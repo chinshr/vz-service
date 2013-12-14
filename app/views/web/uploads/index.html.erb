@@ -1,0 +1,29 @@
+<% content_for :javascript_includes do %>
+<%= javascript_include_tag 'web/uploads' %>
+<% end %>
+<div class="row">
+  <div class="col-md-8">
+    <table>
+      <div id="box" style="background: #eee; font-size: 26px; width: 400px; height: 300px;line-height: 300px; margin: 0 auto; text-align: center;">
+        Connecting...
+      </div>
+
+      <tr>
+        <td>File selection:</td>
+        <td><input type="file" id="files" name="files[]" multiple /></td>
+      </tr>
+      <tr>
+        <td>Progress:</td>
+        <td><div id="progress_bar"><div class="percent">0%</div></div></td>
+      </tr>
+      <tr>
+        <td>Status:</td>
+        <td><span id="status"></span></td>
+      </tr>
+    </table>
+
+    <div id="app_status"></div>
+  </div>
+  <div class="col-md-4">.col-md-4</div>
+</div>
+
