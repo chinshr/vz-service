@@ -18,7 +18,7 @@
   <!-- Add modernizr -->
   <%= javascript_include_tag :modernizr %>
   
-  <%= javascript_include_tag "application", "data-turbolinks-track" => true %>
+  <%#= javascript_include_tag "application", "data-turbolinks-track" => true %>
   
   <!-- For third-generation iPad with high-resolution Retina display: -->
   <!-- Size should be 144 x 144 pixels -->
@@ -96,8 +96,7 @@
 <!-- JavaScripts
 ================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->
-<%= javascript_include_tag "//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js",
-  "application" %>
+<%= javascript_include_tag "application", "//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js", "data-turbolinks-track" => true %>
 <%= yield :javascript_includes %>
 
 </body>
