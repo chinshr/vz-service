@@ -1,8 +1,5 @@
 class Web::UploadsController < ApplicationController
   
-  def show
-  end
-  
   def signput
     response.headers['Access-Control-Allow-Origin'] = '*'
     response.headers['Access-Control-Allow-Credentials'] = 'true'

@@ -4,7 +4,7 @@ window.Qscribe =
   Views: {}
   Routers: {}
   initialize: -> 
-    new Qscribe.Routers.Qrcodes()
+    new Qscribe.Routers.Uploads()
     Backbone.history.start()
 
 $(document).ready ->

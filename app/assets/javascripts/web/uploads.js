@@ -1,3 +1,7 @@
+$('input#files').on("change", function() {
+  alert("hello")
+})
+
 if (false) {
   function createCORSRequest(method, url) {
     var xhr = new XMLHttpRequest();
@@ -52,7 +56,7 @@ if (false) {
     xhr.onreadystatechange = function(e) {
       if (this.readyState == 4 && this.status == 200) {
         callback(decodeURIComponent(this.responseText));
-      } else if(this.readyState == 4 && this.status != 200) {
+      } else if (this.readyState == 4 && this.status != 200) {
         setProgress(0, 'Could not contact signing script. Status = ' + this.status);
       }
     };

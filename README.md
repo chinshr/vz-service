@@ -10,7 +10,6 @@ Development Resources
 * File uploader in iFrame
 * Backbone.js uploader tutorial -- http://blog.crowdint.com/2013/02/19/how-to-manage-file-uploads-with-backbone-js-paperclip-jquery-file-upload-and.html
 
-
 Speech Transcription
 --------------------
 
@@ -35,3 +34,23 @@ S3 Bucket Config
             <AllowedHeader>*</AllowedHeader>
         </CORSRule>
     </CORSConfiguration>
+
+
+Data
+
+- Locale, e.g. "AR-es", "US-en"
+- Country of Origin 
+- Categories: "Policts", "Technology", "Sports", "Art", "Literatura"
+- Tags 
+- Name of document and description
+- Dates: Upload date, Exact date, Aproximate date
+- Privacy settings: public, private, semi-private (unlisted)
+
+Homepage
+
+- Sort by popular
+- Ranking (5 stars)
+- 
+
+
+
