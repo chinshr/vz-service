@@ -2,6 +2,9 @@ class Qscribe.Views.UploadsIndex extends Backbone.View
   template: JST['uploads/index']
 
   events:
+    'dragenter #drop-box': 'onDragover'
+    'dragover #drop-box': 'onDragover'
+#    'dragleave #drop-box': 'onDragover'
     'drop #drop-box': 'onDrop'
     'change input#files': 'onChangeFiles'
   
@@ -12,12 +15,13 @@ class Qscribe.Views.UploadsIndex extends Backbone.View
   # Listen for newly added models and render a view for each
   initialize: () ->
     @listenTo @collection, 'add', @onAddProgress
+    @progressViews = {}
           
   # Instantiate and render new views for models added to the collection
   # This is the view that will be listening to the 'upload:progress' event, and can also allow the user to cancel the upload
   onAddProgress: (model, response) ->
-    progressView = new Qscribe.Views.UploadsProgress.Show(model: model)
-    @$('#file-uploads').append(progressView.render().el)
+    progressView = new Qscribe.Views.UploadsProgress(model: model)
+    @$('#file-uploads').append(progressView.render({name: "test-file-name.a"}).el)
     @progressViews[model.cid] = progressView
         
   onChangeFiles: (e) ->
@@ -28,14 +32,18 @@ class Qscribe.Views.UploadsIndex extends Backbone.View
       file_dom_selector: 'files'
 
   onDrop: (e) ->
+    e.originalEvent.stopPropagation
     e.originalEvent.preventDefault
     return if e.dataTransfer == null
 
-    @uploadToS3({
+    @uploadToS3
       files_dropped: true,
       file_list: e.dataTransfer.files
-    });
-    
+
+  onDragover: (e) ->
+    e.originalEvent.preventDefault
+    e.originalEvent.stopPropagation
+
   # Instantiation of a new S3Upload with custom callbacks
   uploadToS3: (options) ->
     # We create an object to store the newly created models for reference in progress and abort callbacks

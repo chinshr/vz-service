@@ -15,6 +15,7 @@
 //= require turbolinks
 //= require underscore
 //= require backbone
+//= require s3upload
 //= require qscribe
 //= require_tree ../templates
 //= require_tree ./models
@@ -22,4 +23,3 @@
 //= require_tree ./views
 //= require_tree ./routers
 //= require jquery-fileupload/basic
-//= require_tree .
