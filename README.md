@@ -9,6 +9,9 @@ Development Resources
 * File uploader Backbone+S3 -- http://micahroberson.com/upload-files-directly-to-s3-w-backbone-on-heroku/
 * File uploader in iFrame
 * Backbone.js uploader tutorial -- http://blog.crowdint.com/2013/02/19/how-to-manage-file-uploads-with-backbone-js-paperclip-jquery-file-upload-and.html
+* Upload images: 
+  - https://s.ytimg.com/yts/img/upload/large-upload-hover-icon-vflcwlQhZ.png
+  - https://s.ytimg.com/yts/img/upload/large-upload-resting-icon-vflM6eC13.png
 
 Speech Transcription
 --------------------
