@@ -9,3 +9,4 @@ window.Qscribe =
 
 $(document).ready ->
   Qscribe.initialize()
+  

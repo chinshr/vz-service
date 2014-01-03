@@ -96,7 +96,8 @@
 <!-- JavaScripts
 ================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->
-<%= javascript_include_tag "application", "//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js", "data-turbolinks-track" => true %>
+<%# = javascript_include_tag "application", "//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js", "data-turbolinks-track" => true %>
+<%= javascript_include_tag "application", "//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js" %>
 <%= yield :javascript_includes %>
 
 </body>

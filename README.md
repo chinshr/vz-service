@@ -5,13 +5,18 @@ Development Resources
 ---------------------
 
 * Bootstrap templates -- http://bootply.com/templates
-* Google+ boostrap theme repo -- https://github.com/iatek/bootstrap-google-plus
-* File uploader Backbone+S3 -- http://micahroberson.com/upload-files-directly-to-s3-w-backbone-on-heroku/
+* Google+ boostrap theme repo 
+  - https://github.com/iatek/bootstrap-google-plus
+* File uploader Backbone + S3
+  - http://micahroberson.com/upload-files-directly-to-s3-w-backbone-on-heroku/
 * File uploader in iFrame
-* Backbone.js uploader tutorial -- http://blog.crowdint.com/2013/02/19/how-to-manage-file-uploads-with-backbone-js-paperclip-jquery-file-upload-and.html
+* Backbone.js uploader tutorial
+  - http://blog.crowdint.com/2013/02/19/how-to-manage-file-uploads-with-backbone-js-paperclip-jquery-file-upload-and.html
 * Upload images: 
   - https://s.ytimg.com/yts/img/upload/large-upload-hover-icon-vflcwlQhZ.png
   - https://s.ytimg.com/yts/img/upload/large-upload-resting-icon-vflM6eC13.png
+* jQuery Tag entries: 
+  - http://stackoverflow.com/questions/519107/jquery-autocomplete-tagging-plug-in-like-stackoverflows-input-tags
 
 Speech Transcription
 --------------------

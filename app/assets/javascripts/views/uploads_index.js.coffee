@@ -2,9 +2,8 @@ class Qscribe.Views.UploadsIndex extends Backbone.View
   template: JST['uploads/index']
 
   events:
-    'dragenter #drop-box': 'onDragover'
-    'dragover #drop-box': 'onDragover'
-#    'dragleave #drop-box': 'onDragover'
+    'dragenter #drop-box': 'doNothing'
+    'dragover #drop-box': 'doNothing'
     'drop #drop-box': 'onDrop'
     'change input#files': 'onChangeFiles'
   
@@ -32,17 +31,17 @@ class Qscribe.Views.UploadsIndex extends Backbone.View
       file_dom_selector: 'files'
 
   onDrop: (e) ->
-    e.originalEvent.stopPropagation
-    e.originalEvent.preventDefault
+    e.originalEvent.preventDefault()
+    
     return if e.dataTransfer == null
 
     @uploadToS3
       files_dropped: true,
-      file_list: e.dataTransfer.files
+      file_list: e.originalEvent.dataTransfer.files
 
-  onDragover: (e) ->
-    e.originalEvent.preventDefault
-    e.originalEvent.stopPropagation
+  doNothing: (e) ->
+    e.originalEvent.preventDefault()
+    e.originalEvent.stopPropagation()
 
   # Instantiation of a new S3Upload with custom callbacks
   uploadToS3: (options) ->
