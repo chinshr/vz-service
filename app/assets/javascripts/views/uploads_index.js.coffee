@@ -28,7 +28,7 @@ class Qscribe.Views.UploadsIndex extends Backbone.View
 
     @uploadToS3
       files_dropped: false,
-      file_dom_selector: 'files'
+      file_dom_selector: '#files'
 
   onDrop: (e) ->
     e.originalEvent.preventDefault()
@@ -59,12 +59,12 @@ class Qscribe.Views.UploadsIndex extends Backbone.View
         # otherwise trigger an 'upload:progress' event on the model which a view can listen for
         if percent == 0
           upload = new Qscribe.Models.Upload
-            name : file.name,
+            file_name : file.name,
             s3_url: '',
             # card_id : @model.id,
             # project_id: @model.get('project_id'),
             file_type : file.type,
-            size : parseFloat(file.size)
+            file_size : parseFloat(file.size)
           # Key on file.size for uniqueness
           newUploads[file.size] = upload
           # Add the model to the Backbone collection, which will trigger an 'add' event

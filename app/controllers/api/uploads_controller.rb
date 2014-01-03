@@ -2,6 +2,16 @@ class Api::UploadsController < ApplicationController
   before_filter :cors_allow_origin, :only => :signput
   respond_to :json, :xml
   
+  def create
+    # file_type: "audio/x-m4a"
+    # file_name: "sample.m4a"
+    # s3_url: "http://s3.amazonaws.com/qscribe-uploads/default_name"
+    # file_size: 62676
+    
+    @upload = Upload.create(upload_params)
+    respond_with @upload
+  end
+  
   def signput
     object_name    = params[:s3_object_name]
     mime_type      = params[:s3_object_type]
@@ -22,10 +32,13 @@ class Api::UploadsController < ApplicationController
   protected
   
   def cors_allow_origin
-    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Origin']      = '*'
     response.headers['Access-Control-Allow-Credentials'] = 'true'
-    response.headers['Access-Control-Allow-Methods'] = 'OPTIONS, GET, POST'
-    response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Depth, User-Agent, X-File-Size, X-Requested-With, If-Modified-Since, X-File-Name, Cache-Control'
+    response.headers['Access-Control-Allow-Methods']     = 'OPTIONS, GET, POST'
+    response.headers['Access-Control-Allow-Headers']     = 'Content-Type, Depth, User-Agent, X-File-Size, X-Requested-With, If-Modified-Since, X-File-Name, Cache-Control'
   end
   
+  def upload_params
+    params.require(:file_name, :file_type, :s3_url).permit(:file_size)
+  end
 end
