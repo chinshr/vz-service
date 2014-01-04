@@ -12,5 +12,9 @@ FactoryGirl.define do
     sequence(:description) {|n| "description-#{n}"}
   end
 
+  factory :ingest_audio, :class => "Ingest::Audio" do
+    association :upload
+    association :ingestable, factory: :document
+  end
   
 end
