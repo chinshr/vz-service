@@ -11,24 +11,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140103032423) do
+ActiveRecord::Schema.define(version: 20140104013228) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-
-  create_table "document_ingests", force: true do |t|
-    t.integer  "upload_id"
-    t.string   "locale",       limit: 5, default: "en-US", null: false
-    t.integer  "privacy_mask",           default: 0,       null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.integer  "document_id"
-  end
-
-  add_index "document_ingests", ["document_id"], name: "index_document_ingests_on_document_id", using: :btree
-  add_index "document_ingests", ["locale"], name: "index_document_ingests_on_locale", using: :btree
-  add_index "document_ingests", ["privacy_mask"], name: "index_document_ingests_on_privacy_mask", using: :btree
-  add_index "document_ingests", ["upload_id"], name: "index_document_ingests_on_upload_id", using: :btree
 
   create_table "documents", force: true do |t|
     t.string   "title"
@@ -38,20 +24,42 @@ ActiveRecord::Schema.define(version: 20140103032423) do
     t.datetime "updated_at"
   end
 
+  add_index "documents", ["created_at"], name: "index_documents_on_created_at", using: :btree
   add_index "documents", ["slug"], name: "index_documents_on_slug", using: :btree
   add_index "documents", ["title"], name: "index_documents_on_title", using: :btree
+  add_index "documents", ["updated_at"], name: "index_documents_on_updated_at", using: :btree
+
+  create_table "ingests", force: true do |t|
+    t.integer  "upload_id"
+    t.integer  "ingestable_id"
+    t.string   "ingestable_type"
+    t.string   "type"
+    t.string   "aasm_state",      default: "starting", null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "ingests", ["aasm_state"], name: "index_ingests_on_aasm_state", using: :btree
+  add_index "ingests", ["created_at"], name: "index_ingests_on_created_at", using: :btree
+  add_index "ingests", ["ingestable_id", "ingestable_type"], name: "index_ingests_on_ingestable_id_and_ingestable_type", using: :btree
+  add_index "ingests", ["type"], name: "index_ingests_on_type", using: :btree
+  add_index "ingests", ["updated_at"], name: "index_ingests_on_updated_at", using: :btree
+  add_index "ingests", ["upload_id"], name: "index_ingests_on_upload_id", using: :btree
 
   create_table "uploads", force: true do |t|
     t.string   "file_name"
     t.string   "file_type"
     t.string   "file_size"
     t.string   "s3_url"
+    t.string   "locale",     limit: 5, default: "en-US", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
+  add_index "uploads", ["created_at"], name: "index_uploads_on_created_at", using: :btree
   add_index "uploads", ["file_name"], name: "index_uploads_on_file_name", using: :btree
   add_index "uploads", ["file_size"], name: "index_uploads_on_file_size", using: :btree
   add_index "uploads", ["file_type"], name: "index_uploads_on_file_type", using: :btree
+  add_index "uploads", ["updated_at"], name: "index_uploads_on_updated_at", using: :btree
 
 end

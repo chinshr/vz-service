@@ -37,8 +37,21 @@ end
 
 # Use unicorn as the app server
 # gem 'unicorn'
+group :development, :test do
+  gem "debugger"
+end
 
-gem "debugger", group: [:development, :test]
+group :test do
+  gem 'mocha', :require => false  #'~> 0.12.8', 
+  gem 'shoulda'
+  gem 'shoulda-context'
+  gem 'shoulda-matchers'#, '1.4.1'
+  gem 'factory_girl_rails'
+  gem 'minitest'
+  gem 'simplecov', :require => false
+  gem 'turn'
+end
+
 gem "modernizr-rails"
 gem "speech2text", path: "../speech2text"
 
