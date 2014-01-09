@@ -7,6 +7,20 @@ class DocumentTest < ActiveSupport::TestCase
   
   context "validations" do
     should validate_presence_of :title
+    # should validate_presence_of :slug
     should ensure_length_of(:title).is_at_most(255)
+    
+    should "validate presence of slug" do
+      document = Document.new(:slug => "test")
+      document.valid?
+      assert_not_equal "test", document.slug
+      assert_equal [], document.errors[:slug]
+      
+      document = Document.new
+      document.valid?
+      assert_equal [], document.errors[:slug]
+    end
   end
+  
+  
 end

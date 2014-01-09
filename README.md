@@ -17,6 +17,8 @@ Development Resources
   - https://s.ytimg.com/yts/img/upload/large-upload-resting-icon-vflM6eC13.png
 * jQuery Tag entries: 
   - http://stackoverflow.com/questions/519107/jquery-autocomplete-tagging-plug-in-like-stackoverflows-input-tags
+* Backbone JS form serialization:
+  - https://github.com/marioizquierdo/jquery.serializeJSON
 
 Speech Transcription
 --------------------

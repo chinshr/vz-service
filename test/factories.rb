@@ -1,6 +1,6 @@
 FactoryGirl.define do
 
-  factory :upload do
+  factory :upload_audio, :class => "Upload::Audio" do
     sequence(:file_name) {|n| "sample-#{n}.m4a"}
     file_type "audio/x-m4a"
     file_size 62676
@@ -13,7 +13,7 @@ FactoryGirl.define do
   end
 
   factory :ingest_audio, :class => "Ingest::Audio" do
-    association :upload
+    association :upload, factory: :upload_audio
     association :ingestable, factory: :document
   end
   

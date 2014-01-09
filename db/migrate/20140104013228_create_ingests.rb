@@ -5,7 +5,7 @@ class CreateIngests < ActiveRecord::Migration
       t.integer :ingestable_id
       t.string :ingestable_type
       t.string :type
-      t.string :aasm_state, :null => false, :default => "starting"
+      t.string :aasm_state, :null => false, :default => "created"
       t.timestamps
     end
     

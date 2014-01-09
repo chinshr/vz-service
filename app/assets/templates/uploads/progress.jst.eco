@@ -1,6 +1,6 @@
 <div class="progress-panel well">
   <button type="button" class="close cancel" style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;">×</button>
-  <h4><span class="message">Initializing.</span>&nbsp;'<%= @name %>'</h4>
+  <h4><span class="message">Initializing.</span>&nbsp;'<%= @file_name %>'</h4>
   <form class="form-horizontal" role="form" disabled="true">
     <div class="progress progress-striped active">
       <div class="progress-bar progress-bar-info" style="width: 0%"></div>
@@ -9,7 +9,7 @@
     <div class="" style="xdisplay:none">
       <div class="form-group">
         <div class="col-sm-12">
-          <input type="text" class="form-control" placeholder="Name" name="uploads[name]" value="<%= @name %>"></input>
+          <input type="text" class="form-control" placeholder="Name" name="uploads[name]" value="<%= @file_name %>"></input>
         </div>
       </div>
 

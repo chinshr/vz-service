@@ -1,0 +1,1 @@
+attributes :id, :file_name, :file_type, :file_size, :s3_url, :locale, :slug, :title, :description, :status, :type, :created_at

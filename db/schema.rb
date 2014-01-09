@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140104013228) do
+ActiveRecord::Schema.define(version: 20140109033932) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -34,14 +34,24 @@ ActiveRecord::Schema.define(version: 20140104013228) do
     t.integer  "ingestable_id"
     t.string   "ingestable_type"
     t.string   "type"
-    t.string   "aasm_state",      default: "starting", null: false
+    t.string   "aasm_state",      default: "created", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.datetime "started_at"
+    t.datetime "stopped_at"
+    t.datetime "reset_at"
+    t.datetime "removed_at"
+    t.datetime "finished_at"
   end
 
   add_index "ingests", ["aasm_state"], name: "index_ingests_on_aasm_state", using: :btree
   add_index "ingests", ["created_at"], name: "index_ingests_on_created_at", using: :btree
+  add_index "ingests", ["finished_at"], name: "index_ingests_on_finished_at", using: :btree
   add_index "ingests", ["ingestable_id", "ingestable_type"], name: "index_ingests_on_ingestable_id_and_ingestable_type", using: :btree
+  add_index "ingests", ["removed_at"], name: "index_ingests_on_removed_at", using: :btree
+  add_index "ingests", ["reset_at"], name: "index_ingests_on_reset_at", using: :btree
+  add_index "ingests", ["started_at"], name: "index_ingests_on_started_at", using: :btree
+  add_index "ingests", ["stopped_at"], name: "index_ingests_on_stopped_at", using: :btree
   add_index "ingests", ["type"], name: "index_ingests_on_type", using: :btree
   add_index "ingests", ["updated_at"], name: "index_ingests_on_updated_at", using: :btree
   add_index "ingests", ["upload_id"], name: "index_ingests_on_upload_id", using: :btree
@@ -54,12 +64,14 @@ ActiveRecord::Schema.define(version: 20140104013228) do
     t.string   "locale",     limit: 5, default: "en-US", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "type"
   end
 
   add_index "uploads", ["created_at"], name: "index_uploads_on_created_at", using: :btree
   add_index "uploads", ["file_name"], name: "index_uploads_on_file_name", using: :btree
   add_index "uploads", ["file_size"], name: "index_uploads_on_file_size", using: :btree
   add_index "uploads", ["file_type"], name: "index_uploads_on_file_type", using: :btree
+  add_index "uploads", ["type"], name: "index_uploads_on_type", using: :btree
   add_index "uploads", ["updated_at"], name: "index_uploads_on_updated_at", using: :btree
 
 end

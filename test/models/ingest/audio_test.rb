@@ -17,5 +17,4 @@ class Ingest::AudioTest < ActiveSupport::TestCase
     assert_equal document.title, ingest.title
     assert_equal document.description, ingest.description
   end
-  
 end

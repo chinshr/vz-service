@@ -7,7 +7,6 @@ class Api::UploadsController < ApplicationController
     # file_name: "sample.m4a"
     # s3_url: "http://s3.amazonaws.com/qscribe-uploads/default_name"
     # file_size: 62676
-    
     @upload = Upload.create(upload_params)
     respond_with "api", @upload
   end
@@ -39,9 +38,6 @@ class Api::UploadsController < ApplicationController
   end
   
   def upload_params
-    params.require(:file_name)
-    params.require(:file_type)
-    params.require(:s3_url)
-    params.permit(:file_name, :file_type, :s3_url)
+    params.require(:upload).permit(:type, :file_name, :file_type, :file_size, :s3_url)
   end
 end
