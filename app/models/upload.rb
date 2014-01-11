@@ -1,17 +1,12 @@
 class Upload < ActiveRecord::Base
-  has_one :ingest
+  has_one :ingest, dependent: :destroy
   
   validates :type, presence: true
   validates :file_name, presence: true, length: { maximum: 255 }
   validates :file_type, presence: true, length: { maximum: 255 }
   validates :s3_url, presence: true, length: { maximum: 255 }
-  
-  def human_name
-    file_name.split(".").first.humanize
-  end
-  
+
   class << self
-    
     # type casts to the class specified in :type parameter
     #
     # E.g.
@@ -58,5 +53,14 @@ class Upload < ActiveRecord::Base
       attributes[:type] = klass.name
       klass
     end
+  end
+
+  def humanized_file_name
+    result = file_name
+    return if result.blank?
+    result = result.split(".").first unless result.blank?
+    result.gsub!(/[-+]+/, ' ') unless result.blank?
+    result = result.humanize unless result.blank?
+    result
   end
 end

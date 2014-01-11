@@ -3,9 +3,8 @@ class CreateUploads < ActiveRecord::Migration
     create_table :uploads do |t|
       t.string :file_name
       t.string :file_type
-      t.string :file_size
+      t.integer :file_size
       t.string :s3_url
-      t.string :locale, :limit => 5, :default => "en-US", :null => false
       t.timestamps
     end
     

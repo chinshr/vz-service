@@ -13,4 +13,9 @@ class UploadTest < ActiveSupport::TestCase
     should validate_presence_of :s3_url
     should ensure_length_of(:s3_url).is_at_most(255)
   end
+  
+  should "humanize file name" do
+    assert_equal "I like pickles", Upload.new(file_name: "i_like_pickles.m4a").humanized_file_name
+    assert_equal "I like pickles", Upload.new(file_name: "i-like-pickles.m4a").humanized_file_name
+  end
 end

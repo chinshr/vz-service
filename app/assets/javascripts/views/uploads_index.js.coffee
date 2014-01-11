@@ -43,6 +43,16 @@ class Qscribe.Views.UploadsIndex extends Backbone.View
     e.originalEvent.preventDefault()
     e.originalEvent.stopPropagation()
 
+  makeid: ()->
+    text = ""
+    possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+    i = 0
+
+    while i < 10
+      text += possible.charAt(Math.floor(Math.random() * possible.length))
+      i++
+    text
+
   # Instantiation of a new S3Upload with custom callbacks
   uploadToS3: (options) ->
     # We create an object to store the newly created models for reference in progress and abort callbacks
@@ -52,6 +62,7 @@ class Qscribe.Views.UploadsIndex extends Backbone.View
       files_dropped: options.files_dropped,
       file_list: options.file_list,
       file_dom_selector: options.file_dom_selector,
+      s3_object_name: @makeid(),
       s3_sign_put_url: 'api/uploads/signput.json',
 
       onProgress: (xhr, file, percent, message) =>
@@ -59,12 +70,12 @@ class Qscribe.Views.UploadsIndex extends Backbone.View
         # otherwise trigger an 'upload:progress' event on the model which a view can listen for
         if percent == 0
           upload = new Qscribe.Models.Upload
-            file_name : file.name,
+            file_name: file.name,
             s3_url: '',
-            # card_id : @model.id,
-            # project_id: @model.get('project_id'),
-            file_type : file.type,
-            file_size : parseFloat(file.size)
+            file_type: file.type,
+            file_size: parseFloat(file.size),
+            type: "audio",
+            locale: "en-US"
           # Key on file.size for uniqueness
           newUploads[file.size] = upload
           # Add the model to the Backbone collection, which will trigger an 'add' event

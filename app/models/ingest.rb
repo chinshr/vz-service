@@ -15,7 +15,7 @@ class Ingest < ActiveRecord::Base
     :resetting => RESETTING, :reset =>  RESET, :removing => REMOVING, :removed => REMOVED, :finished => FINISHED}
   
   belongs_to :upload
-  belongs_to :ingestable, polymorphic: true, touch: true
+  belongs_to :ingestable, polymorphic: true, dependent: :destroy
   
   validates :upload, presence: true
   validates :ingestable, presence: true
@@ -61,7 +61,7 @@ class Ingest < ActiveRecord::Base
   end
   
   def status
-    self.class::STATES.symbolize_keys[aasm_current_state]
+    self.class::STATES.symbolize_keys[aasm.current_state]
   end
   
   protected

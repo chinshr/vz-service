@@ -18,14 +18,18 @@ ActiveRecord::Schema.define(version: 20140109033932) do
 
   create_table "documents", force: true do |t|
     t.string   "title"
-    t.string   "slug"
+    t.string   "slug",                                     null: false
     t.text     "description"
+    t.integer  "privacy_mask",           default: 0,       null: false
+    t.string   "locale",       limit: 5, default: "en-US", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
   add_index "documents", ["created_at"], name: "index_documents_on_created_at", using: :btree
-  add_index "documents", ["slug"], name: "index_documents_on_slug", using: :btree
+  add_index "documents", ["locale"], name: "index_documents_on_locale", using: :btree
+  add_index "documents", ["privacy_mask"], name: "index_documents_on_privacy_mask", using: :btree
+  add_index "documents", ["slug"], name: "index_documents_on_slug", unique: true, using: :btree
   add_index "documents", ["title"], name: "index_documents_on_title", using: :btree
   add_index "documents", ["updated_at"], name: "index_documents_on_updated_at", using: :btree
 
@@ -59,9 +63,8 @@ ActiveRecord::Schema.define(version: 20140109033932) do
   create_table "uploads", force: true do |t|
     t.string   "file_name"
     t.string   "file_type"
-    t.string   "file_size"
+    t.integer  "file_size"
     t.string   "s3_url"
-    t.string   "locale",     limit: 5, default: "en-US", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "type"

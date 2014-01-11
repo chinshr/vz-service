@@ -36,7 +36,7 @@ class Upload::AudioTest < ActiveSupport::TestCase
     upload = Upload.create(type: "audio", file_name: "audio.m4a", file_type: "audio/x-m4a", file_size: 12345, s3_url: "http://s3.amazonaws.com/dropbox/audio.m4a")
     assert upload.ingest
     assert upload.ingest.ingestable
-    assert_equal upload.ingest.title, upload.human_name
+    assert_equal upload.ingest.title, upload.humanized_file_name
   end
 
 end

@@ -4,7 +4,9 @@ class Api::UploadsController < Api::ApplicationController
   
   # [POST] /api/uploads.json
   def create
-    @upload = Upload.create(create_params)
+    @upload = Upload.new(create_params.permit(:type))
+    @upload.attributes = create_params.except(:type)
+    @upload.save
     respond_with "api", @upload
   end
   
@@ -52,10 +54,10 @@ class Api::UploadsController < Api::ApplicationController
   end
   
   def create_params
-    params.require(:upload).permit(:type, :file_name, :file_type, :file_size, :s3_url)
+    params.require(:upload).permit(:type, :file_name, :file_type, :file_size, :s3_url, :locale, :privacy_mask)
   end
   
   def update_params
-    params.require(:upload).permit(:title, :description)
+    params.require(:upload).permit(:title, :description, :locale, :privacy_mask)
   end
 end

@@ -4,10 +4,18 @@ class Api::UploadsControllerTest < ActionController::TestCase
   context "POST /api/uploads" do
     should "create audio upload" do
       post :create, :upload => {type: "audio", file_type: "audio/x-m4a", file_name: "sample.m4a", file_size: 62676,
-        s3_url: "http://s3.amazonaws.com/qscribe-uploads/sample.m4a"}, 
+        s3_url: "http://s3.amazonaws.com/qscribe-uploads/amQW1N-sample.m4a", locale: "en-GB"}, 
         format: :json
       assert_response :success
       assert_response_body response
+      
+      upload = Upload.last
+      assert_equal "Upload::Audio", upload.type 
+      assert_equal "audio/x-m4a", upload.file_type 
+      assert_equal "sample.m4a", upload.file_name 
+      assert_equal 62676, upload.file_size
+      assert_equal "http://s3.amazonaws.com/qscribe-uploads/amQW1N-sample.m4a", upload.s3_url
+      assert_equal "en-GB", upload.locale
     end
 
     should "NOT create audio upload without file type audio" do
@@ -37,20 +45,26 @@ class Api::UploadsControllerTest < ActionController::TestCase
   context "PUT /uploads/:id" do
     should "update upload" do
       upload = FactoryGirl.create(:upload_audio)
-      put :update, {:id => upload.id, :upload => {:title => "Fun Fest!", :description => "Interview taken at fun fest."}, format: :json}
+      put :update, {:id => upload.id, :upload => {:title => "La fiesta!", :description => "Entrevista en la fiesta.", locale: "es-AR"}, format: :json}
       assert_response :success
       assert_response_body response
-      assert_equal "Fun Fest!", upload.reload.title
-      assert_equal "Interview taken at fun fest.", upload.reload.description
+      assert_equal "La fiesta!", upload.reload.title
+      assert_equal "Entrevista en la fiesta.", upload.reload.description
+      assert_equal "es-AR", upload.reload.locale
     end
   end
 
   context "DELETE /uploads" do
     should "destroy upload" do
       upload = FactoryGirl.create(:upload_audio)
-      delete :destroy, {id: upload.id, format: :json}
-      assert_response :success
-      assert_equal 0, Upload.count
+      assert_difference 'Document.count', -1 do
+        assert_difference 'Ingest.count', -1 do
+          assert_difference 'Upload.count', -1 do
+            delete :destroy, {id: upload.id, format: :json}
+            assert_response :success
+          end
+        end
+      end
     end
   end
   
