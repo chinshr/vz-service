@@ -1,14 +1,28 @@
-class Api::UploadsController < ApplicationController
+class Api::UploadsController < Api::ApplicationController
   before_filter :cors_allow_origin, :only => :signput
   respond_to :json, :xml
   
+  # [POST] /api/uploads.json
   def create
-    # file_type: "audio/x-m4a"
-    # file_name: "sample.m4a"
-    # s3_url: "http://s3.amazonaws.com/qscribe-uploads/default_name"
-    # file_size: 62676
-    @upload = Upload.create(upload_params)
+    @upload = Upload.create(create_params)
     respond_with "api", @upload
+  end
+  
+  # [GET] /api/uploads/1.json
+  def show
+    @upload = Upload.find(params[:id])
+    respond_with @upload
+  end
+  
+  # [PUT] /api/uploads/1.json
+  def update
+    @upload = Upload.update(params[:id], update_params)
+    respond_with @upload
+  end
+
+  # [DELETE] /api/uploads/1.json
+  def destroy
+    respond_with Upload.destroy(params[:id])
   end
   
   def signput
@@ -37,7 +51,11 @@ class Api::UploadsController < ApplicationController
     response.headers['Access-Control-Allow-Headers']     = 'Content-Type, Depth, User-Agent, X-File-Size, X-Requested-With, If-Modified-Since, X-File-Name, Cache-Control'
   end
   
-  def upload_params
+  def create_params
     params.require(:upload).permit(:type, :file_name, :file_type, :file_size, :s3_url)
+  end
+  
+  def update_params
+    params.require(:upload).permit(:title, :description)
   end
 end

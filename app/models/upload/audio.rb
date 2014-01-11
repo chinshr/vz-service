@@ -1,14 +1,19 @@
 class Upload::Audio < ::Upload
-  delegate :title, to: :ingest
-  delegate :title=, to: :ingest
+  delegate :title, to: :ingest, allow_nil: true
+  delegate :title=, to: :ingest, allow_nil: true
   
-  delegate :description, to: :ingest
-  delegate :description=, to: :ingest
+  delegate :description, to: :ingest, allow_nil: true
+  delegate :description=, to: :ingest, allow_nil: true
   
   delegate :status, to: :ingest
   delegate :slug, to: :ingest
   
+  validates :title, presence: true, on: :update
+  validates :description, presence: true, on: :update
   validate :audio_file_type
+  
+  after_create :create_ingest
+  after_save :update_ingest
   
   protected
   
@@ -23,4 +28,8 @@ class Upload::Audio < ::Upload
     end unless new_record?
   end
   
+  def update_ingest
+    ingest.ingestable.save if ingest && ingest.ingestable && ingest.ingestable.changed?
+    ingest.save if ingest && ingest.changed?
+  end
 end

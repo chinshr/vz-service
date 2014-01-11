@@ -6,8 +6,6 @@ class Upload < ActiveRecord::Base
   validates :file_type, presence: true, length: { maximum: 255 }
   validates :s3_url, presence: true, length: { maximum: 255 }
   
-  after_create :create_ingest
-  
   def human_name
     file_name.split(".").first.humanize
   end
@@ -60,6 +58,5 @@ class Upload < ActiveRecord::Base
       attributes[:type] = klass.name
       klass
     end
-    
   end
 end

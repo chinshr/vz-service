@@ -5,6 +5,9 @@ FactoryGirl.define do
     file_type "audio/x-m4a"
     file_size 62676
     sequence(:s3_url) {|n| "http://s3.amazonaws.com/dropbox/sample-#{n}.m4a"} 
+    before(:create) do |upload|
+      upload.build_ingest(type: "Ingest::Audio", upload: upload, ingestable: FactoryGirl.create(:document))
+    end
   end
 
   factory :document do
