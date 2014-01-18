@@ -19,8 +19,6 @@ class Qscribe.Views.UploadsProgress extends Backbone.View
     @$('.message').html(data.message);
 
     if data.percent == 100
-      @$('.progress').removeClass('active')
-      @$('form input, form textarea, form button').removeAttr("disabled")
       @_xhr = null
     else if !@_xhr
       # Else if @_xhr is not yet defined, save a reference to it
@@ -33,4 +31,15 @@ class Qscribe.Views.UploadsProgress extends Backbone.View
     @$(".progress-panel").remove()
     
   onAfterCreate: (e) ->
-    alert "Stored"
+    # fill form
+    $("input[name='upload[title]']").val(@model.attributes.title)
+    $("select[name='upload[locale]']").val(@model.attributes.locale)
+    $("select[name='upload[privacy]']").val(@model.attributes.privacy)
+    
+    @$('.progress').removeClass('active')
+    @$('form input, form textarea, form button').removeAttr("disabled")
+    @$(".form-fields").show()
+    
+    @$('.message').html(@model.message());
+    
+    

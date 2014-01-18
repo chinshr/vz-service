@@ -3,20 +3,27 @@ require 'test_helper'
 class Api::UploadsControllerTest < ActionController::TestCase
   context "POST /api/uploads" do
     should "create audio upload" do
-      post :create, :upload => {type: "audio", file_type: "audio/x-m4a", file_name: "sample.m4a", file_size: 62676,
-        s3_url: "http://s3.amazonaws.com/qscribe-uploads/amQW1N-sample.m4a", locale: "en-GB", :privacy => "private"}, 
-        format: :json
-      assert_response :success
-      assert_response_body response
+      assert_difference 'Document.count', 1 do
+        assert_difference 'Ingest::Audio.count', 1 do
+          assert_difference 'Upload::Audio.count', 1 do
+            post :create, :upload => {:file_name => "i-like-pickles.wav", :s3_url => "http://s3.amazonaws.com/qscribe-uploads/8enYwMjB0B", 
+              :file_type => "audio/wav", :file_size => 225284, :type => "audio", :locale => "en-UK", :privacy => "private"}, 
+                format: :json
+            assert_response :success
+            assert_response_body response
       
-      upload = Upload.last
-      assert_equal "Upload::Audio", upload.type 
-      assert_equal "audio/x-m4a", upload.file_type 
-      assert_equal "sample.m4a", upload.file_name 
-      assert_equal 62676, upload.file_size
-      assert_equal "http://s3.amazonaws.com/qscribe-uploads/amQW1N-sample.m4a", upload.s3_url
-      assert_equal "en-GB", upload.locale
-      assert_equal [:private], upload.privacy
+            upload = Upload.last
+            assert_equal "Upload::Audio", upload.type 
+            assert_equal "audio/wav", upload.file_type 
+            assert_equal "i-like-pickles.wav", upload.file_name 
+            assert_equal 225284, upload.file_size
+            assert_equal "http://s3.amazonaws.com/qscribe-uploads/8enYwMjB0B", upload.s3_url
+            assert_equal "en-UK", upload.locale
+            assert_equal [:private], upload.privacy
+            assert_equal 0, upload.progress
+          end
+        end
+      end
     end
 
     should "NOT create audio upload without file type audio" do

@@ -1,6 +1,6 @@
 <div class="progress-panel well">
   <button type="button" class="close cancel" style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;">×</button>
-  <h4><%= @file_name %>Test&nbsp;&nbsp;
+  <h4><%= @file_name %>&nbsp;
     <span class="label label-info status"><span class="message">Initializing.</span></span>
     <span class="label label-success slug"><a href="YdG3bj">http://localhost:3000/YdG3bj</a></span>
   </h4>
@@ -9,18 +9,18 @@
       <div class="progress-bar progress-bar-info" style="width: 0%"></div>
     </div>
 
-    <div class="" style="xdisplay:none">
+    <div class="form-fields" style="display:none">
       <div class="row">
         <div class="col-md-6">
           <div class="form-group">
             <div class="col-md-12">
-              <input type="text" class="form-control" placeholder="Name" name="uploads[name]" value="<%= @title %>"></input>
+              <input type="text" class="form-control" placeholder="Title" name="upload[title]" value="<%= @title %>"></input>
             </div>
           </div>
 
           <div class="form-group">
             <div class="col-md-12">
-              <textarea class="form-control" placeholder="Description" name="uploads[description]" value="<%= @description %>"></textarea>
+              <textarea class="form-control" placeholder="Description" name="upload[description]" value="<%= @description %>"></textarea>
             </div>
           </div>
         </div>
@@ -28,7 +28,7 @@
         <div class="col-md-6">
           <div class="form-group">
             <div class="col-md-12">
-              <select class="form-control file-locale">
+              <select class="form-control file-locale" name="upload[locale]">
                 <option value="en-US">English United States</option>
                 <option value="en-UK">English Great Britain</option>
                 <option value="es-ES">Spanish Spain</option>
@@ -41,7 +41,7 @@
 
           <div class="form-group">
             <div class="col-md-12">
-              <select id="file-privacy" class="form-control">
+              <select class="form-control file-privacy" name="upload[privacy]">
                 <option value="public">Public</option>
                 <option value="private">Private</option>
                 <option value="unlisted">Unlisted</option>
@@ -49,7 +49,6 @@
             </div>
           </div>
         </div>
-        
       </div>
 
       <div class="form-group">
