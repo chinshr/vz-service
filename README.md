@@ -62,5 +62,9 @@ Homepage
 - Ranking (5 stars)
 - 
 
+Humanize in CC:
+
+    @file_name.split(".")[0].replace(/[_-]/g, ' ').replace /(\w+)/g, match ->
+      match.charAt(0).toUpperCase() + match.slice(1)
 
 

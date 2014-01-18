@@ -8,11 +8,12 @@ class Upload::Audio < ::Upload
   delegate :locale, to: :ingest, allow_nil: true
   delegate :locale=, to: :ingest, allow_nil: true
 
-  delegate :privacy_mask, to: :ingest, allow_nil: true
-  delegate :privacy_mask=, to: :ingest, allow_nil: true
+  delegate :privacy, to: :ingest, allow_nil: true
+  delegate :privacy=, to: :ingest, allow_nil: true
   
   delegate :status, to: :ingest
   delegate :slug, to: :ingest
+  delegate :progress, to: :ingest
   
   validates :title, presence: true, on: :update
   validate :audio_file_type
@@ -28,7 +29,8 @@ class Upload::Audio < ::Upload
   end
   
   def build_ingest_and_document
-    build_ingest(type: "Ingest::Audio", upload: self, ingestable: ::Document.new(title: humanized_file_name, locale: "en-US")) unless ingest
+    build_ingest(type: "Ingest::Audio", upload: self, 
+      ingestable: ::Document.new(title: humanized_file_name, locale: "en-US", privacy: :public)) unless ingest
   end
   
   def set_ingest_and_document

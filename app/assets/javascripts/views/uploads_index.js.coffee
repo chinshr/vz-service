@@ -22,7 +22,7 @@ class Qscribe.Views.UploadsIndex extends Backbone.View
     progressView = new Qscribe.Views.UploadsProgress(model: model)
     @$('#file-uploads').append(progressView.render({name: "test-file-name.a"}).el)
     @progressViews[model.cid] = progressView
-        
+
   onChangeFiles: (e) ->
     return if $(e.target).val() == ''
 
@@ -75,7 +75,8 @@ class Qscribe.Views.UploadsIndex extends Backbone.View
             file_type: file.type,
             file_size: parseFloat(file.size),
             type: "audio",
-            locale: "en-US"
+            locale: @$("#file-locale").val() || "en-US",
+            privacy: @$("#file-privacy").val() || "public"
           # Key on file.size for uniqueness
           newUploads[file.size] = upload
           # Add the model to the Backbone collection, which will trigger an 'add' event

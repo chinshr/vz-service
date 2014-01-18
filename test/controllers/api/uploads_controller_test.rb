@@ -4,7 +4,7 @@ class Api::UploadsControllerTest < ActionController::TestCase
   context "POST /api/uploads" do
     should "create audio upload" do
       post :create, :upload => {type: "audio", file_type: "audio/x-m4a", file_name: "sample.m4a", file_size: 62676,
-        s3_url: "http://s3.amazonaws.com/qscribe-uploads/amQW1N-sample.m4a", locale: "en-GB"}, 
+        s3_url: "http://s3.amazonaws.com/qscribe-uploads/amQW1N-sample.m4a", locale: "en-GB", :privacy => "private"}, 
         format: :json
       assert_response :success
       assert_response_body response
@@ -16,6 +16,7 @@ class Api::UploadsControllerTest < ActionController::TestCase
       assert_equal 62676, upload.file_size
       assert_equal "http://s3.amazonaws.com/qscribe-uploads/amQW1N-sample.m4a", upload.s3_url
       assert_equal "en-GB", upload.locale
+      assert_equal [:private], upload.privacy
     end
 
     should "NOT create audio upload without file type audio" do
@@ -92,6 +93,7 @@ class Api::UploadsControllerTest < ActionController::TestCase
     assert attributes.has_key?("description")
     assert attributes.has_key?("status")
     assert attributes.has_key?("type")
+    assert attributes.has_key?("progress")
     assert attributes.has_key?("updated_at")
     assert attributes.has_key?("created_at")
   end

@@ -27,13 +27,26 @@ class Upload::AudioTest < ActiveSupport::TestCase
     assert_equal upload.ingest.ingestable.slug, upload.slug
   end
 
+  should "build with default locale" do
+    upload = FactoryGirl.create(:upload_audio)
+    assert_equal "en-US", upload.locale
+    assert_equal upload.ingest.ingestable.locale, upload.locale
+  end
+
+  should "build with default privacy" do
+    upload = FactoryGirl.build(:upload_audio)
+    assert_equal [:public], upload.privacy
+    assert_equal upload.ingest.ingestable.privacy, upload.privacy
+  end
+
   should "build Upload::Audio" do
     audio_upload = Upload.new type: "audio"
     assert audio_upload.is_a?(Upload::Audio), "should instantiate with :type parameter"
   end
   
   should "create audio ingest and document for audio upload" do
-    upload = Upload.create(type: "audio", file_name: "audio.m4a", file_type: "audio/x-m4a", file_size: 12345, s3_url: "http://s3.amazonaws.com/dropbox/audio.m4a")
+    upload = Upload.create(type: "audio", file_name: "audio.m4a", file_type: "audio/x-m4a", 
+      file_size: 12345, s3_url: "http://s3.amazonaws.com/dropbox/audio.m4a")
     assert upload.ingest
     assert upload.ingest.ingestable
     assert_equal upload.ingest.title, upload.humanized_file_name

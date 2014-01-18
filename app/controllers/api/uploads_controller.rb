@@ -4,6 +4,7 @@ class Api::UploadsController < Api::ApplicationController
   
   # [POST] /api/uploads.json
   def create
+    # {"upload"=>{"file_name"=>"i-like-pickles.wav", "s3_url"=>"http://s3.amazonaws.com/qscribe-uploads/8enYwMjB0B", "file_type"=>"audio/wav", "file_size"=>225284, "type"=>"audio", "locale"=>"en-US", "privacy"=>"public"}, "action"=>"create", "controller"=>"api/uploads"}
     @upload = Upload.new(create_params.permit(:type))
     @upload.attributes = create_params.except(:type)
     @upload.save
@@ -54,10 +55,10 @@ class Api::UploadsController < Api::ApplicationController
   end
   
   def create_params
-    params.require(:upload).permit(:type, :file_name, :file_type, :file_size, :s3_url, :locale, :privacy_mask)
+    params.require(:upload).permit(:type, :file_name, :file_type, :file_size, :s3_url, :locale, :privacy)
   end
   
   def update_params
-    params.require(:upload).permit(:title, :description, :locale, :privacy_mask)
+    params.require(:upload).permit(:title, :description, :locale, :privacy)
   end
 end

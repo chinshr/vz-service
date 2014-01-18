@@ -10,6 +10,7 @@ class Qscribe.Views.UploadsProgress extends Backbone.View
   initialize: () ->
     @listenTo(@model, 'upload:progress', @onUploadProgress)
     @listenTo(@model, 'destroy', @destroy)
+    @listenToOnce(@model, 'sync', @onAfterCreate)
 
   onUploadProgress: (data) ->
     console.log data.percent
@@ -30,3 +31,6 @@ class Qscribe.Views.UploadsProgress extends Backbone.View
     if @_xhr
       @_xhr.abort()
     @$(".progress-panel").remove()
+    
+  onAfterCreate: (e) ->
+    alert "Stored"

@@ -8,8 +8,8 @@ class Ingest::Audio < ::Ingest
   delegate :locale, to: :ingestable
   delegate :locale=, to: :ingestable
 
-  delegate :privacy_mask, to: :ingestable
-  delegate :privacy_mask=, to: :ingestable
+  delegate :privacy, to: :ingestable
+  delegate :privacy=, to: :ingestable
   
   delegate :slug, to: :ingestable
 end
