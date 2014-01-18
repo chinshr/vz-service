@@ -8,6 +8,7 @@ class Qscribe.Views.UploadsProgress extends Backbone.View
     @
 
   initialize: () ->
+    @interval = null
     @listenTo(@model, 'upload:progress', @onUploadProgress)
     @listenTo(@model, 'destroy', @destroy)
     @listenToOnce(@model, 'sync', @onAfterCreate)
@@ -28,18 +29,38 @@ class Qscribe.Views.UploadsProgress extends Backbone.View
     # Leverage the saved xhr reference to abort() the upload
     if @_xhr
       @_xhr.abort()
+    @stop()
     @$(".progress-panel").remove()
     
   onAfterCreate: (e) ->
     # fill form
-    $("input[name='upload[title]']").val(@model.attributes.title)
-    $("select[name='upload[locale]']").val(@model.attributes.locale)
-    $("select[name='upload[privacy]']").val(@model.attributes.privacy)
+    @$("input[name='upload[title]']").val(@model.attributes.title)
+    @$("select[name='upload[locale]']").val(@model.attributes.locale)
+    @$("select[name='upload[privacy]']").val(@model.attributes.privacy)
     
-    @$('.progress').removeClass('active')
+    #@$('.progress').removeClass('active')
     @$('form input, form textarea, form button').removeAttr("disabled")
     @$(".form-fields").show()
     
-    @$('.message').html(@model.message());
+    @$('.message').html(@model.message())
+    @ping()
     
-    
+  ping: ->
+    @interval = setInterval =>
+        @poll()
+      , 2500
+
+  stop: ->
+    window.clearInterval(@interval)
+
+  poll: ->
+    @model.fetch()
+    @$('.message').html(@model.message())
+    @$('.alert-slug-link').html("<a href=\"#{@model.attributes.slug}\" target=\"_blank\">http://voyz.es/#{@model.attributes.slug}</a>")
+
+    @$('.progress .progress-bar').css('width', "#{@model.attributes.progress}%")
+
+    if !@$('.progress .progress-bar').hasClass('progress-bar-success')
+      @$('.progress .progress-bar').removeClass('progress-bar-info')
+      @$('.progress .progress-bar').addClass('progress-bar-success')
+
