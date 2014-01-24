@@ -20,7 +20,7 @@ class Upload::Audio < ::Upload
   
   after_save :save_ingest_and_document
   after_initialize :build_ingest_and_document
-  before_validation :set_ingest_and_document
+  before_validation :set_title, on: :create
 
   protected
   
@@ -33,7 +33,7 @@ class Upload::Audio < ::Upload
       ingestable: ::Document.new(title: humanized_file_name, locale: "en-US", privacy: :public)) unless ingest
   end
   
-  def set_ingest_and_document
+  def set_title
     self.title = humanized_file_name if title.blank?
   end
   

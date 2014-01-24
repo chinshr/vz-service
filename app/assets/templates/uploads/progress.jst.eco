@@ -10,7 +10,7 @@
 
     <div class="alert alert-success alert-slug">
       <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-      <div class="alert-slug-message">Transcribe availabe at&nbsp;<span class="alert-slug-link"><a href="YdG3bj" target="_blank">http://localhost:3000/YdG3bj</a></span></div>
+      <div class="alert-slug-message">Transcription will be availabe at&nbsp;<span class="alert-slug-link"><a href="YdG3bj" target="_blank">http://localhost:3000/YdG3bj</a></span></div>
     </div>
 
     <div class="form-fields" style="display:none">
@@ -18,12 +18,14 @@
         <div class="col-md-6">
           <div class="form-group">
             <div class="col-md-12">
-              <input type="text" class="form-control" placeholder="Title" name="upload[title]" value="<%= @title %>"></input>
+              <label class="sr-only" for="">Title</label>
+              <input type="text" class="form-control" placeholder="Title" name="upload[title]" value="<%= @title %>" data-error-style="tooltip" data-tooltip-position="left"></input>
             </div>
           </div>
 
           <div class="form-group">
             <div class="col-md-12">
+              <label class="sr-only" for="">Description</label>
               <textarea class="form-control" placeholder="Description" name="upload[description]" value="<%= @description %>"></textarea>
             </div>
           </div>
@@ -32,6 +34,7 @@
         <div class="col-md-6">
           <div class="form-group">
             <div class="col-md-12">
+              <label class="sr-only" for="">Audio Language</label>
               <select class="form-control file-locale" name="upload[locale]">
                 <option value="en-US">English United States</option>
                 <option value="en-UK">English Great Britain</option>
@@ -45,6 +48,7 @@
 
           <div class="form-group">
             <div class="col-md-12">
+              <label class="sr-only" for="">Privacy</label>
               <select class="form-control file-privacy" name="upload[privacy]">
                 <option value="public">Public</option>
                 <option value="private">Private</option>
@@ -57,7 +61,7 @@
 
       <div class="form-group">
         <div class="col-sm-12">
-          <button class="btn btn-success pull-right" type="button" disabled="true">Update</button>
+          <button class="btn btn-success pull-right" type="submit" disabled="true" data-loading-text="Updating...">Update</button>
         </div>
       </div>
     </div>

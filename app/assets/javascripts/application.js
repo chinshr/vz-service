@@ -14,6 +14,8 @@
 //= require jquery_ujs
 //= require underscore
 //= require backbone
+//= require backbone-validation
+//= require validation_config
 //= require s3upload
 //= require qscribe
 //= require_tree ../templates

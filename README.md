@@ -19,6 +19,10 @@ Development Resources
   - http://stackoverflow.com/questions/519107/jquery-autocomplete-tagging-plug-in-like-stackoverflows-input-tags
 * Backbone JS form serialization:
   - https://github.com/marioizquierdo/jquery.serializeJSON
+  - http://lostechies.com/derickbailey/2011/07/24/awesome-model-binding-for-backbone-js/
+  - https://github.com/theironcook/Backbone.ModelBinder
+  - https://github.com/thedersen/backbone.validation
+  - https://gist.github.com/driehle/2909552 -- validation with bootstrap tooltips
 
 Speech Transcription
 --------------------

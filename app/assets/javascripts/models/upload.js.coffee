@@ -1,6 +1,10 @@
 class Qscribe.Models.Upload extends Backbone.Model
   urlRoot: 'api/uploads'
   
+  validation:
+    title:
+      required: true
+      
   parse: (response) ->
     response.upload
     
@@ -9,10 +13,10 @@ class Qscribe.Models.Upload extends Backbone.Model
 
   message: () ->
     msg = switch @.attributes.status
-      when 0 then "Finalized."
-      when 1 then "Starting."
-      when 2 then "Started."
-      when 3 then "Stopping."
+      when 0 then "Uploaded."
+      when 1 then "Transcoding started."
+      when 2 then "Transcoding."
+      when 3 then "Transcoding stopping."
       when 4 then "Stopped."
       when 5 then "Resetting."
       when 6 then "Reset."

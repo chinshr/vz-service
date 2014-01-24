@@ -15,6 +15,16 @@ class Upload::AudioTest < ActiveSupport::TestCase
       assert_equal false, upload.valid?, "should not be valid"
       assert_equal [I18n.t("activerecord.errors.models.upload.attributes.file_type.audio_expected")], upload.errors[:file_type]
     end
+    
+    should "validate presence of title on update" do
+      upload = Upload.create(type: "audio", file_name: "audio-test.m4a", file_type: "audio/x-m4a", 
+        file_size: 12345, s3_url: "http://s3.amazonaws.com/dropbox/audio-test.m4a")
+      assert_equal upload.humanized_file_name, upload.title
+      upload.title = ""
+      assert_equal false, upload.valid?
+      assert_equal ["can't be blank"], upload.errors[:title]
+    end
+    
   end
 
   should "create" do

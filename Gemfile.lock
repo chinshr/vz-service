@@ -52,6 +52,7 @@ GEM
       jquery-rails
       rails (>= 3.1)
     backbone-support (0.4.0)
+    backbone-validation-rails (0.7.1.1)
     builder (3.1.4)
     coffee-rails (4.0.1)
       coffee-script (>= 2.2.0)
@@ -187,6 +188,7 @@ DEPENDENCIES
   aws-sdk (~> 1.6.0)
   backbone-on-rails
   backbone-support
+  backbone-validation-rails
   coffee-rails (~> 4.0.0)
   debugger
   eco

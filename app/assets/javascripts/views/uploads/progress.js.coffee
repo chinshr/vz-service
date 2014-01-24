@@ -2,9 +2,13 @@ class Qscribe.Views.UploadsProgress extends Backbone.View
   template: JST['uploads/progress']
   events: 
     'click .cancel' : 'onCancelUpload'
+    'submit' : 'onFormSubmit'
+    'keyup input': 'fieldChanged'
+    'change select': 'selectionChanged'
   
   render: ->
     @$el.html @template @model.attributes
+    Backbone.Validation.bind(@)
     @
 
   initialize: () ->
@@ -45,6 +49,24 @@ class Qscribe.Views.UploadsProgress extends Backbone.View
     @$('.message').html(@model.message())
     @ping()
     
+  onFormSubmit: (e) ->
+    e.originalEvent.preventDefault()
+    form = $(e.target)
+    data = {}
+    
+    _.map form.serializeArray(), (n) ->
+      key = n['name'].match(/\[(.+)\]/)
+      data[key[1]] = n['value'] if key.length > 1
+    @model.set(data)
+
+    if @model.isValid(true)
+      @$(".btn").button("loading")
+      @model.sync 'update', @model,
+        success: () =>
+          @$(".btn").button("reset")
+        error: () =>
+          @$(".btn").button("reset")
+    
   ping: ->
     @interval = setInterval =>
         @poll()
@@ -54,7 +76,9 @@ class Qscribe.Views.UploadsProgress extends Backbone.View
     window.clearInterval(@interval)
 
   poll: ->
-    @model.fetch()
+    # @model.fetch()
+    @model.sync 'read', @model
+    
     @$('.message').html(@model.message())
     @$('.alert-slug-link').html("<a href=\"#{@model.attributes.slug}\" target=\"_blank\">http://voyz.es/#{@model.attributes.slug}</a>")
 
@@ -64,3 +88,18 @@ class Qscribe.Views.UploadsProgress extends Backbone.View
       @$('.progress .progress-bar').removeClass('progress-bar-info')
       @$('.progress .progress-bar').addClass('progress-bar-success')
 
+  fieldChanged: (e) ->
+    field = $(e.currentTarget)
+    data = {}
+    if key = field.attr('name').match(/\[(.+)\]/)[1]
+      data[key] = field.val()
+      @model.set data
+      @model.isValid key
+      @model.validate()
+            
+  selectionChanged: (e) ->
+    field = $(e.currentTarget)
+    value = $("option: selected", field).val()
+    data  = {}
+    data[field.attr('id')] = value
+    model.set(data)
