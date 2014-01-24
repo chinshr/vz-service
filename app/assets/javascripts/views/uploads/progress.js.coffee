@@ -94,12 +94,13 @@ class Qscribe.Views.UploadsProgress extends Backbone.View
     if key = field.attr('name').match(/\[(.+)\]/)[1]
       data[key] = field.val()
       @model.set data
-      @model.isValid key
+      #@model.isValid key
       @model.validate()
             
   selectionChanged: (e) ->
     field = $(e.currentTarget)
-    value = $("option: selected", field).val()
     data  = {}
-    data[field.attr('id')] = value
-    model.set(data)
+    if key = field.attr('name').match(/\[(.+)\]/)[1]
+      data[key] = field.val()
+      @model.set(data)
+      @model.validate()

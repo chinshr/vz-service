@@ -19,7 +19,7 @@
           <div class="form-group">
             <div class="col-md-12">
               <label class="sr-only" for="">Title</label>
-              <input type="text" class="form-control" placeholder="Title" name="upload[title]" value="<%= @title %>" data-error-style="tooltip" data-tooltip-position="left"></input>
+              <input type="text" class="form-control" placeholder="Title" name="upload[title]" value="<%= @title %>" data-error-style="tooltip" data-tooltip-position="right"></input>
             </div>
           </div>
 

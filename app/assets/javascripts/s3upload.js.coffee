@@ -58,11 +58,22 @@ class window.S3Upload
       xhr = null
     xhr
 
+  generateObjectName: () ->
+    text = ""
+    possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+    i = 0
+
+    while i < 10
+      text += possible.charAt(Math.floor(Math.random() * possible.length))
+      i++
+    text
+
   executeOnSignedUrl: (file, callback) ->
     this_s3upload = this
 
     xhr = new XMLHttpRequest()
-    xhr.open 'GET', @s3_sign_put_url + '?s3_object_type=' + file.type + '&s3_object_name=' + @s3_object_name, true
+    # xhr.open 'GET', @s3_sign_put_url + '?s3_object_type=' + file.type + '&s3_object_name=' + @s3_object_name, true
+    xhr.open 'GET', @s3_sign_put_url + '?s3_object_type=' + file.type + '&s3_object_name=' + @generateObjectName(), true
 
     # Hack to pass bytes through unprocessed.
     xhr.overrideMimeType 'text/plain; charset=x-user-defined'
