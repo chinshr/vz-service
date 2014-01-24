@@ -6,3 +6,4 @@ tmp/
 coverage/
 database.yml
 public/assets/*
+logfile
