@@ -14,7 +14,6 @@ Qscribe::Application.routes.draw do
   
   scope :module => "web", :as => "web" do
     get '/upload' => "uploads#index"
-    get "/upload/signput" => "uploads#signput"
   end
 
   namespace :api do

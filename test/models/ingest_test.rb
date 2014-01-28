@@ -54,7 +54,25 @@ class IngestTest < ActiveSupport::TestCase
     ingest.process!
     assert_equal :removed, ingest.aasm_current_state
     assert_not_nil ingest.removed_at
-    
   end
   
+  should "log message" do
+    ingest = FactoryGirl.create(:ingest_audio)
+    ingest.log! :copy, "File not found."
+    assert_equal ["File not found."], ingest.messages["copy"]
+    ingest.log! :transcode, "Service unavailable."
+    assert_equal ["Service unavailable."], ingest.messages["transcode"]
+    ingest.log! 'transcode', "Unsufficient disk space."
+    assert_equal ["Service unavailable.", "Unsufficient disk space."], ingest.messages["transcode"]
+  end
+  
+  should "delegate to @upload#s3_key" do
+    ingest = FactoryGirl.create(:ingest_audio)
+    assert_not_nil ingest.s3_key
+  end
+
+  should "delegate to @upload#s3_url" do
+    ingest = FactoryGirl.create(:ingest_audio)
+    assert_not_nil ingest.s3_url
+  end
 end

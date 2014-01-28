@@ -33,12 +33,12 @@ class Api::UploadsController < Api::ApplicationController
     expires        = Time.now.to_i + APP_CONFIG['EXPIRE_TIME'].to_i
 
     amz_headers    = "x-amz-acl:public-read" # set the public read permission on the uploaded file
-    string_to_sign = "PUT\n\n#{mime_type}\n#{expires}\n#{amz_headers}\n#{APP_CONFIG['S3_BUCKET']}/#{object_name}";
+    string_to_sign = "PUT\n\n#{mime_type}\n#{expires}\n#{amz_headers}\n#{APP_CONFIG['S3_INBOUND_BUCKET']}/#{object_name}";
     signature      = CGI::escape(Base64.strict_encode64(OpenSSL::HMAC.digest('sha1', APP_CONFIG['S3_SECRET'], string_to_sign)))
 
     @signput = {
-      signed_request: CGI::escape("#{APP_CONFIG['S3_URL']}#{APP_CONFIG['S3_BUCKET']}/#{object_name}?AWSAccessKeyId=#{APP_CONFIG['S3_KEY']}&Expires=#{expires}&Signature=#{signature}"),
-      url: "#{APP_CONFIG['S3_URL']}#{APP_CONFIG['S3_BUCKET']}/#{object_name}"
+      signed_request: CGI::escape("#{APP_CONFIG['S3_URL']}#{APP_CONFIG['S3_INBOUND_BUCKET']}/#{object_name}?AWSAccessKeyId=#{APP_CONFIG['S3_KEY']}&Expires=#{expires}&Signature=#{signature}"),
+      url: "#{APP_CONFIG['S3_URL']}#{APP_CONFIG['S3_INBOUND_BUCKET']}/#{object_name}"
     }
 
     respond_with @signput

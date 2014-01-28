@@ -63,4 +63,8 @@ class Upload < ActiveRecord::Base
     result = result.humanize unless result.blank?
     result
   end
+  
+  def s3_key
+    s3_url ? s3_url.split("/").last : nil
+  end
 end

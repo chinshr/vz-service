@@ -1,0 +1,9 @@
+# Default concurrency is set to 5 which implies 3 web worker threads
+# See http://manuel.manuelles.nl/sidekiq-heroku-redis-calc/
+
+:verbose: true
+:concurrency: 5
+:queues:
+  - [critical, 7]
+  - [default, 5]
+  - [low, 3]

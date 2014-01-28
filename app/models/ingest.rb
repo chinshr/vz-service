@@ -14,8 +14,13 @@ class Ingest < ActiveRecord::Base
   STATES    = {:created => CREATED, :starting => STARTING, :started => STARTED, :stopping => STOPPING, :stopped => STOPPED,
     :resetting => RESETTING, :reset =>  RESET, :removing => REMOVING, :removed => REMOVED, :finished => FINISHED}
   
+  serialize :messages, Hash
+  
   belongs_to :upload
   belongs_to :ingestable, polymorphic: true, dependent: :destroy
+  
+  delegate :s3_url, to: :upload, allow_nil: true
+  delegate :s3_key, to: :upload, allow_nil: true
   
   validates :upload, presence: true
   validates :ingestable, presence: true
@@ -62,6 +67,21 @@ class Ingest < ActiveRecord::Base
   
   def status
     self.class::STATES.symbolize_keys[aasm.current_state]
+  end
+  
+  def log(name, message)
+    raise ArgumentError, "name missing" if name.blank?
+    name = name.to_s
+    if existing_messages = self.messages[name]
+      self.messages[name] = [existing_messages, message].flatten
+    else
+      self.messages[name] = [message]
+    end
+  end
+  
+  def log!(name, message)
+    log(name, message)
+    save!
   end
   
   protected

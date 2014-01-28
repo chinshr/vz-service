@@ -18,4 +18,9 @@ class UploadTest < ActiveSupport::TestCase
     assert_equal "I like pickles", Upload.new(file_name: "i_like_pickles.m4a").humanized_file_name
     assert_equal "I like pickles", Upload.new(file_name: "i-like-pickles.m4a").humanized_file_name
   end
+  
+  should "have s3_key" do
+    upload = FactoryGirl.create(:upload_audio, :s3_url => "http://s3.amazonaws.com/dropbox/61glI7mwmN")
+    assert_equal "61glI7mwmN", upload.s3_key
+  end
 end
