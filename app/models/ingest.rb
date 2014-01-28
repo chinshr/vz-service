@@ -63,6 +63,10 @@ class Ingest < ActiveRecord::Base
     event :finish do
       transitions :from => :started, :to => :finished
     end
+    
+    event :fail do
+      transitions :from => [:created, :starting, :started, :stopping, :stopped, :resetting, :reset], :to => :stopped
+    end
   end
   
   def status
