@@ -54,7 +54,7 @@ class Ingest::AudioWorker
       update_s3_url_with File.join(APP_CONFIG['S3_URL'], APP_CONFIG['S3_OUTBOUND_BUCKET'], @ingest.s3_key)
 
       # Deleting inbound object.
-      # s3.buckets[APP_CONFIG['S3_INBOUND_BUCKET']].objects.delete(@ingest.s3_key)
+      s3.buckets[APP_CONFIG['S3_INBOUND_BUCKET']].objects.delete(@ingest.s3_key)
     end
   end
 
