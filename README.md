@@ -28,8 +28,8 @@ Speech Transcription
 --------------------
 
     require "speech"
-    audio = Speech::AudioToText.new("samples/MARTINEZ_FugaDelCabildo_RADIO.mp3")
-    audio.to_text(2, "es-AR")
+    audio = Speech::AudioToText.new("samples/i-like-pickles.wav")
+    audio.to_text(2, "en-US")
 
 
 S3 Bucket Config

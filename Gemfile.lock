@@ -209,11 +209,13 @@ DEPENDENCIES
   backbone-support
   backbone-validation-rails
   coffee-rails (~> 4.0.0)
+  curb
   debugger
   eco
   ejs
   factory_girl_rails
   jquery-rails
+  json
   minitest
   mocha
   modernizr-rails
@@ -232,3 +234,4 @@ DEPENDENCIES
   turn
   uglifier (>= 1.3.0)
   unicorn
+  uuid

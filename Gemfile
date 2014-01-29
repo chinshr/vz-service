@@ -69,3 +69,7 @@ gem 'oj'
 gem 'aasm'
 gem 'sidekiq'
 gem 'unicorn'
+
+gem 'uuid'
+gem 'curb'
+gem 'json'

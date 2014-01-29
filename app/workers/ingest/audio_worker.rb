@@ -1,5 +1,6 @@
 require 'rubygems'
 require 'aws-sdk'
+require "speech"
 
 class Ingest::AudioWorker
   include Sidekiq::Worker
@@ -9,8 +10,9 @@ class Ingest::AudioWorker
     :initialize                                  => 0,
     :move_object_from_inbound_to_outbound_bucket => 1,
     :download_object_from_outbound_bucket        => 2,
-    :transcode                                   => 3,
-    :cleanup                                     => 4
+    :transcribe                                  => 3,
+    :cleanup                                     => 4,
+    :finalize                                    => 5,
   }
   
   def initialize
@@ -18,19 +20,17 @@ class Ingest::AudioWorker
       :access_key_id     => APP_CONFIG['S3_KEY'],    # '*** Provide access key ***'
       :secret_access_key => APP_CONFIG['S3_SECRET']  # '*** Provide secret key ***'
     )
+    @s3 = AWS::S3.new
   end
   
   def perform(ingest_id, options = {})
     options.symbolize_keys!
     @ingest = Ingest.find(ingest_id)
-    # @ingest.process!
     
     # Execute stages
     Ingest::AudioWorker::STAGES.keys.each do |stage|
       send("#{stage}!".to_sym)
     end
-    
-    # @ingest.finish!
   rescue Exception => ex
     @ingest.fail! if @ingest
     logger(ex)
@@ -38,53 +38,100 @@ class Ingest::AudioWorker
   end
 
   def initialize!
-    @ingest.update_attribute(:stage, "initialize") unless @ingest.stage
+    stage! :initialize do
+      @ingest.process!
+      set_progress! 2
+    end
   end
 
   def move_object_from_inbound_to_outbound_bucket!
     stage! :move_object_from_inbound_to_outbound_bucket, "object key #{@ingest.s3_key}" do
-      # Get an instance of the S3 interface.
-      s3 = AWS::S3.new
-
       # Copy the object.
-      s3.buckets[APP_CONFIG['S3_INBOUND_BUCKET']].objects[@ingest.s3_key].copy_to(@ingest.s3_key, 
+      s3.buckets[APP_CONFIG['S3_INBOUND_BUCKET']].objects[s3_key].copy_to(s3_key, 
         :bucket_name => APP_CONFIG['S3_OUTBOUND_BUCKET'])
 
       # Update ingest reference
-      update_s3_url_with File.join(APP_CONFIG['S3_URL'], APP_CONFIG['S3_OUTBOUND_BUCKET'], @ingest.s3_key)
+      update_s3_url_with File.join(APP_CONFIG['S3_URL'], APP_CONFIG['S3_OUTBOUND_BUCKET'], s3_key)
 
       # Deleting inbound object.
-      s3.buckets[APP_CONFIG['S3_INBOUND_BUCKET']].objects.delete(@ingest.s3_key)
+      # s3.buckets[APP_CONFIG['S3_INBOUND_BUCKET']].objects.delete(s3_key)
+      
+      set_progress! 5
     end
   end
 
   def download_object_from_outbound_bucket!
     stage! :download_object_from_outbound_bucket do
+      File.open(audio_filename_fullpath, 'wb') do |file|
+        s3.buckets[APP_CONFIG['S3_OUTBOUND_BUCKET']].objects[s3_key].read do |chunk|
+          file.write(chunk)
+        end
+      end
+      set_progress! 10
     end
   end
   
-  def transcode!
-    stage! :transcode do
+  def transcribe!
+    stage! :transcribe do
+      audio = Speech::AudioToText.new(audio_filename_fullpath)
+      time = BigDecimal.new("0.0")
+      audio.to_json(3, @ingest.locale) do |chunk, response|
+        debugger
+        @ingest.segments.create(
+          :offset           => chunk.offset,
+          :duration         => chunk.duration,
+          :start_time       => time,
+          :end_time         => time += BigDecimal.new(chunk.duration.to_s),
+          :service_response => response,
+          :service_name     => "google.com/speech-api/v1"
+        ) do |segment|
+        end
+        increment_progress! 1, chunk.splitter.chunks.size, 0.8
+      end
     end
   end
 
   def cleanup!
     stage! :cleanup do
+      File.delete(audio_filename_fullpath) if File.exist? audio_filename_fullpath
+    end
+  end
+  
+  def finalize!
+    stage! :finalize do
+      @ingest.finish!
     end
   end
   
   protected
   
   def stage!(stage_name, message = nil)
-    if @ingest.stage && Ingest::AudioWorker::STAGES[stage_name.to_sym] > Ingest::AudioWorker::STAGES[@ingest.stage.to_sym]
-      log! stage_name, message_with("starting", stage_name, message)
+    debugger
+    if can_stage?(stage_name)
+      log! stage_name, header_with("starting", stage_name, message)
       @ingest.update_attribute(:stage, stage_name.to_s) if @ingest
       yield if block_given?
-      log! stage_name, message_with("finished", stage_name, message) if block_given?
+      log! stage_name, header_with("finished", stage_name, message) if block_given?
     end
   end
+  
+  def can_stage?(stage_name)
+    if @ingest
+      if @ingest.stage && @ingest.started?
+        # get on with the next stage
+        return Ingest::AudioWorker::STAGES[stage_name.to_sym] > Ingest::AudioWorker::STAGES[@ingest.stage.to_sym]
+      elsif @ingest.stage && @ingest.stopped?
+        # attempt to re-run current stopped stage
+        return Ingest::AudioWorker::STAGES[stage_name.to_sym] >= Ingest::AudioWorker::STAGES[@ingest.stage.to_sym]
+      elsif !@ingest.stage
+        # initializing
+        return true
+      end
+    end
+    false
+  end
 
-  def message_with(noun, stage_name, message = nil)
+  def header_with(noun, stage_name, message = nil)
     if message 
       "*** #{noun} #{stage_name.to_s.upcase} at #{Time.now.utc}: #{message}"
     else
@@ -92,17 +139,32 @@ class Ingest::AudioWorker
     end
   end
 
-  def progress!(percent, message = nil)
-    log! @ingest.stage, message if @ingest && message
-    @ingest.update_attribute(:progress, percent)
+  # set_progress! 10 => 10%
+  def set_progress!(percent)
+    Ingest.transaction do
+      @ingest.lock!
+      new_progress = @ingest.progress + percent
+      new_progress = new_progress > 100 ? 100 : new_progress
+      @ingest.update_attribute(:progress, new_progress)
+    end if @ingest
+  end
+
+  # set_progress! 10 => 10%
+  # increment_progress! 1, 5, 0.8 => 26%
+  # increment_progress! 1, 5, 0.8 => 42%
+  # ...
+  # increment_progress! 1, 5, 0.8 => 90%
+  def increment_progress!(counter, denominator, factor = 1.0)
+    Ingest.transaction do
+      @ingest.lock!
+      new_progress = @ingest.progress + (count / total.to_f * factor * 100).round
+      new_progress = new_progress > 100 ? 100 : new_progress
+      @ingest.update_attribute(:progress, new_progress)
+    end if @ingest
   end
   
   def log!(stage_name, message)
     @ingest.log! stage_name, message if @ingest
-  end
-  
-  def update_s3_url_with(url)
-    @ingest.upload.update_attribute :s3_url, url if @ingest && @ingest.upload
   end
   
   def logger(exception)
@@ -115,4 +177,27 @@ class Ingest::AudioWorker
     log!(@ingest.stage || :worker, errors)
     Rails.logger.error errors
   end
+  
+  def update_s3_url_with(url)
+    @ingest.update_attribute :s3_url, url if @ingest
+  end
+  
+  def s3_key
+    @ingest.s3_key if @ingest
+  end
+  alias_method :audio_filename, :s3_key
+  
+  def s3_url
+    @ingest.s3_url if @ingest
+  end
+
+  def audio_filename_fullpath
+    if Rails.env.development?
+      "#{Rails.root}/tmp/#{audio_filename}"
+    else
+      "#{Rails.root}/#{audio_filename}"
+    end
+  end
+  
+  def s3; @s3; end
 end

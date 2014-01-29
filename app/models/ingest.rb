@@ -19,9 +19,6 @@ class Ingest < ActiveRecord::Base
   belongs_to :upload
   belongs_to :ingestable, polymorphic: true, dependent: :destroy
   
-  delegate :s3_url, to: :upload, allow_nil: true
-  delegate :s3_key, to: :upload, allow_nil: true
-  
   validates :upload, presence: true
   validates :ingestable, presence: true
   
@@ -54,14 +51,14 @@ class Ingest < ActiveRecord::Base
     end
 
     event :process do
-      transitions :from => :starting, :to => :started
-      transitions :from => :stopping, :to => :stopped
-      transitions :from => :resetting, :to => :reset
-      transitions :from => :removing, :to => :removed
+      transitions :from => [:starting, :started], :to => :started
+      transitions :from => [:stopping, :stopped], :to => :stopped
+      transitions :from => [:resetting, :reset], :to => :reset
+      transitions :from => [:removing, :removed], :to => :removed
     end
     
     event :finish do
-      transitions :from => :started, :to => :finished
+      transitions :from => [:started, :finished], :to => :finished
     end
     
     event :fail do
@@ -71,6 +68,10 @@ class Ingest < ActiveRecord::Base
   
   def status
     self.class::STATES.symbolize_keys[aasm.current_state]
+  end
+  
+  def state
+    aasm.current_state
   end
   
   def log(name, message)
@@ -86,6 +87,14 @@ class Ingest < ActiveRecord::Base
   def log!(name, message)
     log(name, message)
     save!
+  end
+  
+  def s3_url
+    self[:s3_url] || upload ? upload.s3_url : nil
+  end
+  
+  def s3_key
+    s3_url ? s3_url.split("/").last : nil
   end
   
   protected
