@@ -28,7 +28,6 @@ class Ingest::Audio < ::Ingest
   def enter_starting
     super
     self.messages = {}
-    self.s3_url   = nil
     segments.destroy_all
   end
   

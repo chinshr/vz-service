@@ -4,6 +4,8 @@ require 'rails/test_help'
 require 'shoulda'
 
 class ActiveSupport::TestCase
+  require "mocha/setup"
+  
   ActiveRecord::Migration.check_pending!
 
   # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.

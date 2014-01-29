@@ -8,11 +8,12 @@ class Ingest::AudioWorker
 
   STAGES = {
     :initialize                                  => 0,
-    :move_object_from_inbound_to_outbound_bucket => 1,
+    :copy_object_from_inbound_to_outbound_bucket => 1,
     :download_object_from_outbound_bucket        => 2,
     :transcribe                                  => 3,
-    :cleanup                                     => 4,
-    :finalize                                    => 5,
+    :update_ingestable                           => 4,
+    :cleanup                                     => 5,
+    :finalized                                   => 6,
   }
   
   def initialize
@@ -25,7 +26,7 @@ class Ingest::AudioWorker
   
   def perform(ingest_id, options = {})
     options.symbolize_keys!
-    @ingest = Ingest.find(ingest_id)
+    @ingest = Ingest::Audio.find(ingest_id)
     
     # Check what we have to do?
     case @ingest.state
@@ -51,67 +52,52 @@ class Ingest::AudioWorker
     end
   end
 
-  def move_object_from_inbound_to_outbound_bucket!
-    stage! :move_object_from_inbound_to_outbound_bucket, "object key #{@ingest.s3_key}" do
+  def copy_object_from_inbound_to_outbound_bucket!
+    stage! :copy_object_from_inbound_to_outbound_bucket, "object key #{@ingest.s3_key}" do
       # Copy the object.
-      s3.buckets[APP_CONFIG['S3_INBOUND_BUCKET']].objects[s3_key].copy_to(s3_key, 
-        :bucket_name => APP_CONFIG['S3_OUTBOUND_BUCKET'])
+      s3_copy_object APP_CONFIG['S3_INBOUND_BUCKET'], APP_CONFIG['S3_OUTBOUND_BUCKET'], s3_key
 
       # Update ingest reference
       update_s3_url_with File.join(APP_CONFIG['S3_URL'], APP_CONFIG['S3_OUTBOUND_BUCKET'], s3_key)
 
-      # Deleting inbound object.
-      # s3.buckets[APP_CONFIG['S3_INBOUND_BUCKET']].objects.delete(s3_key)
-      
       set_progress! 5
     end
   end
 
   def download_object_from_outbound_bucket!
     stage! :download_object_from_outbound_bucket do
-      File.open(audio_filename_fullpath, 'wb') do |file|
-        s3.buckets[APP_CONFIG['S3_OUTBOUND_BUCKET']].objects[s3_key].read do |chunk|
-          file.write(chunk)
-        end
-      end
+      s3_download_object(APP_CONFIG['S3_OUTBOUND_BUCKET'], s3_key, audio_filename_fullpath)
       set_progress! 10
     end
   end
   
   def transcribe!
     stage! :transcribe do
-      audio = Speech::AudioToText.new(audio_filename_fullpath)
-      start_time = BigDecimal.new("0.0")
-      audio.to_json(3, @ingest.locale) do |chunk|
-        end_time = start_time + BigDecimal.new(chunk.duration.to_s)
-        @ingest.segments.create(
-          :offset      => chunk.offset,
-          :duration    => chunk.duration,
-          :start_time  => start_time,
-          :end_time    => end_time,
-          :best_text   => chunk.best_text,
-          :best_score  => chunk.best_score,
-          :response    => chunk.captured_json
-        )
-        start_time = end_time
-        increment_progress! 1, chunk.splitter.chunks.size, 0.8
-      end
-
-      # update ingest document
+      transcribe_file(audio_filename_fullpath)
+    end
+  end
+  
+  def update_ingestable!
+    stage! :update_ingestable do
       content = @ingest.segments.map {|sg| sg.best_text ? sg.best_text.strip : nil}.compact.join(" ")
-      @ingest.document.update_attribute(:content, content)
+      @ingest.ingestable.update_attribute(:content, content)
     end
   end
 
   def cleanup!
     stage! :cleanup do
+      # Delete local file
       File.delete(audio_filename_fullpath) if File.exist? audio_filename_fullpath
+      
+      # Delete inbound object.
+      s3_delete_object(APP_CONFIG['S3_INBOUND_BUCKET'], s3_key)
+      
       set_progress! 95
     end
   end
   
-  def finalize!
-    stage! :finalize do
+  def finalized!
+    stage! :finalized do
       @ingest.finish!
       set_progress! 100
     end
@@ -213,4 +199,41 @@ class Ingest::AudioWorker
   end
   
   def s3; @s3; end
+  
+  def s3_copy_object(source_bucket_name, destination_bucket_name, source_key, destination_key = nil)
+    destination_key = source_key if destination_key.blank?
+    s3.buckets[source_bucket_name].objects[key].copy_to(key, :bucket_name => destination_bucket_name)
+  end
+  
+  def s3_download_object(source_bucket_name, source_key, destination_filename)
+    File.open(destination_filename, 'wb') do |file|
+      s3.buckets[source_bucket_name].objects[source_key].read do |chunk|
+        file.write(chunk)
+      end
+    end
+  end
+  
+  def transcribe_file(filename)
+    start_time = BigDecimal.new("0.0")
+    audio      = Speech::AudioToText.new(filename)
+    audio.to_json(3, @ingest.locale) do |chunk|
+      end_time = start_time + BigDecimal.new(chunk.duration.to_s)
+      @ingest.segments.create(
+        :offset      => chunk.offset,
+        :duration    => chunk.duration,
+        :start_time  => start_time,
+        :end_time    => end_time,
+        :best_text   => chunk.best_text,
+        :best_score  => chunk.best_score,
+        :response    => chunk.captured_json
+      )
+      start_time = end_time
+      increment_progress! 1, chunk.splitter.chunks.size, 0.8
+    end
+  end
+  
+  def s3_delete_object(bucket_name, key) 
+    s3.buckets[bucket_name].objects.delete(key)
+  end
+  
 end
