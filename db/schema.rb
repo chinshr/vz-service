@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140128221614) do
+ActiveRecord::Schema.define(version: 20140129031331) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -24,6 +24,7 @@ ActiveRecord::Schema.define(version: 20140128221614) do
     t.string   "locale",       limit: 5, default: "en-US", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.text     "content"
   end
 
   add_index "documents", ["created_at"], name: "index_documents_on_created_at", using: :btree
@@ -66,12 +67,14 @@ ActiveRecord::Schema.define(version: 20140128221614) do
     t.text     "messages"
     t.string   "stage"
     t.string   "s3_url"
+    t.integer  "iteration",       default: 0,         null: false
   end
 
   add_index "ingests", ["aasm_state"], name: "index_ingests_on_aasm_state", using: :btree
   add_index "ingests", ["created_at"], name: "index_ingests_on_created_at", using: :btree
   add_index "ingests", ["finished_at"], name: "index_ingests_on_finished_at", using: :btree
   add_index "ingests", ["ingestable_id", "ingestable_type"], name: "index_ingests_on_ingestable_id_and_ingestable_type", using: :btree
+  add_index "ingests", ["iteration"], name: "index_ingests_on_iteration", using: :btree
   add_index "ingests", ["removed_at"], name: "index_ingests_on_removed_at", using: :btree
   add_index "ingests", ["reset_at"], name: "index_ingests_on_reset_at", using: :btree
   add_index "ingests", ["stage"], name: "index_ingests_on_stage", using: :btree

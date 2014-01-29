@@ -18,7 +18,7 @@ module Speech
 
     def to_text(max = 2, lang = "en-US")
       to_json(max, lang)
-      chunks.map {|ch| ch.captured_json['best_text']}.compact.join(" ")
+      chunks.map {|ch| ch.best_text}.compact.join(" ")
     end
 
     def to_json(max = 2, lang = "en-US")
@@ -69,10 +69,10 @@ module Speech
           chunk.captured_json['hypotheses'] = data['hypotheses'].map {|ut| [ut['utterance'], ut['confidence']]}
           
           if data.key?('hypotheses') && data['hypotheses'].first
-            chunk.captured_json['best_text']  = data['hypotheses'].first['utterance']
-            chunk.captured_json['best_score'] = data['hypotheses'].first['confidence']
-            self.score                        += data['hypotheses'].first['confidence']
-            self.segments                     += 1
+            chunk.best_text  = data['hypotheses'].first['utterance']
+            chunk.best_score = data['hypotheses'].first['confidence']
+            self.score       += data['hypotheses'].first['confidence']
+            self.segments    += 1
             puts data['hypotheses'].first['utterance'] if self.verbose
           end
           retrying = false

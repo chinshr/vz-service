@@ -21,7 +21,7 @@ class Ingest::AudioTest < ActiveSupport::TestCase
     assert_equal document.description, ingest.description
   end
   
-  should "have segments" do
+  should "have segments and remove them when starting ingest" do
     document = FactoryGirl.create(:document)
     ingest   = FactoryGirl.create(:ingest_audio, :ingestable => document)
     segment1 = FactoryGirl.create(:ingest_audio_segment, :offset => 0, :ingest => ingest, :best_score => 0)
@@ -30,5 +30,11 @@ class Ingest::AudioTest < ActiveSupport::TestCase
     assert_equal 3, ingest.segments.count
     assert_equal 0.5, ingest.score.to_f
     assert_equal 10.53, ingest.duration.to_f
+    ingest.log! :error, "error message"
+    assert_equal %({"error"=>["error message"]}), ingest.messages.to_s
+    ingest.start!
+    assert_equal :starting, ingest.state
+    assert ingest.messages.empty?
+    assert_equal 0, ingest.segments.count
   end
 end

@@ -27,10 +27,17 @@ class Ingest::AudioWorker
     options.symbolize_keys!
     @ingest = Ingest.find(ingest_id)
     
-    # Execute stages
-    Ingest::AudioWorker::STAGES.keys.each do |stage|
-      send("#{stage}!".to_sym)
+    # Check what we have to do?
+    case @ingest.state
+    when :starting, :stopped, :reset
+      # Execute stages
+      Ingest::AudioWorker::STAGES.keys.each do |stage|
+        send("#{stage}!".to_sym)
+      end
+    when :resetting, :stopping then @ingest.process!
+    when :removing then @ingest.process!
     end
+    
   rescue Exception => ex
     @ingest.fail! if @ingest
     logger(ex)
@@ -40,7 +47,7 @@ class Ingest::AudioWorker
   def initialize!
     stage! :initialize do
       @ingest.process!
-      set_progress! 2
+      set_progress! 0
     end
   end
 
@@ -74,39 +81,45 @@ class Ingest::AudioWorker
   def transcribe!
     stage! :transcribe do
       audio = Speech::AudioToText.new(audio_filename_fullpath)
-      time = BigDecimal.new("0.0")
-      audio.to_json(3, @ingest.locale) do |chunk, response|
-        debugger
+      start_time = BigDecimal.new("0.0")
+      audio.to_json(3, @ingest.locale) do |chunk|
+        end_time = start_time + BigDecimal.new(chunk.duration.to_s)
         @ingest.segments.create(
-          :offset           => chunk.offset,
-          :duration         => chunk.duration,
-          :start_time       => time,
-          :end_time         => time += BigDecimal.new(chunk.duration.to_s),
-          :service_response => response,
-          :service_name     => "google.com/speech-api/v1"
-        ) do |segment|
-        end
+          :offset      => chunk.offset,
+          :duration    => chunk.duration,
+          :start_time  => start_time,
+          :end_time    => end_time,
+          :best_text   => chunk.best_text,
+          :best_score  => chunk.best_score,
+          :response    => chunk.captured_json
+        )
+        start_time = end_time
         increment_progress! 1, chunk.splitter.chunks.size, 0.8
       end
+
+      # update ingest document
+      content = @ingest.segments.map {|sg| sg.best_text ? sg.best_text.strip : nil}.compact.join(" ")
+      @ingest.document.update_attribute(:content, content)
     end
   end
 
   def cleanup!
     stage! :cleanup do
       File.delete(audio_filename_fullpath) if File.exist? audio_filename_fullpath
+      set_progress! 95
     end
   end
   
   def finalize!
     stage! :finalize do
       @ingest.finish!
+      set_progress! 100
     end
   end
   
   protected
   
   def stage!(stage_name, message = nil)
-    debugger
     if can_stage?(stage_name)
       log! stage_name, header_with("starting", stage_name, message)
       @ingest.update_attribute(:stage, stage_name.to_s) if @ingest
@@ -157,7 +170,7 @@ class Ingest::AudioWorker
   def increment_progress!(counter, denominator, factor = 1.0)
     Ingest.transaction do
       @ingest.lock!
-      new_progress = @ingest.progress + (count / total.to_f * factor * 100).round
+      new_progress = @ingest.progress + (counter / denominator.to_f * factor * 100).round
       new_progress = new_progress > 100 ? 100 : new_progress
       @ingest.update_attribute(:progress, new_progress)
     end if @ingest

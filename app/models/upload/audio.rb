@@ -38,7 +38,10 @@ class Upload::Audio < ::Upload
   end
   
   def save_ingest_and_document
-    ingest.ingestable.save if ingest && ingest.ingestable && ingest.ingestable.changed?
-    ingest.save if ingest && ingest.changed?
+    if ingest
+      ingest.ingestable.save if ingest.ingestable && ingest.ingestable.changed?
+      ingest.save if ingest.changed?
+      ingest.start! if ingest.may_start?
+    end
   end
 end

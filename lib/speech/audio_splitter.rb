@@ -5,7 +5,7 @@ module Speech
     attr_accessor :original_file, :size, :duration, :chunks
 
     class AudioChunk
-      attr_accessor :splitter, :chunk, :flac_chunk, :offset, :duration, :flac_rate, :copied, :captured_json
+      attr_accessor :splitter, :chunk, :flac_chunk, :offset, :duration, :flac_rate, :copied, :captured_json, :best_text, :best_score
 
       def initialize(splitter, offset, duration)
         self.offset        = offset
@@ -14,6 +14,8 @@ module Speech
         self.splitter      = splitter
         self.copied        = false
         self.captured_json = {}
+        self.best_text     = nil
+        self.best_score    = nil
       end
 
       def self.copy(splitter)

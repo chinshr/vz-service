@@ -60,7 +60,7 @@ class window.S3Upload
 
   generateObjectName: () ->
     text = ""
-    possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+    possible = "abcdefghijklmnopqrstuvwxyz0123456789"
     i = 0
 
     while i < 10

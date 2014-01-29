@@ -24,18 +24,19 @@ class Ingest < ActiveRecord::Base
   
   aasm column: 'aasm_state' do
     state :created, initial: true
-    state :starting
+    state :starting, :enter => :enter_starting, :after_enter => :after_enter_starting
     state :started, :enter => :enter_started
-    state :stopping
+    state :stopping, :enter_after => :enter_after_stopping
     state :stopped, :enter => :enter_stopped
-    state :resetting
+    state :resetting, :enter_after => :enter_after_resetting
     state :reset, :enter => :enter_reset
     state :removing
     state :removed, :enter => :enter_removed
     state :finished, :enter => :enter_finished
     
     event :start do
-      transitions :from => [:created, :reset], :to => :starting
+      transitions :from => :created, :to => :starting, :guard => :has_s3_url?
+      transitions :from => :reset, :to => :starting, :guard => :has_s3_url?
     end
     
     event :stop do
@@ -43,7 +44,7 @@ class Ingest < ActiveRecord::Base
     end
     
     event :reset do
-      transitions :from => [:started, :stopped], :to => :resetting
+      transitions :from => [:stopped], :to => :resetting
     end
 
     event :remove do
@@ -58,7 +59,7 @@ class Ingest < ActiveRecord::Base
     end
     
     event :finish do
-      transitions :from => [:started, :finished], :to => :finished
+      transitions :from => [:started, :finished, :stopped], :to => :finished
     end
     
     event :fail do
@@ -93,11 +94,18 @@ class Ingest < ActiveRecord::Base
     self[:s3_url] || upload ? upload.s3_url : nil
   end
   
+  def has_s3_url?
+    !s3_url.blank?
+  end
+  
   def s3_key
     s3_url ? s3_url.split("/").last : nil
   end
   
   protected
+
+  def enter_starting; end
+  def after_enter_starting; end
   
   def enter_started
     self.started_at = Time.now.utc
@@ -106,7 +114,11 @@ class Ingest < ActiveRecord::Base
   def enter_stopped
     self.stopped_at = Time.now.utc
   end
+  
+  def enter_after_stopping; end
 
+  def enter_after_resetting; end
+  
   def enter_reset
     self.reset_at = Time.now.utc
   end
