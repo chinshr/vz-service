@@ -112,7 +112,7 @@ class window.S3Upload
       xhr.upload.onprogress = (e) ->
         if e.lengthComputable
           percentLoaded = Math.round (e.loaded / e.total) * 100
-          this_s3upload.onProgress xhr, file, percentLoaded, if percentLoaded == 100 then 'Finalizing.' else 'Uploading.'
+          this_s3upload.onProgress xhr, file, percentLoaded, if percentLoaded == 100 then 'Upload finalizing.' else 'Uploading.'
 
       xhr.onabort = () ->
         this_s3upload.onAbort file, 'XHR Cancelled by user'

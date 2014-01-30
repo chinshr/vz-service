@@ -2,6 +2,9 @@ ENV["RAILS_ENV"] ||= "test"
 require File.expand_path('../../config/environment', __FILE__)
 require 'rails/test_help'
 require 'shoulda'
+require 'sidekiq/testing'
+Sidekiq::Testing.fake!
+AWS.stub!
 
 class ActiveSupport::TestCase
   require "mocha/setup"

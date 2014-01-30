@@ -27,10 +27,10 @@ class Ingest::AudioWorker
   def perform(ingest_id, options = {})
     options.symbolize_keys!
     @ingest = Ingest::Audio.find(ingest_id)
-    
+
     # Check what we have to do?
     case @ingest.state
-    when :starting, :stopped, :reset
+    when :starting
       # Execute stages
       Ingest::AudioWorker::STAGES.keys.each do |stage|
         send("#{stage}!".to_sym)
@@ -73,6 +73,7 @@ class Ingest::AudioWorker
   
   def transcribe!
     stage! :transcribe do
+      @ingest.segments.destroy_all
       transcribe_file(audio_filename_fullpath)
     end
   end
@@ -119,8 +120,9 @@ class Ingest::AudioWorker
       if @ingest.stage && @ingest.started?
         # get on with the next stage
         return Ingest::AudioWorker::STAGES[stage_name.to_sym] > Ingest::AudioWorker::STAGES[@ingest.stage.to_sym]
-      elsif @ingest.stage && @ingest.stopped?
-        # attempt to re-run current stopped stage
+      elsif @ingest.stage && @ingest.stage == stage_name.to_s && @ingest.starting?
+        # attempt to re-run stage
+        @ingest.process!
         return Ingest::AudioWorker::STAGES[stage_name.to_sym] >= Ingest::AudioWorker::STAGES[@ingest.stage.to_sym]
       elsif !@ingest.stage
         # initializing
@@ -173,7 +175,7 @@ class Ingest::AudioWorker
     errors += ("=" * 80) + "\n"
     errors += exception.backtrace.join("\n")
     errors += ("=" * 80) + "\n"
-    log!(@ingest.stage || :worker, errors)
+    log!(@ingest.stage || :errors, errors) if @ingest
     Rails.logger.error errors
   end
   
@@ -202,7 +204,7 @@ class Ingest::AudioWorker
   
   def s3_copy_object(source_bucket_name, destination_bucket_name, source_key, destination_key = nil)
     destination_key = source_key if destination_key.blank?
-    s3.buckets[source_bucket_name].objects[key].copy_to(key, :bucket_name => destination_bucket_name)
+    s3.buckets[source_bucket_name].objects[source_key].copy_to(destination_key, :bucket_name => destination_bucket_name)
   end
   
   def s3_download_object(source_bucket_name, source_key, destination_filename)

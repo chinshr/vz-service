@@ -26,17 +26,16 @@ class Ingest < ActiveRecord::Base
     state :created, initial: true
     state :starting, :enter => :enter_starting, :after_enter => :after_enter_starting
     state :started, :enter => :enter_started
-    state :stopping, :enter_after => :enter_after_stopping
+    state :stopping, :after_enter => :after_enter_stopping
     state :stopped, :enter => :enter_stopped
-    state :resetting, :enter_after => :enter_after_resetting
+    state :resetting, :after_enter => :after_enter_resetting
     state :reset, :enter => :enter_reset
     state :removing
     state :removed, :enter => :enter_removed
     state :finished, :enter => :enter_finished
     
     event :start do
-      transitions :from => :created, :to => :starting, :guard => :has_s3_url?
-      transitions :from => :reset, :to => :starting, :guard => :has_s3_url?
+      transitions :from => [:created, :stopped, :reset], :to => :starting, :guard => :has_s3_url?
     end
     
     event :stop do
@@ -75,6 +74,10 @@ class Ingest < ActiveRecord::Base
     aasm.current_state
   end
   
+  def continue_processing?
+    !stage.blank? && starting?
+  end
+  
   def log(name, message)
     raise ArgumentError, "name missing" if name.blank?
     name = name.to_s
@@ -107,6 +110,9 @@ class Ingest < ActiveRecord::Base
   def enter_starting; end
   def after_enter_starting; end
   
+  def after_enter_stopping; end
+  def after_enter_resetting; end
+  
   def enter_started
     self.started_at = Time.now.utc
   end
@@ -115,12 +121,10 @@ class Ingest < ActiveRecord::Base
     self.stopped_at = Time.now.utc
   end
   
-  def enter_after_stopping; end
-
-  def enter_after_resetting; end
-  
   def enter_reset
     self.reset_at = Time.now.utc
+    self.messages = {}
+    self.increment(:iteration)
   end
 
   def enter_finished

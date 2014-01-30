@@ -42,7 +42,6 @@ class Qscribe.Views.UploadsProgress extends Backbone.View
     @$("select[name='upload[locale]']").val(@model.attributes.locale)
     @$("select[name='upload[privacy]']").val(@model.attributes.privacy)
     
-    #@$('.progress').removeClass('active')
     @$('form input, form textarea, form button').removeAttr("disabled")
     @$(".form-fields").show()
     
@@ -76,14 +75,31 @@ class Qscribe.Views.UploadsProgress extends Backbone.View
     window.clearInterval(@interval)
 
   poll: ->
-    # @model.fetch()
-    @model.sync 'read', @model
+    @model.sync 'read', @model,
+      success: (data) =>
+        @model.set("progress", data.upload.progress)
+        @model.set("status", data.upload.status)
+      error: (model) =>
+        console.log "error fetching upload ID = #{@data.upload.id}"
     
     @$('.message').html(@model.message())
     @$('.alert-slug-link').html("<a href=\"#{@model.attributes.slug}\" target=\"_blank\">http://voyz.es/#{@model.attributes.slug}</a>")
 
     @$('.progress .progress-bar').css('width', "#{@model.attributes.progress}%")
 
+    # show progressbar motion
+    if @model.hasProgress()
+      @$('.progress').addClass('active')
+    else
+      @$('.progress').removeClass('active')
+
+    # change to green status label when finished
+    if @model.hasFinished()
+      @$('.status').removeClass('label-info').addClass('label-success')
+    else
+      @$('.status').removeClass('label-success').addClass('label-info')
+      
+    # change progress bar color to green when transcribing
     if !@$('.progress .progress-bar').hasClass('progress-bar-success')
       @$('.progress .progress-bar').removeClass('progress-bar-info')
       @$('.progress .progress-bar').addClass('progress-bar-success')

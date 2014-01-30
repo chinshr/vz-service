@@ -27,6 +27,16 @@ class Upload::AudioTest < ActiveSupport::TestCase
     
   end
 
+  should "start ingest after s3_url is supplied" do
+    Ingest::AudioWorker.jobs.clear
+    upload = Upload.new(type: "audio", file_name: "audio-test.m4a", file_type: "audio/x-m4a", 
+      file_size: 12345, s3_url: "http://s3.amazonaws.com/dropbox/audio-test.m4a")
+    assert_difference "Ingest::AudioWorker.jobs.size", 1 do
+      upload.save
+      assert_equal :starting, upload.ingest.state
+    end
+  end
+
   should "create" do
     upload = FactoryGirl.create(:upload_audio)
     assert upload.valid?, "should be true"

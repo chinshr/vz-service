@@ -27,8 +27,6 @@ class Ingest::Audio < ::Ingest
 
   def enter_starting
     super
-    self.messages = {}
-    segments.destroy_all
   end
   
   def after_enter_starting
@@ -36,17 +34,12 @@ class Ingest::Audio < ::Ingest
     Ingest::AudioWorker.perform_async(self.id)
   end
   
-  def enter_after_resetting
+  def after_enter_resetting
     super
     Ingest::AudioWorker.perform_async(self.id)
   end
 
-  def enter_reset
-    super
-    self.increment(:iteration)
-  end
-
-  def enter_after_stopping
+  def after_enter_stopping
     super
     Ingest::AudioWorker.perform_async(self.id)
   end

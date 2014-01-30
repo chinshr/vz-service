@@ -11,12 +11,24 @@ class Qscribe.Models.Upload extends Backbone.Model
   toJSON: () ->
     {upload: _.clone(@.attributes)}
 
+  hasFinished: () ->
+    if @.attributes.status == 9
+      true
+    else
+      false
+    
+  hasProgress: () ->
+    switch @.attributes.status
+      when 0, 1, 2, 3, 5, 7 then true
+      else 
+        false
+
   message: () ->
-    msg = switch @.attributes.status
+    switch @.attributes.status
       when 0 then "Uploaded."
-      when 1 then "Transcoding started."
-      when 2 then "Transcoding."
-      when 3 then "Transcoding stopping."
+      when 1 then "Processing started."
+      when 2 then "Processing."
+      when 3 then "Stopping."
       when 4 then "Stopped."
       when 5 then "Resetting."
       when 6 then "Reset."

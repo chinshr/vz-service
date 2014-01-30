@@ -1,6 +1,10 @@
 require 'test_helper'
 
 class Ingest::AudioTest < ActiveSupport::TestCase
+  setup do
+    Ingest::AudioWorker.jobs.clear
+  end
+  
   context "associations" do
     should have_many :segments
   end
@@ -21,7 +25,7 @@ class Ingest::AudioTest < ActiveSupport::TestCase
     assert_equal document.description, ingest.description
   end
   
-  should "have segments and remove them when starting ingest" do
+  should "have segments and remove messages when reset" do
     document = FactoryGirl.create(:document)
     ingest   = FactoryGirl.create(:ingest_audio, :ingestable => document)
     segment1 = FactoryGirl.create(:ingest_audio_segment, :offset => 0, :ingest => ingest, :best_score => 0)
@@ -34,7 +38,48 @@ class Ingest::AudioTest < ActiveSupport::TestCase
     assert_equal %({"error"=>["error message"]}), ingest.messages.to_s
     ingest.start!
     assert_equal :starting, ingest.state
-    assert ingest.messages.empty?
-    assert_equal 0, ingest.segments.count
+    ingest.process!
+    assert_equal :started, ingest.state
+    ingest.stop!
+    assert_equal :stopping, ingest.state
+    ingest.process!
+    assert_equal :stopped, ingest.state
+    ingest.reset!
+    assert_equal :resetting, ingest.state
+    assert_equal false, ingest.messages.empty?
+    ingest.process!
+    assert_equal :reset, ingest.state
+    assert_equal true, ingest.messages.empty?
+  end
+  
+  should "create worker process with state machine" do
+    ingest = FactoryGirl.create(:ingest_audio)
+    Ingest::AudioWorker.jobs.clear
+    
+    ingest.start!  # inside model!
+    assert_equal :starting, ingest.state
+    assert_equal 1, Ingest::AudioWorker.jobs.size
+    
+    ingest.process!  # inside worker!
+    assert_equal :started, ingest.state
+    Ingest::AudioWorker.jobs.clear
+
+    ingest.stop!  # inside model!
+    assert_equal :stopping, ingest.state
+    assert_equal 1, Ingest::AudioWorker.jobs.size
+    
+    ingest.process!  # inside worker!
+    assert_equal :stopped, ingest.state
+    Ingest::AudioWorker.jobs.clear
+    
+    ingest.reset!  # inside model!
+    assert_equal :resetting, ingest.state
+    assert_equal 1, Ingest::AudioWorker.jobs.size
+    assert_equal 0, ingest.iteration
+    
+    ingest.process!  # inside worker!
+    assert_equal :reset, ingest.state
+    Ingest::AudioWorker.jobs.clear
+    assert_equal 1, ingest.iteration
   end
 end

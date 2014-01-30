@@ -33,11 +33,24 @@ class IngestTest < ActiveSupport::TestCase
     assert_equal :stopped, ingest.aasm_current_state
     assert_not_nil ingest.stopped_at
 
+    ingest.start!
+    assert_equal :starting, ingest.aasm_current_state
+    ingest.process!
+    assert_equal :started, ingest.aasm_current_state
+    assert_not_nil ingest.started_at
+
+    ingest.stop!
+    assert_equal :stopping, ingest.aasm_current_state
+    ingest.process!
+    assert_equal :stopped, ingest.aasm_current_state
+    assert_not_nil ingest.stopped_at
+
     ingest.reset!
     assert_equal :resetting, ingest.aasm_current_state
     ingest.process!
     assert_equal :reset, ingest.aasm_current_state
     assert_not_nil ingest.reset_at
+    assert_equal 1, ingest.iteration
 
     ingest.start!
     assert_equal :starting, ingest.aasm_current_state
