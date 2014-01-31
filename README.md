@@ -29,6 +29,7 @@ Speech Transcription
 
     require "speech"
     audio = Speech::AudioToText.new("samples/i-like-pickles.wav")
+    audio = Speech::AudioToText.new("samples/SampleAudio.wav")
     audio.to_json(2, "en-US")
     audio.to_text(2, "en-US")
 

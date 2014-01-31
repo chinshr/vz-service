@@ -1,15 +1,8 @@
+require "sidekiq/web"
+
 Qscribe::Application.routes.draw do
-  # get "qrcodes/index"
-  # root 'qrcodes#index'
+  mount Sidekiq::Web, at: "/sidekiq"
 
-  # scope :api do
-  #   resources :qrcodes, format: false
-  # end
-  
-  # The priority is based upon order of creation: first created -> highest priority.
-  # See how all your routes lay out with "rake routes".
-
-  # You can have the root of your site routed with "root"
   root 'web/pages#index'
   
   scope :module => "web", :as => "web" do

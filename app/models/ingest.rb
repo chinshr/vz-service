@@ -105,6 +105,34 @@ class Ingest < ActiveRecord::Base
     s3_url ? s3_url.split("/").last : nil
   end
   
+  # set_progress! 10 => 10%
+  def set_progress!(percent)
+    Ingest.transaction do
+      lock!
+      new_progress = percent
+      new_progress = new_progress > 100 ? 100 : new_progress
+      update_attribute(:progress, new_progress)
+    end
+  end
+
+  # set_progress! 10 => 10%
+  # increment_progress! 1, 5, 0.8 => 26%
+  # increment_progress! 1, 5, 0.8 => 42%
+  # ...
+  # increment_progress! 1, 5, 0.8 => 90%
+  def increment_progress!(counter, denominator, factor = 1.0)
+    Ingest.transaction do
+      lock!
+      new_progress = (self[:progress] || 0) + (counter / denominator.to_f * factor * 100)
+      new_progress = new_progress > 100 ? 100 : new_progress
+      update_attribute(:progress, new_progress)
+    end
+  end
+  
+  def progress
+    self[:progress].round if self[:progress]
+  end
+  
   protected
 
   def enter_starting; end

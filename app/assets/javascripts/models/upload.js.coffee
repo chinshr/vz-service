@@ -26,7 +26,7 @@ class Qscribe.Models.Upload extends Backbone.Model
   message: () ->
     switch @.attributes.status
       when 0 then "Uploaded."
-      when 1 then "Processing started."
+      when 1 then "Processing starting."
       when 2 then "Processing."
       when 3 then "Stopping."
       when 4 then "Stopped."

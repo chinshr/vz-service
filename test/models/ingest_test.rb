@@ -88,4 +88,26 @@ class IngestTest < ActiveSupport::TestCase
     ingest = FactoryGirl.create(:ingest_audio)
     assert_not_nil ingest.s3_url
   end
+  
+  should "set progress" do
+    ingest = FactoryGirl.create(:ingest_audio)
+    ingest.set_progress!(5) and ingest.reload
+    assert_equal 5, ingest.progress
+    ingest.set_progress!(75.5) and ingest.reload
+    assert_equal 76, ingest.progress
+    ingest.set_progress!(101) and ingest.reload
+    assert_equal 100, ingest.progress
+  end
+
+  should "increment progress" do
+    ingest = FactoryGirl.create(:ingest_audio)
+    ingest.set_progress!(10) and ingest.reload
+    assert_equal 10, ingest.progress
+    175.times do |index|
+      ingest.increment_progress! 1, 175, 0.8
+    end
+    assert_equal 90, ingest.progress
+    ingest.increment_progress! 1, 175, 0.8
+    assert_equal 90, ingest.progress
+  end
 end

@@ -21,7 +21,6 @@ class Ingest::AudioWorker
       :access_key_id     => APP_CONFIG['S3_KEY'],    # '*** Provide access key ***'
       :secret_access_key => APP_CONFIG['S3_SECRET']  # '*** Provide secret key ***'
     )
-    @s3 = AWS::S3.new
   end
   
   def perform(ingest_id, options = {})
@@ -90,8 +89,8 @@ class Ingest::AudioWorker
       # Delete local file
       File.delete(audio_filename_fullpath) if File.exist? audio_filename_fullpath
       
-      # Delete inbound object.
-      s3_delete_object(APP_CONFIG['S3_INBOUND_BUCKET'], s3_key)
+      # Delete uploaded object.
+      s3_delete_object(APP_CONFIG['S3_INBOUND_BUCKET'], @ingest.upload.s3_key)
       
       set_progress! 95
     end
@@ -142,12 +141,7 @@ class Ingest::AudioWorker
 
   # set_progress! 10 => 10%
   def set_progress!(percent)
-    Ingest.transaction do
-      @ingest.lock!
-      new_progress = @ingest.progress + percent
-      new_progress = new_progress > 100 ? 100 : new_progress
-      @ingest.update_attribute(:progress, new_progress)
-    end if @ingest
+    @ingest.set_progress!(percent) if @ingest
   end
 
   # set_progress! 10 => 10%
@@ -156,12 +150,7 @@ class Ingest::AudioWorker
   # ...
   # increment_progress! 1, 5, 0.8 => 90%
   def increment_progress!(counter, denominator, factor = 1.0)
-    Ingest.transaction do
-      @ingest.lock!
-      new_progress = @ingest.progress + (counter / denominator.to_f * factor * 100).round
-      new_progress = new_progress > 100 ? 100 : new_progress
-      @ingest.update_attribute(:progress, new_progress)
-    end if @ingest
+    @ingest.increment_progress!(counter, denominator, factor) if @ingest
   end
   
   def log!(stage_name, message)
@@ -200,14 +189,14 @@ class Ingest::AudioWorker
     end
   end
   
-  def s3; @s3; end
-  
   def s3_copy_object(source_bucket_name, destination_bucket_name, source_key, destination_key = nil)
+    s3 = AWS::S3.new
     destination_key = source_key if destination_key.blank?
     s3.buckets[source_bucket_name].objects[source_key].copy_to(destination_key, :bucket_name => destination_bucket_name)
   end
   
   def s3_download_object(source_bucket_name, source_key, destination_filename)
+    s3 = AWS::S3.new
     File.open(destination_filename, 'wb') do |file|
       s3.buckets[source_bucket_name].objects[source_key].read do |chunk|
         file.write(chunk)
@@ -235,6 +224,7 @@ class Ingest::AudioWorker
   end
   
   def s3_delete_object(bucket_name, key) 
+    s3 = AWS::S3.new
     s3.buckets[bucket_name].objects.delete(key)
   end
   

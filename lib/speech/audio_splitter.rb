@@ -32,9 +32,11 @@ module Speech
         offset_ts = AudioInspector::Duration.from_seconds(self.offset).to_s
         duration_ts = AudioInspector::Duration.from_seconds(self.duration).to_s
         # NOTE: kind of a hack, but if the original source is less than or equal to 1 second, we should skip ffmpeg
-        #puts "building chunk: #{duration_ts.inspect} and offset: #{offset_ts}"
-        #puts "offset: #{ offset_ts.to_s }, duration: #{duration_ts.to_s}"
-        cmd = "ffmpeg -y -i #{splitter.original_file} -acodec copy -vcodec copy -ss #{offset_ts} -t #{duration_ts} #{self.chunk}   >/dev/null 2>&1"
+        # puts "building chunk: #{duration_ts.inspect} and offset: #{offset_ts}"
+        # puts "offset: #{ offset_ts.to_s }, duration: #{duration_ts.to_s}"
+        # cmd = "ffmpeg -y -i #{splitter.original_file} -acodec copy -vcodec copy -ss #{offset_ts} -t #{duration_ts} #{self.chunk}   >/dev/null 2>&1"
+        # cmd = "ffmpeg -y -i #{splitter.original_file} -acodec copy -vcodec copy -ss #{offset_ts} -t #{duration_ts} -f aiff #{self.chunk}   >/dev/null 2>&1"
+        cmd = "ffmpeg -y -i #{splitter.original_file} -acodec flac -vcodec copy -ss #{offset_ts} -t #{duration_ts} -f flac #{self.chunk}   >/dev/null 2>&1"
         if system(cmd)
           self
         else

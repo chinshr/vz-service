@@ -96,6 +96,7 @@ class Qscribe.Views.UploadsProgress extends Backbone.View
     # change to green status label when finished
     if @model.hasFinished()
       @$('.status').removeClass('label-info').addClass('label-success')
+      @stop()
     else
       @$('.status').removeClass('label-success').addClass('label-info')
       

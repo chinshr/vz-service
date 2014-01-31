@@ -63,7 +63,7 @@ ActiveRecord::Schema.define(version: 20140129031331) do
     t.datetime "reset_at"
     t.datetime "removed_at"
     t.datetime "finished_at"
-    t.integer  "progress",        default: 0,         null: false
+    t.float    "progress",        default: 0.0,       null: false
     t.text     "messages"
     t.string   "stage"
     t.string   "s3_url"
