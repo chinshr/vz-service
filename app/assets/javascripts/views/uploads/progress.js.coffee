@@ -84,6 +84,7 @@ class Qscribe.Views.UploadsProgress extends Backbone.View
     
     @$('.message').html(@model.message())
     @$('.alert-slug-link').html("<a href=\"#{@model.attributes.slug}\" target=\"_blank\">http://voyz.es/#{@model.attributes.slug}</a>")
+    @$('.alert-slug').show()
 
     @$('.progress .progress-bar').css('width', "#{@model.attributes.progress}%")
 
@@ -93,12 +94,18 @@ class Qscribe.Views.UploadsProgress extends Backbone.View
     else
       @$('.progress').removeClass('active')
 
-    # change to green status label when finished
+    # change status light
     if @model.hasFinished()
-      @$('.status').removeClass('label-info').addClass('label-success')
+      @$('.status').
+        removeClass('label-info').
+        addClass('label-success')
       @stop()
-    else
-      @$('.status').removeClass('label-success').addClass('label-info')
+    else if @model.hasStopped()
+      @$('.status').
+        removeClass('label-info').
+        removeClass('label-success').
+        removeClass('label-warning').
+        addClass('label-danger')
       
     # change progress bar color to green when transcribing
     if !@$('.progress .progress-bar').hasClass('progress-bar-success')

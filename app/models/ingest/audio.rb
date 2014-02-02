@@ -44,4 +44,14 @@ class Ingest::Audio < ::Ingest
     Ingest::AudioWorker.perform_async(self.id)
   end
   
+  def after_exit_restarting
+    super
+    segments.destroy_all
+  end
+  
+  def after_enter_restarting
+    super
+    Ingest::AudioWorker.perform_async(self.id)
+  end
+  
 end

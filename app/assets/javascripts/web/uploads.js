@@ -1,7 +1,3 @@
-$('input#files').on("change", function() {
-  alert("hello")
-})
-
 if (false) {
   function createCORSRequest(method, url) {
     var xhr = new XMLHttpRequest();

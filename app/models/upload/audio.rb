@@ -1,4 +1,6 @@
 class Upload::Audio < ::Upload
+  # include ActiveModel::Dirty
+
   delegate :title, to: :ingest, allow_nil: true
   delegate :title=, to: :ingest, allow_nil: true
   
@@ -22,6 +24,11 @@ class Upload::Audio < ::Upload
   after_initialize :build_ingest_and_document
   before_validation :set_title, on: :create
 
+  def has_locale_recently_changed?
+    return !!ingest.ingestable.changes[:locale] if ingest.ingestable
+    false
+  end
+  
   protected
   
   def audio_file_type
@@ -39,9 +46,17 @@ class Upload::Audio < ::Upload
   
   def save_ingest_and_document
     if ingest
+      locale_changed = has_locale_recently_changed?
       ingest.ingestable.save if ingest.ingestable && ingest.ingestable.changed?
       ingest.save if ingest.changed?
-      ingest.start! if ingest.may_start?
+      
+      if !new_record? && has_s3_url?
+        if locale_changed
+          ingest.restart! if ingest.may_restart?
+        else
+          ingest.start! if ingest.may_start?
+        end
+      end
     end
   end
 end

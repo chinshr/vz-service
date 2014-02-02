@@ -1,18 +1,20 @@
 class Ingest < ActiveRecord::Base
   include AASM
   
-  CREATED   = 0
-  STARTING  = 1
-  STARTED   = 2
-  STOPPING  = 3
-  STOPPED   = 4
-  RESETTING = 5
-  RESET     = 6
-  REMOVING  = 7
-  REMOVED   = 8
-  FINISHED  = 9
+  CREATED    = 0
+  STARTING   = 1
+  STARTED    = 2
+  STOPPING   = 3
+  STOPPED    = 4
+  RESETTING  = 5
+  RESET      = 6
+  REMOVING   = 7
+  REMOVED    = 8
+  FINISHED   = 9
+  RESTARTING = 10
   STATES    = {:created => CREATED, :starting => STARTING, :started => STARTED, :stopping => STOPPING, :stopped => STOPPED,
-    :resetting => RESETTING, :reset =>  RESET, :removing => REMOVING, :removed => REMOVED, :finished => FINISHED}
+    :resetting => RESETTING, :reset =>  RESET, :removing => REMOVING, :removed => REMOVED, :finished => FINISHED, 
+    :restarting => RESTARTING}
   
   serialize :messages, Hash
   
@@ -33,6 +35,7 @@ class Ingest < ActiveRecord::Base
     state :removing
     state :removed, :enter => :enter_removed
     state :finished, :enter => :enter_finished
+    state :restarting, :after_exit => :after_exit_restarting, :after_enter => :after_enter_restarting
     
     event :start do
       transitions :from => [:created, :stopped, :reset], :to => :starting, :guard => :has_s3_url?
@@ -55,6 +58,7 @@ class Ingest < ActiveRecord::Base
       transitions :from => [:stopping, :stopped], :to => :stopped
       transitions :from => [:resetting, :reset], :to => :reset
       transitions :from => [:removing, :removed], :to => :removed
+      transitions :from => :restarting, :to => :starting
     end
     
     event :finish do
@@ -63,6 +67,10 @@ class Ingest < ActiveRecord::Base
     
     event :fail do
       transitions :from => [:created, :starting, :started, :stopping, :stopped, :resetting, :reset], :to => :stopped
+    end
+    
+    event :restart do
+      transitions :from => [:starting, :started], :to => :restarting
     end
   end
   
@@ -153,6 +161,7 @@ class Ingest < ActiveRecord::Base
     self.reset_at = Time.now.utc
     self.messages = {}
     self.increment(:iteration)
+    self.stage = nil
   end
 
   def enter_finished
@@ -161,5 +170,13 @@ class Ingest < ActiveRecord::Base
   
   def enter_removed
     self.removed_at = Time.now.utc
+  end
+  
+  def after_exit_restarting
+    update_attributes(messages: {}, stage: nil, iteration: iteration + 1)
+  end
+  
+  def after_enter_restarting
+    self.restarted_at = Time.now.utc
   end
 end

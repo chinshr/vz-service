@@ -8,7 +8,7 @@
       <div class="progress-bar progress-bar-info" style="width: 0%"></div>
     </div>
 
-    <div class="alert alert-success alert-slug">
+    <div class="alert alert-success alert-slug" hidden>
       <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
       <div class="alert-slug-message">Transcription will be availabe at&nbsp;<span class="alert-slug-link"><a href="YdG3bj" target="_blank">http://localhost:3000/YdG3bj</a></span></div>
     </div>

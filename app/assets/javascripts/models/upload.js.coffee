@@ -16,6 +16,12 @@ class Qscribe.Models.Upload extends Backbone.Model
       true
     else
       false
+
+  hasStopped: () ->
+    if @.attributes.status == 4
+      true
+    else
+      false
     
   hasProgress: () ->
     switch @.attributes.status

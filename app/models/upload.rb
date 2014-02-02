@@ -67,4 +67,8 @@ class Upload < ActiveRecord::Base
   def s3_key
     s3_url ? s3_url.split("/").last : nil
   end
+  
+  def has_s3_url?
+    !s3_url.blank?
+  end
 end

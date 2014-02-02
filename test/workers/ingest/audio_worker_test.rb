@@ -7,9 +7,7 @@ class Ingest::AudioWorkerTest < ActiveSupport::TestCase
     
     Ingest::AudioWorker.any_instance.stubs(:s3_copy_object).returns(true)
     Ingest::AudioWorker.any_instance.stubs(:s3_download_object).returns(true)
-    
     Ingest::AudioWorker.any_instance.stubs(:s3_delete_object).returns(true)
-
     Ingest::AudioWorker.jobs.clear
   end
 

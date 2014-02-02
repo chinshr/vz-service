@@ -37,6 +37,21 @@ class Upload::AudioTest < ActiveSupport::TestCase
     end
   end
 
+  should "start restart after locale has changed" do
+    Ingest::AudioWorker.jobs.clear
+    upload = Upload.new(type: "audio", file_name: "audio-test.m4a", file_type: "audio/x-m4a", 
+      file_size: 12345, s3_url: "http://s3.amazonaws.com/dropbox/audio-test.m4a", :locale => "en-US")
+    assert_difference "Ingest::AudioWorker.jobs.size", 2 do
+      upload.save
+      assert_equal :starting, upload.ingest.state
+      upload.ingest.process!
+      assert_equal :started, upload.ingest.state
+      upload.locale = "es-ES"
+      upload.save
+      assert_equal :restarting, upload.ingest.state
+    end
+  end
+
   should "create" do
     upload = FactoryGirl.create(:upload_audio)
     assert upload.valid?, "should be true"

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140129031331) do
+ActiveRecord::Schema.define(version: 20140201011456) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -68,6 +68,8 @@ ActiveRecord::Schema.define(version: 20140129031331) do
     t.string   "stage"
     t.string   "s3_url"
     t.integer  "iteration",       default: 0,         null: false
+    t.boolean  "busy",            default: false,     null: false
+    t.datetime "restarted_at"
   end
 
   add_index "ingests", ["aasm_state"], name: "index_ingests_on_aasm_state", using: :btree
