@@ -1,12 +1,12 @@
-window.Qscribe =
+window.Voyzes =
   Models: {}
   Collections: {}
   Views: {}
   Routers: {}
   initialize: -> 
-    new Qscribe.Routers.Uploads()
+    new Voyzes.Routers.Uploads()
     Backbone.history.start()
 
 $(document).ready ->
-  Qscribe.initialize()
+  Voyzes.initialize()
   

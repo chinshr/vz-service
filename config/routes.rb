@@ -1,6 +1,6 @@
 require "sidekiq/web"
 
-Qscribe::Application.routes.draw do
+Voyzes::Application.routes.draw do
   mount Sidekiq::Web, at: "/sidekiq"
 
   root 'web/pages#index'

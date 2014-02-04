@@ -3,7 +3,7 @@
 
 require File.expand_path('../config/application', __FILE__)
 
-Qscribe::Application.load_tasks
+Voyzes::Application.load_tasks
 
 # Add a new rake test task... E.g., rake test:lib, below everything else in that file...
 # Alternatively, add a task in lib/tasks/ directory and plop in the same code

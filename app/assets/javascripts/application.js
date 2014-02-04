@@ -17,7 +17,7 @@
 //= require backbone-validation
 //= require validation_config
 //= require s3upload
-//= require qscribe
+//= require voyzes
 //= require_tree ../templates
 //= require_tree ./models
 //= require_tree ./collections

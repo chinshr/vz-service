@@ -9,4 +9,4 @@
 
 # Make sure your secret_key_base is kept private
 # if you're sharing your code publicly.
-Qscribe::Application.config.secret_key_base = 'be85e3c8374fece807389fbacee401317e76f42957ee4c4a8ef5da0701b5d22d727f19cb41cfb9970de5009f76bd85efb69cf195e256e3729d748b452c04a44b'
+Voyzes::Application.config.secret_key_base = 'be85e3c8374fece807389fbacee401317e76f42957ee4c4a8ef5da0701b5d22d727f19cb41cfb9970de5009f76bd85efb69cf195e256e3729d748b452c04a44b'

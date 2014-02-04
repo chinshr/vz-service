@@ -1,11 +1,11 @@
-class Qscribe.Routers.Uploads extends Backbone.Router
+class Voyzes.Routers.Uploads extends Backbone.Router
   routes:
     '' : 'showIndex'
 
   showIndex: -> 
-    @collection = new Qscribe.Collections.Uploads()
+    @collection = new Voyzes.Collections.Uploads()
     # @collection.fetch() 
-    view = new Qscribe.Views.UploadsIndex collection: @collection
+    view = new Voyzes.Views.UploadsIndex collection: @collection
     $('#upload-app').html view.render().el
       
       

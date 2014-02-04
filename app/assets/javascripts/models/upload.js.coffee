@@ -1,4 +1,4 @@
-class Qscribe.Models.Upload extends Backbone.Model
+class Voyzes.Models.Upload extends Backbone.Model
   urlRoot: 'api/uploads'
   
   validation:
