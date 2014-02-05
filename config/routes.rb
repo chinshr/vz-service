@@ -1,12 +1,15 @@
 require "sidekiq/web"
 
 Voyzes::Application.routes.draw do
+  devise_for :users
   mount Sidekiq::Web, at: "/sidekiq"
 
   root 'web/pages#index'
   
   scope :module => "web", :as => "web" do
     get '/upload' => "uploads#index"
+    get '/:id' => "documents#show"
+    get '/:id/edit' => "documents#edit"
   end
 
   namespace :api do

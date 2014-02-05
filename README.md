@@ -26,7 +26,10 @@ Development Resources
 * Device with Rails 4
   - Installation flow: http://stackoverflow.com/questions/16513066/devise-with-rails-4
   - Email only signup: https://github.com/plataformatec/devise/wiki/How-To:-Email-only-sign-up
-  
+* HTML5 Editors
+  - List of editors: http://www.jquery4u.com/plugins/html5-wysiwyg/  
+  - Raptor Editor: https://www.raptor-editor.com
+  - Save REST with Raptor: https://www.raptor-editor.com/documentation/tutorials/save-rest
   
 Speech Transcription
 --------------------
