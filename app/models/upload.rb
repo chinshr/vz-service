@@ -1,12 +1,17 @@
 class Upload < ActiveRecord::Base
   has_one :ingest, dependent: :destroy
+  belongs_to :session
   
   validates :type, presence: true
   validates :file_name, presence: true, length: { maximum: 255 }
   validates :file_type, presence: true, length: { maximum: 255 }
   validates :s3_url, presence: true, length: { maximum: 255 }
 
+  scope :any_of_states, lambda {|params| joins(:ingest).where(:ingests => {:aasm_state => [params].flatten.map(&:to_s)})}
+  scope :none_of_states, lambda {|params| joins(:ingest).where("ingests.aasm_state NOT IN (?)", [params].flatten.map(&:to_s)) }
+  
   class << self
+    
     # type casts to the class specified in :type parameter
     #
     # E.g.

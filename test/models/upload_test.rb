@@ -3,6 +3,7 @@ require 'test_helper'
 class UploadTest < ActiveSupport::TestCase
   context "associations" do
     should have_one :ingest
+    should belong_to :session
   end
   
   context "validations" do
@@ -12,6 +13,22 @@ class UploadTest < ActiveSupport::TestCase
     should ensure_length_of(:file_type).is_at_most(255)
     should validate_presence_of :s3_url
     should ensure_length_of(:s3_url).is_at_most(255)
+  end
+
+  context "scopes" do
+    setup do
+      @upload = FactoryGirl.create(:upload_audio)
+    end
+    
+    should "have any_of_states" do
+      @upload.ingest.update_attribute(:aasm_state, "started")
+      assert_equal [@upload], Upload.any_of_states([:starting, :started])
+    end
+
+    should "have none_of_states" do
+      @upload.ingest.update_attribute(:aasm_state, "started")
+      assert_equal [@upload], Upload.none_of_states([:created, :starting, :stopping, :stopped, :resetting, :reset, :removing, :removed])
+    end
   end
   
   should "humanize file name" do

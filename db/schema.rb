@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140201011456) do
+ActiveRecord::Schema.define(version: 20140205022913) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -86,6 +86,16 @@ ActiveRecord::Schema.define(version: 20140201011456) do
   add_index "ingests", ["updated_at"], name: "index_ingests_on_updated_at", using: :btree
   add_index "ingests", ["upload_id"], name: "index_ingests_on_upload_id", using: :btree
 
+  create_table "sessions", force: true do |t|
+    t.string   "uid"
+    t.string   "ip"
+    t.string   "user_agent"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "sessions", ["uid"], name: "index_sessions_on_uid", using: :btree
+
   create_table "uploads", force: true do |t|
     t.string   "file_name"
     t.string   "file_type"
@@ -94,12 +104,14 @@ ActiveRecord::Schema.define(version: 20140201011456) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "type"
+    t.integer  "session_id"
   end
 
   add_index "uploads", ["created_at"], name: "index_uploads_on_created_at", using: :btree
   add_index "uploads", ["file_name"], name: "index_uploads_on_file_name", using: :btree
   add_index "uploads", ["file_size"], name: "index_uploads_on_file_size", using: :btree
   add_index "uploads", ["file_type"], name: "index_uploads_on_file_type", using: :btree
+  add_index "uploads", ["session_id"], name: "index_uploads_on_session_id", using: :btree
   add_index "uploads", ["type"], name: "index_uploads_on_type", using: :btree
   add_index "uploads", ["updated_at"], name: "index_uploads_on_updated_at", using: :btree
 

@@ -23,7 +23,11 @@ Development Resources
   - https://github.com/theironcook/Backbone.ModelBinder
   - https://github.com/thedersen/backbone.validation
   - https://gist.github.com/driehle/2909552 -- validation with bootstrap tooltips
-
+* Device with Rails 4
+  - Installation flow: http://stackoverflow.com/questions/16513066/devise-with-rails-4
+  - Email only signup: https://github.com/plataformatec/devise/wiki/How-To:-Email-only-sign-up
+  
+  
 Speech Transcription
 --------------------
 

@@ -4,18 +4,26 @@ class Api::UploadsController < Api::ApplicationController
   
   # [POST] /api/uploads.json
   def create
-    @upload = Upload.new(create_params.permit(:type))
+    @upload = Upload.new(create_params.permit(:type)) do |u|
+      u.session_id = current_session.id
+    end
     @upload.attributes = create_params.except(:type)
     @upload.save
     respond_with "api", @upload
   end
-  
+
+  # [GET] /api/uploads.json
+  def index
+    @uploads = current_session.uploads.none_of_states(:finished)
+    respond_with @uploads
+  end
+
   # [GET] /api/uploads/1.json
   def show
     @upload = Upload.find(params[:id])
     respond_with @upload
   end
-  
+
   # [PUT] /api/uploads/1.json
   def update
     @upload = Upload.update(params[:id], update_params)
@@ -43,20 +51,20 @@ class Api::UploadsController < Api::ApplicationController
 
     respond_with @signput
   end
-  
+
   protected
-  
+
   def cors_allow_origin
     response.headers['Access-Control-Allow-Origin']      = '*'
     response.headers['Access-Control-Allow-Credentials'] = 'true'
     response.headers['Access-Control-Allow-Methods']     = 'OPTIONS, GET, POST'
     response.headers['Access-Control-Allow-Headers']     = 'Content-Type, Depth, User-Agent, X-File-Size, X-Requested-With, If-Modified-Since, X-File-Name, Cache-Control'
   end
-  
+
   def create_params
     params.require(:upload).permit(:type, :file_name, :file_type, :file_size, :s3_url, :locale, :privacy)
   end
-  
+
   def update_params
     params.require(:upload).permit(:title, :description, :locale, :privacy)
   end

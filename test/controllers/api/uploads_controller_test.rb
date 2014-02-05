@@ -40,6 +40,14 @@ class Api::UploadsControllerTest < ActionController::TestCase
       assert_response :unprocessable_entity
     end
   end
+
+  context "GET /uploads" do
+    should "return uploads" do
+      upload = FactoryGirl.create(:upload_audio)
+      get :index, format: :json
+      assert_response :success
+    end
+  end
   
   context "GET /uploads/:id" do
     should "return upload" do

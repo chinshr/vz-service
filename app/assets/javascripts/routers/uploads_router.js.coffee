@@ -4,7 +4,7 @@ class Voyzes.Routers.Uploads extends Backbone.Router
 
   showIndex: -> 
     @collection = new Voyzes.Collections.Uploads()
-    # @collection.fetch() 
+    @collection.fetch() 
     view = new Voyzes.Views.UploadsIndex collection: @collection
     $('#upload-app').html view.render().el
       
