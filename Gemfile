@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
-ruby "2.0.0"
+ruby '2.0.0'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.0.2'
@@ -55,8 +55,11 @@ group :test do
   gem 'turn'
 end
 
+group :production do
+  gem 'rails_12factor'
+end
+
 gem "modernizr-rails"
-gem "speech2text", path: "../speech2text"
 
 gem 'aws-sdk', '~> 1.6.0'
 gem 'aws-s3'
