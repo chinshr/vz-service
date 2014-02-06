@@ -14,7 +14,7 @@ class Api::UploadsController < Api::ApplicationController
 
   # [GET] /api/uploads.json
   def index
-    @uploads = current_session.uploads.none_of_states(:finished)
+    @uploads = current_session.uploads.any_of_states(:foobar)
     respond_with @uploads
   end
 
