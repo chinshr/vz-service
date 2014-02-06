@@ -1,0 +1,6 @@
+<%
+  edit ||= false
+%>
+<div id="inline-content" class="<%= edit ? 'editor' : '' %> well">
+  <%= @document.content %>
+</div>
