@@ -30,6 +30,12 @@ Development Resources
   - List of editors: http://www.jquery4u.com/plugins/html5-wysiwyg/  
   - Raptor Editor: https://www.raptor-editor.com
   - Save REST with Raptor: https://www.raptor-editor.com/documentation/tutorials/save-rest
+* Installing ffmpeg on heroku
+  - Install multi build packs: https://github.com/ddollar/heroku-buildpack-multi
+  - add .buildpacks file
+    https://github.com/shunjikonishi/heroku-buildpack-ffmpeg
+    https://github.com/heroku/heroku-buildpack-ruby
+    
   
 Speech Transcription
 --------------------
