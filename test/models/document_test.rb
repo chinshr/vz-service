@@ -31,4 +31,21 @@ class DocumentTest < ActiveSupport::TestCase
     end
   end
   
+  context "document with ingests" do
+    setup do
+      @document = FactoryGirl.create(:document)
+      @ingest   = FactoryGirl.create(:ingest_audio, :ingestable => @document)
+    end
+    
+    should "have finshed transcribing" do
+      @ingest.update_attribute(:aasm_state, "finished")
+      assert_equal true, @document.trancribed?
+    end
+    
+    should "not have finshed transcribing" do
+      @ingest.update_attribute(:aasm_state, "started")
+      assert_equal false, @document.trancribed?
+    end
+  end
+  
 end

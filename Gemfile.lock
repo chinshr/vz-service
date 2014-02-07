@@ -29,6 +29,9 @@ GEM
     ansi (1.4.3)
     arel (4.0.2)
     atomic (1.1.14)
+    autoscaler (0.7.0)
+      heroku-api
+      sidekiq (~> 2.7)
     aws-s3 (0.6.3)
       builder
       mime-types
@@ -79,12 +82,16 @@ GEM
     eco-source (1.1.0.rc.1)
     ejs (1.1.1)
     erubis (2.7.0)
+    excon (0.31.0)
     execjs (2.0.2)
     factory_girl (4.3.0)
       activesupport (>= 3.0.0)
     factory_girl_rails (4.3.0)
       factory_girl (~> 4.3.0)
       railties (>= 3.0.0)
+    heroku-api (0.3.17)
+      excon (~> 0.27)
+      multi_json (~> 1.8.2)
     hike (1.2.3)
     httparty (0.12.0)
       json (~> 1.8)
@@ -220,6 +227,7 @@ PLATFORMS
 
 DEPENDENCIES
   aasm
+  autoscaler
   aws-s3
   aws-sdk (~> 1.6.0)
   backbone-on-rails

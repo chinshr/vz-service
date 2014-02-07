@@ -74,6 +74,7 @@ gem 'rabl'
 gem 'oj'
 gem 'aasm'
 gem 'sidekiq'
+gem 'autoscaler'
 gem "sinatra", require: false
 gem 'unicorn'
 

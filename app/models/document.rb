@@ -28,6 +28,10 @@ class Document < ActiveRecord::Base
     PRIVACY_SETTINGS.map {|k,v| k}.reject {|d| ((privacy_mask || 0) & self.class.privacy_mask(d)).zero?}
   end
   
+  def trancribed?
+    ingests.all? {|i| i.finished?}
+  end
+  
   protected
   
   def generate_slug
