@@ -35,8 +35,46 @@ Development Resources
   - add .buildpacks file
     https://github.com/shunjikonishi/heroku-buildpack-ffmpeg
     https://github.com/heroku/heroku-buildpack-ruby
-    
+* HTML5 Players
+  - SoundManager2 (Soundcloud) http://www.schillmania.com/projects/soundmanager2/
+  - jplayer.org
+  - audio.js -- http://kolber.github.io/audiojs/
+
+Reference Services
+------------------
+
+* Popuparchive -- https://www.popuparchive.org
+* Transcription service -- https://transcribe.wreally.com
+* Oyez.org 
+  - http://www.oyez.org/
+  - http://www.oyez.org/cases/2000-2009/2009/2009_132ORIG 
   
+Home Page Text
+--------------
+
+++++++++++
+Sería muy parecido, con este texto al inicio:
+Por un mayor acceso a la información, por más transparencia
+Comparte los audios de tus grabaciones periodísticas
+
+Los iconos tendrían estos textos
+
+Figura 1
+Sube tu audio
+
+Figura 2
+El sistema lo transcribe por ti
+
+Figura 3
+Edítalo
+
+Figura 4
+Compártelo
+
+Y abajo, al final, estarían los tres últimos audios publicados. 
+
+++++++++++++++++
+
 Speech Transcription
 --------------------
 

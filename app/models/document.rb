@@ -7,6 +7,8 @@ class Document < ActiveRecord::Base
   validates :slug, presence: true, uniqueness: {case_sensitive: false}
   validates :title, presence: true, length: { maximum: 255 }
   
+  scope :recent, lambda {|n = 5| order("documents.created_at DESC").limit(n)}
+  
   before_validation :generate_slug
   
   class << self

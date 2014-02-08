@@ -9,6 +9,12 @@ class Upload < ActiveRecord::Base
 
   scope :any_of_states, lambda {|params| joins(:ingest).where(:ingests => {:aasm_state => [params].flatten.map(&:to_s)})}
   scope :none_of_states, lambda {|params| joins(:ingest).where("ingests.aasm_state NOT IN (?)", [params].flatten.map(&:to_s)) }
+  scope :started, lambda {any_of_states(:started)}
+  scope :stopped, lambda {any_of_states(:stopped)}
+  scope :reset, lambda {any_of_states(:reset)}
+  scope :removed, lambda {any_of_states(:removed)}
+  scope :finished, lambda {any_of_states(:finished)}
+  scope :recent, lambda {|n = 5| order("uploads.created_at DESC").limit(n)}
   
   class << self
     
