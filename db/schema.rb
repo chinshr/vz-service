@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140208001131) do
+ActiveRecord::Schema.define(version: 20140208191412) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -118,6 +118,24 @@ ActiveRecord::Schema.define(version: 20140208001131) do
   add_index "ingests", ["type"], name: "index_ingests_on_type", using: :btree
   add_index "ingests", ["updated_at"], name: "index_ingests_on_updated_at", using: :btree
   add_index "ingests", ["upload_id"], name: "index_ingests_on_upload_id", using: :btree
+
+  create_table "messages", force: true do |t|
+    t.string   "uid",         null: false
+    t.string   "from"
+    t.string   "to"
+    t.string   "cc"
+    t.string   "reply_to"
+    t.string   "subject"
+    t.text     "html"
+    t.text     "text"
+    t.text     "attachments"
+    t.string   "type"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "messages", ["type"], name: "index_messages_on_type", using: :btree
+  add_index "messages", ["uid"], name: "index_messages_on_uid", using: :btree
 
   create_table "sessions", force: true do |t|
     t.string   "uid"

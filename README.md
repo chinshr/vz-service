@@ -39,6 +39,9 @@ Development Resources
   - SoundManager2 (Soundcloud) http://www.schillmania.com/projects/soundmanager2/
   - jplayer.org
   - audio.js -- http://kolber.github.io/audiojs/
+* Accept Incoming Emails into a Heroku App Using SendGrid 
+  - http://nanceskitchen.com/2010/02/21/accept-incoming-emails-into-a-heroku-app-using-sendgrid/
+  - inbound parse hooks -- http://sendgrid.com/docs/API_Reference/Webhooks/parse.html
 
 Reference Services
 ------------------
