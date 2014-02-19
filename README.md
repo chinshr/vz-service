@@ -40,9 +40,11 @@ Development Resources
   - jplayer.org
   - audio.js -- http://kolber.github.io/audiojs/
 * Accept Incoming Emails into a Heroku App Using SendGrid 
-  - http://nanceskitchen.com/2010/02/21/accept-incoming-emails-into-a-heroku-app-using-sendgrid/
+  - ruby processor -- http://nanceskitchen.com/2010/02/21/accept-incoming-emails-into-a-heroku-app-using-sendgrid/
   - inbound parse hooks -- http://sendgrid.com/docs/API_Reference/Webhooks/parse.html
-
+  - downloading attachments -- http://www.sitepoint.com/handle-incoming-email-with-sendgrid/
+  - reading attachments with read in ruby -- http://stackoverflow.com/questions/11117698/receiving-emails-with-attachments-from-sendgrid-in-rails-3-2-x
+  
 Reference Services
 ------------------
 
@@ -51,12 +53,29 @@ Reference Services
 * Oyez.org 
   - http://www.oyez.org/
   - http://www.oyez.org/cases/2000-2009/2009/2009_132ORIG 
+* Nuance has a voice to text service -- http://www.nuance.com/for-business/mobile-solutions/voice-to-text-services/index.htm
+  - contact: Bill Sheppard, bill.sheppard@nuance.com, 408.242.8177
   
-Home Page Text
---------------
+Home Page
+---------
+
+Images:
+
+* Home hero shot -- http://www.flickr.com/photos/bkhl/5670222339/
+
+* Upload Audio -- http://www.flickr.com/photos/stevegibbs/7709749172
+
+* Transcribe -- 
+
+* Share -- http://www.flickr.com/photos/royprasad/4714980030
+
+* Icon
+  - http://www.flickr.com/photos/36218298
+  - http://www.flickr.com/photos/82038674
 
 ++++++++++
 Sería muy parecido, con este texto al inicio:
+
 Por un mayor acceso a la información, por más transparencia
 Comparte los audios de tus grabaciones periodísticas
 

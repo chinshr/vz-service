@@ -16,3 +16,8 @@
 .content {
   padding-top: 65px;
 }
+
+.navbar-brand {
+  background: transparent url(/assets/voyzes-logo.png) no-repeat;
+  width: 100px;
+}

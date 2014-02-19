@@ -1,3 +1,196 @@
-// Place all the styles related to the web/pages controller here.
-// They will automatically be included in application.css.
-// You can use Sass (SCSS) here: http://sass-lang.com/
+.pages.index {
+  background-color: #f8f8f8;
+
+  .container {
+    padding: 0;
+  }
+
+  .content {
+    padding-top: 50px;
+  }
+  
+  #home-hero {
+    overflow: hidden;
+    height: 463px;
+  }
+  
+  .hero {
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 360px;
+    position: relative;
+    text-align: center;
+    width: 100%;
+    
+    .hero-wall-bg {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-repeat: repeat-x;
+      background-color: #f8f8f8;
+/*      
+      animation: bgmotion 4s;
+      animation-fill-mode: forwards;
+      transition-delay: 2s;
+      -webkit-animation: bgmotion 4s;
+      -webkit-animation-fill-mode: forwards;
+      -webkit-filter: blur(4px);
+      -webkit-transition-delay: 2s;
+      -moz-animation: bgmotion 4s;
+      -moz-animation-fill-mode: forwards;
+      -moz-filter: blur(4px);
+      -moz-transition-delay: 2s;
+      -webkit-transition: opacity .75s ease-in-out;
+      -webkit-transition-delay: .25s;
+      -moz-transition: opacity .75s ease-in-out .25s;
+      -o-transition: opacity .75s ease-in-out .25s;
+      transition: opacity .75s ease-in-out .25s;
+*/    
+    }
+
+    .hero-bg {
+      height: 100%;
+      position: absolute;
+      width: 1382px;
+      max-width: 100%;
+      max-height: 600px;
+      margin: auto;
+      left: 0;
+      right: 0;
+      background-position: center;
+      background-size: auto;
+      background-repeat: no-repeat;
+      background-image: url(/assets/home-hero-bg.jpg);
+/*    
+      animation: bgmotion 4s;
+      animation-fill-mode: forwards;
+      transition-delay: 2s;
+      -webkit-animation: bgmotion 4s;
+      -webkit-animation-fill-mode: forwards;
+      -webkit-filter: blur(0px);
+      -webkit-transition-delay: 2s;
+      -moz-animation: bgmotion 4s;
+      -moz-animation-fill-mode: forwards;
+      -moz-filter: blur(4px);
+      -moz-transition-delay: 2s;
+      -webkit-transition: opacity .75s ease-in-out;
+      -webkit-transition-delay: .25s;
+      -moz-transition: opacity .75s ease-in-out .25s;
+      -o-transition: opacity .75s ease-in-out .25s;
+      transition: opacity .75s ease-in-out .25s;
+*/
+    }
+
+    #home-title {
+      position: relative;
+      width: 500px;
+      margin: 170px 0 0 10px;
+      text-align: left;
+      
+      h1 {
+        color: #444;
+        xcolor: #A73E9A;
+        margin: 20px 0 14px 0;
+        font-family: 'Open Sans', sans-serif;
+        font-size: 62px;
+        font-weight: 300;
+        line-height: 48px;
+      }
+
+      p {
+        xcolor: #A73E9A;
+        margin-bottom: 8px !important;
+        xpadding: 0 !important;
+        line-height: 1.45em;
+        font-size: 18px;
+      }
+    }
+  }
+  
+  .announcement {
+    margin: 30px auto;
+    
+    .upload-audio {
+      background-image: url(/assets/home-upload-audio.jpg);
+    }
+
+    .transcribe {
+      background-image: url(/assets/home-transcribe.jpg);
+    }
+
+    .edit-share {
+      background-image: url(/assets/home-edit-share.jpg);
+    }
+
+    a {
+      color: #fff;
+      text-decoration: none;
+      font-size: 22px;
+      text-shadow: 0 1px 1px rgba(0,0,0,.7);
+    }
+    
+    .home-card {
+      margin-top: 0;
+      margin-bottom: 0;
+      -webkit-border-radius: 3px;
+      -moz-border-radius: 3px;
+      -ms-border-radius: 3px;
+      -o-border-radius: 3px;
+      border-radius: 3px;
+      background-position: center 0;
+      background-repeat: no-repeat;
+      background-size: cover;
+      height: 157px;
+      position: relative;
+      text-align: center;
+      display: inline-block;
+      width: 100%;
+      
+      .card-details {
+        bottom: 0;
+        height: 52px;
+        position: absolute;
+        width: 100%;
+        display: table;
+        border-bottom: 5px solid transparent;
+        -webkit-transition: all .2s ease-out;
+        -moz-transition: all .2s ease-out;
+        -o-transition: all .2s ease-out;
+        transition: all .2s ease-out;
+        background: rgba(0,0,0,.5);
+      }
+      
+      .card-arrow {
+        -webkit-transition: all .25s;
+        -moz-transition: all .25s;
+        -o-transition: all .25s;
+        transition: all .25s;
+        background-repeat: no-repeat;
+        width: 12px;
+        height: 14px;
+        display: inline-block;
+        vertical-align: middle;
+        font-size: 12px;
+      }
+
+      .card-details a {
+        display: table-cell;
+        vertical-align: middle;
+      }
+    }
+    
+    .home-card:hover {
+      .card-details {
+        height:57.33333px;
+        border-bottom: 5px solid #3369e8;
+      }
+      
+      .card-arrow {
+        margin-left:4px;
+        width:8px
+      }
+    }
+  }
+}
+
