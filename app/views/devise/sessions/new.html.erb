@@ -1,15 +1,12 @@
 <% content_for :header do %>
   <%= render "shared/web/devise_errors" %>
 <% end %>
+<a class="signup-brand" href="/">home</a>
 <%= form_for(resource, :as => resource_name, :url => session_path(resource_name), 
     :html => {:class => "form-signin well"}) do |f| %>
-  <h1><a class="signup-brand" href="#">&nbsp;</a></h1>
-  
-<!--
   <h2 class="form-signin-heading">Please sign in</h2>
--->
 
-  <%= f.email_field :email, :autofocus => true, :class => "form-control first", :placeholder => "Email address", :autofocus => true %>
+  <%= f.email_field :email, :autofocus => "autofocus", :autocapitalize => "off", :autocomplete => "off", :autocorrect => "off", :spellcheck => false, :class => "form-control first", :placeholder => "Email address" %>
   <%= f.password_field :password, :class => "form-control last", :placeholder => "Password" %>
 
   <% if devise_mapping.rememberable? -%>

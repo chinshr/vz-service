@@ -24,7 +24,8 @@
 
 /* Devise */
 
-body.devise.sessions, body.devise.registrations {
+body.devise.sessions, body.devise.registrations, body.devise.confirmations, 
+body.confirmations, body.devise.passwords {
   padding-top: 40px;
   padding-bottom: 40px;
   background-color: #fff;
@@ -39,25 +40,32 @@ body.devise.sessions, body.devise.registrations {
     width: 100%;
   }
   
+  .signup-brand, .signin-brand {
+    width: 100px;
+    height: 45px;
+    text-indent: -119988px;
+    overflow: hidden;
+    text-align: left;
+    background-image: url(/assets/voyzes-logo.png);
+    background-repeat: no-repeat;
+    background-position: 0 0;
+    display: block;
+    margin: 0 auto;
+    margin-bottom: 20px;
+  }
+  
   .form-signin, .form-signup {
-    max-width: 350px;
+    max-width: 360px;
     padding: 35px;
     margin: 0 auto;
     
-    .signup-brand, .signin-brand {
-      background: transparent url(/assets/voyzes-logo.png) no-repeat;
-      width: 100px;
-      height: 145px;
-    }
-
-    h1 {
-      margin: 0 0 10px 0;
-    }
-    
     h2 {
-      font-size: 16px;
+      font-size: 20px;
+      margin-top: 0;
       margin-bottom: 15px;
       line-height: 1.45em;
+      font-weight: bold;
+      color: #444;
     }
     
     .checkbox {

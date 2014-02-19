@@ -44,6 +44,7 @@ Development Resources
   - inbound parse hooks -- http://sendgrid.com/docs/API_Reference/Webhooks/parse.html
   - downloading attachments -- http://www.sitepoint.com/handle-incoming-email-with-sendgrid/
   - reading attachments with read in ruby -- http://stackoverflow.com/questions/11117698/receiving-emails-with-attachments-from-sendgrid-in-rails-3-2-x
+* Capturing Audio&Video HTML5 -- http://www.html5rocks.com/en/tutorials/getusermedia/intro/
   
 Reference Services
 ------------------

@@ -2,9 +2,10 @@
 <% content_for :header do %>
   <%= render "shared/web/devise_errors" %>
 <% end %>
+<a class="signup-brand" href="/">home</a>
 <%= form_for(resource, :as => resource_name, :url => user_registration_path(resource), 
     :html => {:class => "form-signup well"}) do |f| %>
-  <h2>Sign up. All we need is your email address.</h2>
+  <h2>Sign up here. All we need is your email address.</h2>
 
   <%= f.email_field :email, :autofocus => true, :class => "form-control first", :placeholder => "Email address" %>
 
