@@ -3,7 +3,7 @@ require "sidekiq/web"
 Voyzes::Application.routes.draw do
   devise_for :admin_users, ActiveAdmin::Devise.config
   ActiveAdmin.routes(self)
-  devise_for :users
+  devise_for :users, :controllers => {:confirmations => 'confirmations'}
   mount Sidekiq::Web, at: "/sidekiq"
 
   root 'web/pages#index'

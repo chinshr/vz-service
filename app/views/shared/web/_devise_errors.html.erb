@@ -1,0 +1,21 @@
+<% unless resource.errors.empty? %>
+  <%
+    messages = resource.errors.full_messages.map { |msg| content_tag(:li, msg) }.join
+    sentence = I18n.t("errors.messages.not_saved",
+      :count    => resource.errors.count,
+      :resource => resource.class.model_name.human.downcase)
+  %>
+  <div class="container content">
+  <div class="col-md-12">
+    <div class="alert alert-danger">
+      <button type="button" class="close" data-dismiss="alert">×</button>
+      <h2><%= sentence.html_safe %></h2>
+      <ul>
+      <%= messages.html_safe %>
+      </ul>
+    </div>
+  </div>
+  </div>
+<% else %>
+<i></i>
+<% end %>

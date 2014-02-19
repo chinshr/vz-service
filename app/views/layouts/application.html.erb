@@ -41,51 +41,14 @@
   <%= favicon_link_tag 'favicon.ico', :rel => 'shortcut icon' %>
 </head>
 <body class="<%= dom_controller_class %> <%= dom_controller_action_class %>">
-  <div class="navbar navbar-fixed-top header" role="navigation">
-    <div class="col-md-12 header-container">
-      <div class="navbar-header">
-        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="icon-bar">A</span>
-          <span class="icon-bar">B</span>
-          <span class="icon-bar">C</span>
-        </button>
-        <a class="navbar-brand" href="/">&nbsp;</a>
-      </div>
-      <div class="navbar-collapse collapse">
-        <!-- search-input -->
-        <form class="navbar-form pull-left">
-          <div class="input-group" style="max-width:470px;">
-            <input type="text" class="form-control" placeholder="Search" name="srch-term" id="srch-term">
-            <div class="input-group-btn">
-              <button class="btn btn-default btn-primary" type="submit"><i class="glyphicon glyphicon-search"></i></button>
-            </div>
-          </div>
-        </form>
-        <!--/.search-input -->
-        <ul class="nav navbar-nav navbar-right">
-          <li>
-            <% if current_user %>
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-user"></i></a>
-            <ul class="dropdown-menu">
-              <li><a href="#"><span class="badge pull-right">40</span>Link</a></li>
-              <li><a href="#"><span class="badge pull-right">2</span>Link</a></li>
-              <li><a href="#"><span class="badge pull-right">0</span>Link</a></li>
-              <li><a href="#"><span class="label label-info pull-right">1</span>Link</a></li>
-              <li><a href="#"><span class="badge pull-right">13</span>Link</a></li>
-            </ul>
-            <% end %>
-          </li>
-        </ul>
-      </div><!--/.navbar-collapse -->
-    </div>
-  </div>
-
+  <%= render 'layouts/header' %>
+  
   <div class="container content">
+    <%= render 'layouts/flash', :flash => flash %>
+    
     <%= yield %>
     
-    <hr class="divider">
-    <%= render "shared/web/footer" %>
+    <%= render "layouts/footer" %>
   </div>
 
 <!-- JavaScripts

@@ -27,6 +27,11 @@ footer {
   font-size: 12px;
 }
 
+h1, h2, h3, h4, h5, input { 
+  font-family: 'Open Sans', Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
 .navbar-default {
   background-color: #f4f4f4;
   margin-top:50px;
