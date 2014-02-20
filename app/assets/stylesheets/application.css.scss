@@ -86,6 +86,18 @@ body.confirmations, body.devise.passwords {
       -moz-box-sizing: border-box;
       box-sizing: border-box;
     }
+    
+    .form-control.first {
+      margin-bottom: -1px;
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+
+    .form-control.last {
+      margin-bottom: 10px;
+      border-top-left-radius: 0;
+      border-top-right-radius: 0;
+    }
 
     .form-control:focus {
       z-index: 2;
@@ -96,7 +108,7 @@ body.confirmations, body.devise.passwords {
       font-size: 14px;
     }
 
-    input[type="text"] {
+/*    input[type="text"] {
       margin-bottom: -1px;
       border-bottom-left-radius: 0;
       border-bottom-right-radius: 0;
@@ -107,6 +119,7 @@ body.confirmations, body.devise.passwords {
       border-top-left-radius: 0;
       border-top-right-radius: 0;
     }
+*/  
   }
 }
 

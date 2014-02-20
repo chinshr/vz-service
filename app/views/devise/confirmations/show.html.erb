@@ -5,11 +5,12 @@
 <a class="signup-brand" href="/">home</a>
 <%= form_for(resource, :as => resource_name, :url => confirmation_path(resource_name), 
     :html => {:method => :put, :class => "form-signup well"}) do |f| %>
-  <h2>You're almost done! Now, create a password to securely access your account.</h2>
-
+  <h2>You're almost done!</h2>
+  <%= f.text_field :first_name, :class => "form-control first", :placeholder => "First name" %>
+  <%= f.text_field :last_name, :class => "form-control", :placeholder => "Last name" %>
+  
   <%= f.password_field :password, :class => "form-control first", :placeholder => "Password", :autocomplete => "off" %>
   <%= f.password_field :password_confirmation, :class => "form-control last", :placeholder => "Password Confirmation", :autocomplete => "off" %>
-  <%#= f.hidden_field :confirmation_token, :as => :hidden %>
   <%= hidden_field_tag :confirmation_token, @confirmation_token %>
 
   <button class="btn btn-lg btn-primary btn-block" type="submit">Confirm</button>

@@ -1,4 +1,11 @@
 <%# Signup %>
+<% content_for :javascript_includes do %>
+  <%= javascript_tag do %>
+  $(function() {
+    $("form input[name='user[time_zone]']").val(jstz.determine_timezone().name());
+  });
+  <% end %>
+<% end %>
 <% content_for :header do %>
   <%= render "shared/web/devise_errors" %>
 <% end %>
@@ -7,12 +14,8 @@
     :html => {:class => "form-signup well"}) do |f| %>
   <h2>Sign up here. All we need is your email address.</h2>
 
-  <div class="clearfix">
-    <%= f.label :email %>
-    <div class="input">
-      <%= f.email_field :email, :autofocus => true, :class => "form-control first", :placeholder => "Email address" %>
-    </div>
-  </div>
+  <%= f.email_field :email, :autofocus => "autofocus", :autocapitalize => "off", :autocomplete => "off", :autocorrect => "off", :spellcheck => false, :class => "form-control first last", :placeholder => "Email address" %>
+  <%= f.hidden_field :time_zone %>
 
   <button class="btn btn-lg btn-primary btn-block" type="submit">Sign up</button>
 

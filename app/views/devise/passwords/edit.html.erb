@@ -1,16 +1,21 @@
-<h2>Change your password</h2>
+<%#  Change password %>
+<% content_for :header do %>
+  <%= render "shared/web/devise_errors" %>
+<% end %>
+<a class="signup-brand" href="/">home</a>
 
-<%= form_for(resource, :as => resource_name, :url => password_path(resource_name), :html => { :method => :put }) do |f| %>
-  <%= devise_error_messages! %>
+
+<%= form_for(resource, :as => resource_name, :url => password_path(resource_name), 
+  :html => {:method => :put, :class => "form-signup well"}) do |f| %>
+  <h2>Change your password.</h2>
+
   <%= f.hidden_field :reset_password_token %>
 
-  <div><%= f.label :password, "New password" %><br />
-  <%= f.password_field :password, :autofocus => true %></div>
+  <%= f.password_field :password, :class => "form-control first", :placeholder => "Password", :autocomplete => "off" %>
+  <%= f.password_field :password_confirmation, :class => "form-control last", :placeholder => "Password Confirmation", :autocomplete => "off" %>
 
-  <div><%= f.label :password_confirmation, "Confirm new password" %><br />
-  <%= f.password_field :password_confirmation %></div>
+  <button class="btn btn-lg btn-primary btn-block" type="submit">Change password</button>
 
-  <div><%= f.submit "Change my password" %></div>
+  <%= render "devise/shared/links" %>
 <% end %>
 
-<%= render "devise/shared/links" %>

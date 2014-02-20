@@ -3,20 +3,33 @@ class User < ActiveRecord::Base
   # :lockable, :timeoutable and :omniauthable
   devise :database_authenticatable, :registerable,
     :recoverable, :rememberable, :trackable, :validatable, 
-    :confirmable#, :token_authenticatable
+    :confirmable
 
-=begin
+  geocoded_by :current_sign_in_ip, :latitude  => :lat, :longitude => :lng
+  reverse_geocoded_by :lat, :lng do |record, results|
+    if geo = results.first
+      record.city         = geo.city
+      record.address      = geo.address
+      record.postal_code  = geo.postal_code
+      record.region_name  = geo.state
+      record.region_code  = geo.state_code
+      record.country_code = geo.country_code
+    end
+  end
+  
+  validates :first_name, presence: true, :if => :confirmed_or_confirmation_validation?
+  validates :last_name, presence: true, :if => :confirmed_or_confirmation_validation?
+  
+  scope :confirmed, lambda {where("users.confirmed_at IS NOT NULL")}
+  
+  after_validation :reverse_geocode, :if => :has_coordinates?
+  after_validation :geocode, :if => :has_ip_address?, :unless => :has_coordinates?
+
   def password_required?
+    # previous = !persisted? || !password.nil? || !password_confirmation.nil?
     super if confirmed?
+    confirmation_validation?
   end
-
-  def password_match?
-    self.errors[:password] << "can't be blank" if password.blank?
-    self.errors[:password_confirmation] << "can't be blank" if password_confirmation.blank?
-    self.errors[:password_confirmation] << "does not match password" if password != password_confirmation
-    password == password_confirmation && !password.blank?
-  end
-=end
 
   def only_if_unconfirmed
     # unless_confirmed {yield}
@@ -27,8 +40,26 @@ class User < ActiveRecord::Base
     encrypted_password.blank?
   end
   
-  def attempt_set_password(params)
-    update_attributes({:password => params[:password], :password_confirmation => params[:password_confirmation]})
+  def confirm_set_with(params)
+    @confirmation_validation = true
+    update_attributes(params)
+  end
+
+  def confirmation_validation?
+    !!@confirmation_validation
   end
   
+  def confirmed_or_confirmation_validation?
+    confirmed? || confirmation_validation?
+  end
+
+  protected
+
+  def has_coordinates?
+    lat.present? && lng.present?
+  end
+
+  def has_ip_address?
+    current_sign_in_ip.present?
+  end
 end

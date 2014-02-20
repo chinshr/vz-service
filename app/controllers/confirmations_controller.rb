@@ -8,7 +8,7 @@ class ConfirmationsController < Devise::ConfirmationsController
   def update
     with_unconfirmed_confirmable do
       if @confirmable.has_no_password?
-        @confirmable.attempt_set_password(params[:user])
+        @confirmable.confirm_set_with user_params
 
         if @confirmable.valid?
           do_confirm
@@ -63,5 +63,9 @@ class ConfirmationsController < Devise::ConfirmationsController
     @confirmable.confirm!
     set_flash_message :notice, :confirmed
     sign_in_and_redirect(resource_name, @confirmable)
+  end
+  
+  def user_params
+    params.require(:user).permit(:password, :password_confirmation, :first_name, :last_name)
   end
 end

@@ -16,6 +16,7 @@
 //= require jquery.ui.widget
 //= require rails.validations
 //= require rails.validations.bootstrap
+//= require detect_timezone
 //= require raptor
 //= require underscore
 //= require backbone

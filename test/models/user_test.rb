@@ -1,7 +1,8 @@
 require 'test_helper'
 
 class UserTest < ActiveSupport::TestCase
-  # test "the truth" do
-  #   assert true
-  # end
+  context "validations" do
+    should validate_presence_of :first_name
+    should validate_presence_of :last_name
+  end
 end
