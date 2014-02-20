@@ -12,7 +12,11 @@
  *= require theme
  *= require_tree ./web
  */
- 
+
+.navbar-toggle {
+  font-family: 'Glyphicons Halflings' !important;
+} 
+
 .content {
   padding-top: 65px;
 }

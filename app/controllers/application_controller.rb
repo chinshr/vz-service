@@ -8,7 +8,7 @@ class ApplicationController < ActionController::Base
   protected
   
   def session_required
-    unless !!current_session
+    if session && session[:session_id].present? && !current_session
       self.current_session = Session.where(uid: session[:session_id]).first_or_create! do |session|
         session.ip         = request.ip
         session.user_agent = request.user_agent

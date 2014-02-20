@@ -4,6 +4,7 @@ ActiveAdmin.register Session do
     column :ip
     column :user_agent
     column :created_at
+    column :updated_at
     # default_actions
     column do |resource|
       links = ""
