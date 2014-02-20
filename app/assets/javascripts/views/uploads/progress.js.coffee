@@ -42,7 +42,7 @@ class Voyzes.Views.UploadsProgress extends Backbone.View
     @$("select[name='upload[locale]']").val(@model.attributes.locale)
     @$("select[name='upload[privacy]']").val(@model.attributes.privacy)
     
-    @$('form input, form textarea, form button').removeAttr("disabled")
+    @$('form, form input, form textarea, form button').removeAttr("disabled")
     @$(".form-fields").show()
     
     @$('.message').html(@model.message())
