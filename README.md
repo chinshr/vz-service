@@ -45,6 +45,8 @@ Development Resources
   - downloading attachments -- http://www.sitepoint.com/handle-incoming-email-with-sendgrid/
   - reading attachments with read in ruby -- http://stackoverflow.com/questions/11117698/receiving-emails-with-attachments-from-sendgrid-in-rails-3-2-x
 * Capturing Audio&Video HTML5 -- http://www.html5rocks.com/en/tutorials/getusermedia/intro/
+* Client side validation, simple form, rails 4 -- http://www.ddarrensmith.com/blog/2012/05/17/ruby-on-rails-client-side-validation-with-validation-helpers-and-twitter-bootstrap/
+
   
 Reference Services
 ------------------

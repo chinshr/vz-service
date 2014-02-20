@@ -1,11 +1,20 @@
 require "sidekiq/web"
 
 Voyzes::Application.routes.draw do
+  # admin
   devise_for :admin_users, ActiveAdmin::Devise.config
   ActiveAdmin.routes(self)
+
+  # user devise
   devise_for :users, :controllers => {:confirmations => 'confirmations'}
+  devise_scope :user do
+    put "/users/confirmation" => "confirmations#update", :as => :update_user_confirmation
+  end
+  
+  # sidekick
   mount Sidekiq::Web, at: "/sidekiq"
 
+  # site
   root 'web/pages#index'
   
   scope :module => "web", :as => "web" do

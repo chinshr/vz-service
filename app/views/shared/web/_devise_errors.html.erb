@@ -1,4 +1,4 @@
-<% unless resource.errors.empty? %>
+<% if resource && !resource.errors.empty? %>
   <%
     messages = resource.errors.full_messages.map { |msg| content_tag(:li, msg) }.join
     sentence = I18n.t("errors.messages.not_saved",

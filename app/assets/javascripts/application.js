@@ -14,6 +14,8 @@
 //= require jquery_ujs
 //= require jquery.ui.core
 //= require jquery.ui.widget
+//= require rails.validations
+//= require rails.validations.bootstrap
 //= require raptor
 //= require underscore
 //= require backbone

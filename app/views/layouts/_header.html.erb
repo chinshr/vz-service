@@ -26,11 +26,8 @@
           <% if current_user %>
           <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-user"></i></a>
           <ul class="dropdown-menu">
-            <li><a href="#"><span class="badge pull-right">40</span>Link</a></li>
-            <li><a href="#"><span class="badge pull-right">2</span>Link</a></li>
-            <li><a href="#"><span class="badge pull-right">0</span>Link</a></li>
-            <li><a href="#"><span class="label label-info pull-right">1</span>Link</a></li>
-            <li><a href="#"><span class="badge pull-right">13</span>Link</a></li>
+            <li><a href="<%= edit_user_registration_path %>">Account</a></li>
+            <li><%= link_to 'Sign out', destroy_user_session_path, :method => :delete %></li>
           </ul>
           <% end %>
         </li>
