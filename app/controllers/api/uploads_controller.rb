@@ -5,7 +5,7 @@ class Api::UploadsController < Api::ApplicationController
   # [POST] /api/uploads.json
   def create
     @upload = Upload.new(create_params.permit(:type)) do |u|
-      u.session_id = current_session.id
+      u.session_id = current_session.id if current_session
     end
     @upload.attributes = create_params.except(:type)
     @upload.save
@@ -14,7 +14,7 @@ class Api::UploadsController < Api::ApplicationController
 
   # [GET] /api/uploads.json
   def index
-    @uploads = current_session.uploads.any_of_states(:foobar)
+    @uploads = current_session.uploads.any_of_states(:foobar) if current_session
     respond_with @uploads
   end
 
