@@ -1,5 +1,3 @@
 class Message::Inbound < Message
-  belongs_to :user
-  
-  validates :user, presence: true
+  validates :from, presence: true
 end

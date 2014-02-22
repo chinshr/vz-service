@@ -38,6 +38,10 @@ class Upload < ActiveRecord::Base
     end  
     alias_method_chain :new, :cast
     
+    def generate_object_name
+      Model::Uid.random_string(10, "a-z, 0-9")
+    end
+    
     private 
     
     # E.g. "audio" => Upload::Audio

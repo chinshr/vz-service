@@ -33,4 +33,13 @@ FactoryGirl.define do
     end
   end
   
+  factory :message do
+    from "sender@example.com"
+    to "receiver@example.com"
+  end
+
+  factory :inbound_message, :class => "Message::Inbound", :parent => :message do
+    to "inbound@example.com"
+  end
+  
 end

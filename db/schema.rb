@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140221210735) do
+ActiveRecord::Schema.define(version: 20140222191213) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -48,6 +48,15 @@ ActiveRecord::Schema.define(version: 20140221210735) do
 
   add_index "admin_users", ["email"], name: "index_admin_users_on_email", unique: true, using: :btree
   add_index "admin_users", ["reset_password_token"], name: "index_admin_users_on_reset_password_token", unique: true, using: :btree
+
+  create_table "attachings", force: true do |t|
+    t.integer  "message_id"
+    t.integer  "upload_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "attachings", ["message_id", "upload_id"], name: "index_attachings_on_message_id_and_upload_id", unique: true, using: :btree
 
   create_table "documents", force: true do |t|
     t.string   "title"
@@ -132,12 +141,12 @@ ActiveRecord::Schema.define(version: 20140221210735) do
     t.string   "type"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "user_id"
+    t.integer  "sender_id"
   end
 
+  add_index "messages", ["sender_id"], name: "index_messages_on_sender_id", using: :btree
   add_index "messages", ["type"], name: "index_messages_on_type", using: :btree
   add_index "messages", ["uid"], name: "index_messages_on_uid", using: :btree
-  add_index "messages", ["user_id"], name: "index_messages_on_user_id", using: :btree
 
   create_table "sessions", force: true do |t|
     t.string   "uid"

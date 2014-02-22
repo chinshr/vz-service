@@ -15,4 +15,8 @@ module Helper::Mailer
     "#{name} <#{email_address}>"
   end
 
+  def unprettify_multiples(emails)
+    emails && emails.match(/\b[A-Z0-9._%+-]+@(?:[A-Z0-9-]+\.)+[A-Z]+\b/i)).to_a
+  end
+
 end

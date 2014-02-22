@@ -40,4 +40,8 @@ class UploadTest < ActiveSupport::TestCase
     upload = FactoryGirl.create(:upload_audio, :s3_url => "http://s3.amazonaws.com/dropbox/61glI7mwmN")
     assert_equal "61glI7mwmN", upload.s3_key
   end
+  
+  should "generate object name" do
+    assert_equal 10, Upload.generate_object_name.length
+  end
 end

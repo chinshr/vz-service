@@ -37,4 +37,6 @@ module Model::Uid
       begin; self.uid = self.class.random_string(self.class::UID_LENGTH); end while self.class.where(:uid => uid).present?
     end
   end
+  
+  extend ClassMethods
 end
