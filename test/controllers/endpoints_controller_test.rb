@@ -28,6 +28,8 @@ class EndpointsControllerTest < ActionController::TestCase
     
     assert_equal "Confirmation instructions", ActionMailer::Base.deliveries[0].subject
     assert_equal "Congrats, we are processing your audio files.", ActionMailer::Base.deliveries[1].subject
+    assert_equal User.last, Message.last.sender
+    assert_equal User.last, Upload.last.user
   end
 
   should "not process message without any attachment and not send any notifications" do
