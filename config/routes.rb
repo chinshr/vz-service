@@ -28,7 +28,7 @@ Voyzes::Application.routes.draw do
     resources :uploads
   end
   
-  post "listeners/receive_email"    => "listener#receive_email"
+  post "endpoints/receive_email" => "endpoints#receive_email"
   
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'

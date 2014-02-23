@@ -86,5 +86,15 @@ class Upload::AudioTest < ActiveSupport::TestCase
     assert upload.ingest.ingestable
     assert_equal upload.ingest.title, upload.humanized_file_name
   end
+  
+  should "have user" do
+    upload = Upload.create(type: "audio", file_name: "audio.m4a", file_type: "audio/x-m4a", 
+      file_size: 12345, s3_url: "http://s3.amazonaws.com/dropbox/audio.m4a")
+    user = FactoryGirl.create(:user)
+    upload.user = user
+    assert_equal true, upload.save
+    upload = Upload.find_by_id(upload.id)
+    assert_equal user, upload.user
+  end
 
 end

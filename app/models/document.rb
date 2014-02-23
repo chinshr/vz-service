@@ -1,7 +1,8 @@
 class Document < ActiveRecord::Base
   SLUG_LENGTH = 6
   PRIVACY_SETTINGS = {:public => 0, :private => 1, :unlisted => 2}
-  
+
+  belongs_to :user
   has_many :ingests, as: :ingestable
 
   validates :slug, presence: true, uniqueness: {case_sensitive: false}

@@ -28,5 +28,5 @@
 #
 def with(*evaluated_objects, &block)
   yield(*evaluated_objects) if evaluated_objects.all? {|o| o}
-  evaluated_objects
+  evaluated_objects.size == 1 ? evaluated_objects.first : evaluated_objects
 end

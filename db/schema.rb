@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140222191213) do
+ActiveRecord::Schema.define(version: 20140222232756) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -67,6 +67,7 @@ ActiveRecord::Schema.define(version: 20140222191213) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.text     "content"
+    t.integer  "user_id"
   end
 
   add_index "documents", ["created_at"], name: "index_documents_on_created_at", using: :btree
@@ -75,6 +76,7 @@ ActiveRecord::Schema.define(version: 20140222191213) do
   add_index "documents", ["slug"], name: "index_documents_on_slug", unique: true, using: :btree
   add_index "documents", ["title"], name: "index_documents_on_title", using: :btree
   add_index "documents", ["updated_at"], name: "index_documents_on_updated_at", using: :btree
+  add_index "documents", ["user_id"], name: "index_documents_on_user_id", using: :btree
 
   create_table "ingest_audio_segments", force: true do |t|
     t.integer  "ingest_id"
@@ -129,7 +131,7 @@ ActiveRecord::Schema.define(version: 20140222191213) do
   add_index "ingests", ["upload_id"], name: "index_ingests_on_upload_id", using: :btree
 
   create_table "messages", force: true do |t|
-    t.string   "uid",         null: false
+    t.string   "uid",        null: false
     t.string   "from"
     t.string   "to"
     t.string   "cc"
@@ -137,7 +139,6 @@ ActiveRecord::Schema.define(version: 20140222191213) do
     t.string   "subject"
     t.text     "html"
     t.text     "text"
-    t.text     "attachments"
     t.string   "type"
     t.datetime "created_at"
     t.datetime "updated_at"

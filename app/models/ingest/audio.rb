@@ -12,6 +12,9 @@ class Ingest::Audio < ::Ingest
 
   delegate :privacy, to: :ingestable
   delegate :privacy=, to: :ingestable
+
+  delegate :user, to: :ingestable
+  delegate :user=, to: :ingestable
   
   delegate :slug, to: :ingestable
 

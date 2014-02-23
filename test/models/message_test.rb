@@ -24,17 +24,38 @@ class MessageTest < ActiveSupport::TestCase
   
   should "attach upload as attachment" do
     message = FactoryGirl.create(:message)
-    upload  = FactoryGirl.create(:upload_audio)
-    assert_difference "Attaching.count", 1 do
-      message.attachments << upload
+    upload  = FactoryGirl.build(:upload_audio)
+    assert_difference "Upload.count", 1 do
+      assert_difference "Attaching.count", 1 do
+        message.attachments << upload
+      end
     end
     assert_equal upload, message.attachments.first
   end
   
   should "have valid attachments" do
     message = FactoryGirl.create(:message)
-    message.attachments << FactoryGirl.create(:upload_audio)
-    assert_equal true, message.valid_attachments?
+    assert_difference "Upload.count", 1 do
+      assert_difference "Attaching.count", 1 do
+        message.attachments.build FactoryGirl.attributes_for(:upload_audio).merge(type: "audio")
+        assert_equal true, message.valid_attachments?
+        message.save!
+      end
+    end
   end
   
+  should "not have valid attachments" do
+    message = FactoryGirl.create(:message)
+    assert_difference "Upload.count", 1 do
+      assert_difference "Attaching.count", 1 do
+        message.attachments.build FactoryGirl.attributes_for(:upload_audio).merge(type: "audio")
+        assert_equal true, message.save
+        message.attachments.build FactoryGirl.attributes_for(:upload_audio).merge(type: "audio").merge(file_type: "mux/pux")
+        assert_equal false, message.valid_attachments?
+        assert_equal false, message.valid?
+        assert_equal ["Attachments is invalid"], message.errors.full_messages
+        assert_equal false, message.save
+      end
+    end
+  end
 end

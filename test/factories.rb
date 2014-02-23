@@ -42,4 +42,11 @@ FactoryGirl.define do
     to "inbound@example.com"
   end
   
+  factory :user do
+    sequence(:email) {|n| "test-#{n}@example.com"}
+    sequence(:first_name) {|n| "first-name-#{n}"}
+    sequence(:last_name) {|n| "last-name-#{n}"}
+    confirmed_at Time.now.utc - 1.day
+  end
+  
 end

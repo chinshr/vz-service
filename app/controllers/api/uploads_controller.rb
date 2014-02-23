@@ -1,6 +1,5 @@
 class Api::UploadsController < Api::ApplicationController
   before_filter :cors_allow_origin, :only => :signput
-  respond_to :json, :xml
   
   # [POST] /api/uploads.json
   def create

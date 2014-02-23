@@ -1,6 +1,4 @@
 class Upload::Audio < ::Upload
-  # include ActiveModel::Dirty
-
   delegate :title, to: :ingest, allow_nil: true
   delegate :title=, to: :ingest, allow_nil: true
   
@@ -12,6 +10,9 @@ class Upload::Audio < ::Upload
 
   delegate :privacy, to: :ingest, allow_nil: true
   delegate :privacy=, to: :ingest, allow_nil: true
+
+  delegate :user, to: :ingest, allow_nil: true
+  delegate :user=, to: :ingest, allow_nil: true
   
   delegate :status, to: :ingest
   delegate :slug, to: :ingest
