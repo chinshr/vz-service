@@ -57,4 +57,9 @@ class Ingest::Audio < ::Ingest
     Ingest::AudioWorker.perform_async(self.id)
   end
   
+  def enter_finished
+    super
+    Ingest::AudioMailer.finished_processing(self).deliver if user
+  end
+  
 end

@@ -141,6 +141,14 @@ class Ingest < ActiveRecord::Base
     self[:progress].round if self[:progress]
   end
   
+  def ingestable_url
+    "http://voyz.es/#{ingestable.slug}"
+  end
+
+  def edit_ingestable_url
+    "http://voyz.es/#{ingestable.slug}/edit"
+  end
+  
   protected
 
   def enter_starting; end

@@ -3,6 +3,7 @@ require 'test_helper'
 class Ingest::AudioTest < ActiveSupport::TestCase
   setup do
     Ingest::AudioWorker.jobs.clear
+    ActionMailer::Base.deliveries.clear
   end
   
   context "associations" do
@@ -82,4 +83,21 @@ class Ingest::AudioTest < ActiveSupport::TestCase
     Ingest::AudioWorker.jobs.clear
     assert_equal 1, ingest.iteration
   end
+  
+  should "finish process with user" do
+    ingest = FactoryGirl.create(:ingest_audio, :user => FactoryGirl.create(:user))
+    
+    ingest.start!  # inside model!
+    assert_equal :starting, ingest.state
+    
+    ingest.process!  # inside worker!
+    assert_equal :started, ingest.state
+
+    ingest.finish!  # inside worker!
+    assert_equal :finished, ingest.state
+    
+    assert_equal 1, ActionMailer::Base.deliveries.size
+    assert_equal "Finished, '#{ingest.upload.file_name}' has processed successfully.", ActionMailer::Base.deliveries[0].subject
+  end
+  
 end
