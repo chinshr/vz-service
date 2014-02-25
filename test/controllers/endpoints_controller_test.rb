@@ -33,7 +33,7 @@ class EndpointsControllerTest < ActionController::TestCase
     end
     
     assert_equal "Confirmation instructions", ActionMailer::Base.deliveries[0].subject
-    assert_equal "Congrats, we are processing your audio files.", ActionMailer::Base.deliveries[1].subject
+    assert_equal "We are working on your message.", ActionMailer::Base.deliveries[1].subject
     assert_equal User.last, Message.last.sender
     assert_equal User.last, Upload.last.user
   end
@@ -71,7 +71,7 @@ class EndpointsControllerTest < ActionController::TestCase
       end
     end
     
-    assert_equal "Sorry, your message could not be processed.", ActionMailer::Base.deliveries[0].subject
+    assert_equal "Sorry, your message cannot be processed.", ActionMailer::Base.deliveries[0].subject
   end
   
 end

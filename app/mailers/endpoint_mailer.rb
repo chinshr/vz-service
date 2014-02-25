@@ -3,11 +3,13 @@ class EndpointMailer < ActionMailer::Base
   default reply_to: "my@voyz.es"
   
   def invalid_message(message)
-    mail(to: message.sender.email, subject: "Sorry, your message could not be processed.")
+    @message = message
+    mail(to: message.sender.email, subject: "Sorry, your message cannot be processed.")
   end
 
   def valid_message(message)
-    mail(to: message.sender.email, subject: "Congrats, we are processing your audio files.")
+    @message = message
+    mail(to: message.sender.email, subject: "We are working on your message.")
   end
   
 end

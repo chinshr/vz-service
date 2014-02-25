@@ -1,3 +1,7 @@
-Thanks for your message, we have received your message and are processing it.
+Thanks for your message. We are processing your files:
 
-You will hear back from us shortly, once we are done with it.
+<% @message.attachments.each do |attachment| -%>
+  <%= "#{attachment.file_name} (#{attachment.file_type})" %>
+<% end -%>
+
+We will send you an update shortly when we are done.
