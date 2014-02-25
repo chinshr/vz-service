@@ -1,4 +1,4 @@
 class Message::Inbound < Message
   validates :from, presence: true
-  validates_associated :attachments
+  # validates_associated :attachments
 end

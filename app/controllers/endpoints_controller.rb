@@ -86,8 +86,6 @@ class EndpointsController < ApplicationController
     errors = ""
     errors += ("=" * 80) + "\n"
     errors += exception.message + "\n"
-    errors += " * @user: #{@user.errors.full_messages.join(', ')}\n" if @user && !@user.valid?
-    errors += " * @message: #{@message.errors.full_messages.join(', ')}\n" if @message && !@message.valid?
     errors += ("-" * 80) + "\n"
     errors += exception.backtrace.join("\n")
     errors += ("=" * 80) + "\n"
@@ -98,6 +96,9 @@ class EndpointsController < ApplicationController
     errors = ""
     errors += " * @user: #{@user.errors.full_messages.join(', ')}\n" if @user && !@user.valid?
     errors += " * @message: #{@message.errors.full_messages.join(', ')}\n" if @message && !@message.valid?
+    @message.attachments.each_with_index do |attachment, index|
+      errors += " * @attachment#{index + 1}: #{attachment.errors.full_messages.join(', ')}\n" if !attachment.valid?
+    end if @message && !@message.valid?
     Rails.logger.error errors unless errors.blank?
   end
   
