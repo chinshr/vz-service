@@ -78,7 +78,7 @@ class EndpointsController < ApplicationController
   
   def upload_file_to_s3_bucket(file_path, key = nil)
     s3 = AWS::S3.new
-    key = File.basename(file_path)
+    key = key || File.basename(file_path)
     s3.buckets[APP_CONFIG['S3_INBOUND_BUCKET']].objects[key].write(:file => file_path)
   end
 
