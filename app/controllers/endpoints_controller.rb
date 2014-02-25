@@ -13,16 +13,19 @@ class EndpointsController < ApplicationController
           message.sender = @user
         end
 
+        attachment_info = params["attachment-info"] ? JSON.parse(params["attachment-info"]) : {}
+        
         attachments_count.times do |index|
           attached_file = params["attachment#{index + 1}"]
-
+          attached_file_info =  attachment_info["attachment#{index + 1}"]
+          
           upload = with @message.attachments.build(:type => "audio") do |upload|
             upload.user        = @user
             upload.title       = @message.subject
             upload.description = @message.text
             upload.file_name   = attached_file.original_filename
-            upload.file_type   = attached_file.content_type
             upload.file_size   = attached_file.tempfile.size
+            upload.file_type   = attached_file_info["type"] || attached_file_info.content_type
             upload.locale      = @message.locale
             upload.privacy     = [:private]
           end
@@ -73,7 +76,10 @@ class EndpointsController < ApplicationController
   end
   
   def message_params
-    params.permit(:text, :html, :from, :to, :cc, :subject)
+    params.inject(ActionController::Parameters.new) do |result, pair|
+      result[pair.first] = pair.last.force_encoding('utf-8') if pair.last && pair.last.respond_to?(:force_encoding)
+      result
+    end.permit(:text, :html, :from, :to, :cc, :subject)
   end
   
   def upload_file_to_s3_bucket(file_path, key = nil)

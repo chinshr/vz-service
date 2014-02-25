@@ -12,8 +12,9 @@ class EndpointsControllerTest < ActionController::TestCase
     attachment1.content_type = "audio/x-m4a"  # re-assign, doesn't work otherwise!
     
     @params = {"dkim"=>"none", "envelope"=>{"to"=>["my@app.example.com"], "from"=>"raj@example.com"}, 
-      "subject"=>"Sample recording 1", "attachment-info"=>{"attachment1"=>{"filename"=>"sample.m4a","name"=>"sample.m4a","type"=>"audio/x-m4a"}}, 
-      "charsets"=>{"to"=>"UTF-8","subject"=>"UTF-8","from"=>"UTF-8"}, "SPF"=>"none", 
+      "subject"=>"Sample recording 1", 
+      "attachment-info"=>"{\"attachment1\":{\"filename\":\"sample.m4a\",\"name\":\"sample.m4a\",\"type\":\"audio/x-m4a\"}}",
+      "charsets"=>"{\"to\":\"UTF-8\",\"subject\":\"UTF-8\",\"from\":\"UTF-8\"}",
       "headers"=>"Received: by mx-006.sjc1.sendgrid.net with ...", 
       "to"=>"my@app.example.com", "from"=>"Juergen Fesslmeier <juergen@synctv.com>", "sender_ip"=>"199.36.142.181", 
       "attachment1"=>attachment1, "attachments"=>"1", "html" => "<i>Check this out!</i>"}
@@ -72,4 +73,5 @@ class EndpointsControllerTest < ActionController::TestCase
     
     assert_equal "Sorry, your message could not be processed.", ActionMailer::Base.deliveries[0].subject
   end
+  
 end
