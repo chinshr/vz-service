@@ -104,9 +104,14 @@ class IngestTest < ActiveSupport::TestCase
     assert_not_nil ingest.s3_key
   end
 
-  should "delegate to @upload#s3_url" do
+  should "utilize @ingest#s3_url or delegate to @upload#s3_url" do
     ingest = FactoryGirl.create(:ingest_audio)
     assert_not_nil ingest.s3_url
+    assert_equal ingest.upload.s3_url, ingest.s3_url
+    ingest.update_attribute(:s3_url, "http://s3.amazonaws.com/dropbox/changed.m4a")
+    ingest = Ingest.find(ingest.id)
+    assert_equal "http://s3.amazonaws.com/dropbox/changed.m4a", ingest.s3_url
+    assert_not_equal ingest.upload.s3_url, ingest.s3_url
   end
   
   should "set progress" do

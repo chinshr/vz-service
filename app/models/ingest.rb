@@ -102,7 +102,9 @@ class Ingest < ActiveRecord::Base
   end
   
   def s3_url
-    self[:s3_url] || upload ? upload.s3_url : nil
+    self[:s3_url] || begin
+      upload ? upload.s3_url : nil
+    end
   end
   
   def has_s3_url?
