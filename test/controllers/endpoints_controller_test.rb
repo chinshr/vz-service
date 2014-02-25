@@ -4,22 +4,27 @@ class EndpointsControllerTest < ActionController::TestCase
   setup do
     EndpointsController.any_instance.stubs(:upload_file_to_s3_bucket).returns(true)
     ActionMailer::Base.deliveries.clear
-  end
-
-  should "process message with attachments, signup user and send notifications" do
-    attachement1 = ActionDispatch::Http::UploadedFile.new({
+    attachment1 = ActionDispatch::Http::UploadedFile.new({
       :filename     => "sample.m4a",
       :content_type => "audio/x-m4a",
       :tempfile     => File.new("#{Rails.root}/test/fixtures/sample.m4a")
     })
-    attachement1.content_type = "audio/x-m4a"  # re-assign, doesn't work otherwise!
+    attachment1.content_type = "audio/x-m4a"  # re-assign, doesn't work otherwise!
+    
+    @params = {"dkim"=>"none", "envelope"=>{"to"=>["my@app.example.com"], "from"=>"raj@example.com"}, 
+      "subject"=>"Sample recording 1", "attachment-info"=>{"attachment1"=>{"filename"=>"sample.m4a","name"=>"sample.m4a","type"=>"audio/x-m4a"}}, 
+      "charsets"=>{"to"=>"UTF-8","subject"=>"UTF-8","from"=>"UTF-8"}, "SPF"=>"none", 
+      "headers"=>"Received: by mx-006.sjc1.sendgrid.net with ...", 
+      "to"=>"my@app.example.com", "from"=>"Juergen Fesslmeier <juergen@synctv.com>", "sender_ip"=>"199.36.142.181", 
+      "attachment1"=>attachment1, "attachments"=>"1", "html" => "<i>Check this out!</i>"}
+  end
 
+  should "process message with attachments, signup user and send notifications" do
     assert_difference "User.count", 1 do
       assert_difference "Message.count", 1 do
         assert_difference "Upload.count", 1 do
           assert_difference "ActionMailer::Base.deliveries.size", 2 do
-            post :receive_email, {"format" => "xml", "from" => "raj@example.com", "to" => "my@voyz.es", "subject" => "New recording", 
-              "html" => "<i>Check this out!</i>", "attachments" => "1", "attachment1" => attachement1}
+            post :receive_email, @params.merge({"format" => "xml"})
             assert_response :success
           end
         end

@@ -58,4 +58,12 @@ class MessageTest < ActiveSupport::TestCase
       end
     end
   end
+  
+  should "assign a sender as user" do
+    user = FactoryGirl.create(:user)
+    message = Message::Inbound.new(FactoryGirl.attributes_for(:message)) do |message|
+      message.sender = user
+    end
+    assert_equal user, message.sender
+  end
 end
