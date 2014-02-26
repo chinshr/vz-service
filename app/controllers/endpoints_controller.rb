@@ -7,14 +7,14 @@ class EndpointsController < ApplicationController
   def receive_email
     begin
       if (attachments_count = params["attachments"].to_i) && attachments_count > 0
-        @user = User.find_or_initialize_by(email: Helper::Mailer::unprettify(params["from"]))
+        attachment_info = params["attachment-info"] ? JSON.parse(params["attachment-info"]) : {}
+        charsets        = params["charsets"] ? JSON.parse(params["charsets"]) : {}
 
-        @message = Message::Inbound.new(message_params) do |message|
+        @user    = User.find_or_initialize_by(email: Helper::Mailer::unprettify(params["from"]))
+        @message = Message::Inbound.new(message_params(charsets)) do |message|
           message.sender = @user
         end
 
-        attachment_info = params["attachment-info"] ? JSON.parse(params["attachment-info"]) : {}
-        
         attachments_count.times do |index|
           attached_file = params["attachment#{index + 1}"]
           attached_file_info =  attachment_info["attachment#{index + 1}"]
@@ -71,15 +71,27 @@ class EndpointsController < ApplicationController
     params["subject"] = clean_field(params["subject"])
   end
   
+  def utf8_encode_params(params, encoding)
+    params.inject(ActionController::Parameters.new) do |result, pair|
+      result[pair.first] = pair.last.force_encoding('utf-8') if pair.last && pair.last.respond_to?(:force_encoding)
+      result
+    end
+  end
+  
   def clean_field(input_string)
     input_string.gsub(/\n/, "") if input_string
   end
   
-  def message_params
-    params.inject(ActionController::Parameters.new) do |result, pair|
-      result[pair.first] = pair.last.force_encoding('utf-8') if pair.last && pair.last.respond_to?(:force_encoding)
-      result
-    end.permit(:text, :html, :from, :to, :cc, :subject)
+  def message_params(charsets = nil)
+    converted_params = {}
+    if charsets.is_a?(Hash)
+      charsets.each do |key, source_charset|
+        if params[key].present? && params[key].respond_to?(:force_encoding)
+          converted_params[key] = params[key].force_encoding(source_charset).encode("utf-8")
+        end
+      end
+    end
+    params.merge(converted_params).permit(:text, :html, :from, :to, :cc, :subject)
   end
   
   def upload_file_to_s3_bucket(file_path, key = nil)
