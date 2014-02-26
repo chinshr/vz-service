@@ -86,8 +86,14 @@ class EndpointsController < ApplicationController
     converted_params = {}
     if charsets.is_a?(Hash)
       charsets.each do |key, source_charset|
-        if params[key].present? && params[key].respond_to?(:force_encoding)
-          converted_params[key] = params[key].force_encoding(source_charset).encode("utf-8")
+        if params[key].is_a?(String)
+          converted_params[key] = params[key].force_encoding(source_charset).encode("UTF-8")
+        end
+      end
+    else
+      [:text, :html, :from, :to, :cc, :subject].each do |key|
+        if params[key].is_a?(String)
+          converted_params[key] = params[key].encode('UTF-8', 'binary', invalid: :replace, undef: :replace, replace: '')
         end
       end
     end
