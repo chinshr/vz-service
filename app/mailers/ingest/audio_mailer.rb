@@ -3,7 +3,7 @@ class Ingest::AudioMailer < ActionMailer::Base
   
   def finished_processing(ingest)
     @ingest = ingest
-    mail(to: @ingest.user.email, subject: "Finished, '#{@ingest.upload.file_name}' has processed successfully.")
+    mail(to: @ingest.user.email, subject: "Finished, '#{@ingest.upload.file_name}' has been transcribed.")
   end
   
 end

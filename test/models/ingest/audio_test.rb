@@ -97,7 +97,7 @@ class Ingest::AudioTest < ActiveSupport::TestCase
     assert_equal :finished, ingest.state
     
     assert_equal 1, ActionMailer::Base.deliveries.size
-    assert_equal "Finished, '#{ingest.upload.file_name}' has processed successfully.", ActionMailer::Base.deliveries[0].subject
+    assert_equal "Finished, '#{ingest.upload.file_name}' has been transcribed.", ActionMailer::Base.deliveries[0].subject
   end
   
 end
