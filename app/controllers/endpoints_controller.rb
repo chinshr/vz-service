@@ -39,13 +39,13 @@ class EndpointsController < ApplicationController
       else
         Rails.logger.warn "Thanks #{@user ? @user.email : ''} for your message, but we didn't find any audio attachments."
       end
-    rescue Exception => ex
-      log_exception(ex)
+    rescue Exception => @exception
+      log_exception(@exception)
     ensure
       respond_to do |format|
         if @message && @message.valid? && @message.attachments.count > 0
           EndpointMailer.valid_message(@message).deliver
-          flash[:notice] = "Message and attachments were successfully received."
+          Rails.logger.info "Message and attachments were successfully received."
           format.xml {render :xml => @message, :status => :created}
         else
           Rails.logger.error params.inspect
@@ -54,9 +54,9 @@ class EndpointsController < ApplicationController
           @message.sender = nil if @user && @user.new_record?  # make sure we are not signing up the user if something went wrong!
           @message.save(:validate => false) if @message  # save message anyway!
 
-          flash[:notice]= "Oops, we've noticed an error when processing this message."
-          # format.xml {render :xml => @message ? @message.errors : {code: -1, message: "unparseable"}, :status => 202}
-          format.xml {render :xml => @message ? @message.errors : {code: -1, message: "unparseable"}, :status => :unprocessable_entity}
+          Rails.logger.error "Oops, we've noticed an error when processing this message."
+          format.xml {render :xml => @message ? @message.errors : {code: -1, message: "unparseable"}, 
+            :status => @exception ? :unprocessable_entity : 202}
         end
       end
     end

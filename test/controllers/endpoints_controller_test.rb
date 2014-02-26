@@ -45,7 +45,7 @@ class EndpointsControllerTest < ActionController::TestCase
           assert_difference "ActionMailer::Base.deliveries.size", 0 do
             post :receive_email, {"format" => "xml", "from" => "raj@example.com", "to" => "my@voyz.es", "subject" => "Forgot attachments", 
               "text" => "Umm, I must have forgotten something!?"}
-            assert_response :unprocessable_entity
+            assert_response 202
           end
         end
       end
