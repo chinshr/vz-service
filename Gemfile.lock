@@ -17,7 +17,7 @@ GIT
       sass-rails
 
 GIT
-  remote: git@github.com:chinshr/griddler.git
+  remote: https://github.com/chinshr/griddler.git
   revision: d86760c4c4590abb56029cc1ea6cf3f7bafabce0
   specs:
     griddler (0.6.3)

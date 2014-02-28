@@ -88,4 +88,4 @@ gem "geocoder"
 gem 'gmaps4rails'
 gem 'nokogiri'
 gem 'whatlanguage'
-gem 'griddler', :git => "git@github.com:chinshr/griddler.git" # :path => "../griddler"
+gem 'griddler', :git => "https://github.com/chinshr/griddler.git" # :path => "../griddler"
