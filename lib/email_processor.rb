@@ -12,7 +12,7 @@ class EmailProcessor
         user    = User.find_or_initialize_by(email: Helper::Mailer::unprettify(email.from))
         message = Message::Inbound.new do |m|
           m.to      = address_join(email.to)
-          m.cc      = email.cc.map {|e| e[:email]}.join(",")
+          m.cc      = address_join(email.cc)
           m.from    = email.from
           m.subject = email.subject
           m.body    = email.body
@@ -50,19 +50,22 @@ class EmailProcessor
       end
     rescue Exception => exception
       log_exception(exception)
-      raise exception
+      Rails.logger.error "Oops, we've noticed an exception when processing this message."
     ensure
       if message && message.valid? && message.attachments.count > 0
         EndpointMailer.valid_message(message).deliver
         Rails.logger.info "Message and attachments were successfully received."
       else
-        Rails.logger.error email.inspect
-        log_model_errors(user, message)
+        # Rails.logger.error email.inspect
         EndpointMailer.invalid_message(message).deliver if message && !message.valid?
-        message.sender = nil if user && user.new_record?  # make sure we are not signing up the user if something went wrong!
+        message.sender = nil if message && user && user.new_record?  # make sure we are not signing up the user if something went wrong!
         message.save(:validate => false) if message  # save message anyway!
 
-        Rails.logger.error "Oops, we've noticed an error when processing this message."
+        Rails.logger.error "Oops, no user was built." if !user
+        Rails.logger.error "Oops, the user cannot be saved." if user && user.new_record?
+        Rails.logger.error "Oops, no message was built." if !message
+        Rails.logger.error "Oops, the message cannot be saved." if message && !message.valid?
+        Rails.logger.error "Oops, we've noticed we could not process any audio attachments." if message && message.attachments.count == 0
       end
     end
   
