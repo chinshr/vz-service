@@ -116,7 +116,13 @@ class EmailProcessor
     end
     
     def mime_type(file_path)
-      mt = `file -Ib #{file_path}`.gsub(/\n/, "")
+      mt = if Rails.env.production?
+        # Heroku
+        `file -ib #{file_path}`.gsub(/\n/, "")
+      else
+        # BSD
+        `file -Ib #{file_path}`.gsub(/\n/, "")
+      end
       mt.split(";").first
     rescue
       nil
