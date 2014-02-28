@@ -29,6 +29,7 @@ Voyzes::Application.routes.draw do
   end
   
   post "endpoints/receive_email" => "endpoints#receive_email"
+  # post 'endpoints/email_processor' => 'griddler/emails#create'
   
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'

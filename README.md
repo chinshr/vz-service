@@ -41,6 +41,9 @@ Development Resources
   - audio.js -- http://kolber.github.io/audiojs/
 * Accept Incoming Emails into a Heroku App Using SendGrid 
   - ruby processor -- http://nanceskitchen.com/2010/02/21/accept-incoming-emails-into-a-heroku-app-using-sendgrid/
+  - test sendgrid parse api by sending email to: my@app21958309.bymail.in (<any-address>@<sendgrid-user-name>.bymail.in)
+  - griddler gem tutorial to receive emails -- http://sendgrid.com/blog/receiving-email-in-your-rails-app-with-griddler/
+  - griddler gem -- https://github.com/thoughtbot/griddler
   - inbound parse hooks -- http://sendgrid.com/docs/API_Reference/Webhooks/parse.html
   - downloading attachments -- http://www.sitepoint.com/handle-incoming-email-with-sendgrid/
   - reading attachments with read in ruby -- http://stackoverflow.com/questions/11117698/receiving-emails-with-attachments-from-sendgrid-in-rails-3-2-x

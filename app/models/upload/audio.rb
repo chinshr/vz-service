@@ -25,6 +25,12 @@ class Upload::Audio < ::Upload
   after_initialize :build_ingest_and_document
   before_validation :set_title, on: :create
 
+  class << self
+    def accepted_audio_file_type?(file_type)
+      !!(file_type && file_type.match(/^(audio)\/?.*$/))
+    end
+  end
+
   def has_locale_recently_changed?
     return !!ingest.ingestable.changes[:locale] if ingest.ingestable
     false
@@ -33,7 +39,7 @@ class Upload::Audio < ::Upload
   protected
   
   def audio_file_type
-    errors.add(:file_type, :audio_expected) if !file_type || !file_type.match(/^(audio)\/?.*$/)
+    errors.add(:file_type, :audio_expected) unless Upload::Audio.accepted_audio_file_type?(file_type)
   end
   
   def build_ingest_and_document

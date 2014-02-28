@@ -18,6 +18,7 @@ class EndpointsControllerTest < ActionController::TestCase
       "headers"=>"Received: by mx-006.sjc1.sendgrid.net with ...", 
       "to"=>"my@app.example.com", "from"=>"Juergen Fesslmeier <juergen@synctv.com>", "sender_ip"=>"199.36.142.181", 
       "attachment1"=>attachment1, "attachments"=>"1", "html" => "<i>Check this out!</i>"}
+    @params.symbolize_keys!
   end
 
   should "process message with attachments, signup user and send notifications" do

@@ -42,6 +42,15 @@ class Upload < ActiveRecord::Base
       Model::Uid.random_string(10, "a-z, 0-9")
     end
     
+    def humanized_file_name(file_name)
+      result = file_name
+      return if result.blank?
+      result = result.split(".").first unless result.blank?
+      result.gsub!(/[-+]+/, ' ') unless result.blank?
+      result = result.humanize unless result.blank?
+      result
+    end
+    
     private 
     
     # E.g. "audio" => Upload::Audio
@@ -71,12 +80,7 @@ class Upload < ActiveRecord::Base
   end
 
   def humanized_file_name
-    result = file_name
-    return if result.blank?
-    result = result.split(".").first unless result.blank?
-    result.gsub!(/[-+]+/, ' ') unless result.blank?
-    result = result.humanize unless result.blank?
-    result
+    Upload.humanized_file_name(file_name)
   end
   
   def s3_key
