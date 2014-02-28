@@ -50,6 +50,14 @@ Development Resources
 * Capturing Audio&Video HTML5 -- http://www.html5rocks.com/en/tutorials/getusermedia/intro/
 * Client side validation, simple form, rails 4 -- http://www.ddarrensmith.com/blog/2012/05/17/ruby-on-rails-client-side-validation-with-validation-helpers-and-twitter-bootstrap/
 * Backbone Devise app -- https://github.com/jhuckabee/backbone_devise
+
+SendGrid setup
+
+app21958309.bymail.in -> http://voyzes.herokuapp.com/endpoints/receive_email.xml
+my@voyz.es -> http://voyzes.herokuapp.com/endpoints/receive_email.xml
+
+app21958309.bymail.in -> http://voyzes.herokuapp.com/email_processor.xml
+my.voyz.es -> http://voyzes.herokuapp.com/email_processor.xml
   
 Reference Services
 ------------------

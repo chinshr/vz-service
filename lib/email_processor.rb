@@ -50,6 +50,7 @@ class EmailProcessor
       end
     rescue Exception => exception
       log_exception(exception)
+      raise exception
     ensure
       if message && message.valid? && message.attachments.count > 0
         EndpointMailer.valid_message(message).deliver
