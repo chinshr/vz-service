@@ -22,7 +22,8 @@ class EmailProcessor
         end
 
         email.attachments.each do |attached_file|
-          if Upload::Audio.accepted_audio_file_type?(attached_file.content_type)
+          content_type = mime_type(attached_file.tempfile.path) || attached_file.content_type
+          if Upload::Audio.accepted_audio_file_type?(content_type)
             upload = with message.attachments.build(:type => "audio") do |upload|
               upload.user        = user
               upload.title       = if email.subject.blank? 
@@ -33,16 +34,23 @@ class EmailProcessor
               upload.description = email.body
               upload.file_name   = attached_file.original_filename
               upload.file_size   = attached_file.tempfile.size
-              upload.file_type   = attached_file.content_type
+              upload.file_type   = content_type
               upload.locale      = message.locale
               upload.privacy     = [:private]
             end
+            
+            Rails.logger.info "* mime_type: #{mime_type(attached_file.tempfile.path)}"
 
             key = Upload.generate_object_name
             upload_file_to_s3_bucket(attached_file.tempfile.path, key)
             upload.s3_url = "#{APP_CONFIG['S3_URL']}#{APP_CONFIG['S3_INBOUND_BUCKET']}/#{key}"
 
             message.save
+            
+            Rails.logger.error "* Message invalid: #{message.inspect}" unless message.valid?
+            Rails.logger.error "** Message attachment invalid: #{upload.inspect}" unless upload.valid?
+          else
+            Rails.logger.info "* Attachment '#{attached_file.original_filename} (#{content_type}:#{attached_file.content_type})' is not an audio file."
           end
         end
       else
@@ -105,6 +113,13 @@ class EmailProcessor
     def address_join(field)
       result = field.map {|e| e[:email]}
       result.empty? ? nil : result.join(",")
+    end
+    
+    def mime_type(file_path)
+      mt = `file -Ib #{file_path}`.gsub(/\n/, "")
+      mt.split(";").first
+    rescue
+      nil
     end
   end
 end

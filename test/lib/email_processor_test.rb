@@ -10,7 +10,7 @@ class EmailProcessorTest < ActiveSupport::TestCase
       :content_type => "audio/x-m4a",
       :tempfile     => File.new("#{Rails.root}/test/fixtures/sample.m4a")
     })
-    attachment1.content_type = "audio/x-m4a"  # re-assign, doesn't work otherwise!
+    # attachment1.content_type = "audio/x-m4a"  # re-assign, doesn't work otherwise!
     
     @params = {
       "dkim"=>"none", 
@@ -92,14 +92,14 @@ class EmailProcessorTest < ActiveSupport::TestCase
       :content_type => "invalid/content-type",
       :tempfile     => File.new("#{Rails.root}/test/fixtures/sample.m4a")
     })
-    attachment1.content_type = "audio/x-m4a"  # re-assign, doesn't work otherwise!
+    # attachment1.content_type = "audio/x-m4a"  # re-assign, doesn't work otherwise!
 
     attachment2 = ActionDispatch::Http::UploadedFile.new({
       :filename     => "msg-1483-73.txt",
       :content_type => "text/plain",
       :tempfile     => File.new("#{Rails.root}/test/fixtures/msg-1483-73.txt")
     })
-    attachment2.content_type = "text/plain"  # re-assign, doesn't work otherwise!
+    # attachment2.content_type = "text/plain"  # re-assign, doesn't work otherwise!
 
     assert_difference "User.count", 1 do
       assert_difference "Message.count", 1 do
@@ -118,11 +118,11 @@ class EmailProcessorTest < ActiveSupport::TestCase
     assert_equal "We are working hard transcribing your message.", ActionMailer::Base.deliveries[1].subject
   end
 
-  should "not process with invalid audio files and send invalid message notification" do
+  should "not process with invalid audio file and send invalid message notification" do
     attachement1 = ActionDispatch::Http::UploadedFile.new({
       :filename     => "sample.m4a",
       :content_type => "invalid/content-type",
-      :tempfile     => File.new("#{Rails.root}/test/fixtures/sample.m4a")
+      :tempfile     => File.new("#{Rails.root}/test/fixtures/msg-1483-73.txt")
     })
 
     assert_difference "User.count", 0 do
