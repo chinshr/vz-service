@@ -50,6 +50,7 @@ Development Resources
 * Capturing Audio&Video HTML5 -- http://www.html5rocks.com/en/tutorials/getusermedia/intro/
 * Client side validation, simple form, rails 4 -- http://www.ddarrensmith.com/blog/2012/05/17/ruby-on-rails-client-side-validation-with-validation-helpers-and-twitter-bootstrap/
 * Backbone Devise app -- https://github.com/jhuckabee/backbone_devise
+* Google Speech API, Languages -- http://stackoverflow.com/questions/14257598/what-are-language-codes-for-voice-recognition-languages-in-chromes-implementati
 
 SendGrid setup
 

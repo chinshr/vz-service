@@ -35,7 +35,7 @@ class EmailProcessor
               upload.file_name   = attached_file.original_filename
               upload.file_size   = attached_file.tempfile.size
               upload.file_type   = content_type
-              upload.locale      = message.locale || "en-US"
+              upload.locale      = address_locale(email.to) || message.locale || "en-US"
               upload.privacy     = [:private]
             end
             
@@ -127,5 +127,19 @@ class EmailProcessor
     rescue
       nil
     end
+    
+    def address_locale(field)
+      field.each do | a|
+        if (tri = a[:email].split("+")).size > 1
+          if (bi = tri.last.split("@")).size > 1
+            if bi.first.match(/^([a-z]{2}-[A-Z]{2}|[a-z]{2})$/i)
+              return $1
+            end
+          end
+        end
+      end
+      nil
+    end
+    
   end
 end

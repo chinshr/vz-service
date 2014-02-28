@@ -14,8 +14,7 @@ class EmailProcessorTest < ActiveSupport::TestCase
     
     @params = {
       "dkim"=>"none", 
-      "envelope"=>{"to"=>["my@app.example.com"], 
-      "from"=>"raj@example.com"}, 
+      "envelope"=>{"to"=>["my@app.example.com"], "from"=>"raj@example.com"}, 
       "to"=>"my@app.example.com", "from"=>"Raj Aakula <raj@example.com>", "sender_ip"=>"199.36.142.181", 
       "subject"=>"Sample recording 1", 
       "attachment-info"=>"{\"attachment1\":{\"filename\":\"sample.m4a\",\"name\":\"sample.m4a\",\"type\":\"audio/x-m4a\"}}",
@@ -52,6 +51,13 @@ class EmailProcessorTest < ActiveSupport::TestCase
     assert_equal "Sample recording 1", Upload.last.title
   end
 
+  should "parse locale from email address" do
+    @params["to"] = "my+en-UK@app.example.com"
+    normalized_params(@params).each do |p|
+      Griddler::Email.new(p).process
+    end
+    assert_equal "en-UK", Upload.last.locale
+  end
 
   should "process message with attachments, send notification" do
     FactoryGirl.create(:user, :email => "raj@example.com")
