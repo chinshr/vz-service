@@ -35,7 +35,7 @@ class EmailProcessor
               upload.file_name   = attached_file.original_filename
               upload.file_size   = attached_file.tempfile.size
               upload.file_type   = content_type
-              upload.locale      = message.locale
+              upload.locale      = message.locale || "en-US"
               upload.privacy     = [:private]
             end
             
