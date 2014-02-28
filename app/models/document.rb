@@ -10,7 +10,7 @@ class Document < ActiveRecord::Base
   
   scope :recent, lambda {|n = 5| order("documents.created_at DESC").limit(n)}
   
-  before_validation :generate_slug
+  before_validation :generate_slug, :on => :create
   
   class << self
     
