@@ -28,7 +28,6 @@ Voyzes::Application.routes.draw do
     resources :uploads
   end
   
-  post "endpoints/receive_email" => "endpoints#receive_email"
   # post 'endpoints/email_processor' => 'griddler/emails#create'
   
   # Example of regular route:

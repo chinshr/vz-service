@@ -61,11 +61,11 @@ class EmailProcessor
       Rails.logger.error "Oops, we've noticed an exception when processing this message."
     ensure
       if message && message.valid? && message.attachments.count > 0
-        EndpointMailer.valid_message(message).deliver
+        EmailProcessorMailer.valid_message(message).deliver
         Rails.logger.info "Message and attachments were successfully received."
       else
         # Rails.logger.error email.inspect
-        EndpointMailer.invalid_message(message).deliver if message && !message.valid?
+        EmailProcessorMailer.invalid_message(message).deliver if message && !message.valid?
         message.sender = nil if message && user && user.new_record?  # make sure we are not signing up the user if something went wrong!
         message.save(:validate => false) if message  # save message anyway!
 
