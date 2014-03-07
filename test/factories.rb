@@ -47,6 +47,7 @@ FactoryGirl.define do
     sequence(:first_name) {|n| "first-name-#{n}"}
     sequence(:last_name) {|n| "last-name-#{n}"}
     confirmed_at Time.now.utc - 1.day
+    current_sign_in_ip "95.63.14.59"
   end
   
 end
