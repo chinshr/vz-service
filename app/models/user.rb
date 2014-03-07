@@ -5,7 +5,7 @@ class User < ActiveRecord::Base
     :recoverable, :rememberable, :trackable, :validatable, 
     :confirmable
 
-  geocoded_by :current_sign_in_ip, :latitude  => :lat, :longitude => :lng
+  geocoded_by :ip_address, :latitude  => :lat, :longitude => :lng
   reverse_geocoded_by :lat, :lng do |record, results|
     if geo = results.first
       record.city         = geo.city
@@ -61,5 +61,10 @@ class User < ActiveRecord::Base
 
   def has_ip_address?
     current_sign_in_ip.present?
+  end
+  
+  def ip_address
+    debugger
+    current_sign_in_ip || last_sign_in_ip
   end
 end

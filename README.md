@@ -51,6 +51,13 @@ Development Resources
 * Client side validation, simple form, rails 4 -- http://www.ddarrensmith.com/blog/2012/05/17/ruby-on-rails-client-side-validation-with-validation-helpers-and-twitter-bootstrap/
 * Backbone Devise app -- https://github.com/jhuckabee/backbone_devise
 * Google Speech API, Languages -- http://stackoverflow.com/questions/14257598/what-are-language-codes-for-voice-recognition-languages-in-chromes-implementati
+* Noise reduction 
+  - with ffmpeg and sox: http://www.zoharbabin.com/how-to-do-noise-reduction-using-ffmpeg-and-sox/
+  - ffmpeg: http://ffmpeg.zeranoe.com/forum/viewtopic.php?f=15&t=1687
+  - Sox buildpack: https://github.com/lepinsk/heroku-buildpack-sox
+  - Sox noisprof -- http://sox.10957.n7.nabble.com/noiseprof-noisered-and-artifacts-on-audio-td4971.html
+  - Voice Activity Detection (VAD) to detect the section of silence before the user actually starts speaking -- https://github.com/jacksonh/sox/blob/master/scripts/voice-cleanup.sh
+* Convert audio to flac -- http://superuser.com/questions/339023/convert-audio-file-to-flac-with-ffmpeg
 
 SendGrid setup
 
@@ -118,6 +125,8 @@ Speech Transcription
     require "speech"
     audio = Speech::AudioToText.new("samples/i-like-pickles.wav")
     audio = Speech::AudioToText.new("samples/SampleAudio.wav")
+    audio = Speech::AudioToText.new("samples/New-Recording.m4a")
+    audio = Speech::AudioToText.new("samples/John-and-Juergen.m4a")
     audio.to_json(2, "en-US")
     audio.to_text(2, "en-US")
 

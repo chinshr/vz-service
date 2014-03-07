@@ -25,7 +25,8 @@ module Speech
       self.score    = 0.0
       self.segments = 0
 
-      url = "https://www.google.com/speech-api/v1/recognize?xjerr=1&client=speech2text&lang=#{lang}&maxresults=#{max}"
+      # url = "https://www.google.com/speech-api/v1/recognize?xjerr=1&client=speech2text&lang=#{lang}&maxresults=#{max}"
+      url = "https://www.google.com/speech-api/v1/recognize?xjerr=1&client=chromium&lang=#{lang}&maxresults=#{max}"
       splitter = Speech::AudioSplitter.new(file) # based off the wave file because flac doesn't tell us the duration
       easy = Curl::Easy.new(url)
       self.chunks = splitter.split
@@ -50,7 +51,8 @@ module Speech
       while retrying && retry_count < 3 # 3 retries
         easy.verbose = self.verbose
         easy.headers['Content-Type'] = "audio/x-flac; rate=#{chunk.flac_rate}"
-        easy.headers['User-Agent'] = "https://github.com/taf2/speech2text"
+        # easy.headers['User-Agent'] = "https://github.com/taf2/speech2text"
+        easy.headers['User-Agent'] = "Mozilla/5.0"
         easy.post_body = "Content=#{chunk.to_flac_bytes}"
         if self.verbose
           easy.on_progress {|dl_total, dl_now, ul_total, ul_now| printf("%.2f/%.2f\r", ul_now, ul_total); true }
