@@ -22,9 +22,8 @@ class User < ActiveRecord::Base
   
   scope :confirmed, lambda {where("users.confirmed_at IS NOT NULL")}
   
-  after_validation :reverse_geocode, :if => :has_coordinates?
-  after_validation :geocode, :if => :has_ip_address?, :unless => :has_coordinates?
-  before_save :do_geocode
+  before_save :geocode, :if => :has_ip_address?, :unless => :geocoded?
+  before_save :reverse_geocode, :if => :geocoded?
 
   def password_required?
     # previous = !persisted? || !password.nil? || !password_confirmation.nil?
@@ -56,20 +55,11 @@ class User < ActiveRecord::Base
 
   protected
 
-  def has_coordinates?
-    lat.present? && lng.present?
-  end
-
   def has_ip_address?
-    current_sign_in_ip.present?
+    ip_address.present?
   end
   
   def ip_address
     current_sign_in_ip || last_sign_in_ip
-  end
-  
-  def do_geocode
-    geocode unless geocoded?
-    reverse_geocode unless geocoded?
   end
 end
