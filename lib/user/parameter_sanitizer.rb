@@ -1,7 +1,7 @@
 class User::ParameterSanitizer < Devise::ParameterSanitizer
   private
-  
-  def account_update
-    default_params.permit(:first_name, :last_name, :email, :password, :password_confirmation, :current_password, :time_zone)
+
+  def sign_up
+    permit self.for(:sign_up) + [:time_zone]
   end
 end
