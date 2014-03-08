@@ -89,3 +89,4 @@ gem 'gmaps4rails'
 gem 'nokogiri'
 gem 'whatlanguage'
 gem 'griddler', :git => "https://github.com/chinshr/griddler.git" # :path => "../griddler"
+gem 'newrelic_rpm'

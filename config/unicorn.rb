@@ -1,6 +1,6 @@
+preload_app true    # preloads an application before forking worker processes
 worker_processes 2  # amount of unicorn workers to spin up
 timeout 15          # restarts workers set to 15 seconds as recommended by Heroku
-preload_app true    # preloads an application before forking worker processes
 listen ENV['PORT'], :backlog => 25
 
 before_fork do |server, worker|
