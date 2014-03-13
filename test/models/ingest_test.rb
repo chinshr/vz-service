@@ -28,19 +28,16 @@ class IngestTest < ActiveSupport::TestCase
     assert_not_nil ingest.started_at
     ingest.log! :started, "working"
     ingest.update_attributes(stage: "transcoding")
-    FactoryGirl.create(:ingest_audio_segment, :ingest => ingest)
+    FactoryGirl.create(:document_segment, :document => ingest.ingestable)
     assert_equal 0, ingest.iteration
     assert_equal false, ingest.messages.empty?
-    assert_equal 1, ingest.segments.count
 
     ingest.restart!
     assert_equal :restarting, ingest.state
     assert_equal false, ingest.messages.empty?
-    assert_equal false, ingest.segments.empty?
     ingest.process!
     assert_equal :starting, ingest.state
     assert_equal true, ingest.messages.empty?
-    assert_equal 0, ingest.segments.count
     assert_nil ingest.stage
     ingest.process!
     assert_equal :started, ingest.state

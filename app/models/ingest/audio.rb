@@ -1,6 +1,4 @@
 class Ingest::Audio < ::Ingest
-  has_many :segments, class_name: "Ingest::Audio::Segment", foreign_key: :ingest_id, dependent: :destroy
-  
   delegate :title, to: :ingestable
   delegate :title=, to: :ingestable
   
@@ -18,14 +16,6 @@ class Ingest::Audio < ::Ingest
   
   delegate :slug, to: :ingestable
 
-  def score
-    segments.average(:best_score) 
-  end
-  
-  def duration
-    segments.sum(:duration) 
-  end
-  
   protected
 
   def enter_starting
@@ -49,7 +39,7 @@ class Ingest::Audio < ::Ingest
   
   def after_exit_restarting
     super
-    segments.destroy_all
+    # segments.destroy_all
   end
   
   def after_enter_restarting

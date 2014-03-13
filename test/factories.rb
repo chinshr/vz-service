@@ -20,19 +20,6 @@ FactoryGirl.define do
     association :ingestable, factory: :document
   end
 
-  factory :ingest_audio_segment, :class => "Ingest::Audio::Segment" do
-    association :ingest, factory: :ingest_audio
-    offset 0
-    duration 3.51
-    start_time 0
-    end_time 3.51
-    best_text "I like pickles"
-    best_score 0.59
-    before(:create) do |segment|
-      segment.response = {"status" => 0, "id" => "ce178ea89f8b17d8e8298c9c7814700a-1", "hypotheses" => [["I like pickles", 0.59408695], ["I like turtles", 0.34534354], ["I like tickles", nil], ["I like to Kohl's", nil]]}
-    end
-  end
-
   factory :document_segment, :class => "Document::Segment" do
     association :document
     offset 0

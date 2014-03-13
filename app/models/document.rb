@@ -4,7 +4,7 @@ class Document < ActiveRecord::Base
 
   belongs_to :user
   has_many :ingests, as: :ingestable
-  has_many :segments, dependent: :destroy
+  has_many :segments, -> { order(offset: :asc) }, dependent: :destroy
 
   validates :slug, presence: true, uniqueness: {case_sensitive: false}
   validates :title, presence: true, length: { maximum: 255 }
@@ -34,6 +34,14 @@ class Document < ActiveRecord::Base
   
   def trancribed?
     ingests.all? {|i| i.finished?}
+  end
+  
+  def score
+    segments.average(:score) 
+  end
+  
+  def duration
+    segments.sum(:duration)
   end
   
   protected
