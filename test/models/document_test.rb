@@ -3,6 +3,7 @@ require 'test_helper'
 class DocumentTest < ActiveSupport::TestCase
   context "associations" do
     should have_many :ingests
+    should have_many :segments
   end
   
   context "validations" do

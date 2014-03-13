@@ -32,6 +32,19 @@ FactoryGirl.define do
       segment.response = {"status" => 0, "id" => "ce178ea89f8b17d8e8298c9c7814700a-1", "hypotheses" => [["I like pickles", 0.59408695], ["I like turtles", 0.34534354], ["I like tickles", nil], ["I like to Kohl's", nil]]}
     end
   end
+
+  factory :document_segment, :class => "Document::Segment" do
+    association :document
+    offset 0
+    duration 3.51
+    start_time 0
+    end_time 3.51
+    text "I like pickles"
+    score 0.59
+    before(:create) do |segment|
+      segment.response = {"status" => 0, "id" => "ce178ea89f8b17d8e8298c9c7814700a-1", "hypotheses" => [["I like pickles", 0.59408695], ["I like turtles", 0.34534354], ["I like tickles", nil], ["I like to Kohl's", nil]]}
+    end
+  end
   
   factory :message do
     from "sender@example.com"
@@ -48,6 +61,11 @@ FactoryGirl.define do
     sequence(:last_name) {|n| "last-name-#{n}"}
     confirmed_at Time.now.utc - 1.day
     current_sign_in_ip "95.63.14.59"
+  end
+  
+  factory :track do
+    sequence(:s3_url) {|n| "http://s3.amazonaws.com/private/zp66vfwg21-#{n}"}
+    sequence(:mp3_s3_url) {|n| "http://s3.amazonaws.com/private/zp66vfwg21-#{n}-128kbps-mp3"}
   end
   
 end

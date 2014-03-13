@@ -5,13 +5,14 @@ module Speech
     attr_accessor :file, :rate, :captured_json
     attr_accessor :score, :verbose, :segments, :chunks
 
-    def initialize(file, options={})
+    def initialize(file, options = {})
       self.verbose         = false
       self.file            = file
       self.captured_json   = {}
       self.score           = 0.0
       self.segments        = 0
       self.chunks          = []
+      self.chunk_size      = options[:chunk_size].to_i if options.key?(:chunk_size)
 
       self.verbose = !!options[:verbose] if options.key?(:verbose)
     end
@@ -25,11 +26,11 @@ module Speech
       self.score    = 0.0
       self.segments = 0
 
-      # url = "https://www.google.com/speech-api/v1/recognize?xjerr=1&client=speech2text&lang=#{lang}&maxresults=#{max}"
-      url = "https://www.google.com/speech-api/v1/recognize?xjerr=1&client=chromium&lang=#{lang}&maxresults=#{max}"
-      splitter = Speech::AudioSplitter.new(file) # based off the wave file because flac doesn't tell us the duration
-      easy = Curl::Easy.new(url)
-      self.chunks = splitter.split
+      # url         = "https://www.google.com/speech-api/v1/recognize?xjerr=1&client=speech2text&lang=#{lang}&maxresults=#{max}"
+      url           = "https://www.google.com/speech-api/v1/recognize?xjerr=1&client=chromium&lang=#{lang}&maxresults=#{max}"
+      splitter      = Speech::AudioSplitter.new(file) # based off the wave file because flac doesn't tell us the duration
+      easy          = Curl::Easy.new(url)
+      self.chunks   = splitter.split
       
       chunks.each do |chunk|
         chunk.build.to_flac

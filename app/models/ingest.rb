@@ -20,6 +20,7 @@ class Ingest < ActiveRecord::Base
   
   belongs_to :upload
   belongs_to :ingestable, polymorphic: true, dependent: :destroy
+  belongs_to :track
   
   validates :upload, presence: true
   validates :ingestable, presence: true

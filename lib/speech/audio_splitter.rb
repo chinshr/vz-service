@@ -2,7 +2,7 @@
 module Speech
 
   class AudioSplitter
-    attr_accessor :original_file, :size, :duration, :chunks
+    attr_accessor :original_file, :size, :duration, :chunks, :verbose
 
     class AudioChunk
       attr_accessor :splitter, :chunk, :flac_chunk, :offset, :duration, :flac_rate, :copied, :captured_json, :best_text, :best_score
@@ -76,18 +76,19 @@ module Speech
 
     end
 
-    def initialize(file, chunk_size=5)
+    def initialize(file, options = {})
       self.original_file = file      
-      self.duration = AudioInspector.new(file).duration
-      self.size = chunk_size
-      self.chunks = []
+      self.duration      = AudioInspector.new(file).duration
+      self.size          = options.key?(:chunk_size) ? options[:chunk_size].to_i : 5
+      self.chunks        = []
+      self.verbose       = !!options[:verbose] if options.key?(:verbose)
     end
 
     def split
       # compute the total number of chunks
       full_chunks = (self.duration.to_f / size).to_i
       last_chunk = ((self.duration.to_f % size) * 100).round / 100.0
-      #puts "generate: #{full_chunks} chunks of #{size} seconds, last: #{last_chunk} seconds"
+      puts "generate: #{full_chunks} chunks of #{size} seconds, last: #{last_chunk} seconds" if self.verbose
 
       (full_chunks - 1).times do |chunkid|
         if chunkid > 0
@@ -104,7 +105,7 @@ module Speech
       else
         chunks << AudioChunk.new(self, chunks.last.offset.to_i + chunks.last.duration.to_i, self.size + last_chunk)
       end
-      #puts "Chunk count: #{chunks.size}"
+      puts "Chunk count: #{chunks.size}" if self.verbose
 
       chunks
     end

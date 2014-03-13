@@ -4,6 +4,7 @@ class Document < ActiveRecord::Base
 
   belongs_to :user
   has_many :ingests, as: :ingestable
+  has_many :segments, dependent: :destroy
 
   validates :slug, presence: true, uniqueness: {case_sensitive: false}
   validates :title, presence: true, length: { maximum: 255 }
