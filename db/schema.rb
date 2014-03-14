@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140313002957) do
+ActiveRecord::Schema.define(version: 20140313210401) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -110,7 +110,6 @@ ActiveRecord::Schema.define(version: 20140313002957) do
     t.float    "progress",        default: 0.0,       null: false
     t.text     "messages"
     t.string   "stage"
-    t.string   "s3_url"
     t.integer  "iteration",       default: 0,         null: false
     t.boolean  "busy",            default: false,     null: false
     t.datetime "restarted_at"
@@ -164,7 +163,7 @@ ActiveRecord::Schema.define(version: 20140313002957) do
 
   create_table "tracks", force: true do |t|
     t.string   "s3_url"
-    t.string   "mp3_s3_url"
+    t.string   "s3_mp3_url"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

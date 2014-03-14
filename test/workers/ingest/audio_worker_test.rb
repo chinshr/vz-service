@@ -8,6 +8,13 @@ class Ingest::AudioWorkerTest < ActiveSupport::TestCase
     Ingest::AudioWorker.any_instance.stubs(:s3_copy_object).returns(true)
     Ingest::AudioWorker.any_instance.stubs(:s3_download_object).returns(true)
     Ingest::AudioWorker.any_instance.stubs(:s3_delete_object).returns(true)
+    Ingest::AudioWorker.any_instance.stubs(:s3_upload_object).returns(true)
+    Ingest::AudioWorker.any_instance.stubs(:s3_delete_object_if_exists).returns(true)
+    Ingest::AudioWorker.any_instance.stubs(:s3_copy_object_if_exists).returns(true)
+    Ingest::AudioWorker.any_instance.stubs(:ffmpeg_convert_to_mp3).returns(true)
+    Ingest::AudioWorker.any_instance.stubs(:ffmpeg_convert_to_wav_and_strip_audio_channel).returns(true)
+    Ingest::AudioWorker.any_instance.stubs(:sox_normalize_audio).returns(true)
+
     Ingest::AudioWorker.jobs.clear
   end
 
@@ -32,6 +39,8 @@ class Ingest::AudioWorkerTest < ActiveSupport::TestCase
   should "don't process when stopped " do
     @ingest.start!
     assert_equal :starting, @ingest.state
+    @ingest.create_track(:s3_url => "http://s3.amazonaws.com/234klj32", :s3_mp3_url => "http://s3.amazonaws.com/234klj32.128.mp3")
+    @ingest.save if @ingest.changed?
     @ingest.update_attribute(:stage, "transcribe")
     @ingest.fail!  # oops! somthing bad happened...
     assert_equal :stopped, @ingest.state
@@ -73,13 +82,13 @@ class Ingest::AudioWorkerTest < ActiveSupport::TestCase
         segments = #{segments}
         segments.each_with_index do |segment, index|
           response = {"status" => 0, "id" => "", "hypotheses" => [segment, 0.79]}
-          @ingest.segments.create(
+          @ingest.ingestable.segments.create(
             :offset      => index,
             :duration    => 1,
             :start_time  => index,
             :end_time    => index + 1,
-            :best_text   => segment,
-            :best_score  => 0.79,
+            :text        => segment,
+            :score       => 0.79,
             :response    => response
           )
         end

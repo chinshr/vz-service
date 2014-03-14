@@ -14,5 +14,11 @@ class TrackTest < ActiveSupport::TestCase
     assert_equal ingest, track.ingest
     assert_equal ingest.ingestable, track.document
   end
-   
+  
+  should "get s3_key" do
+    track = FactoryGirl.create(:track, :s3_url => "http://s3.amazonaws.com/private/zp66vfwg",
+      :s3_mp3_url => "http://s3.amazonaws.com/private/zp66vfwg.128.mp3")
+    assert_equal "zp66vfwg", track.s3_key
+    assert_equal "zp66vfwg.128.mp3", track.s3_mp3_key
+  end
 end

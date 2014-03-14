@@ -39,7 +39,7 @@ class Ingest < ActiveRecord::Base
     state :restarting, :after_exit => :after_exit_restarting, :after_enter => :after_enter_restarting
     
     event :start do
-      transitions :from => [:created, :stopped, :reset], :to => :starting, :guard => :has_s3_url?
+      transitions :from => [:created, :stopped, :reset], :to => :starting, :guard => :has_valid_upload?
     end
     
     event :stop do
@@ -47,7 +47,7 @@ class Ingest < ActiveRecord::Base
     end
     
     event :reset do
-      transitions :from => [:stopped], :to => :resetting
+      transitions :from => [:stopped, :finished], :to => :resetting
     end
 
     event :remove do
@@ -100,20 +100,6 @@ class Ingest < ActiveRecord::Base
   def log!(name, message)
     log(name, message)
     save!
-  end
-  
-  def s3_url
-    self[:s3_url] || begin
-      upload ? upload.s3_url : nil
-    end
-  end
-  
-  def has_s3_url?
-    !s3_url.blank?
-  end
-  
-  def s3_key
-    s3_url ? s3_url.split("/").last : nil
   end
   
   # set_progress! 10 => 10%
@@ -189,5 +175,9 @@ class Ingest < ActiveRecord::Base
   
   def after_enter_restarting
     self.restarted_at = Time.now.utc
+  end
+  
+  def has_valid_upload?
+    !!(upload && upload.s3_url)
   end
 end

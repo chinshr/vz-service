@@ -211,7 +211,7 @@ Simpler, voice cleanup from http://sox.sourceforge.net/Docs/Scripts:
 
     sox john-and-juergen.wav cleaned.wav \
       remix - \
-      highpass 100 lowpass 2k\
+      highpass 100 lowpass 2k \
       norm \
       compand 0.05,0.2 6:-54,-90,-36,-36,-24,-24,0,-12 0 -90 0.1 \
       vad -T 0.6 -p 0.2 -t 5 \
@@ -221,6 +221,21 @@ Simpler, voice cleanup from http://sox.sourceforge.net/Docs/Scripts:
       fade 0.1 \
       reverse \
       norm -0.5
+
+
+      sox john-and-juergen.m4a cleaned.m4a \
+        remix - \
+        highpass 100 lowpass 2k \
+        norm \
+        compand 0.05,0.2 6:-54,-90,-36,-36,-24,-24,0,-12 0 -90 0.1 \
+        vad -T 0.6 -p 0.2 -t 5 \
+        fade 0.1 \
+        reverse \
+        vad -T 0.6 -p 0.2 -t 5 \
+        fade 0.1 \
+        reverse \
+        norm -0.5
+
 
 My combined version of the two from above:
 

@@ -11,9 +11,13 @@ defaults: &defaults
 
 development:
   <<: *defaults
+  S3_INBOUND_BUCKET: <%= ENV.fetch('S3_INBOUND_BUCKET', "/voyzes-dev-uploads") %>
+  S3_OUTBOUND_BUCKET: <%= ENV.fetch('S3_INBOUND_BUCKET', "/voyzes-dev-private") %>
 
 test:
   <<: *defaults
+  S3_INBOUND_BUCKET: <%= ENV.fetch('S3_INBOUND_BUCKET', "/voyzes-dev-uploads") %>
+  S3_OUTBOUND_BUCKET: <%= ENV.fetch('S3_INBOUND_BUCKET', "/voyzes-dev-private") %>
 
 production:
   <<: *defaults

@@ -7,13 +7,14 @@ class Ingest::AudioWorker
   sidekiq_options :queue => :default, :retry => false, :backtrace => true
 
   STAGES = {
-    :initialize                                  => 0,
-    :copy_object_from_inbound_to_outbound_bucket => 1,
+    :initialize_pipeline                         => 0,
+    :move_object_from_inbound_to_outbound_bucket => 1,
     :download_object_from_outbound_bucket        => 2,
-    :transcribe                                  => 3,
-    :update_ingestable                           => 4,
-    :remove_upload                               => 5,
-    :finalized                                   => 6,
+    :normalize_original_audio_file               => 3,
+    :create_mp3_and_upload                       => 4,
+    :transcribe                                  => 5,
+    :update_ingestable                           => 6,
+    :finalized                                   => 7
   }
   
   def initialize
@@ -21,6 +22,8 @@ class Ingest::AudioWorker
       :access_key_id     => APP_CONFIG['S3_KEY'],    # '*** Provide access key ***'
       :secret_access_key => APP_CONFIG['S3_SECRET']  # '*** Provide secret key ***'
     )
+    
+    @mp3_bitrate = 128
   end
   
   def perform(ingest_id, options = {})
@@ -54,60 +57,88 @@ class Ingest::AudioWorker
     liberate!
   end
 
-  def initialize!
-    stage! :initialize do
+  def initialize_pipeline!
+    stage! :initialize_pipeline do
       @ingest.process!
+      @ingest.track.destroy if @ingest.track
+      @ingest.create_track(:s3_url => "empty")
+      @ingest.save if @ingest.changed?
       set_progress! 0
     end
   end
 
-  def copy_object_from_inbound_to_outbound_bucket!
-    stage! :copy_object_from_inbound_to_outbound_bucket, "object key #{@ingest.s3_key}" do
-      # Copy the object.
-      s3_copy_object APP_CONFIG['S3_INBOUND_BUCKET'], APP_CONFIG['S3_OUTBOUND_BUCKET'], s3_key
+  def move_object_from_inbound_to_outbound_bucket!
+    stage! :move_object_from_inbound_to_outbound_bucket, "object key #{@ingest.upload.s3_key}" do
+      # Copy the object to outbound folder.
+      s3_copy_object_if_exists APP_CONFIG['S3_INBOUND_BUCKET'], APP_CONFIG['S3_OUTBOUND_BUCKET'], @ingest.upload.s3_key
 
-      # Update ingest reference
-      update_s3_url_with File.join(APP_CONFIG['S3_URL'], APP_CONFIG['S3_OUTBOUND_BUCKET'], s3_key)
+      # Update s3 references
+      @ingest.track.update_attribute(:s3_url, outbound_url(@ingest.upload.s3_key))
 
+      # Delete uploaded object
+      s3_delete_object_if_exists(APP_CONFIG['S3_INBOUND_BUCKET'], @ingest.upload.s3_key)
+      
       set_progress! 5
     end
   end
 
   def download_object_from_outbound_bucket!
     stage! :download_object_from_outbound_bucket do
-      s3_download_object(APP_CONFIG['S3_OUTBOUND_BUCKET'], s3_key, audio_file_fullpath)
+      s3_download_object(APP_CONFIG['S3_OUTBOUND_BUCKET'], @ingest.track.s3_key, original_audio_file_fullpath)
       set_progress! 10
     end
   end
+
+  def normalize_original_audio_file!
+    stage! :normalize_original_audio_file do
+      # Create single WAV file
+      ffmpeg_convert_to_wav_and_strip_audio_channel(original_audio_file_fullpath, single_channel_audio_file_fullpath)
+      
+      # Noise cancel and normalize it
+      sox_normalize_audio(single_channel_audio_file_fullpath, normalized_audio_file_fullpath)
+      
+      # Delete the single channel file
+      delete_file_if_exists single_channel_audio_file_fullpath
+      
+      set_progress! 20
+    end
+  end
   
+  def create_mp3_and_upload!
+    stage! :create_mp3_and_upload do
+      # Convert to mp3
+      ffmpeg_convert_to_mp3 normalized_audio_file_fullpath, mp3_audio_file_fullpath
+      
+      # Upload mp3
+      s3_upload_object(mp3_audio_file_fullpath, APP_CONFIG['S3_OUTBOUND_BUCKET'], mp3_audio_file)
+      
+      # Update s3 references
+      @ingest.track.update_attribute(:s3_mp3_url, outbound_url(mp3_audio_file))
+      
+      set_progress! 15
+    end
+  end
+
   def transcribe!
     stage! :transcribe do
-      @ingest.segments.destroy_all
-      transcribe_file(audio_file_fullpath)
-      cleanup_workspace!
+      # Remove previous segments (in case we reprocessing)
+      @ingest.ingestable.segments.destroy_all
+      
+      # Start the stranscription with normalization
+      transcribe_file(normalized_audio_file_fullpath)
+      
+      # Sweep files we are not using anymore
+      delete_file_if_exists normalized_audio_file_fullpath
     end
   end
   
   def update_ingestable!
     stage! :update_ingestable do
-      content = @ingest.segments.map {|sg| sg.best_text ? sg.best_text.strip : nil}.compact.join(" ")
+      content = @ingest.ingestable.segments.map {|sg| sg.text ? sg.text.strip : nil}.compact.join(" ")
       @ingest.ingestable.update_attribute(:content, content)
     end
   end
 
-  def remove_upload!
-    stage! :remove_upload do
-      # Delete uploaded object.
-      s3_delete_object(APP_CONFIG['S3_INBOUND_BUCKET'], @ingest.upload.s3_key)
-      
-      set_progress! 95
-    end
-  end
-  
-  def cleanup_workspace!
-    File.delete(audio_file_fullpath) if audio_file_fullpath && File.exist?(audio_file_fullpath)
-  end
-  
   def finalized!
     stage! :finalized do
       @ingest.finish!
@@ -181,26 +212,62 @@ class Ingest::AudioWorker
     Rails.logger.error errors
   end
   
-  def update_s3_url_with(url)
-    @ingest.update_attribute :s3_url, url if @ingest
-  end
-  
   def s3_key
     @ingest.s3_key if @ingest
   end
   
   def s3_url
-    @ingest.s3_url if @ingest
+    @ingest.track.s3_url if @ingest
   end
 
-  def audio_file
-    @ingest.s3_key if @ingest
+  def original_audio_file
+    @ingest.track.s3_key if @ingest
   end
 
-  def audio_file_fullpath
-    File.join("/tmp/" + audio_file) if audio_file
+  def original_audio_file_fullpath
+    File.join("/tmp", original_audio_file) if original_audio_file
+  end
+
+  def mp3_audio_file
+    "#{@ingest.track.s3_key}.#{@mp3_bitrate}.mp3" if @ingest
+  end
+
+  def mp3_audio_file_fullpath
+    File.join("/tmp", mp3_audio_file) if mp3_audio_file
+  end
+
+  def single_channel_audio_file
+    "#{@ingest.track.s3_key}.single-channel" if @ingest
   end
   
+  def single_channel_audio_file_fullpath
+    File.join("/tmp", single_channel_audio_file) if single_channel_audio_file
+  end
+
+  def normalized_audio_file
+    "#{@ingest.track.s3_key}.normalized.wav" if @ingest
+  end
+
+  def normalized_audio_file_fullpath
+    File.join("/tmp", normalized_audio_file) if normalized_audio_file
+  end
+  
+  def outbound_url(key)
+    File.join(APP_CONFIG['S3_URL'], APP_CONFIG['S3_OUTBOUND_BUCKET'], key)
+  end
+
+  def inbound_url(key)
+    File.join(APP_CONFIG['S3_URL'], APP_CONFIG['S3_INBOUND_BUCKET'], key)
+  end
+  
+  def s3_copy_object_if_exists(source_bucket_name, destination_bucket_name, source_key, destination_key = nil)
+    s3 = AWS::S3.new
+    destination_key = source_key if destination_key.blank?
+    if s3.buckets[source_bucket_name].objects[source_key].exists?
+      s3.buckets[source_bucket_name].objects[source_key].copy_to(destination_key, :bucket_name => destination_bucket_name)
+    end
+  end
+
   def s3_copy_object(source_bucket_name, destination_bucket_name, source_key, destination_key = nil)
     s3 = AWS::S3.new
     destination_key = source_key if destination_key.blank?
@@ -221,13 +288,13 @@ class Ingest::AudioWorker
     audio      = Speech::AudioToText.new(filename)
     audio.to_json(3, @ingest.locale) do |chunk|
       end_time = start_time + BigDecimal.new(chunk.duration.to_s)
-      @ingest.segments.create(
+      @ingest.ingestable.segments.create(
         :offset      => chunk.offset,
         :duration    => chunk.duration,
         :start_time  => start_time,
         :end_time    => end_time,
-        :best_text   => chunk.best_text,
-        :best_score  => chunk.best_score,
+        :text        => chunk.best_text,
+        :score       => chunk.best_score,
         :response    => chunk.captured_json
       )
       start_time = end_time
@@ -240,6 +307,13 @@ class Ingest::AudioWorker
   def s3_delete_object(bucket_name, key) 
     s3 = AWS::S3.new
     s3.buckets[bucket_name].objects.delete(key)
+  end
+
+  def s3_delete_object_if_exists(bucket_name, key) 
+    s3 = AWS::S3.new
+    if s3.buckets[bucket_name].objects[key].exists?
+      s3.buckets[bucket_name].objects.delete(key)
+    end
   end
   
   def when_liberated
@@ -262,4 +336,49 @@ class Ingest::AudioWorker
       send("#{stage}!".to_sym)
     end
   end
+  
+  def ffmpeg_convert_to_mp3(source_file, mp3_file)
+    cmd = "ffmpeg -b #{@mp3_bitrate}k -i #{source_file} #{mp3_file}   >/dev/null 2>&1"
+    system(cmd)
+  end
+  
+  def s3_upload_object(local_file, bucket_name, key = nil)
+    s3 = AWS::S3.new
+    AWS.config.http_handler.pool.empty!
+    
+    key = File.basename(local_file) unless key
+    Rails.logger.info "-->> start s3 upload: #{local_file}, #{bucket_name}, #{key}"
+    if false
+      s3.buckets[bucket_name].objects[key].write(:file => local_file)
+    else
+      s3.buckets[bucket_name].objects[key].write(File.open(local_file), content_length: File.size(local_file))
+    end
+    Rails.logger.info "-->> finished s3 upload: #{local_file}, #{bucket_name}, #{key}"
+  end
+
+  def ffmpeg_convert_to_wav_and_strip_audio_channel(input_file, output_file)
+    cmd = "ffmpeg -i #{input_file} -f wav -ac 1 #{output_file}   >/dev/null 2>&1"
+    system(cmd)
+  end
+    
+  def sox_normalize_audio(input_file, output_file)
+    cmd = "sox #{input_file} #{output_file} \\" +
+      "remix - \\" +
+      "highpass 100 lowpass 2k \\" +
+      "norm \\" +
+      "compand 0.05,0.2 6:-54,-90,-36,-36,-24,-24,0,-12 0 -90 0.1 \\" + 
+      "vad -T 0.6 -p 0.2 -t 5 \\" +
+      "fade 0.1 \\" +
+      "reverse \\" +
+      "vad -T 0.6 -p 0.2 -t 5 \\" +
+      "fade 0.1 \\" +
+      "reverse \\" +
+      "norm -0.5"
+    system(cmd)
+  end
+
+  def delete_file_if_exists(file)
+    File.delete(file) if file && File.exist?(file) && !Rails.env.development?
+  end
+  
 end

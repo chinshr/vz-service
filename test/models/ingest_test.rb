@@ -96,6 +96,7 @@ class IngestTest < ActiveSupport::TestCase
     assert_equal ["Service unavailable.", "Unsufficient disk space."], ingest.messages["transcode"]
   end
   
+=begin
   should "delegate to @upload#s3_key" do
     ingest = FactoryGirl.create(:ingest_audio)
     assert_not_nil ingest.s3_key
@@ -110,6 +111,7 @@ class IngestTest < ActiveSupport::TestCase
     assert_equal "http://s3.amazonaws.com/dropbox/changed.m4a", ingest.s3_url
     assert_not_equal ingest.upload.s3_url, ingest.s3_url
   end
+=end
   
   should "set progress" do
     ingest = FactoryGirl.create(:ingest_audio)
