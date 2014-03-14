@@ -8,4 +8,4 @@ database.yml
 public/assets/*
 logfile
 .DS_Store
-samples/
+samples/*
