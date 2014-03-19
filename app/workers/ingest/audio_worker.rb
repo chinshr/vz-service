@@ -17,11 +17,14 @@ class Ingest::AudioWorker
     :finalized                                   => 7
   }
   
-  def initialize
+  def initialize(ingest_id = nil)
     AWS.config(
       :access_key_id     => APP_CONFIG['S3_KEY'],    # '*** Provide access key ***'
       :secret_access_key => APP_CONFIG['S3_SECRET']  # '*** Provide secret key ***'
     )
+    
+    # For server debugging purposes
+    @ingest = Ingest::Audio.find(ingest_id) if ingest_id
     
     @mp3_bitrate = 128
   end
@@ -128,6 +131,9 @@ class Ingest::AudioWorker
       # Update s3 references
       @ingest.track.update_attribute(:s3_mp3_url, outbound_url(mp3_audio_file))
       
+      # Remove mp3 file locally
+      delete_file_if_exists mp3_audio_file_fullpath
+      
       set_progress! 15
     end
   end
@@ -140,8 +146,9 @@ class Ingest::AudioWorker
       # Start the stranscription with normalization
       transcribe_file(normalized_audio_file_fullpath)
       
-      # Sweep files we are not using anymore
+      # Sweep files we don't need anymore
       delete_file_if_exists normalized_audio_file_fullpath
+      delete_file_if_exists original_audio_file_fullpath
     end
   end
   
@@ -349,8 +356,12 @@ class Ingest::AudioWorker
   end
   
   def ffmpeg_convert_to_mp3(source_file, mp3_file)
-    cmd = "ffmpeg -b #{@mp3_bitrate}k -y -i #{source_file} #{mp3_file}   >/dev/null 2>&1"
-    system(cmd)
+    cmd = "ffmpeg -y -i #{source_file} -b #{@mp3_bitrate}k #{mp3_file}   >/dev/null 2>&1"
+    if system(cmd)
+      true
+    else
+      raise "Failed convert audio to mp3 with bitrate #{@mp3_bitrate}k: #{source_file}\n#{cmd}"
+    end
   end
   
   def s3_upload_object(local_file, bucket_name, key = nil)
@@ -369,7 +380,11 @@ class Ingest::AudioWorker
 
   def ffmpeg_convert_to_wav_and_strip_audio_channel(input_file, output_file)
     cmd = "ffmpeg -i #{input_file} -y -f wav -ac 1 #{output_file}   >/dev/null 2>&1"
-    system(cmd)
+    if system(cmd)
+      true
+    else
+      raise "Failed convert audio to wav and strip audio channel: #{input_file}\n#{cmd}"
+    end
   end
     
   def sox_normalize_audio(input_file, output_file)
@@ -385,7 +400,11 @@ class Ingest::AudioWorker
       "fade 0.1 \\" +
       "reverse \\" +
       "norm -0.5"
-    system(cmd)
+    if system(cmd)
+      true
+    else
+      raise "Failed to normalize audio: #{input_file}\n#{cmd}"
+    end
   end
 
   def delete_file_if_exists(file)
