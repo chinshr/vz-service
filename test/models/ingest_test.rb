@@ -18,11 +18,13 @@ class IngestTest < ActiveSupport::TestCase
   end
   
   should "work with state machine" do
-    ingest = FactoryGirl.create(:ingest_audio)
+    ingest = FactoryGirl.create(:ingest_audio, :terminate => true, :busy => true)
     assert_equal :created, ingest.state
 
     ingest.start!
     assert_equal :starting, ingest.state
+    assert_equal false, ingest.terminate?
+    assert_equal false, ingest.busy?
     ingest.process!
     assert_equal :started, ingest.state
     assert_not_nil ingest.started_at
@@ -32,20 +34,26 @@ class IngestTest < ActiveSupport::TestCase
     assert_equal 0, ingest.iteration
     assert_equal false, ingest.messages.empty?
 
+    ingest.clear_terminate!
+    assert_equal false, ingest.terminate?
     ingest.restart!
     assert_equal :restarting, ingest.state
+    assert_equal true, ingest.terminate?
     assert_equal false, ingest.messages.empty?
     ingest.process!
-    assert_equal :starting, ingest.state
+    assert_equal :started, ingest.state
     assert_equal true, ingest.messages.empty?
     assert_nil ingest.stage
-    ingest.process!
-    assert_equal :started, ingest.state
-    ingest.log! :started, "working"
+    # ingest.process!
+    # assert_equal :started, ingest.state
+    # ingest.log! :started, "working"
     ingest.update_attributes(stage: "copy_object")
 
+    ingest.clear_terminate!
+    assert_equal false, ingest.terminate?
     ingest.stop!
     assert_equal :stopping, ingest.state
+    assert_equal true, ingest.terminate?
     ingest.process!
     assert_equal :stopped, ingest.state
     assert_not_nil ingest.stopped_at
@@ -62,8 +70,11 @@ class IngestTest < ActiveSupport::TestCase
     assert_equal :stopped, ingest.state
     assert_not_nil ingest.stopped_at
 
+    ingest.clear_terminate!
+    assert_equal false, ingest.terminate?
     ingest.reset!
     assert_equal :resetting, ingest.state
+    assert_equal true, ingest.terminate?
     ingest.process!
     assert_equal :reset, ingest.state
     assert_not_nil ingest.reset_at

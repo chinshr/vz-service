@@ -12,7 +12,7 @@ class Ingest::AudioTest < ActiveSupport::TestCase
     assert_equal document.title, ingest.title
     assert_equal document.description, ingest.description
   end
-
+  
   should "delegate to document setters" do
     document = FactoryGirl.create(:document)
     ingest = FactoryGirl.create(:ingest_audio, :ingestable => document)
@@ -25,14 +25,6 @@ class Ingest::AudioTest < ActiveSupport::TestCase
   should "have segments and remove messages when reset" do
     document = FactoryGirl.create(:document)
     ingest   = FactoryGirl.create(:ingest_audio, :ingestable => document)
-=begin
-    segment1 = FactoryGirl.create(:ingest_audio_segment, :offset => 0, :ingest => ingest, :best_score => 0)
-    segment2 = FactoryGirl.create(:ingest_audio_segment, :offset => 1, :ingest => ingest, :best_score => 0.5)
-    segment3 = FactoryGirl.create(:ingest_audio_segment, :offset => 2, :ingest => ingest, :best_score => 1)
-    assert_equal 3, ingest.segments.count
-    assert_equal 0.5, ingest.score.to_f
-    assert_equal 10.53, ingest.duration.to_f
-=end
     ingest.log! :error, "error message"
     assert_equal %({"error"=>["error message"]}), ingest.messages.to_s
     ingest.start!
@@ -90,12 +82,11 @@ class Ingest::AudioTest < ActiveSupport::TestCase
     
     ingest.process!  # inside worker!
     assert_equal :started, ingest.state
-
+  
     ingest.finish!  # inside worker!
     assert_equal :finished, ingest.state
     
     assert_equal 1, ActionMailer::Base.deliveries.size
     assert_equal "Finished, '#{ingest.upload.file_name}' has been transcribed.", ActionMailer::Base.deliveries[0].subject
   end
-  
 end

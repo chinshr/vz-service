@@ -53,6 +53,7 @@ group :test do
   gem 'minitest'
   gem 'simplecov', :require => false
   gem 'turn'
+  gem 'test_after_commit'
 end
 
 group :production do

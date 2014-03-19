@@ -16,40 +16,59 @@ class Ingest::Audio < ::Ingest
   
   delegate :slug, to: :ingestable
 
+  after_commit :perform_async
+
   protected
 
-  def enter_starting
-    super
+  def perform_async
+    Ingest::AudioWorker.perform_async(self.id) if perform_async_scheduled?
+    clear_perform_async!
   end
   
   def after_enter_starting
     super
-    Ingest::AudioWorker.perform_async(self.id)
+    schedule_perform_async!
   end
   
   def after_enter_resetting
     super
-    Ingest::AudioWorker.perform_async(self.id)
+    schedule_perform_async!
   end
 
   def after_enter_stopping
     super
-    Ingest::AudioWorker.perform_async(self.id)
+    schedule_perform_async!
   end
   
-  def after_exit_restarting
+  def after_enter_removing
     super
-    # segments.destroy_all
+    schedule_perform_async!
   end
   
   def after_enter_restarting
     super
     Ingest::AudioWorker.perform_async(self.id)
+    # schedule_perform_async!
   end
   
   def enter_finished
     super
+
+    # send email
     Ingest::AudioMailer.finished_processing(self).deliver if user
   end
+
+  protected
   
+  def perform_async_scheduled?
+    !!@schedule_perform_async
+  end
+
+  def schedule_perform_async!
+    @schedule_perform_async = true
+  end
+
+  def clear_perform_async!
+    @schedule_perform_async = nil
+  end
 end

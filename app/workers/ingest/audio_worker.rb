@@ -33,19 +33,29 @@ class Ingest::AudioWorker
     # check what we have to do?
     case @ingest.state
     when :starting
+      puts "--> processing #{@ingest.state}"
+      @ingest.process!
       run_all_stages
     when :resetting, :stopping
+      puts "--> waiting liberation #{@ingest.state}"
       when_liberated do
+        puts "--> processing #{@ingest.state}"
         @ingest.process!  # => :reset or :stopped
       end
     when :removing
+      puts "--> waiting liberation #{@ingest.state}"
       when_liberated do
+        puts "--> processing #{@ingest.state}"
+        remove_all_files_and_s3_objects
         @ingest.process!  # => :removed
       end
     when :restarting
       # wait until current stage is finishing what it is doing
+      puts "--> waiting liberation #{@ingest.state}"
       when_liberated do
-        @ingest.process!  # => :starting
+        puts "--> processing #{@ingest.state}"
+        @ingest.clear_terminate!
+        @ingest.process!
         run_all_stages
       end
     end
@@ -59,9 +69,8 @@ class Ingest::AudioWorker
 
   def initialize_pipeline!
     stage! :initialize_pipeline do
-      @ingest.process!
       @ingest.track.destroy if @ingest.track
-      @ingest.create_track(:s3_url => "empty")
+      @ingest.create_track(:s3_url => "initializing")
       @ingest.save if @ingest.changed?
       set_progress! 0
     end
@@ -92,12 +101,16 @@ class Ingest::AudioWorker
   def normalize_original_audio_file!
     stage! :normalize_original_audio_file do
       # Create single WAV file
-      ffmpeg_convert_to_wav_and_strip_audio_channel(original_audio_file_fullpath, single_channel_audio_file_fullpath)
-      
+      puts "--> before ffmpeg_convert_to_wav_and_strip_audio_channel"
+      ffmpeg_convert_to_wav_and_strip_audio_channel original_audio_file_fullpath, single_channel_audio_file_fullpath
+
+      puts "--> before sox_normalize_audio"
       # Noise cancel and normalize it
-      sox_normalize_audio(single_channel_audio_file_fullpath, normalized_audio_file_fullpath)
+      delete_file_if_exists normalized_audio_file_fullpath
+      sox_normalize_audio single_channel_audio_file_fullpath, normalized_audio_file_fullpath
       
       # Delete the single channel file
+      puts "--> delete single_channel_audio_file_fullpath"
       delete_file_if_exists single_channel_audio_file_fullpath
       
       set_progress! 20
@@ -159,14 +172,10 @@ class Ingest::AudioWorker
   end
   
   def can_stage?(stage_name)
-    if @ingest
+    if @ingest && !@ingest.terminate?
       if @ingest.stage && @ingest.started?
         # get on with the next stage
         return Ingest::AudioWorker::STAGES[stage_name.to_sym] > Ingest::AudioWorker::STAGES[@ingest.stage.to_sym]
-      elsif @ingest.stage && @ingest.stage == stage_name.to_s && @ingest.starting?
-        # attempt to re-run stage
-        @ingest.process!
-        return Ingest::AudioWorker::STAGES[stage_name.to_sym] >= Ingest::AudioWorker::STAGES[@ingest.stage.to_sym]
       elsif !@ingest.stage
         # initializing
         return true
@@ -198,6 +207,7 @@ class Ingest::AudioWorker
   end
   
   def log!(stage_name, message)
+    puts "** stage #{stage_name}: #{message}" if @ingest && Rails.env.development?
     @ingest.log! stage_name, message if @ingest
   end
   
@@ -300,7 +310,7 @@ class Ingest::AudioWorker
       start_time = end_time
       increment_progress! 1, chunk.splitter.chunks.size, 0.8
       @ingest.reload
-      break unless @ingest.started?
+      break if !@ingest.started? || @ingest.terminate?
     end
   end
   
@@ -319,6 +329,7 @@ class Ingest::AudioWorker
   def when_liberated
     return unless @ingest
     counter = 0
+    @ingest.reload
     while @ingest.busy? && counter < 10
       sleep 1
       @ingest.reload
@@ -338,7 +349,7 @@ class Ingest::AudioWorker
   end
   
   def ffmpeg_convert_to_mp3(source_file, mp3_file)
-    cmd = "ffmpeg -b #{@mp3_bitrate}k -i #{source_file} #{mp3_file}   >/dev/null 2>&1"
+    cmd = "ffmpeg -b #{@mp3_bitrate}k -y -i #{source_file} #{mp3_file}   >/dev/null 2>&1"
     system(cmd)
   end
   
@@ -357,14 +368,14 @@ class Ingest::AudioWorker
   end
 
   def ffmpeg_convert_to_wav_and_strip_audio_channel(input_file, output_file)
-    cmd = "ffmpeg -i #{input_file} -f wav -ac 1 #{output_file}   >/dev/null 2>&1"
+    cmd = "ffmpeg -i #{input_file} -y -f wav -ac 1 #{output_file}   >/dev/null 2>&1"
     system(cmd)
   end
     
   def sox_normalize_audio(input_file, output_file)
     cmd = "sox #{input_file} #{output_file} \\" +
       "remix - \\" +
-      "highpass 100 lowpass 2k \\" +
+      "highpass 100 \\" +
       "norm \\" +
       "compand 0.05,0.2 6:-54,-90,-36,-36,-24,-24,0,-12 0 -90 0.1 \\" + 
       "vad -T 0.6 -p 0.2 -t 5 \\" +
@@ -378,7 +389,19 @@ class Ingest::AudioWorker
   end
 
   def delete_file_if_exists(file)
-    File.delete(file) if file && File.exist?(file) && !Rails.env.development?
+    File.delete(file) if file && File.exist?(file)
+  end
+  
+  def remove_all_files_and_s3_objects
+    # remove local files
+    delete_file_if_exists original_audio_file_fullpath
+    delete_file_if_exists single_channel_audio_file_fullpath
+    delete_file_if_exists normalized_audio_file_fullpath
+    delete_file_if_exists mp3_audio_file_fullpath
+
+    # remove S3 objects
+    s3_delete_object_if_exists(APP_CONFIG['S3_OUTBOUND_BUCKET'], @ingest.track.s3_key)
+    s3_delete_object_if_exists(APP_CONFIG['S3_OUTBOUND_BUCKET'], @ingest.track.s3_mp3_key)
   end
   
 end

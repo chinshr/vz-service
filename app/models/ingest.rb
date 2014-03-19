@@ -33,7 +33,7 @@ class Ingest < ActiveRecord::Base
     state :stopped, :enter => :enter_stopped
     state :resetting, :after_enter => :after_enter_resetting
     state :reset, :enter => :enter_reset
-    state :removing
+    state :removing, :enter => :enter_removing, :after_enter => :after_enter_removing
     state :removed, :enter => :enter_removed
     state :finished, :enter => :enter_finished
     state :restarting, :after_exit => :after_exit_restarting, :after_enter => :after_enter_restarting
@@ -55,11 +55,11 @@ class Ingest < ActiveRecord::Base
     end
 
     event :process do
-      transitions :from => [:starting, :started], :to => :started
+      transitions :from => [:starting, :restarting, :started], :to => :started
       transitions :from => [:stopping, :stopped], :to => :stopped
       transitions :from => [:resetting, :reset], :to => :reset
       transitions :from => [:removing, :removed], :to => :removed
-      transitions :from => :restarting, :to => :starting
+      transitions :from => :restarting, :to => :started
     end
     
     event :finish do
@@ -138,13 +138,38 @@ class Ingest < ActiveRecord::Base
     "http://voyz.es/#{ingestable.slug}/edit"
   end
   
+  def signal_terminate!
+    update_attribute(:terminate, true)
+  end
+
+  def clear_terminate!
+    update_attribute(:terminate, false)
+  end
+
+  def signal_busy!
+    update_attribute(:busy, true)
+  end
+
+  def clear_busy!
+    update_attribute(:busy, false)
+  end
+  
   protected
 
-  def enter_starting; end
-  def after_enter_starting; end
+  def enter_starting
+    self.terminate = false
+    self.busy      = false
+  end
   
-  def after_enter_stopping; end
-  def after_enter_resetting; end
+  def after_enter_starting; end
+
+  def after_enter_stopping
+    self.terminate = true
+  end
+
+  def after_enter_resetting
+    self.terminate = true
+  end
   
   def enter_started
     self.started_at = Time.now.utc
@@ -152,20 +177,30 @@ class Ingest < ActiveRecord::Base
 
   def enter_stopped
     self.stopped_at = Time.now.utc
+    self.terminate  = false
+    self.busy       = false
   end
   
   def enter_reset
-    self.reset_at = Time.now.utc
-    self.messages = {}
-    self.increment(:iteration)
-    self.stage = nil
+    self.reset_at  = Time.now.utc
+    self.messages  = {}
+    self.stage     = nil
+    self.progress  = 0
+    self.terminate = false
+    self.busy      = false
+    increment(:iteration)
   end
 
   def enter_finished
     self.finished_at = Time.now.utc
   end
   
+  def enter_removing
+    self.terminate = true
+  end
+  
   def enter_removed
+    self.terminate  = false
     self.removed_at = Time.now.utc
   end
   
@@ -175,7 +210,10 @@ class Ingest < ActiveRecord::Base
   
   def after_enter_restarting
     self.restarted_at = Time.now.utc
+    self.terminate    = true
   end
+  
+  def after_enter_removing; end
   
   def has_valid_upload?
     !!(upload && upload.s3_url)

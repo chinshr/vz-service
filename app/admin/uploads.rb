@@ -17,16 +17,23 @@ ActiveAdmin.register Upload do
     column :locale
     column :created_at
     column :progress
+    column :iteration do |resource|
+      resource.ingest.iteration
+    end
     column(:state) do |resource|
       colors = {:created => :grey, :starting => :grey, :started => :ok, :restarting => :grey,
-        :stopping => :error, :stopped => :error, :resetting => :warning, :reset => :warning, 
+        :stopping => :grey, :stopped => :error, :resetting => :warning, :reset => :warning, 
         :finished => :ok, :removing => :warning, :removed => :warning}
       status_tag(resource.ingest.state.to_s, colors[resource.ingest.state])
     end
     column do |resource|
       links = ""
       links += link_to I18n.t('active_admin.view'), resource_path(resource), :class => "member_link view_link"
-      (resource.ingest.aasm_events_for_current_state - [:process, :fail, :finish]).each do |event|
+      if resource.ingest.state == :removed
+        links += link_to "Delete", resource_path(resource), 
+          :method => :delete, :class => "member_link delete_link", :confirm => "Are you really really really sure?"
+      end
+      (resource.ingest.aasm.events(resource.ingest.aasm.current_state) - [:process, :fail, :finish]).each do |event|
         links += link_to event.to_s.humanize, switch_admin_upload_path(resource, :event => event), 
           :class => "member_link view_link button", :confirm => "Really want to #{event.to_s.humanize.downcase}?"
       end
