@@ -24,7 +24,9 @@ ActiveAdmin.register Upload do
     column :s3_url
     column :locale
     column :created_at
-    column :progress
+    column :progress do |resource|
+      %(<div class="progressbar"><div style="width:#{resource.ingest.progress}%"></div></div>).html_safe
+    end
     column :iteration do |resource|
       resource.ingest.iteration
     end
