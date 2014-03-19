@@ -96,7 +96,7 @@ class Ingest::AudioWorker
 
   def download_object_from_outbound_bucket!
     stage! :download_object_from_outbound_bucket do
-      s3_download_object(APP_CONFIG['S3_OUTBOUND_BUCKET'], @ingest.track.s3_key, original_audio_file_fullpath)
+      s3_download_object APP_CONFIG['S3_OUTBOUND_BUCKET'], @ingest.track.s3_key, original_audio_file_fullpath
       set_progress! 10
     end
   end
@@ -356,11 +356,11 @@ class Ingest::AudioWorker
   end
   
   def ffmpeg_convert_to_mp3(source_file, mp3_file)
-    cmd = "ffmpeg -y -i #{source_file} -b #{@mp3_bitrate}k #{mp3_file}   >/dev/null 2>&1"
+    cmd = "ffmpeg -y -i #{source_file} -f mp2 -b #{@mp3_bitrate}k #{mp3_file}   >/dev/null 2>&1"
     if system(cmd)
       true
     else
-      raise "Failed convert audio to mp3 with bitrate #{@mp3_bitrate}k: #{source_file}\n#{cmd}"
+      raise "Failed converting audio to mp3 with bitrate #{@mp3_bitrate}k: #{source_file}\n#{cmd}"
     end
   end
   
