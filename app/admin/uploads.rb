@@ -8,7 +8,15 @@ ActiveAdmin.register Upload do
   scope :removed
   scope :finished
   
+  batch_action :delete do |ids|
+    Upload.removed.find(ids).each do |upload|
+      upload.destroy
+    end
+    redirect_to collection_path, alert: "The uploads have been deleted."
+  end
+    
   index do
+    selectable_column
     column :id
     column :title do |resource|
       link_to resource.title, admin_document_path(resource)

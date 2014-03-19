@@ -12,6 +12,9 @@
         <select id="file-locale" class="form-control">
           <option value="en-US">English United States</option>
           <option value="en-UK">English Great Britain</option>
+          <option value="de-DE">German Germany</option>
+          <option value="fr-FR">French France</option>
+          <option value="it-IT">Italian Italy</option>
           <option value="es-ES">Spanish Spain</option>
           <option value="es-MX">Spanish Mexico</option>
           <option value="es-AR">Spanish Argentina</option>

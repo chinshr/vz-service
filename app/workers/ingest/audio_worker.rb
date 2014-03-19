@@ -8,13 +8,12 @@ class Ingest::AudioWorker
 
   STAGES = {
     :initialize_pipeline                         => 0,
-    :move_object_from_inbound_to_outbound_bucket => 1,
-    :download_object_from_outbound_bucket        => 2,
-    :normalize_original_audio_file               => 3,
-    :create_mp3_and_upload                       => 4,
-    :transcribe                                  => 5,
-    :update_ingestable                           => 6,
-    :finalized                                   => 7
+    :move_object_from_inbound_to_outbound_bucket => 10,
+    :download_object_from_outbound_bucket        => 20,
+    :normalize_original_audio_file               => 30,
+    :create_mp3_and_upload                       => 40,
+    :transcribe                                  => 50,
+    :finalized                                   => 60
   }
   
   def initialize(ingest_id = nil)
@@ -146,19 +145,16 @@ class Ingest::AudioWorker
       # Start the stranscription with normalization
       transcribe_file(normalized_audio_file_fullpath)
       
+      # Update document
+      content = @ingest.ingestable.segments.map {|sg| sg.text ? sg.text.strip : nil}.compact.join(" ")
+      @ingest.ingestable.update_attribute(:content, content)
+      
       # Sweep files we don't need anymore
       delete_file_if_exists normalized_audio_file_fullpath
       delete_file_if_exists original_audio_file_fullpath
     end
   end
   
-  def update_ingestable!
-    stage! :update_ingestable do
-      content = @ingest.ingestable.segments.map {|sg| sg.text ? sg.text.strip : nil}.compact.join(" ")
-      @ingest.ingestable.update_attribute(:content, content)
-    end
-  end
-
   def finalized!
     stage! :finalized do
       @ingest.finish!
@@ -328,9 +324,12 @@ class Ingest::AudioWorker
 
   def s3_delete_object_if_exists(bucket_name, key) 
     s3 = AWS::S3.new
-    if s3.buckets[bucket_name].objects[key].exists?
+    if bucket_name.present? && key.present? && s3.buckets[bucket_name].objects[key].exists?
       s3.buckets[bucket_name].objects.delete(key)
     end
+    true
+  rescue AWS::S3::Errors::NoSuchKey => ex
+    false
   end
   
   def when_liberated
