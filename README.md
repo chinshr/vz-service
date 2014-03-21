@@ -72,7 +72,7 @@ Development Resources
   - Vulcan configure -- http://www.higherorderheroku.com/articles/using-vulcan-to-build-binary-dependencies-on-heroku/
 * Steps to create a heroku buildpack
   - curl on Heroku bash from github repo: curl -L https://github.com/chinshr/qio/tarball/master | tar zx
-  
+  - Tar and GZ the archive: tar -zcvf qio.tar.gz qio-build
 
 Competitive Products
 --------------------
