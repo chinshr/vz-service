@@ -12,4 +12,10 @@ class Track < ActiveRecord::Base
     s3_mp3_url ? s3_mp3_url.split("/").last : nil
   end
   
+  def stream_url
+    s3 = AWS::S3.new
+    object = s3.buckets[APP_CONFIG['S3_OUTBOUND_BUCKET']].objects[s3_mp3_key]
+    object.url_for(:get, {:expires => 20.minutes.from_now, :secure => true}).to_s
+  end
+  
 end

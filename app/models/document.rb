@@ -5,6 +5,7 @@ class Document < ActiveRecord::Base
   belongs_to :user
   has_many :ingests, as: :ingestable
   has_many :segments, -> { order(offset: :asc) }, dependent: :destroy
+  has_many :tracks, :through => :ingests
 
   validates :slug, presence: true, uniqueness: {case_sensitive: false}
   validates :title, presence: true, length: { maximum: 255 }

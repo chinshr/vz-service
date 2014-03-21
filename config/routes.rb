@@ -25,6 +25,9 @@ Voyzes::Application.routes.draw do
 
   namespace :api do
     get "/uploads/signput" => "uploads#signput"
+    resources :documents, :only => [] do
+      resources :tracks, :only => :index
+    end
     resources :uploads
   end
   

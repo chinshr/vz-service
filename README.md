@@ -65,6 +65,19 @@ Development Resources
 * A command line tool to slice sound files at onset or beat timestamps -- http://aubio.org/manpages/latest/aubiocut.1.html
 * Extracting portion of speech -- http://stackoverflow.com/questions/5498142/what-is-a-good-approach-for-extracting-portions-of-speech-from-an-arbitrary-audi
 * How to store data in S3 and allow user access in a secure way -- http://stackoverflow.com/questions/10811017/how-to-store-data-in-s3-and-allow-user-access-in-a-secure-way-with-rails-api-i
+* Resources for doing noise reduction in speech -- http://www1.icsi.berkeley.edu/Speech/papers/gelbart-ms/pointers/
+  - Aurora front-end archive, voice detection, noise reduction http://www1.icsi.berkeley.edu/Speech/papers/qio/
+  - Convert audio to header less PCM http://stackoverflow.com/questions/4854513/can-ffmpeg-convert-audio-to-raw-pcm-if-so-how
+  - Creating buildpack binaries -- http://blog.clearideas.ca/2013/04/26/Adding-Custom-Binaries-to-Heroku/
+  - Vulcan configure -- http://www.higherorderheroku.com/articles/using-vulcan-to-build-binary-dependencies-on-heroku/
+* Steps to create a heroku buildpack
+  - curl on Heroku bash from github repo: curl -L https://github.com/chinshr/qio/tarball/master | tar zx
+  
+
+Competitive Products
+--------------------
+
+* Gridspace -- http://gridspace.com
 
 
 SendGrid Setup
@@ -179,7 +192,7 @@ Humanize in CC:
     @file_name.split(".")[0].replace(/[_-]/g, ' ').replace /(\w+)/g, match ->
       match.charAt(0).toUpperCase() + match.slice(1)
 
-## Audio noise reduction pipeline
+## SoX Audio noise reduction pipeline
 
 Convert to wav file format:
 
@@ -236,16 +249,87 @@ Simpler, voice cleanup from http://sox.sourceforge.net/Docs/Scripts:
         reverse \
         norm -0.5
 
+## Standard SOX normalizer
 
-My combined version of the two from above:
-
-    sox -t raw -r 44.1k -e signed-int -c 1 -b 16 john-and-juergen.wav cleaned.wav \
+    sox john-and-juergen.wav john-and-juergen.cleaned.wav \
       remix - \
       highpass 100 \
       norm \
-      noisered noise.profile 0.5 \
       compand 0.05,0.2 6:-54,-90,-36,-36,-24,-24,0,-12 0 -90 0.1 \
-      vad -T 0.25 -p 0.2 -t 5 fade 0.1 reverse \
-      vad -T 0.25 -p 0.25 -t 5 fade 0.1 reverse \
-      norm -0.5 rate 44.1k stat
+      vad -T 0.6 -p 0.2 -t 5 \
+      fade 0.1 \
+      reverse \
+      vad -T 0.6 -p 0.2 -t 5 \
+      fade 0.1 \
+      reverse \
+      norm -0.5
 
+## Aurora QIO pipeline
+
+Setup env
+
+    export AURORACALC=/Users/juergen/Downloads/aurora-front-end/qio
+    export PATH=$PATH:$AURORACALC/src
+
+Get a list of supported PCM formats:
+
+    ffmpeg -formats | grep PCM
+
+Convert audio to Wav format:
+
+   ffmpeg -i john-and-juergen.m4a -y -f wav -ac 2 john-and-juergen.wav
+
+Convert to raw headerless PCM and down sample to 16-bit
+
+    ffmpeg -i john-and-juergen.wav -ar 16000 -y -f s16le -acodec pcm_s16le john-and-juergen.pcm
+
+Create silence flags, 25ms window, without Wiener filter:
+
+    silence_flags -S 0 -Length 25 \
+      -VADweights $AURORACALC/parameters/vad/net.tim-fin-tic-spn-rand.54i+50h+2o.mel-delay+dct+lpf.wts.head \
+      -VADnorm $AURORACALC/parameters/vad/tim-fin-tic-spn-rand.mel-delay+dct+lpf.norms \
+      -fs 16000 -swapin 0 \
+      -i john-and-juergen.pcm -o john-and-juergen.s
+
+Create silence flags, 25ms window, including Wiener filter:
+
+    silence_flags -S 1 -Length 25 \
+      -VADweights $AURORACALC/parameters/vad/net.tim-fin-tic-it-spn-rand.54i+50h+2o.0-delay-wiener+dct+lpf.wts.head \
+      -VADnorm $AURORACALC/parameters/vad/tim-fin-tic-it-spn-rand.0-delay-wiener+dct+lpf.norms \
+      -fs 16000 -swapin 0 \
+      -i john-and-juergen.pcm -o john-and-juergen.s
+
+Create silence flags, 20ms window no Wiener:
+
+    silence_flags -S 1 -Length 20 \
+      -VADweights $AURORACALC/parameters/vad/net.tim-fin-tic-spn-rand.54i+50h+2o.win20-mel-delay+dct+lpf.wts.head \
+      -VADnorm $AURORACALC/parameters/vad/tim-fin-tic-spn-rand.win20-mel-delay+dct+lpf.norms \
+      -fs 16000 -swapin 0 \
+      -i john-and-juergen.pcm -o john-and-juergen.s
+
+Noise reduce PCM file with silence flags:
+
+    nr -fs 16000 -Length 20 -swapin 0 -swapout 0 \
+      -Ssilfile john-and-juergen.s \
+      -i john-and-juergen.pcm -o john-and-juergen.cleaned.pcm
+
+Convert PCM file back to wav audio:
+
+    ffmpeg -f s16le -ar 16k -ac 2 -y -i john-and-juergen.cleaned.pcm john-and-juergen.cleaned.wav
+
+Let's normalize afterwards:
+
+    sox john-and-juergen.cleaned.wav john-and-juergen.cleaned.normalized.wav \
+      remix - \
+      highpass 100\
+      norm \
+      compand 0.05,0.2 6:-54,-90,-36,-36,-24,-24,0,-12 0 -90 0.1 \
+      vad -T 0.6 -p 0.2 -t 5 \
+      fade 0.0 \
+      reverse \
+      vad -T 0.6 -p 0.2 -t 5 \
+      fade 0.0 \
+      reverse \
+      norm -0.5
+
+    

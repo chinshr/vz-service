@@ -1,0 +1,1 @@
+attributes :id, :stream_url, :updated_at, :created_at
