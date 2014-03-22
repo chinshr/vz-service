@@ -51,7 +51,7 @@ class Ingest < ActiveRecord::Base
     end
 
     event :remove do
-      transitions :from => [:created, :started, :stopped, :reset, :finished], :to => :removing
+      transitions :from => [:created, :starting, :started, :stopping, :stopped, :resetting, :reset, :finished], :to => :removing
     end
 
     event :process do

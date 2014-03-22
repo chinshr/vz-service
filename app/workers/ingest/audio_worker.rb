@@ -353,7 +353,7 @@ class Ingest::AudioWorker
   
   def transcribe_file(filename)
     start_time = BigDecimal.new("0.0")
-    audio      = Speech::AudioToText.new(filename)
+    audio      = Speech::AudioToText.new(filename, {chunk_size: 20, verbose: Rails.env.development?})
     audio.to_json(3, @ingest.locale) do |chunk|
       end_time = start_time + BigDecimal.new(chunk.duration.to_s)
       @ingest.ingestable.segments.create(
@@ -365,6 +365,8 @@ class Ingest::AudioWorker
         :score       => chunk.best_score,
         :response    => chunk.captured_json
       )
+      puts "-> chunk #{start_time}-#{end_time} (#{chunk.duration}): #{chunk.best_text} (#{chunk.best_score})"
+
       start_time = end_time
       increment_progress! 1, chunk.splitter.chunks.size, 0.75
       @ingest.reload
@@ -496,7 +498,7 @@ class Ingest::AudioWorker
   end
 
   def ffmpeg_convert_pcm_to_wav(input_file, output_file)
-    cmd = "ffmpeg -f s16le -ar 16k -ac 2 -y -i #{input_file} #{output_file}"
+    cmd = "ffmpeg -f s16le -ar 16k -ac 1 -y -i #{input_file} #{output_file}"
     if system(cmd)
       true
     else

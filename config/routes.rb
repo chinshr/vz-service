@@ -21,6 +21,7 @@ Voyzes::Application.routes.draw do
     get '/upload' => "uploads#index"
     get '/:id' => "documents#show"
     get '/:id/edit' => "documents#edit"
+    get '/:id/stream' => "documents#stream"
   end
 
   namespace :api do
