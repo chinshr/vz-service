@@ -11,6 +11,7 @@ class Ingest::AudioWorker
     :move_object_from_inbound_to_outbound_bucket => 10,
     :download_object_from_outbound_bucket        => 20,
     :normalize_original_audio_file               => 30,
+    :noise_reduce_audio_file                     => 35, 
     :create_mp3_and_upload                       => 40,
     :transcribe                                  => 50,
     :finalized                                   => 60
@@ -108,12 +109,34 @@ class Ingest::AudioWorker
 
       puts "--> before sox_normalize_audio"
       # Noise cancel and normalize it
-      delete_file_if_exists normalized_audio_file_fullpath
       sox_normalize_audio single_channel_audio_file_fullpath, normalized_audio_file_fullpath
       
       # Delete the single channel file
       puts "--> delete single_channel_audio_file_fullpath"
       delete_file_if_exists single_channel_audio_file_fullpath
+      
+      set_progress! 15
+    end
+  end
+
+  def noise_reduce_audio_file!
+    stage! :noise_reduce_audio_file do
+      # Convert to raw headerless PCM and down sample to 16-bit
+      ffmpeg_downsample_and_convert_to_pcm(normalized_audio_file_fullpath, pcm_audio_file_fullpath)
+      
+      # Figure out none speech sections
+      qio_silence_flags(pcm_audio_file_fullpath, silence_file_full_path)
+      
+      # Apply the QIO NR with silence file
+      qio_noise_reduce(pcm_audio_file_fullpath, silence_file_full_path, noise_reduced_pcm_audio_file_fullpath)
+      
+      # Convert PCM back to WAV
+      ffmpeg_convert_pcm_to_wav(noise_reduced_pcm_audio_file_fullpath, noise_reduced_wav_audio_file_fullpath)
+
+      # Delete no more used files
+      delete_file_if_exists pcm_audio_file_fullpath
+      delete_file_if_exists silence_file_full_path
+      delete_file_if_exists noise_reduced_pcm_audio_file_fullpath
       
       set_progress! 20
     end
@@ -122,7 +145,7 @@ class Ingest::AudioWorker
   def create_mp3_and_upload!
     stage! :create_mp3_and_upload do
       # Convert to mp3
-      ffmpeg_convert_to_mp3 normalized_audio_file_fullpath, mp3_audio_file_fullpath
+      ffmpeg_convert_to_mp3 noise_reduced_wav_audio_file_fullpath, mp3_audio_file_fullpath
       
       # Upload mp3
       s3_upload_object(mp3_audio_file_fullpath, APP_CONFIG['S3_OUTBOUND_BUCKET'], mp3_audio_file)
@@ -133,7 +156,7 @@ class Ingest::AudioWorker
       # Remove mp3 file locally
       delete_file_if_exists mp3_audio_file_fullpath
       
-      set_progress! 15
+      set_progress! 25
     end
   end
 
@@ -143,7 +166,7 @@ class Ingest::AudioWorker
       @ingest.ingestable.segments.destroy_all
       
       # Start the stranscription with normalization
-      transcribe_file(normalized_audio_file_fullpath)
+      transcribe_file(noise_reduced_wav_audio_file_fullpath)
       
       # Update document
       content = @ingest.ingestable.segments.map {|sg| sg.text ? sg.text.strip : nil}.compact.join(" ")
@@ -265,6 +288,38 @@ class Ingest::AudioWorker
     File.join("/tmp", normalized_audio_file) if normalized_audio_file
   end
   
+  def pcm_audio_file
+    "#{@ingest.track.s3_key}.pcm" if @ingest
+  end
+  
+  def pcm_audio_file_fullpath
+    File.join("/tmp", pcm_audio_file) if pcm_audio_file
+  end
+
+  def silence_file
+    "#{@ingest.track.s3_key}.s" if @ingest
+  end
+  
+  def silence_file_full_path
+    File.join("/tmp", silence_file) if silence_file
+  end
+
+  def noise_reduced_pcm_audio_file
+    "#{@ingest.track.s3_key}.nr.pcm" if @ingest
+  end
+
+  def noise_reduced_pcm_audio_file_fullpath
+    File.join("/tmp", noise_reduced_pcm_audio_file) if noise_reduced_pcm_audio_file
+  end
+  
+  def noise_reduced_wav_audio_file
+    "#{@ingest.track.s3_key}.nr.wav" if @ingest
+  end
+
+  def noise_reduced_wav_audio_file_fullpath
+    File.join("/tmp", noise_reduced_wav_audio_file) if noise_reduced_wav_audio_file
+  end
+  
   def outbound_url(key)
     File.join(APP_CONFIG['S3_URL'], APP_CONFIG['S3_OUTBOUND_BUCKET'], key)
   end
@@ -311,7 +366,7 @@ class Ingest::AudioWorker
         :response    => chunk.captured_json
       )
       start_time = end_time
-      increment_progress! 1, chunk.splitter.chunks.size, 0.8
+      increment_progress! 1, chunk.splitter.chunks.size, 0.75
       @ingest.reload
       break if !@ingest.started? || @ingest.terminate?
     end
@@ -406,6 +461,49 @@ class Ingest::AudioWorker
     end
   end
 
+  def ffmpeg_downsample_and_convert_to_pcm(input_file, output_file)
+    cmd = "ffmpeg -i #{input_file} -ar 16000 -y -f s16le -acodec pcm_s16le #{output_file}"
+    if system(cmd)
+      true
+    else
+      raise "Failed convert audio to pcm and downsample: #{input_file}\n#{cmd}"
+    end
+  end
+  
+  def qio_silence_flags(input_file, output_file)
+    cmd = "silence_flags -S 1 -Length 20 \\" + 
+      "-VADweights #{ENV['AURORACALC']}/parameters/vad/net.tim-fin-tic-spn-rand.54i+50h+2o.win20-mel-delay+dct+lpf.wts.head \\" +
+      "-VADnorm #{ENV['AURORACALC']}/parameters/vad/tim-fin-tic-spn-rand.win20-mel-delay+dct+lpf.norms \\" +
+      "-fs 16000 \\" + 
+      "-swapin 0 \\" +
+      "-i #{input_file} -o #{output_file}"
+    if system(cmd)
+      true
+    else
+      raise "Failed to produce silence file: #{input_file}\n#{cmd}"
+    end
+  end
+
+  def qio_noise_reduce(input_file, silence_file, output_file)
+    cmd = "nr -fs 16000 -Length 20 -swapin 0 -swapout 0 \\" +
+      "-Ssilfile #{silence_file} \\" +
+      "-i #{input_file} -o #{output_file}"
+    if system(cmd)
+      true
+    else
+      raise "Failed to noise reduce file: #{input_file}\n#{cmd}"
+    end
+  end
+
+  def ffmpeg_convert_pcm_to_wav(input_file, output_file)
+    cmd = "ffmpeg -f s16le -ar 16k -ac 2 -y -i #{input_file} #{output_file}"
+    if system(cmd)
+      true
+    else
+      raise "Failed to convert pcm file: #{input_file}\n#{cmd}"
+    end
+  end
+  
   def delete_file_if_exists(file)
     File.delete(file) if file && File.exist?(file)
   end
@@ -416,6 +514,9 @@ class Ingest::AudioWorker
     delete_file_if_exists single_channel_audio_file_fullpath
     delete_file_if_exists normalized_audio_file_fullpath
     delete_file_if_exists mp3_audio_file_fullpath
+    delete_file_if_exists pcm_audio_file_fullpath
+    delete_file_if_exists silence_file_full_path
+    delete_file_if_exists noise_reduced_pcm_audio_file_fullpath
 
     # remove S3 objects
     s3_delete_object_if_exists(APP_CONFIG['S3_OUTBOUND_BUCKET'], @ingest.track.s3_key)

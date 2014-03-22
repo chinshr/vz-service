@@ -14,6 +14,10 @@ class Ingest::AudioWorkerTest < ActiveSupport::TestCase
     Ingest::AudioWorker.any_instance.stubs(:ffmpeg_convert_to_mp3).returns(true)
     Ingest::AudioWorker.any_instance.stubs(:ffmpeg_convert_to_wav_and_strip_audio_channel).returns(true)
     Ingest::AudioWorker.any_instance.stubs(:sox_normalize_audio).returns(true)
+    Ingest::AudioWorker.any_instance.stubs(:ffmpeg_downsample_and_convert_to_pcm).returns(true)
+    Ingest::AudioWorker.any_instance.stubs(:qio_silence_flags).returns(true)
+    Ingest::AudioWorker.any_instance.stubs(:qio_noise_reduce).returns(true)
+    Ingest::AudioWorker.any_instance.stubs(:ffmpeg_convert_pcm_to_wav).returns(true)
 
     Ingest::AudioWorker.jobs.clear
   end
