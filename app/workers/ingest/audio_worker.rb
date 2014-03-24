@@ -24,9 +24,11 @@ class Ingest::AudioWorker
     )
     
     # For server debugging purposes
-    @ingest = Ingest::Audio.find(ingest_id) if ingest_id
-    
-    @mp3_bitrate = 128
+    @ingest               = Ingest::Audio.find(ingest_id) if ingest_id
+    @mp3_bitrate          = 128    # in kbits
+    @chunk_size           = 10     # in seconds
+    @vad_silence_segments = 20     # in ms
+    @vad_noise_reduce     = false  # noise reduce, true or false (note: true only works with 25ms silence segments)
   end
   
   def perform(ingest_id, options = {})
@@ -36,27 +38,27 @@ class Ingest::AudioWorker
     # check what we have to do?
     case @ingest.state
     when :starting
-      puts "--> processing #{@ingest.state}"
+      Rails.logger.info "--> processing #{@ingest.state}"
       @ingest.process!
       run_all_stages
     when :resetting, :stopping
-      puts "--> waiting liberation #{@ingest.state}"
+      Rails.logger.info "--> waiting liberation #{@ingest.state}"
       when_liberated do
-        puts "--> processing #{@ingest.state}"
+        Rails.logger.info "--> processing #{@ingest.state}"
         @ingest.process!  # => :reset or :stopped
       end
     when :removing
-      puts "--> waiting liberation #{@ingest.state}"
+      Rails.logger.info "--> waiting liberation #{@ingest.state}"
       when_liberated do
-        puts "--> processing #{@ingest.state}"
+        Rails.logger.info "--> processing #{@ingest.state}"
         remove_all_files_and_s3_objects
         @ingest.process!  # => :removed
       end
     when :restarting
       # wait until current stage is finishing what it is doing
-      puts "--> waiting liberation #{@ingest.state}"
+      Rails.logger.info "--> waiting liberation #{@ingest.state}"
       when_liberated do
-        puts "--> processing #{@ingest.state}"
+        Rails.logger.info "--> processing #{@ingest.state}"
         @ingest.clear_terminate!
         @ingest.process!
         run_all_stages
@@ -104,15 +106,15 @@ class Ingest::AudioWorker
   def normalize_original_audio_file!
     stage! :normalize_original_audio_file do
       # Create single WAV file
-      puts "--> before ffmpeg_convert_to_wav_and_strip_audio_channel"
+      Rails.logger.info "--> before ffmpeg_convert_to_wav_and_strip_audio_channel"
       ffmpeg_convert_to_wav_and_strip_audio_channel original_audio_file_fullpath, single_channel_audio_file_fullpath
 
-      puts "--> before sox_normalize_audio"
+      Rails.logger.info "--> before sox_normalize_audio"
       # Noise cancel and normalize it
       sox_normalize_audio single_channel_audio_file_fullpath, normalized_audio_file_fullpath
       
       # Delete the single channel file
-      puts "--> delete single_channel_audio_file_fullpath"
+      Rails.logger.info "--> delete single_channel_audio_file_fullpath"
       delete_file_if_exists single_channel_audio_file_fullpath
       
       set_progress! 15
@@ -233,7 +235,7 @@ class Ingest::AudioWorker
   end
   
   def log!(stage_name, message)
-    puts "** stage #{stage_name}: #{message}" if @ingest && Rails.env.development?
+    Rails.logger.info "** stage #{stage_name}: #{message}" if @ingest && Rails.env.development?
     @ingest.log! stage_name, message if @ingest
   end
   
@@ -353,7 +355,7 @@ class Ingest::AudioWorker
   
   def transcribe_file(filename)
     start_time = BigDecimal.new("0.0")
-    audio      = Speech::AudioToText.new(filename, {chunk_size: 20, verbose: Rails.env.development?})
+    audio      = Speech::AudioToText.new(filename, {chunk_size: @chunk_size, verbose: Rails.env.development?})
     audio.to_json(3, @ingest.locale) do |chunk|
       end_time = start_time + BigDecimal.new(chunk.duration.to_s)
       @ingest.ingestable.segments.create(
@@ -365,7 +367,7 @@ class Ingest::AudioWorker
         :score       => chunk.best_score,
         :response    => chunk.captured_json
       )
-      puts "-> chunk #{start_time}-#{end_time} (#{chunk.duration}): #{chunk.best_text} (#{chunk.best_score})"
+      Rails.logger.info "-> chunk #{start_time}-#{end_time} (#{chunk.duration}): #{chunk.best_text} (#{chunk.best_score})"
 
       start_time = end_time
       increment_progress! 1, chunk.splitter.chunks.size, 0.75
@@ -393,7 +395,7 @@ class Ingest::AudioWorker
     return unless @ingest
     counter = 0
     @ingest.reload
-    while @ingest.busy? && counter < 10
+    while @ingest.busy? && counter < @chunk_size * 2
       sleep 1
       @ingest.reload
       counter += 1
@@ -413,6 +415,8 @@ class Ingest::AudioWorker
   
   def ffmpeg_convert_to_mp3(source_file, mp3_file)
     cmd = "ffmpeg -y -i #{source_file} -f mp2 -b #{@mp3_bitrate}k #{mp3_file}   >/dev/null 2>&1"
+
+    Rails.logger.info "-> $ #{cmd}"
     if system(cmd)
       true
     else
@@ -436,6 +440,8 @@ class Ingest::AudioWorker
 
   def ffmpeg_convert_to_wav_and_strip_audio_channel(input_file, output_file)
     cmd = "ffmpeg -i #{input_file} -y -f wav -ac 1 #{output_file}   >/dev/null 2>&1"
+
+    Rails.logger.info "-> $ #{cmd}"
     if system(cmd)
       true
     else
@@ -456,6 +462,8 @@ class Ingest::AudioWorker
       "fade 0.1 \\" +
       "reverse \\" +
       "norm -0.5"
+
+    Rails.logger.info "-> $ #{cmd}"
     if system(cmd)
       true
     else
@@ -465,6 +473,8 @@ class Ingest::AudioWorker
 
   def ffmpeg_downsample_and_convert_to_pcm(input_file, output_file)
     cmd = "ffmpeg -i #{input_file} -ar 16000 -y -f s16le -acodec pcm_s16le #{output_file}"
+
+    Rails.logger.info "-> $ #{cmd}"
     if system(cmd)
       true
     else
@@ -473,12 +483,27 @@ class Ingest::AudioWorker
   end
   
   def qio_silence_flags(input_file, output_file)
-    cmd = "silence_flags -S 1 -Length 20 \\" + 
+    vad_params = if @vad_silence_segments == 25 && @vad_noise_reduce
+      "-S 1 -Length 25 \\" +
+      "-VADweights #{ENV['AURORACALC']}/parameters/vad/net.tim-fin-tic-it-spn-rand.54i+50h+2o.0-delay-wiener+dct+lpf.wts.head \\" +
+      "-VADnorm #{ENV['AURORACALC']}/parameters/vad/tim-fin-tic-it-spn-rand.0-delay-wiener+dct+lpf.norms \\"
+    elsif @vad_silence_segments == 20 && !@vad_noise_reduce
+      "-S 0 -Length 20 \\" +
       "-VADweights #{ENV['AURORACALC']}/parameters/vad/net.tim-fin-tic-spn-rand.54i+50h+2o.win20-mel-delay+dct+lpf.wts.head \\" +
-      "-VADnorm #{ENV['AURORACALC']}/parameters/vad/tim-fin-tic-spn-rand.win20-mel-delay+dct+lpf.norms \\" +
+      "-VADnorm #{ENV['AURORACALC']}/parameters/vad/tim-fin-tic-spn-rand.win20-mel-delay+dct+lpf.norms \\"
+    else
+      "-S 0 -Length 25 \\" +
+      "-VADweights #{ENV['AURORACALC']}/parameters/vad/net.tim-fin-tic-spn-rand.54i+50h+2o.mel-delay+dct+lpf.wts.head \\" +
+      "-VADnorm #{ENV['AURORACALC']}/parameters/vad/tim-fin-tic-spn-rand.mel-delay+dct+lpf.norms \\"
+    end
+    
+    cmd = "silence_flags \\" +
+      vad_params +
       "-fs 16000 \\" + 
       "-swapin 0 \\" +
-      "-i #{input_file} -o #{output_file}"
+      "-i #{input_file} -o #{output_file} "
+
+    Rails.logger.info "-> $ #{cmd}"
     if system(cmd)
       true
     else
@@ -487,9 +512,18 @@ class Ingest::AudioWorker
   end
 
   def qio_noise_reduce(input_file, silence_file, output_file)
-    cmd = "nr -fs 16000 -Length 20 -swapin 0 -swapout 0 \\" +
+    length_and_shift = if @vad_silence_segments.modulo(2) == 0
+      "-Length #{@vad_silence_segments} -Shift #{@vad_silence_segments / 2} \\"
+    else
+      "-Length #{@vad_silence_segments} \\"
+    end
+    
+    cmd = "nr -fs 16000 -swapin 0 -swapout 0 \\" +
+      length_and_shift +
       "-Ssilfile #{silence_file} \\" +
       "-i #{input_file} -o #{output_file}"
+
+    Rails.logger.info "-> $ #{cmd}"
     if system(cmd)
       true
     else
@@ -499,6 +533,8 @@ class Ingest::AudioWorker
 
   def ffmpeg_convert_pcm_to_wav(input_file, output_file)
     cmd = "ffmpeg -f s16le -ar 16k -ac 1 -y -i #{input_file} #{output_file}"
+
+    Rails.logger.info "-> $ #{cmd}"
     if system(cmd)
       true
     else
@@ -507,7 +543,7 @@ class Ingest::AudioWorker
   end
   
   def delete_file_if_exists(file)
-    File.delete(file) if file && File.exist?(file)
+    File.delete(file) if file && File.exist?(file) && !Rails.env.development?
   end
   
   def remove_all_files_and_s3_objects

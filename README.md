@@ -141,6 +141,17 @@ Y abajo, al final, estarían los tres últimos audios publicados.
 
 ++++++++++++++++
 
+Voice Profiles
+--------------
+
+Meeting room
+Conference
+Street
+Coffee Shop
+Car
+Telephone
+Television
+
 Speech Transcription
 --------------------
 
@@ -301,7 +312,7 @@ Create silence flags, 25ms window, including Wiener filter:
 
 Create silence flags, 20ms window no Wiener:
 
-    silence_flags -S 1 -Length 20 \
+    silence_flags -S 0 -Length 20 \
       -VADweights $AURORACALC/parameters/vad/net.tim-fin-tic-spn-rand.54i+50h+2o.win20-mel-delay+dct+lpf.wts.head \
       -VADnorm $AURORACALC/parameters/vad/tim-fin-tic-spn-rand.win20-mel-delay+dct+lpf.norms \
       -fs 16000 -swapin 0 \
