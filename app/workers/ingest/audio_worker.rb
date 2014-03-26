@@ -66,7 +66,7 @@ class Ingest::AudioWorker
     end
   rescue Exception => ex
     @ingest.fail! if @ingest
-    logger(ex)
+    exception_logger(ex)
     raise ex
   ensure
     liberate!
@@ -239,7 +239,7 @@ class Ingest::AudioWorker
     @ingest.log! stage_name, message if @ingest
   end
   
-  def logger(exception)
+  def exception_logger(exception)
     errors = ""
     errors += ("=" * 80) + "\n"
     errors += exception.message + "\n"

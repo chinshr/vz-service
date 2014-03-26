@@ -17,6 +17,18 @@ GIT
       sass-rails
 
 GIT
+  remote: git@github.com:chinshr/codekit-ruby.git
+  revision: f8e2c3a63a893bdf9de4725f9d335facf67aa8f5
+  specs:
+    att-codekit (3.1.5)
+      bundler (~> 1.3)
+      immutable_struct
+      json
+      mime-types (~> 1.25)
+      rake
+      rest-client (~> 1.6)
+
+GIT
   remote: https://github.com/chinshr/griddler.git
   revision: d86760c4c4590abb56029cc1ea6cf3f7bafabce0
   specs:
@@ -145,6 +157,7 @@ GEM
       json (~> 1.8)
       multi_xml (>= 0.5.2)
     i18n (0.6.9)
+    immutable_struct (1.1.1)
     inherited_resources (1.4.1)
       has_scope (~> 0.6.0.rc)
       responders (~> 1.0.0.rc)
@@ -224,6 +237,8 @@ GEM
       redis (~> 3.0.4)
     responders (1.0.0)
       railties (>= 3.2, < 5)
+    rest-client (1.6.7)
+      mime-types (>= 1.16)
     sass (3.2.15)
     sass-rails (4.0.2)
       railties (>= 4.0.0, < 5.0)
@@ -297,6 +312,7 @@ PLATFORMS
 DEPENDENCIES
   aasm
   activeadmin!
+  att-codekit!
   autoscaler
   aws-s3
   aws-sdk (~> 1.6.0)

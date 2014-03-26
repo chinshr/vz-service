@@ -40,6 +40,11 @@ Development Resources
   - jplayer.org
   - audio.js -- http://kolber.github.io/audiojs/
   - audio visualization -- http://www.smartjava.org/content/exploring-html5-web-audio-visualizing-sound
+  - Audio Player – Responsive & Touch-Friendly -- http://tympanus.net/Development/AudioPlayer/
+  - Waveform player, $6 -- http://codecanyon.net/item/zoomsounds-neat-html5-audio-player/4525354
+  - Zoomsound continued, themes: http://dzsthemes.net/audioplayer/
+  - Wavesurfer -- https://github.com/katspaugh/wavesurfer.js
+  - Top Ten players -- http://www.scratchinginfo.com/top-10-best-html5-audio-players/
 * Accept Incoming Emails into a Heroku App Using SendGrid 
   - ruby processor -- http://nanceskitchen.com/2010/02/21/accept-incoming-emails-into-a-heroku-app-using-sendgrid/
   - test sendgrid parse api by sending email to: my@app21958309.bymail.in (<any-address>@<sendgrid-user-name>.bymail.in)
@@ -63,7 +68,6 @@ Development Resources
   - VAD engery detector -- http://stackoverflow.com/questions/5498142/what-is-a-good-approach-for-extracting-portions-of-speech-from-an-arbitrary-audi
 * Convert audio to flac -- http://superuser.com/questions/339023/convert-audio-file-to-flac-with-ffmpeg
 * A command line tool to slice sound files at onset or beat timestamps -- http://aubio.org/manpages/latest/aubiocut.1.html
-* Extracting portion of speech -- http://stackoverflow.com/questions/5498142/what-is-a-good-approach-for-extracting-portions-of-speech-from-an-arbitrary-audi
 * How to store data in S3 and allow user access in a secure way -- http://stackoverflow.com/questions/10811017/how-to-store-data-in-s3-and-allow-user-access-in-a-secure-way-with-rails-api-i
 * Resources for doing noise reduction in speech -- http://www1.icsi.berkeley.edu/Speech/papers/gelbart-ms/pointers/
   - Aurora front-end archive, voice detection, noise reduction http://www1.icsi.berkeley.edu/Speech/papers/qio/
@@ -73,6 +77,9 @@ Development Resources
 * Steps to create a heroku buildpack
   - curl on Heroku bash from github repo: curl -L https://github.com/chinshr/qio/tarball/master | tar zx
   - Tar and GZ the archive: tar -zcvf qio.tar.gz qio-build
+* ATT Speech Service
+  - Ruby example: https://gist.github.com/t2-support-gists/5189859
+  - Speech Docs -- https://developer.att.com/apis/speech/docs
 
 Competitive Products
 --------------------
@@ -162,6 +169,10 @@ Speech Transcription
     audio = Speech::AudioToText.new("samples/cleaned.wav")
     audio.to_json(2, "en-US")
     audio.to_text(2, "en-US")
+
+    audio = Speech::Att::AudioToText.new("samples/i-like-pickles.wav", :api_key => "tgcqoeaecj4ff052a9ee8g0mzt9xti7p", :secret_key => "j7caqnrtvtiiqhtl1nhlmyp5li0dclxg")
+
+    audio = Speech::AudioToText.new("samples/i-like-pickles.wav", :engine => :att_speech_engine, :api_key => "tgcqoeaecj4ff052a9ee8g0mzt9xti7p", :secret_key => "j7caqnrtvtiiqhtl1nhlmyp5li0dclxg")
 
 
 S3 Bucket Config

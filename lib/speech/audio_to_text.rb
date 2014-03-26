@@ -1,93 +1,19 @@
 # -*- encoding: binary -*-
 module Speech
-
   class AudioToText
-    attr_accessor :file, :rate, :captured_json
-    attr_accessor :score, :verbose, :segments, :chunks, :chunk_size
+    attr_accessor :engine
 
     def initialize(file, options = {})
-      self.verbose         = false
-      self.file            = file
-      self.captured_json   = {}
-      self.score           = 0.0
-      self.segments        = 0
-      self.chunks          = []
-      self.chunk_size      = options[:chunk_size].to_i if options.key?(:chunk_size)
-
-      self.verbose = !!options[:verbose] if options.key?(:verbose)
+      engine_class = options.key?(:engine) ? "Speech::Engines::#{options[:engine].to_s.classify}".constantize : Engines::GoogleSpeechEngine
+      self.engine  = engine_class.new(file, options)
     end
 
     def to_text(max = 2, lang = "en-US")
-      to_json(max, lang)
-      chunks.map {|ch| ch.best_text}.compact.join(" ")
+      engine.to_text(max, lang)
     end
 
     def to_json(max = 2, lang = "en-US")
-      self.score    = 0.0
-      self.segments = 0
-
-      url           = "https://www.google.com/speech-api/v1/recognize?xjerr=1&client=speech2text&lang=#{lang}&maxresults=#{max}"
-      options       = {chunk_size: chunk_size, verbose: verbose}.reject {|k,v| v.blank?}
-      splitter      = Speech::AudioSplitter.new(file, options) # based off the wave file because flac doesn't tell us the duration
-      easy          = Curl::Easy.new(url)
-      self.chunks   = splitter.split
-      
-      chunks.each do |chunk|
-        chunk.build.to_flac
-        convert_chunk(easy, chunk)
-        yield chunk if block_given?
-      end
-      self.score /= self.segments
-      return {"segments" => chunks.map {|ch| ch.captured_json}}
-    end
-
-  protected
-
-    def convert_chunk(easy, chunk, options = {})
-      puts "sending chunk of size #{chunk.duration}..." if self.verbose
-      retrying    = true
-      retry_count = 0
-      result      = {}
-      
-      while retrying && retry_count < 3 # 3 retries
-        easy.verbose = self.verbose
-        easy.headers['Content-Type'] = "audio/x-flac; rate=#{chunk.flac_rate}"
-        # easy.headers['User-Agent'] = "https://github.com/taf2/speech2text"
-        easy.headers['User-Agent'] = "Mozilla/5.0"
-        easy.post_body = "Content=#{chunk.to_flac_bytes}"
-        if self.verbose
-          easy.on_progress {|dl_total, dl_now, ul_total, ul_now| printf("%.2f/%.2f\r", ul_now, ul_total); true }
-        end
-        easy.http_post
-        if easy.response_code == 500
-          puts "500 from google retry after 0.5 seconds" if self.verbose
-          retrying    = true
-          retry_count += 1
-          sleep 0.5 # wait longer on error?, google??
-        else
-          # {"status":0,"id":"ce178ea89f8b17d8e8298c9c7814700a-1","hypotheses":[{"utterance"=>"I like pickles", "confidence"=>0.59408695}, {"utterance"=>"I like turtles"}, {"utterance"=>"I like tickles"}, {"utterance"=>"I like to Kohl's"}, {"utterance"=>"I Like tickles"}, {"utterance"=>"I lyk tickles"}, {"utterance"=>"I liked to Kohl's"}]}
-          data                              = JSON.parse(easy.body_str)
-          chunk.captured_json['status']     = data['status']
-          chunk.captured_json['id']         = data['id']
-          chunk.captured_json['hypotheses'] = data['hypotheses'].map {|ut| [ut['utterance'], ut['confidence']]}
-          
-          if data.key?('hypotheses') && data['hypotheses'].first
-            chunk.best_text  = data['hypotheses'].first['utterance']
-            chunk.best_score = data['hypotheses'].first['confidence']
-            self.score       += data['hypotheses'].first['confidence']
-            self.segments    += 1
-            puts data['hypotheses'].first['utterance'] if self.verbose
-          end
-          retrying = false
-        end
-        
-        sleep 0.1 # not too fast there tiger
-      end
-      
-      puts "#{segments} processed: #{self.captured_json.inspect}" if self.verbose
-    ensure
-      chunk.clean
-      return result
+      engine.to_json(max, lang)
     end
   end
 end

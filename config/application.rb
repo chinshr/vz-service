@@ -22,6 +22,6 @@ module Voyzes
     
     I18n.enforce_available_locales = true
 
-    config.autoload_paths += Dir["#{config.root}/lib/**/"]
+#    config.autoload_paths += Dir["#{config.root}/lib/**/"]
   end
 end
