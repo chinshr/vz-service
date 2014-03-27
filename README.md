@@ -78,8 +78,15 @@ Development Resources
   - curl on Heroku bash from github repo: curl -L https://github.com/chinshr/qio/tarball/master | tar zx
   - Tar and GZ the archive: tar -zcvf qio.tar.gz qio-build
 * ATT Speech Service
-  - Ruby example: https://gist.github.com/t2-support-gists/5189859
+  - Sample apps: https://github.com/attdevsupport/ATT_APIPlatform_SampleApps
+  - Ruby Gist: https://gist.github.com/t2-support-gists/5189859
   - Speech Docs -- https://developer.att.com/apis/speech/docs
+* List of Voice Recognition Software 
+  - Avios list of  for speech recognition tools -- http://www.avios.org/app_dev.htm
+  - Wikipedia list of speech recognition tools -- http://en.wikipedia.org/wiki/List_of_speech_recognition_software
+  - Nuance Dev program -- www.ndevmobile.com
+  - Tropo (Voxeo) tool TTS and ASR -- https://www.tropo.com
+
 
 Competitive Products
 --------------------
@@ -167,12 +174,17 @@ Speech Transcription
     audio = Speech::AudioToText.new("samples/SampleAudio.wav")
     audio = Speech::AudioToText.new("samples/New-Recording.m4a")
     audio = Speech::AudioToText.new("samples/cleaned.wav")
-    audio.to_json(2, "en-US")
-    audio.to_text(2, "en-US")
+    audio.to_json(:max_results => 2, :locale => "en-US")
+    audio.to_text(:max_results => 2, :locale => "en-US")
+    
+    # Google Speech Engine
+    audio = Speech::AudioToText.new("samples/i-like-pickles.wav")
 
-    audio = Speech::Att::AudioToText.new("samples/i-like-pickles.wav", :api_key => "tgcqoeaecj4ff052a9ee8g0mzt9xti7p", :secret_key => "j7caqnrtvtiiqhtl1nhlmyp5li0dclxg")
+    # ATT Speech Engine, mode: standard
+    audio = Speech::AudioToText.new("samples/i-like-pickles.wav", :engine => :att_speech_engine, :api_key => "tgcqoeaecj4ff052a9ee8g0mzt9xti7p", :secret_key => "j7caqnrtvtiiqhtl1nhlmyp5li0dclxg", :mode => "standard")
 
-    audio = Speech::AudioToText.new("samples/i-like-pickles.wav", :engine => :att_speech_engine, :api_key => "tgcqoeaecj4ff052a9ee8g0mzt9xti7p", :secret_key => "j7caqnrtvtiiqhtl1nhlmyp5li0dclxg")
+    # ATT Speech Engine, mode: custom
+    audio = Speech::AudioToText.new("samples/i-like-pickles.wav", :engine => :att_speech_engine, :api_key => "tgcqoeaecj4ff052a9ee8g0mzt9xti7p", :secret_key => "j7caqnrtvtiiqhtl1nhlmyp5li0dclxg", :mode => "custom")
 
 
 S3 Bucket Config

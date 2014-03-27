@@ -6,9 +6,10 @@ module Speech
       
       protected
       
-      def reset!
-        super
-        url  = "https://www.google.com/speech-api/v1/recognize?xjerr=1&client=speech2text&lang=#{language}&maxresults=#{max_results}"
+      def reset!(options = {})
+        super options
+        
+        url          = "https://www.google.com/speech-api/v1/recognize?xjerr=1&client=speech2text&lang=#{locale}&maxresults=#{max_results}"
         self.service = Curl::Easy.new(url)
       end
       
@@ -20,7 +21,7 @@ module Speech
         puts "sending chunk of size #{chunk.duration}..." if self.verbose
         retrying    = true
         retry_count = 0
-        result      = {}
+        result      = {'status' => STATUS_UNPROCESSED}
 
         while retrying && retry_count < 3 # 3 retries
           service.verbose = self.verbose
@@ -39,10 +40,11 @@ module Speech
             sleep 0.5 # wait longer on error?, google??
           else
             # {"status":0,"id":"ce178ea89f8b17d8e8298c9c7814700a-1","hypotheses":[{"utterance"=>"I like pickles", "confidence"=>0.59408695}, {"utterance"=>"I like turtles"}, {"utterance"=>"I like tickles"}, {"utterance"=>"I like to Kohl's"}, {"utterance"=>"I Like tickles"}, {"utterance"=>"I lyk tickles"}, {"utterance"=>"I liked to Kohl's"}]}
-            data                              = JSON.parse(service.body_str)
-            chunk.captured_json['status']     = data['status']
-            chunk.captured_json['id']         = data['id']
-            chunk.captured_json['hypotheses'] = data['hypotheses'].map {|ut| [ut['utterance'], ut['confidence']]}
+            data                 = JSON.parse(service.body_str)
+            result['status']     = STATUS_PROCESSED # data['status']
+            result['id']         = data['id']
+            # result['hypotheses'] = data['hypotheses'].map {|ut| [ut['utterance'], ut['confidence']]}
+            result['hypotheses'] = data['hypotheses'].map {|ut| {'hypothesis' => ut['utterance'], 'confidence' => ut['confidence']}}
 
             if data.key?('hypotheses') && data['hypotheses'].first
               chunk.best_text  = data['hypotheses'].first['utterance']
@@ -57,9 +59,13 @@ module Speech
           sleep 0.1 # not too fast there tiger
         end
 
-        puts "#{segments} processed: #{self.captured_json.inspect}" if self.verbose
+        puts "#{segments} processed: #{result.inspect} from: #{data.inspect}" if self.verbose
+      rescue Exception => ex
+        result['status'] = STATUS_ERROR
+        result['errors'] = [ex.message]
       ensure
         chunk.clean
+        chunk.captured_json = result
         return result
       end
     end

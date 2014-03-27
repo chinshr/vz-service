@@ -8,12 +8,12 @@ module Speech
       self.engine  = engine_class.new(file, options)
     end
 
-    def to_text(max = 2, lang = "en-US")
-      engine.to_text(max, lang)
+    def to_text(options = {})
+      engine.to_text(options)
     end
 
-    def to_json(max = 2, lang = "en-US")
-      engine.to_json(max, lang)
+    def to_json(options = {})
+      engine.to_json(options)
     end
   end
 end

@@ -92,4 +92,4 @@ gem 'whatlanguage'
 gem 'griddler', :git => "https://github.com/chinshr/griddler.git" # :path => "../griddler"
 gem 'newrelic_rpm'
 # gem 'att-codekit'  # requires source 'http://lprod.code-api-att.com:8808'
-gem 'att-codekit', :git => "git@github.com:chinshr/codekit-ruby.git"
+gem 'att-codekit', :path => "/Users/juergen/work/ruby/codekit-ruby" # :git => "git@github.com:chinshr/codekit-ruby.git"
