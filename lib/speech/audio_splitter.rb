@@ -5,7 +5,7 @@ module Speech
     attr_accessor :original_file, :size, :duration, :chunks, :verbose
 
     class AudioChunk
-      attr_accessor :splitter, :chunk, :flac_chunk, :wav_chunk, :offset, :duration, :flac_rate, :copied, 
+      attr_accessor :splitter, :chunk, :flac_chunk, :wav_chunk, :pcm_chunk, :offset, :duration, :flac_rate, :copied, 
         :captured_json, :best_text, :best_score
 
       def initialize(splitter, offset, duration)
@@ -70,6 +70,10 @@ module Speech
         File.read(self.flac_chunk)
       end
 
+      def flac_size
+        File.size(self.wav_chunk)
+      end
+
       # convert the audio file to wav format
       def to_wav
         chunk_outputfile = chunk.gsub(/#{File.extname(chunk)}$/, ".wav")
@@ -86,9 +90,45 @@ module Speech
           end
 
         else
-          raise "failed to convert chunk: #{chunk} with flac #{chunk}"
+          raise "failed to convert chunk: #{chunk} with wav #{chunk}"
         end
         self
+      end
+
+      def to_wav_bytes
+        File.read(self.wav_chunk)
+      end
+
+      def wav_size
+        File.size(self.wav_chunk)
+      end
+
+      def to_pcm
+        chunk_outputfile = chunk.gsub(/#{File.extname(chunk)}$/, ".pcm")
+        if system("ffmpeg -i #{chunk} -y -ar 16000 -f s16le -acodec pcm_s16le -ac 1 #{chunk_outputfile}   >/dev/null 2>&1")
+          self.pcm_chunk = chunk.gsub(/#{File.extname(chunk)}$/, ".pcm")
+          self.flac_rate = 16000
+          # convert the audio file to 16K
+          # self.flac_rate = `ffmpeg -i #{self.wav_chunk} 2>&1`.strip.scan(/Audio: wav, (.*) Hz/).first.first.strip
+          # down_sampled = self.pcm_chunk.gsub(/\.pcm$/, '-sampled.pcm')
+          # if system("ffmpeg -i #{self.pcm_chunk} -ar 16000 -y #{down_sampled} >/dev/null 2>&1")
+          #   system("mv #{down_sampled} #{self.pcm_chunk} 2>&1 >/dev/null")
+          #   self.flac_rate = 16000
+          # else
+          #   raise "failed to convert to lower audio rate"
+          # end
+        else
+          raise "failed to convert chunk: #{chunk} with pcm #{chunk}"
+        end
+        self
+      end
+
+      def to_pcm_bytes
+        File.read(self.pcm_chunk)
+      end
+
+      def pcm_size
+        File.size(self.pcm_chunk)
       end
 
       # delete the chunk file
@@ -96,6 +136,7 @@ module Speech
         File.unlink self.chunk if File.exist?(self.chunk)
         File.unlink self.flac_chunk if self.flac_chunk && File.exist?(self.flac_chunk)
         File.unlink self.wav_chunk if self.wav_chunk && File.exist?(self.wav_chunk)
+        File.unlink self.pcm_chunk if self.pcm_chunk && File.exist?(self.pcm_chunk)
       end
     end
 

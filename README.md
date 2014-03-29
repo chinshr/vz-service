@@ -186,6 +186,8 @@ Speech Transcription
 
     # ATT Speech Engine, mode: custom
     audio = Speech::AudioToText.new("samples/i-like-pickles.wav", :engine => :att_speech_engine, :api_key => "tgcqoeaecj4ff052a9ee8g0mzt9xti7p", :secret_key => "j7caqnrtvtiiqhtl1nhlmyp5li0dclxg", :mode => "custom")
+    
+    audio = Speech::AudioToText.new("samples/i-like-pickles.pcm", :engine => :nuance_dragon_engine, :verbose => true, :app_id => "NMDPTRIAL_chinshr20140326185635", :app_key => "edb1acb2e50d02417b643e6dce510ea9dd565c4ad4725dcb8d807c96fe6304eb14b09ef9bea03a390578a6d3cab57ca70bd8f1df4b4eabd8cf276ecd8a72b99f")
 
 Nuance NDEV Developer Program, Dragon Mobile, ASR and TTS
 ---------------------------------------------------------
