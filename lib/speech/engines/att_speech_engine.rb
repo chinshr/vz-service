@@ -45,22 +45,26 @@ module Speech
       #     content_language (Content-Language): "en-US", "es-US" 
       #
       def convert_chunk(chunk, options = {})
-        puts "sending chunk of size #{chunk.duration}..." if self.verbose
+        puts "sending chunk of size #{chunk.duration}, locale: #{locale}..." if self.verbose
         retrying            = true
         retry_count         = 0
         result              = {'status' => STATUS_UNPROCESSED}
         dictionary, grammar = load_files(options)
+        service_options     = {}.merge(options)
 
-        service_options = {
-          :speech_context   => "GenericHints", 
-          :content_language => locale
-        }.merge(options)
-        service_options[:xargs] = service_options[:xargs] ? "#{service_options[:xargs]},NumResults=#{max_results}" : "NumResults=#{max_results}"
-
+        service_options[:xargs] = if service_options[:xargs]
+          "#{service_options[:xargs]},NumResults=#{max_results}" 
+        else
+          "NumResults=#{max_results}"
+        end
+        
         while retrying && retry_count < 3 # 3 retries
           response = if mode == "standard"
             service.stdSpeechToText(chunk.wav_chunk, service_options)
           elsif mode == "custom"
+            service_options = {
+              :content_language => locale
+            }.merge(service_options)
             service.customSpeechToText(chunk.wav_chunk, dictionary, grammar, service_options)
           else
             raise "Unsupported ATT speech engine ASR mode: '#{mode}'."

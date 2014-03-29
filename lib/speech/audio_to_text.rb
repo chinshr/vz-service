@@ -12,8 +12,8 @@ module Speech
       engine.to_text(options)
     end
 
-    def to_json(options = {})
-      engine.to_json(options)
+    def to_json(options = {}, &block)
+      engine.to_json(options, &block)
     end
   end
 end

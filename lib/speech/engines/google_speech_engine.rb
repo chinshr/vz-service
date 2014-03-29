@@ -18,7 +18,7 @@ module Speech
       end
       
       def convert_chunk(chunk, options = {})
-        puts "sending chunk of size #{chunk.duration}..." if self.verbose
+        puts "sending chunk of size #{chunk.duration}, locale: #{locale}..." if self.verbose
         retrying    = true
         retry_count = 0
         result      = {'status' => STATUS_UNPROCESSED}

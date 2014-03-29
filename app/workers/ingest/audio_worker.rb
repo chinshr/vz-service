@@ -356,7 +356,7 @@ class Ingest::AudioWorker
   def transcribe_file(filename)
     start_time = BigDecimal.new("0.0")
     audio      = Speech::AudioToText.new(filename, {chunk_size: @chunk_size, verbose: Rails.env.development?})
-    audio.to_json(3, @ingest.locale) do |chunk|
+    audio.to_json(:locale => @ingest.locale) do |chunk|
       end_time = start_time + BigDecimal.new(chunk.duration.to_s)
       @ingest.ingestable.segments.create(
         :offset      => chunk.offset,
