@@ -82,6 +82,7 @@ Development Resources
   - Ruby Gist: https://gist.github.com/t2-support-gists/5189859
   - Speech Docs -- https://developer.att.com/apis/speech/docs
 * List of Voice Recognition Software 
+  - Accurate list of speech services -- http://stackoverflow.com/questions/3113864/server-side-voice-recognition
   - Avios list of  for speech recognition tools -- http://www.avios.org/app_dev.htm
   - Wikipedia list of speech recognition tools -- http://en.wikipedia.org/wiki/List_of_speech_recognition_software
   - Nuance Dev program -- www.ndevmobile.com
@@ -187,7 +188,9 @@ Speech Transcription
     # ATT Speech Engine, mode: custom
     audio = Speech::AudioToText.new("samples/i-like-pickles.wav", :engine => :att_speech_engine, :api_key => "tgcqoeaecj4ff052a9ee8g0mzt9xti7p", :secret_key => "j7caqnrtvtiiqhtl1nhlmyp5li0dclxg", :mode => "custom")
     
-    audio = Speech::AudioToText.new("samples/i-like-pickles.pcm", :engine => :nuance_dragon_engine, :verbose => true, :app_id => "NMDPTRIAL_chinshr20140326185635", :app_key => "edb1acb2e50d02417b643e6dce510ea9dd565c4ad4725dcb8d807c96fe6304eb14b09ef9bea03a390578a6d3cab57ca70bd8f1df4b4eabd8cf276ecd8a72b99f")
+    # Nuance Dragon Mobile Engine
+    audio = Speech::AudioToText.new("samples/i-like-pickles.wav", :engine => :nuance_dragon_engine, :verbose => true, :base_url => "https://blb.nmdp.nuancemobility.net:443", :app_id => "NMDPPRODUCTION_Voyzes_Voyzes_Website_20140329232339", :app_key => "b5182f8460a0d862fd2a3f8d34a6dca39a1c5bbf424fa1d2585c9a681e8631d39f6058ff003061fd5aa08a8f476732e1838ea0c5dd4198359e329ebcb8cf8f57")
+
 
 Nuance NDEV Developer Program, Dragon Mobile, ASR and TTS
 ---------------------------------------------------------

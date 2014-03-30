@@ -9,7 +9,7 @@ module Speech
         
         self.base_url  = options.key?(:base_url) ? options[:base_url] : "http://sandbox.nmdp.nuancemobility.net"
         self.app_id    = options[:app_id] if options.key?(:app_id)
-        self.app_key   = options[:app_key] if options.key?(:app_key)
+        self.app_key   = options[:app_key].gsub(/ 0x/, "") if options.key?(:app_key)
         self.device_id = options.key?(:device_id) ? options[:device_id] : "8CGoCMXyIcJosb2"
       end
       
@@ -21,16 +21,23 @@ module Speech
         self.uri  = URI.parse(url)
         self.http = Net::HTTP.new(uri.host, uri.port)
         if uri.scheme == "https"
+          #pem              = File.read("/usr/local/etc/openssl/cert.pem")
+          #ENV['SSL_CERT_FILE'] = "/usr/local/etc/openssl/cert.pem" # "/usr/local/etc/cacert.pem"
           http.use_ssl     = true
-          # http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-          http.verify_mode = OpenSSL::SSL::VERIFY_PEER
+          # http.ssl_version = :TLSv2
+          # http.ssl_version = :SSLv3
+          #http.ca_file     = "/usr/local/etc/cacert.pem"
+          #http.cert        = OpenSSL::X509::Certificate.new(pem)
+          # http.key         = OpenSSL::PKey::RSA.new(pem)
+          # http.verify_mode = OpenSSL::SSL::VERIFY_PEER
+          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
         else
           http.use_ssl = false
         end
       end
       
       def build(chunk)
-        chunk.build.to_pcm
+        chunk.build.to_wav
       end
       
       def convert_chunk(chunk, options = {})
@@ -50,7 +57,7 @@ module Speech
             headers['X-Dictation-NBestListSize'] = max_results.to_s
             headers['X-Dictation-AudioSource']   = "" # SpeakerAndMicrophone, HeadsetInOut, HeadsetBT, HeadPhone, LineOut
           end
-          # headers['Content-Length']              = chunk.to_pcm_bytes.size.to_s  # chunk.wav_size.to_s  # if not, headers['Transfer-Encoding'] = "chunked"
+          # headers['Content-Length']              = chunk.to_wav_bytes.size.to_s  # chunk.wav_size.to_s  # if not, headers['Transfer-Encoding'] = "chunked"
           headers['Transfer-Encoding'] = "chunked"
           headers['Content-Language']            = normalize_language(locale)
           headers['Accept-Language']             = normalize_language(locale)
@@ -58,11 +65,11 @@ module Speech
           headers['Expect']                      = ""
           
           Net::HTTP.http_logger_options = {:trace => true, :body => true, :header => true, :verbose => true} if verbose
-          
+
           # request
           request              = Net::HTTP::Post.new(uri.path + "?" + uri.query, headers)
           request.content_type = headers["Content-Type"]
-          request.body         = chunk.to_pcm_bytes  # chunk.to_wav_binary.unpack("B*")[0]
+          request.body         = chunk.to_wav_bytes  # chunk.to_wav_binary.unpack("B*")[0]
           response             = http.request(request)
 
           # response.is_a?(Net::HTTPSuccess) 
