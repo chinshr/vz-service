@@ -2,12 +2,12 @@
 module Speech
   module Engines
     class NuanceDragonEngine < Base
-      attr_accessor :http, :uri, :base_url, :app_id, :app_key, :device_id
+      attr_accessor :service, :base_url, :app_id, :app_key, :device_id
       
       def initialize(file, options = {})
         super file, options
         
-        self.base_url  = options.key?(:base_url) ? options[:base_url] : "http://sandbox.nmdp.nuancemobility.net"
+        self.base_url  = options.key?(:base_url) ? options[:base_url] : "https://dictation.nuancemobility.net:443"
         self.app_id    = options[:app_id] if options.key?(:app_id)
         self.app_key   = options[:app_key].gsub(/ 0x/, "") if options.key?(:app_key)
         self.device_id = options.key?(:device_id) ? options[:device_id] : "8CGoCMXyIcJosb2"
@@ -17,23 +17,8 @@ module Speech
       
       def reset!(options = {})
         super options
-        url       = "#{base_url}/NMDPAsrCmdServlet/dictation?appId=#{app_id}&appKey=#{app_key}&id=#{device_id}"
-        self.uri  = URI.parse(url)
-        self.http = Net::HTTP.new(uri.host, uri.port)
-        if uri.scheme == "https"
-          #pem              = File.read("/usr/local/etc/openssl/cert.pem")
-          #ENV['SSL_CERT_FILE'] = "/usr/local/etc/openssl/cert.pem" # "/usr/local/etc/cacert.pem"
-          http.use_ssl     = true
-          # http.ssl_version = :TLSv2
-          # http.ssl_version = :SSLv3
-          #http.ca_file     = "/usr/local/etc/cacert.pem"
-          #http.cert        = OpenSSL::X509::Certificate.new(pem)
-          # http.key         = OpenSSL::PKey::RSA.new(pem)
-          # http.verify_mode = OpenSSL::SSL::VERIFY_PEER
-          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-        else
-          http.use_ssl = false
-        end
+        url          = "#{base_url}/NMDPAsrCmdServlet/dictation?appId=#{app_id}&appKey=#{app_key}&id=#{device_id}"
+        self.service = Curl::Easy.new(url)
       end
       
       def build(chunk)
@@ -44,55 +29,48 @@ module Speech
         puts "sending chunk of size #{chunk.duration}, locale: #{locale}..." if self.verbose
         retrying    = true
         retry_count = 0
-        headers     = {}
         result      = {'status' => STATUS_UNPROCESSED}
 
         while retrying && retry_count < 3 # 3 retries
-          # service.verbose = self.verbose
+          service.verbose = self.verbose
           
           # headers
-          headers['Content-Type']                = "audio/x-wav;codec=pcm;bit=16;rate=#{chunk.flac_rate}"
-          headers['Accept-Topic']                = "Dictation" # Dictation or WebSearch
+          service.headers['Content-Type']                = "audio/x-wav;codec=pcm;bit=16;rate=#{chunk.flac_rate}"
+          service.headers['Accept-Topic']                = "Dictation" # Dictation or WebSearch
           if options.key?(:audio_source)
-            headers['X-Dictation-NBestListSize'] = max_results.to_s
-            headers['X-Dictation-AudioSource']   = "" # SpeakerAndMicrophone, HeadsetInOut, HeadsetBT, HeadPhone, LineOut
+            service.headers['X-Dictation-AudioSource']   = "" # SpeakerAndMicrophone, HeadsetInOut, HeadsetBT, HeadPhone, LineOut
           end
-          # headers['Content-Length']              = chunk.to_wav_bytes.size.to_s  # chunk.wav_size.to_s  # if not, headers['Transfer-Encoding'] = "chunked"
-          headers['Transfer-Encoding'] = "chunked"
-          headers['Content-Language']            = normalize_language(locale)
-          headers['Accept-Language']             = normalize_language(locale)
-          headers['Accept']                      = "application/plain" # application/xml or text/plain
-          headers['Expect']                      = ""
+          # service.headers['Content-Length']              = chunk.to_wav_bytes.size.to_s  # chunk.wav_size.to_s  # if not, headers['Transfer-Encoding'] = "chunked"
+          # service.headers['Transfer-Encoding'] = "chunked"
+          service.headers['X-Dictation-NBestListSize']   = max_results.to_s
+          service.headers['Accept-Language']             = canonical_locale(locale)
+          service.headers['Accept']                      = "text/plain" # "application/xml"
           
-          Net::HTTP.http_logger_options = {:trace => true, :body => true, :header => true, :verbose => true} if verbose
-
+          # service.headers['User-Agent'] = "Mozilla/5.0"
+          
           # request
-          request              = Net::HTTP::Post.new(uri.path + "?" + uri.query, headers)
-          request.content_type = headers["Content-Type"]
-          request.body         = chunk.to_wav_bytes  # chunk.to_wav_binary.unpack("B*")[0]
-          response             = http.request(request)
-
-          # response.is_a?(Net::HTTPSuccess) 
+          service.post_body = "#{chunk.to_wav_bytes}"
+          service.on_progress {|dl_total, dl_now, ul_total, ul_now| printf("%.2f/%.2f\r", ul_now, ul_total); true } if self.verbose
+          service.http_post
+          
           if service.response_code >= 500
             puts "500 from Nuance retry after 0.5 seconds" if self.verbose
             retrying    = true
             retry_count += 1
             sleep 0.5 # wait longer on error?, google??
           else
-            # {"status":0,"id":"ce178ea89f8b17d8e8298c9c7814700a-1","hypotheses":[{"utterance"=>"I like pickles", "confidence"=>0.59408695}, {"utterance"=>"I like turtles"}, {"utterance"=>"I like tickles"}, {"utterance"=>"I like to Kohl's"}, {"utterance"=>"I Like tickles"}, {"utterance"=>"I lyk tickles"}, {"utterance"=>"I liked to Kohl's"}]}
-            debugger
-            data                 = JSON.parse(service.body_str)
-            result['status']     = STATUS_PROCESSED # data['status']
-            result['id']         = data['id']
-            # result['hypotheses'] = data['hypotheses'].map {|ut| [ut['utterance'], ut['confidence']]}
-            result['hypotheses'] = data['hypotheses'].map {|ut| {'hypothesis' => ut['utterance'], 'confidence' => ut['confidence']}}
+            data                 = service.body_str
+            data                 = data.gsub(/\n/, "") if data.present?
+            result['id']         = chunk.id
+            result['hypotheses'] = [{'utterance' => data, 'confidence' => 1}]
 
-            if data.key?('hypotheses') && data['hypotheses'].first
-              chunk.best_text  = data['hypotheses'].first['utterance']
-              chunk.best_score = data['hypotheses'].first['confidence']
-              self.score       += data['hypotheses'].first['confidence']
+            if result.key?('hypotheses') && result['hypotheses'].first
+              result['status'] = STATUS_PROCESSED
+              chunk.best_text  = result['hypotheses'].first['utterance']
+              chunk.best_score = result['hypotheses'].first['confidence']
+              self.score       += 1
               self.segments    += 1
-              puts data['hypotheses'].first['utterance'] if self.verbose
+              puts result['hypotheses'].first['utterance'] if self.verbose
             end
             retrying = false
           end
@@ -101,20 +79,28 @@ module Speech
         end
 
         puts "#{segments} processed: #{result.inspect} from: #{data.inspect}" if self.verbose
-      # rescue Exception => ex
-      #   result['status'] = STATUS_ERROR
-      #   result['errors'] = [ex.message]
-      #   raise ex
-      # ensure
-      #   chunk.clean
-      #   chunk.captured_json = result
-      #   return result
+      rescue Exception => ex
+        result['status'] = STATUS_ERROR
+        result['errors'] = [ex.message.to_s.gsub(/\n|\r/, "")]
+        raise ex
+      ensure
+        chunk.clean
+        chunk.captured_json = result
+        return result
       end
       
       private
       
-      def normalize_language(locale)
-        locale.gsub("-", "_").downcase if locale
+      # E.g. "en-US" -> "en_US"
+      def canonical_locale(locale)
+        locale.gsub("-", "_") if locale
+      end
+      
+      def supported_locales
+        ["en-AU", "en-GB", "en-US", "ar-EG", "ar-SA", "ar-AE", "zh-HK", "ca-ES", "hr-HR", "cs-CZ", "da-DK", "nl-NL", "fi-FI", 
+         "fr-CA", "fr-FR", "de-DE", "el-GR", "he-IL", "hu-HU", "id-ID", "it-IT", "ja-JP", "ko-KR", "ms-MY", "cn-MA", "zh-TW",
+         "no-NO", "pl-PL", "pt-BR", "pt-PT", "ro-RO", "ru-RU", "sk-SK", "es-ES", "es-MX", "es-US", "sv-SE", "th-TH", "tr-TR",
+         "uk-UA", "vi-VN"]
       end
     end
   end

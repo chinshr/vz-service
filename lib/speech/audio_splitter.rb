@@ -5,13 +5,14 @@ module Speech
     attr_accessor :original_file, :size, :duration, :chunks, :verbose
 
     class AudioChunk
-      attr_accessor :splitter, :chunk, :flac_chunk, :wav_chunk, :pcm_chunk, :offset, :duration, :flac_rate, :copied, 
+      attr_accessor :id, :splitter, :chunk, :flac_chunk, :wav_chunk, :offset, :duration, :flac_rate, :copied, 
         :captured_json, :best_text, :best_score
 
-      def initialize(splitter, offset, duration)
+      def initialize(splitter, offset, duration, id = nil)
         self.offset        = offset
         self.chunk         = File.join("/tmp/" + UUID.generate + "-chunk-" + File.basename(splitter.original_file).gsub(/\.(.*)$/, "-#{offset}" + '.\1'))
         self.duration      = duration
+        self.id            = id
         self.splitter      = splitter
         self.copied        = false
         self.captured_json = {}
@@ -19,8 +20,8 @@ module Speech
         self.best_score    = nil
       end
 
-      def self.copy(splitter)
-        chunk = AudioChunk.new(splitter, 0, splitter.duration.to_f)
+      def self.copy(splitter, id = nil)
+        chunk        = AudioChunk.new(splitter, 0, splitter.duration.to_f, id)
         chunk.copied = true
         system("cp #{splitter.original_file} #{chunk.chunk}")
         chunk
@@ -30,7 +31,7 @@ module Speech
       def build
         return self if self.copied
         # ffmpeg -y -i sample.audio.wav -acodec copy -vcodec copy -ss 00:00:00.00 -t 00:00:30.00 sample.audio.out.wav
-        offset_ts = AudioInspector::Duration.from_seconds(self.offset).to_s
+        offset_ts   = AudioInspector::Duration.from_seconds(self.offset).to_s
         duration_ts = AudioInspector::Duration.from_seconds(self.duration).to_s
         # NOTE: kind of a hack, but if the original source is less than or equal to 1 second, we should skip ffmpeg
         # puts "building chunk: #{duration_ts.inspect} and offset: #{offset_ts}"
@@ -75,7 +76,7 @@ module Speech
       end
 
       # convert the audio file to wav format
-      def to_wav
+      def to_wav(options = {})
         chunk_outputfile = chunk.gsub(/#{File.extname(chunk)}$/, ".wav")
         if system("ffmpeg -i #{chunk} -y -f wav -ac 1 #{chunk_outputfile}   >/dev/null 2>&1")
           self.wav_chunk = chunk.gsub(/#{File.extname(chunk)}$/, ".wav")
@@ -103,40 +104,11 @@ module Speech
         File.size(self.wav_chunk)
       end
 
-      def to_pcm
-        chunk_outputfile = chunk.gsub(/#{File.extname(chunk)}$/, ".pcm")
-        if system("ffmpeg -i #{chunk} -y -ar 16000 -f s16le -acodec pcm_s16le -ac 1 #{chunk_outputfile}   >/dev/null 2>&1")
-          self.pcm_chunk = chunk.gsub(/#{File.extname(chunk)}$/, ".pcm")
-          self.flac_rate = 16000
-          # convert the audio file to 16K
-          # self.flac_rate = `ffmpeg -i #{self.wav_chunk} 2>&1`.strip.scan(/Audio: wav, (.*) Hz/).first.first.strip
-          # down_sampled = self.pcm_chunk.gsub(/\.pcm$/, '-sampled.pcm')
-          # if system("ffmpeg -i #{self.pcm_chunk} -ar 16000 -y #{down_sampled} >/dev/null 2>&1")
-          #   system("mv #{down_sampled} #{self.pcm_chunk} 2>&1 >/dev/null")
-          #   self.flac_rate = 16000
-          # else
-          #   raise "failed to convert to lower audio rate"
-          # end
-        else
-          raise "failed to convert chunk: #{chunk} with pcm #{chunk}"
-        end
-        self
-      end
-
-      def to_pcm_bytes
-        File.read(self.pcm_chunk)
-      end
-
-      def pcm_size
-        File.size(self.pcm_chunk)
-      end
-
       # delete the chunk file
       def clean
         File.unlink self.chunk if File.exist?(self.chunk)
         File.unlink self.flac_chunk if self.flac_chunk && File.exist?(self.flac_chunk)
         File.unlink self.wav_chunk if self.wav_chunk && File.exist?(self.wav_chunk)
-        File.unlink self.pcm_chunk if self.pcm_chunk && File.exist?(self.pcm_chunk)
       end
     end
 
@@ -150,26 +122,28 @@ module Speech
 
     def split
       # compute the total number of chunks
+      chunk_id    = 1
       full_chunks = (self.duration.to_f / size).to_i
-      last_chunk = ((self.duration.to_f % size) * 100).round / 100.0
+      last_chunk  = ((self.duration.to_f % size) * 100).round / 100.0
       puts "generate: #{full_chunks} chunks of #{size} seconds, last: #{last_chunk} seconds" if self.verbose
 
-      (full_chunks - 1).times do |chunkid|
-        if chunkid > 0
-          chunks << AudioChunk.new(self, chunkid * self.size, self.size)
+      (full_chunks - 1).times do |index|
+        if index > 0
+          chunks << AudioChunk.new(self, index * self.size, self.size, chunk_id)
         else
-          off = (chunkid * self.size) - (self.size / 2)
+          off = (index * self.size) - (self.size / 2)
           off = 0 if off < 0
-          chunks << AudioChunk.new(self, off, self.size)
+          chunks << AudioChunk.new(self, off, self.size, chunk_id)
         end
+        chunk_id += 1
       end
 
       if chunks.empty?
-        chunks << AudioChunk.copy(self)#, 0, self.duration.to_f)
+        chunks << AudioChunk.copy(self, chunk_id)
       else
-        chunks << AudioChunk.new(self, chunks.last.offset.to_i + chunks.last.duration.to_i, self.size + last_chunk)
+        chunks << AudioChunk.new(self, chunks.last.offset.to_i + chunks.last.duration.to_i, self.size + last_chunk, chunk_id)
       end
-      puts "Chunk count: #{chunks.size}" if self.verbose
+      puts "Chunk (id=#{chunk_id}) count: #{chunks.size}" if self.verbose
 
       chunks
     end

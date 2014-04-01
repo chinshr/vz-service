@@ -3,7 +3,7 @@
 require 'curb'
 require 'json'
 require 'uuid'
-require 'net-http-spy'
+# require 'net-http-spy'
 
 module Speech; end
 

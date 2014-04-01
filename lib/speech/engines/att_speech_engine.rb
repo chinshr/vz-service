@@ -76,16 +76,18 @@ module Speech
             retry_count += 1
             sleep 0.5
           else
-            data                 = JSON.parse(response.nbest.to_json)
-            result['status']     = STATUS_PROCESSED # "#{response.status}"
-            result['id']         = "#{response.id}"
-            result['hypotheses'] = data.map {|ut| {'hypothesis' => ut['hypothesis'], 'confidence' => ut['confidence'], 'language' => ut['language'], 'scores' => ut['scores'], 'words' => ut['words']}}
+            # [{"confidence"=>0.11, "grade"=>"accept", "hypothesis"=>"mikos done any shows saturday night", "language"=>"en-US", "nlu_hypothesis"=>[], "result"=>"Mikos done any shows saturday night.", "scores"=>[0.03, 0.11, 0.1, 0.1, 0.31, 1], "words"=>["Mikos", "done", "any", "shows", "saturday", "night."]}]
+            data                  = JSON.parse(response.nbest.to_json)
+            result['id']          = chunk.id
+            result['external_id'] = "#{response.id}"
+            result['hypotheses']  = data.map {|ut| {'utterance' => ut['hypothesis'], 'confidence' => ut['confidence'], 'language' => ut['language'], 'scores' => ut['scores'], 'words' => ut['words']}}
           
-            if data.first
-              chunk.best_text  = data.first['result']
-              chunk.best_score = data.first['confidence']
-              self.score       += data.first['confidence']
-              self.segments    += 1
+            if data.first && data.first['result']
+              result['status']    = STATUS_PROCESSED # "#{response.status}"
+              chunk.best_text     = data.first['result']
+              chunk.best_score    = data.first['confidence']
+              self.score         += data.first['confidence']
+              self.segments      += 1
               puts data.first['result'] if self.verbose
             end
             retrying = false
@@ -97,7 +99,7 @@ module Speech
         puts "#{segments} processed: #{result.inspect} from: #{data.inspect}" if self.verbose
       rescue Exception => ex
         result['status'] = STATUS_ERROR
-        result['errors']  = [ex.message]
+        result['errors'] = [ex.message.to_s.gsub(/\n|\r/, "")]
       ensure
         chunk.clean
         chunk.captured_json = result
@@ -114,6 +116,10 @@ module Speech
       
       def scope
         mode == "custom" ? "STTC" : "SPEECH"
+      end
+      
+      def supported_locales
+        ["en-US"]
       end
     end
   end

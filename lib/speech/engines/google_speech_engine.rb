@@ -40,13 +40,14 @@ module Speech
             sleep 0.5 # wait longer on error?, google??
           else
             # {"status":0,"id":"ce178ea89f8b17d8e8298c9c7814700a-1","hypotheses":[{"utterance"=>"I like pickles", "confidence"=>0.59408695}, {"utterance"=>"I like turtles"}, {"utterance"=>"I like tickles"}, {"utterance"=>"I like to Kohl's"}, {"utterance"=>"I Like tickles"}, {"utterance"=>"I lyk tickles"}, {"utterance"=>"I liked to Kohl's"}]}
-            data                 = JSON.parse(service.body_str)
-            result['status']     = STATUS_PROCESSED # data['status']
-            result['id']         = data['id']
-            # result['hypotheses'] = data['hypotheses'].map {|ut| [ut['utterance'], ut['confidence']]}
-            result['hypotheses'] = data['hypotheses'].map {|ut| {'hypothesis' => ut['utterance'], 'confidence' => ut['confidence']}}
+            data                      = JSON.parse(service.body_str)
+            result['id']              = chunk.id
+            result['external_id']     = data['id']
+            result['external_status'] = data['status']
+            result['hypotheses']      = data['hypotheses'].map {|ut| {'utterance' => ut['utterance'], 'confidence' => ut['confidence']}}
 
             if data.key?('hypotheses') && data['hypotheses'].first
+              result['status'] = STATUS_PROCESSED
               chunk.best_text  = data['hypotheses'].first['utterance']
               chunk.best_score = data['hypotheses'].first['confidence']
               self.score       += data['hypotheses'].first['confidence']
@@ -62,11 +63,22 @@ module Speech
         puts "#{segments} processed: #{result.inspect} from: #{data.inspect}" if self.verbose
       rescue Exception => ex
         result['status'] = STATUS_ERROR
-        result['errors'] = [ex.message]
+        result['errors'] = [ex.message.to_s.gsub(/\n|\r/, "")]
       ensure
         chunk.clean
         chunk.captured_json = result
         return result
+      end
+      
+      private
+      
+      def supported_locales
+        ["af", "eu", "bg", "ca", "ar-EG", "ar-JO", "ar-KW", "ar-LB", "ar-QA", "ar-AE", "ar-MA", "ar-IQ", "ar-DZ", "ar-BH", "ar-LY",
+         "ar-OM", "ar-SA", "ar-TN", "ar-YE", "cs", "nl-NL", "en-AU", "en-CA", "en-IN", "en-NZ", "en-ZA", "en-GB", "en-US", "fi", 
+         "fr-FR", "gl", "de-DE", "he", "hu", "is", "it-IT", "id", "ja", "ko", "la", "zh-CN", "zh-TW", "zh-HK", "zh-yue", "ms-MY", 
+         "no-NO", "pl", "pt-PT", "pt-BR", "ro-RO", "ru", "sr-SP", "sk", "es-AR", "es-BO", "es-CL", "es-CO", "es-CR", "es-DO", 
+         "es-EC", "es-SV", "es-GT", "es-HN", "es-MX", "es-NI", "es-PA", "es-PY", "es-PE", "es-PR", "es-ES", "es-US", "es-UY", 
+         "es-VE", "sv-SE", "tr", "zu"]
       end
     end
   end

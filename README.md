@@ -87,7 +87,7 @@ Development Resources
   - Wikipedia list of speech recognition tools -- http://en.wikipedia.org/wiki/List_of_speech_recognition_software
   - Nuance Dev program -- www.ndevmobile.com
   - Tropo (Voxeo) tool TTS and ASR -- https://www.tropo.com
-
+* Nice UI -- https://www.firebase.com
 
 Competitive Products
 --------------------
@@ -179,17 +179,21 @@ Speech Transcription
     audio.to_text(:max_results => 2, :locale => "en-US")
     
     # Google Speech Engine
-    audio = Speech::AudioToText.new("samples/i-like-pickles.wav")
-    audio = Speech::AudioToText.new("samples/me-gusta-pepinillos.m4a")
+    audio = Speech::AudioToText.new("samples/i-like-pickles.wav", :verbose => true)
+    audio = Speech::AudioToText.new("samples/me-gusta-pepinillos.m4a", :verbose => true); audio.to_json(:locale => "es-US")
 
     # ATT Speech Engine, mode: standard
-    audio = Speech::AudioToText.new("samples/me-gusta-pepinillos.m4a", :engine => :att_speech_engine, :api_key => "tgcqoeaecj4ff052a9ee8g0mzt9xti7p", :secret_key => "j7caqnrtvtiiqhtl1nhlmyp5li0dclxg", :mode => "standard", :verbose => true)
+    audio = Speech::AudioToText.new("samples/i-like-pickles.wav", :engine => :att_speech_engine, :api_key => "tgcqoeaecj4ff052a9ee8g0mzt9xti7p", :secret_key => "j7caqnrtvtiiqhtl1nhlmyp5li0dclxg", :mode => "standard", :verbose => true)
+
+    audio = Speech::AudioToText.new("samples/me-gusta-pepinillos.m4a", :engine => :att_speech_engine, :api_key => "tgcqoeaecj4ff052a9ee8g0mzt9xti7p", :secret_key => "j7caqnrtvtiiqhtl1nhlmyp5li0dclxg", :mode => "standard", :verbose => true); audio.to_json(:locale => "es-MX")
 
     # ATT Speech Engine, mode: custom
-    audio = Speech::AudioToText.new("samples/i-like-pickles.wav", :engine => :att_speech_engine, :api_key => "tgcqoeaecj4ff052a9ee8g0mzt9xti7p", :secret_key => "j7caqnrtvtiiqhtl1nhlmyp5li0dclxg", :mode => "custom")
+    audio = Speech::AudioToText.new("samples/i-like-pickles.wav", :engine => :att_speech_engine, :api_key => "tgcqoeaecj4ff052a9ee8g0mzt9xti7p", :secret_key => "j7caqnrtvtiiqhtl1nhlmyp5li0dclxg", :mode => "custom", :verbose => true)
     
-    # Nuance Dragon Mobile Engine
-    audio = Speech::AudioToText.new("samples/i-like-pickles.wav", :engine => :nuance_dragon_engine, :verbose => true, :base_url => "https://blb.nmdp.nuancemobility.net:443", :app_id => "NMDPPRODUCTION_Voyzes_Voyzes_Website_20140329232339", :app_key => "b5182f8460a0d862fd2a3f8d34a6dca39a1c5bbf424fa1d2585c9a681e8631d39f6058ff003061fd5aa08a8f476732e1838ea0c5dd4198359e329ebcb8cf8f57")
+    # Nuance Dragon Engine
+    audio = Speech::AudioToText.new("samples/i-like-pickles.wav", :engine => :nuance_dragon_engine, :verbose => true, :base_url => "https://dictation.nuancemobility.net:443", :app_id => "NMDPTRIAL_chinshr20140326185635", :app_key => "edb1acb2e50d02417b643e6dce510ea9dd565c4ad4725dcb8d807c96fe6304eb14b09ef9bea03a390578a6d3cab57ca70bd8f1df4b4eabd8cf276ecd8a72b99f&id=C4461956B60B")
+
+    audio = Speech::AudioToText.new("samples/me-gusta-pepinillos.m4a", :engine => :nuance_dragon_engine, :verbose => true, :base_url => "https://dictation.nuancemobility.net:443", :app_id => "NMDPTRIAL_chinshr20140326185635", :app_key => "edb1acb2e50d02417b643e6dce510ea9dd565c4ad4725dcb8d807c96fe6304eb14b09ef9bea03a390578a6d3cab57ca70bd8f1df4b4eabd8cf276ecd8a72b99f&id=C4461956B60B"); audio.to_json(:locale => "es-MX")
 
 
 Nuance NDEV Developer Program, Dragon Mobile, ASR and TTS
