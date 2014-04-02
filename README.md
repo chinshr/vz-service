@@ -87,8 +87,21 @@ Development Resources
   - Wikipedia list of speech recognition tools -- http://en.wikipedia.org/wiki/List_of_speech_recognition_software
   - Nuance Dev program -- www.ndevmobile.com
   - Tropo (Voxeo) tool TTS and ASR -- https://www.tropo.com
-* Nice UI -- https://www.firebase.com
-
+* Nice simple and clean UI example -- https://www.firebase.com
+* Ruby language tools:
+  - Ruby english language tagger -- https://github.com/yohasebe/engtagger
+  - Perl Lingua::DE::Tagger -- http://search.cpan.org/~tschulz/FreeHAL-71/Lingua/DE/Tagger.pm
+  - Multi language tree tagger Ruby -- https://github.com/arbox/treetagger-ruby and http://search.cpan.org/dist/Lingua-TreeTagger/lib/Lingua/TreeTagger.pm
+  - Ruby wordnet: https://github.com/ged/ruby-wordnet
+  - Text similarity Perl library: http://sourceforge.net/projects/text-similarity/
+  - Ruby similarity: https://github.com/bbcrd/Similarity
+  - Hypernym distance: http://stats.stackexchange.com/questions/7313/closest-distance-in-hypernym-tree-as-measure-of-semantic-distance-between-phrase
+  - Semantic similarity measurement: http://www.codeproject.com/Articles/11835/WordNet-based-semantic-similarity-measurement
+  - WordNet sense similarity with NLTK: some basics -- http://jaganadhg.freeflux.net/blog/archive/2010/10/19/wordnet-sense-similarity-with-nltk-some-basics.html
+  - Fuzzy match ruby library, https://github.com/seamusabshere/fuzzy_match
+  - Fuzzy match using Sørensen–Dice coefficient http://en.wikipedia.org/wiki/Sørensen–Dice_coefficient
+  - Bag-of words model for utterance similarity -- http://en.wikipedia.org/wiki/Bag_of_words_model
+  
 Competitive Products
 --------------------
 
@@ -179,11 +192,11 @@ Speech Transcription
     audio.to_text(:max_results => 2, :locale => "en-US")
     
     # Google Speech Engine
-    audio = Speech::AudioToText.new("samples/i-like-pickles.wav", :verbose => true)
-    audio = Speech::AudioToText.new("samples/me-gusta-pepinillos.m4a", :verbose => true); audio.to_json(:locale => "es-US")
+    audio = Speech::AudioToText.new("samples/i-like-pickles.wav", :verbose => true); audio.to_json
+    audio = Speech::AudioToText.new("samples/me-gusta-pepinillos.m4a", :verbose => true); audio.to_json(:locale => "es-MX")
 
     # ATT Speech Engine, mode: standard
-    audio = Speech::AudioToText.new("samples/i-like-pickles.wav", :engine => :att_speech_engine, :api_key => "tgcqoeaecj4ff052a9ee8g0mzt9xti7p", :secret_key => "j7caqnrtvtiiqhtl1nhlmyp5li0dclxg", :mode => "standard", :verbose => true)
+    audio = Speech::AudioToText.new("samples/i-like-pickles.wav", :engine => :att_speech_engine, :api_key => "tgcqoeaecj4ff052a9ee8g0mzt9xti7p", :secret_key => "j7caqnrtvtiiqhtl1nhlmyp5li0dclxg", :mode => "standard", :verbose => true); audio.to_json
 
     audio = Speech::AudioToText.new("samples/me-gusta-pepinillos.m4a", :engine => :att_speech_engine, :api_key => "tgcqoeaecj4ff052a9ee8g0mzt9xti7p", :secret_key => "j7caqnrtvtiiqhtl1nhlmyp5li0dclxg", :mode => "standard", :verbose => true); audio.to_json(:locale => "es-MX")
 
@@ -191,10 +204,26 @@ Speech Transcription
     audio = Speech::AudioToText.new("samples/i-like-pickles.wav", :engine => :att_speech_engine, :api_key => "tgcqoeaecj4ff052a9ee8g0mzt9xti7p", :secret_key => "j7caqnrtvtiiqhtl1nhlmyp5li0dclxg", :mode => "custom", :verbose => true)
     
     # Nuance Dragon Engine
-    audio = Speech::AudioToText.new("samples/i-like-pickles.wav", :engine => :nuance_dragon_engine, :verbose => true, :base_url => "https://dictation.nuancemobility.net:443", :app_id => "NMDPTRIAL_chinshr20140326185635", :app_key => "edb1acb2e50d02417b643e6dce510ea9dd565c4ad4725dcb8d807c96fe6304eb14b09ef9bea03a390578a6d3cab57ca70bd8f1df4b4eabd8cf276ecd8a72b99f&id=C4461956B60B")
+    audio = Speech::AudioToText.new("samples/i-like-pickles.wav", :engine => :nuance_dragon_engine, :verbose => true, :base_url => "https://dictation.nuancemobility.net:443", :app_id => "NMDPTRIAL_chinshr20140326185635", :app_key => "edb1acb2e50d02417b643e6dce510ea9dd565c4ad4725dcb8d807c96fe6304eb14b09ef9bea03a390578a6d3cab57ca70bd8f1df4b4eabd8cf276ecd8a72b99f&id=C4461956B60B"); audio.to_json
 
     audio = Speech::AudioToText.new("samples/me-gusta-pepinillos.m4a", :engine => :nuance_dragon_engine, :verbose => true, :base_url => "https://dictation.nuancemobility.net:443", :app_id => "NMDPTRIAL_chinshr20140326185635", :app_key => "edb1acb2e50d02417b643e6dce510ea9dd565c4ad4725dcb8d807c96fe6304eb14b09ef9bea03a390578a6d3cab57ca70bd8f1df4b4eabd8cf276ecd8a72b99f&id=C4461956B60B"); audio.to_json(:locale => "es-MX")
 
+Best transcription
+------------------
+
+require "fuzzy_match"
+z[0] = "where should we there yet the voice of Nemo 2700 this recording right to know that I'm f****** over here we can do that this has been a way or the other"
+z[1] = "Voice app. Boarding. I'm talking to it." 
+z[2] = "Is requesting the voicesIs requesting the voices right This recording serviceAnd this recording service I'm talking to CaseyI'm talking to season"
+a = z.each_index.inject([]) do |column, column_index|
+  column << z.each_index.inject([]) do |row, row_index|
+    row << z[column_index].levenshtein_similar(z[row_index])
+  end
+end
+m=Matrix.rows(a)
+total_words = z.inject(0) {|r, e| r += e.split.size}
+v=m * Vector[z[0].split.size / total_words.to_f, z[1].split.size / total_words.to_f, z[2].split.size / total_words.to_f]
+=> Vector[1.4473684210526316, 1.3647912885662432, 1.4963702359346642]
 
 Nuance NDEV Developer Program, Dragon Mobile, ASR and TTS
 ---------------------------------------------------------
@@ -397,4 +426,43 @@ Let's normalize afterwards:
       reverse \
       norm -0.5
 
-    
+Genesis Recording Script
+========================
+
+Genesis 1-1 English in the US
+-----------------------------
+
+In the beginning God created the heavens and the earth. 
+Now the earth was formless and empty, darkness was over the surface of the deep, and the Spirit of God was hovering over the waters.
+And God said, “Let there be light,” and there was light. 
+God saw that the light was good, 
+and he separated the light from the darkness.
+God called the light “day,” and the darkness he called “night.” 
+And there was evening, and there was morning—the first day.
+
+
+
+Genesis 1-1 German in Germany
+-----------------------------
+
+Im Anfang schuf Gott Himmel und Erde.
+Und die Erde war wüst und leer, und es war ﬁnster auf der Tiefe;
+und der Geist Gottes schwebte auf dem Wasser.
+Und Gott sprach: Es werde Licht! Und es ward Licht.
+Und Gott sah, dass das Licht gut war.
+Da schied Gott das Licht von der Finsternis
+und nannte das Licht Tag und die Finsternis Nacht.
+Da ward aus Abend und Morgen der erste Tag.
+
+Genesis 1-1 Spanish in Argentina
+--------------------------------
+
+En el principio creó Dios los cielos y la tierra. 
+Y la tierra estaba desordenada y vacía, y las tinieblas estaban sobre la faz del abismo,
+Y el Espíritu de Dios se movía sobre la faz de las aguas. 
+Y dijo Dios: Sea la luz! Y fue la luz. 
+Y vio Dios que la luz era buena; 
+Y separó Dios la luz de las tinieblas. 
+Y llamó Dios a la luz Día, y a las tinieblas llamó Noche. 
+Y fue la tarde y la mañana un día.
+

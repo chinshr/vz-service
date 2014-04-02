@@ -45,8 +45,7 @@ module Speech
           service.headers['X-Dictation-NBestListSize']   = max_results.to_s
           service.headers['Accept-Language']             = canonical_locale(locale)
           service.headers['Accept']                      = "text/plain" # "application/xml"
-          
-          # service.headers['User-Agent'] = "Mozilla/5.0"
+          service.headers['User-Agent']                  = USER_AGENT
           
           # request
           service.post_body = "#{chunk.to_wav_bytes}"
@@ -60,9 +59,9 @@ module Speech
             sleep 0.5 # wait longer on error?, google??
           else
             data                 = service.body_str
-            data                 = data.gsub(/\n/, "") if data.present?
+            data                 = data.split(/\n/) if data.present?
             result['id']         = chunk.id
-            result['hypotheses'] = [{'utterance' => data, 'confidence' => 1}]
+            result['hypotheses'] = data.reject(&:blank?).map {|d| {'utterance' => d}}
 
             if result.key?('hypotheses') && result['hypotheses'].first
               result['status'] = STATUS_PROCESSED

@@ -91,6 +91,7 @@ gem 'nokogiri'
 gem 'whatlanguage'
 gem 'griddler', :git => "https://github.com/chinshr/griddler.git" # :path => "../griddler"
 gem 'newrelic_rpm'
-# gem 'att-codekit'  # requires source 'http://lprod.code-api-att.com:8808'
 gem 'att-codekit', :git => "git@github.com:chinshr/codekit-ruby.git" # :path => "/Users/juergen/work/ruby/codekit-ruby" 
-# gem 'net-http-spy'
+gem 'engtagger'
+gem 'amatch'
+gem 'fuzzy_match'

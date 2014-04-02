@@ -5,6 +5,7 @@ module Speech
       attr_accessor :file, :rate, :captured_json, :score, :verbose, :segments, :chunks, :chunk_size,
         :max_results, :locale
 
+      USER_AGENT         = "Mozilla/5.0"
       STATUS_UNPROCESSED = 0
       STATUS_PROCESSED   = 1
       STATUS_ERROR       = -1
@@ -21,7 +22,7 @@ module Speech
         self.locale        = "en-US"
       end
 
-      def to_text(option = {})
+      def to_text(options = {})
         to_json(options)
         chunks.map {|ch| ch.best_text}.compact.join(" ")
       end

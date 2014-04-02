@@ -25,14 +25,16 @@ module Speech
 
         while retrying && retry_count < 3 # 3 retries
           service.verbose = self.verbose
+
+          # headers
           service.headers['Content-Type'] = "audio/x-flac; rate=#{chunk.flac_rate}"
-          # service.headers['User-Agent'] = "https://github.com/taf2/speech2text"
-          service.headers['User-Agent'] = "Mozilla/5.0"
+          service.headers['User-Agent']   = USER_AGENT
+          
+          # request
           service.post_body = "Content=#{chunk.to_flac_bytes}"
-          if self.verbose
-            service.on_progress {|dl_total, dl_now, ul_total, ul_now| printf("%.2f/%.2f\r", ul_now, ul_total); true }
-          end
+          service.on_progress {|dl_total, dl_now, ul_total, ul_now| printf("%.2f/%.2f\r", ul_now, ul_total); true} if self.verbose
           service.http_post
+          
           if service.response_code == 500
             puts "500 from google retry after 0.5 seconds" if self.verbose
             retrying    = true
