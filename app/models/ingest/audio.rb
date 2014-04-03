@@ -47,7 +47,7 @@ class Ingest::Audio < ::Ingest
   
   def after_enter_restarting
     super
-    Ingest::AudioWorker.perform_async(self.id)
+    ::Ingest::AudioWorker.perform_async(self.id)
     # schedule_perform_async!
   end
   
@@ -55,7 +55,7 @@ class Ingest::Audio < ::Ingest
     super
 
     # send email
-    Ingest::AudioMailer.finished_processing(self).deliver if user
+    ::Ingest::AudioMailer.finished_processing(self).deliver if user
   end
 
   protected

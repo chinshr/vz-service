@@ -27,6 +27,7 @@ FactoryGirl.define do
     start_time 0
     end_time 3.51
     text "I like pickles"
+    processing_status 0
     score 0.59
     before(:create) do |segment|
       segment.response = {"status" => 0, "id" => "ce178ea89f8b17d8e8298c9c7814700a-1", "hypotheses" => [["I like pickles", 0.59408695], ["I like turtles", 0.34534354], ["I like tickles", nil], ["I like to Kohl's", nil]]}

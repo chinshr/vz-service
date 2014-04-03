@@ -1,0 +1,36 @@
+require 'test_helper'
+
+class Speech::AudioSplitterTest < ActiveSupport::TestCase
+
+  should "split audio into chunks" do
+    splitter = Speech::AudioSplitter.new("#{Rails.root}/test/fixtures/i-like-pickles.wav")
+
+    assert_equal '00:00:03.52', splitter.duration.to_s
+    assert_equal 3.52, splitter.duration.to_f
+
+    chunks = splitter.split
+    assert_equal 1, chunks.size
+    chunks.each do|chunk|
+      assert_equal Speech::AudioSplitter::AudioChunk::STATUS_BUILT, chunk.status  # built because there is only one chunk
+      chunk.build
+      assert_equal Speech::AudioSplitter::AudioChunk::STATUS_BUILT, chunk.status
+      chunk.to_flac
+      chunk.to_wav
+      assert_equal Speech::AudioSplitter::AudioChunk::STATUS_ENCODED, chunk.status
+      assert chunk.to_flac_bytes
+      assert_equal 112700, chunk.flac_size
+      assert chunk.to_wav_bytes
+      assert_equal 112700, chunk.wav_size
+      
+      assert_equal [], chunk.errors
+      assert File.exist? chunk.chunk
+      assert File.exist? chunk.flac_chunk
+      assert File.exist? chunk.wav_chunk
+      chunk.clean
+      assert !File.exist?(chunk.chunk)
+      assert !File.exist?(chunk.flac_chunk)
+      assert !File.exist?(chunk.wav_chunk)
+    end
+  end
+
+end

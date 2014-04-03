@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140402235854) do
+ActiveRecord::Schema.define(version: 20140403225039) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -60,10 +60,10 @@ ActiveRecord::Schema.define(version: 20140402235854) do
 
   create_table "document_segments", force: true do |t|
     t.integer  "document_id"
-    t.integer  "offset",                               null: false
-    t.decimal  "duration",    precision: 11, scale: 5
-    t.decimal  "start_time",  precision: 11, scale: 5
-    t.decimal  "end_time",    precision: 11, scale: 5
+    t.integer  "offset",                                                 null: false
+    t.decimal  "duration",          precision: 11, scale: 5
+    t.decimal  "start_time",        precision: 11, scale: 5
+    t.decimal  "end_time",          precision: 11, scale: 5
     t.text     "response"
     t.string   "text"
     t.float    "score"
@@ -71,11 +71,13 @@ ActiveRecord::Schema.define(version: 20140402235854) do
     t.datetime "updated_at"
     t.integer  "position"
     t.string   "type"
+    t.integer  "processing_status",                          default: 0, null: false
   end
 
   add_index "document_segments", ["document_id"], name: "index_document_segments_on_document_id", using: :btree
   add_index "document_segments", ["offset"], name: "index_document_segments_on_offset", using: :btree
   add_index "document_segments", ["position"], name: "index_document_segments_on_position", using: :btree
+  add_index "document_segments", ["processing_status"], name: "index_document_segments_on_processing_status", using: :btree
   add_index "document_segments", ["type"], name: "index_document_segments_on_type", using: :btree
 
   create_table "documents", force: true do |t|

@@ -95,3 +95,4 @@ gem 'att-codekit', :git => "git@github.com:chinshr/codekit-ruby.git" # :path => 
 gem 'engtagger'
 gem 'amatch'
 gem 'fuzzy_match'
+gem 'psych'

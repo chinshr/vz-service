@@ -1,9 +1,9 @@
-module Helper::Mailer
+module Mailer::Helper
   extend self
     
   # tries to return a regular email address from a pretty printed email
   #
-  # e.g.
+  # E.g.
   #
   #   "John Smith <j@s.com>" -> "j@s.com"
   #

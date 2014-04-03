@@ -9,7 +9,7 @@ class EmailProcessor
     def process_audio(email)
       user, message, exception = nil, nil, nil
       if email.attachments.count > 0
-        user    = User.find_or_initialize_by(email: Helper::Mailer::unprettify(email.from))
+        user    = User.find_or_initialize_by(email: Mailer::Helper::unprettify(email.from))
         message = Message::Inbound.new do |m|
           m.to      = address_join(email.to)
           m.cc      = address_join(email.cc)

@@ -5,8 +5,16 @@ module Speech
     attr_accessor :original_file, :size, :duration, :chunks, :verbose
 
     class AudioChunk
+      STATUS_UNPROCESSED         = 0
+      STATUS_BUILT               = 1
+      STATUS_ENCODED             = 2
+      STATUS_TRANSCRIBED         = 3
+      STATUS_BUILD_ERROR         = -1
+      STATUS_ENCODING_ERROR      = -2
+      STATUS_TRANSCRIPTION_ERROR = -3
+      
       attr_accessor :id, :splitter, :chunk, :flac_chunk, :wav_chunk, :offset, :duration, :flac_rate, :copied, 
-        :captured_json, :best_text, :best_score
+        :captured_json, :best_text, :best_score, :status, :errors
 
       def initialize(splitter, offset, duration, id = nil)
         self.offset        = offset
@@ -18,10 +26,13 @@ module Speech
         self.captured_json = {}
         self.best_text     = nil
         self.best_score    = nil
+        self.status        = STATUS_UNPROCESSED
+        self.errors        = []
       end
 
       def self.copy(splitter, id = nil)
         chunk        = AudioChunk.new(splitter, 0, splitter.duration.to_f, id)
+        chunk.status = STATUS_BUILT
         chunk.copied = true
         system("cp #{splitter.original_file} #{chunk.chunk}")
         chunk
@@ -40,8 +51,10 @@ module Speech
         # cmd = "ffmpeg -y -i #{splitter.original_file} -acodec copy -vcodec copy -ss #{offset_ts} -t #{duration_ts} -f aiff #{self.chunk}   >/dev/null 2>&1"
         cmd = "ffmpeg -y -i #{splitter.original_file} -acodec flac -vcodec copy -ss #{offset_ts} -t #{duration_ts} -f flac #{self.chunk}   >/dev/null 2>&1"
         if system(cmd)
+          self.status = STATUS_BUILT
           self
         else
+          self.status = STATUS_BUILD_ERROR
           raise "Failed to generate chunk at offset: #{offset_ts}, duration: #{duration_ts}\n#{cmd}"
         end
       end
@@ -57,11 +70,14 @@ module Speech
           if system("ffmpeg -i #{self.flac_chunk} -ar 16000 -y #{down_sampled} >/dev/null 2>&1")
             system("mv #{down_sampled} #{self.flac_chunk} 2>&1 >/dev/null")
             self.flac_rate = 16000
+            self.status    = STATUS_ENCODED
+            self
           else
+            self.status    = STATUS_ENCODING_ERROR
             raise "failed to convert to lower audio rate"
           end
-
         else
+          self.status = STATUS_ENCODING_ERROR
           raise "failed to convert chunk: #{chunk} with flac #{chunk}"
         end
         self
@@ -86,11 +102,13 @@ module Speech
           if system("ffmpeg -i #{self.wav_chunk} -ar 16000 -y #{down_sampled} >/dev/null 2>&1")
             system("mv #{down_sampled} #{self.wav_chunk} 2>&1 >/dev/null")
             self.flac_rate = 16000
+            self.status    = STATUS_ENCODED
           else
+            self.status    = STATUS_ENCODING_ERROR
             raise "failed to convert to lower audio rate"
           end
-
         else
+          self.status = STATUS_ENCODING_ERROR
           raise "failed to convert chunk: #{chunk} with wav #{chunk}"
         end
         self
@@ -144,7 +162,6 @@ module Speech
         chunks << AudioChunk.new(self, chunks.last.offset.to_i + chunks.last.duration.to_i, self.size + last_chunk, chunk_id)
       end
       puts "Chunk (id=#{chunk_id}) count: #{chunks.size}" if self.verbose
-
       chunks
     end
 

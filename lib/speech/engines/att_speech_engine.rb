@@ -48,7 +48,7 @@ module Speech
         puts "sending chunk of size #{chunk.duration}, locale: #{locale}..." if self.verbose
         retrying            = true
         retry_count         = 0
-        result              = {'status' => STATUS_UNPROCESSED}
+        result              = {'status' => chunk.status}
         dictionary, grammar = load_files(options)
         service_options     = {}.merge(options)
 
@@ -83,7 +83,7 @@ module Speech
             result['hypotheses']  = data.map {|ut| {'utterance' => ut['hypothesis'], 'confidence' => ut['confidence'], 'language' => ut['language'], 'scores' => ut['scores'], 'words' => ut['words']}}
           
             if data.first && data.first['result']
-              result['status']    = STATUS_PROCESSED # "#{response.status}"
+              chunk.status        = result['status'] = AudioChunk::STATUS_TRANSCRIBED
               chunk.best_text     = data.first['result']
               chunk.best_score    = data.first['confidence']
               self.score         += data.first['confidence']
@@ -98,8 +98,8 @@ module Speech
       
         puts "#{segments} processed: #{result.inspect} from: #{data.inspect}" if self.verbose
       rescue Exception => ex
-        result['status'] = STATUS_ERROR
-        result['errors'] = [ex.message.to_s.gsub(/\n|\r/, "")]
+        result['status'] = chunk.status = AudioChunk::STATUS_TRANSCRIPTION_ERROR
+        result['errors'] = (chunk.errors << ex.message.to_s.gsub(/\n|\r/, ""))
       ensure
         chunk.clean
         chunk.captured_json = result

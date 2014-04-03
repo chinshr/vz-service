@@ -1,9 +1,11 @@
-require 'rubygems'
-require 'aws-sdk'
+require "rubygems"
+require "aws-sdk"
 require "speech"
 
 class Ingest::AudioWorker
   include Sidekiq::Worker
+  include Ingest::AudioWorkerHelper
+  
   sidekiq_options :queue => :default, :retry => false, :backtrace => true
 
   STAGES = {
@@ -370,17 +372,19 @@ class Ingest::AudioWorker
     })
     audio.to_json(:locale => @ingest.locale) do |chunk|
       end_time = start_time + BigDecimal.new(chunk.duration.to_s)
-      @ingest.ingestable.segments.create(
-        :type        => "Document::Segment::GoogleSpeech",
-        :position    => chunk.id,
-        :offset      => chunk.offset,
-        :duration    => chunk.duration,
-        :start_time  => start_time,
-        :end_time    => end_time,
-        :text        => chunk.best_text,
-        :score       => chunk.best_score,
-        :response    => chunk.captured_json
-      )
+      @ingest.ingestable.segments.create({
+        :type              => "Document::Segment::GoogleSpeech",
+        :position          => chunk.id,
+        :offset            => chunk.offset,
+        :duration          => chunk.duration,
+        :start_time        => start_time,
+        :end_time          => end_time,
+        :text              => chunk.best_text,
+        :score             => chunk.best_score,
+        :response          => chunk.captured_json,
+        :errors            => chunk.errors,
+        :processing_status => chunk.status
+      })
       Rails.logger.info "-> google speech chunk ##{chunk.id}: #{start_time}-#{end_time} (#{chunk.duration}): #{chunk.best_text} (#{chunk.best_score})"
 
       start_time = end_time
@@ -399,17 +403,19 @@ class Ingest::AudioWorker
     })
     audio.to_json(:locale => @ingest.locale) do |chunk|
       end_time = start_time + BigDecimal.new(chunk.duration.to_s)
-      @ingest.ingestable.segments.create(
-        :type        => "Document::Segment::AttSpeech",
-        :position    => chunk.id,
-        :offset      => chunk.offset,
-        :duration    => chunk.duration,
-        :start_time  => start_time,
-        :end_time    => end_time,
-        :text        => chunk.best_text,
-        :score       => chunk.best_score,
-        :response    => chunk.captured_json
-      )
+      @ingest.ingestable.segments.create({
+        :type              => "Document::Segment::AttSpeech",
+        :position          => chunk.id,
+        :offset            => chunk.offset,
+        :duration          => chunk.duration,
+        :start_time        => start_time,
+        :end_time          => end_time,
+        :text              => chunk.best_text,
+        :score             => chunk.best_score,
+        :response          => chunk.captured_json,
+        :errors            => chunk.errors,
+        :processing_status => chunk.status
+      })
       Rails.logger.info "-> att speech chunk ##{chunk.id}: #{start_time}-#{end_time} (#{chunk.duration}): #{chunk.best_text} (#{chunk.best_score})"
 
       start_time = end_time
@@ -429,17 +435,18 @@ class Ingest::AudioWorker
     })
     audio.to_json(:locale => @ingest.locale) do |chunk|
       end_time = start_time + BigDecimal.new(chunk.duration.to_s)
-      @ingest.ingestable.segments.create(
-        :type        => "Document::Segment::AttSpeech",
-        :position    => chunk.id,
-        :offset      => chunk.offset,
-        :duration    => chunk.duration,
-        :start_time  => start_time,
-        :end_time    => end_time,
-        :text        => chunk.best_text,
-        :score       => chunk.best_score,
-        :response    => chunk.captured_json
-      )
+      @ingest.ingestable.segments.create({
+        :type              => "Document::Segment::AttSpeech",
+        :position          => chunk.id,
+        :offset            => chunk.offset,
+        :duration          => chunk.duration,
+        :start_time        => start_time,
+        :end_time          => end_time,
+        :text              => chunk.best_text,
+        :score             => chunk.best_score,
+        :response          => chunk.captured_json,
+        :processing_status => chunk.status
+      })
       Rails.logger.info "-> nuance dragon chunk ##{chunk.id}: #{start_time}-#{end_time} (#{chunk.duration}): #{chunk.best_text} (#{chunk.best_score})"
 
       start_time = end_time

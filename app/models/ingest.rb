@@ -122,7 +122,7 @@ class Ingest < ActiveRecord::Base
       lock!
       new_progress = (self[:progress] || 0) + (counter / denominator.to_f * factor * 100)
       new_progress = new_progress > 100 ? 100 : new_progress
-      update_attribute(:progress, new_progress) if new_progress > progress
+      update_attribute(:progress, new_progress)
     end
   end
   

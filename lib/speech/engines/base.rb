@@ -2,14 +2,11 @@
 module Speech
   module Engines
     class Base
+      USER_AGENT = "Mozilla/5.0"
+
       attr_accessor :file, :rate, :captured_json, :score, :verbose, :segments, :chunks, :chunk_size,
         :max_results, :locale
 
-      USER_AGENT         = "Mozilla/5.0"
-      STATUS_UNPROCESSED = 0
-      STATUS_PROCESSED   = 1
-      STATUS_ERROR       = -1
-      
       def initialize(file, options = {})
         self.file            = file
         self.captured_json   = {}
