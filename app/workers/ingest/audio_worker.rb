@@ -352,13 +352,27 @@ class Ingest::AudioWorker
       end
     end
   end
-  
+
   def transcribe_file(filename)
+    threads = []
+    threads << Thread.new { google_speech_transcribe_file(filename) }
+    threads << Thread.new { att_speech_transcribe_file(filename) }
+    threads << Thread.new { nuance_dragon_transcribe_file(filename) }
+    while !thread.all? {|t| t.alive?}
+      puts "Still running..."
+    end
+  end
+  
+  def google_speech_transcribe_file(filename)
     start_time = BigDecimal.new("0.0")
-    audio      = Speech::AudioToText.new(filename, {chunk_size: @chunk_size, verbose: Rails.env.development?})
+    audio      = Speech::AudioToText.new(filename, {
+      engine: :google_speech_engine, chunk_size: @chunk_size, verbose: Rails.env.development?
+    })
     audio.to_json(:locale => @ingest.locale) do |chunk|
       end_time = start_time + BigDecimal.new(chunk.duration.to_s)
       @ingest.ingestable.segments.create(
+        :type        => "Document::Segment::GoogleSpeech",
+        :position    => chunk.id,
         :offset      => chunk.offset,
         :duration    => chunk.duration,
         :start_time  => start_time,
@@ -367,7 +381,66 @@ class Ingest::AudioWorker
         :score       => chunk.best_score,
         :response    => chunk.captured_json
       )
-      Rails.logger.info "-> chunk #{start_time}-#{end_time} (#{chunk.duration}): #{chunk.best_text} (#{chunk.best_score})"
+      Rails.logger.info "-> google speech chunk ##{chunk.id}: #{start_time}-#{end_time} (#{chunk.duration}): #{chunk.best_text} (#{chunk.best_score})"
+
+      start_time = end_time
+      increment_progress! 1, chunk.splitter.chunks.size, 0.75
+      @ingest.reload
+      break if !@ingest.started? || @ingest.terminate?
+    end
+  end
+
+  def att_speech_transcribe_file(filename)
+    start_time = BigDecimal.new("0.0")
+    audio      = Speech::AudioToText.new(filename, {
+      engine: :att_speech_engine, chunk_size: @chunk_size, 
+      api_key: "tgcqoeaecj4ff052a9ee8g0mzt9xti7p", secret_key: "j7caqnrtvtiiqhtl1nhlmyp5li0dclxg", 
+      mode: "standard", verbose: Rails.env.development?
+    })
+    audio.to_json(:locale => @ingest.locale) do |chunk|
+      end_time = start_time + BigDecimal.new(chunk.duration.to_s)
+      @ingest.ingestable.segments.create(
+        :type        => "Document::Segment::AttSpeech",
+        :position    => chunk.id,
+        :offset      => chunk.offset,
+        :duration    => chunk.duration,
+        :start_time  => start_time,
+        :end_time    => end_time,
+        :text        => chunk.best_text,
+        :score       => chunk.best_score,
+        :response    => chunk.captured_json
+      )
+      Rails.logger.info "-> att speech chunk ##{chunk.id}: #{start_time}-#{end_time} (#{chunk.duration}): #{chunk.best_text} (#{chunk.best_score})"
+
+      start_time = end_time
+      increment_progress! 1, chunk.splitter.chunks.size, 0.75
+      @ingest.reload
+      break if !@ingest.started? || @ingest.terminate?
+    end
+  end
+
+  def nuance_dragon_transcribe_file(filename)
+    start_time = BigDecimal.new("0.0")
+    audio      = Speech::AudioToText.new(filename, {
+      engine: :nuance_dragon_engine, chunk_size: @chunk_size, 
+      base_url: "https://dictation.nuancemobility.net:443", app_id: "NMDPTRIAL_chinshr20140326185635", 
+      app_key: "edb1acb2e50d02417b643e6dce510ea9dd565c4ad4725dcb8d807c96fe6304eb14b09ef9bea03a390578a6d3cab57ca70bd8f1df4b4eabd8cf276ecd8a72b99f",
+      verbose: Rails.env.development?
+    })
+    audio.to_json(:locale => @ingest.locale) do |chunk|
+      end_time = start_time + BigDecimal.new(chunk.duration.to_s)
+      @ingest.ingestable.segments.create(
+        :type        => "Document::Segment::AttSpeech",
+        :position    => chunk.id,
+        :offset      => chunk.offset,
+        :duration    => chunk.duration,
+        :start_time  => start_time,
+        :end_time    => end_time,
+        :text        => chunk.best_text,
+        :score       => chunk.best_score,
+        :response    => chunk.captured_json
+      )
+      Rails.logger.info "-> nuance dragon chunk ##{chunk.id}: #{start_time}-#{end_time} (#{chunk.duration}): #{chunk.best_text} (#{chunk.best_score})"
 
       start_time = end_time
       increment_progress! 1, chunk.splitter.chunks.size, 0.75
