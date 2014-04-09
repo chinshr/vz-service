@@ -54,6 +54,7 @@ group :test do
   gem 'simplecov', :require => false
   gem 'turn'
   gem 'test_after_commit'
+  gem 'webmock'
 end
 
 group :production do
@@ -96,3 +97,4 @@ gem 'engtagger'
 gem 'amatch'
 gem 'fuzzy_match'
 gem 'psych'
+gem 'gingerice'

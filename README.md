@@ -101,6 +101,9 @@ Development Resources
   - Fuzzy match ruby library, https://github.com/seamusabshere/fuzzy_match
   - Fuzzy match using Sørensen–Dice coefficient http://en.wikipedia.org/wiki/Sørensen–Dice_coefficient
   - Bag-of words model for utterance similarity -- http://en.wikipedia.org/wiki/Bag_of_words_model
+* Sentence correction with Ginger http://www.gingersoftware.com
+  - https://github.com/subosito/gingerice
+
   
 Competitive Products
 --------------------

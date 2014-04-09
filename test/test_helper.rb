@@ -3,7 +3,8 @@ require File.expand_path('../../config/environment', __FILE__)
 require 'rails/test_help'
 require 'shoulda'
 require 'sidekiq/testing'
-require "geocoder"
+require 'geocoder'
+require 'webmock/minitest'
 
 Sidekiq::Testing.fake!
 AWS.stub!
@@ -32,12 +33,14 @@ class ActiveSupport::TestCase
   #
   # Note: You'll currently still have to declare fixtures explicitly in integration tests
   # -- they do not yet inherit this setting
-  fixtures :all
+  # fixtures :all
 
   # Add more helper methods to be used by all tests here...
   include Shoulda::Matchers::ActiveRecord 
   extend Shoulda::Matchers::ActiveRecord 
   include Shoulda::Matchers::ActiveModel 
   extend Shoulda::Matchers::ActiveModel 
+  
+  # include WebMock::API
 end
 

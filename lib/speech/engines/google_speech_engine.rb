@@ -34,7 +34,7 @@ module Speech
           service.post_body = "Content=#{chunk.to_flac_bytes}"
           service.on_progress {|dl_total, dl_now, ul_total, ul_now| printf("%.2f/%.2f\r", ul_now, ul_total); true} if self.verbose
           service.http_post
-          
+
           if service.response_code == 500
             puts "500 from google retry after 0.5 seconds" if self.verbose
             retrying    = true
@@ -49,7 +49,7 @@ module Speech
             result['hypotheses']      = data['hypotheses'].map {|ut| {'utterance' => ut['utterance'], 'confidence' => ut['confidence']}}
 
             if data.key?('hypotheses') && data['hypotheses'].first
-              chunk.status     = result['status'] = AudioChunk::STATUS_TRANSCRIBED
+              chunk.status     = result['status'] = AudioSplitter::AudioChunk::STATUS_TRANSCRIBED
               chunk.best_text  = data['hypotheses'].first['utterance']
               chunk.best_score = data['hypotheses'].first['confidence']
               self.score       += data['hypotheses'].first['confidence']
@@ -64,7 +64,7 @@ module Speech
 
         puts "#{segments} processed: #{result.inspect} from: #{data.inspect}" if self.verbose
       rescue Exception => ex
-        result['status'] = chunk.status = AudioChunk::STATUS_TRANSCRIPTION_ERROR
+        result['status'] = chunk.status = AudioSplitter::AudioChunk::STATUS_TRANSCRIPTION_ERROR
         result['errors'] = (chunk.errors << ex.message.to_s.gsub(/\n|\r/, ""))
       ensure
         chunk.clean
