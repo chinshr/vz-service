@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140403225039) do
+ActiveRecord::Schema.define(version: 20140409230749) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -72,6 +72,7 @@ ActiveRecord::Schema.define(version: 20140403225039) do
     t.integer  "position"
     t.string   "type"
     t.integer  "processing_status",                          default: 0, null: false
+    t.text     "processing_errors"
   end
 
   add_index "document_segments", ["document_id"], name: "index_document_segments_on_document_id", using: :btree

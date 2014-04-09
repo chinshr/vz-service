@@ -1,2 +1,0 @@
-module Ingest::AudioWorkerHelper
-end
