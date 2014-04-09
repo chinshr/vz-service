@@ -83,7 +83,7 @@ module Speech
             result['hypotheses']  = data.map {|ut| {'utterance' => ut['hypothesis'], 'confidence' => ut['confidence'], 'language' => ut['language'], 'scores' => ut['scores'], 'words' => ut['words']}}
           
             if data.first && data.first['result']
-              chunk.status        = result['status'] = AudioChunk::STATUS_TRANSCRIBED
+              chunk.status        = result['status'] = AudioSplitter::AudioChunk::STATUS_TRANSCRIBED
               chunk.best_text     = data.first['result']
               chunk.best_score    = data.first['confidence']
               self.score         += data.first['confidence']

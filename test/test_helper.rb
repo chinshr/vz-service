@@ -40,7 +40,5 @@ class ActiveSupport::TestCase
   extend Shoulda::Matchers::ActiveRecord 
   include Shoulda::Matchers::ActiveModel 
   extend Shoulda::Matchers::ActiveModel 
-  
-  # include WebMock::API
 end
 

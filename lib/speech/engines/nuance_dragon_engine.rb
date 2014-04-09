@@ -51,7 +51,7 @@ module Speech
           service.post_body = "#{chunk.to_wav_bytes}"
           service.on_progress {|dl_total, dl_now, ul_total, ul_now| printf("%.2f/%.2f\r", ul_now, ul_total); true } if self.verbose
           service.http_post
-          
+
           if service.response_code >= 500
             puts "500 from Nuance retry after 0.5 seconds" if self.verbose
             retrying    = true
@@ -64,7 +64,7 @@ module Speech
             result['hypotheses'] = data.reject(&:blank?).map {|d| {'utterance' => d.force_encoding("utf-8")}}
 
             if result.key?('hypotheses') && result['hypotheses'].first
-              chunk.status     = result['status'] = AudioChunk::STATUS_TRANSCRIBED
+              chunk.status     = result['status'] = AudioSplitter::AudioChunk::STATUS_TRANSCRIBED
               chunk.best_text  = result['hypotheses'].first['utterance']
               chunk.best_score = result['hypotheses'].first['confidence']
               self.score       += 1
