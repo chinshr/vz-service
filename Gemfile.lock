@@ -137,7 +137,6 @@ GEM
       execjs
     eco-source (1.1.0.rc.1)
     ejs (1.1.1)
-    engtagger (0.1.2)
     erubis (2.7.0)
     excon (0.32.1)
     execjs (2.0.2)
@@ -341,7 +340,6 @@ DEPENDENCIES
   devise
   eco
   ejs
-  engtagger
   factory_girl_rails
   fuzzy_match
   geocoder
