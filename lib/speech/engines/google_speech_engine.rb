@@ -23,7 +23,7 @@ module Speech
         retry_count = 0
         result      = {'status' => chunk.status}
 
-        while retrying && retry_count < 3 # 3 retries
+        while retrying && retry_count < max_retries # 3 retries
           service.verbose = self.verbose
 
           # headers
@@ -68,7 +68,7 @@ module Speech
         result['errors'] = (chunk.errors << ex.message.to_s.gsub(/\n|\r/, ""))
       ensure
         chunk.clean
-        chunk.captured_json = result
+        chunk.captured_json = result.to_json
         return result
       end
       

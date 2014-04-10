@@ -58,7 +58,7 @@ module Speech
           "NumResults=#{max_results}"
         end
         
-        while retrying && retry_count < 3 # 3 retries
+        while retrying && retry_count < max_retries # 3 retries
           response = if mode == "standard"
             service.stdSpeechToText(chunk.wav_chunk, service_options)
           elsif mode == "custom"
@@ -102,7 +102,7 @@ module Speech
         result['errors'] = (chunk.errors << ex.message.to_s.gsub(/\n|\r/, ""))
       ensure
         chunk.clean
-        chunk.captured_json = result
+        chunk.captured_json = result.to_json
         return result
       end
       

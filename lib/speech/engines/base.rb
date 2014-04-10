@@ -5,7 +5,7 @@ module Speech
       USER_AGENT = "Mozilla/5.0"
 
       attr_accessor :file, :rate, :captured_json, :score, :verbose, :segments, :chunks, :chunk_size,
-        :max_results, :locale
+        :max_results, :max_retries, :locale
 
       def initialize(file, options = {})
         self.file            = file
@@ -16,7 +16,8 @@ module Speech
         self.chunk_size      = options[:chunk_size].to_i if options.key?(:chunk_size)
         self.verbose         = !!options[:verbose] if options.key?(:verbose)
         self.max_results     = 2
-        self.locale        = "en-US"
+        self.max_retries     = 3
+        self.locale          = "en-US"
       end
 
       def to_text(options = {})
@@ -34,7 +35,7 @@ module Speech
         end
         
         self.score /= self.segments
-        return {"chunks" => chunks.map {|ch| ch.captured_json}}
+        return {"chunks" => chunks.map {|ch| JSON.parse(ch.captured_json)}}
       end
 
       protected
@@ -44,6 +45,7 @@ module Speech
         self.segments    = 0
         self.chunks      = Speech::AudioSplitter.new(file, splitter_options).split
         self.max_results = options[:max_results] || 2
+        self.max_retries = options[:max_retries] || 3
         self.locale      = options[:locale] || "en-US"
       end
       
