@@ -17,7 +17,7 @@ GIT
       sass-rails
 
 GIT
-  remote: git@github.com:chinshr/codekit-ruby.git
+  remote: https://github.com/chinshr/codekit-ruby.git
   revision: 08d65997ec676bfd99d64692067aea21af3ee13b
   specs:
     att-codekit (3.1.5)
