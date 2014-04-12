@@ -16,6 +16,7 @@ Voyzes::Application.routes.draw do
 
   # site
   root 'web/pages#index'
+  get 'lmk' => 'web/pages#show'
   
   scope :module => "web", :as => "web" do
     get '/upload' => "uploads#index"

@@ -7,4 +7,14 @@ class Document::Segment < ActiveRecord::Base
   
   validates :document, presence: true
   validates :offset, presence: true
+  
+  scope :any_of_type, lambda {|params| where(:type => type_for(params))}
+  
+  class << self
+    def type_for(params)
+      [params].flatten.map do |p|
+        "Document::Segment::#{p.to_s.classify}"
+      end
+    end
+  end
 end

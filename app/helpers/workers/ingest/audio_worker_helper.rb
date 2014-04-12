@@ -28,7 +28,7 @@ module Workers::Ingest::AudioWorkerHelper
           :end_time          => end_time,
           :text              => chunk.best_text,
           :score             => chunk.best_score,
-          :response          => chunk.captured_json,
+          :response          => JSON.parse(chunk.captured_json),
           :processing_errors => chunk.errors,
           :processing_status => chunk.status
         })
@@ -61,7 +61,7 @@ module Workers::Ingest::AudioWorkerHelper
           :end_time          => end_time,
           :text              => chunk.best_text,
           :score             => chunk.best_score,
-          :response          => chunk.captured_json,
+          :response          => JSON.parse(chunk.captured_json),
           :processing_errors => chunk.errors,
           :processing_status => chunk.status
         })
@@ -95,7 +95,7 @@ module Workers::Ingest::AudioWorkerHelper
           :end_time          => end_time,
           :text              => chunk.best_text,
           :score             => chunk.best_score,
-          :response          => chunk.captured_json,
+          :response          => JSON.parse(chunk.captured_json),
           :processing_errors => chunk.errors,
           :processing_status => chunk.status
         })

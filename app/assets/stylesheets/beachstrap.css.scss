@@ -1,0 +1,49 @@
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, vendor/assets/stylesheets,
+ * or vendor/assets/stylesheets of plugins, if any, can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the top of the
+ * compiled file, but it's generally better to create a new file per style scope.
+ *
+ *= require beachstrap/bootstrap
+ *= require beachstrap/beachstrap-styles
+ *= require_self
+ */
+
+#home {
+  .container {
+    .row {
+      .text {
+        ul {
+          padding-left: 0;
+          list-style-type: none;
+          
+          li {
+            font-size: 1.5em;
+            margin: 20px 0;
+          }
+        }
+      }
+    }
+  }
+  
+}
+
+#work {
+  button.btn-circle {
+    width: 130px;
+    height: 130px;
+    text-align: center;
+    padding: 20px 0;
+    font-size: 1.5em;
+    line-height: 1.42;
+    border-radius: 100%;
+    
+    i {
+      font-size: 2em;
+    }
+  }
+}

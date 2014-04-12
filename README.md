@@ -103,7 +103,8 @@ Development Resources
   - Bag-of words model for utterance similarity -- http://en.wikipedia.org/wiki/Bag_of_words_model
 * Sentence correction with Ginger http://www.gingersoftware.com
   - https://github.com/subosito/gingerice
-
+* Parallax effects with bootstrap
+  - https://wrapbootstrap.com/tag/parallax
   
 Competitive Products
 --------------------
