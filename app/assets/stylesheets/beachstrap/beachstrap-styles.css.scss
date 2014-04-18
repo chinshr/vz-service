@@ -36,20 +36,22 @@ $color-dark-blue:#3D505F;
 }
 
 @mixin slideIn($trans: translateX(-480px)){
-    -webkit-transform:$trans;
-    -moz-transform:$trans;
-    -o-transform:$trans;
-    transform:$trans;
+  -webkit-transform:$trans;
+  -moz-transform:$trans;
+  -o-transform:$trans;
+  transform:$trans;
 }
 
 body{
-  font-family: 'Oxygen', sans-serif;
+  /* font-family: 'Oxygen', sans-serif; */
+  font-family: 'Lato', sans-serif;
   height:100%;
   color: $color-dark-blue;
  }
 
 h1, h2, h3, h4, h5{
-  font-family: 'Oxygen', sans-serif;
+  /* font-family: 'Oxygen', sans-serif; */
+  font-family: 'Lato', sans-serif;
   letter-spacing: -1px;
   margin-bottom:16px;
   color:$color-dark-blue;
@@ -135,7 +137,7 @@ header{
     margin:0;
     padding:1px 0;
     text-indent: -9999px;
-    background: url(../images/logo.png) no-repeat 0 0;
+    background: url(/assets/beachstrap/logo.png) no-repeat 0 0;
   }
 
 }
