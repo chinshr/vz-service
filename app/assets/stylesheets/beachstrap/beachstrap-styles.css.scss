@@ -241,39 +241,38 @@ nav{
   }
 }
 
-#home{
+#home {
   padding-top:80px;
   padding-bottom: 0;
   height:100%;
   margin-bottom:0;
 
-    .ipad{
-      position: relative;
-      right:-10px;
-      overflow: hidden;
-    }
-    .ipad img{
+  .ipad {
     position: relative;
-      opacity: 0;
-      right: -500px;
-      @include transition(all 1s ease);
-
+    right: -10px;
+    overflow: hidden;
+  }
+  
+  .ipad img {
+    position: relative;
+    opacity: 0;
+    right: 500px;
+    @include transition(all 1s ease);
   }
 
-  .ipad.anim img{
+  .ipad.anim img {
     opacity: 1;
-    @include slideIn;
-
+    @include slideIn(translateX(500px));
     }
 
-  .text{
+  .text {
     position: relative;
     opacity: 0;
     left:-50px;
     @include transition(all 1.5s ease);
   }
 
-  .text.anim{
+  .text.anim {
     opacity: 1;
     @include slideIn(translateX(50px));
   }

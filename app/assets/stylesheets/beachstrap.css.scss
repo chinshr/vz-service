@@ -70,7 +70,13 @@ body.pages {
         }
       }
     }
-
+    .text {
+      padding-left: 50px;
+    }
+    .ipad {
+      padding: 0;
+      right: 0;
+    }
   }
 
   #parallax {
@@ -89,9 +95,16 @@ body.pages {
       text-align: center;
       padding: 20px 0;
       font-size: 1.5em;
+      color: #fff;
       line-height: 1.42;
       border-radius: 100%;
-
+      background-color: #353535;
+      
+      background: -webkit-linear-gradient(#fff, #353535); /* For Safari 5.1 to 6.0 */
+      background: -o-linear-gradient(#fff, #353535); /* For Opera 11.1 to 12.0 */
+      background: -moz-linear-gradient(#fff, #353535); /* For Firefox 3.6 to 15 */
+      background: linear-gradient(#fff, #353535); /* Standard syntax */
+      
       i {
         font-size: 2em;
       }
