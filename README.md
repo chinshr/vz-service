@@ -105,6 +105,7 @@ Development Resources
   - https://github.com/subosito/gingerice
 * Parallax effects with bootstrap
   - https://wrapbootstrap.com/tag/parallax
+* Awesome icons -- http://fortawesome.github.io/Font-Awesome/icons/  
   
 Competitive Products
 --------------------

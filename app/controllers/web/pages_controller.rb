@@ -1,6 +1,5 @@
 class Web::PagesController < ApplicationController
-  
-  def show
+  def index
     render :layout => "beachstrap"
   end
 end

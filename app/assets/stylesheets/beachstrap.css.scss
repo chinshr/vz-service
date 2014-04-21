@@ -89,6 +89,13 @@ body.pages {
   }
 
   #work {
+    .caption {
+      p {
+        font-size: 18px;
+        line-height: 1.4em;
+      }
+    }
+    
     button.btn-circle {
       width: 130px;
       height: 130px;
@@ -99,14 +106,20 @@ body.pages {
       line-height: 1.42;
       border-radius: 100%;
       background-color: #353535;
-      
-      background: -webkit-linear-gradient(#fff, #353535); /* For Safari 5.1 to 6.0 */
-      background: -o-linear-gradient(#fff, #353535); /* For Opera 11.1 to 12.0 */
-      background: -moz-linear-gradient(#fff, #353535); /* For Firefox 3.6 to 15 */
-      background: linear-gradient(#fff, #353535); /* Standard syntax */
+      /*
+      background-image: -webkit-gradient(
+        linear, left top, left bottom, from(rgba(50,50,50,0.8)),
+        to(rgba(80,80,80,0.2)), color-stop(.5,#333333)
+      );
+      */
+      background: -webkit-linear-gradient(rgba(255, 255, 255, 1), rgba(52, 52, 52, 1)); /* For Safari 5.1 to 6.0 */
+      background: -o-linear-gradient(rgba(255, 255, 255, 1), rgba(52, 52, 52, 1)); /* For Opera 11.1 to 12.0 */
+      background: -moz-linear-gradient(rgba(255, 255, 255, 1), rgba(52, 52, 52, 1)); /* For Firefox 3.6 to 15 */
+      background: linear-gradient(rgba(200, 200, 200, 1), rgba(52, 52, 52, 1)); /* Standard syntax */
       
       i {
         font-size: 2em;
+        margin: 0;
       }
     }
   }
