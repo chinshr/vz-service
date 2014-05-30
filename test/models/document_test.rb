@@ -3,7 +3,7 @@ require 'test_helper'
 class DocumentTest < ActiveSupport::TestCase
   context "associations" do
     should have_many :ingests
-    should have_many :segments
+    should have_many :chunks
   end
   
   context "validations" do
@@ -51,23 +51,23 @@ class DocumentTest < ActiveSupport::TestCase
   
   should "calculate average score and duration" do
     document = FactoryGirl.create(:document)
-    segment1 = FactoryGirl.create(:document_segment, :offset => 0, :document => document, :score => 0)
-    segment2 = FactoryGirl.create(:document_segment, :offset => 1, :document => document, :score => 0.5)
-    segment3 = FactoryGirl.create(:document_segment, :offset => 2, :document => document, :score => 1)
-    assert_equal 3, document.segments.count
+    chunk1 = FactoryGirl.create(:document_chunk, :offset => 0, :document => document, :score => 0)
+    chunk2 = FactoryGirl.create(:document_chunk, :offset => 1, :document => document, :score => 0.5)
+    chunk3 = FactoryGirl.create(:document_chunk, :offset => 2, :document => document, :score => 1)
+    assert_equal 3, document.chunks.count
     assert_equal 0.5, document.score.to_f
     assert_equal 10.53, document.duration.to_f
   end
 
-  should "order segments by offset" do
+  should "order chunks by offset" do
     document = FactoryGirl.create(:document)
-    segment3 = FactoryGirl.create(:document_segment, :offset => 2, :document => document, :score => 1)
-    segment1 = FactoryGirl.create(:document_segment, :offset => 0, :document => document, :score => 0)
-    segment2 = FactoryGirl.create(:document_segment, :offset => 1, :document => document, :score => 0.5)
-    assert_equal 3, document.segments.count
-    assert_equal segment1, document.segments[0]
-    assert_equal segment2, document.segments[1]
-    assert_equal segment3, document.segments[2]
+    chunk3 = FactoryGirl.create(:document_chunk, :offset => 2, :document => document, :score => 1)
+    chunk1 = FactoryGirl.create(:document_chunk, :offset => 0, :document => document, :score => 0)
+    chunk2 = FactoryGirl.create(:document_chunk, :offset => 1, :document => document, :score => 0.5)
+    assert_equal 3, document.chunks.count
+    assert_equal chunk1, document.chunks[0]
+    assert_equal chunk2, document.chunks[1]
+    assert_equal chunk3, document.chunks[2]
   end
   
 end

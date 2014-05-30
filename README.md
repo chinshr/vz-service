@@ -106,7 +106,11 @@ Development Resources
 * Parallax effects with bootstrap
   - https://wrapbootstrap.com/tag/parallax
 * Awesome icons -- http://fortawesome.github.io/Font-Awesome/icons/  
-  
+* Quill Rich Text Editor -- http://quilljs.com
+* Flipping DIVs in HTML5 tutorial: http://simonlockyer.info/flip-div-css3-tutorial/
+* Gmail inbox grid 
+  - http://www.bootply.com/XXmcPas41w
+
 Competitive Products
 --------------------
 

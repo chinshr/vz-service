@@ -20,7 +20,7 @@ FactoryGirl.define do
     association :ingestable, factory: :document
   end
 
-  factory :document_segment, :class => "Document::Segment" do
+  factory :document_chunk, :class => "Document::Chunk" do
     association :document
     offset 0
     duration 3.51

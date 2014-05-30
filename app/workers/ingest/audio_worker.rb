@@ -57,7 +57,7 @@ class Ingest::AudioWorker
         @ingest.process!  # => :removed
       end
     when :restarting
-      # wait until current stage is finishing what it is doing
+      # wait until current stage is finishing what it is currently doing!
       Rails.logger.info "--> waiting liberation #{@ingest.state}"
       when_liberated do
         Rails.logger.info "--> processing #{@ingest.state}"
@@ -166,14 +166,17 @@ class Ingest::AudioWorker
 
   def transcribe!
     stage! :transcribe do
-      # Remove previous segments (in case we reprocessing)
-      @ingest.ingestable.segments.destroy_all
+      # Remove previous chunks (in case we reprocessing)
+      @ingest.ingestable.chunks.destroy_all
       
       # Start the stranscription with normalization
       transcribe_file(noise_reduced_wav_audio_file_fullpath)
       
+      # Normalize chunk scores
+      normalize_document_chunk_scores(@ingest.ingestable.chunks)
+      
       # Update document
-      content = @ingest.ingestable.segments.map {|sg| sg.text ? sg.text.strip : nil}.compact.join(" ")
+      content = @ingest.ingestable.chunks.map {|sg| sg.text ? sg.text.strip : nil}.compact.join(" ")
       @ingest.ingestable.update_attribute(:content, content)
       
       # Sweep files we don't need anymore

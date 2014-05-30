@@ -1,5 +1,5 @@
-class Document::Segment < ActiveRecord::Base
-  self.table_name = "document_segments"
+class Document::Chunk < ActiveRecord::Base
+  self.table_name = "document_chunks"
   serialize :response, Hash
   serialize :processing_errors, Array
   
@@ -13,7 +13,7 @@ class Document::Segment < ActiveRecord::Base
   class << self
     def type_for(params)
       [params].flatten.map do |p|
-        "Document::Segment::#{p.to_s.classify}"
+        "Document::Chunk::#{p.to_s.classify}"
       end
     end
   end

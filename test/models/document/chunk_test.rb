@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class Document::SegmentTest < ActiveSupport::TestCase
+class Document::ChunkTest < ActiveSupport::TestCase
   context "associations" do
     should belong_to :document
   end
@@ -11,7 +11,7 @@ class Document::SegmentTest < ActiveSupport::TestCase
   end
   
   should "have response" do
-    segment = FactoryGirl.create(:document_segment)
+    segment = FactoryGirl.create(:document_chunk)
     assert_equal 0, segment.response['status']
     assert_equal "I like pickles", segment.text
     assert_equal 0.59, segment.score
@@ -35,23 +35,23 @@ class Document::SegmentTest < ActiveSupport::TestCase
     end
     
     should "create GoogleSpeech segment" do
-      assert_difference "Document::Segment::GoogleSpeech.count", 1 do
-        @ingest.ingestable.segments.create(@attributes.merge({:type => "Document::Segment::GoogleSpeech"}))
-        assert_equal Document::Segment::GoogleSpeech, @ingest.ingestable.segments.first.class
+      assert_difference "Document::Chunk::GoogleSpeech.count", 1 do
+        @ingest.ingestable.chunks.create(@attributes.merge({:type => "Document::Chunk::GoogleSpeech"}))
+        assert_equal Document::Chunk::GoogleSpeech, @ingest.ingestable.chunks.first.class
       end
     end
     
     should "create AttSpeech segment" do
-      assert_difference "Document::Segment::AttSpeech.count", 1 do
-        @ingest.ingestable.segments.create(@attributes.merge({:type => "Document::Segment::AttSpeech"}))
-        assert_equal Document::Segment::AttSpeech, @ingest.ingestable.segments.first.class
+      assert_difference "Document::Chunk::AttSpeech.count", 1 do
+        @ingest.ingestable.chunks.create(@attributes.merge({:type => "Document::Chunk::AttSpeech"}))
+        assert_equal Document::Chunk::AttSpeech, @ingest.ingestable.chunks.first.class
       end
     end
 
     should "create NuanceDragon segment" do
-      assert_difference "Document::Segment::NuanceDragon.count", 1 do
-        @ingest.ingestable.segments.create(@attributes.merge({:type => "Document::Segment::NuanceDragon"}))
-        assert_equal Document::Segment::NuanceDragon, @ingest.ingestable.segments.first.class
+      assert_difference "Document::Chunk::NuanceDragon.count", 1 do
+        @ingest.ingestable.chunks.create(@attributes.merge({:type => "Document::Chunk::NuanceDragon"}))
+        assert_equal Document::Chunk::NuanceDragon, @ingest.ingestable.chunks.first.class
       end
     end
     

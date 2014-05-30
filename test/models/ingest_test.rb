@@ -30,7 +30,7 @@ class IngestTest < ActiveSupport::TestCase
     assert_not_nil ingest.started_at
     ingest.log! :started, "working"
     ingest.update_attributes(stage: "transcoding")
-    FactoryGirl.create(:document_segment, :document => ingest.ingestable)
+    FactoryGirl.create(:document_chunk, :document => ingest.ingestable)
     assert_equal 0, ingest.iteration
     assert_equal false, ingest.messages.empty?
 

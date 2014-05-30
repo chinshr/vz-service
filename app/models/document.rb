@@ -4,11 +4,11 @@ class Document < ActiveRecord::Base
 
   belongs_to :user
   has_many :ingests, as: :ingestable
-  has_many :segments, -> { order(offset: :asc) }, dependent: :destroy
+  has_many :chunks, -> { order(offset: :asc) }, dependent: :destroy
   has_many :tracks, :through => :ingests
 
   validates :slug, presence: true, uniqueness: {case_sensitive: false}
-  validates :title, presence: true, length: { maximum: 255 }
+  validates :title, presence: true, length: {maximum: 255}
   
   scope :recent, lambda {|n = 5| order("documents.created_at DESC").limit(n)}
   
@@ -38,11 +38,11 @@ class Document < ActiveRecord::Base
   end
   
   def score
-    segments.average(:score) 
+    chunks.average(:score) 
   end
   
   def duration
-    segments.sum(:duration)
+    chunks.sum(:duration)
   end
   
   protected
