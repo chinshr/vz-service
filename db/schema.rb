@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140529221947) do
+ActiveRecord::Schema.define(version: 20140603000549) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -79,6 +79,7 @@ ActiveRecord::Schema.define(version: 20140529221947) do
   add_index "document_chunks", ["offset"], name: "index_document_chunks_on_offset", using: :btree
   add_index "document_chunks", ["position"], name: "index_document_chunks_on_position", using: :btree
   add_index "document_chunks", ["processing_status"], name: "index_document_chunks_on_processing_status", using: :btree
+  add_index "document_chunks", ["score"], name: "index_document_chunks_on_score", using: :btree
   add_index "document_chunks", ["type"], name: "index_document_chunks_on_type", using: :btree
 
   create_table "documents", force: true do |t|

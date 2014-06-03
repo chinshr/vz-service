@@ -29,7 +29,7 @@ class AudioWorkerTest
   
   def nuance_dragon_transcribe_file(filename)
     ActiveRecord::Base.connection_pool.with_connection do
-      Document::Chunk::NuanceDragon.create(:position => 1, :offset => 0,  :text => "I have to say", :score => 0, :document => document)
+      Document::Chunk::NuanceDragon.create(:position => 1, :offset => 0,  :text => "I have say", :score => 0, :document => document)
       Document::Chunk::NuanceDragon.create(:position => 2, :offset => 0,  :text => "that some macaronies are", :score => 0, :document => document)
       Document::Chunk::NuanceDragon.create(:position => 3, :offset => 0,  :text => "the cesty food in the world", :score => 0, :document => document)
     end
@@ -55,6 +55,12 @@ class Workers::Ingest::AudioWorkerHelperTest < ActionView::TestCase
   should "normalize document chunks" do
     threads = @worker.transcribe_file("dummy.wav")
     @worker.normalize_document_chunk_scores(@ingest.ingestable)
+    @ingest.ingestable.chunks.group_by(&:position).each do |position, current_chunks|
+      debugger
+      assert_equal 3, current_chunks.size
+    end
+    
+    @ingest.ingestable.chunks.best
   end
   
 end

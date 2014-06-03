@@ -110,6 +110,7 @@ Development Resources
 * Flipping DIVs in HTML5 tutorial: http://simonlockyer.info/flip-div-css3-tutorial/
 * Gmail inbox grid 
   - http://www.bootply.com/XXmcPas41w
+* SQL to select groups: http://stackoverflow.com/questions/3800551/select-first-row-in-each-group-by-group
 
 Competitive Products
 --------------------
@@ -448,8 +449,6 @@ God saw that the light was good,
 and he separated the light from the darkness.
 God called the light “day,” and the darkness he called “night.” 
 And there was evening, and there was morning—the first day.
-
-
 
 Genesis 1-1 German in Germany
 -----------------------------
