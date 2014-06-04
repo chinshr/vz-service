@@ -55,12 +55,9 @@ class Workers::Ingest::AudioWorkerHelperTest < ActionView::TestCase
   should "normalize document chunks" do
     threads = @worker.transcribe_file("dummy.wav")
     @worker.normalize_document_chunk_scores(@ingest.ingestable)
-    @ingest.ingestable.chunks.group_by(&:position).each do |position, current_chunks|
-      debugger
-      assert_equal 3, current_chunks.size
-    end
     
-    @ingest.ingestable.chunks.best
+    assert_equal 3, @ingest.ingestable.chunks.best.count
+    assert_equal "I hate to say that macaronies are the best food in the world", @ingest.ingestable.chunks.best.text
   end
   
 end

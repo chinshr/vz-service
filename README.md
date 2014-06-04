@@ -111,6 +111,8 @@ Development Resources
 * Gmail inbox grid 
   - http://www.bootply.com/XXmcPas41w
 * SQL to select groups: http://stackoverflow.com/questions/3800551/select-first-row-in-each-group-by-group
+* Kalid speech engine, open source -- http://kaldi.sourceforge.net
+* Data analysis -- http://deepdive.stanford.edu
 
 Competitive Products
 --------------------
