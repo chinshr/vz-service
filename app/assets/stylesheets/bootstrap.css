@@ -5476,7 +5476,7 @@ button.close {
   opacity: .5;
 }
 .carousel-control.left {
-  background-image:  background-repeat: repeat-x;
+  background-image:  none;
 }
 .carousel-control.right {
   right: 0;
