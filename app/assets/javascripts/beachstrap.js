@@ -14,9 +14,9 @@
 //= require jquery_ujs
 //= require jquery.ui.core
 //= require jquery.ui.widget
+//= require bootstrap
 //= require beachstrap/waypoints.min.js
 //= require beachstrap/beachstrap-script
 //= require beachstrap/jquery.nav
 //= require beachstrap/jquery.scrollTo
-//= require beachstrap/bootstrap
 //= require beachstrap/holder

@@ -1,23 +1,23 @@
 /*
 Author: Mammoth-Interactive
 Description: Beachstrap theme styles
-Date: 31 October 2013 (Happy halloween!)
+Date: 17 March 2014
 */
 
 /* Table of Contents
 ==================================================
 
-  #GENERAL
-  #HEADER
-  #MAIN
-  #CAROUSEL SECTION
-  #PARALLAX SECTION
-  #TEAM SECTION
-  #SIGNUP SECTION
-  #CONTACT SECTION
-  #BLOG SECTION
-  #FOOTER
-  #MEDIA QUERIES
+#GENERAL
+#HEADER
+#MAIN
+#CAROUSEL SECTION
+#PARALLAX SECTION
+#TEAM SECTION
+#SIGNUP SECTION
+#CONTACT SECTION
+#BLOG SECTION
+#FOOTER
+#MEDIA QUERIES
 
 ==================================================
 */
@@ -25,7 +25,7 @@ Date: 31 October 2013 (Happy halloween!)
 /* ==================== GENERAL ================== */
 
 $color-white:#fff;
-$color-orange:#3F6169; /* #F1784D; */
+$color-orange:#F1784D;
 $color-dark-blue:#3D505F;
 
 @mixin transition($trans:background .5s ease){
@@ -42,16 +42,16 @@ $color-dark-blue:#3D505F;
   transform:$trans;
 }
 
+@import 'beachstrap/beachstrap-custom';
+
 body{
-  /* font-family: 'Oxygen', sans-serif; */
-  font-family: 'Lato', sans-serif;
+  font-family: $font-family;
   height:100%;
   color: $color-dark-blue;
- }
+}
 
 h1, h2, h3, h4, h5{
-  /* font-family: 'Oxygen', sans-serif; */
-  font-family: 'Lato', sans-serif;
+  font-family: $font-family;
   letter-spacing: -1px;
   margin-bottom:16px;
   color:$color-dark-blue;
@@ -84,12 +84,12 @@ form{
 }
 
 .form-control{
-    border-radius: 0;
-    border:1px solid #ccc;
-    @include transition;
-    padding:20px;
-    box-sizing: border-box;
-    &:focus{
+  border-radius: 0;
+  border:1px solid #ccc;
+  @include transition;
+  padding:20px;
+  box-sizing: border-box;
+  &:focus{
     background-color:#eee;
     box-shadow: none;
   }
@@ -110,12 +110,12 @@ form{
 }
 
 .sn-links a{
-    color: $color-dark-blue;
-    @include transition(color 0.5s ease);
+  color: $color-dark-blue;
+  @include transition(color 0.5s ease);
 
-    &:hover{
-      color: $color-orange;
-    }
+  &:hover{
+    color: $color-orange;
+  }
 
   .fa{
     font-size:32px;
@@ -133,7 +133,7 @@ header{
   z-index: 200;
   width:100%;
 
-    h1#logo{
+  h1#logo{
     margin:0;
     padding:1px 0;
     text-indent: -9999px;
@@ -153,16 +153,16 @@ nav{
       display: inline;
       margin:0 20px;
 
-        &:last-child{
-          margin-right:0;
-        }
-    &.active a{
-      color: $color-orange;
-      text-decoration: none;
-    }
-
+      &:last-child{
+        margin-right:0;
       }
+      &.active a{
+        color: $color-orange;
+        text-decoration: none;
+      }
+
     }
+  }
 
 
   a{
@@ -188,12 +188,12 @@ nav{
   background-position: center;  /* Internet Explorer 7/8 */
   background-attachment: fixed;
 
-.cont-wrapper{
-  position: relative;
-  width: 100%;
-  top:230px;
+  .cont-wrapper{
+    position: relative;
+    width: 100%;
+    top:230px;
 
-}
+  }
 
   p.intro{
     font-size:46px;
@@ -253,7 +253,7 @@ nav{
     overflow: hidden;
   }
   
-  .ipad img {
+  .ipad img{
     position: relative;
     opacity: 0;
     right: 500px;
@@ -263,16 +263,16 @@ nav{
   .ipad.anim img {
     opacity: 1;
     @include slideIn(translateX(500px));
-    }
+  }
 
-  .text {
+  .text{
     position: relative;
     opacity: 0;
-    left:-50px;
+    left: -50px;
     @include transition(all 1.5s ease);
   }
 
-  .text.anim {
+  .text.anim{
     opacity: 1;
     @include slideIn(translateX(50px));
   }
@@ -335,7 +335,7 @@ nav{
     text-shadow: 0px 1px 1px black;
   }
 
- }
+}
 
 /* ================= TEAM SECTION ==================== */
 
@@ -343,7 +343,7 @@ nav{
   padding:40px 0 60px 0;
   text-align: center;
 
-    .staff-mem{
+  .staff-mem{
     cursor:pointer;
     position: relative;
     top:0;
@@ -353,21 +353,21 @@ nav{
       margin-bottom:10px;
     }
 
-      &.anim{
-        top:-10px;
-        }
+    &.anim{
+      top:-10px;
+    }
 
-          img{
-                    margin:0 auto;
-          border:1px solid #ccc ;
-        }
+    img{
+      margin:0 auto;
+      border:1px solid #ccc ;
+    }
 
     }/* end staff-me */
 
     p{
-    margin-bottom:60px;
+      margin-bottom:60px;
     }
-}
+  }
 
 /* ================= SIGN UP SECTION ======================== */
 
@@ -423,16 +423,16 @@ nav{
       img{
         @include transition(all 2.5s ease);
 
-          &.anim{
-            -webkit-transform: scale(1.2);
-            -moz-transform: scale(1.2);
-            -o-transform: scale(1.2);
-            transform: scale(1.2);
-            }
+        &.anim{
+          -webkit-transform: scale(1.2);
+          -moz-transform: scale(1.2);
+          -o-transform: scale(1.2);
+          transform: scale(1.2);
+        }
         }/* end img */
-      }/* end post pic */
-    }/* end post */
-}
+        }/* end post pic */
+        }/* end post */
+      }
 
 /* ============================= FOOTER =============================== */
 
@@ -463,33 +463,33 @@ footer{
 /* No media query since this is the default in Bootstrap */
 
 @media (max-width: 480px) {
-header{
-  min-height:50px;
+  header{
+    min-height:50px;
 
-  h1#logo{
-  position: relative;
-    top:-6px;
-  }
+    h1#logo{
+      position: relative;
+      top:-6px;
+    }
 
-  a.mini-nav{
-  position: relative;
-  top:-8px;
-/*  line-height: 0; */
+    a.mini-nav{
+      position: relative;
+      top:-8px;
+      /* 	line-height: 0; */
+    }
   }
-}
 
   #main{
-      min-height:500px !important;
+    min-height:500px !important;
 
-     .cont-wrapper{
+    .cont-wrapper{
       top:100px;
     }
 
-      p.intro{
-        text-align: center;
-        font-size:32px;
-        line-height:38px;
-      }
+    p.intro{
+      text-align: center;
+      font-size:32px;
+      line-height:38px;
+    }
   }
 
   .btn-db{
@@ -503,79 +503,106 @@ header{
 
 @media (max-width:991px) {
 
-header{
-  a.mini-nav{
-    font-size: 28px;
-    color: #fff;
-    border:1px solid rgba(255, 255, 255, 0.3);
-    padding:0 8px;
-    border-radius:5px;
-  }
+  header{
+    a.mini-nav{
+      font-size: 28px;
+      color: #fff;
+      border:1px solid rgba(255, 255, 255, 0.3);
+      padding:0 8px;
+      border-radius:5px;
+    }
 
-nav ul{
-  padding: 0;
-  margin-top:40px;
-  display: none;
-}
-  nav ul.nav {
-    li{
-      display: block;
-      text-align: center;
-      margin:0;
-      padding:10px 0;
-      width: 100%;
-      border-top:1px solid rgba(255, 255, 255, 0.2);
-
-      &:hover{
-        background: rgba(0.255, 0.255, 0.255, 0.2);
-      }
-
-      a{
+    nav ul{
+      padding: 0;
+      margin-top:40px;
+      display: none;
+    }
+    nav ul.nav {
+      li{
         display: block;
-        width:100%;
+        text-align: center;
+        margin:0;
+        padding:10px 0;
+        width: 100%;
+        border-top:1px solid rgba(255, 255, 255, 0.2);
+
+        &:hover{
+          background: rgba(0.255, 0.255, 0.255, 0.2);
+        }
+
+        a{
+          display: block;
+          width:100%;
+        }
       }
     }
-  }
 
-}
+  }
 
   h1{
-      font-size:34px;
-      line-height:38px;
-    }
+    font-size:34px;
+    line-height:38px;
+  }
 
-    h2{
-      font-size: 28px;
-      line-height:32px;
-      }
+  h2{
+    font-size: 28px;
+    line-height:32px;
+  }
 
-    h3{
-      font-size: 22px;
-      line-height:26px;
-    }
+  h3{
+    font-size: 22px;
+    line-height:26px;
+  }
 
   #main {
     background-attachment: scroll;
     background-position-x: -100px;
 
-   min-height: 600px;
-     .cont-wrapper{
+    min-height: 600px;
+    .cont-wrapper{
       top:110px;
     }
 
     p.intro{
-        text-align: center;
-        }
+      text-align: center;
     }
+  }
 
   #home {
     padding-top:30px;
+    padding-top:80px;
+    padding-bottom: 0;
+    height:100%;
+    margin-bottom:0;
 
     .ipad{
-        top:140px;
+      position: relative;
+      right: -10px;
+      overflow: hidden;
     }
 
-    .text{
+    .ipad img {
+      position: relative;
+      opacity: 0;
+      right: 500px;
+      @include transition(all 1s ease);
+    }
+
+    .ipad.anim img {
+      opacity: 1;
+      @include slideIn(translateX(500px));
+    }
+
+    .text {
+      position: relative;
+      opacity: 0;
+      left:-50px;
+      @include transition(all 1.5s ease);
+    }
+
+    .text.anim {
+      opacity: 1;
+      @include slideIn(translateX(50px));
     }
   }
 }
