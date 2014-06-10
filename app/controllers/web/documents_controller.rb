@@ -1,4 +1,4 @@
-class Web::DocumentsController < ApplicationController
+class Web::DocumentsController < Web::ApplicationController
   before_filter :load_document!
   before_filter :authenticate_user!, :if => :document_private?
   

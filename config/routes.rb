@@ -17,14 +17,24 @@ Voyzes::Application.routes.draw do
   # site
   root 'web/pages#index'
   # get 'lmk' => 'web/pages#show'
-  
+
+  # Web::Application
   scope :module => "web", :as => "web" do
     get '/upload' => "uploads#index"
+
+    # Web:Account::Application
+    get "/account" => "account/application#index"
+    resource :dashboard, :only => :show, :controller => "account/dashboards"
+    namespace :account do
+      resource :profile, :only => [:show, :update]
+      resource :billing, :only => :show
+    end
+
     get '/:id' => "documents#show"
     get '/:id/edit' => "documents#edit"
     get '/:id/stream' => "documents#stream"
   end
-
+  
   namespace :api do
     get "/uploads/signput" => "uploads#signput"
     resources :documents, :only => [] do

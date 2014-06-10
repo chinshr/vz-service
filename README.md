@@ -111,8 +111,15 @@ Development Resources
 * Gmail inbox grid 
   - http://www.bootply.com/XXmcPas41w
 * SQL to select groups: http://stackoverflow.com/questions/3800551/select-first-row-in-each-group-by-group
-* Kalid speech engine, open source -- http://kaldi.sourceforge.net
-* Data analysis -- http://deepdive.stanford.edu
+* Kaldi speech engine, open source -- http://kaldi.sourceforge.net
+* Machine learning
+  - Data analysis -- http://deepdive.stanford.edu
+  - Conditional Random Fields (CRF) models, e.g. DeepDive, Tuffy
+  - SK Learn -- http://scikit-learn.org/stable/
+  - Support Vector Machine (SVM)
+  - Jaccard Coefficient
+  - Machine learning gem AI4R, SciRuby, 
+  - Machine learning for everyone: BigML.com, kaggle.com
 
 Competitive Products
 --------------------

@@ -1,2 +1,2 @@
-class Web::UploadsController < ApplicationController
+class Web::UploadsController < Web::ApplicationController
 end

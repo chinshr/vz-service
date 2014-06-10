@@ -46,6 +46,10 @@ class Document < ActiveRecord::Base
     chunks.sum(:duration)
   end
   
+  def content
+    chunks.best.text
+  end
+  
   protected
   
   def generate_slug
