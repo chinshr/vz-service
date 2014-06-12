@@ -1,0 +1,18 @@
+$color-white:#fff;
+$color-orange: #3F6169; /* #F1784D; */
+$color-dark-blue:#3D505F;
+$font-family: 'Lato', sans-serif;
+
+@mixin transition($trans:background .5s ease){
+  -webkit-transition:$trans;
+  -moz-transition:$trans;
+  -o-transition:$trans;
+  transition:$trans;
+}
+
+@mixin slideIn($trans: translateX(-480px)){
+  -webkit-transform:$trans;
+  -moz-transform:$trans;
+  -o-transform:$trans;
+  transform:$trans;
+}

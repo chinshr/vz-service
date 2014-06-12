@@ -42,7 +42,7 @@ $color-dark-blue:#3D505F;
   transform:$trans;
 }
 
-@import 'beachstrap/beachstrap-custom';
+@import 'application-custom';
 
 body{
   font-family: $font-family;
@@ -125,7 +125,7 @@ form{
 
 /* ====================== HEADER ========================= */
 
-header{
+header {
   background-color: rgba( 21.255, 26.255, 40.255, 0.8);
   min-height: 70px;
   padding:15px 0 0 0;
@@ -133,7 +133,7 @@ header{
   z-index: 200;
   width:100%;
 
-  h1#logo{
+  h1#logo {
     margin:0;
     padding:1px 0;
     text-indent: -9999px;
@@ -142,14 +142,14 @@ header{
 
 }
 
-nav{
+nav {
 
-  ul.nav{
+  ul.nav {
     text-align: right;
     padding-top:10px;
     font-size:16px;
 
-    li{
+    li {
       display: inline;
       margin:0 20px;
 
@@ -165,7 +165,7 @@ nav{
   }
 
 
-  a{
+  a {
     color: $color-white;
     font-weight:700;
     @include transition;
@@ -463,10 +463,10 @@ footer{
 /* No media query since this is the default in Bootstrap */
 
 @media (max-width: 480px) {
-  header{
+  header {
     min-height:50px;
 
-    h1#logo{
+    h1#logo {
       position: relative;
       top:-6px;
     }
@@ -478,45 +478,46 @@ footer{
     }
   }
 
-  #main{
+  #main {
     min-height:500px !important;
 
     .cont-wrapper{
       top:100px;
     }
 
-    p.intro{
+    p.intro {
       text-align: center;
       font-size:32px;
       line-height:38px;
     }
   }
 
-  .btn-db{
+  .btn-db {
     margin-top:10px;
   }
 
-  footer p, footer .sn-links{
+  footer p, footer .sn-links {
     text-align: center;
   }
 }
 
 @media (max-width:991px) {
 
-  header{
-    a.mini-nav{
+  header {
+    a.mini-nav {
       font-size: 28px;
       color: #fff;
-      border:1px solid rgba(255, 255, 255, 0.3);
-      padding:0 8px;
-      border-radius:5px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 0 8px;
+      border-radius: 5px;
     }
 
-    nav ul{
+    nav ul {
       padding: 0;
       margin-top:40px;
       display: none;
     }
+    
     nav ul.nav {
       li{
         display: block;
@@ -539,17 +540,17 @@ footer{
 
   }
 
-  h1{
-    font-size:34px;
-    line-height:38px;
+  h1 {
+    font-size: 34px;
+    line-height: 38px;
   }
 
-  h2{
+  h2 {
     font-size: 28px;
-    line-height:32px;
+    line-height: 32px;
   }
 
-  h3{
+  h3 {
     font-size: 22px;
     line-height:26px;
   }
@@ -559,11 +560,11 @@ footer{
     background-position-x: -100px;
 
     min-height: 600px;
-    .cont-wrapper{
+    .cont-wrapper {
       top:110px;
     }
 
-    p.intro{
+    p.intro {
       text-align: center;
     }
   }
@@ -609,9 +610,9 @@ footer{
 
 /* Small devices (tablets, 768px and up) */
 @media (min-width: 768px) {
-  #home{
-    .text{
-      top:0;
+  #home {
+    .text {
+      top: 0;
     }
   }
 }
