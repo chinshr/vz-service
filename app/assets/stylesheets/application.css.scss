@@ -10,7 +10,6 @@
  *
  *= require bootstrap
  *= require_self
- *= require theme
  *= require_tree ./web
  */
 
@@ -131,13 +130,13 @@ body.confirmations, body.devise.passwords {
 header {
   /* background-color: rgba(21.255, 26.255, 40.255, 0.8); */
   background-color: #292d33;
-  min-height: 70px;
+  height: 70px;
   padding: 0;
   position: fixed;
   z-index: 200;
   width:100%;
 
-  h1#logo {
+  #logo {
     margin: 15px 0;
     padding:1px 0;
     text-indent: -9999px;
@@ -147,7 +146,7 @@ header {
   nav {
     a {
       color: $color-white;
-      font-weight:700;
+      font-weight: 700;
       @include transition;
 
       &:hover, &.active{
@@ -160,12 +159,12 @@ header {
       text-transform: uppercase;
       text-align: right;
       padding-top: 0;
-      font-size:16px;
+      font-size: 16px;
 
       li {
         display: inline;
-        padding: 25px 10px 25px 45px;
-        
+        padding: 25px 15px 25px 15px;
+        height: 70px;
 
         &:last-child{
           margin-right:0;
@@ -183,12 +182,15 @@ header {
           }
         }
 
-        
         &.active a {
           color: $color-orange;
           background-color: #292d33;
         }
-
+        
+        &.dropdown {
+          padding-left: 45px;
+        }
+          
         &.dropdown:hover {
           background-color: #373d44;
           @include transition;
@@ -196,6 +198,10 @@ header {
         
         &.dropdown.open {
           background-color: #373d44;
+        }
+
+        &.dropdown.open > a {
+          background-color: transparent !important;
         }
 
         &.dropdown span {
@@ -216,7 +222,7 @@ header {
       }
       
       .dropdown-menu {
-        top: 72px;
+        top: 70px;
         border: none;
         sbackground-color: #3d444b;
         sbackground-color: rgba(21.255, 26.255, 40.255, 0.8);
@@ -249,7 +255,6 @@ header {
         & > li > a:focus {
           color: $color-white;
           text-decoration: none;
-          sbackground-color: #f5f5f5;
           background-color: #292d33;
         }
 
@@ -262,9 +267,248 @@ header {
           outline: 0;
         }
       }
+    } /* ul.nav */
+  } /* nav */
+  
+  nav.navbar-default {
+    background-color: transparent;
+    margin-top: 0;
+
+    .container-fluid {
+      padding-left: 0;
+      padding-right: 0;
     }
 
-  }
+    .navbar-brand {
+      width: 110px;
+    }
+
+    .navbar-brand:hover,
+    .navbar-brand:focus {
+      color: #5e5e5e;
+      background-color: transparent;
+    }
+
+    .navbar-text {
+      color: #777;
+    }
+
+    .navbar-nav {
+      li {
+        &.active a {
+          color: $color-orange;
+        }
+
+        &:hover {
+          sbackground-color: #373d44;
+          @include transition;
+        }
+        
+        &.active {
+          background-color: #373d44;
+        }
+      }
+    }
+
+    .navbar-nav > li > a {
+      padding-top: 10px;
+      padding-bottom: 10px;
+      color: $color-white;
+      font-weight: bold;
+    }
+
+    .navbar-nav > li > a:hover,
+    .navbar-nav > li > a:focus {
+      color: $color-orange;
+      background-color: transparent;
+    }
+
+    .navbar-nav > .active > a,
+    .navbar-nav > .active > a:hover,
+    .navbar-nav > .active > a:focus {
+      color: $color-orange;
+      background-color: transparent;
+    }
+
+    .navbar-nav > .disabled > a,
+    .navbar-nav > .disabled > a:hover,
+    .navbar-nav > .disabled > a:focus {
+      color: #ccc;
+      background-color: transparent;
+    }
+
+    .btn-group {
+      text-transform: uppercase;
+      margin: 20px;
+      
+      a {
+        font-weight: bold;
+      }
+      
+      a:hover,
+      a:focus {
+        color: $color-white;
+        background-color: transparent;
+        @include transition;
+      }
+      
+    }
+  } /* nav.navbar-default */
   
 }
 
+/* ====================== THEME ========================= */
+
+/* 
+
+Bootsrap Google Plus Style Theme from Bootply.com http://bootply.com/templates
+https://github.com/iatek/bootstrap-google-plus
+License: GPL
+Target Version: Bootstrap 3.0.2
+
+*/
+
+/* to optimize performance load fonts from LINK in HEAD */
+/*
+@import url(http://fonts.googleapis.com/css?family=Roboto:400);
+*/
+@import url(//fonts.googleapis.com/css?family=Open+Sans:300,400,600,700);
+
+body {
+  background-color:#e0e0e0;
+  -webkit-font-smoothing: antialiased;
+  font-family: $font-family;
+  font-weight: normal;
+  font-size: 14px;
+}
+
+footer {
+  font-family: $font-family;
+  font-weight: normal;
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, input { 
+  font-family: $font-family;
+  -webkit-font-smoothing: antialiased;
+}
+
+.navbar-default {
+  background-color: #f4f4f4;
+  margin-top:50px;
+  border-width:0;
+  z-index:5;
+}
+.header-container {
+  background-color: #f1f1f1;
+}
+.navbar-default .navbar-nav > .active > a,.navbar-default .navbar-nav > li:hover > a {
+  border:0 solid #4285f4;
+  border-bottom-width:2px;
+  font-weight:800;
+  background-color:transparent !important;
+}
+.navbar-default .dropdown-menu {
+  background-color: #ffffff;
+}
+.navbar-default .dropdown-menu li > a {
+  padding-left:30px;
+}
+.header {
+  background-color: #f1f1f1;
+  border-width: 0;
+}
+.header .navbar-collapse {
+  background-color: #f1f1f1;
+}
+
+.btn, .form-control, .panel, .list-group, .well {
+  border-radius: $btn-default-radius;
+  box-shadow: 0 0 0;
+  border-width: 1px;
+}
+.form-control {border-color:#d7d7d7;}
+.btn-primary {border-color:transparent;}
+.btn-primary,.label-primary,.list-group-item.active, .list-group-item.active:hover, .list-group-item.active:focus {background-color:#4285f4;}
+.btn-plus {background-color:#ffffff;border-width:1px;border-color:#dddddd;box-shadow:1px 1px 0 #999999;border-radius:3px;color:#666666;text-shadow:0 0 1px #bbbbbb;}
+.well,.panel {border-color:#d2d2d2;box-shadow:0 1px 0 #cfcfcf;border-radius:3px;}
+.btn-success,.label-success,.progress-bar-success{background-color:#65b045;}
+.btn-info,.label-info,.progress-bar-info{background-color:#a0c3ff;border-color:#a0c3ff;}
+.btn-danger,.label-danger,.progress-bar-danger{background-color:#dd4b39;}
+.btn-warning,.label-warning,.progress-bar-warning{background-color:#f4b400;color:#444444;}
+.btn-flat-plain {border-color: #ccc;}
+
+hr {border-color:#ececec;}
+
+button {
+  outline: 0;
+}
+textarea {
+  resize: none;
+  outline: 0;
+}
+.panel .btn i,.btn span{
+  color:#666666;
+}
+.panel .panel-heading {
+  background-color:#ffffff;
+  font-weight:700;
+  font-size:16px;
+  color:#262626;
+  border-color:#ffffff;
+}
+.panel .panel-heading a {
+  font-weight:400;
+  font-size:11px;
+}
+.panel .panel-default {
+  border-color:#cccccc;
+}
+.panel .panel-thumbnail {
+  padding:0;
+}
+.panel .img-circle {
+  width:50px;
+  height:50px;
+}
+.list-group-item:first-child,.list-group-item:last-child {
+  border-radius:0;
+}
+h3,h4,h5 { 
+  border:0 solid #efefef; 
+  border-bottom-width:1px;
+  padding-bottom:10px;
+}
+
+.modal-dialog {
+  width: 450px;
+}
+
+.modal-footer {
+  border-width:0;
+}
+
+.dropdown-menu {
+  background-color:#f4f4f4;
+  border-color:#f0f0f0;
+  border-radius:0;
+  margin-top:-1px;
+}
+/* end theme styles */
+
+/* template layout */
+#subnav {
+  position:fixed;
+  width:100%;
+}
+
+@media (max-width: 768px) {
+  #subnav {
+    padding-top: 6px;
+  }
+}
+
+#main {
+  padding-top:120px;
+}

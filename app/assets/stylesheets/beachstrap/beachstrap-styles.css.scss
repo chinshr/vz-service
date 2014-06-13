@@ -44,13 +44,13 @@ $color-dark-blue:#3D505F;
 
 @import 'application-custom';
 
-body{
+body {
   font-family: $font-family;
   height:100%;
   color: $color-dark-blue;
 }
 
-h1, h2, h3, h4, h5{
+h1, h2, h3, h4, h5 {
   font-family: $font-family;
   letter-spacing: -1px;
   margin-bottom:16px;
@@ -59,28 +59,28 @@ h1, h2, h3, h4, h5{
   margin-bottom:26px;
 
 }
-h1{
+h1 {
   font-size:42px;
   line-height:52px;
 }
 
-h2{
+h2 {
   font-size: 38px;
   line-height: 44px;
 }
 
-h3{
+h3 {
   font-size: 28px;
   line-height: 28px;
 }
 
-p{
+p {
   font-size:15px;
   line-height:26px;
   margin-bottom:32px;
 }
 
-form{
+form {
 }
 
 .form-control{

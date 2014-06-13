@@ -1,7 +1,11 @@
+@import url(//fonts.googleapis.com/css?family=Lato:200,700,300);
+@import url(//netdna.bootstrapcdn.com/font-awesome/4.0.1/css/font-awesome.css);
+
 $color-white:#fff;
 $color-orange: #3F6169; /* #F1784D; */
 $color-dark-blue:#3D505F;
 $font-family: 'Lato', sans-serif;
+$btn-default-radius: 2px;
 
 @mixin transition($trans:background .5s ease){
   -webkit-transition:$trans;
