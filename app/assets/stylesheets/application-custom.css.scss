@@ -1,11 +1,17 @@
+/* ====================== FONTS ========================= */
+
 @import url(//fonts.googleapis.com/css?family=Lato:200,700,300);
 @import url(//netdna.bootstrapcdn.com/font-awesome/4.0.1/css/font-awesome.css);
+
+/* ====================== VARIABLES ========================= */
 
 $color-white:#fff;
 $color-orange: #3F6169; /* #F1784D; */
 $color-dark-blue:#3D505F;
 $font-family: 'Lato', sans-serif;
 $btn-default-radius: 2px;
+
+/* ====================== MIXINS ========================= */
 
 @mixin transition($trans:background .5s ease){
   -webkit-transition:$trans;
@@ -20,3 +26,53 @@ $btn-default-radius: 2px;
   -o-transform:$trans;
   transform:$trans;
 }
+
+/* ====================== ANIMATIONS ========================= */
+
+@-webkit-keyframes fadeInDown {
+  0% {
+    opacity:0;
+    -webkit-transform:translateY(-20px);
+  }
+  100% {
+    opacity:1;
+    -webkit-transform:translateY(0);
+  }
+}
+
+@-moz-keyframes fadeInDown {
+  0% {
+    opacity:0;
+    -moz-transform:translateY(-20px);
+  }
+  
+  100% {
+    opacity:1;
+    -moz-transform:translateY(0);
+  }
+}
+
+@-o-keyframes fadeInDown{
+  0% {
+    opacity:0;
+    -o-transform: translateY(-20px);
+  }
+  
+  100% {
+    opacity:1;
+    -o-transform:translateY(0);
+  }
+}
+
+@keyframes fadeInDown{
+  0% {
+    opacity:0;
+    transform: translateY(-20px);
+  }
+  
+  100% {
+    opacity:1;
+    transform: translateY(0);
+  }
+}
+

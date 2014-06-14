@@ -1,0 +1,92 @@
+body.account {
+
+  .full-width {
+    padding: 0;
+  }
+
+  .blankstate {
+    margin-top: 70px;
+    position: relative;
+    text-align: center;
+    padding: 40px 20px;
+
+    h1 {
+      color: #FFF;
+      margin: 0px 0px 10px 0px;
+      text-transform: uppercase;
+    }
+    
+    button.close {
+      position: absolute;
+      right: 20px;
+      top: 10px;
+      color: #fff;
+      text-shadow: none;
+    }
+      
+    h1, p {
+      text-shadow: 0px 1px 3px rgba(0, 0, 0, 0.9);
+    }
+
+    p {
+      font-size: 22px;
+      margin: 0px 0px 40px 0px;
+      color: #fff;
+      
+      font-weight: 400;
+      font-style: normal;
+      line-height: 28px;
+    }
+    
+    ul.list-inline li {
+      display: inline;
+      margin: 0px 10px;
+      line-height: 28px;
+    }
+    
+    ul li a {
+      border-radius: 3px;
+      opacity: 0.7;
+      display: inline-block;
+      color: #FFF;
+      text-decoration: none;
+      border: 2px solid #FFF;
+      font-size: 18px;
+      width: 150px;
+      padding: 0px;
+      line-height: 70px;
+    }
+  }
+
+  .blankstate-plain {
+    background: #242424 url(/assets/backgrounds/cartographer.png) top left repeat;
+    background-color: #242424;
+  }
+
+  .blankstate-secondary {
+    background: #242424 url(/assets/backgrounds/cartographer.png) top left repeat;
+    background: -webkit-linear-gradient(180deg, rgba(63, 97, 105, 0) 0%, rgba(63, 97, 105, 0.1) 50%, rgba(63, 97, 105, 0.6) 100%), url(/assets/backgrounds/cartographer.png) top left repeat;
+    background: linear-gradient(180deg, rgba(63, 97, 105, 0) 0%, rgba(63, 97, 105, 0.1) 50%, rgba(63, 97, 105, 0.6) 100%), url(/assets/backgrounds/cartographer.png) top left repeat;
+    background-color: #242424;
+  }
+
+  .animated {
+    -webkit-animation-duration: .5s;
+    -moz-animation-duration: .5s;
+    -o-animation-duration: .5s;
+    animation-duration: .5s;
+    -webkit-animation-fill-mode: both;
+    -moz-animation-fill-mode: both;
+    -o-animation-fill-mode: both;
+    animation-fill-mode: both;
+  }
+
+  .animated.fade-in-down {
+    -webkit-animation-name: fadeInDown;
+    -moz-animation-name: fadeInDown;
+    -o-animation-name: fadeInDown;
+    animation-name: fadeInDown;
+  }
+
+} 
+

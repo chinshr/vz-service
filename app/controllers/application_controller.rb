@@ -7,6 +7,14 @@ class ApplicationController < ActionController::Base
   
   protected
   
+  def after_sign_in_path_for(resource)
+    if resource.is_a?(User)
+      web_dashboard_path
+    else
+      admin_dashboard_path
+    end
+  end
+  
   def session_required
     if session && session[:session_id].present? && !current_session
       self.current_session = Session.where(uid: session[:session_id]).first_or_create! do |session|
