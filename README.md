@@ -122,12 +122,13 @@ Development Resources
   - Machine learning for everyone: BigML.com, kaggle.com
 * Create ICO file from PNG -- http://stackoverflow.com/questions/4584895/favicon-to-png-in-php
 * Bootstrap Youtube modal -- http://lab.abhinayrathore.com/bootstrap-youtube/
+* Another amazing bootstrap theme -- http://themify.me/demo/themes/fullpane/
 
 Competitive Products
 --------------------
 
 * Gridspace -- http://gridspace.com
-
+* Transcribe Wreally -- http://transcribe.wreally.com
 
 SendGrid Setup
 --------------

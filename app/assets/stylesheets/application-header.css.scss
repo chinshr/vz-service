@@ -11,7 +11,7 @@ header {
     margin: 15px 0;
     padding:1px 0;
     text-indent: -9999px;
-    background: url(/assets/voyzes-logo-life.png) no-repeat 0 0;
+    background: url(/assets/voyzes-logo.png) no-repeat 0 0;
   }
 
   nav {
@@ -165,13 +165,35 @@ header {
     }
 
     .navbar-brand {
-      width: 355px;
+      width: 115px;
     }
 
     .navbar-brand:hover,
     .navbar-brand:focus {
       color: #5e5e5e;
       background-color: transparent;
+    }
+
+    .navbar-tag {
+      margin: 16px 0;
+      text-transform: uppercase;
+      font-weight: 100;
+      font-size: 26px;
+      float: left;
+      width: 300px;
+      color: #777;
+    }
+    
+    .navbar-tag:hover,
+    .navbar-tag:focus {
+      color: $color-white;
+      background-color: transparent;
+    }
+
+    @media (max-width: 480px) {
+      .navbar-tag {
+        display: none;
+      }
     }
 
     .navbar-text {
