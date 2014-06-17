@@ -125,8 +125,27 @@ form {
 
 /* ====================== HEADER ========================= */
 
+@import 'application-header';
+
 header {
-  background-color: rgba( 21.255, 26.255, 40.255, 0.8);
+  background-color: rgba(21.255, 26.255, 40.255, 0.8);
+}
+
+nav {
+  .navbar-nav {
+    li {
+      height: 70px;
+
+      &.active {
+        background-color: rgba(55, 61, 68, 0.8) !important;
+      }
+    }
+  }
+}
+
+/*
+header {
+  background-color: rgba(21.255, 26.255, 40.255, 0.8);
   min-height: 70px;
   padding:15px 0 0 0;
   position: fixed;
@@ -137,9 +156,8 @@ header {
     margin:0;
     padding:1px 0;
     text-indent: -9999px;
-    background: url(/assets/beachstrap/logo.png) no-repeat 0 0;
+    background: url(/assets/voyzes-logo-life.png) no-repeat 0 0;
   }
-
 }
 
 nav {
@@ -156,7 +174,7 @@ nav {
       &:last-child{
         margin-right:0;
       }
-      &.active a{
+      &.active a {
         color: $color-orange;
         text-decoration: none;
       }
@@ -167,7 +185,7 @@ nav {
 
   a {
     color: $color-white;
-    font-weight:700;
+    font-weight: 700;
     @include transition;
 
     &:hover, &.active{
@@ -176,10 +194,26 @@ nav {
     }
   }
 }
+*/
+
+/* ====================== MODAL ======================== */
+
+.modal-content {
+  background-color: rgba(21.255, 26.255, 40.255, 0.8);
+}
+
+.modal-header {
+  border-bottom: 0;
+  
+  .close {
+    color: #3d505f;
+  }
+}
+
 
 /* ====================== MAIN ========================= */
 
-#main{
+#main {
   background: url(/assets/beachstrap/foto-background.jpg) 0 0 no-repeat fixed;
   min-height:747px;
   -webkit-background-size: cover;
@@ -219,6 +253,8 @@ nav {
   padding:10px 40px;
   font-weight:700;
   cursor: pointer;
+  border-radius: $btn-default-radius;
+  
   @include transition(background-color 0.5s ease);
 
   &:hover{

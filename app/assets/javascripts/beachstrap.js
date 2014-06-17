@@ -20,3 +20,9 @@
 //= require beachstrap/jquery.nav
 //= require beachstrap/jquery.scrollTo
 //= require beachstrap/holder
+//= require beachstrap/bootstrap.youtubepopup
+
+$(function () {
+  // $(".youtube").YouTubeModal({autoplay:0, width:640, height:480});
+  $(".youtube").YouTubeModal({autoplay:1, width:680, height:380, color: "#151a28", controls: 0, theme: "dark"});
+});

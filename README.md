@@ -120,6 +120,8 @@ Development Resources
   - Jaccard Coefficient
   - Machine learning gem AI4R, SciRuby, 
   - Machine learning for everyone: BigML.com, kaggle.com
+* Create ICO file from PNG -- http://stackoverflow.com/questions/4584895/favicon-to-png-in-php
+* Bootstrap Youtube modal -- http://lab.abhinayrathore.com/bootstrap-youtube/
 
 Competitive Products
 --------------------
