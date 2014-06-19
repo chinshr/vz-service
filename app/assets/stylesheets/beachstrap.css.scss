@@ -62,14 +62,22 @@ body.pages {
     }
     
     @media (max-width: 768px) {
+      .cont-wrapper {
+        right: 20px;
+      }
+      
       p.intro {
         font-size: 30px;
       }
     }
     
     @media (max-width: 480px) {
+      .cont-wrapper {
+        right: 0px;
+      }
+      
       p.intro {
-        font-size: 26px;
+        font-size: 24px;
       }
     }
 
