@@ -4,11 +4,11 @@
  * https://github.com/abhinayrathore/Bootstrap-Youtube-Popup-Player-Plugin
  */
 (function ($) {
-    var $YouTubeModal = null,
+    var $YouTubeModal       = null,
         $YouTubeModalDialog = null,
-        $YouTubeModalTitle = null,
-        $YouTubeModalBody = null,
-        margin = 5;
+        $YouTubeModalTitle  = null,
+        $YouTubeModalBody   = null,
+        margin              = 1;
 
     //Plugin methods
     var methods = {
@@ -18,7 +18,7 @@
 
             // initialize YouTube Player Modal
             if ($YouTubeModal == null) {
-                $YouTubeModal = $('<div class="modal fade ' + options.cssClass + '" id="YouTubeModal" role="dialog" aria-hidden="true">');
+                $YouTubeModal = $('<div class="modal fade' + options.cssClass + '" id="YouTubeModal" role="dialog" aria-hidden="true">');
                 var modalContent = '<div class="modal-dialog" id="YouTubeModalDialog">'+
                     '<div class="modal-content" id="YouTubeModalContent">'+
                       '<div class="modal-header">'+
@@ -34,7 +34,14 @@
                 $YouTubeModalBody = $("#YouTubeModalBody");
                 $YouTubeModal.modal({
                     show: false
-                }).on('hide.bs.modal', resetModalBody);
+                }).on('hide.bs.modal', resetModalBody)
+                  .on('show.bs.modal', function () {
+                    $(this).find('.modal-body').css({
+                      width:'auto',  // probably not needed
+                      height:'auto', // probably not needed 
+                      'max-height':'100%'
+                    });
+                  });
             }
 
             return this.each(function () {
@@ -66,9 +73,30 @@
                         //Setup YouTube Modal
                         var YouTubeURL = getYouTubeUrl(youtubeId, options);
                         var YouTubePlayerIframe = getYouTubePlayer(YouTubeURL, options.width, options.height);
+                        
                         setModalBody(YouTubePlayerIframe);
-                        $YouTubeModal.modal('show');
+                        
+/*
+                        $("#YouTubeModal iframe").each(function() {
+                          $(this).data('aspectRatio', this.height / this.width)
+                            .removeAttr('height')
+                            .removeAttr('width');
+                        });
 
+                        $(window).resize(function() {
+                          var newWidth = $("body").width() * .5;
+
+                          // Resize all videos according to their own aspect ratio
+                          $("#YouTubeModal .modal-body").each(function() {
+                            var $el = $(this);
+                            $el
+                              .width(newWidth)
+                              .height(newWidth * $el.find("iframe").data('aspectRatio'));
+                          });
+                        }).resize();
+*/
+
+                        $YouTubeModal.modal('show');
                         return false;
                     });
                 }
@@ -86,7 +114,7 @@
     }
 
     function setModalBody(content) {
-        $YouTubeModalBody.html(content);
+        $YouTubeModalBody.html("<div class='video-wrapper'>" + content + "</div>");
     }
 
     function resetModalBody() {

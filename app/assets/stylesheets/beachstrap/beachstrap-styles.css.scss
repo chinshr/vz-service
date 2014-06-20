@@ -143,6 +143,14 @@ nav {
   }
 }
 
+.navbar-default .navbar-nav > .active > a,.navbar-default .navbar-nav > li:hover > a {
+  border: 0 solid #4285f4;
+  border-bottom-width: 2px;
+  font-weight: 800;
+  background-color: transparent !important;
+  @include transition(border .2s ease);
+}
+
 /*
 header {
   background-color: rgba(21.255, 26.255, 40.255, 0.8);

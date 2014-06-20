@@ -2,11 +2,14 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
+    <meta name="description" content="Record your life. Your conversations deserve a place to be found.">
     <meta name="author" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title><%= content_for?(:title) ? yield(:title) : "VOYZ.ES" %></title>
+    <%= csrf_meta_tags %>
 
-    <title><%= content_for?(:title) ? yield(:title) : "Voyzes" %></title>
+    <!-- Add to homescreen for Chrome on Android -->
+    <meta name="mobile-web-app-capable" content="yes">
 
     <link rel="dns-prefetch" href="//fonts.googleapis.com">
 
@@ -176,8 +179,8 @@
                     <div class="container">
                       <h1>What we do</h1>
                       <div class="caption">
-                        <p>Voyzes provides ways to upload, store audios, reliably transcribe them into text and derive meaning from the content to make audio conversations indexable. Anyone will easily record, store, organize and archive audio recordings. Discover unheard voices from around the world.</p>
-                        <p>Interviews, meetings, focus groups, classes, customer service; these are every days testimonials that usually remain only in the memory of the people who witness them. With Voyzes, many good stories are going to be found in someones raw conversations; many working misunderstandings will be solved by recording office meetings and some countries will improve their access to information and transparency with more sources available.</p>
+                        <p>VOYZ.ES provides ways to upload, store audios, reliably transcribe them into text and derive meaning from the content to make audio conversations indexable. Anyone will easily record, store, organize and archive audio recordings. Discover unheard voices from around the world.</p>
+                        <p>Interviews, meetings, focus groups, classes, customer service; these are every days testimonials that usually remain only in the memory of the people who witness them. With VOYZ.ES, many good stories are going to be found in someones raw conversations; many working misunderstandings will be solved by recording office meetings and some countries will improve their access to information and transparency with more sources available.</p>
                       </div>
                     </div>
                 
@@ -340,7 +343,7 @@
               <div class="staff-mem">
                 <img src="/assets/beachstrap/mariana.png" class="img-responsive img-circle">
                 <h3>Mariana Saiz</h3>
-                <p>Economist and Data Scientist. Launched Crédito Flexible at BNP Paribas Personal ($50m run rate). Researched on income poverty and micro finance for UCA in Buenos Aires.
+                <p>Economist and Data Scientist. Launched Crédito Flexible at BNP Paribas Personal. Research on income distribution and micro finance for UCA in Buenos Aires.
                 </p>
                 <p class="sn-links">
                   <a href="//twitter.com/marianasaiz" title="twitter" target="_blank"><i class="fa fa-twitter"></i></a>
@@ -454,7 +457,7 @@
         <div class="container">
           <div class="row">
             <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
-              <p>&copy; Copyright Voyzes <%= Time.now.year %>. All rights reserved.</p>
+              <p>&copy; VOYZ.ES <%= Time.now.year %>. All rights reserved.</p>
             </div>
             <div class="col-lg-5 col-md-5 col-sm-5 col-xs-12">
               <p class="sn-links"><a href="//twitter.com/voyzes" title="twitter" target="_blank"><i class="fa fa-twitter"></i></a>

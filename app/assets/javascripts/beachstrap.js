@@ -22,7 +22,8 @@
 //= require beachstrap/holder
 //= require beachstrap/bootstrap.youtubepopup
 
-$(function () {
-  // $(".youtube").YouTubeModal({autoplay:0, width:640, height:480});
+$(function() {
+
   $(".youtube").YouTubeModal({autoplay:1, width:680, height:380, color: "#151a28", controls: 0, theme: "dark"});
+
 });

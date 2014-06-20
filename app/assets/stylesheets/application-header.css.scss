@@ -239,6 +239,7 @@ header {
     .navbar-nav > li > a:focus {
       color: $color-orange;
       background-color: transparent;
+      @include transition(color .2s ease);
     }
 
     .navbar-nav > .active > a,
