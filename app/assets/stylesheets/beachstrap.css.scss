@@ -20,6 +20,12 @@ body.pages {
     text-transform: uppercase;
   }
   
+  .modal-dialog {
+    margin: 0px;
+    width: auto;
+    height: auto;
+  }
+  
   .modal-body {
     position: relative;
     overflow-y: auto;
@@ -62,7 +68,9 @@ body.pages {
     }
 
     p.btn-wrp {
-      text-align: right;
+      line-height: 50px;
+      text-align: center;
+      margin: 50px 0;
     }
 
     p.intro {
@@ -84,7 +92,12 @@ body.pages {
     }
     
     @media (max-width: 768px) {
+      .cont-gradient {
+        top: 180px;
+      }
+
       .cont-wrapper {
+        top: 180px;
         right: 20px;
       }
       
@@ -94,7 +107,12 @@ body.pages {
     }
     
     @media (max-width: 480px) {
+      .cont-gradient {
+        top: 130px;
+      }
+
       .cont-wrapper {
+        top: 130px;
         right: 0px;
       }
       
@@ -110,9 +128,20 @@ body.pages {
       border-radius: 5px;
 
       &:hover {
-        border: 3px solid $color-orange;
+        border: 3px solid $color-light-blue;
+        color: $color-light-blue;
         text-decoration: none;
         @include transition(border .2s ease);
+        @include transition(color .2s ease);
+      }
+    }
+    .c2a-button.youtube {
+      padding: 26px 28px;
+      border-radius: 300px;
+      font-size: 35px;
+      
+      i {
+        padding: 0 0 0 3px;
       }
     }
   }

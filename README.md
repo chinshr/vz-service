@@ -28,8 +28,10 @@ Development Resources
   - Email only signup: https://github.com/plataformatec/devise/wiki/How-To:-Email-only-sign-up
 * HTML5 Editors
   - List of editors: http://www.jquery4u.com/plugins/html5-wysiwyg/  
+  - Another wysiwyg editor http://mindmup.github.io/bootstrap-wysiwyg/
   - Raptor Editor: https://www.raptor-editor.com
   - Save REST with Raptor: https://www.raptor-editor.com/documentation/tutorials/save-rest
+  - Quill Rich Text Editor -- http://quilljs.com
 * Installing ffmpeg on heroku
   - Install multi build packs: https://github.com/ddollar/heroku-buildpack-multi
   - add .buildpacks file
@@ -106,7 +108,6 @@ Development Resources
 * Parallax effects with bootstrap
   - https://wrapbootstrap.com/tag/parallax
 * Awesome icons -- http://fortawesome.github.io/Font-Awesome/icons/  
-* Quill Rich Text Editor -- http://quilljs.com
 * Flipping DIVs in HTML5 tutorial: http://simonlockyer.info/flip-div-css3-tutorial/
 * Gmail inbox grid 
   - http://www.bootply.com/XXmcPas41w
@@ -122,10 +123,25 @@ Development Resources
   - Machine learning for everyone: BigML.com, kaggle.com
 * Create ICO file from PNG -- http://stackoverflow.com/questions/4584895/favicon-to-png-in-php
 * Bootstrap Youtube modal -- http://lab.abhinayrathore.com/bootstrap-youtube/
-* Another amazing bootstrap home page theme -- http://themify.me/demo/themes/fullpane/
 * Convert png to icons (ico) for favicon http://iconverticons.com/
 * Retina images -- https://github.com/imulus/retinajs
-* Bootstrap modal manager and fix for responsive layouts -- https://github.com/jschr/bootstrap-modal
+* Bootstrap resources
+  - Another amazing bootstrap home page theme -- http://themify.me/demo/themes/fullpane/
+  - Bootstrap modal manager and fix for responsive layouts -- https://github.com/jschr/bootstrap-modal
+  - Alternatives bootstrap checkbox -- http://montrezorro.github.io/bootstrap-checkbox/
+  - Pinterest layout with bootstrap -- http://bragthemes.com/demo/pinstrap/
+  - Dropdown select with lookahead and tagging -- http://ivaynberg.github.io/select2/
+  - Bootstrap Combobox -- https://github.com/danielfarrell/bootstrap-combobox
+  - FuelUX, http://exacttarget.github.io/fuelux/
+  - Login from navbar dropdown -- http://mifsud.me/adding-dropdown-login-form-bootstraps-navbar/
+  - Twitter radio buttons from input http://dan.doezema.com/2012/03/twitter-bootstrap-radio-button-form-inputs/
+  - File input with image -- http://jasny.github.io/bootstrap/javascript/#fileinput
+  - Bootstrap Dropbox uploader -- http://tutorialzine.com/2012/11/dropbox-photo-crop/
+  - HTML5 image uploader with crop -- http://www.script-tutorials.com/html5-image-uploader-with-jcrop/
+  - Image upload and crop -- http://www.jqueryrain.com/demo/jquery-crop-image-plugin/
+  - Chosen, better select/combo -- http://harvesthq.github.io/chosen/
+* typeahead.js provides search suggestions -- http://twitter.github.io/typeahead.js
+* JS injecting extra info to copy-pasted text -- http://www.jitbit.com/alexblog/230-javascript-injecting-extra-info-to-copy-pasted-text/
 
 Competitive Products
 --------------------

@@ -12,7 +12,6 @@
 
     //Plugin methods
     var methods = {
-        //initialize plugin
         init: function (options) {
             options = $.extend({}, $.fn.YouTubeModal.defaults, options);
 
@@ -36,6 +35,10 @@
                     show: false
                 }).on('hide.bs.modal', resetModalBody)
                   .on('show.bs.modal', function () {
+                    $(this).find('.modal-dialog').css({
+                      width:'auto'
+                    });
+                    
                     $(this).find('.modal-body').css({
                       width:'auto',  // probably not needed
                       height:'auto', // probably not needed 
@@ -70,13 +73,13 @@
 
                         resizeModal(options.width);
 
-                        //Setup YouTube Modal
+                        // Setup YouTube Modal
                         var YouTubeURL = getYouTubeUrl(youtubeId, options);
                         var YouTubePlayerIframe = getYouTubePlayer(YouTubeURL, options.width, options.height);
                         
                         setModalBody(YouTubePlayerIframe);
-                        
-/*
+
+                        /*
                         $("#YouTubeModal iframe").each(function() {
                           $(this).data('aspectRatio', this.height / this.width)
                             .removeAttr('height')
@@ -84,18 +87,18 @@
                         });
 
                         $(window).resize(function() {
-                          var newWidth = $("body").width() * .5;
+                          var newWidth = $("modal-body").width();
 
                           // Resize all videos according to their own aspect ratio
-                          $("#YouTubeModal .modal-body").each(function() {
+                          $(".modal").each(function() {
                             var $el = $(this);
                             $el
                               .width(newWidth)
                               .height(newWidth * $el.find("iframe").data('aspectRatio'));
                           });
                         }).resize();
-*/
-
+                        */
+                        
                         $YouTubeModal.modal('show');
                         return false;
                     });

@@ -113,9 +113,9 @@
                 <p class="intro">Your conversations <br/>deserve a place to be found</p>
                 <p class="btn-wrp">
                   <% if Rails.env.production? %>
-                  <a href="https://www.youtube.com/watch?v=w2oLFpcMPlo" class="c2a-button youtube" onClick="_gaq.push(['_trackEvent', 'Videos', 'Play', 'Knight Talk: Ana María Carrano']);">Learn More</a>
+                  <a href="https://www.youtube.com/watch?v=w2oLFpcMPlo" class="c2a-button youtube" onClick="_gaq.push(['_trackEvent', 'Videos', 'Play', 'Knight Talk: Ana María Carrano']);"><i class="glyphicon glyphicon-play"></i></a>
                   <% else %>
-                  <a href="https://www.youtube.com/watch?v=w2oLFpcMPlo" class="c2a-button youtube">Learn More</a>
+                  <a href="https://www.youtube.com/watch?v=w2oLFpcMPlo" class="c2a-button youtube"><i class="glyphicon glyphicon-play"></i></a>
                   <% end %>
                 </p>
               </div><!-- end cont wrapper -->
@@ -473,7 +473,6 @@
 
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     
-    <%#= javascript_include_tag "//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js", "beachstrap" %>
     <%= javascript_include_tag "beachstrap" %>
     <%= javascript_tag do %>
       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
