@@ -16,10 +16,24 @@
 @import 'application-custom';
 
 body.pages {
+  &.selected-main-item {
+    header {
+      background-color: transparent;
+
+      nav .navbar-nav li {
+        background-color: transparent !important;
+      }
+    }
+  }
+  
   h1, #our-team h2, ul.nav {
     text-transform: uppercase;
   }
   
+  ul.nav {
+    padding-left: 0;
+  }
+    
   .modal-dialog {
     margin: 0px;
     width: auto;

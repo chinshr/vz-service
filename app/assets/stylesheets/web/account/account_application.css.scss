@@ -1,5 +1,7 @@
 body.account {
 
+  /* ====================== BLANKSTATE ========================= */
+
   .full-width {
     padding: 0;
   }
@@ -86,6 +88,24 @@ body.account {
     -moz-animation-name: fadeInDown;
     -o-animation-name: fadeInDown;
     animation-name: fadeInDown;
+  }
+
+  /* ====================== PANELS ========================= */
+
+  .upload-grid {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    
+    .panel-upload {
+      border: 3px dashed #ccc;
+      background-color: transparent;
+    }
+    
+    .panel {
+      .progress {
+        border-radius: 2px 2px 0 0;
+        height: 4px;
+      }
+    }
   }
 
 } 

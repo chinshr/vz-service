@@ -194,12 +194,14 @@ header {
       float: left;
       width: 300px;
       color: #777;
+      @include transition(color .2s ease);
     }
     
     .navbar-tag:hover,
     .navbar-tag:focus {
       color: $color-white;
       background-color: transparent;
+      @include transition(color .2s ease);
     }
 
     @media (max-width: 480px) {

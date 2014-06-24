@@ -47,7 +47,7 @@
     <![endif]-->
   </head>
 
-  <body data-spy="scroll" data-target="#navigation" class="<%= dom_controller_class %> <%= dom_controller_action_class %>">
+  <body data-spy="scroll" data-offset="70" data-target="#navigation" class="<%= dom_controller_class %> <%= dom_controller_action_class %>">
     <div id="content">
       <%#
       <header>
@@ -93,9 +93,10 @@
 
               <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav pull-right">
-                  <li class="active"><a href="#main" title="Home">Home</a></li>
-                  <li><a href="#work" title="Work">What We Do</a></li>
-                  <li><a href="#our-team" title="Our Team">About Us</a></li>
+                  <li id="selected-main-item" class="active"><a href="#main" title="Home">Home</a></li>
+                  <li id="selected-intro-strip-item" class="xhidden"><a href="#intro-strip" title="Home">How It Works</a></li>
+                  <li id="selected-work-item"><a href="#work" title="Work">What We Do</a></li>
+                  <li id="selected-our-team-item"><a href="#our-team" title="Our Team">About Us</a></li>
                 </ul>
               </div><!-- collapse navbar-collapse -->
             </div><!-- container-fluid -->
