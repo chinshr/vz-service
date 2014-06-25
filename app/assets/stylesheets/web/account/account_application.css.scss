@@ -94,18 +94,58 @@ body.account {
 
   .upload-grid {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    
-    .panel-upload {
-      border: 3px dashed #ccc;
-      background-color: transparent;
-    }
-    
+    min-height: 300px;
     .panel {
       .progress {
         border-radius: 2px 2px 0 0;
         height: 4px;
       }
+      
+      .btn i {
+        color: #fff;
+        margin-right: 3px;
+      }
+
+      .chosen-container-single .chosen-single {
+        height: 33px;
+        padding-top: 4px;
+        
+        b {
+          margin-top: 4px;
+        }
+      }
+      
+      &.panel-upload {
+        border: 3px dashed #ccc;
+        box-shadow: 0 0px;
+        background-color: transparent;
+
+        .panel-heading {
+          background-color: transparent;
+          border-bottom-color: transparent;
+        }
+
+        h4 {
+          text-align: center;
+          font-weight: bold;
+          border-bottom-color: transparent;
+        }
+      }
+      
+      &.panel-upload:hover {
+        background-color: #fff;
+        border-color: #d2d2d2;
+        box-shadow: 0 1px 0 #cfcfcf;
+        border: 1px solid #d2d2d2;
+        margin: 2px;
+        
+        h4 {
+          border-bottom-color: #fff; /* #efefef */
+        }
+      }
     }
+    
+    
   }
 
 } 

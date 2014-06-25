@@ -39,43 +39,53 @@
     
     <div class="col-lg-4 col-md-4 col-sm-4">
       <div id="drop-box" class="panel panel-upload">
-        <div class="panel-body">
+        <div class="panel-heading">
           <h4>Drop files here...</h4>
+          <div class="word-separator">&mdash; or &mdash;</div>
+
+          <!-- file picker -->
+          <div class="form-group group-pick-file">
+            <label for="" class="control-label hidden">Add file</label>
+            <button class="btn btn-primary btn-file-upload">Add file...</button>
+          </div>
+          
+        </div>
+        <div class="panel-body">
 
           <form class="xform-horizontal" role="form">
-            <!-- file picker -->
-            <div class="form-group group-pick-file">
-              <label for="" class="control-label hidden">Email</label>
-              <button class="btn btn-primary btn-file-upload">Add file</button>
-            </div>
             
             <!-- file privacy -->
             <div class="btn-group group-file-privacy" data-toggle="buttons">
-              <label class="btn btn-primary">
-                <input type="radio" name="file-privacy" id="file-privacy-private"> Private
+              <label class="btn btn-primary active">
+                <input type="radio" name="file-privacy" id="file-privacy-public"><i class="glyphicon glyphicon-book"></i>&nbsp;Public
               </label>
-              <label class="btn btn-primary">
-                <input type="radio" name="file-privacy" id="file-privacy-public"> Public
+              <label class="btn btn-primary disabled">
+                <input type="radio" name="file-privacy" id="file-privacy-private"><i class="glyphicon glyphicon-lock"></i>&nbsp;Private
               </label>
             </div>
             
-            <!-- file locale -->
-            <div class="form-group group-file-locale" data-toggle="buttons">
-              <label for="disabledSelect">Audio language</label>
-              <select id="file-locale" class="form-control">
-                <option value="en-US">English United States</option>
-                <option value="en-UK">English Great Britain</option>
-                <option value="de-DE">German Germany</option>
-                <option value="fr-FR">French France</option>
-                <option value="it-IT">Italian Italy</option>
-                <option value="es-ES">Spanish Spain</option>
-                <option value="es-MX">Spanish Mexico</option>
-                <option value="es-AR">Spanish Argentina</option>
-                <option value="es-VE">Spanish Venezuela</option>
-              </select>
-            </div>
           </form>
+          
+        </div><!-- panel-body -->
+        <div class="panel-footer">
+          <!-- file locale -->
+          <div class="form-group group-file-locale">
+            <label class="hidden" for="disabledSelect">Audio language</label>
+            <select data-placeholder="Choose a Language..." id="file-locale" class="form-control locale-control">
+              <option value=""></option>
+              <option value="en-US">English United States</option>
+              <option value="en-UK">English Great Britain</option>
+              <option value="de-DE">German Germany</option>
+              <option value="fr-FR">French France</option>
+              <option value="it-IT">Italian Italy</option>
+              <option value="es-ES">Spanish Spain</option>
+              <option value="es-MX">Spanish Mexico</option>
+              <option value="es-AR">Spanish Argentina</option>
+              <option value="es-VE">Spanish Venezuela</option>
+            </select>
+          </div>
         </div>
+        
       </div>
     </div>
 

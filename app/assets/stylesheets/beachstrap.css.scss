@@ -138,15 +138,15 @@ body.pages {
     .c2a-button {
       color: #fff;
       background-color: transparent;
-      border: 3px solid $color-white;
+      border: 5px solid $color-white;
       border-radius: 5px;
 
       &:hover {
-        border: 3px solid $color-light-blue;
-        color: $color-light-blue;
+        background-color: #fff;
+        xborder: 3px solid $color-light-blue;
+        color: #8A6847;
         text-decoration: none;
-        @include transition(border .2s ease);
-        @include transition(color .2s ease);
+        @include transition(background-color .2s ease);
       }
     }
     .c2a-button.youtube {
