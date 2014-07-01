@@ -15,6 +15,7 @@
 //= require jquery.ui.core
 //= require jquery.ui.widget
 //= require chosen.jquery
+//= require select2
 //= require rails.validations
 //= require rails.validations.bootstrap
 //= require detect_timezone

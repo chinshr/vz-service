@@ -90,6 +90,7 @@ Development Resources
   - Nuance Dev program -- www.ndevmobile.com
   - Tropo (Voxeo) tool TTS and ASR -- https://www.tropo.com
 * Nice simple and clean UI example -- https://www.firebase.com
+* Another example of a great clean footer
 * Ruby language tools:
   - Ruby english language tagger -- https://github.com/yohasebe/engtagger
   - Perl Lingua::DE::Tagger -- http://search.cpan.org/~tschulz/FreeHAL-71/Lingua/DE/Tagger.pm
@@ -140,6 +141,7 @@ Development Resources
   - HTML5 image uploader with crop -- http://www.script-tutorials.com/html5-image-uploader-with-jcrop/
   - Image upload and crop -- http://www.jqueryrain.com/demo/jquery-crop-image-plugin/
   - Chosen, better select/combo -- http://harvesthq.github.io/chosen/
+  - Yet another combo, select, tag input: http://brianreavis.github.io/selectize.js/
 * typeahead.js provides search suggestions -- http://twitter.github.io/typeahead.js
 * JS injecting extra info to copy-pasted text -- http://www.jitbit.com/alexblog/230-javascript-injecting-extra-info-to-copy-pasted-text/
 
