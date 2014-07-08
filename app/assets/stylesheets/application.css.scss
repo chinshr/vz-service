@@ -13,6 +13,7 @@
  *= require select2
  *= require select2-bootstrap
  *= require_self
+ *= require_tree ./devise
  *= require_tree ./web
  */
 
@@ -30,103 +31,6 @@
   background: transparent url(/assets/voyzes-logo-life.png) no-repeat;
   width: 100px;
 }
-
-/* ====================== DEVISE ========================= */
-
-body.devise.sessions, body.devise.registrations, body.devise.confirmations, 
-body.confirmations, body.devise.passwords {
-  padding-top: 40px;
-  padding-bottom: 40px;
-  background-color: #fff;
-
-  .container {
-    background-color: #fff;
-  }
-  
-  .signup-brand, .signin-brand {
-    width: 100px;
-    height: 45px;
-    text-indent: -119988px;
-    overflow: hidden;
-    text-align: left;
-    background-image: url(/assets/voyzes-logo.png);
-    background-repeat: no-repeat;
-    background-position: 0 0;
-    display: block;
-    margin: 0 auto;
-    margin-bottom: 20px;
-  }
-  
-  .form-signin, .form-signup {
-    max-width: 360px;
-    padding: 35px;
-    margin: 0 auto;
-    
-    h2 {
-      font-size: 20px;
-      margin-top: 0;
-      margin-bottom: 15px;
-      line-height: 1.45em;
-      font-weight: 400;
-      color: #444;
-    }
-    
-    .checkbox {
-      margin-bottom: 10px;
-    }
-
-    .checkbox {
-      font-weight: normal;
-      font-size: 14px;
-    }
-
-    .form-control {
-      position: relative;
-      font-size: 16px;
-      height: auto;
-      padding: 10px;
-      -webkit-box-sizing: border-box;
-      -moz-box-sizing: border-box;
-      box-sizing: border-box;
-    }
-    
-    .form-control.first {
-      margin-bottom: -1px;
-      border-bottom-left-radius: 0;
-      border-bottom-right-radius: 0;
-    }
-
-    .form-control.last {
-      margin-bottom: 10px;
-      border-top-left-radius: 0;
-      border-top-right-radius: 0;
-    }
-
-    .form-control:focus {
-      z-index: 2;
-    }
-    
-    .form-signin-links {
-      margin: 10px 0;
-      font-size: 14px;
-    }
-
-/*    
-    input[type="text"] {
-      margin-bottom: -1px;
-      border-bottom-left-radius: 0;
-      border-bottom-right-radius: 0;
-    }
-
-    input[type="password"] {
-      margin-bottom: 10px;
-      border-top-left-radius: 0;
-      border-top-right-radius: 0;
-    }
-*/  
-  }
-}
-
 
 /* ====================== HEADER ========================= */
 

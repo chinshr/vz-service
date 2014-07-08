@@ -5,4 +5,3 @@ module Mailer; end
 require "mailer/helper"
 require "speech"
 
-require "user/parameter_sanitizer"

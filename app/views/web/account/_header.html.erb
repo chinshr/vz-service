@@ -1,0 +1,50 @@
+<header>
+  <div class="container">
+    <nav class="navbar navbar-default" id="navigation" role="navigation">
+      <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a id="logo" class="navbar-brand" href="#">VOYZ.ES</a>
+          <a class="navbar-tag" href="/dashboard">Dashboard</a>
+        </div>
+        
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <% if current_user %>
+          <ul class="nav navbar-nav navbar-right">
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><img class="avatar" ng-src="https://www.gravatar.com/avatar/7bd6975cb131c69ce17b3b77e2e465c5.jpg?d=retro&amp;size=80" src="https://www.gravatar.com/avatar/7bd6975cb131c69ce17b3b77e2e465c5.jpg?d=retro&amp;size=80"><span>Account Settings </span><b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="<%= web_dashboard_path %>"><span class="badge badge-warning pull-right">3</span>Dashboard</a></li>
+                <li><a href="<%= web_account_profile_path %>">User Profile</a></li>
+                <li><a href="<%= web_account_billing_path %>">Billing Information</a></li>
+                <li class="divider"></li>
+                <li class="logout">
+                  <%= link_to "Logout", destroy_user_session_path, :method => :delete, :class => "btn btn-small btn-danger" %>
+                </li>
+              </ul>
+            </li><!-- dropdown -->
+          </ul>
+          <% else %>
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="#">Overview</a></li>
+            <li><a href="#">Getting Started</a></li>
+            <li><a href="#">Pricing</a></li>
+          </ul>
+
+          <div id="login-buttons" class="btn-group btn-group-horizontal pull-right">
+            <a href="<%= new_user_session_path %>" class="btn btn-small btn-flat-plain">Login</a>
+            <a href="<%= new_user_registration_path %>" class="btn btn-small btn-primary">Sign Up</a>
+          </div>
+        <% end %>
+        </div><!-- collapse navbar-collapse -->
+      </div><!-- container-fluid -->
+    </nav>
+  </div><!-- end container -->
+</header>
+

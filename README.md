@@ -145,11 +145,15 @@ Development Resources
 * typeahead.js provides search suggestions -- http://twitter.github.io/typeahead.js
 * JS injecting extra info to copy-pasted text -- http://www.jitbit.com/alexblog/230-javascript-injecting-extra-info-to-copy-pasted-text/
 
-Competitive Products
---------------------
+Business Resources
+------------------
 
-* Gridspace -- http://gridspace.com
-* Transcribe Wreally -- http://transcribe.wreally.com
+* Competitive products:
+  - Gridspace -- http://gridspace.com
+  - Transcribe Wreally -- http://transcribe.wreally.com
+* HIPAA compliance (box notes is): http://en.wikipedia.org/wiki/Health_Insurance_Portability_and_Accountability_Act
+
+
 
 SendGrid Setup
 --------------

@@ -28,28 +28,33 @@
         </ul>
       </div>
       
+<!--
       <div class="alert alert-warning">
         <button type="button" class="close" data-dismiss="alert">×</button>
         This is is the image.
       </div>
+-->
     </div>
   </div>
   
+  <div id="hover-overlay"></div>
   <div id="file-uploads" class="upload-grid">
     
     <div class="col-lg-4 col-md-4 col-sm-4 tile upload-tile">
       <div id="drop-box" class="panel upload-panel">
         <div class="panel-heading">
           <h3>Drop files here...</h3>
-          <div class="word-separator">&mdash; or &mdash;</div>
-
-          <div class="form-group form-group-file-picker">
-            <label for="" class="control-label hidden">Add file</label>
-            <button class="btn btn-primary btn-lg btn-file-upload">Add file...</button>
-          </div><!-- form-group-file-picker -->
-          
         </div><!-- panel-heading -->
         <div class="panel-body">
+          <div class="upload-panel-separator">&mdash; or &mdash;</div>
+
+          <div class="form-group form-group-file-upload">
+            <label for="" class="control-label hidden">Add files</label>
+            <button id="files-proxy" class="btn btn-primary btn-lg btn-file-upload"><i class="glyphicon glyphicon-cloud-upload"></i>&nbsp;Add files...</button>
+            <input type="file" id="files" name="files[]" multiple />
+            <div class="email-file-upload-holder">or email to <a href="mailto:my@voyz.es?subject=Document title&body=—%0DAttach all your audio files you want transcribed for English United States (en-US)." class="xbtn xbtn-link btn-email-upload">my@voyz.es</a></div>
+          </div><!-- form-group-file-upload -->
+
           <div class="form-group form-group-locale">
             <label class="hidden" for="disabledSelect">Audio language</label>
             <select data-placeholder="Choose a Language..." id="file-locale" class="form-control input-sm input-single-searchable">
@@ -74,7 +79,7 @@
               <label class="btn btn-primary btn-sm active">
                 <input type="radio" name="file-privacy" id="file-privacy-public"><i class="glyphicon glyphicon-book icon-public"></i>&nbsp;Public
               </label>
-              <label class="btn btn-primary btn-sm disabled">
+              <label class="btn btn-primary btn-sm xdisabled">
                 <input type="radio" name="file-privacy" id="file-privacy-private"><i class="glyphicon glyphicon-lock icon-private"></i>&nbsp;Private
               </label>
             </div>
@@ -171,11 +176,18 @@
             <li class="tag-list-tag">white</li>
             <li class="tag-list-tag">blue</li>
           </ul>
-          
-          Show Body
         </div><!-- panel-body -->
-        <div class="panel-footer">
-        </div><!-- panel-footer -->
+        <div class="panel-body action-panel">
+          <div class="action-panel-bg-image"></div>
+          <div class="action-panel-btn-group">
+            <button class="btn btn-primary btn-lg btn-panel-action"><i class="glyphicon glyphicon-wrench"></i>&nbsp;Change</button>
+            <button class="btn btn-primary btn-lg btn-panel-action"><i class="glyphicon glyphicon-pencil"></i>&nbsp;Edit</button>
+            <button class="btn btn-primary btn-lg btn-panel-action"><i class="glyphicon glyphicon-eye-open"></i>&nbsp;Preview</button>
+            <!--
+            <button class="btn btn-primary btn-lg btn-panel-action"><i class="glyphicon glyphicon-user"></i>&nbsp;Collaborate</button>
+            -->
+          </div><!-- action-panel-btn-group -->
+        </div><!-- action-panel-->
       </div><!-- show-panel -->
     </div><!-- show-tile -->
 
