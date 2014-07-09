@@ -2,13 +2,34 @@
 <% content_for :header do %>
   <%= render "shared/web/devise_errors" %>
 <% end %>
-<a class="signup-brand" href="/">home</a>
-<%= form_for(resource, :as => resource_name, :url => password_path(resource_name), 
-  :html => {:method => :post, :class => "form-signup well"}) do |f| %>
-  <h2>Forgot your password?</h2>
 
-  <%= f.email_field :email, :autofocus => "autofocus", :autocapitalize => "off", :autocomplete => "off", :autocorrect => "off", :spellcheck => false, :class => "form-control first", :placeholder => "Email address" %>
+<div class="container-fluid content-primary">
+  <div class="row">
+    <div class="col-lg-12 tile form-tile animated fadeInUp">
+      <%= form_for(resource, :as => resource_name, :url => password_path(resource_name), 
+        :html => {:method => :post, :class => "form-signup  panel animated fade-in-up"}) do |f| %>
+        <div class="panel-heading">
+          <h1 class="logo"><a class="signup-brand" href="/">Forgot your password?</a></h1>
+          <p>Please enter your email to recover your password. </p>
+        </div>
+        <div class="panel-body">
+          <div class="form-group">
+            <%= f.label :email, "Email address" %>
+            <%= f.email_field :email, :autofocus => "autofocus", :autocapitalize => "off", :autocomplete => "off", :autocorrect => "off", :spellcheck => false, :class => "form-control first", :placeholder => "Enter email address" %>
+          </div>
+        </div>  
+        <div class="panel-footer">
+          <button class="btn btn-lg btn-primary btn-block" type="submit">Recover Password</button>
+        </div>
+      <% end %>
+    </div><!-- form-tile -->
+  </div><!-- row -->
 
-  <button class="btn btn-lg btn-primary btn-block" type="submit">Resend</button>
-  <%= render "devise/shared/links" %>
-<% end %>
+  <div class="row">
+    <div class="text-small text-center text-light text-translucent">
+      If you continue not receiving any instruction email, <br />try to unblock VOYZ.ES in your email spam settings.
+    </div>
+
+    <%= render "devise/shared/links" %>
+  </div><!-- row -->
+</div><!-- content-primary -->

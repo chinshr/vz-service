@@ -1,16 +1,16 @@
 @import 'application-custom';
 
-body.devise {
+body.devise, body.confirmations {
   background-color: $color-white;
 
   .content-primary {
-    padding: 0 0 25px;
+    padding: 60px 0;
     background: -webkit-linear-gradient(281deg, #3f6169, #55dcfc);
     background: linear-gradient(169deg, #3f6169, #55dcfc);
     background-color: #3f6169;
     
     .login-quote {
-      margin: 40px 0;
+      margin: 10px 0 25px;
       
       blockquote {
         border: 0;
@@ -31,6 +31,7 @@ body.devise {
         }
         
         i {
+          font-family: "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
           font-weight: 700;
           font-style: normal;
           font-size: 80px;
@@ -65,7 +66,7 @@ body.devise {
     } /* .login-quote */
 
     .tile {
-      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-family: "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
       
       input {
         font: inherit;
@@ -77,12 +78,21 @@ body.devise {
     }
     
     .panel {
-      box-shadow: 0 2px 3px rgba(0, 0, 0,.3);
+      box-shadow: 0 2px 5px rgba(0, 0, 0,.3);
       
       .panel-heading {
         h1 {
           font-size: 52px;
           line-height: 60px;
+        }
+        
+        p {
+          color: #555;
+          padding: 0 15px;
+          font-weight: 400;
+          font-style: normal;
+          font-size: 15px;
+          text-align: center;
         }
         
         .logo {
@@ -124,9 +134,29 @@ body.devise {
       opacity: 1;
     }
     
-    
     .btn-block {
       width: 100%;
+    }
+
+    .text-translucent {
+      opacity: .5;
+    }
+    
+    .text-light {
+      color: #fff;
+      
+      a {
+        color: #fff;
+      }
+    }
+    
+    .text-small {
+      font-family: "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+      font-weight: 400;
+      font-style: normal;
+      font-size: 12px;
+      line-height: 20px;
+      margin: 0 0 15px 0;
     }
     
   } /* content-primary */
