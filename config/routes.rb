@@ -16,11 +16,12 @@ Voyzes::Application.routes.draw do
 
   # site
   root 'web/pages#index'
-  # get 'lmk' => 'web/pages#show'
 
   # Web::Application
   scope :module => "web", :as => "web" do
     get '/upload' => "uploads#index"
+    get '/terms/privacy-policy' => "terms#privacy_policy"
+    get '/terms/terms-of-service' => "terms#terms_of_service"
 
     # Web:Account::Application
     get "/account" => "account/application#index"

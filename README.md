@@ -144,6 +144,13 @@ Development Resources
   - Yet another combo, select, tag input: http://brianreavis.github.io/selectize.js/
 * typeahead.js provides search suggestions -- http://twitter.github.io/typeahead.js
 * JS injecting extra info to copy-pasted text -- http://www.jitbit.com/alexblog/230-javascript-injecting-extra-info-to-copy-pasted-text/
+* Adapting to retina display -- http://www.sitepoint.com/css-techniques-for-retina-displays/
+* PhoneGap recording samples:
+  - https://software.intel.com/en-us/html5/articles/media-sample-with-phonegap
+  - Samples app repo: https://github.com/gomobile/sample-phonegap-audio
+  - PhoneGap audio example: https://github.com/bargar/phone-gap-audio-example
+  - http://docs.phonegap.com/en/3.3.0/cordova_media_media.md.html#Media
+* Standards Terms -- http://www.entrepreneur.com/formnet/form/1174
 
 Business Resources
 ------------------

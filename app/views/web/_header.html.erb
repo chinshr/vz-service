@@ -11,7 +11,11 @@
             <span class="icon-bar"></span>
           </button>
           <a id="logo" class="navbar-brand" href="#">VOYZ.ES</a>
-          <a class="navbar-tag" href="/dashboard">Dashboard</a>
+          <% if content_for?(:navbar_tag) %>
+            <%= content_for(:navbar_tag) %>
+          <% else %>
+          <a class="navbar-tag" href="/">Record your Life</a>
+          <% end %>
         </div>
         
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -31,15 +35,15 @@
             </li><!-- dropdown -->
           </ul>
           <% else %>
+          <% if false %>
           <ul class="nav navbar-nav">
             <li class="active"><a href="#">Overview</a></li>
             <li><a href="#">Getting Started</a></li>
             <li><a href="#">Pricing</a></li>
           </ul>
-
+          <% end %>
           <div id="login-buttons" class="btn-group btn-group-horizontal pull-right">
             <a href="<%= new_user_session_path %>" class="btn btn-small btn-flat-plain">Login</a>
-            <a href="<%= new_user_registration_path %>" class="btn btn-small btn-primary">Sign Up</a>
           </div>
         <% end %>
         </div><!-- collapse navbar-collapse -->

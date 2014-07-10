@@ -27,7 +27,7 @@ $(function() {
   $(".youtube").YouTubeModal({autoplay:1, width:680, height:380, color: "#151a28", controls: 0, theme: "dark", 
     title: "Stanford Knight Talk: Ana María Carrano"});
 
-  $('body').on('activate.bs.scrollspy', function (event) {
+  $('body.pages').on('activate.bs.scrollspy', function (event) {
     if (event.target && event.target.id) {
       var body = $('body');
       if (body && body[0] && body[0].className.length > 0) {

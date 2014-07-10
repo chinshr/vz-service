@@ -1,0 +1,88 @@
+body.terms {
+  background-color: #fff;
+  
+  .container-fluid {
+    padding: 0;
+  }
+
+  .hero {
+    margin: 70px 0 0 0;
+    padding: 0;
+    color: #fff;
+    text-align: center;
+    
+    .hero-wrapper {
+      position: relative;
+    }
+    
+    .hero-inner {
+      padding-top: 20px;
+      height: 120px;
+      position: relative;
+      overflow: hidden;
+    }
+  }
+  
+  .hero-plain {
+    background: #242424 url(/assets/backgrounds/cartographer.png) top left repeat;
+    background-color: #242424;
+  }
+  
+  .hero-secondary {
+    background: #242424 url(/assets/backgrounds/cartographer.png) top left repeat;
+    background: -webkit-linear-gradient(180deg, rgba(63, 97, 105, 0) 0%, rgba(63, 97, 105, 0.1) 50%, rgba(63, 97, 105, 0.6) 100%), url(/assets/backgrounds/cartographer.png) top left repeat;
+    background: linear-gradient(180deg, rgba(63, 97, 105, 0) 0%, rgba(63, 97, 105, 0.1) 50%, rgba(63, 97, 105, 0.6) 100%), url(/assets/backgrounds/cartographer.png) top left repeat;
+    background-color: #242424;
+  }
+  
+  .content-block {
+    padding: 60px 0;
+
+    .terms-article {
+      font-family: "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif !important;
+      padding-left: 90px;
+      font-size: 18px;
+      
+      h1, h2, h3, h4, a {
+        font-family: inherit;
+      }
+    }
+
+    .terms-sidenav {
+      &.affix {
+        position: relative;
+      }
+            
+      ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+
+        li {
+          border-bottom: 1px solid #f7f7f7;
+          text-transform: uppercase;
+          line-height: 28px;
+          xmargin-bottom: 28px;
+
+          a {
+            padding: 0 20px;
+            line-height: 49px;
+            color: #7b8386;
+            display: block;
+            font-size: 12px;
+
+            text-decoration: none;
+          }
+          
+          .active {
+            font-weight: 700;
+            font-style: normal;
+            color: #322f31;
+            font-size: 14px;
+          }
+        }
+
+      }
+    } /* terms-sidenav */
+  } /* content-block */
+}

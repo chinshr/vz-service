@@ -33,8 +33,12 @@ module ApplicationHelper
     markdown.render(text).html_safe
   end
 
-  def readme_to_markdown
-    markdown(File.read(Rails.root + "README.md"))
+  def privacy_policy_to_markdown
+    markdown(File.read(Rails.root + "PRIVACY-POLICY.md"))
+  end
+
+  def terms_of_service_to_markdown
+    markdown(File.read(Rails.root + "TERMS-OF-SERVICE.md"))
   end
   
   # E.g. devise sessions
