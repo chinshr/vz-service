@@ -38,13 +38,22 @@ body.terms {
   .content-block {
     padding: 60px 0;
 
-    .terms-article {
+    article {
       font-family: "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif !important;
       padding-left: 90px;
       font-size: 18px;
       
-      h1, h2, h3, h4, a {
+      h1, h2, h3, h4, h5, h6 {
         font-family: inherit;
+        margin-bottom: 10px;
+      }
+      
+      p {
+        margin-bottom: 25px;
+      }
+      
+      li {
+        margin-bottom: 10px;
       }
     }
 
@@ -69,7 +78,7 @@ body.terms {
             line-height: 49px;
             color: #7b8386;
             display: block;
-            font-size: 12px;
+            font-size: 14px;
 
             text-decoration: none;
           }
@@ -78,7 +87,6 @@ body.terms {
             font-weight: 700;
             font-style: normal;
             color: #322f31;
-            font-size: 14px;
           }
         }
 
