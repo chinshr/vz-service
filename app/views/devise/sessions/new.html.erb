@@ -3,50 +3,33 @@
 <% end %>
 
 <div class="container-fluid content-primary">
-  <div class="row">
-    <div class="col-lg-12 login-quote">
-      <blockquote class="text-light animated fade-in-down">
-        <p>
-          <%- @login_quote = random_login_quote %>
-          <i class="top">“</i>
-          <%= @login_quote.first %>
-          <i class="bottom">”</i>
-        </p>
-
-        <footer><%= @login_quote.last %></footer>
-      </blockquote>
-    </div><!-- login-quote -->
-  </div><!-- row -->
-
-  <div class="row">
-    <div class="col-lg-12 tile form-tile animated fadeInUp">
-      <%= form_for(resource, {:as => resource_name, :url => session_path(resource_name), 
-          :html => {:class => "form-signin panel animated fade-in-up"}}) do |f| %>
-        <div class="panel-heading">
-          <h1 class="logo"><a class="signup-brand" href="/">Login to VOYZ.ES</a></h1>
+  <%= render "devise/shared/login_quote" %>
+  
+  <div class="tile form-tile animated fadeInUp">
+    <%= form_for(resource, {:as => resource_name, :url => session_path(resource_name), 
+        :html => {:class => "form-signin panel animated fade-in-up"}}) do |f| %>
+      <div class="panel-heading">
+        <h1 class="logo"><a class="signup-brand" href="/">Login to VOYZ.ES</a></h1>
+      </div>
+      <div class="panel-body">
+        <div class="form-group">
+          <%= f.label :email, "Email address" %>
+          <%= f.email_field :email, :autofocus => "autofocus", :autocapitalize => "off", :autocomplete => "off", :autocorrect => "off", :spellcheck => false, :class => "form-control first", :placeholder => "Enter email address" %>
         </div>
-        <div class="panel-body">
-          <div class="form-group">
-            <%= f.label :email, "Email address" %>
-            <%= f.email_field :email, :autofocus => "autofocus", :autocapitalize => "off", :autocomplete => "off", :autocorrect => "off", :spellcheck => false, :class => "form-control first", :placeholder => "Enter email address" %>
-          </div>
-          <div class="form-group">
-            <%= f.label :password, "Password" %>
-            <%= f.password_field :password, :class => "form-control last", :placeholder => "Enter password" %>
-          </div>
-
-          <% if devise_mapping.rememberable? -%>
-            <label class="checkbox"><%= f.check_box :remember_me %> <%= f.label :remember_me %></label>
-          <% end -%>
-        </div>  
-        <div class="panel-footer">
-          <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+        <div class="form-group">
+          <%= f.label :password, "Password" %>
+          <%= f.password_field :password, :class => "form-control last", :placeholder => "Enter password" %>
         </div>
-      <% end %>
-    </div><!-- form-tile -->
-  </div><!-- row -->
 
-  <div class="row">
-    <%= render "devise/shared/links" %>
-  </div><!-- row -->
+        <% if devise_mapping.rememberable? -%>
+          <label class="checkbox"><%= f.check_box :remember_me %> <%= f.label :remember_me %></label>
+        <% end -%>
+      </div>  
+      <div class="panel-footer">
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+      </div>
+    <% end %>
+  </div><!-- form-tile -->
+
+  <%= render "devise/shared/links" %>
 </div>

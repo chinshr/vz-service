@@ -1,0 +1,12 @@
+<div class="login-quote">
+  <blockquote class="text-light animated fade-in-down">
+    <p>
+      <%- @login_quote = random_login_quote %>
+      <i class="top">“</i>
+      <%= @login_quote.first %>
+      <i class="bottom">”</i>
+    </p>
+
+    <footer><%= @login_quote.last %></footer>
+  </blockquote>
+</div><!-- login-quote -->
