@@ -1,5 +1,3 @@
-## Please Read This Carefully
-
 **In using this website you are deemed to have read and agreed to the following terms and conditions:**
 
 
