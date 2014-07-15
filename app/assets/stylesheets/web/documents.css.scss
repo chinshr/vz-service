@@ -1,3 +1,32 @@
+body.documents {
+  background-color: #fff;
+  
+  .container {
+    margin-top: 95px;
+
+    .page-container {
+      border: 1px solid #dbdbdb;
+
+      .title-container {
+        h1 {
+          margin-top: 10px;
+        }
+      }
+      
+      .content-container {
+      }
+      
+    }
+
+    .collab-container {
+
+    }
+
+    
+  }
+
+}
+
 #inline-content {
   font-size: 24px;
 }
@@ -14,8 +43,3 @@
   }
 }
 
-#content-container {
-  h1 {
-    margin-top: 0;
-  }
-}

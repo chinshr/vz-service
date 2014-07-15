@@ -32,6 +32,10 @@ Development Resources
   - Raptor Editor: https://www.raptor-editor.com
   - Save REST with Raptor: https://www.raptor-editor.com/documentation/tutorials/save-rest
   - Quill Rich Text Editor -- http://quilljs.com
+  - Bootstrap editor -- http://mindmup.github.io/bootstrap-wysiwyg/
+  - WYSIHTML5 editor -- http://customer.io/blog/Email-wysiwyg-editor-inspired-by-jekyll.html
+  - Summernote editor on bootstrap -- http://hackerwins.github.io/summernote/
+  - Hallo contentEditable editor -- https://github.com/bergie/hallo
 * Installing ffmpeg on heroku
   - Install multi build packs: https://github.com/ddollar/heroku-buildpack-multi
   - add .buildpacks file
@@ -46,7 +50,12 @@ Development Resources
   - Waveform player, $6 -- http://codecanyon.net/item/zoomsounds-neat-html5-audio-player/4525354
   - Zoomsound continued, themes: http://dzsthemes.net/audioplayer/
   - Wavesurfer -- https://github.com/katspaugh/wavesurfer.js
+  - 60 best media players -- http://www.jqueryrain.com/example/jquery-media-player/page/5/
   - Top Ten players -- http://www.scratchinginfo.com/top-10-best-html5-audio-players/
+  - UbaPlayer with Flash Fallback -- http://www.jqueryrain.com/?W1oH_b8d
+  - jWebAudio with effects/gaming -- http://01org.github.io/jWebAudio/
+  - Skinnable browser+audio -- http://mediaelementjs.com/
+  - Build your own tutorial: http://www.alexkatz.me/html5-audio/building-a-custom-html5-audio-player-with-javascript/
 * Accept Incoming Emails into a Heroku App Using SendGrid 
   - ruby processor -- http://nanceskitchen.com/2010/02/21/accept-incoming-emails-into-a-heroku-app-using-sendgrid/
   - test sendgrid parse api by sending email to: my@app21958309.bymail.in (<any-address>@<sendgrid-user-name>.bymail.in)
@@ -151,6 +160,10 @@ Development Resources
   - PhoneGap audio example: https://github.com/bargar/phone-gap-audio-example
   - http://docs.phonegap.com/en/3.3.0/cordova_media_media.md.html#Media
 * Standards Terms -- http://www.entrepreneur.com/formnet/form/1174
+* Video player for cover background videos -- https://github.com/stefanerickson/covervid
+* Live updating with Rails:
+  - Faye implementation tutorial -- http://code.tutsplus.com/tutorials/how-to-use-faye-as-a-real-time-push-server-in-rails--net-22600
+  - ActionController::Live, see online resources
 
 Business Resources
 ------------------

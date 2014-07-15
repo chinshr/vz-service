@@ -5,7 +5,7 @@
   <meta name="description" content="Record your life. Your conversations deserve a place to be found.">
   <meta name="author" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title><%= content_for?(:title) ? yield(:title) : "VOYZ.ES" %></title>
+  <title><%= content_for?(:title) ? "#{yield(:title)} — VOYZ.ES" : "VOYZ.ES" %></title>
   <%= csrf_meta_tags %>
   
   <link rel="dns-prefetch" href="//fonts.googleapis.com">
@@ -42,6 +42,12 @@
   <!-- For all other devices -->
   <!-- Size should be 32 x 32 pixels -->
   <%= favicon_link_tag 'favicon.ico', :rel => 'shortcut icon' %>
+  
+  <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!--[if lt IE 9]>
+    <script src="/assets/beachstrap/html5shiv.js"></script>
+    <script src="/assets/beachstrap/respond.min.js"></script>
+  <![endif]-->
 </head>
 <body class="<%= dom_controller_class %> <%= dom_controller_action_class %>">
   <div id="content">

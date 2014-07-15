@@ -46,9 +46,9 @@ We do not sell, trade, or otherwise transfer to outside parties your personally 
 
 Occasionally, at our discretion, we may include or offer third party products or services on our website. These third party sites have separate and independent privacy policies. We therefore have no responsibility or liability for the content and activities of these linked sites. Nonetheless, we seek to protect the integrity of our site and welcome any feedback about these sites.
 
-## Terms and Conditions 
+## Terms of Service
 
-Please also visit our Terms and Conditions section establishing the use, disclaimers, and limitations of liability governing the use of our website at http://voyz.es/terms/terms-of-service
+Please also visit our Terms of Service section establishing the use, disclaimers, and limitations of liability governing the use of our website at http://voyz.es/terms/terms-of-service
 
 ## Your Consent 
 

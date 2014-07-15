@@ -1,3 +1,22 @@
+<div class="container">
+  <div class="row page-overlay">
+    <div class="col-md-1 collab-container">
+      JF
+    </div><!-- collab-container -->
+    <div class="col-md-10 page-container">
+      <div class="title-container">
+        <h1><%= @document.title %></h1>
+      </div>
+      <div class="content-container">
+        <div id="inline-content" class="editor">
+          <%= @document.content %>
+        </div>
+      </div>
+    </div><!-- page-container -->
+  </div><!-- row -->
+</div>
+
+<% if false %>
 <div class="row">
   <div id="" class="col-md-8">
     <%= render "content", edit: true %>
@@ -6,3 +25,4 @@
     <%= render "sidebar", edit: true %>
   </div>
 </div>
+<% end %>
