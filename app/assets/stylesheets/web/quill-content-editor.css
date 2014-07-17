@@ -1,0 +1,9 @@
+body {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 1.5em;
+  -webkit-font-smoothing: antialiased;
+  padding: 0;
+  height: auto;
+}

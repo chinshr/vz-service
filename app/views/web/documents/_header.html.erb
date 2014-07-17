@@ -14,33 +14,33 @@
         </div>
         
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-          <% if current_user %>
-          <ul class="nav navbar-nav navbar-right">
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><img class="avatar" ng-src="https://www.gravatar.com/avatar/7bd6975cb131c69ce17b3b77e2e465c5.jpg?d=retro&amp;size=80" src="https://www.gravatar.com/avatar/7bd6975cb131c69ce17b3b77e2e465c5.jpg?d=retro&amp;size=80"><span>Account Settings </span><b class="caret"></b></a>
-              <ul class="dropdown-menu">
-                <li><a href="<%= web_dashboard_path %>"><span class="badge badge-warning pull-right">3</span>Dashboard</a></li>
-                <li><a href="<%= web_account_profile_path %>">User Profile</a></li>
-                <li><a href="<%= web_account_billing_path %>">Billing Information</a></li>
-                <li class="divider"></li>
-                <li class="logout">
-                  <%= link_to "Logout", destroy_user_session_path, :method => :delete, :class => "btn btn-small btn-danger" %>
-                </li>
-              </ul>
-            </li><!-- dropdown -->
+          <ul id="content-editor-toolbar-container" class="nav navbar-nav toolbar-nav">
+            <!-- font-style -->
+            <li><button title="Bold" type="button" class="btn btn-xs btn-tlb ql-bold fa fa-bold"></button></li>
+            <li><button title="Italic" type="button" class="btn btn-xs btn-tlb ql-italic fa fa-italic"></button></li>
+            <li><button title="Underline" type="button" class="btn btn-xs btn-tlb ql-underline fa fa-underline"></button></li>
+            <li><button title="Strike" type="button" class="btn btn-xs btn-tlb ql-strike fa fa-strikethrough"></button></li>
+
+            <li class="separator"></li>
+            
+            <!-- text-align -->
+            <li><button title="Align Left" type="button" data-value="left" class="btn btn-md btn-tlb ql-align fa fa-align-left"></button></li>
+            <li><button title="Align Center" type="button" data-value="center" class="btn btn-md btn-tlb ql-align-center fa fa-align-center"></button></li>
+            <li><button title="Align Right" type="button" data-value="right" class="btn btn-md btn-tlb ql-align-right fa fa-align-right"></button></li>
+
+            <li class="separator"></li>
+            
+            <!-- lists -->
+            <li><button title="Numbered List" type="button" class="btn btn-md btn-tlb ql-list fa fa-list-ol"></button></li>
+            <li><button title="Bulleted List" type="button" class="btn btn-md btn-tlb ql-bullet fa fa-list-ul"></button></li>
           </ul>
-          <% else %>
-          <% if false %>
-          <ul class="nav navbar-nav">
-            <li class="active"><a href="#">Overview</a></li>
-            <li><a href="#">Getting Started</a></li>
-            <li><a href="#">Pricing</a></li>
+          
+          <ul id="media-player-toolbar-container" class="nav navbar-nav toolbar-nav">
+            <!-- font-style -->
+            <li><button title="Play" type="button" class="btn btn-tlb fa fa-play"></button></li>
           </ul>
-          <% end %>
-          <div id="login-buttons" class="btn-group btn-group-horizontal pull-right">
-            <a href="<%= new_user_session_path %>" class="btn btn-small btn-flat-plain">Login</a>
-          </div>
-        <% end %>
+          
+          
         </div><!-- collapse navbar-collapse -->
       </div><!-- container-fluid -->
     </nav>

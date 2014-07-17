@@ -19,7 +19,7 @@
 //= require rails.validations
 //= require rails.validations.bootstrap
 //= require detect_timezone
-//= require raptor
+//= require quill
 //= require underscore
 //= require backbone
 //= require backbone-validation

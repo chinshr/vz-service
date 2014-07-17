@@ -1,4 +1,45 @@
+@import 'application-custom';
+
 body.documents {
+
+  header {
+    
+    .toolbar-nav {
+      li {
+        padding: 15px 5px;
+        
+        .separator {
+          padding: 15px 5px;
+        }
+      }
+      
+      .btn-tlb {
+        xpadding: 1px 5px;
+        xfont-size: 12px;
+        xline-height: 1.5;
+        xborder-radius: 3px;
+        padding-left: 3px;
+        padding-right: 3px;
+        background-color: transparent;
+        color: #ddd;
+
+        &:active, 
+        &:hover {
+          color: #fff;
+        }
+        
+        &.ql-active {
+          color: $color-blue;
+        }
+      }
+
+    }
+  }
+  
+  #editor-container {
+    font-size: 24px;
+  }
+  
   background-color: #fff;
   
   .container {
@@ -6,20 +47,69 @@ body.documents {
 
     .page-container {
       border: 1px solid #dbdbdb;
+      border-radius: 2px;
+
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-weight: normal;
+      font-size: 14px;
+      line-height: 1.5em;
+      color: #000;
+      
+      padding: 25px 45px;
 
       .title-container {
+        border-bottom: 1px solid #ededed;
+        xpadding-bottom: 15px;
+        
         h1 {
-          margin-top: 10px;
+          font: inherit;
+          font-weight: bold;
+          font-size: 28px;
+          color: #444;
+          cursor: text;
+          text-overflow: ellipsis;
+          overflow: hidden;
+          margin: 0;
+          line-height: 40px;
+          padding-bottom: 10px;
         }
       }
       
       .content-container {
+        padding-top: 15px;
+        
+        .content-holder {
+        }
+        
       }
       
     }
 
     .collab-container {
-
+      .note-head {
+        height: 28px;
+        width: 28px;
+        border-radius: 3px;
+        box-shadow: 0px 1px 1px #999;
+        margin-right: 5px;
+        margin-bottom: 0;
+        cursor: default;
+        position: relative;
+        transition: left 400ms ease, opacity 400ms linear, top 400ms ease;
+        -webkit-transition: left 400ms ease, opacity 400ms linear, top 400ms ease;
+        top: calc(50% - 14px);
+        left: 35px;
+      }
+      
+      .user-initials {
+        display: inline-block;
+        color: white;
+        line-height: 29px;
+        font-size: 13px;
+        font-family: Helvetica;
+        text-align: center;
+        vertical-align: top;
+      }
     }
 
     

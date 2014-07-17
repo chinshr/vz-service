@@ -163,7 +163,11 @@ Development Resources
 * Video player for cover background videos -- https://github.com/stefanerickson/covervid
 * Live updating with Rails:
   - Faye implementation tutorial -- http://code.tutsplus.com/tutorials/how-to-use-faye-as-a-real-time-push-server-in-rails--net-22600
+  - Faye example app on heroku -- https://github.com/ntenisOT/Faye-Heroku-Cedar-RedisToGo
   - ActionController::Live, see online resources
+  - Adding real time to Rails w/ WebSockets and http://liamkaufman.com/blog/2013/02/27/adding-real-time-to-a-restful-rails-app/
+  - Real time rails w/ node.js-- http://mikeatlas.github.io/realtime-rails/
+  - Pusher Rails on Heroku example -- https://github.com/phuphighter/pusher_app_example
 
 Business Resources
 ------------------

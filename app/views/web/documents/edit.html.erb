@@ -1,14 +1,14 @@
 <div class="container">
   <div class="row page-overlay">
     <div class="col-md-1 collab-container">
-      JF
+      <div class="note-head user-initials" id="188274716" title="Juergen Fesslmeier" data-bucket-number="0" style="opacity: 1; background-color: rgb(242, 44, 68);">JF</div>
     </div><!-- collab-container -->
     <div class="col-md-10 page-container">
       <div class="title-container">
-        <h1><%= @document.title %></h1>
+        <h1><div id="title-editor" class="editor"><%= @document.title %></div></h1>
       </div>
       <div class="content-container">
-        <div id="inline-content" class="editor">
+        <div id="content-editor" class="content-holder editor">
           <%= @document.content %>
         </div>
       </div>
