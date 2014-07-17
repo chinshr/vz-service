@@ -79,7 +79,9 @@ Development Resources
   - VAD engery detector -- http://stackoverflow.com/questions/5498142/what-is-a-good-approach-for-extracting-portions-of-speech-from-an-arbitrary-audi
 * Convert audio to flac -- http://superuser.com/questions/339023/convert-audio-file-to-flac-with-ffmpeg
 * A command line tool to slice sound files at onset or beat timestamps -- http://aubio.org/manpages/latest/aubiocut.1.html
-* How to store data in S3 and allow user access in a secure way -- http://stackoverflow.com/questions/10811017/how-to-store-data-in-s3-and-allow-user-access-in-a-secure-way-with-rails-api-i
+* S3 Download / Streaming
+  - How to store data in S3 and allow user access in a secure way -- http://stackoverflow.com/questions/10811017/how-to-store-data-in-s3-and-allow-user-access-in-a-secure-way-with-rails-api-i
+  - Nice writup using paperclip providing authorized S3 URLs: http://thewebfellas.com/blog/2009/8/29/protecting-your-paperclip-downloads
 * Resources for doing noise reduction in speech -- http://www1.icsi.berkeley.edu/Speech/papers/gelbart-ms/pointers/
   - Aurora front-end archive, voice detection, noise reduction http://www1.icsi.berkeley.edu/Speech/papers/qio/
   - Convert audio to header less PCM http://stackoverflow.com/questions/4854513/can-ffmpeg-convert-audio-to-raw-pcm-if-so-how

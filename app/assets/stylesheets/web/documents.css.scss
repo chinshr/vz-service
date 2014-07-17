@@ -14,10 +14,6 @@ body.documents {
       }
       
       .btn-tlb {
-        xpadding: 1px 5px;
-        xfont-size: 12px;
-        xline-height: 1.5;
-        xborder-radius: 3px;
         padding-left: 3px;
         padding-right: 3px;
         background-color: transparent;
@@ -33,6 +29,33 @@ body.documents {
         }
       }
 
+    } /* .toobar-nav */
+    
+    .audio-player-nav {
+      #progress-bar {
+        position: absolute;
+        left: 0;
+        top: 50%;
+        margin-top: 0px;
+        height: 3px;
+        left: 0%;
+        width: 90%;
+        z-index: 10;
+      }
+      
+      .waveform-container {
+        position: relative;
+        min-width: 300px;
+        height: 40px;
+        
+        wave > wave {
+          left: 0;
+        }
+        
+        canvas {
+          left: 0;
+        }
+      }
     }
   }
   

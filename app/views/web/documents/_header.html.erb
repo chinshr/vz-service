@@ -35,11 +35,21 @@
             <li><button title="Bulleted List" type="button" class="btn btn-md btn-tlb ql-bullet fa fa-list-ul"></button></li>
           </ul>
           
-          <ul id="media-player-toolbar-container" class="nav navbar-nav toolbar-nav">
-            <!-- font-style -->
-            <li><button title="Play" type="button" class="btn btn-tlb fa fa-play"></button></li>
+          <ul id="media-player-toolbar-container" class="nav navbar-nav toolbar-nav audio-player-nav">
+            <!-- player -->
+            <li><button title="Play" type="button" class="btn btn-tlb fa fa-play player player-play" data-action="play"></button></li>
+            <li>
+              <div id="waveform" class="waveform-container">
+                <div class="progress progress-striped active" id="progress-bar">
+                    <div class="progress-bar progress-bar-info"></div>
+                </div>
+                <!-- Here goes the waveform -->
+              </div>
+            </li>
+            <li><button title="Backward" type="button" class="btn btn-tlb fa fa-step-backward player player-step-backward" data-action="step-backward"></button></li>
+            <li><button title="Forward" type="button" class="btn btn-tlb fa fa-step-forward player player-step-forward" data-action="step-forward"></button></li>
+            
           </ul>
-          
           
         </div><!-- collapse navbar-collapse -->
       </div><!-- container-fluid -->
