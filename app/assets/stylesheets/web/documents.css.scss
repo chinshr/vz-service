@@ -1,16 +1,53 @@
 @import 'application-custom';
 
 body.documents {
+  background-color: #fff;
 
   header {
+    height: 50px;
+    
+    .dropdown {
+      height: 50px;
+      
+      .dropdown-toggle {
+        border: 0;
+        background-color: transparent;
+        padding: 0;
+        
+        .caret {
+          color: #aaa;
+          margin-top: 23px;
+        }
+      }
+    }
+    
+    #logo {
+      margin: 13px 0;
+      text-indent: -9999px;
+      background: url(/assets/voyzes-logo-small.png) no-repeat 0 0;
+      width: 75px;
+    }
     
     .toolbar-nav {
+      padding-left: 30px;
+      
       li {
-        padding: 15px 5px;
+        padding: 0;
+        
+        button {
+          outline: none !important;
+          height: 50px;
+          margin: auto 5px;
+          width: 20px;
+        }
         
         .separator {
           padding: 15px 5px;
         }
+      }
+      
+      li.waveform-item {
+        padding: 5px 5px;
       }
       
       .btn-tlb {
@@ -29,10 +66,12 @@ body.documents {
         }
       }
 
-    } /* .toobar-nav */
+    } /* .toolbar-nav */
     
     .audio-player-nav {
-      #progress-bar {
+      padding-left: 15px;
+      
+      #player-progress-bar {
         position: absolute;
         left: 0;
         top: 50%;
@@ -56,89 +95,90 @@ body.documents {
           left: 0;
         }
       }
-    }
-  }
-  
-  #editor-container {
-    font-size: 24px;
-  }
-  
-  background-color: #fff;
+    } /* .audio-player-nav */
+  } /* header */
   
   .container {
     margin-top: 95px;
-
-    .page-container {
-      border: 1px solid #dbdbdb;
-      border-radius: 2px;
-
-      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-      font-weight: normal;
-      font-size: 14px;
-      line-height: 1.5em;
-      color: #000;
-      
-      padding: 25px 45px;
-
-      .title-container {
-        border-bottom: 1px solid #ededed;
-        xpadding-bottom: 15px;
-        
-        h1 {
-          font: inherit;
-          font-weight: bold;
-          font-size: 28px;
-          color: #444;
-          cursor: text;
-          text-overflow: ellipsis;
-          overflow: hidden;
-          margin: 0;
-          line-height: 40px;
-          padding-bottom: 10px;
-        }
-      }
-      
-      .content-container {
-        padding-top: 15px;
-        
-        .content-holder {
-        }
-        
-      }
-      
-    }
-
-    .collab-container {
-      .note-head {
-        height: 28px;
-        width: 28px;
-        border-radius: 3px;
-        box-shadow: 0px 1px 1px #999;
-        margin-right: 5px;
-        margin-bottom: 0;
-        cursor: default;
-        position: relative;
-        transition: left 400ms ease, opacity 400ms linear, top 400ms ease;
-        -webkit-transition: left 400ms ease, opacity 400ms linear, top 400ms ease;
-        top: calc(50% - 14px);
-        left: 35px;
-      }
-      
-      .user-initials {
-        display: inline-block;
-        color: white;
-        line-height: 29px;
-        font-size: 13px;
-        font-family: Helvetica;
-        text-align: center;
-        vertical-align: top;
-      }
-    }
-
     
-  }
+    .page-overlay {
+      /*
+      position: absolute;
+      top: 95px;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      overflow: hidden;
+      */
+                
+      .page-container {
+        border: 1px solid #dbdbdb;
+        border-radius: 2px;
+        padding: 25px 45px;
+        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        font-weight: normal;
+        font-size: 16px;
+        line-height: 1.5em;
+        height: 100%;
 
-}
+        .title-container {
+          border-bottom: 1px solid #ededed;
+          xpadding-bottom: 15px;
+
+          h1 {
+            font: inherit;
+            font-weight: bold;
+            font-size: 28px;
+            color: #444;
+            cursor: text;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            margin: 0;
+            line-height: 40px;
+            padding-bottom: 10px;
+          }
+        }
+
+        .content-container {
+          padding-top: 20px;
+
+          .content-holder {
+            overflow: hidden;
+          }
+        }
+
+      }
+
+      .collab-container {
+        .note-head {
+          height: 28px;
+          width: 28px;
+          border-radius: 3px;
+          box-shadow: 0px 1px 1px #999;
+          margin-right: 5px;
+          margin-bottom: 0;
+          cursor: default;
+          position: relative;
+          transition: left 400ms ease, opacity 400ms linear, top 400ms ease;
+          -webkit-transition: left 400ms ease, opacity 400ms linear, top 400ms ease;
+          top: calc(50% - 14px);
+          left: 35px;
+        }
+
+        .user-initials {
+          display: inline-block;
+          color: white;
+          line-height: 29px;
+          font-size: 13px;
+          font-family: Helvetica;
+          text-align: center;
+          vertical-align: top;
+        }
+      } /* .collab-container */
+    } /* .page-overlay */
+    
+  } /* .container */
+} /* body.documents */
 
 #inline-content {
   font-size: 24px;

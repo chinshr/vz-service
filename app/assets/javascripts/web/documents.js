@@ -5,35 +5,50 @@
 //= require wavesurfer/webaudio.media
 //= require wavesurfer/drawer
 //= require wavesurfer/drawer.canvas
-
+//= require quill
 
 /* Quill Editor */
 $(document).ready(function() {
+
   var titleEditor = new Quill('#title-editor', {
-    modules: {
+    'modules': {
     },
     'styles': '/assets/web/quill-title-editor.css'
   });
 
   var contentEditor = new Quill('#content-editor', {
-    modules: {
+    'modules': {
       'toolbar': {
         container: '#content-editor-toolbar-container'
       },
     },
     'styles': '/assets/web/quill-content-editor.css'
   });
+  
+  contentEditor.addContainer('spacer-container');
+  contentEditor.onModuleLoad('toolbar', function(toolbar) {
+    $('#content-editor iframe').contents().find('body').css('overflow', 'hidden');
+  });
+  contentEditor.on('text-change', function(delta, source) {
+    $('#content-editor').height(contentEditor.root.ownerDocument.body.scrollHeight);
+  });
+  
+  var keyboard = contentEditor.getModule('keyboard');
+  keyboard.addHotkey({key: 32, metaKey: true, shiftKey: true}, function(range) {
+    console.log('user hit command + shift + [');
+    return true;   // return false will prevent other listeners from receiving the event
+  });
+  
 });
 
 /* player */
-
 var wavesurfer = Object.create(WaveSurfer);
 
 $(document).ready(function() {
-  
-  /* weaveform progress bar */
+
+  /* waveform load progress bar */
   (function () {
-    var progressDiv = document.querySelector('#progress-bar');
+    var progressDiv = document.querySelector('#player-progress-bar');
     var progressBar = progressDiv.querySelector('.progress-bar');
 
     var showProgress = function (percent) {
@@ -52,21 +67,28 @@ $(document).ready(function() {
   }());
   
   wavesurfer.init({
-    container     : document.querySelector('#waveform'),
+    container     : $('#waveform').get(0),  // document.querySelector('#waveform'),
     height        : 40,
     waveColor     : '#ddd', // 'violet',
-    progressColor : '#fff',
+    progressColor : '#fff', // '#3f6169', // '#fff',
     loaderColor   : '#555',
-    cursorColor   : '#5492ce', // '#3f6169',
-    markerWidth   : 0.5,
-    audioRate     : 2,
+    cursorColor   : '#5492ce',
+    markerWidth   : 1,
+    audioRate     : 1,
     normalize     : true
   });
   
-  wavesurfer.load('/samples/i-like-pickles.wav');
-  // wavesurfer.loadBlob('/samples/i-like-pickles.wav');
+  //wavesurfer.load('/samples/i-like-pickles.wav');
+  wavesurfer.load('/samples/genesis-1-1-en-us.m4a');
   
-});
+  wavesurfer.backend.on('audioprocess', function onFinish(time) {
+      if (time >= wavesurfer.getDuration() - 0.01) {
+        $('.player-play-pause').addClass('fa-play').removeClass('fa-pause');
+        wavesurfer.un('audioprogress', onFinish);
+        wavesurfer.stop();
+      }
+  });
+}); /* on document load */
 
 // Play at once when ready
 // Won't work on iOS until you touch the page
@@ -76,14 +98,24 @@ wavesurfer.on('ready', function () {
 
 // Do something when the clip is over
 wavesurfer.on('finish', function () {
-  console.log('Finished playing');
+  $(event.target).addClass('fa-play').removeClass('fa-pause');
 });
 
 // Bind buttons and keypresses
 (function () {
   var eventHandlers = {
-    'play': function () {
+    'toggle-play-pause': function (event) {
+      if ($(event.target).hasClass('fa-play')) {
+        $(event.target).addClass('fa-pause').removeClass('fa-play');
+      } else {
+        $(event.target).addClass('fa-play').removeClass('fa-pause');
+      }
       wavesurfer.playPause();
+    },
+
+    'reset': function () {
+      $('.player-play-pause').addClass('fa-play').removeClass('fa-pause');
+      wavesurfer.stop();
     },
 
     'green-mark': function () {
@@ -112,32 +144,73 @@ wavesurfer.on('finish', function () {
 
     'toggle-mute': function () {
       wavesurfer.toggleMute();
+    },
+    
+    'toggle-playback-rate': function (event) {
+      if (wavesurfer.backend.playbackRate > 1.0) {
+        $(event.target).addClass('fa-angle-double-down').removeClass('fa-angle-down');
+        wavesurfer.backend.setPlaybackRate(1);
+      } else if (wavesurfer.backend.playbackRate == 1) {
+        if ($(event.target).hasClass('fa-angle-double-up')) {
+          $(event.target).addClass('fa-angle-down').removeClass('fa-angle-double-up').removeClass('fa-angle-douple-down');
+          wavesurfer.backend.setPlaybackRate(1.25);
+        } else if ($(event.target).hasClass('fa-angle-double-down')){
+          $(event.target).addClass('fa-angle-up').removeClass('fa-angle-double-down').removeClass('fa-angle-douple-up');
+          wavesurfer.backend.setPlaybackRate(0.75);
+        }
+      } else if (wavesurfer.backend.playbackRate < 1.0) {
+        $(event.target).addClass('fa-angle-double-up').removeClass('fa-angle-up');
+        wavesurfer.backend.setPlaybackRate(1);
+      } else {
+        $(event.target).addClass('fa-angle-double-up').removeClass('fa-angle-up').removeClass('fa-angle-douple-down').removeClass('fa-angle-douple-up');
+        wavesurfer.backend.setPlaybackRate(1);
+      }
     }
+    
   };
 
-/*
-  document.addEventListener('keydown', function (e) {
+  $(document).on('keydown', function (e) {
     var map = {
-      32: 'play',       // space
-      38: 'green-mark', // up
-      40: 'red-mark',   // down
-      37: 'back',       // left
-      39: 'forth'       // right
+      32: 'toggle-play-pause',       // space
+      37: 'step-backward',       // left
+      39: 'step-forward'       // right
     };
+    
     if (e.keyCode in map) {
+      // alert(e.keyCode);
       var handler = eventHandlers[map[e.keyCode]];
       e.preventDefault();
       handler && handler(e);
     }
   });
-*/
 
-  document.addEventListener('click', function (e) {
+  $('iframe').each(function (index, iframe) {
+    var doc = iframe.contentWindow.document;
+    
+    $(doc).on('keydown', function (e) {
+      var map = {
+        32: 'toggle-play-pause',       // space
+        37: 'step-backward',           // left
+        39: 'step-forward'             // right
+      };
+
+      if (e.keyCode in map) {
+        var handler = eventHandlers[map[e.keyCode]];
+        e.preventDefault();
+        handler && handler(e);
+      }
+    });
+  });
+  
+  // key('ctrl+r', function(){ alert('stopped reload!'); return false });
+
+  $(document).on('click', function (e) {
     var action = e.target.dataset && e.target.dataset.action;
     if (action && action in eventHandlers) {
       eventHandlers[action](e);
     }
   });
+  
 }());
 
 // Flash mark when it's played over
@@ -159,43 +232,3 @@ wavesurfer.on('error', function (err) {
   console.error(err);
 });
 
-// Drag'n'drop
-/*
-document.addEventListener('DOMContentLoaded', function () {
-    var toggleActive = function (e, toggle) {
-        e.stopPropagation();
-        e.preventDefault();
-        toggle ? e.target.classList.add('wavesurfer-dragover') :
-            e.target.classList.remove('wavesurfer-dragover');
-    };
-
-    var handlers = {
-        // Drop event
-        drop: function (e) {
-            toggleActive(e, false);
-
-            // Load the file into wavesurfer
-            if (e.dataTransfer.files.length) {
-                wavesurfer.loadBlob(e.dataTransfer.files[0]);
-            } else {
-                wavesurfer.fireEvent('error', 'Not a file');
-            }
-        },
-
-        // Drag-over event
-        dragover: function (e) {
-            toggleActive(e, true);
-        },
-
-        // Drag-leave event
-        dragleave: function (e) {
-            toggleActive(e, false);
-        }
-    };
-
-    var dropTarget = document.querySelector('#drop');
-    Object.keys(handlers).forEach(function (event) {
-        dropTarget.addEventListener(event, handlers[event]);
-    });
-});
-*/

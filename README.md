@@ -170,6 +170,10 @@ Development Resources
   - Adding real time to Rails w/ WebSockets and http://liamkaufman.com/blog/2013/02/27/adding-real-time-to-a-restful-rails-app/
   - Real time rails w/ node.js-- http://mikeatlas.github.io/realtime-rails/
   - Pusher Rails on Heroku example -- https://github.com/phuphighter/pusher_app_example
+* Speex, speech codec with voice activation (VAD), echo cancellation -- http://www.speex.org/docs/manual/speex-manual/node4.html#SECTION00420000000000000000
+* Opus Codec, successor of Speex, w/ Skype contributions
+  - Opus voice paper http://jmvalin.ca/papers/aes135_opus_silk.pdf
+* Codepen for Quill bug -- http://codepen.io/anon/pen/GCIku
 
 Business Resources
 ------------------
@@ -178,7 +182,7 @@ Business Resources
   - Gridspace -- http://gridspace.com
   - Transcribe Wreally -- http://transcribe.wreally.com
 * HIPAA compliance (box notes is): http://en.wikipedia.org/wiki/Health_Insurance_Portability_and_Accountability_Act
-
+* Dictaphone ebay buying guide -- http://www.ebay.com/gds/Dictaphone-Buying-Guide-/10000000177630514/g.html
 
 
 SendGrid Setup
