@@ -19,6 +19,26 @@ body.documents {
           margin-top: 23px;
         }
       }
+      
+      .dropdown-menu {
+        box-shadow: none;
+        margin-top: 0;
+        border-color: #aaa;
+        
+        li {
+          a {
+            text-transform: uppercase;
+            font-weight: bold;
+            padding-left: 10px;
+            padding-right: 0;
+            
+            i {
+              padding-right: 10px;
+            }
+          }
+        }
+      }
+      
     }
     
     #logo {
@@ -41,8 +61,9 @@ body.documents {
           width: 20px;
         }
         
-        .separator {
-          padding: 15px 5px;
+        &.separator {
+          padding-left: 3px;
+          padding-right: 3px;
         }
       }
       
@@ -51,8 +72,8 @@ body.documents {
       }
       
       .btn-tlb {
-        padding-left: 3px;
-        padding-right: 3px;
+        padding-left: 0;
+        padding-right: 0;
         background-color: transparent;
         color: #ddd;
 
@@ -63,6 +84,7 @@ body.documents {
         
         &.ql-active {
           color: $color-blue;
+          xcolor: $color-orange;
         }
       }
 
@@ -71,6 +93,12 @@ body.documents {
     .audio-player-nav {
       padding-left: 15px;
       
+      li {
+        button {
+          margin-left: 2px;
+          margin-right: 2px;
+        }
+      }
       #player-progress-bar {
         position: absolute;
         left: 0;
