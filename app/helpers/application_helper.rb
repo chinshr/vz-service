@@ -95,4 +95,22 @@ module ApplicationHelper
     FAMOUS_QUOTES[rand(FAMOUS_QUOTES.size.to_i)]
   end
   
+  # E.g.
+  #
+  #  :bold, 'B', :meta_key
+  #  :align, 'A', [:shift_key, :meta_key]
+  #
+  def key_cmd(string, key = nil, modifiers = nil)
+    modifiers = [modifiers].flatten
+    modifiers = modifiers.inject([]) do |ms, e|
+      ms << case e
+      when :meta_key then "⌘"
+      when :shift_key then "⇧"
+      when :alt_key then "⌥"
+      end
+    end
+    modifiers = modifiers.reject(&:blank?).inject('') {|s, m| s += m.to_s}
+    key = key.blank? ? "" : (modifiers.blank? ? "(#{key.to_s})" : "(#{modifiers}-#{key})")
+    "#{string.to_s.humanize} #{key}".html_safe
+  end
 end

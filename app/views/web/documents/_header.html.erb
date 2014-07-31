@@ -15,7 +15,7 @@
             <span class="caret"></span>
           </button>
           <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
-            <li role="presentation"><a role="menuitem" href="#"><i class="glyphicon glyphicon-dashboard"></i>Dashboard</a></li>
+            <li role="presentation"><a role="menuitem" href="/dashboard"><i class="fa fa-level-up"></i>Dashboard</a></li>
           </ul>
         </div>
       </div><!-- navbar-header -->
@@ -23,28 +23,28 @@
       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
         <ul id="content-editor-toolbar-container" class="nav navbar-nav toolbar-nav">
           <!-- font-style -->
-          <li><button title="Bold" type="button" class="btn btn-md btn-tlb ql-bold fa fa-bold"></button></li>
-          <li><button title="Italic" type="button" class="btn btn-md btn-tlb ql-italic fa fa-italic"></button></li>
-          <li><button title="Underline" type="button" class="btn btn-md btn-tlb ql-underline fa fa-underline"></button></li>
-          <li><button title="Strike" type="button" class="btn btn-md btn-tlb ql-strike fa fa-strikethrough"></button></li>
+          <li><button title="<%= key_cmd(:bold, 'B', :meta_key) %>" type="button" class="btn btn-md btn-tlb ql-bold fa fa-bold" data-toggle="tooltip" data-placement="bottom"></button></li>
+          <li><button title="<%= key_cmd(:italic, 'I', :meta_key) %>" type="button" class="btn btn-md btn-tlb ql-italic fa fa-italic" data-toggle="tooltip" data-placement="bottom"></button></li>
+          <li><button title="<%= key_cmd(:underline, 'U', :meta_key) %>" type="button" class="btn btn-md btn-tlb ql-underline fa fa-underline" data-toggle="tooltip" data-placement="bottom"></button></li>
+          <li><button title="<%= key_cmd(:strikethrough, 'S', :meta_key) %>" type="button" class="btn btn-md btn-tlb ql-strike fa fa-strikethrough" data-toggle="tooltip" data-placement="bottom"></button></li>
 
           <li class="separator">&nbsp;</li>
           
           <!-- text-align -->
-          <li><button title="Align Left" type="button" data-value="left" class="btn btn-md btn-tlb ql-align fa fa-align-left"></button></li>
-          <li><button title="Align Center" type="button" data-value="center" class="btn btn-md btn-tlb ql-align-center fa fa-align-center"></button></li>
-          <li><button title="Align Right" type="button" data-value="right" class="btn btn-md btn-tlb ql-align-right fa fa-align-right"></button></li>
+          <li><button title="<%= key_cmd(:align_left) %>" type="button" data-value="left" class="btn btn-md btn-tlb ql-align fa fa-align-left" data-toggle="tooltip" data-placement="bottom"></button></li>
+          <li><button title="<%= key_cmd(:align_center) %>" type="button" data-value="center" class="btn btn-md btn-tlb ql-align-center fa fa-align-center" data-toggle="tooltip" data-placement="bottom"></button></li>
+          <li><button title="<%= key_cmd(:align_right) %>" type="button" data-value="right" class="btn btn-md btn-tlb ql-align-right fa fa-align-right" data-toggle="tooltip" data-placement="bottom"></button></li>
 
           <li class="separator">&nbsp;</li>
           
           <!-- lists -->
-          <li><button title="Numbered List" type="button" class="btn btn-md btn-tlb ql-list fa fa-list-ol"></button></li>
-          <li><button title="Bulleted List" type="button" class="btn btn-md btn-tlb ql-bullet fa fa-list-ul"></button></li>
+          <li><button title="<%= key_cmd(:numbered_list) %>" type="button" class="btn btn-md btn-tlb ql-list fa fa-list-ol" data-toggle="tooltip" data-placement="bottom"></button></li>
+          <li><button title="<%= key_cmd(:bulleted_list) %>" type="button" class="btn btn-md btn-tlb ql-bullet fa fa-list-ul" data-toggle="tooltip" data-placement="bottom"></button></li>
         </ul>
         
         <ul id="media-player-toolbar-container" class="nav navbar-nav toolbar-nav audio-player-nav">
           <!-- player -->
-          <li><button title="Play" type="button" class="btn btn-md btn-tlb fa fa-play player player-play-pause" data-action="toggle-play-pause"></button></li>
+          <li><button title="<%= key_cmd(:play, 'Space', [:shift_key, :meta_key]) %>" type="button" class="btn btn-lg btn-tlb fa fa-play player player-play-pause" data-action="toggle-play-pause" data-toggle="tooltip" data-placement="bottom"></button></li>
           <li class="waveform-item">
             <div id="waveform" class="waveform-container">
               <div class="progress progress-striped active" id="player-progress-bar">
@@ -53,10 +53,10 @@
               <!-- Here goes the waveform -->
             </div>
           </li>
-          <li><button title="Playback Speed" type="button" class="btn btn-lg btn-tlb fa fa-angle-double-up player player-toggle-playback-rate" data-action="toggle-playback-rate"></button></li>
-          <li><button title="Step Backward" type="button" class="btn btn-sm btn-tlb fa fa-step-backward player player-step-backward" data-action="step-backward"></button></li>
-          <li><button title="Step Forward" type="button" class="btn btn-sm btn-tlb fa fa-step-forward player player-step-forward" data-action="step-forward"></button></li>
-          <li><button title="Reset" type="button" class="btn btn-md btn-tlb glyphicon glyphicon-repeat player player-reset" data-action="reset"></button></li>
+          <li><button title="<%= key_cmd(:toggle_playback_speed) %>" type="button" class="btn btn-lg btn-tlb fa fa-angle-double-up player player-toggle-playback-rate" data-action="toggle-playback-rate" data-toggle="tooltip" data-placement="bottom"></button></li>
+          <li><button title="<%= key_cmd(:step_backward) %>" type="button" class="btn btn-md btn-tlb fa fa-step-backward player player-step-backward" data-action="step-backward" data-toggle="tooltip" data-placement="bottom"></button></li>
+          <li><button title="<%= key_cmd(:step_forward) %>" type="button" class="btn btn-md btn-tlb fa fa-step-forward player player-step-forward" data-action="step-forward" data-toggle="tooltip" data-placement="bottom"></button></li>
+          <li><button title="<%= key_cmd(:stop) %>" type="button" class="btn btn-md btn-tlb fa fa-stop player player-reset" data-action="reset" data-toggle="tooltip" data-placement="bottom"></button></li>
         </ul>
       </div><!-- collapse navbar-collapse -->
     </nav>

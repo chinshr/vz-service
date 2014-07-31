@@ -7,6 +7,11 @@
 //= require wavesurfer/drawer.canvas
 //= require quill
 
+/* Tooltips */
+$(document).ready(function() {
+  $('.btn-tlb').tooltip({});
+});
+
 /* Quill Editor */
 $(document).ready(function() {
 

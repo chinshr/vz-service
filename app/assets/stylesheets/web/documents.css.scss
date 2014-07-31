@@ -6,6 +6,10 @@ body.documents {
   header {
     height: 50px;
     
+    .tooltip {
+      font-weight: bold;
+    }
+    
     .dropdown {
       height: 50px;
       
