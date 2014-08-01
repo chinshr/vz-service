@@ -30,17 +30,34 @@ $(document).ready(function() {
     'styles': '/assets/web/quill-content-editor.css'
   });
   
+  $(".user-initials").stop().animate({
+    top: 100
+  }, 100);
+  
   contentEditor.addContainer('spacer-container');
   contentEditor.onModuleLoad('toolbar', function(toolbar) {
     $('#content-editor iframe').contents().find('body').css('overflow', 'hidden');
   });
   contentEditor.on('text-change', function(delta, source) {
+    // expand window
     $('#content-editor').height(contentEditor.root.ownerDocument.body.scrollHeight);
+    
+    // move user-initials
+    var sel = contentEditor.root.ownerDocument.getSelection();
+    if (sel.rangeCount > 0) {
+      var range = sel.getRangeAt(0);
+      var rects = range.getClientRects();
+      if (rects.length > 0) {
+        $(".user-initials").stop().animate({
+          top: 100 + rects[0].top
+        }, 100);
+      }
+    }
   });
   
   var keyboard = contentEditor.getModule('keyboard');
   keyboard.addHotkey({key: 32, metaKey: true, shiftKey: true}, function(range) {
-    console.log('user hit command + shift + [');
+    console.log('user hit Shift+Cmd+Space');
     return true;   // return false will prevent other listeners from receiving the event
   });
   
