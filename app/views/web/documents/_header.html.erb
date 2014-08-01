@@ -1,4 +1,4 @@
-<header class="documents">
+<header>
   <div class="container-fluid">
     <nav class="navbar navbar-default" id="navigation" role="navigation">
       <!-- Brand and toggle get grouped for better mobile display -->
@@ -18,7 +18,7 @@
             <li role="presentation"><a role="menuitem" href="/dashboard"><i class="fa fa-level-up"></i>Dashboard</a></li>
           </ul>
         </div>
-      </div><!-- navbar-header -->
+      </div><!-- .navbar-header -->
       
       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
         <ul id="content-editor-toolbar-container" class="nav navbar-nav toolbar-nav">
@@ -50,7 +50,7 @@
               <div class="progress progress-striped active" id="player-progress-bar">
                   <div class="progress-bar progress-bar-info"></div>
               </div>
-              <!-- Here goes the waveform -->
+              <!-- here goes the waveform -->
             </div>
           </li>
           <li><button title="<%= key_cmd(:toggle_playback_speed) %>" type="button" class="btn btn-lg btn-tlb fa fa-angle-double-up player player-toggle-playback-rate" data-action="toggle-playback-rate" data-toggle="tooltip" data-placement="bottom"></button></li>
@@ -58,8 +58,19 @@
           <li><button title="<%= key_cmd(:step_forward) %>" type="button" class="btn btn-md btn-tlb fa fa-step-forward player player-step-forward" data-action="step-forward" data-toggle="tooltip" data-placement="bottom"></button></li>
           <li><button title="<%= key_cmd(:stop) %>" type="button" class="btn btn-md btn-tlb fa fa-stop player player-reset" data-action="reset" data-toggle="tooltip" data-placement="bottom"></button></li>
         </ul>
-      </div><!-- collapse navbar-collapse -->
+        
+        <div id="navbar-right" class="navbar-flush-right">
+          <button id="share-button" title="Copy and paste the link below to share this document." class="btn btn-default btn-with-border" data-container="body" data-toggle="popover" data-placement="bottom" data-target="1"><i class="fa fa-share"></i>Share</button>
+          <!-- Popover content -->
+          <div id="1" class="popover" role="tooltip">
+            <div class="arrow"></div>
+            <h3 class="popover-title"></h3>
+            <div class="popover-content"></div>
+          </div>
+        </div><!-- navbar-flush-section navbar-flush-right -->
+      </div><!-- .collapse .navbar-collapse -->
+      
     </nav>
-  </div><!-- end container -->
-</header><!-- documents -->
+  </div><!-- .container-fluid -->
+</header><!-- header -->
 

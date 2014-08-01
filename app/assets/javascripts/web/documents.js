@@ -7,9 +7,22 @@
 //= require wavesurfer/drawer.canvas
 //= require quill
 
-/* Tooltips */
+/* Tooltips & Popovers */
 $(document).ready(function() {
   $('.btn-tlb').tooltip({});
+
+  $('.btn').popover({});
+  
+  $("#popoverExampleTwo").popover({
+    html : true, 
+    content: function() {
+      return $('#popoverExampleTwoHiddenContent').html();
+    },
+    title: function() {
+      return $('#popoverExampleTwoHiddenTitle').html();
+    }
+  });
+  
 });
 
 /* Quill Editor */
