@@ -8,6 +8,15 @@ body.documents {
     
     .tooltip {
       font-weight: bold;
+
+      .tooltip-inner {
+        background-color: #292d33;
+        padding: 6px 10px;
+      }
+      
+      &.bottom .tooltip-arrow {
+        border-bottom-color: #292d33;
+      }
     }
     
     .dropdown {

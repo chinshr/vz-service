@@ -30,10 +30,6 @@ $(document).ready(function() {
     'styles': '/assets/web/quill-content-editor.css'
   });
   
-  $(".user-initials").stop().animate({
-    top: 100
-  }, 100);
-  
   contentEditor.addContainer('spacer-container');
   contentEditor.onModuleLoad('toolbar', function(toolbar) {
     $('#content-editor iframe').contents().find('body').css('overflow', 'hidden');
@@ -41,17 +37,32 @@ $(document).ready(function() {
   contentEditor.on('text-change', function(delta, source) {
     // expand window
     $('#content-editor').height(contentEditor.root.ownerDocument.body.scrollHeight);
-    
-    // move user-initials
-    var sel = contentEditor.root.ownerDocument.getSelection();
-    if (sel.rangeCount > 0) {
-      var range = sel.getRangeAt(0);
-      var rects = range.getClientRects();
-      if (rects.length > 0) {
-        $(".user-initials").stop().animate({
-          top: 100 + rects[0].top
-        }, 100);
+  });
+  contentEditor.on('selection-change', function(range) {
+    if (range) {
+      if (range.start == range.end) {
+        // console.log('User cursor is on', range.start);
+        
+        // move user-initials
+        var sel = contentEditor.root.ownerDocument.getSelection();
+        if (sel && sel.rangeCount > 0) {
+          var selrg = sel.getRangeAt(0);
+          if (selrg) {
+            var rects = selrg.getClientRects();
+            if (rects.length > 0) {
+              var ui = $(".user-initials");
+              ui.stop().animate({
+                top: 100 - (ui.height() / 2) + rects[0].top
+              }, 50);
+            }
+          }
+        }
+      } else {
+        // var text = editor.getText(range.start, range.end);
+        // console.log('User has highlighted', text);
       }
+    } else {
+      // console.log('Cursor not in the editor');
     }
   });
   
