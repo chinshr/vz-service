@@ -52,7 +52,7 @@ $(document).ready(function() {
             if (rects.length > 0) {
               var ui = $(".user-initials");
               ui.stop().animate({
-                top: 100 - (ui.height() / 2) + rects[0].top
+                top: 105 - (ui.height() / 2) + rects[0].top
               }, 50);
             }
           }

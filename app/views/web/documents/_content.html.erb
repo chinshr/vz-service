@@ -2,7 +2,7 @@
   edit ||= false
 %>
 <% if @document.trancribed? %>
-<div id="content-container" class="well">
+<div id="content-editor-container" class="well">
   <h1><%= @document.title %></h1>
   <div id="inline-content" class="<%= edit ? 'editor' : '' %>">
     <%= @document.content %>

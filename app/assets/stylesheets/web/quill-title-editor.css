@@ -20,5 +20,6 @@ body {
   color: #444;
   -webkit-font-smoothing: antialiased;
   overflow: hidden;
+  text-overflow: ellipsis;
 }
 
