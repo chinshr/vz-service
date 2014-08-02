@@ -7,7 +7,7 @@
 //= require wavesurfer/drawer.canvas
 //= require quill
 
-/* Tooltips & Popovers */
+/* Tooltips */
 $(document).ready(function() {
   $('.btn-tlb').tooltip({});
 
@@ -24,6 +24,25 @@ $(document).ready(function() {
   });
   
 });
+
+// popover
+$(document).ready(function() {
+
+  $('.btn-popover').popover({
+    html: true,
+    title: 'Hello',
+    placement: 'bottom',
+    content: '<button id="close-me">Close Me!</button>'
+  });
+
+/*
+  $('.xbtn-popover').click(function() {
+    $('#' + $(this).data('target')).toggle();
+  });
+*/
+  
+});
+
 
 /* Quill Editor */
 $(document).ready(function() {
@@ -47,29 +66,35 @@ $(document).ready(function() {
   contentEditor.onModuleLoad('toolbar', function(toolbar) {
     $('#content-editor iframe').contents().find('body').css('overflow', 'hidden');
   });
+  
+  var moveUserInitials = function() {
+    var sel = contentEditor.root.ownerDocument.getSelection();
+    if (sel && sel.rangeCount > 0) {
+      var selrg = sel.getRangeAt(0);
+      if (selrg) {
+        var rects = selrg.getClientRects();
+        if (rects.length > 0) {
+          var ui = $(".user-initials");
+          ui.stop().animate({
+            top: 100 - (ui.height() / 2) + rects[0].top
+          }, 50);
+        }
+      }
+    }
+  }
+  
   contentEditor.on('text-change', function(delta, source) {
     // expand window
     $('#content-editor').height(contentEditor.root.ownerDocument.body.scrollHeight);
+    
+    moveUserInitials();
   });
+  
   contentEditor.on('selection-change', function(range) {
     if (range) {
       if (range.start == range.end) {
         // console.log('User cursor is on', range.start);
-        
-        // move user-initials
-        var sel = contentEditor.root.ownerDocument.getSelection();
-        if (sel && sel.rangeCount > 0) {
-          var selrg = sel.getRangeAt(0);
-          if (selrg) {
-            var rects = selrg.getClientRects();
-            if (rects.length > 0) {
-              var ui = $(".user-initials");
-              ui.stop().animate({
-                top: 105 - (ui.height() / 2) + rects[0].top
-              }, 50);
-            }
-          }
-        }
+        moveUserInitials();
       } else {
         // var text = editor.getText(range.start, range.end);
         // console.log('User has highlighted', text);
