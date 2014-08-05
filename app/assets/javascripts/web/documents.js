@@ -46,7 +46,7 @@ $(document).ready(function() {
 
 /* Quill Editor */
 $(document).ready(function() {
-
+  return;
   var titleEditor = new Quill('#title-editor', {
     'modules': {
     },
@@ -116,6 +116,7 @@ $(document).ready(function() {
 var wavesurfer = Object.create(WaveSurfer);
 
 $(document).ready(function() {
+  return;
 
   /* waveform load progress bar */
   (function () {

@@ -44,7 +44,7 @@
   <div id="hover-overlay"></div>
   <div id="file-uploads" class="upload-grid">
     
-    <div class="col-lg-4 col-md-4 col-sm-4 tile upload-tile">
+    <div id="drop-box-tile" class="tile upload-tile col-lg-4 col-md-4 col-sm-4">
       <div id="drop-box" class="panel upload-panel">
         <div class="panel-heading">
           <h3>Drop files here...</h3>
@@ -57,7 +57,7 @@
             <button id="files-proxy" class="btn btn-primary btn-lg btn-file-upload"><i class="glyphicon glyphicon-cloud-upload"></i>&nbsp;Add files...</button>
             <input type="file" id="files" name="files[]" multiple />
             <div class="email-file-upload-holder">or email to <a href="mailto:my@voyz.es?subject=Document title&body=—%0DAttach all your audio files you want transcribed for English United States (en-US)." class="xbtn xbtn-link btn-email-upload">my@voyz.es</a></div>
-          </div><!-- form-group-file-upload -->
+          </div><!-- .form-group-file-upload -->
 
           <div class="form-group form-group-locale">
             <label class="hidden" for="disabledSelect">Audio language</label>
@@ -73,10 +73,9 @@
               <option value="es-AR">Spanish Argentina</option>
               <option value="es-VE">Spanish Venezuela</option>
             </select>
-          </div><!-- form-group-local -->
-        </div><!-- panel-body -->
+          </div><!-- .form-group-locale -->
+        </div><!-- .panel-body -->
         <div class="panel-footer">
-          
           <!-- privacy -->
           <div class="form-group form-group-file-privacy">
             <div class="btn-group group-file-privacy" data-toggle="buttons">
@@ -89,114 +88,115 @@
             </div>
           </div><!-- form-group-file-privacy -->
           
-        </div><!-- panel-footer-->
-      </div><!-- upload-panel -->
-    </div><!-- upload-tile -->
+        </div><!-- .panel-footer-->
+      </div><!-- #drop-box .upload-panel -->
+    </div><!-- #drop-box-tile .upload-tile -->
 
-    <div class="col-lg-4 col-md-4 col-sm-4 tile edit-tile">
-      <div class="panel edit-panel">
-        <div class="progress progress-striped active">
-          <div class="progress-bar progress-bar-info" style="width: 50%"></div>
-        </div>
-        <div class="panel-heading">
-          <h3><i class="glyphicon glyphicon-lock icon-private"></i>i-like-pickles.wav</h3>
-          <span class="label label-info label-status"><span class="message">Initializing.</span></span>
-        </div><!-- panel-heading -->
-        <div class="panel-body">
-          <div class="form-fields xhidden">
+    <div id="uploaded-files">
+      <div class="tile edit-tile col-lg-4 col-md-4 col-sm-4">
+        <div class="panel edit-panel">
+          <div class="progress progress-striped active">
+            <div class="progress-bar progress-bar-info" style="width: 50%"></div>
+          </div>
+          <div class="panel-heading">
+            <h3><i class="glyphicon glyphicon-lock icon-private"></i>i-like-pickles.wav</h3>
+            <span class="label label-info label-status"><span class="message">Initializing.</span></span>
+          </div><!-- panel-heading -->
+          <div class="panel-body">
+            <div class="form-fields xhidden">
 
-            <div class="form-group form-group-title">
-              <label class="sr-only" for="">Title</label>
-              <input type="text" class="form-control input-sm" placeholder="Title" name="upload[title]" value="<%= @title %>" data-error-style="tooltip" data-tooltip-position="right"></input>
-            </div><!-- form-group-title -->
+              <div class="form-group form-group-title">
+                <label class="sr-only" for="">Title</label>
+                <input type="text" class="form-control input-sm" placeholder="Title" name="upload[title]" value="<%= @title %>" data-error-style="tooltip" data-tooltip-position="right"></input>
+              </div><!-- form-group-title -->
 
-            <div class="form-group form-group-tags">
-              <label class="sr-only" for="">Tags</label>
-              <input type="text" class="form-control input-sm input-taggable" placeholder="Tags" name="upload[tags]" value="<%= @tags %>" data-error-style="tooltip" data-tooltip-position="right"></input>
-            </div><!-- form-group-tags -->
+              <div class="form-group form-group-tags">
+                <label class="sr-only" for="">Tags</label>
+                <input type="text" class="form-control input-sm input-taggable" placeholder="Tags" name="upload[tags]" value="<%= @tags %>" data-error-style="tooltip" data-tooltip-position="right"></input>
+              </div><!-- form-group-tags -->
 
-            <div class="form-group form-group-description">
-              <label class="sr-only" for="">Description</label>
-              <textarea class="form-control input-sm" placeholder="Description" name="upload[description]" value="<%= @description %>"></textarea>
-            </div><!-- form-group-description -->
+              <div class="form-group form-group-description">
+                <label class="sr-only" for="">Description</label>
+                <textarea class="form-control input-sm" placeholder="Description" name="upload[description]" value="<%= @description %>"></textarea>
+              </div><!-- form-group-description -->
 
 
-            <div class="form-group form-group-audio-language">
-              <label class="sr-only" for="">Audio Language</label>
-              <select class="form-control input-sm file-locale input-single-searchable" name="upload[locale]">
-                <option value="en-US">English United States</option>
-                <option value="en-UK">English Great Britain</option>
-                <option value="de-DE">German Germany</option>
-                <option value="fr-FR">French France</option>
-                <option value="it-IT">Italian Italy</option>
-                <option value="es-ES">Spanish Spain</option>
-                <option value="es-MX">Spanish Mexico</option>
-                <option value="es-AR">Spanish Argentina</option>
-                <option value="es-VE">Spanish Venezuela</option>
-              </select>
-            </div><!-- form-group-audio-language -->
+              <div class="form-group form-group-audio-language">
+                <label class="sr-only" for="">Audio Language</label>
+                <select class="form-control input-sm file-locale input-single-searchable" name="upload[locale]">
+                  <option value="en-US">English United States</option>
+                  <option value="en-UK">English Great Britain</option>
+                  <option value="de-DE">German Germany</option>
+                  <option value="fr-FR">French France</option>
+                  <option value="it-IT">Italian Italy</option>
+                  <option value="es-ES">Spanish Spain</option>
+                  <option value="es-MX">Spanish Mexico</option>
+                  <option value="es-AR">Spanish Argentina</option>
+                  <option value="es-VE">Spanish Venezuela</option>
+                </select>
+              </div><!-- form-group-audio-language -->
 
-          </div><!-- form-fields -->
-        </div><!-- panel-body -->
-        <div class="panel-footer">
-          <div class="form-group clearfix">
-            <div class="btn-group group-file-privacy pull-left" data-toggle="buttons">
-              <label class="btn btn-primary btn-sm active">
-                <input type="radio" name="file-privacy" id="file-privacy-public"><i class="glyphicon glyphicon-book icon-public"></i>&nbsp;Public
-              </label>
-              <label class="btn btn-primary btn-sm xdisabled">
-                <input type="radio" name="file-privacy" id="file-privacy-private"><i class="glyphicon glyphicon-lock icon-private"></i>&nbsp;Private
-              </label>
-            </div><!-- group-file-privacy -->
+            </div><!-- form-fields -->
+          </div><!-- panel-body -->
+          <div class="panel-footer">
+            <div class="form-group from-group-file-privacy clearfix">
+              <div class="btn-group group-file-privacy pull-left" data-toggle="buttons">
+                <label class="btn btn-primary btn-sm active">
+                  <input type="radio" name="file-privacy" id="file-privacy-public"><i class="glyphicon glyphicon-book icon-public"></i>&nbsp;Public
+                </label>
+                <label class="btn btn-primary btn-sm xdisabled">
+                  <input type="radio" name="file-privacy" id="file-privacy-private"><i class="glyphicon glyphicon-lock icon-private"></i>&nbsp;Private
+                </label>
+              </div><!-- group-file-privacy -->
 
-            <button class="btn btn-sm btn-success pull-right" type="submit" disabled="true" data-loading-text="Updating...">Update</button>
-          </div><!-- form-group -->
-        </div><!-- panel-footer -->
-      </div><!-- edit-panel -->
-    </div><!-- edit-tile -->
-  
-    <div class="col-lg-4 col-md-4 col-sm-4 tile show-tile">
-      <div class="panel show-panel">
-        <div class="progress progress-striped active">
-          <div class="progress-bar progress-bar-success" style="width: 75%"></div>
-        </div>
-        <div class="panel-heading">
-          <div class="dropdown">
-            <button type="button" class="cog" aria-hidden="true" data-toggle="dropdown"><i class="glyphicon glyphicon-cog"></i></button>
-            <ul class="dropdown-menu dropdown-menu-right" role="menu" xaria-labelledby="settings-button">
-              <li role="presentation"><a role="menuitem" tabindex="-1" href="#"><i class="glyphicon glyphicon-pencil"></i>&nbsp;Edit</a></li>
-              <li role="presentation"><a role="menuitem" tabindex="-1" href="#"><i class="glyphicon glyphicon-plus"></i>&nbsp;Add collaborator</a></li>
-              <li role="presentation"><a role="menuitem" tabindex="-1" href="#"><i class="glyphicon glyphicon-credit-card"></i>&nbsp;Change plan</a></li>
-              <li role="presentation" class="divider"></li>
-              <li role="presentation"><a role="menuitem" tabindex="-1" href="#"><i class="glyphicon glyphicon-trash"></i>&nbsp;Delete</a></li>
+              <button class="btn btn-sm btn-success pull-right" type="submit" disabled="true" data-loading-text="Updating...">Update</button>
+            </div><!-- .from-group-file-privacy -->
+          </div><!-- .panel-footer -->
+        </div><!-- .edit-panel -->
+      </div><!-- .edit-tile -->
+
+      <div class="tile show-tile col-lg-4 col-md-4 col-sm-4">
+        <div class="panel show-panel">
+          <div class="progress progress-striped active">
+            <div class="progress-bar progress-bar-success" style="width: 75%"></div>
+          </div>
+          <div class="panel-heading">
+            <div class="dropdown">
+              <button type="button" class="cog" aria-hidden="true" data-toggle="dropdown"><i class="glyphicon glyphicon-cog"></i></button>
+              <ul class="dropdown-menu dropdown-menu-right" role="menu" xaria-labelledby="settings-button">
+                <li role="presentation"><a role="menuitem" tabindex="-1" href="#"><i class="glyphicon glyphicon-pencil"></i>&nbsp;Edit</a></li>
+                <li role="presentation"><a role="menuitem" tabindex="-1" href="#"><i class="glyphicon glyphicon-plus"></i>&nbsp;Add collaborator</a></li>
+                <li role="presentation"><a role="menuitem" tabindex="-1" href="#"><i class="glyphicon glyphicon-credit-card"></i>&nbsp;Change plan</a></li>
+                <li role="presentation" class="divider"></li>
+                <li role="presentation"><a role="menuitem" tabindex="-1" href="#"><i class="glyphicon glyphicon-trash"></i>&nbsp;Delete</a></li>
+              </ul>
+            </div><!-- dropdown -->
+            <h3><i class="glyphicon glyphicon-book icon-public"></i>I like pickles</h3>
+            <span class="label label-success label-status"><span class="message">Finished.</span></span>
+          </div><!-- .panel-heading -->
+          <div class="panel-body">
+            <ul class="tag-list">
+              <li class="tag-list-tag">red</li>
+              <li class="tag-list-tag">white</li>
+              <li class="tag-list-tag">blue</li>
             </ul>
-          </div><!-- dropdown -->
-          <h3><i class="glyphicon glyphicon-book icon-public"></i>I like pickles</h3>
-          <span class="label label-success label-status"><span class="message">Finished.</span></span>
-        </div><!-- panel-heading -->
-        <div class="panel-body">
-          <ul class="tag-list">
-            <li class="tag-list-tag">red</li>
-            <li class="tag-list-tag">white</li>
-            <li class="tag-list-tag">blue</li>
-          </ul>
-        </div><!-- panel-body -->
-        <div class="panel-body action-panel">
-          <div class="action-panel-bg-image"></div>
-          <div class="action-panel-btn-group">
-            <button class="btn btn-primary btn-lg btn-panel-action"><i class="glyphicon glyphicon-wrench"></i>&nbsp;Change</button>
-            <button class="btn btn-primary btn-lg btn-panel-action"><i class="glyphicon glyphicon-pencil"></i>&nbsp;Edit</button>
-            <button class="btn btn-primary btn-lg btn-panel-action"><i class="glyphicon glyphicon-eye-open"></i>&nbsp;Preview</button>
-            <!--
-            <button class="btn btn-primary btn-lg btn-panel-action"><i class="glyphicon glyphicon-user"></i>&nbsp;Collaborate</button>
-            -->
-          </div><!-- action-panel-btn-group -->
-        </div><!-- action-panel-->
-      </div><!-- show-panel -->
-    </div><!-- show-tile -->
-
-  </div><!-- upload-grid -->
-</div><!-- container-fluid -->
+          </div><!-- .panel-body -->
+          <div class="panel-body action-panel">
+            <div class="action-panel-bg-image"></div>
+            <div class="action-panel-btn-group">
+              <button class="btn btn-primary btn-lg btn-panel-action"><i class="glyphicon glyphicon-wrench"></i>&nbsp;Change</button>
+              <button class="btn btn-primary btn-lg btn-panel-action"><i class="glyphicon glyphicon-pencil"></i>&nbsp;Edit</button>
+              <button class="btn btn-primary btn-lg btn-panel-action"><i class="glyphicon glyphicon-eye-open"></i>&nbsp;Preview</button>
+              <!--
+              <button class="btn btn-primary btn-lg btn-panel-action"><i class="glyphicon glyphicon-user"></i>&nbsp;Collaborate</button>
+              -->
+            </div><!-- .action-panel-btn-group -->
+          </div><!-- .action-panel-->
+        </div><!-- .show-panel -->
+      </div><!-- .show-tile -->
+    </div><!-- #uploaded-files -->
+  </div><!-- #file-uploads .upload-grid -->
+</div><!-- .container-fluid -->
 
 
 

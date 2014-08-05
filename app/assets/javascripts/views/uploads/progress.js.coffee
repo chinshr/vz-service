@@ -1,4 +1,4 @@
-class Voyzes.Views.UploadsProgress extends Backbone.View
+class App.Views.UploadsProgress extends Backbone.View
   template: JST['uploads/progress']
   events: 
     'click .cancel' : 'onCancelUpload'

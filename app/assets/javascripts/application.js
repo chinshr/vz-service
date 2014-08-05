@@ -24,7 +24,7 @@
 //= require backbone-validation
 //= require validation_config
 //= require s3upload
-//= require voyzes
+//= require app
 //= require_tree ../templates
 //= require_tree ./models
 //= require_tree ./collections

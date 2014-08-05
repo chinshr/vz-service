@@ -1,4 +1,4 @@
-class Voyzes.Views.UploadsIndex extends Backbone.View
+class App.Views.UploadsIndex extends Backbone.View
   template: JST['uploads/index']
 
   events:
@@ -19,7 +19,7 @@ class Voyzes.Views.UploadsIndex extends Backbone.View
   # Instantiate and render new views for models added to the collection
   # This is the view that will be listening to the 'upload:progress' event, and can also allow the user to cancel the upload
   onAddProgress: (model, response) ->
-    progressView = new Voyzes.Views.UploadsProgress(model: model)
+    progressView = new App.Views.UploadsProgress(model: model)
     @$('#file-uploads').append(progressView.render({name: "test-file-name.a"}).el)
     @progressViews[model.cid] = progressView
 
@@ -58,7 +58,7 @@ class Voyzes.Views.UploadsIndex extends Backbone.View
         # Create a new Attachment model for the file which has just started uploading, 
         # otherwise trigger an 'upload:progress' event on the model which a view can listen for
         if percent == 0
-          upload = new Voyzes.Models.Upload
+          upload = new App.Models.Upload
             file_name: file.name,
             s3_url: '',
             file_type: file.type,

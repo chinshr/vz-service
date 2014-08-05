@@ -1,5 +1,5 @@
-class Voyzes.Models.Upload extends Backbone.Model
-  urlRoot: 'api/uploads'
+class App.Models.Upload extends Backbone.Model
+  urlRoot: 'api/account/uploads'
   
   validation:
     title:
