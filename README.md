@@ -174,6 +174,9 @@ Development Resources
 * Opus Codec, successor of Speex, w/ Skype contributions
   - Opus voice paper http://jmvalin.ca/papers/aes135_opus_silk.pdf
 * Codepen for Quill bug -- http://codepen.io/anon/pen/GCIku
+* Devise API authentication
+  - https://gist.github.com/josevalim/fb706b1e933ef01e4fb6
+  - Example apps for devise including one for API auth
 
 Business Resources
 ------------------

@@ -24,6 +24,8 @@ Geocoder::Lookup::Test.set_default_stub(
   ]
 )
 
+Warden.test_mode!
+
 class ActiveSupport::TestCase
   require "mocha/setup"
   
@@ -40,7 +42,9 @@ class ActiveSupport::TestCase
   extend Shoulda::Matchers::ActiveRecord 
   include Shoulda::Matchers::ActiveModel 
   extend Shoulda::Matchers::ActiveModel 
-  
-  include Devise::TestHelpers
 end
 
+class ActionController::TestCase
+  include Devise::TestHelpers
+  include Warden::Test::Helpers                        
+end

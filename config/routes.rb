@@ -24,25 +24,29 @@ Voyzes::Application.routes.draw do
     get '/terms/terms-of-service' => "terms#terms_of_service"
 
     # Web:Account::Application
-    get "/account" => "account/application#index"
+    get "/account" => 'account/application#index'
     resource :dashboard, :only => :show, :controller => "account/dashboards"
     namespace :account do
       resource :profile, :only => [:show, :update]
       resource :billing, :only => :show
     end
 
-    get '/:id' => "documents#show"
-    get '/:id/edit' => "documents#edit"
-    get '/:id/stream' => "documents#stream"
+    get "/:id" => 'documents#show'
+    get "/:id/edit" => 'documents#edit'
+    get "/:id/stream" => 'documents#stream'
   end
   
   namespace :api do
-    get "/uploads/signput" => "uploads#signput"
+    get "/uploads/signput" => 'uploads#signput'
     resources :documents, :only => [] do
       resources :tracks, :only => :index
     end
     namespace :account do
-      resources :uploads
+      resources :uploads do
+        collection do
+          get "signput"
+        end
+      end
     end
     resources :uploads
   end
