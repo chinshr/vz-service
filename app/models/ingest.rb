@@ -12,7 +12,7 @@ class Ingest < ActiveRecord::Base
   REMOVED    = 8
   FINISHED   = 9
   RESTARTING = 10
-  STATES    = {:created => CREATED, :starting => STARTING, :started => STARTED, :stopping => STOPPING, :stopped => STOPPED,
+  STATES     = {:created => CREATED, :starting => STARTING, :started => STARTED, :stopping => STOPPING, :stopped => STOPPED,
     :resetting => RESETTING, :reset =>  RESET, :removing => REMOVING, :removed => REMOVED, :finished => FINISHED, 
     :restarting => RESTARTING}
   

@@ -177,6 +177,9 @@ Development Resources
 * Devise API authentication
   - https://gist.github.com/josevalim/fb706b1e933ef01e4fb6
   - Example apps for devise including one for API auth
+* API code documentation
+  - Hints on Stripe's API doc: http://www.quora.com/Stripe-company/What-software-powers-the-Stripe-API-documentation
+  - Beautiful API documentation w/ Slate: https://github.com/tripit/slate
 
 Business Resources
 ------------------

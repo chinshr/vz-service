@@ -1,12 +1,33 @@
 class Upload < ActiveRecord::Base
+  cattr_accessor :permit_abstract_instance
+  
+  delegate :privacy, to: :ingest, allow_nil: true
+  delegate :privacy=, to: :ingest, allow_nil: true
+
+  delegate :user, to: :ingest, allow_nil: true
+  delegate :user=, to: :ingest, allow_nil: true
+
+  delegate :title, to: :ingest, allow_nil: true
+  delegate :title=, to: :ingest, allow_nil: true
+  
+  delegate :description, to: :ingest, allow_nil: true
+  delegate :description=, to: :ingest, allow_nil: true
+  
+  delegate :locale, to: :ingest, allow_nil: true
+  delegate :locale=, to: :ingest, allow_nil: true
+
+  delegate :status, to: :ingest
+  delegate :slug, to: :ingest
+  delegate :progress, to: :ingest
+
   has_one :ingest, dependent: :destroy
   belongs_to :session
-  belongs_to :user
   
   validates :type, presence: true
   validates :file_name, presence: true, length: { maximum: 255 }
   validates :file_type, presence: true, length: { maximum: 255 }
   validates :s3_url, presence: true, length: { maximum: 255 }
+  validates :title, presence: true, on: :update
 
   scope :any_of_states, lambda {|params| joins(:ingest).where(:ingests => {:aasm_state => [params].flatten.map(&:to_s)})}
   scope :none_of_states, lambda {|params| joins(:ingest).where("ingests.aasm_state NOT IN (?)", [params].flatten.map(&:to_s)) }
@@ -16,6 +37,10 @@ class Upload < ActiveRecord::Base
   scope :removed, lambda {any_of_states(:removed)}
   scope :finished, lambda {any_of_states(:finished)}
   scope :recent, lambda {|n = 5| order("uploads.created_at DESC").limit(n)}
+  
+  after_initialize :build_ingest_and_ingestable
+  before_validation :set_title, on: :create
+  after_save :save_ingest_and_ingestable
   
   class << self
     
@@ -91,4 +116,36 @@ class Upload < ActiveRecord::Base
   def has_s3_url?
     !s3_url.blank?
   end
+  
+  def has_locale_recently_changed?
+    return !!ingest.ingestable.changes[:locale] if ingest.ingestable
+    false
+  end
+  
+  protected
+  
+  def set_title
+    self.title = humanized_file_name if title.blank?
+  end
+  
+  def build_ingest_and_ingestable
+    raise NameError, "Abstract class #{self.class.name} cannot be instantiated, use a subclass instead, e.g. #{Upload::Audio.name}." unless !!self.class.permit_abstract_instance
+  end
+  
+  def save_ingest_and_ingestable
+    if ingest
+      locale_changed = has_locale_recently_changed?
+      ingest.ingestable.save if ingest.ingestable && ingest.ingestable.changed?
+      ingest.save if ingest.changed?
+      
+      if !new_record? && has_s3_url?
+        if locale_changed
+          ingest.restart! if ingest.may_restart?
+        else
+          ingest.start! if ingest.may_start?
+        end
+      end
+    end
+  end
+  
 end

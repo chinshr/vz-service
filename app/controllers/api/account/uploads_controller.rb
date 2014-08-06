@@ -7,6 +7,7 @@ class Api::Account::UploadsController < Api::Account::ApplicationController
       u.session_id = current_session.id if current_session
     end
     @upload.attributes = create_params.except(:type)
+    @upload.user = current_user if current_user
     @upload.save
     respond_with "api", @upload
   end

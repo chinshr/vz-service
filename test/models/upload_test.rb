@@ -1,19 +1,50 @@
 require 'test_helper'
 
 class UploadTest < ActiveSupport::TestCase
+  setup do
+    Upload.permit_abstract_instance = false
+  end
+  
   context "associations" do
+    setup do
+      Upload.permit_abstract_instance = true
+    end
+
     should have_one :ingest
     should belong_to :session
-    should belong_to :user
   end
   
   context "validations" do
+    setup do
+      Upload.permit_abstract_instance = true
+    end
+    
     should validate_presence_of :file_name
     should ensure_length_of(:file_name).is_at_most(255)
     should validate_presence_of :file_type
     should ensure_length_of(:file_type).is_at_most(255)
     should validate_presence_of :s3_url
     should ensure_length_of(:s3_url).is_at_most(255)
+    
+    should "validate presence of title on update" do
+      upload = Upload.create(type: "audio", file_name: "audio-test.m4a", file_type: "audio/x-m4a", 
+        file_size: 12345, s3_url: "http://s3.amazonaws.com/dropbox/audio-test.m4a")
+      assert_equal upload.humanized_file_name, upload.title
+      upload.title = ""
+      assert_equal false, upload.valid?
+      assert_equal ["can't be blank"], upload.errors[:title]
+    end
+  end
+  
+  context "callbacks" do
+    should "before_validation :set_title, on: :create" do
+      upload = Upload.new(type: "audio", file_name: "audio.m4a", file_type: "audio/x-m4a", 
+        file_size: 12345, s3_url: "http://s3.amazonaws.com/dropbox/audio.m4a")
+      assert_equal upload.humanized_file_name, upload.title
+      assert_equal true, upload.save
+      upload.reload
+      assert_equal "Audio", upload.title
+    end
   end
 
   context "scopes" do
@@ -30,11 +61,84 @@ class UploadTest < ActiveSupport::TestCase
       @upload.ingest.update_attribute(:aasm_state, "started")
       assert_equal [@upload], Upload.none_of_states([:created, :starting, :stopping, :stopped, :resetting, :reset, :removing, :removed])
     end
-  end
+  end # context "scopes"
+  
+  context "delegate" do
+    setup do
+      @upload = Upload.create(type: "audio", file_name: "audio.m4a", file_type: "audio/x-m4a", 
+        file_size: 12345, s3_url: "http://s3.amazonaws.com/dropbox/audio.m4a")
+    end
+    
+    should delegate :user, to: :ingest
+    should delegate :user=, to: :ingest
+    should delegate :privacy, to: :ingest, allow_nil: true
+    should delegate :privacy=, to: :ingest, allow_nil: true
+    should delegate :status, to: :ingest
+    should delegate :slug, to: :ingest
+    should delegate :progress, to: :ingest
+    should delegate :title, to: :ingest, allow_nil: true
+    should delegate :title=, to: :ingest, allow_nil: true
+    should delegate :description, to: :ingest, allow_nil: true
+    should delegate :description=, to: :ingest, allow_nil: true
+    should delegate :locale, to: :ingest, allow_nil: true
+    should delegate :locale=, to: :ingest, allow_nil: true
+
+    should "delegate :user" do
+      assert_equal @upload.ingest.ingestable.user, @upload.user
+    end
+
+    should "delegate :user=" do
+      user = FactoryGirl.create(:user)
+      @upload.user = user
+      assert_equal true, @upload.save
+      @upload = Upload.find_by_id(@upload.id)
+      assert_equal user, @upload.user
+    end
+    
+    should "delegate :privacy" do
+      assert_equal [:public], @upload.privacy
+      assert_equal @upload.ingest.ingestable.privacy, @upload.privacy
+    end
+    
+    should "delegate :status" do
+      assert_equal @upload.ingest.status, @upload.status
+    end
+
+    should "delegate :slug" do
+      assert_equal @upload.ingest.ingestable.slug, @upload.slug
+    end
+
+    should "delegate :title" do
+      assert_equal @upload.ingest.ingestable.title, @upload.title
+    end
+
+    should "delegate :title=" do
+      @upload.title = "A new title"
+      assert_equal "A new title", @upload.ingest.ingestable.title
+    end
+
+    should "delegate :description" do
+      assert_equal @upload.ingest.ingestable.description, @upload.description
+    end
+
+    should "delegate :description=" do
+      @upload.description = "A new description"
+      assert_equal "A new description", @upload.ingest.ingestable.description
+    end
+
+    should "delegate :locale" do
+      assert_equal @upload.ingest.ingestable.locale, @upload.locale
+    end
+
+    should "delegate :locale=" do
+      @upload.locale = "it-IT"
+      assert_equal "it-IT", @upload.ingest.ingestable.locale
+    end
+  end # context "delegate"
   
   should "humanize file name" do
-    assert_equal "I like pickles", Upload.new(file_name: "i_like_pickles.m4a").humanized_file_name
-    assert_equal "I like pickles", Upload.new(file_name: "i-like-pickles.m4a").humanized_file_name
+    assert_equal "I like pickles", Upload::Audio.new(file_name: "i_like_pickles.m4a").humanized_file_name
+    assert_equal "I like pickles", Upload::Audio.new(file_name: "i-like-pickles.m4a").humanized_file_name
   end
   
   should "have s3_key" do
@@ -44,5 +148,25 @@ class UploadTest < ActiveSupport::TestCase
   
   should "generate object name" do
     assert_equal 10, Upload.generate_object_name.length
+  end
+  
+  should "not instantiate abstract class" do
+    assert_raise RuntimeError do
+      Upload.new
+    end
+  end
+
+  should "instantiate abstract class" do
+    Upload.permit_abstract_instance = true
+    assert_nothing_raised RuntimeError do
+      Upload.new
+    end
+  end
+  
+  should "tell if locale has recently changed" do
+    upload = FactoryGirl.create(:upload_audio, :s3_url => "http://s3.amazonaws.com/dropbox/61glI7mwmN")
+    assert_equal false, upload.has_locale_recently_changed?
+    upload.locale = "de-DE"
+    assert_equal true, upload.has_locale_recently_changed?
   end
 end

@@ -2,6 +2,8 @@ require 'test_helper'
 
 class UserTest < ActiveSupport::TestCase
   context "associations" do
+    should have_many :documents
+    should have_many :ingests
     should have_many :uploads
   end
   

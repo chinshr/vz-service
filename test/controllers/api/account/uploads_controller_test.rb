@@ -2,7 +2,6 @@ require 'test_helper'
 
 class Api::Account::UploadsControllerTest < ActionController::TestCase
   setup do
-    WebMock.allow_net_connect!  # geocoder
     @user = FactoryGirl.create :user
     sign_in :user, @user
   end
@@ -19,6 +18,7 @@ class Api::Account::UploadsControllerTest < ActionController::TestCase
             assert_response_body_with_upload_and_attributes
     
             upload = Upload.last
+            assert_equal @user.id, upload.user.id
             assert_equal "Upload::Audio", upload.type 
             assert_equal "audio/wav", upload.file_type 
             assert_equal "i-like-pickles.wav", upload.file_name 

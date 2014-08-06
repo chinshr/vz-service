@@ -4,7 +4,7 @@ class Upload::AudioTest < ActiveSupport::TestCase
   context "validations" do
     should validate_presence_of :type
   
-    should "validate file_type audio" do
+    should "validate audio file_type" do
       upload = FactoryGirl.build :upload_audio, file_type: "audio/x-m4a"
       assert upload.valid?, "should be valid"
       assert_equal [], upload.errors[:file_type]
@@ -15,16 +15,6 @@ class Upload::AudioTest < ActiveSupport::TestCase
       assert_equal false, upload.valid?, "should not be valid"
       assert_equal [I18n.t("activerecord.errors.models.upload.attributes.file_type.audio_expected")], upload.errors[:file_type]
     end
-    
-    should "validate presence of title on update" do
-      upload = Upload.create(type: "audio", file_name: "audio-test.m4a", file_type: "audio/x-m4a", 
-        file_size: 12345, s3_url: "http://s3.amazonaws.com/dropbox/audio-test.m4a")
-      assert_equal upload.humanized_file_name, upload.title
-      upload.title = ""
-      assert_equal false, upload.valid?
-      assert_equal ["can't be blank"], upload.errors[:title]
-    end
-    
   end
   
   should "start ingest after s3_url is supplied" do
@@ -77,12 +67,6 @@ class Upload::AudioTest < ActiveSupport::TestCase
     assert_equal upload.ingest.ingestable.locale, upload.locale
   end
   
-  should "build with default privacy" do
-    upload = FactoryGirl.build(:upload_audio)
-    assert_equal [:public], upload.privacy
-    assert_equal upload.ingest.ingestable.privacy, upload.privacy
-  end
-  
   should "build Upload::Audio" do
     audio_upload = Upload.new type: "audio"
     assert audio_upload.is_a?(Upload::Audio), "should instantiate with :type parameter"
@@ -92,18 +76,10 @@ class Upload::AudioTest < ActiveSupport::TestCase
     upload = Upload.create(type: "audio", file_name: "audio.m4a", file_type: "audio/x-m4a", 
       file_size: 12345, s3_url: "http://s3.amazonaws.com/dropbox/audio.m4a")
     assert upload.ingest
+    assert_equal ::Ingest::Audio, upload.ingest.class
     assert upload.ingest.ingestable
+    assert_equal ::Document, upload.ingest.ingestable.class
     assert_equal upload.ingest.title, upload.humanized_file_name
   end
   
-  should "have user" do
-    upload = Upload.create(type: "audio", file_name: "audio.m4a", file_type: "audio/x-m4a", 
-      file_size: 12345, s3_url: "http://s3.amazonaws.com/dropbox/audio.m4a")
-    user = FactoryGirl.create(:user)
-    upload.user = user
-    assert_equal true, upload.save
-    upload = Upload.find_by_id(upload.id)
-    assert_equal user, upload.user
-  end
-
 end

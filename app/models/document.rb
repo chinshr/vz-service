@@ -4,7 +4,6 @@ class Document < ActiveRecord::Base
 
   belongs_to :user
   has_many :ingests, as: :ingestable
-  # has_many :chunks, -> { order(offset: :asc) }, dependent: :destroy
   has_many :chunks, dependent: :destroy
   has_many :tracks, :through => :ingests
 

@@ -24,6 +24,7 @@ Geocoder::Lookup::Test.set_default_stub(
   ]
 )
 
+WebMock.allow_net_connect!  # geocoder
 Warden.test_mode!
 
 class ActiveSupport::TestCase

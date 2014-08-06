@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140806010805) do
+ActiveRecord::Schema.define(version: 20140603000549) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -186,7 +186,6 @@ ActiveRecord::Schema.define(version: 20140806010805) do
     t.datetime "updated_at"
     t.string   "type"
     t.integer  "session_id"
-    t.integer  "user_id"
   end
 
   add_index "uploads", ["created_at"], name: "index_uploads_on_created_at", using: :btree
@@ -196,7 +195,6 @@ ActiveRecord::Schema.define(version: 20140806010805) do
   add_index "uploads", ["session_id"], name: "index_uploads_on_session_id", using: :btree
   add_index "uploads", ["type"], name: "index_uploads_on_type", using: :btree
   add_index "uploads", ["updated_at"], name: "index_uploads_on_updated_at", using: :btree
-  add_index "uploads", ["user_id"], name: "index_uploads_on_user_id", using: :btree
 
   create_table "users", force: true do |t|
     t.string   "email",                                                     default: "", null: false

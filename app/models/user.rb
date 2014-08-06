@@ -17,7 +17,9 @@ class User < ActiveRecord::Base
     end
   end
   
-  has_many :uploads
+  has_many :documents, dependent: :nullify
+  has_many :ingests, through: :documents
+  has_many :uploads, through: :ingests
   
   validates :first_name, presence: true, :if => :confirmed_or_confirmation_validation?
   validates :last_name, presence: true, :if => :confirmed_or_confirmation_validation?
