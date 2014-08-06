@@ -5,7 +5,6 @@ class Api::TracksController < Api::ApplicationController
     @document.track
   end
   
-  
   protected
   
   def load_document

@@ -86,7 +86,7 @@ gem 'json'
 gem 'devise'
 gem 'activeadmin', github: 'gregbell/active_admin'
 gem 'rails4_client_side_validations'
-gem "geocoder"
+gem 'geocoder'
 gem 'gmaps4rails'
 gem 'nokogiri'
 gem 'whatlanguage'

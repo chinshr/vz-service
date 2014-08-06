@@ -41,6 +41,9 @@ Voyzes::Application.routes.draw do
     resources :documents, :only => [] do
       resources :tracks, :only => :index
     end
+    namespace :account do
+      resources :uploads
+    end
     resources :uploads
   end
   

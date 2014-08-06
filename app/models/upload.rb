@@ -1,6 +1,7 @@
 class Upload < ActiveRecord::Base
   has_one :ingest, dependent: :destroy
   belongs_to :session
+  belongs_to :user
   
   validates :type, presence: true
   validates :file_name, presence: true, length: { maximum: 255 }

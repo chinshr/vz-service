@@ -4,7 +4,7 @@ window.App =
   Views: {}
   Routers: {}
   initialize: -> 
-    new App.Routers.Uploads()
+    new App.Routers.Dashboard()
     Backbone.history.start()
 
 $(document).ready ->

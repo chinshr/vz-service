@@ -4,6 +4,7 @@ class UploadTest < ActiveSupport::TestCase
   context "associations" do
     should have_one :ingest
     should belong_to :session
+    should belong_to :user
   end
   
   context "validations" do

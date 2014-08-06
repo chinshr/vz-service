@@ -4,12 +4,13 @@ body.account {
 
   /* ====================== BLANKSTATE ========================= */
 
-  .full-width {
+  #dashboard-container {
+    margin-top: 70px;
     padding: 0;
   }
 
   .blankstate {
-    margin-top: 70px;
+    xmargin-top: 70px;
     position: relative;
     text-align: center;
     padding: 40px 20px;
@@ -139,7 +140,7 @@ body.account {
   .upload-grid {
     font-family: "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
     min-height: 300px;
-    margin: 25px 0;
+    padding: 25px 0;
 
     input, select, .select2-drop, .select2-result-label {
       font-family: "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;

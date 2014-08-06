@@ -17,6 +17,8 @@ class User < ActiveRecord::Base
     end
   end
   
+  has_many :uploads
+  
   validates :first_name, presence: true, :if => :confirmed_or_confirmation_validation?
   validates :last_name, presence: true, :if => :confirmed_or_confirmation_validation?
   
