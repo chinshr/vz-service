@@ -1,7 +1,5 @@
 require "core_ext"
-module Model; end
-require "model/uid"
-module Mailer; end
-require "mailer/helper"
+require "model_ext"
+require "mailer_ext"
 require "speech"
 
