@@ -18,9 +18,9 @@ class Speech::AudioSplitterTest < ActiveSupport::TestCase
       chunk.to_wav
       assert_equal Speech::AudioSplitter::AudioChunk::STATUS_ENCODED, chunk.status
       assert chunk.to_flac_bytes
-      assert_equal 112700, chunk.flac_size
+      assert_equal 112698, chunk.flac_size
       assert chunk.to_wav_bytes
-      assert_equal 112700, chunk.wav_size
+      assert_equal 112698, chunk.wav_size
       
       assert_equal [], chunk.errors
       assert File.exist? chunk.chunk

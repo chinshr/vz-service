@@ -1,24 +1,12 @@
 require 'test_helper'
 
 class UploadTest < ActiveSupport::TestCase
-  setup do
-    Upload.permit_abstract_instance = false
-  end
-  
   context "associations" do
-    setup do
-      Upload.permit_abstract_instance = true
-    end
-
     should have_one :ingest
     should belong_to :session
   end
   
   context "validations" do
-    setup do
-      Upload.permit_abstract_instance = true
-    end
-    
     should validate_presence_of :file_name
     should ensure_length_of(:file_name).is_at_most(255)
     should validate_presence_of :file_type
@@ -148,19 +136,6 @@ class UploadTest < ActiveSupport::TestCase
   
   should "generate object name" do
     assert_equal 10, Upload.generate_object_name.length
-  end
-  
-  should "not instantiate abstract class" do
-    assert_raise RuntimeError do
-      Upload.new
-    end
-  end
-
-  should "instantiate abstract class" do
-    Upload.permit_abstract_instance = true
-    assert_nothing_raised RuntimeError do
-      Upload.new
-    end
   end
   
   should "tell if locale has recently changed" do

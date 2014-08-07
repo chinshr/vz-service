@@ -58,6 +58,7 @@ class Api::Account::UploadsControllerTest < ActionController::TestCase
   context "GET /api/account/uploads" do
     should "return uploads" do
       upload = FactoryGirl.create(:upload_audio)
+      upload.user = @user and upload.save
       get :index, format: :json
       assert_response :success
     end
@@ -73,6 +74,7 @@ class Api::Account::UploadsControllerTest < ActionController::TestCase
   context "GET /api/account/uploads/:id" do
     should "return upload when signed in" do
       upload = FactoryGirl.create(:upload_audio)
+      upload.user = @user and upload.save
       get :show, :id => upload.id, format: :json
       assert_response :success
       assert_response_body_with_upload_and_attributes
@@ -88,6 +90,7 @@ class Api::Account::UploadsControllerTest < ActionController::TestCase
   context "PUT /api/account/uploads/:id" do
     should "update upload" do
       upload = FactoryGirl.create(:upload_audio)
+      upload.user = @user and upload.save
       put :update, {:id => upload.id, :upload => {:title => "La fiesta!", :description => "Entrevista en la fiesta.", locale: "es-AR"}, format: :json}
       assert_response :success
       assert_response_body_with_upload_and_attributes
@@ -107,6 +110,7 @@ class Api::Account::UploadsControllerTest < ActionController::TestCase
   context "DELETE /api/account/uploads" do
     should "destroy upload" do
       upload = FactoryGirl.create(:upload_audio)
+      upload.user = @user and upload.save
       assert_difference 'Document.count', -1 do
         assert_difference 'Ingest.count', -1 do
           assert_difference 'Upload.count', -1 do

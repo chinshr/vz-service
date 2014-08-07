@@ -1,6 +1,10 @@
 require 'test_helper'
 
 class Speech::Engines::AttSpeechEngineTest < ActiveSupport::TestCase
+  setup do
+    WebMock.disable_net_connect!
+  end
+  
   context "standard mode" do
     setup do
       # oauth

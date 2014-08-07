@@ -65,9 +65,10 @@ class DocumentTest < ActiveSupport::TestCase
     chunk1 = FactoryGirl.create(:document_chunk, :offset => 0, :document => document, :score => 0)
     chunk2 = FactoryGirl.create(:document_chunk, :offset => 1, :document => document, :score => 0.5)
     assert_equal 3, document.chunks.count
-    assert_equal chunk1, document.chunks[0]
-    assert_equal chunk2, document.chunks[1]
-    assert_equal chunk3, document.chunks[2]
+    chunks = document.chunks.order(:offset)
+    assert_equal chunk1, chunks[0]
+    assert_equal chunk2, chunks[1]
+    assert_equal chunk3, chunks[2]
   end
   
 end

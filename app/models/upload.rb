@@ -1,6 +1,4 @@
 class Upload < ActiveRecord::Base
-  cattr_accessor :permit_abstract_instance
-  
   delegate :privacy, to: :ingest, allow_nil: true
   delegate :privacy=, to: :ingest, allow_nil: true
 
@@ -129,7 +127,7 @@ class Upload < ActiveRecord::Base
   end
   
   def build_ingest_and_ingestable
-    raise NameError, "Abstract class #{self.class.name} cannot be instantiated, use a subclass instead, e.g. #{Upload::Audio.name}." unless !!self.class.permit_abstract_instance
+    # raise NameError, "Abstract class #{self.class.name} cannot be instantiated, use a subclass instead, e.g. #{Upload::Audio.name}." unless !!self.class.permit_abstract_instance
   end
   
   def save_ingest_and_ingestable

@@ -14,25 +14,27 @@ class Api::Account::UploadsController < Api::Account::ApplicationController
 
   # [GET] /api/account/uploads(.:format)
   def index
-    @uploads = current_session.uploads.any_of_states(:foobar) if current_session
+    @uploads = current_user.uploads#.filter(params)
     respond_with @uploads
   end
 
   # [GET] /api/account/uploads/1(.:format)
   def show
-    @upload = Upload.find(params[:id])
+    @upload = current_user.uploads.find(params[:id])
     respond_with @upload
   end
 
   # [PUT] /api/account/uploads/1(.:format)
   def update
-    @upload = Upload.update(params[:id], update_params)
+    @upload = current_user.uploads.update(params[:id], update_params)
     respond_with @upload
   end
 
   # [DELETE] /api/account/uploads/1(.:format)
   def destroy
-    respond_with Upload.destroy(params[:id])
+    @upload = current_user.uploads.find(params[:id])
+    @upload = Upload.destroy(@upload)
+    respond_with @upload
   end
   
   # [GET] /api/account/uploads/signput(.:format)
