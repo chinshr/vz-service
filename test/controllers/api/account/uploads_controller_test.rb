@@ -57,10 +57,16 @@ class Api::Account::UploadsControllerTest < ActionController::TestCase
 
   context "GET /api/account/uploads" do
     should "return all uploads" do
-      upload = FactoryGirl.create(:upload_audio)
-      upload.user = @user and upload.save
+      upload1 = FactoryGirl.create(:upload_audio)
+      upload1.user = @user and upload1.save
+      upload2 = FactoryGirl.create(:upload_audio)
+      upload2.user = @user and upload2.save
+      upload3 = FactoryGirl.create(:upload_audio)  # another user's upload
       get :index, format: :json
       assert_response :success
+      assert response_body.has_key?("uploads"), "should have 'uploads' root"
+      assert_equal 2, response_body["uploads"].size, "should only return user's uploads"
+      assert_attributes response_body["uploads"].first
     end
     
     should "filter uploads by state" do
@@ -74,6 +80,7 @@ class Api::Account::UploadsControllerTest < ActionController::TestCase
       assert response_body.has_key?("uploads"), "should have 'uploads' envelope"
       assert_equal 1, response_body["uploads"].size
       assert_attributes response_body["uploads"].first
+      assert_equal Ingest::STATES[:stopped], response_body["uploads"].first["status"], "should be 'stopped' = #{Ingest::STATES[:stopped]}"
     end
     
     should "NOT return uploads when signed out" do
