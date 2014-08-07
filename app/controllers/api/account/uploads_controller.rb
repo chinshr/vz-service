@@ -14,7 +14,8 @@ class Api::Account::UploadsController < Api::Account::ApplicationController
 
   # [GET] /api/account/uploads(.:format)
   def index
-    @uploads = current_user.uploads#.filter(params)
+    debugger
+    @uploads = current_user.uploads.filter(params)
     respond_with @uploads
   end
 

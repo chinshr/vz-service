@@ -56,11 +56,22 @@ class Api::Account::UploadsControllerTest < ActionController::TestCase
   end
 
   context "GET /api/account/uploads" do
-    should "return uploads" do
+    should "return all uploads" do
       upload = FactoryGirl.create(:upload_audio)
       upload.user = @user and upload.save
       get :index, format: :json
       assert_response :success
+    end
+    
+    should "filter uploads by state" do
+      upload1 = FactoryGirl.create(:upload_audio)
+      upload1.user = @user and upload1.save
+      upload2 = FactoryGirl.create(:upload_audio)
+      upload2.ingest.aasm_state = "stopped"
+      upload2.user = @user and upload2.save
+      get :index, :any_of_statuses => [4], format: :json
+      assert_response :success
+      assert_response_body_with_upload_and_attributes
     end
     
     should "NOT return uploads when signed out" do
@@ -72,7 +83,7 @@ class Api::Account::UploadsControllerTest < ActionController::TestCase
   end
   
   context "GET /api/account/uploads/:id" do
-    should "return upload when signed in" do
+    should "return upload with :id" do
       upload = FactoryGirl.create(:upload_audio)
       upload.user = @user and upload.save
       get :show, :id => upload.id, format: :json
@@ -148,10 +159,10 @@ class Api::Account::UploadsControllerTest < ActionController::TestCase
     JSON.parse(response.body)
   end
 
-  def assert_response_body_with_upload_and_attributes
+  def assert_response_body_with_upload_and_attributes(envelope = "upload")
     body = JSON.parse(response.body)
-    assert body.has_key?("upload")
-    assert_attributes body["upload"]
+    assert body.has_key?(envelope.to_s)
+    assert_attributes body[envelope.to_s]
   end
 
   def assert_attributes(attributes)

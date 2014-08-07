@@ -1,4 +1,6 @@
 class Upload < ActiveRecord::Base
+  include Model::Filter
+  
   delegate :privacy, to: :ingest, allow_nil: true
   delegate :privacy=, to: :ingest, allow_nil: true
 
@@ -15,6 +17,7 @@ class Upload < ActiveRecord::Base
   delegate :locale=, to: :ingest, allow_nil: true
 
   delegate :status, to: :ingest
+  delegate :state, to: :ingest
   delegate :slug, to: :ingest
   delegate :progress, to: :ingest
 
@@ -27,8 +30,10 @@ class Upload < ActiveRecord::Base
   validates :s3_url, presence: true, length: { maximum: 255 }
   validates :title, presence: true, on: :update
 
-  scope :any_of_states, lambda {|params| joins(:ingest).where(:ingests => {:aasm_state => [params].flatten.map(&:to_s)})}
-  scope :none_of_states, lambda {|params| joins(:ingest).where("ingests.aasm_state NOT IN (?)", [params].flatten.map(&:to_s)) }
+  filtered_scopes :any_of_statuses, :none_of_statuses
+  scope :any_of_statuses, lambda {|params| joins(:ingest).where(:ingests => {:aasm_state => [params].flatten.map(&:to_s)})}
+  scope :none_of_statuses, lambda {|params| joins(:ingest).where("ingests.aasm_state NOT IN (?)", [params].flatten.map(&:to_s)) }
+  # private scopes
   scope :started, lambda {any_of_states(:started)}
   scope :stopped, lambda {any_of_states(:stopped)}
   scope :reset, lambda {any_of_states(:reset)}

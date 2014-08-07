@@ -40,14 +40,14 @@ class UploadTest < ActiveSupport::TestCase
       @upload = FactoryGirl.create(:upload_audio)
     end
     
-    should "have any_of_states" do
+    should "have any_of_statuses" do
       @upload.ingest.update_attribute(:aasm_state, "started")
-      assert_equal [@upload], Upload.any_of_states([:starting, :started])
+      assert_equal [@upload], Upload.any_of_statuses([:starting, :started])
     end
 
-    should "have none_of_states" do
+    should "have none_of_statuses" do
       @upload.ingest.update_attribute(:aasm_state, "started")
-      assert_equal [@upload], Upload.none_of_states([:created, :starting, :stopping, :stopped, :resetting, :reset, :removing, :removed])
+      assert_equal [@upload], Upload.none_of_statuses([:created, :starting, :stopping, :stopped, :resetting, :reset, :removing, :removed])
     end
   end # context "scopes"
   
@@ -62,6 +62,7 @@ class UploadTest < ActiveSupport::TestCase
     should delegate :privacy, to: :ingest, allow_nil: true
     should delegate :privacy=, to: :ingest, allow_nil: true
     should delegate :status, to: :ingest
+    should delegate :state, to: :ingest
     should delegate :slug, to: :ingest
     should delegate :progress, to: :ingest
     should delegate :title, to: :ingest, allow_nil: true
@@ -90,6 +91,10 @@ class UploadTest < ActiveSupport::TestCase
     
     should "delegate :status" do
       assert_equal @upload.ingest.status, @upload.status
+    end
+
+    should "delegate :state" do
+      assert_equal @upload.ingest.state, @upload.state
     end
 
     should "delegate :slug" do
