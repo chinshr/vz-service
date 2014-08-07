@@ -40,14 +40,14 @@ class UploadTest < ActiveSupport::TestCase
       @upload = FactoryGirl.create(:upload_audio)
     end
     
-    should "have any_of_statuses" do
+    should "have any_of_status" do
       @upload.ingest.update_attribute(:aasm_state, "started")
-      assert_equal [@upload], Upload.any_of_statuses([:starting, :started])
+      assert_equal [@upload], Upload.any_of_status([1, 2])
     end
 
-    should "have none_of_statuses" do
-      @upload.ingest.update_attribute(:aasm_state, "started")
-      assert_equal [@upload], Upload.none_of_statuses([:created, :starting, :stopping, :stopped, :resetting, :reset, :removing, :removed])
+    should "have none_of_status" do
+      @upload.ingest.update_attribute(:aasm_state, "started")  # :started = 2
+      assert_equal [@upload], Upload.none_of_status([0, 1, 3, 4, 5, 6, 7, 8, 9, 10])
     end
   end # context "scopes"
   

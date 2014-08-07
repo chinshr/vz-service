@@ -75,10 +75,12 @@ class Ingest < ActiveRecord::Base
     end
   end
   
+  # e.g. a integer representation, like 9 (=finished)
   def status
     self.class::STATES.symbolize_keys[aasm.current_state]
   end
   
+  # E.g. a human readable string, like :finished
   def state
     aasm.current_state
   end

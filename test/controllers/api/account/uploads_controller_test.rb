@@ -67,11 +67,13 @@ class Api::Account::UploadsControllerTest < ActionController::TestCase
       upload1 = FactoryGirl.create(:upload_audio)
       upload1.user = @user and upload1.save
       upload2 = FactoryGirl.create(:upload_audio)
-      upload2.ingest.aasm_state = "stopped"
       upload2.user = @user and upload2.save
-      get :index, :any_of_statuses => [4], format: :json
+      upload2.ingest.update_attribute(:aasm_state, "stopped")
+      get :index, :any_of_status => [Ingest::STATES[:stopped]], format: :json
       assert_response :success
-      assert_response_body_with_upload_and_attributes
+      assert response_body.has_key?("uploads"), "should have 'uploads' envelope"
+      assert_equal 1, response_body["uploads"].size
+      assert_attributes response_body["uploads"].first
     end
     
     should "NOT return uploads when signed out" do
@@ -155,29 +157,20 @@ class Api::Account::UploadsControllerTest < ActionController::TestCase
   
   protected
 
-  def json_response_body
+  def response_body
+    # TODO: if response is JSON.parse else XML
     JSON.parse(response.body)
   end
 
   def assert_response_body_with_upload_and_attributes(envelope = "upload")
-    body = JSON.parse(response.body)
-    assert body.has_key?(envelope.to_s)
+    body = response_body
+    assert body.has_key?(envelope.to_s), "should have envelope '#{envelope}'"
     assert_attributes body[envelope.to_s]
   end
 
   def assert_attributes(attributes)
-    assert attributes.has_key?("file_name")
-    assert attributes.has_key?("file_type")
-    assert attributes.has_key?("file_size")
-    assert attributes.has_key?("s3_url")
-    assert attributes.has_key?("locale")
-    assert attributes.has_key?("slug")
-    assert attributes.has_key?("title")
-    assert attributes.has_key?("description")
-    assert attributes.has_key?("status")
-    assert attributes.has_key?("type")
-    assert attributes.has_key?("progress")
-    assert attributes.has_key?("updated_at")
-    assert attributes.has_key?("created_at")
+    %w(file_name file_type file_size s3_url locale slug title description status type progress updated_at created_at).each do |attribute|
+      assert attributes.has_key?(attribute), "should containt attribute '#{attribute}' in '#{attributes}'"
+    end
   end
 end

@@ -30,9 +30,11 @@ class Upload < ActiveRecord::Base
   validates :s3_url, presence: true, length: { maximum: 255 }
   validates :title, presence: true, on: :update
 
-  filtered_scopes :any_of_statuses, :none_of_statuses
-  scope :any_of_statuses, lambda {|params| joins(:ingest).where(:ingests => {:aasm_state => [params].flatten.map(&:to_s)})}
-  scope :none_of_statuses, lambda {|params| joins(:ingest).where("ingests.aasm_state NOT IN (?)", [params].flatten.map(&:to_s)) }
+  filtered_scopes :any_of_status, :none_of_status
+  scope :any_of_status, lambda {|params| joins(:ingest).where("ingests.aasm_state IN (?)", [params].flatten.map(&:to_s).
+    map {|s| s.match(/^([\-]{,1}[0-9]+)$/) ? s : nil}.reject(&:blank?).map {|s| Ingest::STATES.key(s.to_i)}.uniq)}
+  scope :none_of_status, lambda {|params| joins(:ingest).where("ingests.aasm_state NOT IN (?)", [params].flatten.map(&:to_s).
+    map {|s| s.match(/^([\-]{,1}[0-9]+)$/) ? s : nil}.reject(&:blank?).map {|s| Ingest::STATES.key(s.to_i)}.uniq)}
   # private scopes
   scope :started, lambda {any_of_states(:started)}
   scope :stopped, lambda {any_of_states(:stopped)}
