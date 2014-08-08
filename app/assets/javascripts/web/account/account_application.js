@@ -24,23 +24,5 @@ $(function() {
   $('#drop-box').on('dragenter', addOverlay).on('drop', removeOverlay);
   $('#hover-overlay').on('dragleave', removeOverlay).on('dragend', removeOverlay).on('drop', removeOverlay);
   
-  $(".upload-panel").hover(function() {
-    // $("body").addClass("hover");
-    $(this).addClass("hover");
-  }, function() {
-    $("body").removeClass("hover");
-    $(this).removeClass("hover");
-  });
   
-  
-  // show-panel hover
-  $(".show-panel").hover(function() {
-    $(this).find(".action-panel").addClass("hover");
-  }, function() {
-    $(this).find(".action-panel").removeClass("hover");
-  });
-
-  $("#files-proxy").bind("click", function() {
-    $("#files").trigger("click");
-  })
 });

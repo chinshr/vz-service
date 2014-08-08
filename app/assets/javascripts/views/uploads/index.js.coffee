@@ -1,12 +1,14 @@
-class App.Views.Dashboard extends Backbone.View
-  # template: JST['uploads/index']
-  template: JST['dashboard']
+class App.Views.UploadsIndex extends Backbone.View
+  template: JST['uploads/index']
 
   events:
     'dragenter #drop-box': 'doNothing'
     'dragover #drop-box': 'doNothing'
     'drop #drop-box': 'onDrop'
     'change input#files': 'onChangeFiles'
+    'click button#files-proxy': 'trigger'
+    'mouseenter #drop-box': 'hover'
+    'mouseleave #drop-box': 'hover'
   
   render: ->
     @$el.html @template
@@ -16,13 +18,27 @@ class App.Views.Dashboard extends Backbone.View
   initialize: () ->
     @listenTo @collection, 'add', @onAddProgress
     @progressViews = {}
-          
+
+  hover: (e) -> 
+    if (e.type == 'mouseenter')
+      $(e.currentTarget).addClass("hover");
+    else
+      $("body").removeClass("hover");
+      $(e.currentTarget).removeClass("hover");
+  
+  trigger: () -> 
+    $("#files").trigger("click");
+            
   # Instantiate and render new views for models added to the collection
   # This is the view that will be listening to the 'upload:progress' event, and can also allow the user to cancel the upload
   onAddProgress: (model, response) ->
-    progressView = new App.Views.UploadsProgress(model: model)
-    @$('#file-uploads').append(progressView.render({name: "test-file-name.a"}).el)
-    @progressViews[model.cid] = progressView
+    if model.attributes.editable
+      view = new App.Views.UploadsEdit(model: model)
+      @$('#uploaded-files').before(view.render({name: "test-file-name.a"}).el)
+    else
+      view = new App.Views.UploadsShow(model: model)
+      @$('#uploaded-files').append(view.render({name: "test-file-name.a"}).el)
+    @progressViews[model.cid] = view
 
   onChangeFiles: (e) ->
     return if $(e.target).val() == ''
@@ -53,7 +69,7 @@ class App.Views.Dashboard extends Backbone.View
       files_dropped: options.files_dropped,
       file_list: options.file_list,
       file_dom_selector: options.file_dom_selector,
-      s3_sign_put_url: 'api/uploads/signput.json',
+      s3_sign_put_url: 'api/account/uploads/signput.json',
 
       onProgress: (xhr, file, percent, message) =>
         # Create a new Attachment model for the file which has just started uploading, 
@@ -67,6 +83,7 @@ class App.Views.Dashboard extends Backbone.View
             type: "audio",
             locale: @$("#file-locale").val() || "en-US",
             privacy: @$("#file-privacy").val() || "public"
+            editable: true
           # Key on file.size for uniqueness
           newUploads[file.size] = upload
           # Add the model to the Backbone collection, which will trigger an 'add' event

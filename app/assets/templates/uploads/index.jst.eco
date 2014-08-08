@@ -1,0 +1,51 @@
+<div id="drop-box-tile" class="tile upload-tile col-lg-4 col-md-4 col-sm-4">
+  <div id="drop-box" class="panel upload-panel">
+    <div class="panel-heading">
+      <h3>Drop files here...</h3>
+    </div><!-- panel-heading -->
+    <div class="panel-body">
+      <div class="upload-panel-separator">&mdash; or &mdash;</div>
+
+      <div class="form-group form-group-file-upload">
+        <label for="" class="control-label hidden">Add files</label>
+        <button id="files-proxy" class="btn btn-primary btn-lg btn-file-upload"><i class="glyphicon glyphicon-cloud-upload"></i>&nbsp;Add files...</button>
+        <input type="file" id="files" name="files[]" multiple />
+        <div class="email-file-upload-holder">or email to <a href="mailto:my@voyz.es?subject=Document title&body=—%0DAttach all your audio files you want transcribed for English United States (en-US)." class="xbtn xbtn-link btn-email-upload">my@voyz.es</a></div>
+      </div><!-- .form-group-file-upload -->
+
+      <div class="form-group form-group-locale">
+        <label class="hidden" for="disabledSelect">Audio language</label>
+        <select data-placeholder="Choose a Language..." id="file-locale" class="form-control input-sm input-single-searchable">
+          <option value=""></option>
+          <option value="en-US">English United States</option>
+          <option value="en-UK">English Great Britain</option>
+          <option value="de-DE">German Germany</option>
+          <option value="fr-FR">French France</option>
+          <option value="it-IT">Italian Italy</option>
+          <option value="es-ES">Spanish Spain</option>
+          <option value="es-MX">Spanish Mexico</option>
+          <option value="es-AR">Spanish Argentina</option>
+          <option value="es-VE">Spanish Venezuela</option>
+        </select>
+      </div><!-- .form-group-locale -->
+    </div><!-- .panel-body -->
+    <div class="panel-footer">
+      <!-- privacy -->
+      <div class="form-group form-group-file-privacy">
+        <div class="btn-group group-file-privacy" data-toggle="buttons">
+          <label class="btn btn-primary btn-sm active">
+            <input type="radio" name="file-privacy" id="file-privacy-public"><i class="glyphicon glyphicon-book icon-public"></i>&nbsp;Public
+          </label>
+          <label class="btn btn-primary btn-sm xdisabled">
+            <input type="radio" name="file-privacy" id="file-privacy-private"><i class="glyphicon glyphicon-lock icon-private"></i>&nbsp;Private
+          </label>
+        </div>
+      </div><!-- form-group-file-privacy -->
+      
+    </div><!-- .panel-footer-->
+  </div><!-- #drop-box .upload-panel -->
+</div><!-- #drop-box-tile .upload-tile -->
+
+<div id="uploaded-files">
+  <!-- upload tiles go here-->
+</div><!-- #uploaded-files -->

@@ -1,3 +1,4 @@
+# TODO remove, old router
 class App.Routers.Uploads extends Backbone.Router
   routes:
     '' : 'showIndex'

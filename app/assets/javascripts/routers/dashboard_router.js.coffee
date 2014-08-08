@@ -4,7 +4,6 @@ class App.Routers.Dashboard extends Backbone.Router
 
   default: -> 
     @collection = new App.Collections.Uploads()
-    @collection.fetch() 
-    view = new App.Views.Dashboard collection: @collection
-    $('#uploaded-files').html view.render().el
-
+    @collection.fetch({data: $.param({'sort_order': {'created_at': 'desc'}})}) 
+    view = new App.Views.UploadsIndex collection: @collection
+    $('#file-uploads').html view.render().el
