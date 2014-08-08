@@ -31,7 +31,7 @@ class Upload < ActiveRecord::Base
   validates :title, presence: true, on: :update
 
   # public scopes
-  filtered_scopes :sort_order, :reverse_order, :any_of_status, :none_of_status
+  filtered_scopes :sort_order, :reverse_sort, :any_of_status, :none_of_status
   scope :sort_order, lambda {|param| 
     case param.first[0]  # E.g. get first key of {"id"=>"asc"}
     when "id"
@@ -42,7 +42,7 @@ class Upload < ActiveRecord::Base
       raise ArgumentError, "Ignored unrecognized value 'sort_order[]=#{param}'."
     end
   }
-  scope :reverse_order, lambda {|param| all.reverse_order if Model::Helper.booleanize(param)}
+  scope :reverse_sort, lambda {|param| all.reverse_order if Model::Helper.booleanize(param)}
   scope :any_of_status, lambda {|params| joins(:ingest).where("ingests.aasm_state IN (?)", [params].flatten.map(&:to_s).
     map {|s| s.match(/^([\-]{,1}[0-9]+)$/) ? s : nil}.reject(&:blank?).map {|s| Ingest::STATES.key(s.to_i)}.uniq)}
   scope :none_of_status, lambda {|params| joins(:ingest).where("ingests.aasm_state NOT IN (?)", [params].flatten.map(&:to_s).

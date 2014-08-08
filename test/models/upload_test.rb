@@ -41,7 +41,7 @@ class UploadTest < ActiveSupport::TestCase
     end
     
     should "have filtered scopes" do
-      assert_equal [:any_of_status, :none_of_status, :sort_order, :reverse_order, :offset, :limit].to_set, 
+      assert_equal [:any_of_status, :none_of_status, :sort_order, :reverse_sort, :offset, :limit].to_set, 
         Upload.scopes.to_set
     end
     
