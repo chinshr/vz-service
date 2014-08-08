@@ -180,6 +180,14 @@ Development Resources
 * API code documentation
   - Hints on Stripe's API doc: http://www.quora.com/Stripe-company/What-software-powers-the-Stripe-API-documentation
   - Beautiful API documentation w/ Slate: https://github.com/tripit/slate
+* API responders to customize respond_with
+  - Responders for API versioning
+  - ActionController::Responder -- http://weblog.rubyonrails.org/2009/8/31/three-reasons-love-responder/
+  - Customer responders -- http://archives.ryandaigle.com/articles/2009/8/10/what-s-new-in-edge-rails-default-restful-rendering
+  - respond_with(@product, :responder => MyResponder) 
+  - default Rails responder class source -- https://github.com/rails/rails/blob/master/actionpack/lib/action_controller/metal/responder.rb
+  - Responders gem -- https://github.com/plataformatec/responders
+  - Customize responder in Devise w/ FailureApp -- https://github.com/plataformatec/devise/wiki/How-To:-Redirect-to-a-specific-page-when-the-user-can-not-be-authenticated
 
 Business Resources
 ------------------
