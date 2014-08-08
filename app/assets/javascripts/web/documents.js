@@ -1,11 +1,11 @@
 //= require lib/WAAPISim/waapisim
-//= require wavesurfer/wavesurfer
-//= require wavesurfer/webaudio
-//= require wavesurfer/webaudio.buffer
-//= require wavesurfer/webaudio.media
-//= require wavesurfer/drawer
-//= require wavesurfer/drawer.canvas
-//= require quill
+//= require lib/wavesurfer/wavesurfer
+//= require lib/wavesurfer/webaudio
+//= require lib/wavesurfer/webaudio.buffer
+//= require lib/wavesurfer/webaudio.media
+//= require lib/wavesurfer/drawer
+//= require lib/wavesurfer/drawer.canvas
+//= require lib/quill
 
 /* Tooltips */
 $(document).ready(function() {
