@@ -16,14 +16,22 @@ module Model::Filter
 
       filter_options.except("id", "action", "controller", "format", "signature", "access_id").each do |key, value|
         if self.scopes.map(&:to_s).include?(key) || ["fields", "add_fields", "remove_fields"].include?(key)
-         value = ((key == "offset" || key == "limit") && value.to_i <= 0) ? 0 : value
-            
+          value = ((key == "offset" || key == "limit") && value.to_i <= 0) ? 0 : value
+         
           if key == "sort_order"
-            Array.wrap(value).each do |v|
+            Array.wrap(value).flatten.each do |v|
               begin
-                @ar_proxy = @ar_proxy.send(key.to_sym, v)
-              rescue ArgumentError => e
-                messages << e.message
+                if v.is_a?(Hash)
+                  v.each do |hk, hv|
+                    # E.g. &sort_order[id]=a?... -> Post.send :sort_order, {"id" => "asc"}
+                    @ar_proxy = @ar_proxy.send(key.to_sym, {hk.to_s.downcase => ::Model::Helper.sort_orderize(hv)})
+                  end
+                else
+                  # E.g. &sort_order[]=id?... -> Post.send :sort_order, {"id" => "asc"}
+                  @ar_proxy = @ar_proxy.send(key.to_sym, {v.to_s.downcase => "asc"})
+                end
+              rescue ArgumentError => ex
+                messages << ex.message
               end
             end
           else
@@ -33,8 +41,7 @@ module Model::Filter
           messages << "Ignored unrecognized parameter '#{key}'."
         end
       end
-
-      # @ar_proxy.messages = messages
+      # TODO Feed 'messages' back to view
       @ar_proxy
     end
 

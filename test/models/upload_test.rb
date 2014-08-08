@@ -40,6 +40,11 @@ class UploadTest < ActiveSupport::TestCase
       @upload = FactoryGirl.create(:upload_audio)
     end
     
+    should "have filtered scopes" do
+      assert_equal [:any_of_status, :none_of_status, :sort_order, :reverse_order, :offset, :limit].to_set, 
+        Upload.scopes.to_set
+    end
+    
     should "have any_of_status" do
       @upload.ingest.update_attribute(:aasm_state, "started")
       assert_equal [@upload], Upload.any_of_status([1, 2])

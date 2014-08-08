@@ -30,7 +30,19 @@ class Upload < ActiveRecord::Base
   validates :s3_url, presence: true, length: { maximum: 255 }
   validates :title, presence: true, on: :update
 
-  filtered_scopes :any_of_status, :none_of_status
+  # public scopes
+  filtered_scopes :sort_order, :reverse_order, :any_of_status, :none_of_status
+  scope :sort_order, lambda {|param| 
+    case param.first[0]  # E.g. get first key of {"id"=>"asc"}
+    when "id"
+      order(self.arel_table[:id].send(param.first[1].to_sym).to_sql)
+    when "created_at"
+      order(self.arel_table[:created_at].send(param.first[1].to_sym).to_sql)
+    else
+      raise ArgumentError, "Ignored unrecognized value 'sort_order[]=#{param}'."
+    end
+  }
+  scope :reverse_order, lambda {|param| all.reverse_order if Model::Helper.booleanize(param)}
   scope :any_of_status, lambda {|params| joins(:ingest).where("ingests.aasm_state IN (?)", [params].flatten.map(&:to_s).
     map {|s| s.match(/^([\-]{,1}[0-9]+)$/) ? s : nil}.reject(&:blank?).map {|s| Ingest::STATES.key(s.to_i)}.uniq)}
   scope :none_of_status, lambda {|params| joins(:ingest).where("ingests.aasm_state NOT IN (?)", [params].flatten.map(&:to_s).

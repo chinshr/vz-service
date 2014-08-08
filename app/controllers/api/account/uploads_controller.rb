@@ -1,4 +1,7 @@
 class Api::Account::UploadsController < Api::Account::ApplicationController
+  include Api::Limit
+  include Api::Require
+
   before_filter :cors_allow_origin, :only => :signput
   
   # [POST] /api/account/uploads(.:format)

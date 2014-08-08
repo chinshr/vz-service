@@ -40,7 +40,7 @@ class Api::Account::UploadsControllerTest < ActionController::TestCase
       assert_response :unauthorized
     end
 
-    should "NOT create audio upload without file type audio" do
+    should "NOT create audio upload without file_type audio" do
       post :create, :upload => {type: "audio", file_type: "XXX", file_name: "xxx.xxx", file_size: 1,
         s3_url: "http://s3.amazonaws.com/qscribe-uploads/xxx.xxx"}, 
         format: :json
@@ -56,31 +56,20 @@ class Api::Account::UploadsControllerTest < ActionController::TestCase
   end
 
   context "GET /api/account/uploads" do
-    should "return all uploads" do
-      upload1 = FactoryGirl.create(:upload_audio)
-      upload1.user = @user and upload1.save
-      upload2 = FactoryGirl.create(:upload_audio)
-      upload2.user = @user and upload2.save
-      upload3 = FactoryGirl.create(:upload_audio)  # another user's upload
-      get :index, format: :json
-      assert_response :success
-      assert response_body.has_key?("uploads"), "should have 'uploads' root"
-      assert_equal 2, response_body["uploads"].size, "should only return user's uploads"
-      assert_attributes response_body["uploads"].first
+    setup do
+      @upload1      = FactoryGirl.create(:upload_audio)
+      @upload1.user = @user and @upload1.save
+      @upload2      = FactoryGirl.create(:upload_audio)
+      @upload2.user = @user and @upload2.save
     end
     
-    should "filter uploads by state" do
-      upload1 = FactoryGirl.create(:upload_audio)
-      upload1.user = @user and upload1.save
-      upload2 = FactoryGirl.create(:upload_audio)
-      upload2.user = @user and upload2.save
-      upload2.ingest.update_attribute(:aasm_state, "stopped")
-      get :index, :any_of_status => [Ingest::STATES[:stopped]], format: :json
+    should "get all user's uploads" do
+      FactoryGirl.create(:upload_audio)  # another user's upload
+      get :index, format: :json
       assert_response :success
-      assert response_body.has_key?("uploads"), "should have 'uploads' envelope"
-      assert_equal 1, response_body["uploads"].size
+      assert response_body.has_key?("uploads"), "should have root"
+      assert_equal 2, response_body["uploads"].size, "should only return user's uploads"
       assert_attributes response_body["uploads"].first
-      assert_equal Ingest::STATES[:stopped], response_body["uploads"].first["status"], "should be 'stopped' = #{Ingest::STATES[:stopped]}"
     end
     
     should "NOT return uploads when signed out" do
@@ -89,10 +78,58 @@ class Api::Account::UploadsControllerTest < ActionController::TestCase
       assert_response :unauthorized
     end
     
+    context "filters" do
+      should "#any_of_status" do
+        @upload2.ingest.update_attribute(:aasm_state, "stopped")
+        get :index, :any_of_status => [Ingest::STATES[:stopped]], format: :json
+        assert_response :success
+        assert response_body.has_key?("uploads"), "should have root"
+        assert_equal 1, response_body["uploads"].size
+        assert_attributes response_body["uploads"].first
+        assert_equal Ingest::STATES[:stopped], response_body["uploads"].first["status"], "should be 'stopped' = #{Ingest::STATES[:stopped]}"
+      end
+
+      should "#none_of_status" do
+        @upload2.ingest.update_attribute(:aasm_state, "stopped")
+        get :index, :none_of_status => [Ingest::STATES[:stopped]], format: :json
+        assert_response :success
+        assert response_body.has_key?("uploads"), "should have root"
+        assert_equal 1, response_body["uploads"].size
+        assert_attributes response_body["uploads"].first
+        assert_not_equal Ingest::STATES[:stopped], response_body["uploads"].first["status"], "should not be 'stopped' = #{Ingest::STATES[:stopped]}"
+      end
+      
+      should "#limit" do
+        get :index, :limit => 1, format: :json
+        assert_response :success
+        assert response_body.has_key?("uploads"), "should have root"
+        assert_equal 1, response_body["uploads"].size
+      end
+
+      context "sort_order" do
+        should "sort all ASC by values #id, #created_at" do
+          get :index, :sort_order => ["id", "created_at"], format: :json
+          assert_response :success
+          assert response_body.has_key?("uploads"), "should have root"
+          assert_equal 2, response_body["uploads"].size
+        end
+        
+        # query "sort_order[created_at]=desc&sort_order[id]=asc"
+        # Note: CGI.unescape({:a => "a", :b => ["c", "d", "e"]}.to_query)
+        should "sort values and order #id ASC, #created_at DESC" do
+          get :index, :sort_order => [{"id" => "asc", "created_at" => "desc"}], format: :json
+          assert_response :success
+          assert response_body.has_key?("uploads"), "should have root"
+          assert_equal 2, response_body["uploads"].size
+        end
+        
+      end
+      
+    end
   end
   
   context "GET /api/account/uploads/:id" do
-    should "return upload with :id" do
+    should "get upload with :id" do
       upload = FactoryGirl.create(:upload_audio)
       upload.user = @user and upload.save
       get :show, :id => upload.id, format: :json
@@ -100,7 +137,15 @@ class Api::Account::UploadsControllerTest < ActionController::TestCase
       assert_response_body_with_upload_and_attributes
     end
 
-    should "NOT return upload when signed out" do
+    should "get 404 not found error with invalid :id" do
+      other_upload = FactoryGirl.create(:upload_audio)
+      get :show, :id => other_upload.id, format: :json
+      assert_response :missing
+      assert response_body.has_key?("error")
+      assert_equal Api::Code::RECORD_NOT_FOUND, response_body["error"]["code"]
+    end
+
+    should "get 401 unauthorized error when when signed out" do
       sign_out :user
       get :show, :id => 1, format: :json
       assert_response :unauthorized
