@@ -1,4 +1,4 @@
-//= require WAAPISim/waapisim
+//= require lib/WAAPISim/waapisim
 //= require wavesurfer/wavesurfer
 //= require wavesurfer/webaudio
 //= require wavesurfer/webaudio.buffer

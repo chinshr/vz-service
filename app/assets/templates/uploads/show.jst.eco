@@ -1,0 +1,39 @@
+<div class="tile show-tile col-lg-4 col-md-4 col-sm-4">
+  <div class="panel show-panel">
+    <div class="progress progress-striped active">
+      <div class="progress-bar progress-bar-success" style="width: 75%"></div>
+    </div>
+    <div class="panel-heading">
+      <div class="dropdown">
+        <button type="button" class="cog" aria-hidden="true" data-toggle="dropdown"><i class="glyphicon glyphicon-cog"></i></button>
+        <ul class="dropdown-menu dropdown-menu-right" role="menu" xaria-labelledby="settings-button">
+          <li role="presentation"><a role="menuitem" tabindex="-1" href="#"><i class="glyphicon glyphicon-pencil"></i>&nbsp;Edit</a></li>
+          <li role="presentation"><a role="menuitem" tabindex="-1" href="#"><i class="glyphicon glyphicon-plus"></i>&nbsp;Add collaborator</a></li>
+          <li role="presentation"><a role="menuitem" tabindex="-1" href="#"><i class="glyphicon glyphicon-credit-card"></i>&nbsp;Change plan</a></li>
+          <li role="presentation" class="divider"></li>
+          <li role="presentation"><a role="menuitem" tabindex="-1" href="#"><i class="glyphicon glyphicon-trash"></i>&nbsp;Delete</a></li>
+        </ul>
+      </div><!-- dropdown -->
+      <h3><i class="glyphicon glyphicon-book icon-public"></i>I like pickles</h3>
+      <span class="label label-success label-status"><span class="message">Finished.</span></span>
+    </div><!-- .panel-heading -->
+    <div class="panel-body">
+      <ul class="tag-list">
+        <li class="tag-list-tag">red</li>
+        <li class="tag-list-tag">white</li>
+        <li class="tag-list-tag">blue</li>
+      </ul>
+    </div><!-- .panel-body -->
+    <div class="panel-body action-panel">
+      <div class="action-panel-bg-image"></div>
+      <div class="action-panel-btn-group">
+        <button class="btn btn-primary btn-lg btn-panel-action"><i class="glyphicon glyphicon-wrench"></i>&nbsp;Change</button>
+        <button class="btn btn-primary btn-lg btn-panel-action"><i class="glyphicon glyphicon-pencil"></i>&nbsp;Edit</button>
+        <button class="btn btn-primary btn-lg btn-panel-action"><i class="glyphicon glyphicon-eye-open"></i>&nbsp;Preview</button>
+        <!--
+        <button class="btn btn-primary btn-lg btn-panel-action"><i class="glyphicon glyphicon-user"></i>&nbsp;Collaborate</button>
+        -->
+      </div><!-- .action-panel-btn-group -->
+    </div><!-- .action-panel-->
+  </div><!-- .show-panel -->
+</div><!-- .show-tile -->
