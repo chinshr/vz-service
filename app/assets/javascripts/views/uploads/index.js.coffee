@@ -2,11 +2,8 @@ class App.Views.UploadsIndex extends Backbone.View
   template: JST['uploads/index']
 
   events:
-#    'dragleave #drop-box-tile': 'dragend'
-    'dragenter #drop-box': 'dragover'
-    'dragover #drop-box': 'dragover'
-    'drop #drop-box': 'drop'
-    'change input#files': 'onChangeFiles'
+    'drop #drop-box': 'dropFiles'
+    'change input#files': 'addFiles'
     'click button#files-proxy': 'trigger'
     'mouseenter #drop-box': 'hover'
     'mouseleave #drop-box': 'hover'
@@ -17,7 +14,7 @@ class App.Views.UploadsIndex extends Backbone.View
 
   # Listen for newly added models and render a view for each
   initialize: () ->
-    @listenTo @collection, 'add', @onAddProgress
+    @listenTo @collection, 'add', @addUploadView
     @progressViews = {}
 
   hover: (e) -> 
@@ -32,7 +29,7 @@ class App.Views.UploadsIndex extends Backbone.View
             
   # Instantiate and render new views for models added to the collection
   # This is the view that will be listening to the 'upload:progress' event, and can also allow the user to cancel the upload
-  onAddProgress: (model, response) ->
+  addUploadView: (model, response) ->
     if model.attributes.editable
       view = new App.Views.UploadsEdit(model: model)
       @$('#uploaded-files').before(view.render({name: "test-file-name.a"}).el)
@@ -41,19 +38,15 @@ class App.Views.UploadsIndex extends Backbone.View
       @$('#uploaded-files').append(view.render({name: "test-file-name.a"}).el)
     @progressViews[model.cid] = view
 
-  onChangeFiles: (e) ->
+  addFiles: (e) ->
     return if $(e.target).val() == ''
 
     @uploadToS3
       files_dropped: false,
       file_dom_selector: '#files'
 
-  drop: (e) ->
+  dropFiles: (e) ->
     e.originalEvent.preventDefault()
-    alert "drop"
-
-    $('body').removeClass("hover");
-    $('.upload-panel').removeClass("hover");
 
     return if e.dataTransfer == null
 
@@ -61,21 +54,10 @@ class App.Views.UploadsIndex extends Backbone.View
       files_dropped: true,
       file_list: e.originalEvent.dataTransfer.files
 
-  dragover: (e) ->
+  dropzone: (e) ->
     e.originalEvent.preventDefault()
     e.originalEvent.stopPropagation()
 
-    $('body').addClass("hover");
-    $('.upload-panel').addClass("hover");
-
-  dragend: (e) ->
-    e.originalEvent.preventDefault()
-    e.originalEvent.stopPropagation()
-
-    $('body').removeClass("hover");
-    $('.upload-panel').removeClass("hover");
-
-    
   # Instantiation of a new S3Upload with custom callbacks
   uploadToS3: (options) ->
     # We create an object to store the newly created models for reference in progress and abort callbacks
