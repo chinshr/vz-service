@@ -2,9 +2,10 @@ class App.Views.UploadsIndex extends Backbone.View
   template: JST['uploads/index']
 
   events:
-    'dragenter #drop-box': 'doNothing'
-    'dragover #drop-box': 'doNothing'
-    'drop #drop-box': 'onDrop'
+#    'dragleave #drop-box-tile': 'dragend'
+    'dragenter #drop-box': 'dragover'
+    'dragover #drop-box': 'dragover'
+    'drop #drop-box': 'drop'
     'change input#files': 'onChangeFiles'
     'click button#files-proxy': 'trigger'
     'mouseenter #drop-box': 'hover'
@@ -47,19 +48,34 @@ class App.Views.UploadsIndex extends Backbone.View
       files_dropped: false,
       file_dom_selector: '#files'
 
-  onDrop: (e) ->
+  drop: (e) ->
     e.originalEvent.preventDefault()
-    
+    alert "drop"
+
+    $('body').removeClass("hover");
+    $('.upload-panel').removeClass("hover");
+
     return if e.dataTransfer == null
 
     @uploadToS3
       files_dropped: true,
       file_list: e.originalEvent.dataTransfer.files
 
-  doNothing: (e) ->
+  dragover: (e) ->
     e.originalEvent.preventDefault()
     e.originalEvent.stopPropagation()
 
+    $('body').addClass("hover");
+    $('.upload-panel').addClass("hover");
+
+  dragend: (e) ->
+    e.originalEvent.preventDefault()
+    e.originalEvent.stopPropagation()
+
+    $('body').removeClass("hover");
+    $('.upload-panel').removeClass("hover");
+
+    
   # Instantiation of a new S3Upload with custom callbacks
   uploadToS3: (options) ->
     # We create an object to store the newly created models for reference in progress and abort callbacks
