@@ -188,6 +188,7 @@ Development Resources
   - default Rails responder class source -- https://github.com/rails/rails/blob/master/actionpack/lib/action_controller/metal/responder.rb
   - Responders gem -- https://github.com/plataformatec/responders
   - Customize responder in Devise w/ FailureApp -- https://github.com/plataformatec/devise/wiki/How-To:-Redirect-to-a-specific-page-when-the-user-can-not-be-authenticated
+* Download Video/Audio from YouTube, DailyMotion -- https://github.com/rb2k/viddl-rb
 
 Business Resources
 ------------------

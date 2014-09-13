@@ -28,15 +28,17 @@ class App.Views.UploadsIndex extends Backbone.View
     $("#files").trigger("click");
             
   # Instantiate and render new views for models added to the collection
-  # This is the view that will be listening to the 'upload:progress' event, and can also allow the user to cancel the upload
+  # This is the view that will be listening to the 'upload:progress' event, 
+  # and can also allow the user to cancel the upload
   addUploadView: (model, response) ->
-    if model.attributes.editable
-      view = new App.Views.UploadsEdit(model: model)
-      @$('#uploaded-files').before(view.render({name: "test-file-name.a"}).el)
-    else
-      view = new App.Views.UploadsShow(model: model)
-      @$('#uploaded-files').append(view.render({name: "test-file-name.a"}).el)
-    @progressViews[model.cid] = view
+    unless _.isEmpty(model.attributes)
+      if model.attributes.editable
+        view = new App.Views.UploadsEdit(model: model)
+        @$('#uploaded-files').before(view.render({name: "test-file-name.a"}).el)
+      else
+        view = new App.Views.UploadsShow(model: model)
+        @$('#uploaded-files').append(view.render({name: "test-file-name.a"}).el)
+      @progressViews[model.cid] = view
 
   addFiles: (e) ->
     return if $(e.target).val() == ''
