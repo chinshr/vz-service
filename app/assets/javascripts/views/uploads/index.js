@@ -115,6 +115,7 @@ App.Views.UploadsIndex = Backbone.View.extend({
           }
         };
       })(this),
+      
       onAbort: (function(_this) {
         return function(file, message) {
           var upload;
@@ -124,6 +125,7 @@ App.Views.UploadsIndex = Backbone.View.extend({
           return _this.$('input#files').replaceWith("<input id='files' type='file' name='files[]' multiple />");
         };
       })(this),
+      
       onFinishS3Put: (function(_this) {
         return function(public_url, file) {
           var upload;
@@ -131,6 +133,7 @@ App.Views.UploadsIndex = Backbone.View.extend({
           return upload.save({s3_url: public_url});
         };
       })(this),
+      
       onError: (function(_this) {
         return function(file, status) {
           var upload;
