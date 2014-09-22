@@ -5,25 +5,6 @@ $(function() {
     maximumInputLength: 15,
     tokenSeparators: [","]
   });
-
-  // drop overlay
-  var addOverlay = function(event) {
-    event.originalEvent.preventDefault()
-    event.originalEvent.stopPropagation()
-    $("body").addClass("hover");
-    //$(".upload-panel").addClass("hover");
-  }
-
-  var removeOverlay = function(event) {
-    event.originalEvent.preventDefault()
-    event.originalEvent.stopPropagation()
-    $("body").removeClass("hover");
-    //$(".upload-panel").removeClass("hover");
-  }
-  
-  // $('body').on('dragenter', addOverlay);
-  //$('body').on('dragover', addOverlay);
-  //$('body').on('dragend', removeOverlay)//.on('dragend', removeOverlay);
   
   var dropTarget = $('#drop-box'),
     body = $('body'),

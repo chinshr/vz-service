@@ -235,10 +235,15 @@ body.account {
         
       }
       
+      &.show-panel {
+        xborder: 3px dashed #999;
+      }
+      
       &.upload-panel {
         border: 3px dashed #ccc;
         box-shadow: none;
         background-color: transparent;
+        margin: 2px;
         @include transition(background-color box-shadow .2s ease);
 
         &.hover {

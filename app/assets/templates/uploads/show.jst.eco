@@ -5,7 +5,7 @@
     </div>
     <div class="panel-heading">
       <div class="dropdown">
-        <button type="button" class="cog" aria-hidden="true" data-toggle="dropdown"><i class="glyphicon glyphicon-cog"></i></button>
+        <button type="button" aria-hidden="true" data-toggle="dropdown" class="cog btn-dropdown-toggle"><i class="glyphicon glyphicon-cog"></i></button>
         <ul class="dropdown-menu dropdown-menu-right" role="menu" xaria-labelledby="settings-button">
           <li role="presentation"><a role="menuitem" tabindex="-1" href="#"><i class="glyphicon glyphicon-pencil"></i>&nbsp;Edit</a></li>
           <li role="presentation"><a role="menuitem" tabindex="-1" href="#"><i class="glyphicon glyphicon-plus"></i>&nbsp;Add collaborator</a></li>
@@ -27,9 +27,9 @@
     <div class="panel-body action-panel">
       <div class="action-panel-bg-image"></div>
       <div class="action-panel-btn-group">
-        <button class="btn btn-primary btn-lg btn-panel-action"><i class="glyphicon glyphicon-wrench"></i>&nbsp;Change</button>
-        <button class="btn btn-primary btn-lg btn-panel-action"><i class="glyphicon glyphicon-pencil"></i>&nbsp;Edit</button>
-        <button class="btn btn-primary btn-lg btn-panel-action"><i class="glyphicon glyphicon-eye-open"></i>&nbsp;Preview</button>
+        <button id="btn-edit" class="btn btn-primary btn-lg btn-panel-action"><i class="glyphicon glyphicon-wrench"></i>&nbsp;Edit</button>
+        <button id="btn-open" class="btn btn-primary btn-lg btn-panel-action"><i class="glyphicon glyphicon-pencil"></i>&nbsp;Open</button>
+        <button id="btn-preview" class="btn btn-primary btn-lg btn-panel-action"><i class="glyphicon glyphicon-eye-open"></i>&nbsp;Preview</button>
         <!--
         <button class="btn btn-primary btn-lg btn-panel-action"><i class="glyphicon glyphicon-user"></i>&nbsp;Collaborate</button>
         -->
