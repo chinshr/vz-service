@@ -7,8 +7,8 @@ App.Models.Upload = Backbone.Model.extend({
     }
   },
       
-  parse: function(response) {
-    response.upload
+  parse: function(response, options) {
+    return response && response.upload ? response.upload : response;
   },
 
   toJSON: function() {

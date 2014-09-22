@@ -39,7 +39,7 @@ GIT
 GEM
   remote: https://rubygems.org/
   specs:
-    aasm (3.1.1)
+    aasm (3.3.2)
     actionmailer (4.0.5)
       actionpack (= 4.0.5)
       mail (~> 2.5.4)
@@ -326,7 +326,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  aasm
+  aasm (= 3.3.2)
   activeadmin!
   amatch
   att-codekit!

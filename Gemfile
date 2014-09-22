@@ -74,7 +74,7 @@ gem 'ejs'
 # gem 'jquery-fileupload-rails'
 gem 'rabl'
 gem 'oj'
-gem 'aasm'
+gem 'aasm', '3.3.2'
 gem 'sidekiq'
 gem 'autoscaler'
 gem "sinatra", require: false

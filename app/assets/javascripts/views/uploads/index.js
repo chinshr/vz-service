@@ -9,15 +9,20 @@ App.Views.UploadsIndex = Backbone.View.extend({
     'mouseleave #drop-box': 'hover'
   },
   
-  render: function() {
-    this.$el.html(this.template);
-    return this;
-  },
-
   // Listen for newly added models and render a view for each
   initialize: function() {
-    this.listenTo(this.collection, 'add', this.addUploadView);
-    return this.progressViews = {};
+    this.listenTo(this.collection, 'add', this.addUpload);
+    this.listenTo(this.collection, 'reset', this.addAll);
+    
+    this.progressViews = {};
+  },
+
+  render: function() {
+    this.$el.html(this.template);
+    
+    this.collection.each(this.addUpload, this);
+    
+    return this;
   },
 
   hover: function(e) {
@@ -36,7 +41,7 @@ App.Views.UploadsIndex = Backbone.View.extend({
   // Instantiate and render new views for models added to the collection
   // This is the view that will be listening to the 'upload:progress' event, 
   // and can also allow the user to cancel the upload
-  addUploadView: function(model, response) {
+  addUpload: function(model, response) {
     var view;
     if (!_.isEmpty(model.attributes)) {
       if (model.attributes.editable) {
@@ -50,6 +55,10 @@ App.Views.UploadsIndex = Backbone.View.extend({
     }
   },
 
+  addAll: function() {
+    this.collection.each(this.addUpload, this);
+  },
+  
   addFiles: function(e) {
     if ($(e.target).val() === '') {
       return;

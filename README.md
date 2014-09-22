@@ -156,11 +156,12 @@ Development Resources
 * typeahead.js provides search suggestions -- http://twitter.github.io/typeahead.js
 * JS injecting extra info to copy-pasted text -- http://www.jitbit.com/alexblog/230-javascript-injecting-extra-info-to-copy-pasted-text/
 * Adapting to retina display -- http://www.sitepoint.com/css-techniques-for-retina-displays/
-* PhoneGap recording samples:
+* Mobile app development, PhoneGap recording samples:
   - https://software.intel.com/en-us/html5/articles/media-sample-with-phonegap
   - Samples app repo: https://github.com/gomobile/sample-phonegap-audio
   - PhoneGap audio example: https://github.com/bargar/phone-gap-audio-example
   - http://docs.phonegap.com/en/3.3.0/cordova_media_media.md.html#Media
+  - Build apps with phonegap famous book -- https://www.gitbook.io/book/nicholasareed/playbook-to-build-apps-with-phonegap-famous
 * Standards Terms -- http://www.entrepreneur.com/formnet/form/1174
 * Video player for cover background videos -- https://github.com/stefanerickson/covervid
 * Live updating with Rails:
@@ -188,7 +189,7 @@ Development Resources
   - default Rails responder class source -- https://github.com/rails/rails/blob/master/actionpack/lib/action_controller/metal/responder.rb
   - Responders gem -- https://github.com/plataformatec/responders
   - Customize responder in Devise w/ FailureApp -- https://github.com/plataformatec/devise/wiki/How-To:-Redirect-to-a-specific-page-when-the-user-can-not-be-authenticated
-* Download Video/Audio from YouTube, DailyMotion -- https://github.com/rb2k/viddl-rb
+* Download Video/Audio from YouTube, DailyMotion, etc. -- https://github.com/rb2k/viddl-rb
 
 Business Resources
 ------------------

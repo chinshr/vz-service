@@ -3,6 +3,7 @@ class Api::UploadsController < Api::ApplicationController
   
   # [POST] /api/uploads.json
   def create
+    ActiveSupport::Deprecation.warn("Should be replaced with [POST] /api/accounts/uploads.json")
     @upload = Upload.new(create_params.permit(:type)) do |u|
       u.session_id = current_session.id if current_session
     end
@@ -13,28 +14,33 @@ class Api::UploadsController < Api::ApplicationController
 
   # [GET] /api/uploads.json
   def index
+    ActiveSupport::Deprecation.warn("Should be replaced with [GET] /api/accounts/uploads.json")
     @uploads = current_session.uploads.any_of_states(:foobar) if current_session
     respond_with @uploads
   end
 
   # [GET] /api/uploads/1.json
   def show
+    ActiveSupport::Deprecation.warn("Should be replaced with [GET] /api/accounts/uploads/1.json")
     @upload = Upload.find(params[:id])
     respond_with @upload
   end
 
   # [PUT] /api/uploads/1.json
   def update
+    ActiveSupport::Deprecation.warn("Should be replaced with [PUT] /api/accounts/uploads/1.json")
     @upload = Upload.update(params[:id], update_params)
     respond_with @upload
   end
 
   # [DELETE] /api/uploads/1.json
   def destroy
+    ActiveSupport::Deprecation.warn("Should be replaced with [DELETE] /api/accounts/uploads/1.json")
     respond_with Upload.destroy(params[:id])
   end
   
   def signput
+    ActiveSupport::Deprecation.warn("Should be replaced with [GET] /api/accounts/uploads/signput.json")
     object_name    = params[:s3_object_name]
     mime_type      = params[:s3_object_type]
     expires        = Time.now.to_i + APP_CONFIG['EXPIRE_TIME'].to_i
