@@ -184,7 +184,7 @@ body.account {
         
       .cog {
         float: right;
-        font-size: 21px;
+        font-size: 18px;
         font-weight: bold;
         line-height: 1;
         color: #000;
@@ -411,6 +411,11 @@ body.account {
           background-image: linear-gradient(to top, #f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eee 100%);          
         }
       }
+      
+      .dropdown-menu {
+        margin: 25px 0 0 0;
+      }
+      
     } /* panel */
     
     

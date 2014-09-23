@@ -4,6 +4,7 @@
       <div class="progress-bar progress-bar-info" style="width: <%= @progress %>%"></div>
     </div>
     <div class="panel-heading">
+      <button type="button" class="close action-close">×</button>
       <h3><i class="glyphicon glyphicon-lock icon-private"></i>i-like-pickles.wav</h3>
       <span class="label label-info label-status"><span class="message">Initializing.</span></span>
     </div><!-- panel-heading -->

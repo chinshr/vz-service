@@ -2,15 +2,16 @@ App.Views.UploadsShow = App.Views.UploadsBase.extend({
   template: JST['uploads/show'],
   
   events: _.extend({
-    'click #btn-preview' : 'preview',
-    'click #btn-edit' : 'edit',
-    'click #btn-open' : 'open'
+    'click .action-update' : 'replaceView',
+    'click .action-edit' : 'openEdit',
+    'click .action-preview' : 'openPreview',
+    'click .action-delete' : 'doDelete'
   }, App.Views.UploadsBase.prototype.events),
   
   initialize: function() {
-    _(function() {
+    _.defer(function() {
       $('.btn-dropdown-toggle').dropdown();
-    }).defer();
+    });
   },
   
   render: function() {
@@ -19,15 +20,23 @@ App.Views.UploadsShow = App.Views.UploadsBase.extend({
     return this;
   },
   
-  preview: function() {
-    alert('preview');
-  },
-  
-  edit: function() {
-    alert('edit document');
+  replaceView: function() {
+    var show = this;
+    var edit = new App.Views.UploadsEdit({model: this.model});
+    this.$el.replaceWith(edit.render().el);
+    show.remove();
   },
 
-  open: function() {
-    alert('open document');
+  openEdit: function() {
+    alert('open edit document');
+  },
+
+  openPreview: function() {
+    alert('open preview document');
+  },
+
+  doDelete: function() {
+    alert('delete');
   }
+  
 });

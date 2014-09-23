@@ -19,9 +19,7 @@ App.Views.UploadsIndex = Backbone.View.extend({
 
   render: function() {
     this.$el.html(this.template);
-    
-    this.collection.each(this.addUpload, this);
-    
+    this.addAll();
     return this;
   },
 
