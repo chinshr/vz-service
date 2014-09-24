@@ -71,6 +71,6 @@ class Api::UploadsController < Api::ApplicationController
   end
 
   def update_params
-    params.require(:upload).permit(:title, :description, :locale, :privacy)
+    params.require(:upload).permit(:title, :description, :tag_list, :locale, :privacy)
   end
 end

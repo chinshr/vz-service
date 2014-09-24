@@ -7,6 +7,8 @@ class Document < ActiveRecord::Base
   has_many :chunks, dependent: :destroy
   has_many :tracks, :through => :ingests
 
+  acts_as_ordered_taggable_on :tags, :auto
+  
   validates :slug, presence: true, uniqueness: {case_sensitive: false}
   validates :title, presence: true, length: {maximum: 255}
   

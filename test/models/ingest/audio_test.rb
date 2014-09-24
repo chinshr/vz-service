@@ -11,15 +11,18 @@ class Ingest::AudioTest < ActiveSupport::TestCase
     ingest = FactoryGirl.create(:ingest_audio, :ingestable => document)
     assert_equal document.title, ingest.title
     assert_equal document.description, ingest.description
+    assert_equal document.tag_list, ingest.tag_list
   end
   
   should "delegate to document setters" do
     document = FactoryGirl.create(:document)
     ingest = FactoryGirl.create(:ingest_audio, :ingestable => document)
-    ingest.title = "Wizard of Oz!"
+    ingest.title       = "Wizard of Oz!"
     ingest.description = "The wonderful Wizard of Oz!"
+    ingest.tag_list    = ["wizard", "oz"]
     assert_equal document.title, ingest.title
     assert_equal document.description, ingest.description
+    assert_equal document.tag_list, ingest.tag_list
   end
   
   should "have segments and remove messages when reset" do

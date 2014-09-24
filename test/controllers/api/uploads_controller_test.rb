@@ -61,11 +61,12 @@ class Api::UploadsControllerTest < ActionController::TestCase
   context "PUT /uploads/:id" do
     should "update upload" do
       upload = FactoryGirl.create(:upload_audio)
-      put :update, {:id => upload.id, :upload => {:title => "La fiesta!", :description => "Entrevista en la fiesta.", locale: "es-AR"}, format: :json}
+      put :update, {:id => upload.id, :upload => {:title => "La fiesta!", :description => "Entrevista en la fiesta.", :tag_list => ["entrevista", "fiesta"], locale: "es-AR"}, format: :json}
       assert_response :success
       assert_response_body response
       assert_equal "La fiesta!", upload.reload.title
       assert_equal "Entrevista en la fiesta.", upload.reload.description
+      assert_equal ["entrevista", "fiesta"], upload.reload.tag_list
       assert_equal "es-AR", upload.reload.locale
     end
   end

@@ -21,6 +21,8 @@ class User < ActiveRecord::Base
   has_many :ingests, through: :documents
   has_many :uploads, through: :ingests
   
+  acts_as_tagger
+  
   validates :first_name, presence: true, :if => :confirmed_or_confirmation_validation?
   validates :last_name, presence: true, :if => :confirmed_or_confirmation_validation?
   

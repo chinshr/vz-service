@@ -65,7 +65,7 @@ class Api::Account::UploadsController < Api::Account::ApplicationController
   end
 
   def update_params
-    params.require(:upload).permit(:title, :description, :locale, :privacy)
+    params.require(:upload).permit(:title, :description, {:tag_list => []}, :locale, :privacy)
   end
 
   def cors_allow_origin

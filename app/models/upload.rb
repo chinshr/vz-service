@@ -12,6 +12,9 @@ class Upload < ActiveRecord::Base
   
   delegate :description, to: :ingest, allow_nil: true
   delegate :description=, to: :ingest, allow_nil: true
+
+  delegate :tag_list, to: :ingest, allow_nil: true
+  delegate :tag_list=, to: :ingest, allow_nil: true
   
   delegate :locale, to: :ingest, allow_nil: true
   delegate :locale=, to: :ingest, allow_nil: true
@@ -61,14 +64,13 @@ class Upload < ActiveRecord::Base
   
   class << self
     
-    # type casts to the class specified in :type parameter
+    # Type casts to the class specified in :type parameter
     #
     # E.g.
     #
-    #   Account::Activity.new(:type => :media_view, ...) -> Account::Activity::MediaView
-    #   Account::Activity.create(:type => "Account::Activity::MediaView", ...) -> Account::Activity::MediaView
-    #   Account::Activity.new(:type => :favorite, :media_id => 1) -> Account::Activity::MediaFavorite
-    #   Account::Activity.new(:type => :favorite, :subject => @media) -> Account::Activity::MediaFavorite
+    #   Upload.new(:type => :audio, ...) -> Upload::Audio
+    #   Upload.create(:type => "Upload::Audio", ...) -> Upload::Audio
+    #   Upload.create(:type => Upload::Audio, ...) -> Upload::Audio
     #
     def new_with_cast(*a, &b)  
       if (h = a.first).is_a? Hash and (type = h[:type] || h['type']) and 

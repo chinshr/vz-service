@@ -5,6 +5,9 @@ class Ingest::Audio < ::Ingest
   delegate :description, to: :ingestable
   delegate :description=, to: :ingestable
 
+  delegate :tag_list, to: :ingestable
+  delegate :tag_list=, to: :ingestable
+
   delegate :locale, to: :ingestable
   delegate :locale=, to: :ingestable
 

@@ -76,6 +76,8 @@ class UploadTest < ActiveSupport::TestCase
     should delegate :description=, to: :ingest, allow_nil: true
     should delegate :locale, to: :ingest, allow_nil: true
     should delegate :locale=, to: :ingest, allow_nil: true
+    should delegate :tag_list, to: :ingest, allow_nil: true
+    should delegate :tag_list=, to: :ingest, allow_nil: true
 
     should "delegate :user" do
       assert_equal @upload.ingest.ingestable.user, @upload.user
@@ -122,6 +124,15 @@ class UploadTest < ActiveSupport::TestCase
     should "delegate :description=" do
       @upload.description = "A new description"
       assert_equal "A new description", @upload.ingest.ingestable.description
+    end
+
+    should "delegate :tag_list" do
+      assert_equal @upload.ingest.ingestable.tag_list, @upload.tag_list
+    end
+
+    should "delegate :tag_list=" do
+      @upload.tag_list = ["a", "new", "tag", "list"]
+      assert_equal ["a", "new", "tag", "list"], @upload.ingest.ingestable.tag_list
     end
 
     should "delegate :locale" do
