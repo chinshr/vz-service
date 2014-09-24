@@ -53,5 +53,13 @@ end
 
 class ActionController::TestCase
   include Devise::TestHelpers
-  include Warden::Test::Helpers                        
+  include Warden::Test::Helpers
+  
+  protected
+  
+  def response_body
+    # TODO: if response is JSON.parse else XML
+    JSON.parse(response.body)
+  end
 end
+

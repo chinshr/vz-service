@@ -21,6 +21,11 @@ class Api::Account::UploadsController < Api::Account::ApplicationController
     respond_with @uploads
   end
 
+  # [GET] /api/account/uploads/count(.:format)
+  def count
+    render :json => {:count => current_user.uploads.filter(params).count}
+  end
+
   # [GET] /api/account/uploads/1(.:format)
   def show
     @upload = current_user.uploads.find(params[:id])

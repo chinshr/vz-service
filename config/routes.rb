@@ -37,6 +37,12 @@ Voyzes::Application.routes.draw do
   end
   
   namespace :api do
+    resources :tags, :only => :index do
+      collection do
+        get "count"
+      end
+    end
+    
     resources :documents, :only => [] do
       resources :tracks, :only => :index
     end
@@ -44,6 +50,7 @@ Voyzes::Application.routes.draw do
       resources :uploads do
         collection do
           get "signput"
+          get "count"
         end
       end
     end

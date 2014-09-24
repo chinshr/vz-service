@@ -128,6 +128,22 @@ class Api::Account::UploadsControllerTest < ActionController::TestCase
     end
   end
   
+  context "GET /api/account/uploads/count.json" do
+    setup do
+      @upload1      = FactoryGirl.create(:upload_audio)
+      @upload1.user = @user and @upload1.save
+      @upload2      = FactoryGirl.create(:upload_audio)
+      @upload2.user = @user and @upload2.save
+    end
+    
+    should "get count" do
+      get :count, format: :json
+      assert_response :success
+      assert response_body.has_key?("count"), "should have root"
+      assert_equal 2, response_body["count"], "should have count uploads"
+    end
+  end
+  
   context "GET /api/account/uploads/:id" do
     should "get upload with :id" do
       upload = FactoryGirl.create(:upload_audio)
@@ -210,11 +226,6 @@ class Api::Account::UploadsControllerTest < ActionController::TestCase
   end
   
   protected
-
-  def response_body
-    # TODO: if response is JSON.parse else XML
-    JSON.parse(response.body)
-  end
 
   def assert_response_body_with_upload_and_attributes(envelope = "upload")
     body = response_body
