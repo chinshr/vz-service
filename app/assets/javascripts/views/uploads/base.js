@@ -2,7 +2,7 @@ App.Views.UploadsBase = Backbone.View.extend({
   events: {
     'click .cancel' : 'onCancelUpload',
     'submit' : 'onFormSubmit',
-    'keyup input': 'fieldChanged',
+    'keyup xinput': 'fieldChanged',
     'change select': 'selectionChanged',
     'mouseenter .show-panel': 'hover',
     'mouseleave .show-panel': 'hover'

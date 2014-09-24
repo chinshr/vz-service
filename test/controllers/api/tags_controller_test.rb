@@ -37,6 +37,21 @@ class Api::TagsControllerTest < ActionController::TestCase
         assert_equal 1, response_body["tags"].size
         assert_equal "brown", response_body["tags"].first["name"]
       end
+
+      should "#least_used" do
+        get :index, :least_used => 1, format: :json
+        assert_response :success
+        assert response_body.has_key?("tags"), "should have root"
+        assert_equal 1, response_body["tags"].size
+      end
+
+      should "#named_like" do
+        get :index, :named_like => "cat", format: :json
+        assert_response :success
+        assert response_body.has_key?("tags"), "should have root"
+        assert_equal 1, response_body["tags"].size
+        assert_equal "cats", response_body["tags"].first["name"]
+      end
       
     end
   end
