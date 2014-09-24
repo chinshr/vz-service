@@ -162,6 +162,7 @@ class Api::Account::UploadsControllerTest < ActionController::TestCase
       assert_equal "La fiesta!", upload.reload.title
       assert_equal "Entrevista en la fiesta.", upload.reload.description
       assert_equal ["entrevista", "fiesta"], upload.reload.tag_list
+      assert_equal ["fiesta", "entrevista"], upload.user.owned_tags.map(&:name)
       assert_equal "es-AR", upload.reload.locale
     end
     

@@ -15,6 +15,7 @@ class Document < ActiveRecord::Base
   scope :recent, lambda {|n = 5| order("documents.created_at DESC").limit(n)}
   
   before_validation :generate_slug, :on => :create
+  before_save :set_tag_owner
   
   class << self
     
@@ -50,11 +51,16 @@ class Document < ActiveRecord::Base
   def content
     chunks.best.text
   end
-  
+
   protected
   
   def generate_slug
     chars = [('a'..'z'), ('A'..'Z'), ('0'..'9')].map {|i| i.to_a}.flatten
     self.slug = String.new.tap {|s| 1.upto(SLUG_LENGTH) {|i| s << chars[rand(chars.size - 1)]}} unless chars.empty?
   end
+  
+  def set_tag_owner
+    # Set the owner of some tags based on the current tag_list
+    set_owner_tag_list_on(user, :tags, self.tag_list)
+  end  
 end
