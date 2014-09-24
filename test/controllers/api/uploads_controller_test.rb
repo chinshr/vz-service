@@ -55,6 +55,7 @@ class Api::UploadsControllerTest < ActionController::TestCase
       get :show, :id => upload.id, format: :json
       assert_response :success
       assert_response_body response
+      
     end
   end
 
@@ -91,9 +92,13 @@ class Api::UploadsControllerTest < ActionController::TestCase
   end
   
   protected
+
+  def response_body(response)
+    JSON.parse(response.body)
+  end
   
   def assert_response_body(response)
-    body = JSON.parse(response.body)
+    body = response_body(response)
     assert body.has_key?("upload")
     assert_attributes body["upload"]
   end
@@ -107,6 +112,7 @@ class Api::UploadsControllerTest < ActionController::TestCase
     assert attributes.has_key?("slug")
     assert attributes.has_key?("title")
     assert attributes.has_key?("description")
+    assert attributes.has_key?("tag_list")
     assert attributes.has_key?("status")
     assert attributes.has_key?("type")
     assert attributes.has_key?("progress")

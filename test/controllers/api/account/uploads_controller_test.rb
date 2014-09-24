@@ -162,7 +162,7 @@ class Api::Account::UploadsControllerTest < ActionController::TestCase
       assert_equal "La fiesta!", upload.reload.title
       assert_equal "Entrevista en la fiesta.", upload.reload.description
       assert_equal ["entrevista", "fiesta"], upload.reload.tag_list
-      assert_equal ["fiesta", "entrevista"], upload.user.owned_tags.map(&:name)
+      assert_equal ["entrevista", "fiesta"], upload.user.owned_tags.map(&:name).sort
       assert_equal "es-AR", upload.reload.locale
     end
     
@@ -223,7 +223,7 @@ class Api::Account::UploadsControllerTest < ActionController::TestCase
   end
 
   def assert_attributes(attributes)
-    %w(file_name file_type file_size s3_url locale slug title description status type progress updated_at created_at).each do |attribute|
+    %w(file_name file_type file_size s3_url locale slug title description tag_list status type progress updated_at created_at).each do |attribute|
       assert attributes.has_key?(attribute), "should containt attribute '#{attribute}' in '#{attributes}'"
     end
   end

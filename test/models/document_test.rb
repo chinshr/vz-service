@@ -71,4 +71,20 @@ class DocumentTest < ActiveSupport::TestCase
     assert_equal chunk3, chunks[2]
   end
   
+  context "tags" do
+    should "allow mixed case tags" do
+      document = FactoryGirl.create(:document)
+      document.tag_list = ["PoC", "myTest", "abra-kadabra"]
+      document.save and document = Document.find(document.id)
+      assert_equal ["PoC", "myTest", "abra-kadabra"], document.tag_list
+    end
+    
+    should "not allow duplicate tags" do
+      document = FactoryGirl.create(:document)
+      document.tag_list = ["one", "one", "two"]
+      document.save and document = Document.find(document.id)
+      assert_equal ["one", "two"], document.tag_list
+    end
+    
+  end
 end

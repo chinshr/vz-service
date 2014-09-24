@@ -9,7 +9,7 @@ require 'webmock/minitest'
 Sidekiq::Testing.fake!
 AWS.stub!
 
-Geocoder.configure(:lookup => :test)
+Geocoder.configure(:lookup => :test, :timeout => 0)
 Geocoder::Lookup::Test.set_default_stub(
   [
     {

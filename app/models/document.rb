@@ -61,6 +61,6 @@ class Document < ActiveRecord::Base
   
   def set_tag_owner
     # Set the owner of some tags based on the current tag_list
-    set_owner_tag_list_on(user, :tags, self.tag_list)
+    set_owner_tag_list_on(user, :tags, self.tag_list) if changes[:tag_list]
   end  
 end
