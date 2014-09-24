@@ -37,7 +37,6 @@ Voyzes::Application.routes.draw do
   end
   
   namespace :api do
-    get "/uploads/signput" => 'uploads#signput'
     resources :documents, :only => [] do
       resources :tracks, :only => :index
     end
@@ -48,7 +47,6 @@ Voyzes::Application.routes.draw do
         end
       end
     end
-    resources :uploads
   end
   
   # post 'endpoints/email_processor' => 'griddler/emails#create'
