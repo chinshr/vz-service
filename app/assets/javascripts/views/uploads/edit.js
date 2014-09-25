@@ -3,10 +3,14 @@ App.Views.UploadsEdit = App.Views.UploadsBase.extend({
   
   events: _.extend({
     'click .action-close' : 'replaceView',
+    'keyup input': 'onFieldChange',
+    'change select': 'onSelectionChange',
+    'submit' : 'onFormSubmit'
   }, App.Views.UploadsBase.prototype.events),
   
   initialize: function() {
-    this.tags = ["red", "green", "blue", "purple"];
+    App.Views.UploadsBase.prototype.initialize.call(this); // super
+    
     _.defer((function(_this) {
       return function() {
         $('.input-taggable').select2({
@@ -64,7 +68,7 @@ App.Views.UploadsEdit = App.Views.UploadsBase.extend({
   },
   
   renderUpdate: function(hasProgress) {
-    App.Views.UploadsBase.prototype.renderUpdate.call(hasProgress); // super
+    App.Views.UploadsBase.prototype.renderUpdate.call(this, hasProgress); // super
 
     // enable fields
     this.$("input[name='upload[title]']").val(this.model.attributes.title);
@@ -75,4 +79,55 @@ App.Views.UploadsEdit = App.Views.UploadsBase.extend({
     this.$(".form-fields").show();
   },
   
+  onFieldChange: function(e) {
+    var data, field, key;
+    field = $(e.currentTarget);
+    data  = {};
+    if (key = field.attr('name').match(/\[(.+)\]/)[1]) {
+      data[key] = field.val();
+      this.model.set(data);
+      return this.model.validate();
+    }
+  },
+
+  onSelectionChange: function(e) {
+    var data, field, key;
+    field = $(e.currentTarget);
+    data = {};
+    if (key = field.attr('name').match(/\[(.+)\]/)[1]) {
+      data[key] = field.val();
+      this.model.set(data);
+      return this.model.validate();
+    }
+  },
+  
+  onFormSubmit: function(e) {
+    var data, form;
+    e.originalEvent.preventDefault();
+    form = $(e.target);
+    data = {};
+    _.map(form.serializeArray(), function(n) {
+      var key;
+      key = n['name'].match(/\[(.+)\]/);
+      if (key.length > 1) {
+        return data[key[1]] = n['value'];
+      }
+    });
+    this.model.set(data);
+    if (this.model.isValid(true)) {
+      this.$(".btn").button("loading");
+      return this.model.sync('update', this.model, {
+        success: (function(_this) {
+          return function() {
+            return _this.$(".btn").button("reset");
+          };
+        })(this),
+        error: (function(_this) {
+          return function() {
+            return _this.$(".btn").button("reset");
+          };
+        })(this)
+      });
+    }
+  },
 });

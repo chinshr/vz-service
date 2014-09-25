@@ -1,10 +1,7 @@
 App.Views.UploadsBase = Backbone.View.extend({
   events: {
-    'click .action-cancel' : 'onCancel',
     'click .action-delete': 'onDelete',
-    'submit' : 'onFormSubmit',
-    'keyup xinput': 'fieldChanged',
-    'change select': 'selectionChanged',
+    'click .action-cancel-upload' : 'onCancelUpload',
     'mouseenter .show-panel': 'hover',
     'mouseleave .show-panel': 'hover'
   },
@@ -41,7 +38,7 @@ App.Views.UploadsBase = Backbone.View.extend({
     }
   },
 
-  onCancel: function(e) {
+  onCancelUpload: function(e) {
     if (this._xhr) {
       this._xhr.abort();
     }
@@ -71,36 +68,6 @@ App.Views.UploadsBase = Backbone.View.extend({
     this.ping();  
   },
     
-  onFormSubmit: function(e) {
-    var data, form;
-    e.originalEvent.preventDefault();
-    form = $(e.target);
-    data = {};
-    _.map(form.serializeArray(), function(n) {
-      var key;
-      key = n['name'].match(/\[(.+)\]/);
-      if (key.length > 1) {
-        return data[key[1]] = n['value'];
-      }
-    });
-    this.model.set(data);
-    if (this.model.isValid(true)) {
-      this.$(".btn").button("loading");
-      return this.model.sync('update', this.model, {
-        success: (function(_this) {
-          return function() {
-            return _this.$(".btn").button("reset");
-          };
-        })(this),
-        error: (function(_this) {
-          return function() {
-            return _this.$(".btn").button("reset");
-          };
-        })(this)
-      });
-    }
-  },
-  
   ping: function() {
     this.interval = setInterval((function(_this) {
       return function() {
@@ -160,29 +127,7 @@ App.Views.UploadsBase = Backbone.View.extend({
     }
   },
   
-  fieldChanged: function(e) {
-    var data, field, key;
-    field = $(e.currentTarget);
-    data  = {};
-    if (key = field.attr('name').match(/\[(.+)\]/)[1]) {
-      data[key] = field.val();
-      this.model.set(data);
-      return this.model.validate();
-    }
-  },
-            
-  selectionChanged: function(e) {
-    var data, field, key;
-    field = $(e.currentTarget);
-    data = {};
-    if (key = field.attr('name').match(/\[(.+)\]/)[1]) {
-      data[key] = field.val();
-      this.model.set(data);
-      return this.model.validate();
-    }
-  },
-  
   _hasProgress: function() {
     return this.model.hasProgress();
-  },
+  }
 });
