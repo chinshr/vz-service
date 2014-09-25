@@ -243,7 +243,7 @@ wavesurfer.on('finish', function () {
 
   $(document).on('keydown', function (e) {
     var map = {
-      32: 'toggle-play-pause',       // space
+      //32: 'toggle-play-pause',       // space  NOTE: took this out as it interfers on other pages
       37: 'step-backward',       // left
       39: 'step-forward'       // right
     };

@@ -22,9 +22,13 @@
     </div><!-- .panel-heading -->
     <div class="panel-body">
       <ul class="tag-list">
-        <li class="tag-list-tag">red</li>
-        <li class="tag-list-tag">white</li>
-        <li class="tag-list-tag">blue</li>
+				<% if @tag_list.length == 0: %>
+				<li class="tag-list-empty">No tags.</li>
+				<% else: %>
+					<% for tag in @tag_list: %>
+	        <li class="tag-list-tag"><%= tag %></li>
+					<% end %>
+				<% end %>
       </ul>
     </div><!-- .panel-body -->
     <div class="panel-body action-panel">

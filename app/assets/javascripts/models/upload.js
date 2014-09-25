@@ -1,6 +1,10 @@
 App.Models.Upload = Backbone.Model.extend({
   urlRoot: 'api/account/uploads',
   
+  defaults: {
+    "tag_list": []
+  },
+    
   validation: {
     title: {
       required: true

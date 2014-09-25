@@ -9,9 +9,12 @@ App.Views.UploadsShow = App.Views.UploadsBase.extend({
   }, App.Views.UploadsBase.prototype.events),
   
   initialize: function() {
-    _.defer(function() {
-      $('.btn-dropdown-toggle').dropdown();
-    });
+    _.defer((function(_this) {
+      return function() {
+        $('.btn-dropdown-toggle').dropdown();
+        _this.ping();
+      }
+    })(this));
   },
   
   render: function() {

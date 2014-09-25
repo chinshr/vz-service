@@ -1,6 +1,7 @@
 App.Views.UploadsBase = Backbone.View.extend({
   events: {
-    'click .cancel' : 'onCancelUpload',
+    'click .action-cancel' : 'onCancel',
+    'click .action-delete': 'onDelete',
     'submit' : 'onFormSubmit',
     'keyup xinput': 'fieldChanged',
     'change select': 'selectionChanged',
@@ -12,12 +13,12 @@ App.Views.UploadsBase = Backbone.View.extend({
     this.$el.html(this.template(this.model.attributes));
     return this;
   },
-        
+  
   initialize: function() {
     this.interval = null;
     this.listenTo(this.model, 'upload:progress', this.onUploadProgress);
-    this.listenTo(this.model, 'destroy', this.destroy);
-    return this.listenToOnce(this.model, 'sync', this.onAfterCreate);
+    this.listenTo(this.model, 'destroy', this.remove);
+    this.listenToOnce(this.model, 'sync', this.onSync);
   },
       
   hover: function(e) {
@@ -40,22 +41,34 @@ App.Views.UploadsBase = Backbone.View.extend({
     }
   },
 
-  onCancelUpload: function(e) {
+  onCancel: function(e) {
     if (this._xhr) {
       this._xhr.abort();
     }
     this.stop();
-    return this.$(".progress-panel").remove();
   },
-    
-  onAfterCreate: function(e) {
-    this.$("input[name='upload[title]']").val(this.model.attributes.title);
-    this.$("select[name='upload[locale]']").val(this.model.attributes.locale);
-    this.$("select[name='upload[privacy]']").val(this.model.attributes.privacy);
-    this.$('form, form input, form textarea, form button').removeAttr("disabled");
-    this.$(".form-fields").show();
-    this.$('.message').html(this.model.message());
-    return this.ping();
+
+  onDelete: function(e) {
+    console.log("=> destroy");
+    if (this._xhr) {
+      this._xhr.abort();
+    }
+    this.model.destroy({
+      wait: true,
+      success: (function(_this) {
+        return function(model, response) {
+          _this.stop();
+          _this.remove();
+          console.log("=> destroyed");
+        };
+      })(this)
+    });
+  },
+
+  onSync: function(event) {
+    this.renderUpdate();
+    // Note: after create (sync) ping-loop needs to be started.
+    this.ping();  
   },
     
   onFormSubmit: function(e) {
@@ -89,11 +102,12 @@ App.Views.UploadsBase = Backbone.View.extend({
   },
   
   ping: function() {
-    return this.interval = setInterval((function(_this) {
+    this.interval = setInterval((function(_this) {
       return function() {
+        console.log("=> poll");
         return _this.poll();
       };
-    })(this), 2500);
+    })(this), 2000 + parseInt(Math.random() * 500));
   },
       
   stop: function() {
@@ -105,30 +119,41 @@ App.Views.UploadsBase = Backbone.View.extend({
       success: (function(_this) {
         return function(data) {
           _this.model.set("progress", data.upload.progress);
-          return _this.model.set("status", data.upload.status);
+          _this.model.set("status", data.upload.status);
+          if (!_this.model.hasProgress()) {
+            _this.stop();
+            _this.renderUpdate();
+          }
         };
       })(this),
       error: (function(_this) {
         return function(model) {
-          return console.log("error fetching upload ID = " + _this.data.upload.id);
+          console.log("error fetching upload ID = " + _this.data.upload.id);
+          _this.renderUpdate(false);
         };
       })(this)
     });
+  },
+
+  renderUpdate: function(hasProgress) {
+    hasProgress = hasProgress || this._hasProgress();
+    
     this.$('.message').html(this.model.message());
     this.$('.alert-slug-link').html("<a href=\"" + this.model.attributes.slug + "\" target=\"_blank\">http://voyz.es/" + this.model.attributes.slug + "</a>");
     this.$('.alert-slug').show();
     this.$('.progress .progress-bar').css('width', "" + this.model.attributes.progress + "%");
-    if (this.model.hasProgress()) {
+    if (hasProgress) {
       this.$('.progress').addClass('active');
     } else {
       this.$('.progress').removeClass('active');
     }
+    
     if (this.model.hasFinished()) {
       this.$('.status').removeClass('label-info').addClass('label-success');
-      this.stop();
     } else if (this.model.hasStopped()) {
       this.$('.status').removeClass('label-info').removeClass('label-success').removeClass('label-warning').addClass('label-danger');
     }
+    
     if (!this.$('.progress .progress-bar').hasClass('progress-bar-success')) {
       this.$('.progress .progress-bar').removeClass('progress-bar-info');
       return this.$('.progress .progress-bar').addClass('progress-bar-success');
@@ -155,5 +180,9 @@ App.Views.UploadsBase = Backbone.View.extend({
       this.model.set(data);
       return this.model.validate();
     }
-  }
+  },
+  
+  _hasProgress: function() {
+    return this.model.hasProgress();
+  },
 });

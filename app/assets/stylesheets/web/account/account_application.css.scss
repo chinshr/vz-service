@@ -380,6 +380,19 @@ body.account {
         margin: 0;
         padding: 0 5px 0 0;
         overflow: hidden;
+
+        li.tag-list-empty {
+          float: left;
+          list-style: none;
+          font-size: 12px;
+          white-space: nowrap;
+          xpadding: 3px 5px;
+          margin: 3px 5px 3px 0;
+          white-space: nowrap;
+          color: #999;
+          xpadding: 3px 5px;
+          xmargin: 3px 5px 3px 0;
+        }
         
         li.tag-list-tag {
           float: left;
