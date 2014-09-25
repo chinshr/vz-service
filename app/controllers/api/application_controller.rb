@@ -1,4 +1,6 @@
 class Api::ApplicationController < ApplicationController
+  include Api::Limit
+  include Api::Require
   include Api::ApplicationHelper
   helper Api::ApplicationHelper
   

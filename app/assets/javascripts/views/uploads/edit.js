@@ -18,7 +18,7 @@ App.Views.UploadsEdit = App.Views.UploadsBase.extend({
             quietMillis: 100,
             data: function (term, page) { // page is the one-based page number tracked by Select2
               return {
-                named_like: term, //search term
+                named_like: term, // search term
                 limit: 10, // page size
                 offset: (page - 1) * 10 // page number
               };

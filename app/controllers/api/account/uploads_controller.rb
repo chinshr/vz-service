@@ -1,7 +1,4 @@
 class Api::Account::UploadsController < Api::Account::ApplicationController
-  include Api::Limit
-  include Api::Require
-
   before_filter :cors_allow_origin, :only => :signput
   
   # [POST] /api/account/uploads(.:format)
@@ -12,7 +9,7 @@ class Api::Account::UploadsController < Api::Account::ApplicationController
     @upload.attributes = create_params.except(:type)
     @upload.user = current_user if current_user
     @upload.save
-    respond_with "api", @upload
+    respond_with "api", "account", @upload
   end
 
   # [GET] /api/account/uploads(.:format)
