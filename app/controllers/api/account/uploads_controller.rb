@@ -4,7 +4,7 @@ class Api::Account::UploadsController < Api::Account::ApplicationController
   # [POST] /api/account/uploads(.:format)
   def create
     @upload = Upload.new(create_params.permit(:type)) do |u|
-      u.session_id = current_session.id if current_session
+      # u.session_id = current_session.id if current_session
     end
     @upload.attributes = create_params.except(:type)
     @upload.user = current_user if current_user

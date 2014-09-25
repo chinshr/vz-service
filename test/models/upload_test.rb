@@ -3,7 +3,6 @@ require 'test_helper'
 class UploadTest < ActiveSupport::TestCase
   context "associations" do
     should have_one(:ingest).dependent(:destroy)
-    should belong_to(:session)
   end
   
   context "validations" do

@@ -25,7 +25,6 @@ class Upload < ActiveRecord::Base
   delegate :progress, to: :ingest
 
   has_one :ingest, dependent: :destroy
-  belongs_to :session
   
   validates :type, presence: true
   validates :file_name, presence: true, length: { maximum: 255 }
