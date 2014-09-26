@@ -17,7 +17,7 @@
           <li role="presentation"><a class="action-delete" role="menuitem" tabindex="-1" href="#"><i class="glyphicon glyphicon-trash"></i>Delete</a></li>
         </ul>
       </div><!-- dropdown -->
-      <h3><i class="glyphicon glyphicon-book icon-public"></i><%= @title %></h3>
+      <h3><i class="glyphicon icon-privacy"></i><%= @title %></h3>
       <span class="label label-success label-status"><span class="message"><%= @message %></span></span>
     </div><!-- .panel-heading -->
     <div class="panel-body">

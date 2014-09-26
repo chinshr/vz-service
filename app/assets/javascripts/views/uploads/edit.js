@@ -5,15 +5,45 @@ App.Views.UploadsEdit = App.Views.UploadsBase.extend({
     'click .action-close' : 'replaceView',
     'keyup input': 'onFieldChange',
     'change select': 'onSelectionChange',
-    'submit' : 'onFormSubmit'
+    'submit' : 'onFormSubmit',
+    'change .btn-group .btn input[type=radio]:radio' : (function(event) {
+      var radio = $(event.currentTarget);
+      this.model.set({privacy: radio.val()});
+      console.log("=> radio triggered");
+      if (!radio.data('triggered')) {
+        console.log("=> radio changed + .btn triggered");
+        // radio.closest('.btn-group .btn').trigger('click');
+      }
+      
+    }),
   }, App.Views.UploadsBase.prototype.events),
   
   initialize: function() {
     App.Views.UploadsBase.prototype.initialize.call(this); // super
+    this.listenTo(this.model, 'change:privacy', this.renderUpdate);
     
     _.defer((function(_this) {
       return function() {
-        $('.input-taggable').select2({
+        // privacy radio button group
+        /*
+        _this.$('.btn-group .btn').bind('click', function(event) {
+          $(this).find("input[type=radio]").
+            data('triggered', true).
+            prop('checked', true);
+          console.log("=> .btn triggered");
+        });
+        
+        _this.$('.btn-group .btn input[type=radio]:radio').bind('change', function(event) {
+          console.log("=> radio changed");
+          if (!$(this).data('triggered')) {
+            console.log("=> radio changed + .btn triggered");
+            $(this).closest('.btn-group .btn').trigger('click');
+          }
+        });
+        */
+        
+        // tags
+        _this.$('.input-taggable').select2({
           minimumInputLength: 3,
           multiple: true,
           maximumInputLength: 15,
@@ -70,14 +100,18 @@ App.Views.UploadsEdit = App.Views.UploadsBase.extend({
   renderUpdate: function(hasProgress) {
     App.Views.UploadsBase.prototype.renderUpdate.call(this, hasProgress); // super
 
-    // enable fields
     this.$("input[name='upload[title]']").val(this.model.attributes.title);
     this.$("input[name='upload[tag_list]']").val(this.model.attributes.tag_list);
     this.$("textarea[name='upload[description]']").val(this.model.attributes.description);
     this.$("select[name='upload[locale]']").val(this.model.attributes.locale);
-    this.$("select[name='upload[privacy]']").val(this.model.attributes.privacy);
     this.$("form, form input, form textarea, form button").removeAttr('disabled');
     this.$(".form-fields").show();
+    
+    // privacy
+    this.$("input[type='radio'][value='" + this.model.attributes.privacy + "']").
+      prop('checked', true).
+      closest('.btn-group .btn').trigger('click');
+    
   },
   
   onFieldChange: function(e) {

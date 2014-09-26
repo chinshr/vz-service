@@ -236,7 +236,7 @@ class Api::Account::UploadsControllerTest < ActionController::TestCase
   end
 
   def assert_attributes(attributes)
-    %w(file_name file_type file_size s3_url locale slug title description tag_list status type progress updated_at created_at).each do |attribute|
+    %w(file_name file_type file_size s3_url locale slug title description tag_list privacy status type progress updated_at created_at).each do |attribute|
       assert attributes.has_key?(attribute), "should containt attribute '#{attribute}' in '#{attributes}'"
     end
   end

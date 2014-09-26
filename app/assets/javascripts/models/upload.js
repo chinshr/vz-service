@@ -19,17 +19,19 @@ App.Models.Upload = Backbone.Model.extend({
     return Backbone.Model.prototype.set.call(this, attributes, options);
   },
 
-/*
-  validate: function(attrs, options) {
-    // TODO: dirty hack to convert tag_list back to array
-    if (attrs.tag_list) {
-      attrs.tag_list = attrs.tag_list.split(',')
-    }
-  },
-*/
-
   parse: function(response, options) {
-    return response && response.upload ? response.upload : response;
+    // Note: collections need to be treated differently because, they are not
+    // wrapped as 'upload', 'upload':{'id':1, ...} vs. 'uploads':[{'id':1,...}, {'id':2, ...}, ...]
+    var res = response && response.upload ? response.upload : response;
+    // we want to modify some attributes
+    for(var key in res) { 
+      if (res.hasOwnProperty(key)) {
+        if (key === 'privacy' && _.isArray(res[key])) {
+          res[key] = res[key].toString();
+        }
+      }
+    }
+    return res;
   },
 
   toJSON: function() {

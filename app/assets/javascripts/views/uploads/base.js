@@ -129,7 +129,18 @@ App.Views.UploadsBase = Backbone.View.extend({
     
     if (!this.$('.progress .progress-bar').hasClass('progress-bar-success')) {
       this.$('.progress .progress-bar').removeClass('progress-bar-info');
-      return this.$('.progress .progress-bar').addClass('progress-bar-success');
+      this.$('.progress .progress-bar').addClass('progress-bar-success');
+    }
+    
+    // privacy
+    if (this.model.attributes.privacy === "private") {
+      this.$('.icon-privacy').
+        addClass('icon-private').addClass('glyphicon-lock').
+        removeClass('icon-public').removeClass('glyphicon-book');
+    } else {
+      this.$('.icon-privacy').
+        removeClass('icon-private').removeClass('glyphicon-lock').
+        addClass('icon-public').addClass('glyphicon-book');
     }
   },
   

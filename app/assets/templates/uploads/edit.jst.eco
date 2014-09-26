@@ -6,7 +6,7 @@
       </div>
       <div class="panel-heading">
         <button type="button" class="close action-close">×</button>
-        <h3><i class="glyphicon glyphicon-lock icon-private"></i>i-like-pickles.wav</h3>
+        <h3><i class="glyphicon icon-privacy"></i>i-like-pickles.wav</h3>
         <span class="label label-info label-status"><span class="message">Initializing.</span></span>
       </div><!-- panel-heading -->
       <div class="panel-body">
@@ -27,7 +27,6 @@
             <textarea class="form-control input-sm" placeholder="Description" name="upload[description]" value="<%= @description %>"></textarea>
             
           </div><!-- form-group-description -->
-
 
           <div class="form-group form-group-audio-language">
             <label class="sr-only" for="">Audio Language</label>
@@ -50,10 +49,10 @@
         <div class="form-group from-group-file-privacy clearfix">
           <div class="btn-group group-file-privacy pull-left" data-toggle="buttons">
             <label class="btn btn-primary btn-sm active">
-              <input type="radio" name="file-privacy" id="file-privacy-public"><i class="glyphicon glyphicon-book icon-public"></i>&nbsp;Public
+              <input type="radio" name="upload[privacy]" id="upload-privacy-public" value="public" checked=""><i class="glyphicon glyphicon-book icon-public"></i>&nbsp;Public
             </label>
-            <label class="btn btn-primary btn-sm xdisabled">
-              <input type="radio" name="file-privacy" id="file-privacy-private"><i class="glyphicon glyphicon-lock icon-private"></i>&nbsp;Private
+            <label class="btn btn-primary btn-sm">
+              <input type="radio" name="upload[privacy]" id="upload-privacy-private" value="private"><i class="glyphicon glyphicon-lock icon-private"></i>&nbsp;Private
             </label>
           </div><!-- group-file-privacy -->
 
