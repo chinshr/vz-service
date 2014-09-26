@@ -72,8 +72,9 @@ App.Views.UploadsEdit = App.Views.UploadsBase.extend({
 
     // enable fields
     this.$("input[name='upload[title]']").val(this.model.attributes.title);
+    this.$("input[name='upload[tag_list]']").val(this.model.attributes.tag_list);
+    this.$("textarea[name='upload[description]']").val(this.model.attributes.description);
     this.$("select[name='upload[locale]']").val(this.model.attributes.locale);
-    this.$("select[name='upload[tag_list]']").val(this.model.attributes.tag_list);
     this.$("select[name='upload[privacy]']").val(this.model.attributes.privacy);
     this.$("form, form input, form textarea, form button").removeAttr('disabled');
     this.$(".form-fields").show();
@@ -83,10 +84,10 @@ App.Views.UploadsEdit = App.Views.UploadsBase.extend({
     var data, field, key;
     field = $(e.currentTarget);
     data  = {};
-    if (key = field.attr('name').match(/\[(.+)\]/)[1]) {
+    if (!!field.attr('name') && (key = field.attr('name').match(/\[(.+)\]/)[1])) {
       data[key] = field.val();
       this.model.set(data);
-      return this.model.validate();
+      return this.model.isValid();
     }
   },
 
@@ -97,11 +98,13 @@ App.Views.UploadsEdit = App.Views.UploadsBase.extend({
     if (key = field.attr('name').match(/\[(.+)\]/)[1]) {
       data[key] = field.val();
       this.model.set(data);
-      return this.model.validate();
+      return this.model.isValid();
     }
   },
   
   onFormSubmit: function(e) {
+    console.log("=> submit");
+    
     var data, form;
     e.originalEvent.preventDefault();
     form = $(e.target);
@@ -109,22 +112,22 @@ App.Views.UploadsEdit = App.Views.UploadsBase.extend({
     _.map(form.serializeArray(), function(n) {
       var key;
       key = n['name'].match(/\[(.+)\]/);
-      if (key.length > 1) {
+      if (!!key && _.isArray(key) && key.length > 1) {
         return data[key[1]] = n['value'];
       }
     });
     this.model.set(data);
-    if (this.model.isValid(true)) {
-      this.$(".btn").button("loading");
+    if (this.model.isValid()) {
+      this.$(":submit").button("loading");
       return this.model.sync('update', this.model, {
         success: (function(_this) {
           return function() {
-            return _this.$(".btn").button("reset");
+            return _this.$(":submit").button("reset");
           };
         })(this),
         error: (function(_this) {
           return function() {
-            return _this.$(".btn").button("reset");
+            return _this.$(":submit").button("reset");
           };
         })(this)
       });

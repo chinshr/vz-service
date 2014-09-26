@@ -425,8 +425,16 @@ body.account {
         }
       }
       
-      .dropdown-menu {
+      ul.dropdown-menu {
         margin: 25px 0 0 0;
+        
+        li {
+          a {
+            i {
+              padding-right: 7px;
+            }
+          }
+        }
       }
       
     } /* panel */

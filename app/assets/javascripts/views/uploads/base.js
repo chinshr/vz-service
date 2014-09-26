@@ -7,7 +7,13 @@ App.Views.UploadsBase = Backbone.View.extend({
   },
   
   render: function() {
-    this.$el.html(this.template(this.model.attributes));
+    this.$el.html(this.template(_.extend(this.model.attributes, {message: this.model.message()})));
+    _.defer((function(_this) {
+      return function() {
+        _this.renderUpdate();
+      }
+    })(this));
+    
     return this;
   },
   
@@ -63,7 +69,7 @@ App.Views.UploadsBase = Backbone.View.extend({
   },
 
   onSync: function(event) {
-    this.renderUpdate();
+    // this.renderUpdate();
     // Note: after create (sync) ping-loop needs to be started.
     this.ping();  
   },

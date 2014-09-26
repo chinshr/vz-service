@@ -1,16 +1,33 @@
 App.Models.Upload = Backbone.Model.extend({
   urlRoot: 'api/account/uploads',
-  
+
   defaults: {
     "tag_list": []
   },
-    
+
   validation: {
     title: {
       required: true
     }
   },
-      
+
+  set: function(attributes, options) {
+    if (attributes && attributes.tag_list && _.isString(attributes.tag_list)) {
+      attributes.tag_list = attributes.tag_list.split(',')
+    }
+
+    return Backbone.Model.prototype.set.call(this, attributes, options);
+  },
+
+/*
+  validate: function(attrs, options) {
+    // TODO: dirty hack to convert tag_list back to array
+    if (attrs.tag_list) {
+      attrs.tag_list = attrs.tag_list.split(',')
+    }
+  },
+*/
+
   parse: function(response, options) {
     return response && response.upload ? response.upload : response;
   },
