@@ -91,7 +91,7 @@ class UploadTest < ActiveSupport::TestCase
     end
     
     should "delegate :privacy" do
-      assert_equal [:public], @upload.privacy
+      assert_equal ["public"], @upload.privacy
       assert_equal @upload.ingest.ingestable.privacy, @upload.privacy
     end
     

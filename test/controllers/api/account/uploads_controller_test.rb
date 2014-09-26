@@ -25,7 +25,7 @@ class Api::Account::UploadsControllerTest < ActionController::TestCase
             assert_equal 225284, upload.file_size
             assert_equal "http://s3.amazonaws.com/qscribe-uploads/8enYwMjB0B", upload.s3_url
             assert_equal "en-UK", upload.locale
-            assert_equal [:private], upload.privacy
+            assert_equal ["private"], upload.privacy
             assert_equal 0, upload.progress
           end
         end
@@ -172,7 +172,8 @@ class Api::Account::UploadsControllerTest < ActionController::TestCase
     should "update upload" do
       upload = FactoryGirl.create(:upload_audio)
       upload.user = @user and upload.save
-      put :update, {:id => upload.id, :upload => {:title => "La fiesta!", :description => "Entrevista en la fiesta.", :tag_list => ["entrevista", "fiesta"], locale: "es-AR"}, format: :json}
+      put :update, {:id => upload.id, :upload => {:title => "La fiesta!", :description => "Entrevista en la fiesta.", 
+        :tag_list => ["entrevista", "fiesta"], locale: "es-AR", :privacy => "private"}, format: :json}
       assert_response :success
       assert_response_body_with_upload_and_attributes
       assert_equal "La fiesta!", upload.reload.title
@@ -180,6 +181,7 @@ class Api::Account::UploadsControllerTest < ActionController::TestCase
       assert_equal ["entrevista", "fiesta"], upload.reload.tag_list
       assert_equal ["entrevista", "fiesta"], upload.user.owned_tags.map(&:name).sort
       assert_equal "es-AR", upload.reload.locale
+      assert_equal ["private"], upload.reload.privacy
     end
     
     should "NOT update upload when signed out" do

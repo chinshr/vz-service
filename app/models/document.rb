@@ -1,6 +1,6 @@
 class Document < ActiveRecord::Base
   SLUG_LENGTH = 6
-  PRIVACY_SETTINGS = {:public => 0, :private => 1, :unlisted => 2}
+  PRIVACY_SETTINGS = {'public' => 0, 'private' => 1, 'unlisted' => 2}
 
   belongs_to :user
   has_many :ingests, as: :ingestable
@@ -21,19 +21,18 @@ class Document < ActiveRecord::Base
     
     def privacy_mask(number)
       numbers = PRIVACY_SETTINGS.map {|k,v| number.is_a?(Fixnum) ? v : k}
-      index = numbers.index(number.is_a?(Fixnum) ? number : number.to_sym)
+      index   = numbers.index(number.is_a?(Fixnum) ? number : number.to_s)
       index ? 2**index : 0
     end
     
   end
   
   def privacy=(values)
-    settings = PRIVACY_SETTINGS.map {|k,v| k}
-    self.privacy_mask = ([values].flatten.map(&:to_sym) & settings).sum {|d| self.class.privacy_mask(d)}
+    self.privacy_mask = ([values].flatten.map(&:to_s) & PRIVACY_SETTINGS.keys).sum {|d| self.class.privacy_mask(d)}
   end
   
   def privacy
-    PRIVACY_SETTINGS.map {|k,v| k}.reject {|d| ((privacy_mask || 0) & self.class.privacy_mask(d)).zero?}
+    PRIVACY_SETTINGS.keys.reject {|d| ((privacy_mask || 0) & self.class.privacy_mask(d)).zero?}
   end
   
   def trancribed?

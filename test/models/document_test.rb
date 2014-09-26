@@ -26,9 +26,14 @@ class DocumentTest < ActiveSupport::TestCase
   context "privacy mask" do
     should "set public" do
       @document = FactoryGirl.create(:document)
+
       @document.privacy = :public
-      @document.save and @document.reload
-      assert_equal [:public], @document.privacy
+      @document.save and @document = Document.find_by_id(@document.id)
+      assert_equal ["public"], @document.privacy
+
+      @document.privacy = "private"
+      @document.save and @document = Document.find_by_id(@document.id)
+      assert_equal ["private"], @document.privacy
     end
   end
   
