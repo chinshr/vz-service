@@ -5,7 +5,6 @@ App.Views.UploadsShow = App.Views.UploadsBase.extend({
     'click .action-update' : 'replaceView',
     'click .action-edit' : 'openEdit',
     'click .action-preview' : 'openPreview',
-    'click .action-delete' : 'doDelete'
   }, App.Views.UploadsBase.prototype.events),
   
   initialize: function() {
@@ -36,10 +35,5 @@ App.Views.UploadsShow = App.Views.UploadsBase.extend({
 
   openPreview: function() {
     alert('open preview document');
-  },
-
-  doDelete: function() {
-    alert('delete');
   }
-  
 });

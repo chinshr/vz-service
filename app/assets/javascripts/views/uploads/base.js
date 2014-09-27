@@ -53,19 +53,25 @@ App.Views.UploadsBase = Backbone.View.extend({
 
   onDelete: function(e) {
     console.log("=> destroy");
-    if (this._xhr) {
-      this._xhr.abort();
-    }
-    this.model.destroy({
-      wait: true,
-      success: (function(_this) {
-        return function(model, response) {
-          _this.stop();
-          _this.remove();
-          console.log("=> destroyed");
-        };
-      })(this)
-    });
+    $.confirm("Do you really want to delete '" + this.model.attributes.title + "'?", (function(_this) {
+      return function(result) {
+        if (!!result) {
+          if (_this._xhr) {
+            _this._xhr.abort();
+          }
+          _this.model.destroy({
+            wait: true,
+            success: (function(__this) {
+              return function(model, response) {
+                __this.stop();
+                __this.remove();
+                console.log("=> destroyed");
+              };
+            })(_this)
+          });
+        }
+      }
+    })(this));
   },
 
   onSync: function(event) {

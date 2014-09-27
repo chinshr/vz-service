@@ -163,9 +163,9 @@ textarea {
   border-radius:0;
 }
 h3,h4,h5 { 
-  border:0 solid #efefef; 
-  border-bottom-width:1px;
-  padding-bottom:10px;
+  xborder:0 solid #efefef; 
+  xborder-bottom-width:1px;
+  xpadding-bottom:10px;
 }
 
 .modal-dialog {
@@ -191,4 +191,13 @@ h3,h4,h5 {
 
 #main {
   padding-top:120px;
+}
+
+.modal {
+  &.alert-modal, &.confirm-modal {
+    .modal-body {
+      font-size: 26px;
+    }
+  }
+  
 }

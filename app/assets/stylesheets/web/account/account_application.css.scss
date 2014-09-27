@@ -311,18 +311,28 @@ body.account {
       
       .action-panel {
         overflow: hidden;
-
-        .action-panel-bg-image {
+        border-radius: 3px 3px 3px 3px;
+        background: transparent;
+        
+        .action-panel-bg-holder {
           z-index: 1;
           display: block;
-          margin: 0 -15px 0 -15px;
-          height: 200px;
-
-          background: transparent url(/assets/backgrounds/13378352314_636bca078c_z.jpg) top left repeat;
-          -webkit-background-size: cover;
-          -moz-background-size: cover;
+          margin: 0 -25px 0 -25px;
+          overflow: hidden;
           background-size: cover;
-          border-radius: 0 0 3px 3px;
+          
+          img {
+            margin: -5px -10px -5px -5px;
+            xbackground: transparent url(/assets/backgrounds/13378352314_636bca078c_z.jpg) top left repeat;
+            x-webkit-background-size: cover;
+            x-moz-background-size: cover;
+            
+            min-width: 100%;
+            min-height: 200px;
+            width: auto;
+            height: 215px;
+            position: 0;
+          }
         }
 
         .action-panel-btn-group {
@@ -341,12 +351,14 @@ body.account {
         }
         
         &.hover {
-          .action-panel-bg-image {
-            -webkit-filter: blur(2px);
-            -moz-filter: blur(2px);
-            -o-filter: blur(2px);
-            -ms-filter: blur(2px);
-            filter: blur(2px);
+          .action-panel-bg-holder {
+            img {
+              -webkit-filter: blur(2px);
+              -moz-filter: blur(2px);
+              -o-filter: blur(2px);
+              -ms-filter: blur(2px);
+              filter: blur(2px);
+            }
           }
           
           .action-panel-btn-group {
