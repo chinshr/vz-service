@@ -65,7 +65,7 @@ Development Resources
   - downloading attachments -- http://www.sitepoint.com/handle-incoming-email-with-sendgrid/
   - reading attachments with read in ruby -- http://stackoverflow.com/questions/11117698/receiving-emails-with-attachments-from-sendgrid-in-rails-3-2-x
   - Removing a channel http://superuser.com/questions/442562/need-to-split-stereo-track-discard-right-channel-and-remove-noise
-* Capturing Audio&Video HTML5 -- http://www.html5rocks.com/en/tutorials/getusermedia/intro/
+* Capturing Audio & Video HTML5 -- http://www.html5rocks.com/en/tutorials/getusermedia/intro/
 * Client side validation, simple form, rails 4 -- http://www.ddarrensmith.com/blog/2012/05/17/ruby-on-rails-client-side-validation-with-validation-helpers-and-twitter-bootstrap/
 * Backbone Devise app -- https://github.com/jhuckabee/backbone_devise
 * Google Speech API, Languages -- http://stackoverflow.com/questions/14257598/what-are-language-codes-for-voice-recognition-languages-in-chromes-implementati
@@ -190,6 +190,9 @@ Development Resources
   - Responders gem -- https://github.com/plataformatec/responders
   - Customize responder in Devise w/ FailureApp -- https://github.com/plataformatec/devise/wiki/How-To:-Redirect-to-a-specific-page-when-the-user-can-not-be-authenticated
 * Download Video/Audio from YouTube, DailyMotion, etc. -- https://github.com/rb2k/viddl-rb
+
+* Flip rotate HTML5 elements: http://lab.smashup.it/flip/
+
 
 Business Resources
 ------------------
