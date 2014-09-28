@@ -21,27 +21,14 @@ App.Views.UploadsEdit = App.Views.UploadsBase.extend({
   initialize: function() {
     App.Views.UploadsBase.prototype.initialize.call(this); // super
     this.listenTo(this.model, 'change:privacy', this.renderUpdate);
+  },
+  
+  render: function() {
+    // super
+    App.Views.UploadsBase.prototype.render.call(this, {});
     
     _.defer((function(_this) {
       return function() {
-        // privacy radio button group
-        /*
-        _this.$('.btn-group .btn').bind('click', function(event) {
-          $(this).find("input[type=radio]").
-            data('triggered', true).
-            prop('checked', true);
-          console.log("=> .btn triggered");
-        });
-        
-        _this.$('.btn-group .btn input[type=radio]:radio').bind('change', function(event) {
-          console.log("=> radio changed");
-          if (!$(this).data('triggered')) {
-            console.log("=> radio changed + .btn triggered");
-            $(this).closest('.btn-group .btn').trigger('click');
-          }
-        });
-        */
-        
         // tags
         _this.$('.input-taggable').select2({
           minimumInputLength: 3,
@@ -88,13 +75,33 @@ App.Views.UploadsEdit = App.Views.UploadsBase.extend({
         });
       }
     })(this));
+    
+    return this;
   },
   
   replaceView: function() {
-    var edit = this;
-    var show = new App.Views.UploadsShow({model: this.model});
-    this.$el.replaceWith(show.render().el);
-    edit.remove();
+    var edit     = this;
+    var editHTML = edit.$el;
+    var show     = new App.Views.UploadsShow({model: this.model});
+    var showHTML = $(show.render(this.model.attributes).el);
+
+    showHTML.find('.panel').css({
+      'transform': 'rotateY(180deg)',
+      '-webkit-transform': 'rotateY(180deg)',
+      'position': 'absolute',
+      'top': '0',
+      'left': '0',
+      'width': '100%'
+    }).appendTo(editHTML.find('.flipper'));
+    
+    editHTML.find('.tile').addClass('flip');
+    editHTML.find('.tile').bind('animationend webkitTransitionEnd oanimationend MSAnimationEnd', (function(_this) {
+      return function(e) {
+        _this.$el.replaceWith(show.render().el);
+        edit.remove();
+      }
+      console.log("=> transition ended");
+    })(this));
   },
   
   renderUpdate: function(hasProgress) {

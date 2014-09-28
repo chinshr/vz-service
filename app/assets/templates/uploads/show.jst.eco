@@ -1,48 +1,50 @@
 <div class="tile show-tile col-lg-4 col-md-4 col-sm-4">
-  <div class="panel show-panel">
-    <div class="progress progress-striped active">
-      <div class="progress-bar progress-bar-success" style="width: <%= @progress %>%"></div>
-    </div>
-    <div class="panel-heading">
-      <div class="dropdown">
-        <button type="button" aria-hidden="true" data-toggle="dropdown" class="cog btn-dropdown-toggle"><i class="glyphicon glyphicon-cog"></i></button>
-        <ul class="dropdown-menu dropdown-menu-right" role="menu" xaria-labelledby="settings-button">
-          <li role="presentation"><a class="action-update" role="menuitem" tabindex="-1" href="#"><i class="glyphicon glyphicon-wrench"></i>Edit</a></li>
-          <li role="presentation"><a class="action-edit" role="menuitem" tabindex="-1" href="#"><i class="glyphicon glyphicon-pencil"></i>Open</a></li>
-          <li role="presentation"><a class="action-preview" role="menuitem" tabindex="-1" href="#"><i class="glyphicon glyphicon-eye-open"></i>Preview</a></li>
-          <li role="presentation" class="divider"></li>
-          <li role="presentation"><a class="action-collaborate" role="menuitem" tabindex="-1" href="#"><i class="glyphicon glyphicon-plus"></i>Add collaborator</a></li>
-          <li role="presentation"><a class="action-plan" role="menuitem" tabindex="-1" href="#"><i class="glyphicon glyphicon-credit-card"></i>Change plan</a></li>
-          <li role="presentation" class="divider"></li>
-          <li role="presentation"><a class="action-delete" role="menuitem" tabindex="-1" href="#"><i class="glyphicon glyphicon-trash"></i>Delete</a></li>
-        </ul>
-      </div><!-- dropdown -->
-      <h3><i class="glyphicon icon-privacy"></i><%= @title %></h3>
-      <span class="label label-success label-status"><span class="message"><%= @message %></span></span>
-    </div><!-- .panel-heading -->
-    <div class="panel-body">
-      <ul class="tag-list">
-        <% if @tag_list.length == 0: %>
-        <li class="tag-list-empty">No tags.</li>
-        <% else: %>
-          <% for tag in @tag_list: %>
-          <li class="tag-list-tag"><%= tag %></li>
-          <% end %>
-        <% end %>
-      </ul>
-    </div><!-- .panel-body -->
-    <div class="panel-body action-panel">
-      <div class="action-panel-bg-holder">
-        <img src="/assets/backgrounds/13378352314_636bca078c_z.jpg" />
+  <div class="flipper">
+    <div class="panel show-panel">
+      <div class="progress progress-striped active">
+        <div class="progress-bar progress-bar-success" style="width: <%= @progress %>%"></div>
       </div>
-      <div class="action-panel-btn-group">
-        <button class="btn btn-primary btn-lg btn-panel-action action-update"><i class="glyphicon glyphicon-wrench"></i>&nbsp;Edit</button>
-        <button class="btn btn-primary btn-lg btn-panel-action action-edit"><i class="glyphicon glyphicon-pencil"></i>&nbsp;Open</button>
-        <button class="btn btn-primary btn-lg btn-panel-action action-preview"><i class="glyphicon glyphicon-eye-open"></i>&nbsp;Preview</button>
-        <!--
-        <button class="btn btn-primary btn-lg btn-panel-action"><i class="glyphicon glyphicon-user"></i>&nbsp;Collaborate</button>
-        -->
-      </div><!-- .action-panel-btn-group -->
-    </div><!-- .action-panel-->
-  </div><!-- .show-panel -->
+      <div class="panel-heading">
+        <div class="dropdown">
+          <button type="button" aria-hidden="true" data-toggle="dropdown" class="cog btn-dropdown-toggle"><i class="glyphicon glyphicon-cog"></i></button>
+          <ul class="dropdown-menu dropdown-menu-right" role="menu" xaria-labelledby="settings-button">
+            <li role="presentation"><a class="action-update" role="menuitem" tabindex="-1" href="#"><i class="glyphicon glyphicon-wrench"></i>Edit</a></li>
+            <li role="presentation"><a class="action-edit" role="menuitem" tabindex="-1" href="#"><i class="glyphicon glyphicon-pencil"></i>Open</a></li>
+            <li role="presentation"><a class="action-preview" role="menuitem" tabindex="-1" href="#"><i class="glyphicon glyphicon-eye-open"></i>Preview</a></li>
+            <li role="presentation" class="divider"></li>
+            <li role="presentation"><a class="action-collaborate" role="menuitem" tabindex="-1" href="#"><i class="glyphicon glyphicon-plus"></i>Add collaborator</a></li>
+            <li role="presentation"><a class="action-plan" role="menuitem" tabindex="-1" href="#"><i class="glyphicon glyphicon-credit-card"></i>Change plan</a></li>
+            <li role="presentation" class="divider"></li>
+            <li role="presentation"><a class="action-delete" role="menuitem" tabindex="-1" href="#"><i class="glyphicon glyphicon-trash"></i>Delete</a></li>
+          </ul>
+        </div><!-- dropdown -->
+        <h3><i class="glyphicon icon-privacy"></i><%= @title %></h3>
+        <span class="label label-success label-status"><span class="message"><%= @message %></span></span>
+      </div><!-- .panel-heading -->
+      <div class="panel-body">
+        <ul class="tag-list">
+          <% if @tag_list.length == 0: %>
+          <li class="tag-list-empty">No tags.</li>
+          <% else: %>
+            <% for tag in @tag_list: %>
+            <li class="tag-list-tag"><%= tag %></li>
+            <% end %>
+          <% end %>
+        </ul>
+      </div><!-- .panel-body -->
+      <div class="panel-body action-panel">
+        <div class="action-panel-bg-holder">
+          <img src="/assets/backgrounds/13378352314_636bca078c_z.jpg" />
+        </div>
+        <div class="action-panel-btn-group">
+          <button class="btn btn-primary btn-lg btn-panel-action action-update"><i class="glyphicon glyphicon-wrench"></i>&nbsp;Edit</button>
+          <button class="btn btn-primary btn-lg btn-panel-action action-edit"><i class="glyphicon glyphicon-pencil"></i>&nbsp;Open</button>
+          <button class="btn btn-primary btn-lg btn-panel-action action-preview"><i class="glyphicon glyphicon-eye-open"></i>&nbsp;Preview</button>
+          <!--
+          <button class="btn btn-primary btn-lg btn-panel-action"><i class="glyphicon glyphicon-user"></i>&nbsp;Collaborate</button>
+          -->
+        </div><!-- .action-panel-btn-group -->
+      </div><!-- .action-panel-->
+    </div><!-- .show-panel -->
+  </div><!-- .flipper -->
 </div><!-- .show-tile -->

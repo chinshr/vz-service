@@ -1,64 +1,66 @@
 <div class="tile edit-tile col-lg-4 col-md-4 col-sm-4">
-  <div class="panel edit-panel">
-    <form class="xform-horizontal" role="form" disabled="true">
-      <div class="progress progress-striped active">
-        <div class="progress-bar progress-bar-info" style="width: <%= @progress %>%"></div>
-      </div>
-      <div class="panel-heading">
-        <button type="button" class="close action-close">×</button>
-        <h3><i class="glyphicon icon-privacy"></i>i-like-pickles.wav</h3>
-        <span class="label label-info label-status"><span class="message">Initializing.</span></span>
-      </div><!-- panel-heading -->
-      <div class="panel-body">
-        <div class="form-fields">
+  <div class="flipper">
+    <div class="panel edit-panel">
+      <form class="xform-horizontal" role="form" disabled="true">
+        <div class="progress progress-striped active">
+          <div class="progress-bar progress-bar-info" style="width: <%= @progress %>%"></div>
+        </div>
+        <div class="panel-heading">
+          <button type="button" class="close action-close">×</button>
+          <h3><i class="glyphicon icon-privacy"></i>i-like-pickles.wav</h3>
+          <span class="label label-info label-status"><span class="message"><%= @message %></span></span>
+        </div><!-- panel-heading -->
+        <div class="panel-body">
+          <div class="form-fields">
 
-          <div class="form-group form-group-title">
-            <label class="sr-only" for="">Title</label>
-            <input type="text" class="form-control input-sm" placeholder="Title" name="upload[title]" value="<%= @title %>" data-error-style="tooltip" data-tooltip-position="right"></input>
-          </div><!-- form-group-title -->
+            <div class="form-group form-group-title">
+              <label class="sr-only" for="">Title</label>
+              <input type="text" class="form-control input-sm" placeholder="Title" name="upload[title]" value="<%= @title %>" data-error-style="tooltip" data-tooltip-position="right"></input>
+            </div><!-- form-group-title -->
 
-          <div class="form-group form-group-tags">
-            <label class="sr-only" for="">Tags</label>
-            <input type="text" class="form-control input-sm input-taggable" placeholder="Tags" name="upload[tag_list]" value="<%= @tag_list.join(',') %>" data-error-style="tooltip" data-tooltip-position="right"></input>
-          </div><!-- form-group-tags -->
+            <div class="form-group form-group-tags">
+              <label class="sr-only" for="">Tags</label>
+              <input type="text" class="form-control input-sm input-taggable" placeholder="Tags" name="upload[tag_list]" value="<%= @tag_list.join(',') %>" data-error-style="tooltip" data-tooltip-position="right"></input>
+            </div><!-- form-group-tags -->
 
-          <div class="form-group form-group-description">
-            <label class="sr-only" for="">Description</label>
-            <textarea class="form-control input-sm" placeholder="Description" name="upload[description]" value="<%= @description %>"></textarea>
+            <div class="form-group form-group-description">
+              <label class="sr-only" for="">Description</label>
+              <textarea class="form-control input-sm" placeholder="Description" name="upload[description]" value="<%= @description %>"></textarea>
             
-          </div><!-- form-group-description -->
+            </div><!-- form-group-description -->
 
-          <div class="form-group form-group-audio-language">
-            <label class="sr-only" for="">Audio Language</label>
-            <select class="form-control input-sm file-locale input-single-searchable" name="upload[locale]">
-              <option value="en-US">English United States</option>
-              <option value="en-UK">English Great Britain</option>
-              <option value="de-DE">German Germany</option>
-              <option value="fr-FR">French France</option>
-              <option value="it-IT">Italian Italy</option>
-              <option value="es-ES">Spanish Spain</option>
-              <option value="es-MX">Spanish Mexico</option>
-              <option value="es-AR">Spanish Argentina</option>
-              <option value="es-VE">Spanish Venezuela</option>
-            </select>
-          </div><!-- form-group-audio-language -->
+            <div class="form-group form-group-audio-language">
+              <label class="sr-only" for="">Audio Language</label>
+              <select class="form-control input-sm file-locale input-single-searchable" name="upload[locale]">
+                <option value="en-US">English United States</option>
+                <option value="en-UK">English Great Britain</option>
+                <option value="de-DE">German Germany</option>
+                <option value="fr-FR">French France</option>
+                <option value="it-IT">Italian Italy</option>
+                <option value="es-ES">Spanish Spain</option>
+                <option value="es-MX">Spanish Mexico</option>
+                <option value="es-AR">Spanish Argentina</option>
+                <option value="es-VE">Spanish Venezuela</option>
+              </select>
+            </div><!-- form-group-audio-language -->
 
-        </div><!-- form-fields -->
-      </div><!-- panel-body -->
-      <div class="panel-footer">
-        <div class="form-group from-group-file-privacy clearfix">
-          <div class="btn-group group-file-privacy pull-left" data-toggle="buttons">
-            <label class="btn btn-primary btn-sm active">
-              <input type="radio" name="upload[privacy]" id="upload-privacy-public" value="public" checked=""><i class="glyphicon glyphicon-book icon-public"></i>&nbsp;Public
-            </label>
-            <label class="btn btn-primary btn-sm">
-              <input type="radio" name="upload[privacy]" id="upload-privacy-private" value="private"><i class="glyphicon glyphicon-lock icon-private"></i>&nbsp;Private
-            </label>
-          </div><!-- group-file-privacy -->
+          </div><!-- form-fields -->
+        </div><!-- panel-body -->
+        <div class="panel-footer">
+          <div class="form-group from-group-file-privacy clearfix">
+            <div class="btn-group group-file-privacy pull-left" data-toggle="buttons">
+              <label class="btn btn-primary btn-sm active">
+                <input type="radio" name="upload[privacy]" id="upload-privacy-public" value="public" checked=""><i class="glyphicon glyphicon-book icon-public"></i>&nbsp;Public
+              </label>
+              <label class="btn btn-primary btn-sm">
+                <input type="radio" name="upload[privacy]" id="upload-privacy-private" value="private"><i class="glyphicon glyphicon-lock icon-private"></i>&nbsp;Private
+              </label>
+            </div><!-- group-file-privacy -->
 
-          <button class="btn btn-sm btn-success pull-right" type="submit" disabled="true" data-loading-text="Updating...">Update</button>
-        </div><!-- .from-group-file-privacy -->
-      </div><!-- .panel-footer -->
-    </form>
-  </div><!-- .edit-panel -->
+            <button class="btn btn-sm btn-success pull-right" type="submit" disabled="true" data-loading-text="Updating...">Update</button>
+          </div><!-- .from-group-file-privacy -->
+        </div><!-- .panel-footer -->
+      </form>
+    </div><!-- .edit-panel -->
+  </div><!-- .flipper -->
 </div><!-- .edit-tile -->

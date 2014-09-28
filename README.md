@@ -191,8 +191,10 @@ Development Resources
   - Customize responder in Devise w/ FailureApp -- https://github.com/plataformatec/devise/wiki/How-To:-Redirect-to-a-specific-page-when-the-user-can-not-be-authenticated
 * Download Video/Audio from YouTube, DailyMotion, etc. -- https://github.com/rb2k/viddl-rb
 
-* Flip rotate HTML5 elements: http://lab.smashup.it/flip/
-
+* HTML5 rotation
+  - Flip rotate HTML5 elements with JS plugin: http://lab.smashup.it/flip/
+  - CSS3 rotation -- http://davidwalsh.name/css-flip
+  - CSS3 animation events -- http://www.sitepoint.com/css3-animation-javascript-event-handlers/
 
 Business Resources
 ------------------

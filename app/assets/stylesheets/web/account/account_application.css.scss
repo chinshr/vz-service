@@ -150,8 +150,48 @@ body.account {
       z-index: 101;
     }
     
+    .tile {
+      perspective: 1000px;
+      
+      .flipper {
+        transition: 0.6s;
+        transform-style: preserve-3d;
+        -webkit-transform-style: preserve-3d;
+        position: relative;
+      }
+      
+      &.flip {
+        .flipper {
+          transform: rotateY(180deg);
+          -webkit-transform: rotateY(180deg);
+        }
+      }
+    }
+    
     .panel {
       @include transition(box-shadow .2s ease);
+
+      backface-visibility: hidden;
+
+      border-radius: 3px !important;
+      
+      &.show-panel {
+        xposition: absolute;
+        xtop: 0;
+        xleft: 0;
+        
+        z-index: 2;
+        /* for firefox 31 */
+        transform: rotateY(0deg);
+      }
+
+      &.edit-panel {
+        xposition: absolute;
+        xtop: 0;
+        xleft: 0;
+        
+        transform: rotateY(0deg); /* -> 180deg */
+      }
       
       &:hover {
         box-shadow: 0px 0px 15px #777;
@@ -322,7 +362,7 @@ body.account {
           background-size: cover;
           
           img {
-            margin: -5px -10px -5px -5px;
+            margin: -5px;
             xbackground: transparent url(/assets/backgrounds/13378352314_636bca078c_z.jpg) top left repeat;
             x-webkit-background-size: cover;
             x-moz-background-size: cover;
