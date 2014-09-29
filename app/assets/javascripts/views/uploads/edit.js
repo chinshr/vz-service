@@ -2,7 +2,7 @@ App.Views.UploadsEdit = App.Views.UploadsBase.extend({
   template: JST['uploads/edit'],
   
   events: _.extend({
-    'click .action-close' : 'replaceView',
+    'click .action-close' : 'flipTile',
     'keyup input': 'onFieldChange',
     'change select': 'onSelectionChange',
     'submit' : 'onFormSubmit',
@@ -23,9 +23,9 @@ App.Views.UploadsEdit = App.Views.UploadsBase.extend({
     this.listenTo(this.model, 'change:privacy', this.renderUpdate);
   },
   
-  render: function() {
+  render: function(attributes) {
     // super
-    App.Views.UploadsBase.prototype.render.call(this, {});
+    App.Views.UploadsBase.prototype.render.call(this, attributes);
     
     _.defer((function(_this) {
       return function() {
@@ -79,7 +79,7 @@ App.Views.UploadsEdit = App.Views.UploadsBase.extend({
     return this;
   },
   
-  replaceView: function() {
+  flipTile: function() {
     var edit     = this;
     var editHTML = edit.$el;
     var show     = new App.Views.UploadsShow({model: this.model});
@@ -95,7 +95,7 @@ App.Views.UploadsEdit = App.Views.UploadsBase.extend({
     }).appendTo(editHTML.find('.flipper'));
     
     editHTML.find('.tile').addClass('flip');
-    editHTML.find('.tile').bind('animationend webkitTransitionEnd oanimationend MSAnimationEnd', (function(_this) {
+    editHTML.find('.tile').bind('transitionend -moz-transitionend -webkit-transitionend -o-transitionend', (function(_this) {
       return function(e) {
         _this.$el.replaceWith(show.render().el);
         edit.remove();
@@ -163,7 +163,8 @@ App.Views.UploadsEdit = App.Views.UploadsBase.extend({
       return this.model.sync('update', this.model, {
         success: (function(_this) {
           return function() {
-            return _this.$(":submit").button("reset");
+            _this.$(":submit").button("reset");
+            return _this.flipTile();
           };
         })(this),
         error: (function(_this) {

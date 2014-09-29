@@ -19,6 +19,9 @@ class Upload < ActiveRecord::Base
   delegate :locale, to: :ingest, allow_nil: true
   delegate :locale=, to: :ingest, allow_nil: true
 
+  delegate :events, to: :ingest, allow_nil: true
+  delegate :event=, to: :ingest, allow_nil: true
+
   delegate :status, to: :ingest
   delegate :state, to: :ingest
   delegate :slug, to: :ingest
@@ -50,12 +53,12 @@ class Upload < ActiveRecord::Base
   scope :none_of_status, lambda {|params| joins(:ingest).where("ingests.aasm_state NOT IN (?)", [params].flatten.map(&:to_s).
     map {|s| s.match(/^([\-]{,1}[0-9]+)$/) ? s : nil}.reject(&:blank?).map {|s| Ingest::STATES.key(s.to_i)}.uniq)}
   # private scopes
-  scope :started, lambda {any_of_states(:started)}
-  scope :stopped, lambda {any_of_states(:stopped)}
-  scope :reset, lambda {any_of_states(:reset)}
-  scope :removed, lambda {any_of_states(:removed)}
-  scope :finished, lambda {any_of_states(:finished)}
-  scope :recent, lambda {|n = 5| order("uploads.created_at DESC").limit(n)}
+  scope :started, lambda {any_of_status(Ingest::STATES[:started])}
+  scope :stopped, lambda {any_of_status(Ingest::STATES[:stopped])}
+  scope :reset, lambda {any_of_status(Ingest::STATES[:reset])}
+  scope :removed, lambda {any_of_status(Ingest::STATES[:removed])}
+  scope :finished, lambda {any_of_status(Ingest::STATES[:finished])}
+  scope :most_recent, lambda {|n = 5| order("uploads.created_at DESC").limit(n)}
   
   after_initialize :build_ingest_and_ingestable
   before_validation :set_title, on: :create

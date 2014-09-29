@@ -24,7 +24,7 @@ Geocoder::Lookup::Test.set_default_stub(
   ]
 )
 
-WebMock.disable_net_connect!(:net_http_connect_on_start => true)
+#WebMock.disable_net_connect!(:net_http_connect_on_start => true)
 Warden.test_mode!
 
 class ActiveSupport::TestCase
@@ -45,7 +45,7 @@ class ActiveSupport::TestCase
   extend Shoulda::Matchers::ActiveModel 
   
   setup do
-    stub_request(:get, "http://freegeoip.net/json/95.63.14.59").
+    stub_request(:get, "freegeoip.net/json/95.63.14.59").
       with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Ruby'}).
       to_return(:status => 200, :body => "{}", :headers => {})
   end

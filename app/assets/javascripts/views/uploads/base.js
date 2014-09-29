@@ -1,13 +1,15 @@
 App.Views.UploadsBase = Backbone.View.extend({
   events: {
-    'click .action-delete': 'onDelete',
-    'click .action-cancel-upload' : 'onCancelUpload',
     'mouseenter .show-panel': 'hover',
     'mouseleave .show-panel': 'hover'
   },
   
-  render: function() {
-    this.$el.html(this.template(_.extend(this.model.attributes, {message: this.model.message()})));
+  render: function(attributes) {
+    this.$el.html(this.template(_.extend(this.model.attributes, {
+      message: this.model.message(), 
+      events: this.permissibleEvents()
+    })));
+    
     _.defer((function(_this) {
       return function() {
         _this.renderUpdate();
@@ -32,6 +34,14 @@ App.Views.UploadsBase = Backbone.View.extend({
     }
   },
 
+  permissibleEvents: function() {
+    var e = this.model.events;
+    if (!!this._xhr) {
+      e.push('stop_upload');  // add custom event not represented by model
+    }
+    return e;
+  },
+
   onUploadProgress: function(data) {
     console.log(data.percent);
     console.log(data.message);
@@ -42,36 +52,6 @@ App.Views.UploadsBase = Backbone.View.extend({
     } else if (!this._xhr) {
       return this._xhr = data.xhr;
     }
-  },
-
-  onCancelUpload: function(e) {
-    if (this._xhr) {
-      this._xhr.abort();
-    }
-    this.stop();
-  },
-
-  onDelete: function(e) {
-    console.log("=> destroy");
-    $.confirm("Do you really want to delete '" + this.model.attributes.title + "'?", (function(_this) {
-      return function(result) {
-        if (!!result) {
-          if (_this._xhr) {
-            _this._xhr.abort();
-          }
-          _this.model.destroy({
-            wait: true,
-            success: (function(__this) {
-              return function(model, response) {
-                __this.stop();
-                __this.remove();
-                console.log("=> destroyed");
-              };
-            })(_this)
-          });
-        }
-      }
-    })(this));
   },
 
   onSync: function(event) {

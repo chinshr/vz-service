@@ -75,14 +75,25 @@ class Ingest < ActiveRecord::Base
     end
   end
   
-  # e.g. a integer representation, like 9 (=finished)
+  # e.g. an integer representation of state, like 9 (=finished)
   def status
     self.class::STATES.symbolize_keys[aasm.current_state]
   end
   
-  # E.g. a human readable string, like :finished
+  # Alias for AASM current state E.g. :finished
   def state
     aasm.current_state
+  end
+  
+  # permissible events
+  def events
+    aasm.events(aasm.current_state) - [:process, :fail, :finish]
+  end
+  
+  # force an event
+  def event=(value)
+    events = Array.wrap(value)
+    may_transition?(events) ? call_transition_with(events) : false
   end
   
   def continue_processing?
@@ -155,7 +166,7 @@ class Ingest < ActiveRecord::Base
   def clear_busy!
     update_attribute(:busy, false)
   end
-  
+
   protected
 
   def enter_starting
@@ -219,5 +230,16 @@ class Ingest < ActiveRecord::Base
   
   def has_valid_upload?
     !!(upload && upload.s3_url)
+  end
+  
+  def may_transition?(events)
+    events.present? ? events.any? {|e| send(:"may_#{e}?")} : false
+  end
+
+  def call_transition_with(events)
+    if event = events.find {|e| send(:"may_#{e}?") ? e : false}
+      return send(:"#{event}")
+    end
+    false
   end
 end

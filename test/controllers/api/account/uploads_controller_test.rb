@@ -189,7 +189,16 @@ class Api::Account::UploadsControllerTest < ActionController::TestCase
       put :update, {:id => 1, :upload => {:title => "La fiesta!", :description => "Entrevista en la fiesta.", locale: "es-AR"}, format: :json}
       assert_response :unauthorized
     end
-    
+
+    should "invoke remove event" do
+      upload = FactoryGirl.create(:upload_audio)
+      upload.user = @user and upload.save
+      put :update, {:id => upload.id, :upload => {:event => "remove"}, format: :json}
+      assert_response :success
+      assert_response_body_with_upload_and_attributes
+      assert_equal 7, response_body["upload"]["status"]
+      assert_equal [], response_body["upload"]["events"]
+    end
   end
 
   context "DELETE /api/account/uploads" do
@@ -236,7 +245,7 @@ class Api::Account::UploadsControllerTest < ActionController::TestCase
   end
 
   def assert_attributes(attributes)
-    %w(file_name file_type file_size s3_url locale slug title description tag_list privacy status type progress updated_at created_at).each do |attribute|
+    %w(file_name file_type file_size s3_url locale slug title description tag_list privacy status type progress events updated_at created_at).each do |attribute|
       assert attributes.has_key?(attribute), "should containt attribute '#{attribute}' in '#{attributes}'"
     end
   end

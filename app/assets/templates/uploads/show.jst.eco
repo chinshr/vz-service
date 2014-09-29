@@ -5,6 +5,7 @@
         <div class="progress-bar progress-bar-success" style="width: <%= @progress %>%"></div>
       </div>
       <div class="panel-heading">
+
         <div class="dropdown">
           <button type="button" aria-hidden="true" data-toggle="dropdown" class="cog btn-dropdown-toggle"><i class="glyphicon glyphicon-cog"></i></button>
           <ul class="dropdown-menu dropdown-menu-right" role="menu" xaria-labelledby="settings-button">
@@ -15,10 +16,13 @@
             <li role="presentation"><a class="action-collaborate" role="menuitem" tabindex="-1" href="#"><i class="glyphicon glyphicon-plus"></i>Add collaborator</a></li>
             <li role="presentation"><a class="action-plan" role="menuitem" tabindex="-1" href="#"><i class="glyphicon glyphicon-credit-card"></i>Change plan</a></li>
             <li role="presentation" class="divider"></li>
+            <li role="presentation" class="<%= 'disabled' unless _.contains(@events, 'stop') || _.contains(@events, 'stop_upload') %>"><a class="action-stop" role="menuitem" tabindex="-1" href="#"><i class="glyphicon glyphicon-stop"></i>Stop</a></li>
+            <li role="presentation" class="<%= 'disabled' unless _.contains(@events, 'start') %>"><a class="action-start" role="menuitem" tabindex="-1" href="#"><i class="glyphicon glyphicon-play"></i>Start</a></li>
             <li role="presentation"><a class="action-delete" role="menuitem" tabindex="-1" href="#"><i class="glyphicon glyphicon-trash"></i>Delete</a></li>
           </ul>
         </div><!-- dropdown -->
-        <h3><i class="glyphicon icon-privacy"></i><%= @title %></h3>
+        
+        <h3><i class="glyphicon icon-privacy <%= if _.contains(@privacy, 'private'): %> glyphicon-lock icon-private <% else: %> glyphicon-book icon-public <% end %>"></i><%= @title %></h3>
         <span class="label label-success label-status"><span class="message"><%= @message %></span></span>
       </div><!-- .panel-heading -->
       <div class="panel-body">

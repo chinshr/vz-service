@@ -17,84 +17,99 @@ class IngestTest < ActiveSupport::TestCase
     assert_equal 0, ingest.status
   end
   
-  should "work with state machine" do
-    ingest = FactoryGirl.create(:ingest_audio, :terminate => true, :busy => true)
-    assert_equal :created, ingest.state
+  context "state machine" do
+    should "events should transition states" do
+      ingest = FactoryGirl.create(:ingest_audio, :terminate => true, :busy => true)
+      assert_equal :created, ingest.state
 
-    ingest.start!
-    assert_equal :starting, ingest.state
-    assert_equal false, ingest.terminate?
-    assert_equal false, ingest.busy?
-    ingest.process!
-    assert_equal :started, ingest.state
-    assert_not_nil ingest.started_at
-    ingest.log! :started, "working"
-    ingest.update_attributes(stage: "transcoding")
-    FactoryGirl.create(:document_chunk, :document => ingest.ingestable)
-    assert_equal 0, ingest.iteration
-    assert_equal false, ingest.messages.empty?
+      ingest.start!
+      assert_equal :starting, ingest.state
+      assert_equal false, ingest.terminate?
+      assert_equal false, ingest.busy?
+      ingest.process!
+      assert_equal :started, ingest.state
+      assert_not_nil ingest.started_at
+      ingest.log! :started, "working"
+      ingest.update_attributes(stage: "transcoding")
+      FactoryGirl.create(:document_chunk, :document => ingest.ingestable)
+      assert_equal 0, ingest.iteration
+      assert_equal false, ingest.messages.empty?
 
-    ingest.clear_terminate!
-    assert_equal false, ingest.terminate?
-    ingest.restart!
-    assert_equal :restarting, ingest.state
-    assert_equal true, ingest.terminate?
-    assert_equal false, ingest.messages.empty?
-    ingest.process!
-    assert_equal :started, ingest.state
-    assert_equal true, ingest.messages.empty?
-    assert_nil ingest.stage
-    # ingest.process!
-    # assert_equal :started, ingest.state
-    # ingest.log! :started, "working"
-    ingest.update_attributes(stage: "copy_object")
+      ingest.clear_terminate!
+      assert_equal false, ingest.terminate?
+      ingest.restart!
+      assert_equal :restarting, ingest.state
+      assert_equal true, ingest.terminate?
+      assert_equal false, ingest.messages.empty?
+      ingest.process!
+      assert_equal :started, ingest.state
+      assert_equal true, ingest.messages.empty?
+      assert_nil ingest.stage
+      # ingest.process!
+      # assert_equal :started, ingest.state
+      # ingest.log! :started, "working"
+      ingest.update_attributes(stage: "copy_object")
 
-    ingest.clear_terminate!
-    assert_equal false, ingest.terminate?
-    ingest.stop!
-    assert_equal :stopping, ingest.state
-    assert_equal true, ingest.terminate?
-    ingest.process!
-    assert_equal :stopped, ingest.state
-    assert_not_nil ingest.stopped_at
+      ingest.clear_terminate!
+      assert_equal false, ingest.terminate?
+      ingest.stop!
+      assert_equal :stopping, ingest.state
+      assert_equal true, ingest.terminate?
+      ingest.process!
+      assert_equal :stopped, ingest.state
+      assert_not_nil ingest.stopped_at
 
-    ingest.start!
-    assert_equal :starting, ingest.state
-    ingest.process!
-    assert_equal :started, ingest.state
-    assert_not_nil ingest.started_at
+      ingest.start!
+      assert_equal :starting, ingest.state
+      ingest.process!
+      assert_equal :started, ingest.state
+      assert_not_nil ingest.started_at
 
-    ingest.stop!
-    assert_equal :stopping, ingest.state
-    ingest.process!
-    assert_equal :stopped, ingest.state
-    assert_not_nil ingest.stopped_at
+      ingest.stop!
+      assert_equal :stopping, ingest.state
+      ingest.process!
+      assert_equal :stopped, ingest.state
+      assert_not_nil ingest.stopped_at
 
-    ingest.clear_terminate!
-    assert_equal false, ingest.terminate?
-    ingest.reset!
-    assert_equal :resetting, ingest.state
-    assert_equal true, ingest.terminate?
-    ingest.process!
-    assert_equal :reset, ingest.state
-    assert_not_nil ingest.reset_at
-    assert_equal 2, ingest.iteration
+      ingest.clear_terminate!
+      assert_equal false, ingest.terminate?
+      ingest.reset!
+      assert_equal :resetting, ingest.state
+      assert_equal true, ingest.terminate?
+      ingest.process!
+      assert_equal :reset, ingest.state
+      assert_not_nil ingest.reset_at
+      assert_equal 2, ingest.iteration
 
-    ingest.start!
-    assert_equal :starting, ingest.state
-    ingest.process!
-    assert_equal :started, ingest.state
-    assert_not_nil ingest.started_at
+      ingest.start!
+      assert_equal :starting, ingest.state
+      ingest.process!
+      assert_equal :started, ingest.state
+      assert_not_nil ingest.started_at
 
-    ingest.finish!
-    assert_equal :finished, ingest.state
-    assert_not_nil ingest.finished_at
+      ingest.finish!
+      assert_equal :finished, ingest.state
+      assert_not_nil ingest.finished_at
 
-    ingest.remove!
-    assert_equal :removing, ingest.state
-    ingest.process!
-    assert_equal :removed, ingest.state
-    assert_not_nil ingest.removed_at
+      ingest.remove!
+      assert_equal :removing, ingest.state
+      ingest.process!
+      assert_equal :removed, ingest.state
+      assert_not_nil ingest.removed_at
+    end
+
+    should "event setter to force and events getter to receive permissible events" do
+      ingest = FactoryGirl.create(:ingest_audio, :terminate => true, :busy => true)
+      assert_equal :created, ingest.state
+      ingest.event = "start"
+      assert_equal :starting, ingest.state
+      assert_equal [:remove, :restart], ingest.events
+
+      ingest = FactoryGirl.create(:ingest_audio, :terminate => true, :busy => true)
+      assert_equal :created, ingest.state
+      ingest.event = :start
+      assert_equal :starting, ingest.state
+    end
   end
   
   should "log message" do

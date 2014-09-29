@@ -7,7 +7,7 @@
         </div>
         <div class="panel-heading">
           <button type="button" class="close action-close">×</button>
-          <h3><i class="glyphicon icon-privacy"></i>i-like-pickles.wav</h3>
+          <h3><i class="glyphicon icon-privacy <%= if _.contains(@privacy, 'private'): %> glyphicon-lock icon-private <% else: %> glyphicon-book icon-public <% end %> "></i>i-like-pickles.wav</h3>
           <span class="label label-info label-status"><span class="message"><%= @message %></span></span>
         </div><!-- panel-heading -->
         <div class="panel-body">
@@ -25,8 +25,7 @@
 
             <div class="form-group form-group-description">
               <label class="sr-only" for="">Description</label>
-              <textarea class="form-control input-sm" placeholder="Description" name="upload[description]" value="<%= @description %>"></textarea>
-            
+              <textarea class="form-control input-sm" placeholder="Description" name="upload[description]"><%= @description %></textarea>
             </div><!-- form-group-description -->
 
             <div class="form-group form-group-audio-language">
