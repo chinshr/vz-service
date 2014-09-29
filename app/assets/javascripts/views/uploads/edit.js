@@ -85,23 +85,28 @@ App.Views.UploadsEdit = App.Views.UploadsBase.extend({
     var show     = new App.Views.UploadsShow({model: this.model});
     var showHTML = $(show.render(this.model.attributes).el);
 
-    showHTML.find('.panel').css({
-      'transform': 'rotateY(180deg)',
-      '-webkit-transform': 'rotateY(180deg)',
-      'position': 'absolute',
-      'top': '0',
-      'left': '0',
-      'width': '100%'
-    }).appendTo(editHTML.find('.flipper'));
-    
-    editHTML.find('.tile').addClass('flip');
-    editHTML.find('.tile').bind('transitionend -moz-transitionend -webkit-transitionend -o-transitionend', (function(_this) {
-      return function(e) {
-        _this.$el.replaceWith(show.render().el);
-        edit.remove();
-      }
-      console.log("=> transition ended");
-    })(this));
+    if (Modernizr.csstransforms3d) {
+      showHTML.find('.panel').css({
+        'transform': 'rotateY(180deg)',
+        '-webkit-transform': 'rotateY(180deg)',
+        'position': 'absolute',
+        'top': '0',
+        'left': '0',
+        'width': '100%'
+      }).appendTo(editHTML.find('.flipper'));
+
+      editHTML.find('.tile').addClass('flip');
+      editHTML.find('.tile').bind('transitionend -moz-transitionend -webkit-transitionend -o-transitionend', (function(_this) {
+        return function(e) {
+          _this.$el.replaceWith(show.render(_this.model.attributes).el);
+          edit.remove();
+        }
+        console.log("=> transition ended");
+      })(this));
+    } else {
+      this.$el.replaceWith(show.render(this.model.attributes).el);
+      edit.remove();
+    }
   },
   
   renderUpdate: function(hasProgress) {

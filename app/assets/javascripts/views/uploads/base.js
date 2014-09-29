@@ -4,6 +4,13 @@ App.Views.UploadsBase = Backbone.View.extend({
     'mouseleave .show-panel': 'hover'
   },
   
+  initialize: function() {
+    this.interval = null;
+    this.listenTo(this.model, 'upload:progress', this.onUploadProgress);
+    this.listenTo(this.model, 'destroy', this.remove);
+    this.listenToOnce(this.model, 'sync', this.onSync);
+  },
+      
   render: function(attributes) {
     this.$el.html(this.template(_.extend(this.model.attributes, {
       message: this.model.message(), 
@@ -19,13 +26,14 @@ App.Views.UploadsBase = Backbone.View.extend({
     return this;
   },
   
-  initialize: function() {
-    this.interval = null;
-    this.listenTo(this.model, 'upload:progress', this.onUploadProgress);
-    this.listenTo(this.model, 'destroy', this.remove);
-    this.listenToOnce(this.model, 'sync', this.onSync);
+  remove: function() {
+    // overload remove
+    this.$el.remove();
+    this.stopListening();
+    this.stop();
+    return this;
   },
-      
+  
   hover: function(e) {
     if (e.type === 'mouseenter') {
       return $(e.currentTarget).find('.action-panel').addClass('hover');

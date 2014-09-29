@@ -37,23 +37,28 @@ App.Views.UploadsShow = App.Views.UploadsBase.extend({
     var edit     = new App.Views.UploadsEdit({model: this.model});
     var editHTML = $(edit.render().el);
     
-    editHTML.find('.panel').css({
-      'transform': 'rotateY(180deg)',
-      '-webkit-transform': 'rotateY(180deg)',
-      'position': 'absolute',
-      'top': '0',
-      'left': '0',
-      'width': '100%'
-    }).appendTo(showHTML.find('.flipper'));
-    
-    showHTML.find('.tile').addClass('flip');
-    showHTML.find('.tile').bind('transitionend -moz-transitionend -webkit-transitionend -o-transitionend', (function(_this) {
-      return function(e) {
-        _this.$el.replaceWith(edit.render().el);
-        show.remove();
-      }
-      console.log("=> transition ended");
-    })(this));
+    if (Modernizr.csstransforms3d) {
+      editHTML.find('.panel').css({
+        'transform': 'rotateY(180deg)',
+        '-webkit-transform': 'rotateY(180deg)',
+        'position': 'absolute',
+        'top': '0',
+        'left': '0',
+        'width': '100%'
+      }).appendTo(showHTML.find('.flipper'));
+
+      showHTML.find('.tile').addClass('flip');
+      showHTML.find('.tile').bind('transitionend -moz-transitionend -webkit-transitionend -o-transitionend', (function(_this) {
+        return function(e) {
+          _this.$el.replaceWith(edit.render(_this.model.attributes).el);
+          show.remove();
+        }
+        console.log("=> transition ended");
+      })(this));
+    } else {
+      this.$el.replaceWith(edit.render(this.model.attributes).el);
+      show.remove();
+    }
   },
 
   onOpenEdit: function() {
