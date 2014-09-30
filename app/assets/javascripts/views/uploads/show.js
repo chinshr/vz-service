@@ -1,5 +1,6 @@
 App.Views.UploadsShow = App.Views.UploadsBase.extend({
   template: JST['uploads/show'],
+  className: 'tile show-tile col-lg-4 col-md-4 col-sm-4',
   
   events: _.extend({
     'click .action-update' : 'flipTile',
@@ -11,16 +12,16 @@ App.Views.UploadsShow = App.Views.UploadsBase.extend({
   }, App.Views.UploadsBase.prototype.events),
   
   initialize: function() {
-    _.defer((function(_this) {
-      return function() {
-        _this.ping();
-      }
-    })(this));
+    App.Views.UploadsBase.prototype.initialize.call(this); // super
   },
 
   render: function() {
     // super
     App.Views.UploadsBase.prototype.render.call(this, {});
+
+    if (!this._hasUploadProgress()) {
+      this.ping();
+    }
     
     _.defer((function(_this) {
       return function() {
@@ -35,7 +36,7 @@ App.Views.UploadsShow = App.Views.UploadsBase.extend({
     var show     = this;
     var showHTML = show.$el;
     var edit     = new App.Views.UploadsEdit({model: this.model});
-    var editHTML = $(edit.render().el);
+    var editHTML = edit.render().$el;
     
     if (Modernizr.csstransforms3d) {
       editHTML.find('.panel').css({
@@ -47,13 +48,13 @@ App.Views.UploadsShow = App.Views.UploadsBase.extend({
         'width': '100%'
       }).appendTo(showHTML.find('.flipper'));
 
-      showHTML.find('.tile').addClass('flip');
-      showHTML.find('.tile').bind('transitionend -moz-transitionend -webkit-transitionend -o-transitionend', (function(_this) {
+      showHTML.addClass('flip');
+      showHTML.bind('transitionend -moz-transitionend -webkit-transitionend -o-transitionend', (function(_this) {
         return function(e) {
           _this.$el.replaceWith(edit.render(_this.model.attributes).el);
           show.remove();
-        }
-        console.log("=> transition ended");
+          console.log("=> transition ended");
+        };
       })(this));
     } else {
       this.$el.replaceWith(edit.render(this.model.attributes).el);

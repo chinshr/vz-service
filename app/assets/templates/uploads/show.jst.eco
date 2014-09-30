@@ -1,4 +1,4 @@
-<div class="tile show-tile col-lg-4 col-md-4 col-sm-4">
+<!--div class="tile show-tile col-lg-4 col-md-4 col-sm-4" -->
   <div class="flipper">
     <div class="panel show-panel">
       <div class="progress progress-striped active">
@@ -51,4 +51,4 @@
       </div><!-- .action-panel-->
     </div><!-- .show-panel -->
   </div><!-- .flipper -->
-</div><!-- .show-tile -->
+<!-- /div --><!-- .show-tile -->

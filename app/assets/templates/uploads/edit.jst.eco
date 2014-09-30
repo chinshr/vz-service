@@ -1,4 +1,4 @@
-<div class="tile edit-tile col-lg-4 col-md-4 col-sm-4">
+<!-- div class="tile edit-tile col-lg-4 col-md-4 col-sm-4" -->
   <div class="flipper">
     <div class="panel edit-panel">
       <form class="xform-horizontal" role="form" disabled="true">
@@ -62,4 +62,4 @@
       </form>
     </div><!-- .edit-panel -->
   </div><!-- .flipper -->
-</div><!-- .edit-tile -->
+<!-- /div --><!-- .edit-tile -->

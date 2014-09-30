@@ -18,7 +18,6 @@
         <div class="form-group form-group-locale">
           <label class="hidden" for="disabledSelect">Audio language</label>
           <select data-placeholder="Choose a Language..." id="file-locale" class="form-control input-sm input-single-searchable">
-            <option value=""></option>
             <option value="en-US">English United States</option>
             <option value="en-UK">English Great Britain</option>
             <option value="de-DE">German Germany</option>
@@ -36,10 +35,10 @@
         <div class="form-group form-group-file-privacy">
           <div class="btn-group group-file-privacy" data-toggle="buttons">
             <label class="btn btn-primary btn-sm active">
-              <input type="radio" name="file-privacy" id="file-privacy-public"><i class="glyphicon glyphicon-book icon-public"></i>&nbsp;Public
+              <input type="radio" name="file-privacy" id="file-privacy-public" value="public" checked=""><i class="glyphicon glyphicon-book icon-public"></i>&nbsp;Public
             </label>
-            <label class="btn btn-primary btn-sm xdisabled">
-              <input type="radio" name="file-privacy" id="file-privacy-private"><i class="glyphicon glyphicon-lock icon-private"></i>&nbsp;Private
+            <label class="btn btn-primary btn-sm">
+              <input type="radio" name="file-privacy" id="file-privacy-private" value="private"><i class="glyphicon glyphicon-lock icon-private"></i>&nbsp;Private
             </label>
           </div>
         </div><!-- form-group-file-privacy -->

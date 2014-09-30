@@ -1,5 +1,6 @@
 App.Views.UploadsEdit = App.Views.UploadsBase.extend({
   template: JST['uploads/edit'],
+  className: 'tile edit-tile col-lg-4 col-md-4 col-sm-4',
   
   events: _.extend({
     'click .action-close' : 'flipTile',
@@ -14,7 +15,6 @@ App.Views.UploadsEdit = App.Views.UploadsBase.extend({
         console.log("=> radio changed + .btn triggered");
         // radio.closest('.btn-group .btn').trigger('click');
       }
-      
     }),
   }, App.Views.UploadsBase.prototype.events),
   
@@ -83,7 +83,7 @@ App.Views.UploadsEdit = App.Views.UploadsBase.extend({
     var edit     = this;
     var editHTML = edit.$el;
     var show     = new App.Views.UploadsShow({model: this.model});
-    var showHTML = $(show.render(this.model.attributes).el);
+    var showHTML = show.render(this.model.attributes).$el;
 
     if (Modernizr.csstransforms3d) {
       showHTML.find('.panel').css({
@@ -95,13 +95,13 @@ App.Views.UploadsEdit = App.Views.UploadsBase.extend({
         'width': '100%'
       }).appendTo(editHTML.find('.flipper'));
 
-      editHTML.find('.tile').addClass('flip');
-      editHTML.find('.tile').bind('transitionend -moz-transitionend -webkit-transitionend -o-transitionend', (function(_this) {
+      editHTML.addClass('flip');
+      editHTML.bind('transitionend -moz-transitionend -webkit-transitionend -o-transitionend', (function(_this) {
         return function(e) {
           _this.$el.replaceWith(show.render(_this.model.attributes).el);
           edit.remove();
-        }
-        console.log("=> transition ended");
+          console.log("=> transition ended");
+        };
       })(this));
     } else {
       this.$el.replaceWith(show.render(this.model.attributes).el);
@@ -123,7 +123,6 @@ App.Views.UploadsEdit = App.Views.UploadsBase.extend({
     this.$("input[type='radio'][value='" + this.model.attributes.privacy + "']").
       prop('checked', true).
       closest('.btn-group .btn').trigger('click');
-    
   },
   
   onFieldChange: function(e) {

@@ -6,7 +6,8 @@ App.Views.UploadsIndex = Backbone.View.extend({
     'change input#files': 'addFiles',
     'click button#files-proxy': 'trigger',
     'mouseenter #drop-box': 'hover',
-    'mouseleave #drop-box': 'hover'
+    'mouseleave #drop-box': 'hover',
+    'change #file-locale': 'updateMail',
   },
   
   // Listen for newly added models and render a view for each
@@ -19,6 +20,12 @@ App.Views.UploadsIndex = Backbone.View.extend({
 
   render: function() {
     this.$el.html(this.template);
+    _.defer((function(_this) {
+      return function() {
+        _this.updateMail();
+      }
+    })(this));
+    
     this.addAll();
     return this;
   },
@@ -35,7 +42,7 @@ App.Views.UploadsIndex = Backbone.View.extend({
   trigger: function() {
     $('#files').trigger('click');
   },
-            
+
   // Instantiate and render new views for models added to the collection
   // This is the view that will be listening to the 'upload:progress' event, 
   // and can also allow the user to cancel the upload
@@ -94,6 +101,7 @@ App.Views.UploadsIndex = Backbone.View.extend({
       file_list: options.file_list,
       file_dom_selector: options.file_dom_selector,
       s3_sign_put_url: 'api/account/uploads/signput.json',
+      
       onProgress: (function(_this) {
         return function(xhr, file, percent, message) {
           var upload;
@@ -105,7 +113,7 @@ App.Views.UploadsIndex = Backbone.View.extend({
               file_size: parseFloat(file.size),
               type: "audio",
               locale: _this.$("#file-locale").val() || "en-US",
-              privacy: _this.$("#file-privacy").val() || "public",
+              privacy: _this.$('.group-file-privacy input[type=radio]:checked').val() || "public",
               editable: true
             });
             newUploads[file.size] = upload;
@@ -151,5 +159,17 @@ App.Views.UploadsIndex = Backbone.View.extend({
         };
       })(this)
     });
-  }
+  },
+  
+  updateMail: function() {
+    return this.$('.btn-email-upload').attr('href', this._mailto);
+  },
+  
+  _mailto: function() {
+    var locale = $("#file-locale option:selected").text() + " (" + $("#file-locale").val() + ")";
+    var href = "mailto:my@voyz.es"+
+      "?subject=Change%20title" +
+      "&body=—%0DAttach audio files to transcribe for " + locale + ". Change title and add description above the line.";
+    return href
+  },
 });

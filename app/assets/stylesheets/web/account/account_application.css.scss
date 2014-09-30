@@ -285,14 +285,18 @@ body.account {
         background-color: transparent;
         margin: 2px;
         @include transition(background-color box-shadow .2s ease);
-
+        
+        select, input {
+          background-color: transparent;
+        }
+          
         &.hover {
           background-color: #fff;
           border-color: #d2d2d2;
           xbox-shadow: 0 1px 0 #cfcfcf;
           box-shadow: 0px 0px 15px #777;
           border: 1px solid #d2d2d2;
-          margin: 2px;
+          margin: 4px;
 
           h3 {
             border-bottom-color: #fff; /* #efefef */
@@ -335,6 +339,7 @@ body.account {
           }
           
           .btn-file-upload {
+            outline: 0;
             display: block;
             margin: 15px auto 15px auto;
             width: 150px;

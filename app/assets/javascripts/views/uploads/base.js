@@ -1,4 +1,5 @@
 App.Views.UploadsBase = Backbone.View.extend({
+  tagName: 'div',
   events: {
     'mouseenter .show-panel': 'hover',
     'mouseleave .show-panel': 'hover'
@@ -69,12 +70,13 @@ App.Views.UploadsBase = Backbone.View.extend({
   },
     
   ping: function() {
+    this.stop();
     this.interval = setInterval((function(_this) {
       return function() {
-        console.log("=> poll");
+        console.log("=> poll (" + (_this.pollCount || 0) + ")");
         return _this.poll();
       };
-    })(this), 2000 + parseInt(Math.random() * 500));
+    })(this), 2500 + parseInt(Math.random() * 1000));
   },
       
   stop: function() {
@@ -85,9 +87,14 @@ App.Views.UploadsBase = Backbone.View.extend({
     this.model.sync('read', this.model, {
       success: (function(_this) {
         return function(data) {
+          if ((_this.model.progress || 0) === data.upload.progress) {
+            _this.pollCount = (_this.pollCount || 0) + 1;
+          } else {
+            _this.pollCount = 0;
+          }
           _this.model.set("progress", data.upload.progress);
           _this.model.set("status", data.upload.status);
-          if (!_this.model.hasProgress()) {
+          if (!(_this.model.hasProgress() && (_this.pollCount || 0) < 50)) {
             _this.stop();
             _this.renderUpdate();
           }
@@ -126,6 +133,19 @@ App.Views.UploadsBase = Backbone.View.extend({
       this.$('.progress .progress-bar').addClass('progress-bar-success');
     }
     
+    // dropdown
+    if (this._hasProgress()) {
+      this.$('.action-stop').parent().removeClass('disabled');
+    } else {
+      this.$('.action-stop').parent().addClass('disabled');
+    }
+
+    if (_.contains(this.model.events, 'start')) {
+      this.$('.action-start').parent().removeClass('disabled');
+    } else {
+      this.$('.action-start').parent().addClass('disabled');
+    }
+    
     // privacy
     if (this.model.attributes.privacy === "private") {
       this.$('.icon-privacy').
@@ -139,6 +159,10 @@ App.Views.UploadsBase = Backbone.View.extend({
   },
   
   _hasProgress: function() {
-    return this.model.hasProgress();
+    return this._hasUploadProgress() || this.model.hasProgress();
+  },
+  
+  _hasUploadProgress: function() {
+    return !!this._xhr;
   }
 });
