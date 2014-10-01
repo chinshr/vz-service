@@ -28,27 +28,29 @@
       <div class="panel-body">
         <ul class="tag-list">
           <% if @tag_list.length == 0: %>
-          <li class="tag-list-empty">No tags.</li>
+          <li class="empty-tag">No tags.</li>
           <% else: %>
             <% for tag in @tag_list: %>
-            <li class="tag-list-tag"><%= tag %></li>
+            <li class="tag"><a href="#"><%= tag %></a></li>
             <% end %>
           <% end %>
         </ul>
       </div><!-- .panel-body -->
-      <div class="panel-body action-panel">
-        <div class="action-panel-bg-holder">
-          <img src="/assets/backgrounds/13378352314_636bca078c_z.jpg" />
-        </div>
-        <div class="action-panel-btn-group">
-          <button class="btn btn-primary btn-lg btn-panel-action action-update"><i class="glyphicon glyphicon-wrench"></i>&nbsp;Edit</button>
-          <button class="btn btn-primary btn-lg btn-panel-action action-edit"><i class="glyphicon glyphicon-pencil"></i>&nbsp;Open</button>
-          <button class="btn btn-primary btn-lg btn-panel-action action-preview"><i class="glyphicon glyphicon-eye-open"></i>&nbsp;Preview</button>
-          <!--
-          <button class="btn btn-primary btn-lg btn-panel-action"><i class="glyphicon glyphicon-user"></i>&nbsp;Collaborate</button>
-          -->
-        </div><!-- .action-panel-btn-group -->
-      </div><!-- .action-panel-->
-    </div><!-- .show-panel -->
+      <div class="panel-background">
+        <div class="action-panel">
+          <div class="action-panel-bg-holder">
+            <img src="/assets/backgrounds/13378352314_636bca078c_z.jpg" />
+          </div>
+          <div class="action-panel-btn-group">
+            <button class="btn btn-primary btn-lg btn-panel-action action-update"><i class="glyphicon glyphicon-wrench"></i>&nbsp;Edit</button>
+            <button class="btn btn-primary btn-lg btn-panel-action action-edit"><i class="glyphicon glyphicon-pencil"></i>&nbsp;Open</button>
+            <button class="btn btn-primary btn-lg btn-panel-action action-preview"><i class="glyphicon glyphicon-eye-open"></i>&nbsp;Preview</button>
+          </div><!-- .action-panel-btn-group -->
+        </div><!-- .action-panel-->
+        <div class="description-holder">
+          <p><%= @description %></p> 
+        </div><!-- .description-holder -->
+      </div><!-- .panel-background -->
+    </div><!-- .panel -->
   </div><!-- .flipper -->
 <!-- /div --><!-- .show-tile -->

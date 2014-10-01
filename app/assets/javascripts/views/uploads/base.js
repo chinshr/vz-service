@@ -37,9 +37,9 @@ App.Views.UploadsBase = Backbone.View.extend({
   
   hover: function(e) {
     if (e.type === 'mouseenter') {
-      return $(e.currentTarget).find('.action-panel').addClass('hover');
+      return $(e.currentTarget).find('.panel-background').addClass('hover');
     } else {
-      return $(e.currentTarget).find('.action-panel').removeClass('hover');
+      return $(e.currentTarget).find('.panel-background').removeClass('hover');
     }
   },
 

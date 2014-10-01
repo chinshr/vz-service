@@ -354,77 +354,125 @@ body.account {
         
       } /* upload-panel */
       
-      .action-panel {
+      .panel-background {
+        height: 100%;
+        width: 100%;
+        position: relative;
         overflow: hidden;
-        border-radius: 3px 3px 3px 3px;
-        background: transparent;
+        border-radius: 0px 0px 3px 3px;
         
-        .action-panel-bg-holder {
-          z-index: 1;
-          display: block;
-          margin: 0 -25px 0 -25px;
-          overflow: hidden;
-          background-size: cover;
+        .description-holder {
+          @include transition(all .5s ease-in-out);
           
-          img {
-            margin: -5px;
-            xbackground: transparent url(/assets/backgrounds/13378352314_636bca078c_z.jpg) top left repeat;
-            x-webkit-background-size: cover;
-            x-moz-background-size: cover;
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          xz-index: 2;
+          -webkit-transform-style: preserve-3d;
+          -moz-transform-style: preserve-3d;
+          transform-style: preserve-3d;
+          padding: 15px;
+          
+          p {
+            position: relative;
+            top: 50%;
+            vertical-align: middle;
+            -webkit-transform: translateY(-50%);
+            -ms-transform: translateY(-50%);
+            -o-transform: translateY(-50%);
+            transform: translateY(-50%);
             
-            min-width: 100%;
-            min-height: 200px;
-            width: auto;
-            height: 215px;
-            position: 0;
+            margin: 0;
+            font-family: $font-family;
+            font-size: 24px;
+            width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: #fff;
+            text-shadow: 1px 1px 1px rgba(black, 0.3);
+            text-align: center;
           }
         }
-
-        .action-panel-btn-group {
-          position: relative;
-          top: -200px;
-          margin: 20px 0 -200px 0;
-          z-index: 2;
-          visibility: hidden;
-        }
         
-        .btn-panel-action {
-          display: block;
-          margin: 0 auto 10px auto;
-          border-radius: 300px;
-          min-width: 200px;
-        }
+        .action-panel {
+          overflow: hidden;
+          background: transparent;
+
+          .action-panel-bg-holder {
+            z-index: 1;
+            display: block;
+            margin: 0 -25px 0 -25px;
+            overflow: hidden;
+            xbackground-size: cover;
+
+            img {
+              margin: -5px;
+              min-width: 100%;
+              min-height: 225px;
+              width: auto;
+              height: 240px;
+              position: 0;
+            }
+          }
+
+          .action-panel-btn-group {
+            position: relative;
+            top: -220px;
+            margin: 20px 0 -200px 0;
+            z-index: 2;
+            visibility: hidden;
+          }
+
+          .btn-panel-action {
+            display: block;
+            margin: 0 auto 10px auto;
+            border-radius: 300px;
+            min-width: 200px;
+            outline: none;
+          }
+
+        } /* action-panel */
         
         &.hover {
-          .action-panel-bg-holder {
-            img {
-              -webkit-filter: blur(2px);
-              -moz-filter: blur(2px);
-              -o-filter: blur(2px);
-              -ms-filter: blur(2px);
-              filter: blur(2px);
+          .description-holder {
+            p {
+              color: transparent;
+              text-shadow: none;
             }
           }
           
-          .action-panel-btn-group {
-            visibility: visible;
-            
-            -webkit-animation-duration: .2s;
-            -moz-animation-duration: .2s;
-            -o-animation-duration: .2s;
-            animation-duration: .2s;
-            -webkit-animation-fill-mode: both;
-            -moz-animation-fill-mode: both;
-            -o-animation-fill-mode: both;
-            animation-fill-mode: both;
-            -webkit-animation-name: fadeInDown;
-            -moz-animation-name: fadeInDown;
-            -o-animation-name: fadeInDown;
-            animation-name: fadeInDown;
-          }
-        }
-        
-      }
+          .action-panel {
+            .action-panel-bg-holder {
+              img {
+                -webkit-filter: blur(2px);
+                -moz-filter: blur(2px);
+                -o-filter: blur(2px);
+                -ms-filter: blur(2px);
+                filter: blur(2px);
+              }
+            }
+
+            .action-panel-btn-group {
+              visibility: visible;
+
+              -webkit-animation-duration: .2s;
+              -moz-animation-duration: .2s;
+              -o-animation-duration: .2s;
+              animation-duration: .2s;
+              -webkit-animation-fill-mode: both;
+              -moz-animation-fill-mode: both;
+              -o-animation-fill-mode: both;
+              animation-fill-mode: both;
+              -webkit-animation-name: fadeInDown;
+              -moz-animation-name: fadeInDown;
+              -o-animation-name: fadeInDown;
+              animation-name: fadeInDown;
+            }
+          } /* .action-panel */
+        } /* &hover */
+      } /* panel-background */
       
       .panel-footer {
         .form-group {
@@ -437,8 +485,9 @@ body.account {
         margin: 0;
         padding: 0 5px 0 0;
         overflow: hidden;
+        list-style: none;
 
-        li.tag-list-empty {
+        li.empty-tag {
           float: left;
           list-style: none;
           font-size: 12px;
@@ -451,34 +500,42 @@ body.account {
           xmargin: 3px 5px 3px 0;
         }
         
-        li.tag-list-tag {
+        li.tag {
+          @include transition(all .2s ease-in-out);
+          
           float: left;
-          list-style: none;
-          font-size: 12px;
-          white-space: nowrap;
-          padding: 3px 5px;
-          margin: 3px 5px 3px 0;
-                    
+          border: 0;
+          border-radius: 5px;
           position: relative;
-          line-height: 13px;
-          color: #333;
+          max-width: 96%;
+          margin: 0 5px 5px 0;
+          background-color: #cfd6d9;
+          padding-top: 3px;
+          padding-bottom: 3px;
           cursor: default;
-          border: 1px solid #aaaaaa;
-          border-radius: 3px;
-          -webkit-box-shadow: 0 0 2px #fff inset, 0 1px 0 rgba(0, 0, 0, 0.05);
-          box-shadow: 0 0 2px #fff inset, 0 1px 0 rgba(0, 0, 0, 0.05);
-          background-clip: padding-box;
-          -webkit-touch-callout: none;
-          -webkit-user-select: none;
-          -moz-user-select: none;
-          -ms-user-select: none;
-          user-select: none;
-          background-color: #e4e4e4;
-          filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eeeeee', endColorstr='#f4f4f4', GradientType=0);
-          background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, color-stop(20%, #f4f4f4), color-stop(50%, #f0f0f0), color-stop(52%, #e8e8e8), color-stop(100%, #eee));
-          background-image: -webkit-linear-gradient(top, #f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eee 100%);
-          background-image: -moz-linear-gradient(top, #f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eee 100%);
-          background-image: linear-gradient(to top, #f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eee 100%);          
+          
+          display: list-item;
+          text-align: -webkit-match-parent;
+          
+          &:hover {
+            background-color: #868d91;
+          }
+          
+          a {
+            padding: 0 10px;
+            line-height: 21px;
+            display: block;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            text-decoration: none;
+            color: #212124;
+            font-weight: 400;
+            
+            &:hover {
+              color: #fff
+            };
+          }
         }
       }
       
