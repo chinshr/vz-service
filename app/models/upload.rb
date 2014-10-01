@@ -27,7 +27,7 @@ class Upload < ActiveRecord::Base
   delegate :slug, to: :ingest
   delegate :progress, to: :ingest
 
-  has_one :ingest, dependent: :destroy
+  has_one :ingest
   
   validates :type, presence: true
   validates :file_name, presence: true, length: { maximum: 255 }
@@ -63,6 +63,7 @@ class Upload < ActiveRecord::Base
   after_initialize :build_ingest_and_ingestable
   before_validation :set_title, on: :create
   after_save :save_ingest_and_ingestable
+  before_destroy :remove_ingest
   
   class << self
     
@@ -167,6 +168,10 @@ class Upload < ActiveRecord::Base
         end
       end
     end
+  end
+  
+  def remove_ingest
+    ingest ? ingest.remove! : true
   end
   
 end

@@ -2,8 +2,9 @@ require 'test_helper'
 
 class IngestTest < ActiveSupport::TestCase
   context "associations" do
-    should belong_to(:upload)
+    should belong_to(:upload).dependent(:destroy)
     should belong_to(:ingestable).dependent(:destroy)
+    should belong_to(:track).dependent(:destroy)
   end
 
   context "validations" do

@@ -2,7 +2,7 @@ require 'test_helper'
 
 class UploadTest < ActiveSupport::TestCase
   context "associations" do
-    should have_one(:ingest).dependent(:destroy)
+    should have_one(:ingest)
   end
   
   context "validations" do

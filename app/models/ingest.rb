@@ -18,9 +18,9 @@ class Ingest < ActiveRecord::Base
   
   serialize :messages, Hash
   
-  belongs_to :upload
+  belongs_to :upload, dependent: :destroy
   belongs_to :ingestable, polymorphic: true, dependent: :destroy
-  belongs_to :track
+  belongs_to :track, dependent: :destroy
   
   validates :upload, presence: true
   validates :ingestable, presence: true
