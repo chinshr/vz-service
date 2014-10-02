@@ -2,14 +2,25 @@
 module Speech
   module Engines
     class GoogleSpeechEngine < Base
-      attr_accessor :service
+      attr_accessor :service, :key
+      
+      def initialize(file, options = {})
+        super file, options
+        self.key = options[:key]
+      end
       
       protected
       
       def reset!(options = {})
         super options
-        
-        url          = "https://www.google.com/speech-api/v1/recognize?xjerr=1&client=speech2text&lang=#{locale}&maxresults=#{max_results}"
+        url = case version
+        when "v1" then
+          "https://www.google.com/speech-api/v1/recognize?xjerr=1&client=speech2text&lang=#{locale}&maxresults=#{max_results}"
+        else
+          "https://www.google.com/speech-api/v2/recognize?output=json&lang=#{locale}"
+        end
+        url += "&key=#{key}" if key 
+
         self.service = Curl::Easy.new(url)
       end
       
@@ -41,28 +52,20 @@ module Speech
             retry_count += 1
             sleep 0.5 # wait longer on error?, google??
           else
-            # {"status":0,"id":"ce178ea89f8b17d8e8298c9c7814700a-1","hypotheses":[{"utterance"=>"I like pickles", "confidence"=>0.59408695}, {"utterance"=>"I like turtles"}, {"utterance"=>"I like tickles"}, {"utterance"=>"I like to Kohl's"}, {"utterance"=>"I Like tickles"}, {"utterance"=>"I lyk tickles"}, {"utterance"=>"I liked to Kohl's"}]}
-            data                      = JSON.parse(service.body_str)
-            result['id']              = chunk.id
-            result['external_id']     = data['id']
-            result['external_status'] = data['status']
-            result['hypotheses']      = data['hypotheses'].map {|ut| {'utterance' => ut['utterance'], 'confidence' => ut['confidence']}}
-
-            if data.key?('hypotheses') && data['hypotheses'].first
-              chunk.status     = result['status'] = AudioSplitter::AudioChunk::STATUS_TRANSCRIBED
-              chunk.best_text  = data['hypotheses'].first['utterance']
-              chunk.best_score = data['hypotheses'].first['confidence']
-              self.score       += data['hypotheses'].first['confidence']
-              self.segments    += 1
-              puts data['hypotheses'].first['utterance'] if self.verbose
+            case version
+            when "v1"
+              parse_v1(chunk, service.body_str, result)
+            else
+              parse_v2(chunk, service.body_str, result)
             end
+
             retrying = false
           end
 
           sleep 0.1 # not too fast there tiger
         end
 
-        puts "#{segments} processed: #{result.inspect} from: #{data.inspect}" if self.verbose
+        puts "#{segments} processed: #{result.inspect} from: #{service.body_str.inspect}" if self.verbose
       rescue Exception => ex
         result['status'] = chunk.status = AudioSplitter::AudioChunk::STATUS_TRANSCRIPTION_ERROR
         result['errors'] = (chunk.errors << ex.message.to_s.gsub(/\n|\r/, ""))
@@ -73,6 +76,81 @@ module Speech
       end
       
       private
+      
+      # V1 response
+      #
+      # {
+      #   "status":0,
+      #   "id":"ce178ea89f8b17d8e8298c9c7814700a-1", 
+      #   "hypotheses":[
+      #     {"utterance"=>"I like pickles", "confidence"=>0.59408695},
+      #     {"utterance"=>"I like turtles"},
+      #     {"utterance"=>"I like tickles"}
+      #   ]}
+      # }
+      #
+      def parse_v1(chunk, raw_data, result = {})
+        data                      = JSON.parse(service.body_str)
+        result['id']              = chunk.id
+        result['external_id']     = data['id']
+        result['external_status'] = data['status']
+
+        if data.key?('hypotheses') && data['hypotheses'].is_a?(Array)
+          result['hypotheses']    = data['hypotheses'].map {|ut| {'utterance' => ut['utterance'], 'confidence' => ut['confidence']}}
+          chunk.status            = result['status'] = AudioSplitter::AudioChunk::STATUS_TRANSCRIBED
+          chunk.best_text         = result['hypotheses'].first['utterance']
+          chunk.best_score        = result['hypotheses'].first['confidence']
+          self.score              += result['hypotheses'].first['confidence']
+          self.segments           += 1
+          puts result['hypotheses'].first['utterance'] if self.verbose
+        end
+        result
+      end
+
+      # V2 response
+      #
+      # {
+      #   "result":[
+      #     {
+      #       "alternative":[
+      #         {
+      #           "transcript":"this is a test",
+      #           "confidence":0.97321892
+      #         },
+      #         {
+      #           "transcript":"this is a test for"
+      #         }
+      #       ],
+      #       "final":true
+      #     }
+      #   ],
+      #   "result_index":0
+      # }
+      #
+      def parse_v2(chunk, raw_data, result = {})
+        data = raw_data.split(/\n/) if raw_data.present?
+        data = data.map {|string| JSON.parse(string)}
+        data = data.find {|json| json["result"] && !json["result"].blank?}
+        
+        result['id']              = chunk.id
+        result['external_id']     = data['result_index']
+        result['external_status'] = data['status']
+
+        if data['result'] && data['result'].is_a?(Array)
+          result['hypotheses']    = data['result'].map {|res| {'utterance' => res['transcript'], 'confidence' => res['confidence']}}
+          result['hypotheses']    = data['result'].map {|r| r['alternative'].map {|a| {'utterance' => a['transcript'], 'confidence' => a['confidence']}}}.flatten
+
+          result['hypotheses'].sort! {|x, y| y['confidence'] || 0 <=> x['confidence'] || 0}
+          
+          chunk.status            = result['status'] = AudioSplitter::AudioChunk::STATUS_TRANSCRIBED
+          chunk.best_text         = result['hypotheses'].first['utterance']
+          chunk.best_score        = result['hypotheses'].first['confidence']
+          self.score              += result['hypotheses'].first['confidence']
+          self.segments           += 1
+          puts result['hypotheses'].first['utterance'] if self.verbose
+        end
+        result
+      end
       
       def supported_locales
         ["af", "eu", "bg", "ca", "ar-EG", "ar-JO", "ar-KW", "ar-LB", "ar-QA", "ar-AE", "ar-MA", "ar-IQ", "ar-DZ", "ar-BH", "ar-LY",

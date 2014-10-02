@@ -1,6 +1,18 @@
 README
 ======
 
+Installation
+------------
+
+* Install bundles `bundle install`
+
+* ffmpeg `brew install ffmpeg`
+
+* sox `brew install sox`
+
+* opus `brew install opus & brew install opusenc`
+
+
 Development Resources
 ---------------------
 
@@ -50,12 +62,14 @@ Development Resources
   - Waveform player, $6 -- http://codecanyon.net/item/zoomsounds-neat-html5-audio-player/4525354
   - Zoomsound continued, themes: http://dzsthemes.net/audioplayer/
   - Wavesurfer -- https://github.com/katspaugh/wavesurfer.js
+  - Wavesurfer copy, cut, paste - http://stackoverflow.com/questions/24551854/cut-and-paste-audio-using-web-audio-api-and-wavesurfer-js
   - 60 best media players -- http://www.jqueryrain.com/example/jquery-media-player/page/5/
   - Top Ten players -- http://www.scratchinginfo.com/top-10-best-html5-audio-players/
   - UbaPlayer with Flash Fallback -- http://www.jqueryrain.com/?W1oH_b8d
   - jWebAudio with effects/gaming -- http://01org.github.io/jWebAudio/
   - Skinnable browser+audio -- http://mediaelementjs.com/
   - Build your own tutorial: http://www.alexkatz.me/html5-audio/building-a-custom-html5-audio-player-with-javascript/
+  - Drawing wave forms from audio stream -- http://stackoverflow.com/questions/19536909/soundcloud-modify-the-waveform-color/19554141#19554141
 * Accept Incoming Emails into a Heroku App Using SendGrid 
   - ruby processor -- http://nanceskitchen.com/2010/02/21/accept-incoming-emails-into-a-heroku-app-using-sendgrid/
   - test sendgrid parse api by sending email to: my@app21958309.bymail.in (<any-address>@<sendgrid-user-name>.bymail.in)
@@ -68,7 +82,9 @@ Development Resources
 * Capturing Audio & Video HTML5 -- http://www.html5rocks.com/en/tutorials/getusermedia/intro/
 * Client side validation, simple form, rails 4 -- http://www.ddarrensmith.com/blog/2012/05/17/ruby-on-rails-client-side-validation-with-validation-helpers-and-twitter-bootstrap/
 * Backbone Devise app -- https://github.com/jhuckabee/backbone_devise
-* Google Speech API, Languages -- http://stackoverflow.com/questions/14257598/what-are-language-codes-for-voice-recognition-languages-in-chromes-implementati
+* Google Speech API, 
+  - Languages -- http://stackoverflow.com/questions/14257598/what-are-language-codes-for-voice-recognition-languages-in-chromes-implementati
+  - API keys -- http://www.chromium.org/developers/how-tos/api-keys 
 * Noise reduction 
   - with ffmpeg and sox: http://www.zoharbabin.com/how-to-do-noise-reduction-using-ffmpeg-and-sox/
   - ffmpeg: http://ffmpeg.zeranoe.com/forum/viewtopic.php?f=15&t=1687
@@ -172,7 +188,7 @@ Development Resources
   - Real time rails w/ node.js-- http://mikeatlas.github.io/realtime-rails/
   - Pusher Rails on Heroku example -- https://github.com/phuphighter/pusher_app_example
 * Speex, speech codec with voice activation (VAD), echo cancellation -- http://www.speex.org/docs/manual/speex-manual/node4.html#SECTION00420000000000000000
-* Opus Codec, successor of Speex, w/ Skype contributions
+* Opus Codec, successor of Speex, w/ Skype contributions, noise reduction, noise filter:
   - Opus voice paper http://jmvalin.ca/papers/aes135_opus_silk.pdf
 * Codepen for Quill bug -- http://codepen.io/anon/pen/GCIku
 * Devise API authentication
@@ -190,7 +206,6 @@ Development Resources
   - Responders gem -- https://github.com/plataformatec/responders
   - Customize responder in Devise w/ FailureApp -- https://github.com/plataformatec/devise/wiki/How-To:-Redirect-to-a-specific-page-when-the-user-can-not-be-authenticated
 * Download Video/Audio from YouTube, DailyMotion, etc. -- https://github.com/rb2k/viddl-rb
-
 * HTML5 rotation
   - Flip rotate HTML5 elements with JS plugin: http://lab.smashup.it/flip/
   - CSS3 rotation -- http://davidwalsh.name/css-flip
@@ -202,6 +217,7 @@ Business Resources
 * Competitive products:
   - Gridspace -- http://gridspace.com
   - Transcribe Wreally -- http://transcribe.wreally.com
+  - ASU Oral History Project -- http://gaialab.asu.edu/OHP
 * HIPAA compliance (box notes is): http://en.wikipedia.org/wiki/Health_Insurance_Portability_and_Accountability_Act
 * Dictaphone ebay buying guide -- http://www.ebay.com/gds/Dictaphone-Buying-Guide-/10000000177630514/g.html
 * Transition browser compatibility -- http://www.sitepoint.com/css3-animation-javascript-event-handlers/
@@ -290,7 +306,7 @@ Speech Transcription
     audio.to_text(:max_results => 2, :locale => "en-US")
     
     # Google Speech Engine
-    audio = Speech::AudioToText.new("samples/i-like-pickles.wav", :verbose => true); audio.to_json
+    audio = Speech::AudioToText.new("samples/i-like-pickles.wav", :verbose => true, :version => "v2", :key => "AIzaSyAqcAyKz-aQq-LWSrAYkajCbqRQflTLCKY"); audio.to_json
     audio = Speech::AudioToText.new("samples/me-gusta-pepinillos.m4a", :verbose => true); audio.to_json(:locale => "es-MX")
 
     # ATT Speech Engine, mode: standard

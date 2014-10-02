@@ -117,8 +117,7 @@ class Ingest < ActiveRecord::Base
   
   # set_progress! 10 => 10%
   def set_progress!(percent)
-    Ingest.transaction do
-      lock!
+    with_lock do
       new_progress = percent
       new_progress = new_progress > 100 ? 100 : new_progress
       update_attribute(:progress, new_progress)
@@ -131,8 +130,7 @@ class Ingest < ActiveRecord::Base
   # ...
   # increment_progress! 1, 5, 0.8 => 90%
   def increment_progress!(counter, denominator, factor = 1.0)
-    Ingest.transaction do
-      lock!
+    with_lock do
       new_progress = (self[:progress] || 0) + (counter / denominator.to_f * factor * 100)
       new_progress = new_progress > 100 ? 100 : new_progress
       update_attribute(:progress, new_progress)

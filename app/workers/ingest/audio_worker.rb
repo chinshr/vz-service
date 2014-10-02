@@ -10,13 +10,13 @@ class Ingest::AudioWorker
 
   STAGES = {
     :initialize_pipeline                         => 0,
-    :move_object_from_inbound_to_outbound_bucket => 10,
-    :download_object_from_outbound_bucket        => 20,
-    :normalize_original_audio_file               => 30,
-    :noise_reduce_audio_file                     => 35, 
-    :create_mp3_and_upload                       => 40,
-    :transcribe                                  => 50,
-    :finalized                                   => 60
+    :move_object_from_inbound_to_outbound_bucket => 5,
+    :download_object_from_outbound_bucket        => 10,
+    :normalize_original_audio_file               => 15,
+    :noise_reduce_audio_file                     => 20, 
+    :create_mp3_and_upload                       => 25,
+    :transcribe                                  => 99,
+    :finalize                                    => 100
   }
   
   def initialize(ingest_id = nil)
@@ -79,7 +79,6 @@ class Ingest::AudioWorker
       @ingest.track.destroy if @ingest.track
       @ingest.create_track(:s3_url => "initializing")
       @ingest.save if @ingest.changed?
-      set_progress! 0
     end
   end
 
@@ -93,15 +92,12 @@ class Ingest::AudioWorker
 
       # Delete uploaded object
       s3_delete_object_if_exists(APP_CONFIG['S3_INBOUND_BUCKET'], @ingest.upload.s3_key)
-      
-      set_progress! 5
     end
   end
 
   def download_object_from_outbound_bucket!
     stage! :download_object_from_outbound_bucket do
       s3_download_object APP_CONFIG['S3_OUTBOUND_BUCKET'], @ingest.track.s3_key, original_audio_file_fullpath
-      set_progress! 10
     end
   end
 
@@ -118,12 +114,16 @@ class Ingest::AudioWorker
       # Delete the single channel file
       Rails.logger.info "--> delete single_channel_audio_file_fullpath"
       delete_file_if_exists single_channel_audio_file_fullpath
-      
-      set_progress! 15
     end
   end
 
   def noise_reduce_audio_file!
+    stage! :noise_reduce_audio_file do
+      FileUtils.copy(normalized_audio_file_fullpath, noise_reduced_wav_audio_file_fullpath)
+    end
+  end
+  
+  def old_noise_reduce_audio_file!
     stage! :noise_reduce_audio_file do
       # Convert to raw headerless PCM and down sample to 16-bit
       ffmpeg_downsample_and_convert_to_pcm(normalized_audio_file_fullpath, pcm_audio_file_fullpath)
@@ -137,12 +137,10 @@ class Ingest::AudioWorker
       # Convert PCM back to WAV
       ffmpeg_convert_pcm_to_wav(noise_reduced_pcm_audio_file_fullpath, noise_reduced_wav_audio_file_fullpath)
 
-      # Delete no more used files
+      # Cleanup obsolete files
       delete_file_if_exists pcm_audio_file_fullpath
       delete_file_if_exists silence_file_full_path
       delete_file_if_exists noise_reduced_pcm_audio_file_fullpath
-      
-      set_progress! 20
     end
   end
   
@@ -159,8 +157,6 @@ class Ingest::AudioWorker
       
       # Remove mp3 file locally
       delete_file_if_exists mp3_audio_file_fullpath
-      
-      set_progress! 25
     end
   end
 
@@ -185,10 +181,9 @@ class Ingest::AudioWorker
     end
   end
   
-  def finalized!
-    stage! :finalized do
+  def finalize!
+    stage! :finalize do
       @ingest.finish!
-      set_progress! 100
     end
   end
   
@@ -198,7 +193,10 @@ class Ingest::AudioWorker
     if can_stage?(stage_name)
       log! stage_name, header_with("starting", stage_name, message)
       @ingest.update_attributes(stage: stage_name.to_s, busy: true) if @ingest
+
       yield if block_given?
+
+      @ingest.set_progress!(STAGES[stage_name.to_sym])  # STAGES.values represent finished progress
       @ingest.update_attributes(busy: false) if @ingest
       log! stage_name, header_with("finished", stage_name, message) if block_given?
     end

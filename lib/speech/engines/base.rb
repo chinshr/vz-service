@@ -5,9 +5,10 @@ module Speech
       USER_AGENT = "Mozilla/5.0"
 
       attr_accessor :file, :rate, :captured_json, :score, :verbose, :segments, :chunks, :chunk_size,
-        :max_results, :max_retries, :locale
+        :max_results, :max_retries, :locale, :version
 
       def initialize(file, options = {})
+        options.symbolize_keys!
         self.file            = file
         self.captured_json   = {}
         self.score           = 0.0
@@ -18,6 +19,7 @@ module Speech
         self.max_results     = 2
         self.max_retries     = 3
         self.locale          = "en-US"
+        self.version         = options[:version] || "v2"
       end
 
       def to_text(options = {})

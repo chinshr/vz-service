@@ -25,6 +25,20 @@ class IngestTest < ActiveSupport::TestCase
       assert_equal true, ingest.remove!, "should be able to event remove"
       assert_equal 1, Ingest::RemoveWorker.jobs.size
     end
+
+    should "remove when upload has already been destroyed" do
+      upload = FactoryGirl.create(:upload_audio)
+      ingest = upload.ingest
+      Ingest::RemoveWorker.jobs.clear
+      assert_no_difference "Ingest.count" do
+        assert_difference "Upload.count", -1 do
+          upload.delete  # remember, after_destroy should have been unaffected
+          assert_equal :removing, ingest.state
+          assert_equal true, ingest.process!, "should be able to process"
+          assert_equal :removed, ingest.state
+        end
+      end
+    end
     
     should "events should transition states" do
       ingest = FactoryGirl.create(:ingest_audio, :terminate => true, :busy => true)
