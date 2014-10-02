@@ -226,7 +226,9 @@ class Ingest < ActiveRecord::Base
     self.terminate    = true
   end
   
-  def after_enter_removing; end
+  def after_enter_removing
+    ::Ingest::RemoveWorker.perform_async(self.id)
+  end
   
   def has_valid_upload?
     !!(upload && upload.s3_url)

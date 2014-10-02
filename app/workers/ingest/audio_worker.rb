@@ -244,17 +244,6 @@ class Ingest::AudioWorker
     @ingest.log! stage_name, message if @ingest
   end
   
-  def exception_logger(exception)
-    errors = ""
-    errors += ("=" * 80) + "\n"
-    errors += exception.message + "\n"
-    errors += ("=" * 80) + "\n"
-    errors += exception.backtrace.join("\n")
-    errors += ("=" * 80) + "\n"
-    log!(@ingest.stage || :errors, errors) if @ingest
-    Rails.logger.error errors
-  end
-  
   def s3_key
     @ingest.s3_key if @ingest
   end
@@ -335,26 +324,22 @@ class Ingest::AudioWorker
     File.join(APP_CONFIG['S3_URL'], APP_CONFIG['S3_INBOUND_BUCKET'], key)
   end
   
-  def when_liberated
-    return unless @ingest
-    counter = 0
-    @ingest.reload
-    while @ingest.busy? && counter < @chunk_size * 2
-      sleep 1
-      @ingest.reload
-      counter += 1
-    end
-    yield unless @ingest.busy?
-  end
-  
-  def liberate!
-    @ingest.update_attributes(busy: false) if @ingest 
-  end
-  
   def run_all_stages
     Ingest::AudioWorker::STAGES.keys.each do |stage|
       send("#{stage}!".to_sym)
     end
   end
   
+  def remove_all_files_and_s3_objects
+    # remove local files
+    delete_file_if_exists original_audio_file_fullpath
+    delete_file_if_exists single_channel_audio_file_fullpath
+    delete_file_if_exists normalized_audio_file_fullpath
+    delete_file_if_exists mp3_audio_file_fullpath
+    delete_file_if_exists pcm_audio_file_fullpath
+    delete_file_if_exists silence_file_full_path
+    delete_file_if_exists noise_reduced_pcm_audio_file_fullpath
+
+    remove_all_s3_objects
+  end
 end

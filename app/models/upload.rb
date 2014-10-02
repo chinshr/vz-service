@@ -171,7 +171,11 @@ class Upload < ActiveRecord::Base
   end
   
   def remove_ingest
-    ingest ? ingest.remove! : true
+    ingest.reload if ingest
+    ingest && ingest.may_remove? ? ingest.remove! : true
+  rescue ActiveRecord::RecordNotFound => ex
+    # when ingest has already been removed, raised by ingest.reload
+    true
   end
   
 end

@@ -318,19 +318,36 @@ module Workers::Ingest::AudioWorkerHelper
     File.delete(file) if file && File.exist?(file) && !Rails.env.development?
   end
   
-  def remove_all_files_and_s3_objects
-    # remove local files
-    delete_file_if_exists original_audio_file_fullpath
-    delete_file_if_exists single_channel_audio_file_fullpath
-    delete_file_if_exists normalized_audio_file_fullpath
-    delete_file_if_exists mp3_audio_file_fullpath
-    delete_file_if_exists pcm_audio_file_fullpath
-    delete_file_if_exists silence_file_full_path
-    delete_file_if_exists noise_reduced_pcm_audio_file_fullpath
-
-    # remove S3 objects
+  def remove_all_s3_objects
     s3_delete_object_if_exists(APP_CONFIG['S3_OUTBOUND_BUCKET'], @ingest.track.s3_key)
     s3_delete_object_if_exists(APP_CONFIG['S3_OUTBOUND_BUCKET'], @ingest.track.s3_mp3_key)
+  end
+  
+  def exception_logger(exception)
+    errors = ""
+    errors += ("=" * 80) + "\n"
+    errors += exception.message + "\n"
+    errors += ("=" * 80) + "\n"
+    errors += exception.backtrace.join("\n")
+    errors += ("=" * 80) + "\n"
+    log!(@ingest.stage || :errors, errors) if @ingest
+    Rails.logger.error errors
+  end
+  
+  def when_liberated
+    return unless @ingest
+    counter = 0
+    @ingest.reload
+    while @ingest.busy? && counter <= (((@chunk_size || 1) * 2) + 1)
+      sleep 1
+      @ingest.reload
+      counter += 1
+    end
+    yield unless @ingest.busy?
+  end
+  
+  def liberate!
+    @ingest.update_attributes(busy: false) if @ingest 
   end
   
 end

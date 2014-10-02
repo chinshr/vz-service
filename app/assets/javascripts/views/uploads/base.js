@@ -102,7 +102,7 @@ App.Views.UploadsBase = Backbone.View.extend({
       })(this),
       error: (function(_this) {
         return function(model) {
-          console.log("error fetching upload ID = " + _this.data.upload.id);
+          console.log("error fetching upload");
           _this.renderUpdate(false);
         };
       })(this)

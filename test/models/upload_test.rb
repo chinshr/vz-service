@@ -164,4 +164,16 @@ class UploadTest < ActiveSupport::TestCase
     upload.locale = "de-DE"
     assert_equal true, upload.has_locale_recently_changed?
   end
+  
+  should "destroy" do
+    upload = FactoryGirl.create(:upload_audio, :s3_url => "http://s3.amazonaws.com/dropbox/61glI7mwmN")
+    assert upload.ingest, "should have an ingest"
+    ingest = upload.ingest
+    assert_difference "Upload.count", -1 do
+      upload.destroy
+      ingest.reload
+      assert_equal :removing, ingest.state
+    end
+  end
+  
 end

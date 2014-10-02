@@ -12,13 +12,20 @@ class IngestTest < ActiveSupport::TestCase
     should validate_presence_of :ingestable
   end
   
-  should "have status" do
-    ingest = FactoryGirl.create(:ingest_audio)
-    assert_equal :created, ingest.state
-    assert_equal 0, ingest.status
-  end
-  
   context "state machine" do
+    should "have state and status" do
+      ingest = FactoryGirl.create(:ingest_audio)
+      assert_equal :created, ingest.state
+      assert_equal 0, ingest.status
+    end
+
+    should "remove" do
+      ingest = FactoryGirl.create(:ingest_audio)
+      Ingest::RemoveWorker.jobs.clear
+      assert_equal true, ingest.remove!, "should be able to event remove"
+      assert_equal 1, Ingest::RemoveWorker.jobs.size
+    end
+    
     should "events should transition states" do
       ingest = FactoryGirl.create(:ingest_audio, :terminate => true, :busy => true)
       assert_equal :created, ingest.state

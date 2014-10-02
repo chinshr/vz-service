@@ -43,15 +43,9 @@ class Ingest::Audio < ::Ingest
     schedule_perform_async!
   end
   
-  def after_enter_removing
-    super
-    schedule_perform_async!
-  end
-  
   def after_enter_restarting
     super
     ::Ingest::AudioWorker.perform_async(self.id)
-    # schedule_perform_async!
   end
   
   def enter_finished
