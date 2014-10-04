@@ -3,116 +3,110 @@ require "matrix"
 
 module Workers::Ingest::AudioWorkerHelper
 
-  # Transcribe
-  
-  def transcribe_file(filename)
-    threads = []
-    threads << Thread.new { google_speech_transcribe_file(filename) }
-    threads << Thread.new { att_speech_transcribe_file(filename) }
-    threads << Thread.new { nuance_dragon_transcribe_file(filename) }
+  class Transcribe
+    attr_accessor :ingest, :filename
     
-    threads.each { |thr| thr.join }
-    threads
-  end
-  
-  def google_speech_transcribe_file(filename)
-    ActiveRecord::Base.connection_pool.with_connection do
-      start_time = BigDecimal.new("0.0")
-      audio      = Speech::AudioToText.new(filename, {
-        engine: :google_speech_engine, chunk_size: @chunk_size, verbose: Rails.env.development?
-      })
-      audio.to_json(:locale => @ingest.locale) do |chunk|
-        end_time = start_time + BigDecimal.new(chunk.duration.to_s)
-        @ingest.ingestable.chunks.create({
-          :type              => "Document::Chunk::GoogleSpeech",
-          :position          => chunk.id,
-          :offset            => chunk.offset,
-          :duration          => chunk.duration,
-          :start_time        => start_time,
-          :end_time          => end_time,
-          :text              => chunk.best_text,
-          :score             => chunk.best_score,
-          :response          => JSON.parse(chunk.captured_json),
-          :processing_errors => chunk.errors,
-          :processing_status => chunk.status
-        })
-        Rails.logger.info "-> google speech chunk ##{chunk.id}: #{start_time}-#{end_time} (#{chunk.duration}): #{chunk.best_text} (#{chunk.best_score})"
+    def initialize(ingest, options = {})
+      @ingest             = ingest
+      @queue              = QueueWithTimeout.new
+      @threads            = []
+      @chunk_size         = options[:chunk_size] || 10
+      @chunk_timeout      = options[:chunk_timeout] || 5
+      @progress_threshold = options[:progress_threshold] || 1.0
+      @mutex              = Mutex.new
+    end
+    
+    def perform(filename)
+      history = {}
+      @threads << Thread.new { google_speech_transcribe_file(filename) }
+      @threads << Thread.new { att_speech_transcribe_file(filename) }
+      @threads << Thread.new { nuance_dragon_transcribe_file(filename) }
 
-        start_time = end_time
-        increment_progress! 1, chunk.splitter.chunks.size, 0.75
-        @ingest.reload
-        break if !@ingest.started? || @ingest.terminate?
+      loop do
+        begin
+          chunk = @queue.pop_with_timeout(@chunk_timeout)
+          if !history[chunk.engine.class.superclass.name] || history[chunk.engine.class.superclass.name] < chunk.id
+            increment_progress(chunk)
+            history[chunk.engine.class.superclass.name] = chunk.id
+          end
+        rescue ThreadError => ex
+          break
+        end
+        sleep 0.2
+      end
+
+      @threads.each {|th| th.join}
+      @ingest.set_progress!(@progress_threshold * 100)
+      @threads
+    end
+    
+    protected
+    
+    def increment_progress(chunk)
+      @mutex.synchronize do
+        @ingest.increment_progress! 1, chunk.splitter.chunks.size, @progress_threshold
       end
     end
-  end
+    
+    def transcribe_file(audio)
+      ActiveRecord::Base.connection_pool.with_connection do
+        start_time = BigDecimal.new("0.0")
+        audio.to_json(:locale => @ingest.locale) do |chunk|
+          @mutex.synchronize do
+            end_time = start_time + BigDecimal.new(chunk.duration.to_s)
+            @ingest.ingestable.chunks.create({
+              :type              => Document::Chunk.type_from_engine_class_for(audio.engine.class), # "Document::Chunk::GoogleSpeech",
+              :position          => chunk.id,
+              :offset            => chunk.offset,
+              :duration          => chunk.duration,
+              :start_time        => start_time,
+              :end_time          => end_time,
+              :text              => chunk.best_text,
+              :score             => chunk.best_score,
+              :response          => JSON.parse(chunk.captured_json),
+              :processing_errors => chunk.errors,
+              :processing_status => chunk.status
+            })
+            Rails.logger.info "-> #{audio.engine.class.name} chunk ##{chunk.id}: #{start_time}-#{end_time} (#{chunk.duration}): #{chunk.best_text} (#{chunk.best_score})"
 
-  def att_speech_transcribe_file(filename)
-    ActiveRecord::Base.connection_pool.with_connection do
-      start_time = BigDecimal.new("0.0")
-      audio      = Speech::AudioToText.new(filename, {
+            start_time = end_time
+            @queue.push(chunk)
+            @ingest.reload
+            break if !@ingest.started? || @ingest.terminate?
+          end
+        end
+      end
+      
+    end
+    
+    def google_speech_transcribe_file(filename)
+      audio = Speech::AudioToText.new(filename, {
+        engine: :google_speech_engine, 
+        chunk_size: @chunk_size, verbose: Rails.env.development?
+      })
+      transcribe_file(audio)
+    end
+
+    def att_speech_transcribe_file(filename)
+      audio = Speech::AudioToText.new(filename, {
         engine: :att_speech_engine, chunk_size: @chunk_size, 
         api_key: "tgcqoeaecj4ff052a9ee8g0mzt9xti7p", secret_key: "j7caqnrtvtiiqhtl1nhlmyp5li0dclxg", 
         mode: "standard", verbose: Rails.env.development?
       })
-      audio.to_json(:locale => @ingest.locale) do |chunk|
-        end_time = start_time + BigDecimal.new(chunk.duration.to_s)
-        @ingest.ingestable.chunks.create({
-          :type              => "Document::Chunk::AttSpeech",
-          :position          => chunk.id,
-          :offset            => chunk.offset,
-          :duration          => chunk.duration,
-          :start_time        => start_time,
-          :end_time          => end_time,
-          :text              => chunk.best_text,
-          :score             => chunk.best_score,
-          :response          => JSON.parse(chunk.captured_json),
-          :processing_errors => chunk.errors,
-          :processing_status => chunk.status
-        })
-        Rails.logger.info "-> att speech chunk ##{chunk.id}: #{start_time}-#{end_time} (#{chunk.duration}): #{chunk.best_text} (#{chunk.best_score})"
-
-        start_time = end_time
-        increment_progress! 1, chunk.splitter.chunks.size, 0.75
-        @ingest.reload
-        break if !@ingest.started? || @ingest.terminate?
-      end
+      transcribe_file(audio)
     end
-  end
 
-  def nuance_dragon_transcribe_file(filename)
-    ActiveRecord::Base.connection_pool.with_connection do
-      start_time = BigDecimal.new("0.0")
-      audio      = Speech::AudioToText.new(filename, {
+    def nuance_dragon_transcribe_file(filename)
+      audio = Speech::AudioToText.new(filename, {
         engine: :nuance_dragon_engine, chunk_size: @chunk_size, 
         base_url: "https://dictation.nuancemobility.net:443", app_id: "NMDPTRIAL_chinshr20140326185635", 
         app_key: "edb1acb2e50d02417b643e6dce510ea9dd565c4ad4725dcb8d807c96fe6304eb14b09ef9bea03a390578a6d3cab57ca70bd8f1df4b4eabd8cf276ecd8a72b99f",
         verbose: Rails.env.development?
       })
-      audio.to_json(:locale => @ingest.locale) do |chunk|
-        end_time = start_time + BigDecimal.new(chunk.duration.to_s)
-        @ingest.ingestable.chunks.create({
-          :type              => "Document::Chunk::NuanceDragon",
-          :position          => chunk.id,
-          :offset            => chunk.offset,
-          :duration          => chunk.duration,
-          :start_time        => start_time,
-          :end_time          => end_time,
-          :text              => chunk.best_text,
-          :score             => chunk.best_score,
-          :response          => JSON.parse(chunk.captured_json),
-          :processing_errors => chunk.errors,
-          :processing_status => chunk.status
-        })
-        Rails.logger.info "-> nuance dragon chunk ##{chunk.id}: #{start_time}-#{end_time} (#{chunk.duration}): #{chunk.best_text} (#{chunk.best_score})"
-
-        start_time = end_time
-        increment_progress! 1, chunk.splitter.chunks.size, 0.75
-        @ingest.reload
-        break if !@ingest.started? || @ingest.terminate?
-      end
+      transcribe_file(audio)
     end
   end
-  
+    
   def normalize_document_chunk_scores(document)
     document.chunks.group_by(&:position).each do |position, grouped_chunks|
       levenshtein_array = grouped_chunks.each_index.inject([]) do |column, column_index|

@@ -52,6 +52,12 @@ class Document::ChunkTest < ActiveSupport::TestCase
     end
   end
   
+  should "get class from engine name" do
+    assert_equal "Document::Chunk::GoogleSpeech", Document::Chunk.type_from_engine_class_for("Speech::Engines::GoogleSpeechEngine")
+    assert_equal "Document::Chunk::AttSpeech", Document::Chunk.type_from_engine_class_for("Speech::Engines::AttSpeechEngine")
+    assert_equal "Document::Chunk::NuanceDragon", Document::Chunk.type_from_engine_class_for("Speech::Engines::NuanceDragonEngine")
+  end
+  
   context "speech engines" do
     setup do
       @ingest = FactoryGirl.create(:ingest_audio)

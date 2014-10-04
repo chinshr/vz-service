@@ -52,11 +52,11 @@ module Speech
       end
       
       def build(chunk)
-        raise "Implement inside engine."
+        raise "Implement in engine."
       end
       
       def splitter_options(options = {})
-        {chunk_size: chunk_size, verbose: verbose}.merge(options).reject {|k,v| v.blank?}
+        {engine: self, chunk_size: chunk_size, verbose: verbose}.merge(options).reject {|k,v| v.blank?}
       end
 
       def chunk_options(options = {})
@@ -64,7 +64,7 @@ module Speech
       end
 
       def convert_chunk(chunk, options = {})
-        raise "Implement inside engine."
+        raise "Implement in engine."
       end
     end
   end

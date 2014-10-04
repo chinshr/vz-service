@@ -15,7 +15,8 @@ module Speech
         super options
         url = case version
         when "v1" then
-          "https://www.google.com/speech-api/v1/recognize?xjerr=1&client=speech2text&lang=#{locale}&maxresults=#{max_results}"
+          # "https://www.google.com/speech-api/v1/recognize?xjerr=1&client=speech2text&lang=#{locale}&maxresults=#{max_results}"
+          "https://www.google.com/speech-api/v1/recognize?client=chromium&lang=#{locale}&maxresults=#{max_results}"
         else
           "https://www.google.com/speech-api/v2/recognize?output=json&lang=#{locale}"
         end

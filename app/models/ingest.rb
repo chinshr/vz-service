@@ -124,16 +124,23 @@ class Ingest < ActiveRecord::Base
     end
   end
 
+  def reload_attribute(attr)
+    value = self.class.where(:id=>id).select(attr).first[attr]
+    self[attr] = value
+  end
+  
   # set_progress! 10 => 10%
   # increment_progress! 1, 5, 0.8 => 26%
   # increment_progress! 1, 5, 0.8 => 42%
   # ...
   # increment_progress! 1, 5, 0.8 => 90%
   def increment_progress!(counter, denominator, factor = 1.0)
-    with_lock do
+    self.class.transaction do
+      Rails.env.test? ? reload_attribute(:progress) : lock!
       new_progress = (self[:progress] || 0) + (counter / denominator.to_f * factor * 100)
       new_progress = new_progress > 100 ? 100 : new_progress
-      update_attribute(:progress, new_progress)
+      self.progress = new_progress
+      save(:validate => false)
     end
   end
   

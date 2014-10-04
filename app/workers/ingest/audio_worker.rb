@@ -166,7 +166,8 @@ class Ingest::AudioWorker
       @ingest.ingestable.chunks.destroy_all
       
       # Start the stranscription with normalization
-      transcribe_file(noise_reduced_wav_audio_file_fullpath)
+      transcribe = Transcribe.new(@ingest, :chunk_size => @chunk_size)
+      transcribe.perform(noise_reduced_wav_audio_file_fullpath)
       
       # Normalize chunk scores
       normalize_document_chunk_scores(@ingest.ingestable.chunks)

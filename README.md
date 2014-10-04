@@ -85,6 +85,8 @@ Development Resources
 * Google Speech API, 
   - Languages -- http://stackoverflow.com/questions/14257598/what-are-language-codes-for-voice-recognition-languages-in-chromes-implementati
   - API keys -- http://www.chromium.org/developers/how-tos/api-keys 
+  - Speech API Gem v2 - https://github.com/gillesdemey/google-speech-v2/
+  - Chrome speech recognition -- http://stackoverflow.com/questions/4361826/does-chrome-have-built-in-speech-recognition-for-x-webkit-speech-input-element
 * Noise reduction 
   - with ffmpeg and sox: http://www.zoharbabin.com/how-to-do-noise-reduction-using-ffmpeg-and-sox/
   - ffmpeg: http://ffmpeg.zeranoe.com/forum/viewtopic.php?f=15&t=1687
@@ -305,7 +307,10 @@ Speech Transcription
     audio.to_json(:max_results => 2, :locale => "en-US")
     audio.to_text(:max_results => 2, :locale => "en-US")
     
-    # Google Speech Engine
+    # Google V1 Chromium Engine
+    audio = Speech::AudioToText.new("samples/i-like-pickles.wav", :verbose => true, :version => "v1"); audio.to_json
+    
+    # Google V2 Speech Engine
     audio = Speech::AudioToText.new("samples/i-like-pickles.wav", :verbose => true, :version => "v2", :key => "AIzaSyAqcAyKz-aQq-LWSrAYkajCbqRQflTLCKY"); audio.to_json
     audio = Speech::AudioToText.new("samples/me-gusta-pepinillos.m4a", :verbose => true); audio.to_json(:locale => "es-MX")
 
@@ -540,6 +545,11 @@ Let's normalize afterwards:
       reverse \
       norm -0.5
 
+Listening to TCP port 80
+
+    sudo tcpflow -p -c -i en0 port 80 | grep -oE '(GET|POST|HEAD) .* HTTP/1.[01]|Host: .*'
+    
+    
 Genesis Recording Script
 ========================
 

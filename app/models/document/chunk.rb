@@ -24,6 +24,12 @@ class Document::Chunk < ActiveRecord::Base
         "Document::Chunk::#{p.to_s.classify}"
       end
     end
+
+    # Document::Chunk.type_from_engine_class_for(audio.engine.class) => "Document::Chunk::GoogleSpeech"
+    def type_from_engine_class_for(klass)
+      chunk_class = self.subclasses.find {|cc| cc.engine_class_name == klass.to_s}
+      chunk_class.name if chunk_class
+    end
     
     # E.g. @document.chunks.best.text => "this is the best chunked text"
     def text

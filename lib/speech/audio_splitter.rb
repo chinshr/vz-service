@@ -2,7 +2,7 @@
 module Speech
 
   class AudioSplitter
-    attr_accessor :original_file, :size, :duration, :chunks, :verbose
+    attr_accessor :original_file, :size, :duration, :chunks, :verbose, :engine
 
     class AudioChunk
       STATUS_UNPROCESSED         = 0
@@ -30,6 +30,10 @@ module Speech
         self.errors        = []
       end
 
+      def engine
+        splitter.engine
+      end
+      
       def self.copy(splitter, id = nil)
         chunk        = AudioChunk.new(splitter, 0, splitter.duration.to_f, id)
         chunk.status = STATUS_BUILT
@@ -128,7 +132,7 @@ module Speech
         File.unlink self.flac_chunk if self.flac_chunk && File.exist?(self.flac_chunk)
         File.unlink self.wav_chunk if self.wav_chunk && File.exist?(self.wav_chunk)
       end
-    end
+    end # AudioChunk
 
     def initialize(file, options = {})
       self.original_file = file      
@@ -136,6 +140,7 @@ module Speech
       self.size          = options.key?(:chunk_size) ? options[:chunk_size].to_i : 5
       self.chunks        = []
       self.verbose       = !!options[:verbose] if options.key?(:verbose)
+      self.engine        = options[:engine]
     end
 
     def split
