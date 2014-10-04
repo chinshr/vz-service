@@ -166,7 +166,8 @@ class Ingest::AudioWorker
       @ingest.ingestable.chunks.destroy_all
       
       # Start the stranscription with normalization
-      transcribe = Transcribe.new(@ingest, :chunk_size => @chunk_size)
+      transcribe = Transcribe.new(@ingest, :chunk_size => @chunk_size, 
+        :chunk_timeout => 15, :progress_thresholds => STATES[:transcribe])
       transcribe.perform(noise_reduced_wav_audio_file_fullpath)
       
       # Normalize chunk scores
@@ -224,20 +225,6 @@ class Ingest::AudioWorker
     end
   end
 
-  # set_progress! 10 => 10%
-  def set_progress!(percent)
-    @ingest.set_progress!(percent) if @ingest
-  end
-
-  # set_progress! 10 => 10%
-  # increment_progress! 1, 5, 0.8 => 26%
-  # increment_progress! 1, 5, 0.8 => 42%
-  # ...
-  # increment_progress! 1, 5, 0.8 => 90%
-  def increment_progress!(counter, denominator, factor = 1.0)
-    @ingest.increment_progress!(counter, denominator, factor) if @ingest
-  end
-  
   def log!(stage_name, message)
     Rails.logger.info "** stage #{stage_name}: #{message}" if @ingest && Rails.env.development?
     @ingest.log! stage_name, message if @ingest

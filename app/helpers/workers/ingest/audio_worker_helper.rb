@@ -12,7 +12,7 @@ module Workers::Ingest::AudioWorkerHelper
       @threads            = []
       @chunk_size         = options[:chunk_size] || 10
       @chunk_timeout      = options[:chunk_timeout] || 5
-      @progress_threshold = options[:progress_threshold] || 1.0
+      @progress_threshold = options[:progress_threshold] || 100
       @mutex              = Mutex.new
     end
     

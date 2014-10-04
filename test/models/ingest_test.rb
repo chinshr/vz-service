@@ -176,10 +176,10 @@ class IngestTest < ActiveSupport::TestCase
     ingest.set_progress!(10) and ingest.reload
     assert_equal 10, ingest.progress
     175.times do |index|
-      ingest.increment_progress! 1, 175, 0.8
+      ingest.increment_progress! 1, 175, 80
     end
     assert_equal 90, ingest.progress
-    ingest.increment_progress! 1, 175, 0.8
+    ingest.increment_progress! 1, 175, 80
     assert_equal 90, ingest.progress
   end
 end
