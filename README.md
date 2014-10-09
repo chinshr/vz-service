@@ -212,6 +212,10 @@ Development Resources
   - Flip rotate HTML5 elements with JS plugin: http://lab.smashup.it/flip/
   - CSS3 rotation -- http://davidwalsh.name/css-flip
   - CSS3 animation events -- http://www.sitepoint.com/css3-animation-javascript-event-handlers/
+* Installing CMU Sphinx
+  - Ruby Pocketsphinx server -- https://github.com/alumae/ruby-pocketsphinx-server
+  - Install Sphinx and Pocketsphinx -- https://mattze96.safe-ws.de/blog/?p=640
+
 
 Business Resources
 ------------------
@@ -587,4 +591,92 @@ Y vio Dios que la luz era buena;
 Y separó Dios la luz de las tinieblas. 
 Y llamó Dios a la luz Día, y a las tinieblas llamó Noche. 
 Y fue la tarde y la mañana un día.
+
+## Install Pocketsphinx
+
+
+Install
+
+    brew install gstreamer010
+    brew install gst-plugins-base010
+    brew install libxml2
+
+Setup
+
+    export GST_PLUGIN_PATH=/usr/local/lib/gstreamer-0.10
+
+Create folders:
+
+    mkdir voice_recognition; cd voice_recognition
+
+Download Sphinxbase: 
+  
+    cd sphinxbase
+    
+    git clone git://github.com/cmusphinx/sphinxbase.git
+
+or
+
+    svn co https://cmusphinx.svn.sourceforge.net/svnroot/cmusphinx/trunk/sphinxbase
+
+Install missing libraries on Darwin:
+
+    brew install swig
+    brew install libtools
+
+Modify autogen.sh, change `libtoolize` to `glibtoolize`
+
+Create makefiles
+
+    ./autogen.sh
+
+Compile 
+
+    make
+
+Install Sphinxbase
+
+    sudo make install
+    cd ..
+
+Download Pocketsphinx at the `/voice_recognition` root.
+
+    git clone git://github.com/cmusphinx/pocketsphinx.git
+
+Generate makefiles (before executing script change `libtoolize` to `glibtoolize`)
+
+     ./autogen.sh
+
+Compile pocketsphinx
+
+    make
+
+Install pocketsphinx
+
+    sudo make install
+    cd ..
+
+Install and extract dictionary and configure
+
+    wget http://goofy.zamia.org/voxforge/de/voxforge-de-r20140907.tgz
+    tar xvzf voxforge-de-r20140907.tgz
+
+Change configuration to:
+
+    cd voxforge-de-r20140907
+    nano run-pocketsphinx.sh
+
+and add this:
+
+    pocketsphinx_continuous \
+        -hmm model_parameters/voxforge.cd_cont_3000 \
+        -lw 10 -feat 1s_c_d_dd -beam 1e-80 -wbeam 1e-40 \
+        -dict etc/voxforge.dic \
+        -wip 0.2 \
+        -agc none -varnorm no -cmn current -inmic yes \
+        -lm etc/voxforge.lm.DMP
+
+Run pocketsphinx
+
+    ./run-pocketsphinx.sh
 
