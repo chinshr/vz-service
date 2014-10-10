@@ -310,12 +310,15 @@ Speech Transcription
     audio = Speech::AudioToText.new("samples/cleaned.wav")
     audio.to_json(:max_results => 2, :locale => "en-US")
     audio.to_text(:max_results => 2, :locale => "en-US")
-    
+
+    # Pocketsphinx Server V1
+    audio = Speech::AudioToText.new("samples/i-like-pickles.wav", :verbose => true, :engine => :pocketsphinx_server_engine); audio.to_json
+
     # Google V1 Chromium Engine
-    audio = Speech::AudioToText.new("samples/i-like-pickles.wav", :verbose => true, :version => "v1"); audio.to_json
-    
+    audio = Speech::AudioToText.new("samples/i-like-pickles.wav", :verbose => true, :engine => :google_speech_engine, :version => "v1"); audio.to_json
+
     # Google V2 Speech Engine
-    audio = Speech::AudioToText.new("samples/i-like-pickles.wav", :verbose => true, :version => "v2", :key => "AIzaSyAqcAyKz-aQq-LWSrAYkajCbqRQflTLCKY"); audio.to_json
+    audio = Speech::AudioToText.new("samples/i-like-pickles.wav", :verbose => true, :engine => :google_speech_engine, :version => "v2", :key => "AIzaSyAqcAyKz-aQq-LWSrAYkajCbqRQflTLCKY"); audio.to_json
     audio = Speech::AudioToText.new("samples/me-gusta-pepinillos.m4a", :verbose => true); audio.to_json(:locale => "es-MX")
 
     # ATT Speech Engine, mode: standard

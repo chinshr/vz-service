@@ -13,7 +13,7 @@ module Speech
       STATUS_ENCODING_ERROR      = -2
       STATUS_TRANSCRIPTION_ERROR = -3
       
-      attr_accessor :id, :splitter, :chunk, :flac_chunk, :wav_chunk, :offset, :duration, :flac_rate, :copied, 
+      attr_accessor :id, :splitter, :chunk, :flac_chunk, :wav_chunk, :raw_chunk, :offset, :duration, :flac_rate, :copied, 
         :captured_json, :best_text, :best_score, :status, :errors
 
       def initialize(splitter, offset, duration, id = nil)
@@ -92,7 +92,7 @@ module Speech
       end
 
       def flac_size
-        File.size(self.wav_chunk)
+        File.size(self.flac_chunk)
       end
 
       # convert the audio file to wav format
@@ -109,11 +109,11 @@ module Speech
             self.status    = STATUS_ENCODED
           else
             self.status    = STATUS_ENCODING_ERROR
-            raise "failed to convert to lower audio rate"
+            raise "failed to convert WAV to lower audio rate"
           end
         else
           self.status = STATUS_ENCODING_ERROR
-          raise "failed to convert chunk: #{chunk} with wav #{chunk}"
+          raise "failed to convert chunk: #{chunk} with WAV #{chunk}"
         end
         self
       end
@@ -126,11 +126,34 @@ module Speech
         File.size(self.wav_chunk)
       end
 
+      # convert the audio file to RAW format
+      def to_raw(options = {})
+        chunk_outputfile = chunk.gsub(/#{File.extname(chunk)}$/, ".raw")
+        if system("ffmpeg -i #{chunk} -y -f s16le -acodec pcm_s16le -ar 16000 -ac 1 #{chunk_outputfile}   >/dev/null 2>&1")
+          self.raw_chunk = chunk_outputfile
+          self.flac_rate = 16000
+          self.status    = STATUS_ENCODED
+        else
+          self.status = STATUS_ENCODING_ERROR
+          raise "failed to convert chunk: #{chunk} with RAW #{chunk}"
+        end
+        self
+      end
+
+      def to_raw_bytes
+        File.read(self.raw_chunk)
+      end
+
+      def raw_size
+        File.size(self.raw_chunk)
+      end
+
       # delete the chunk file
       def clean
         File.unlink self.chunk if File.exist?(self.chunk)
         File.unlink self.flac_chunk if self.flac_chunk && File.exist?(self.flac_chunk)
         File.unlink self.wav_chunk if self.wav_chunk && File.exist?(self.wav_chunk)
+        File.unlink self.raw_chunk if self.raw_chunk && File.exist?(self.raw_chunk)
       end
     end # AudioChunk
 

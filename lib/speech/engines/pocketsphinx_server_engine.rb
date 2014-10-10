@@ -20,7 +20,7 @@ module Speech
       end
       
       def build(chunk)
-        chunk.build.to_wav
+        chunk.build.to_raw
       end
       
       def convert_chunk(chunk, options = {})
@@ -37,7 +37,7 @@ module Speech
           service.headers['User-Agent']   = USER_AGENT
           
           # request
-          service.post_body = "#{chunk.to_wav_bytes}"
+          service.post_body = "#{chunk.to_raw_bytes}"
           service.on_progress {|dl_total, dl_now, ul_total, ul_now| printf("%.2f/%.2f\r", ul_now, ul_total); true} if self.verbose
           service.http_post
 
