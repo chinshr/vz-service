@@ -167,11 +167,11 @@ class Ingest::AudioWorker
       
       # Start the stranscription with normalization
       transcribe = Transcribe.new(@ingest, :chunk_size => @chunk_size, 
-        :chunk_timeout => 15, :progress_thresholds => STATES[:transcribe])
+        :chunk_timeout => 15, :progress_thresholds => STAGES[:transcribe])
       transcribe.perform(noise_reduced_wav_audio_file_fullpath)
       
       # Normalize chunk scores
-      normalize_document_chunk_scores(@ingest.ingestable.chunks)
+      normalize_document_chunk_scores(@ingest.ingestable)
       
       # Update document
       content = @ingest.ingestable.chunks.map {|sg| sg.text ? sg.text.strip : nil}.compact.join(" ")

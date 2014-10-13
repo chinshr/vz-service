@@ -20,7 +20,8 @@ module Speech
       end
       
       def build(chunk)
-        chunk.build.to_raw
+        # chunk.build.to_raw
+        chunk.build.to_flac
       end
       
       def convert_chunk(chunk, options = {})
@@ -33,19 +34,20 @@ module Speech
           service.verbose = self.verbose
 
           # headers
-          service.headers['Content-Type'] = "audio/x-raw-int; rate=#{chunk.flac_rate}"
+          # service.headers['Content-Type'] = "audio/x-raw-int; rate=#{chunk.flac_rate}"
+          service.headers['Content-Type'] = "audio/x-flac; rate=#{chunk.flac_rate}"
           service.headers['User-Agent']   = USER_AGENT
           
           # request
-          service.post_body = "#{chunk.to_raw_bytes}"
+          service.post_body = "#{chunk.to_flac_bytes}"
           service.on_progress {|dl_total, dl_now, ul_total, ul_now| printf("%.2f/%.2f\r", ul_now, ul_total); true} if self.verbose
           service.http_post
 
-          if service.response_code != 200  # 500
+          if service.response_code != 200  # == 500
             puts "#{service.response_code} from server, retry after 0.5 seconds" if self.verbose
             retrying    = true
             retry_count += 1
-            sleep 0.5 # wait longer on error?, google??
+            sleep 0.5 # wait longer on error?
           else
             parse_v1(chunk, service.body_str, result)
             retrying = false

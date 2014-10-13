@@ -53,6 +53,7 @@ Development Resources
   - add .buildpacks file
     https://github.com/shunjikonishi/heroku-buildpack-ffmpeg
     https://github.com/heroku/heroku-buildpack-ruby
+  - Creating a build pack -- https://sendgrid.com/blog/create-first-heroku-buildpack/
 * HTML5 Players
   - SoundManager2 (Soundcloud) http://www.schillmania.com/projects/soundmanager2/
   - jplayer.org
@@ -214,8 +215,10 @@ Development Resources
   - CSS3 animation events -- http://www.sitepoint.com/css3-animation-javascript-event-handlers/
 * Installing CMU Sphinx
   - Ruby Pocketsphinx server -- https://github.com/alumae/ruby-pocketsphinx-server
+  - Another Sinatra Pocketsphinx project -- https://github.com/janika/sinatra_speech
+  - Speech Recognizer -- https://github.com/alumae/speech_recognizer
   - Install Sphinx and Pocketsphinx -- https://mattze96.safe-ws.de/blog/?p=640
-
+  - GST Speech API -- https://github.com/alumae/GST-Speech-API
 
 Business Resources
 ------------------
