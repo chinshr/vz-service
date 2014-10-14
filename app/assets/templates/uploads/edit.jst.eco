@@ -20,7 +20,7 @@
 
             <div class="form-group form-group-tags">
               <label class="sr-only" for="">Tags</label>
-              <input type="text" class="form-control input-sm input-taggable" placeholder="Tags" name="upload[tag_list]" value="<%= @tag_list.join(',') %>" data-error-style="tooltip" data-tooltip-position="right"></input>
+              <input type="text" class="form-control input-sm input-taggable" placeholder="Tags" name="upload[tag_list]" value="<%= (@tag_list || []).join(',') %>" data-error-style="tooltip" data-tooltip-position="right"></input>
             </div><!-- form-group-tags -->
 
             <div class="form-group form-group-description">

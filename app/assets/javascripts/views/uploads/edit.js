@@ -143,7 +143,7 @@ App.Views.UploadsEdit = App.Views.UploadsBase.extend({
     data = {};
     if (key = field.attr('name').match(/\[(.+)\]/)[1]) {
       data[key] = field.val();
-      this.model.set(data);
+      this.model.set(data, {validate: true});
       return this.model.isValid();
     }
   },
@@ -162,7 +162,7 @@ App.Views.UploadsEdit = App.Views.UploadsBase.extend({
         return data[key[1]] = n['value'];
       }
     });
-    this.model.set(data);
+    this.model.set(data, {validate: true});
     if (this.model.isValid()) {
       this.$(":submit").button("loading");
       return this.model.sync('update', this.model, {
