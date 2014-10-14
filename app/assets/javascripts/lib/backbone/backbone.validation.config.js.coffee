@@ -1,6 +1,6 @@
 _.extend Backbone.Validation.callbacks,
   valid: (view, attr, selector) ->
-    control = view.$("[" + selector + "='" + view.model.constructor.name.toLowerCase() + "[" + attr + "]']")
+    control = view.$("[" + selector + "='" + view.model.constructor.className.toLowerCase() + "[" + attr + "]']")
     group = control.parents('.form-group')
     group.removeClass('has-error')
 
@@ -14,7 +14,7 @@ _.extend Backbone.Validation.callbacks,
       group.find('.help-block.error-message').remove()
 
   invalid: (view, attr, error, selector) ->
-    control = view.$("[" + selector + "='" + view.model.constructor.name.toLowerCase() + "[" + attr + "]']")
+    control = view.$("[" + selector + "='" + view.model.constructor.className.toLowerCase() + "[" + attr + "]']")
     group = control.parents('.form-group')
     group.addClass('has-error')
 

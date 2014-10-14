@@ -11,11 +11,16 @@ App.Models.Upload = Backbone.Model.extend({
     }
   },
 
+  validate: function(attrs, options) {
+    if (_.isEmpty(attrs.title)) {
+      return "can't be empty";
+    }
+  },
+
   set: function(attributes, options) {
     if (attributes && attributes.tag_list && _.isString(attributes.tag_list)) {
       attributes.tag_list = attributes.tag_list.split(',')
     }
-
     return Backbone.Model.prototype.set.call(this, attributes, options);
   },
 
@@ -86,4 +91,4 @@ App.Models.Upload = Backbone.Model.extend({
       return "Finished.";
     }
   }
-});
+}, {className: 'Upload'});

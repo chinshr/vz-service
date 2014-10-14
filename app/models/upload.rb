@@ -63,7 +63,7 @@ class Upload < ActiveRecord::Base
   after_initialize :build_ingest_and_ingestable
   before_validation :set_title, on: :create
   after_save :save_ingest_and_ingestable
-  before_destroy :remove_ingest
+  after_commit :remove_ingest, on: :destroy
   
   class << self
     
@@ -169,13 +169,9 @@ class Upload < ActiveRecord::Base
       end
     end
   end
-  
+
   def remove_ingest
-    ingest.reload if ingest
-    ingest && ingest.may_remove? ? ingest.remove! : true
-  rescue ActiveRecord::RecordNotFound => ex
-    # when ingest has already been removed, raised by ingest.reload
-    true
+    ingest.remove! if ingest.reload
   end
   
 end

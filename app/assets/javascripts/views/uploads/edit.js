@@ -20,6 +20,7 @@ App.Views.UploadsEdit = App.Views.UploadsBase.extend({
   
   initialize: function() {
     App.Views.UploadsBase.prototype.initialize.call(this); // super
+    Backbone.Validation.bind(this);
     this.listenTo(this.model, 'change:privacy', this.renderUpdate);
   },
   
@@ -131,7 +132,7 @@ App.Views.UploadsEdit = App.Views.UploadsBase.extend({
     data  = {};
     if (!!field.attr('name') && (key = field.attr('name').match(/\[(.+)\]/)[1])) {
       data[key] = field.val();
-      this.model.set(data);
+      this.model.set(data, {validate: true});
       return this.model.isValid();
     }
   },

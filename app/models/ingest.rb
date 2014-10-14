@@ -22,7 +22,7 @@ class Ingest < ActiveRecord::Base
   belongs_to :ingestable, polymorphic: true, dependent: :destroy
   belongs_to :track, dependent: :destroy
   
-  validates :upload, presence: true
+  validates :upload, presence: true, on: :create
   validates :ingestable, presence: true
   
   aasm column: 'aasm_state' do
@@ -51,7 +51,7 @@ class Ingest < ActiveRecord::Base
     end
 
     event :remove do
-      transitions :from => [:created, :starting, :started, :stopping, :stopped, :resetting, :reset, :finished], :to => :removing
+      transitions :from => [:created, :starting, :started, :stopping, :stopped, :resetting, :reset, :removing, :finished], :to => :removing
     end
 
     event :process do

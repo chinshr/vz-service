@@ -22,8 +22,8 @@
 //= require lib/detect_timezone
 //= require underscore
 //= require backbone
-//= require backbone-validation
-//= require lib/backbone/validation_config
+//= require lib/backbone/backbone.validation
+//= require lib/backbone/backbone.validation.config
 //= require lib/s3upload
 //= require app
 //= require_tree ../templates

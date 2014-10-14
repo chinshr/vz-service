@@ -15,7 +15,7 @@
 
             <div class="form-group form-group-title">
               <label class="sr-only" for="">Title</label>
-              <input type="text" class="form-control input-sm" placeholder="Title" name="upload[title]" value="<%= @title %>" data-error-style="tooltip" data-tooltip-position="right"></input>
+              <input type="text" class="form-control input-sm" placeholder="Title" name="upload[title]" value="<%= @title %>" data-error-style="tooltipx" data-tooltip-position="bottom"></input>
             </div><!-- form-group-title -->
 
             <div class="form-group form-group-tags">

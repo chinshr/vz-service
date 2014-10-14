@@ -8,10 +8,11 @@ class IngestTest < ActiveSupport::TestCase
   end
 
   context "validations" do
-    should validate_presence_of :upload
+    should validate_presence_of(:upload).on(:create)
+    should_not validate_presence_of(:upload).on(:update)
     should validate_presence_of :ingestable
   end
-  
+
   context "state machine" do
     should "have state and status" do
       ingest = FactoryGirl.create(:ingest_audio)

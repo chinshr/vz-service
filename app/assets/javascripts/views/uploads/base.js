@@ -54,7 +54,13 @@ App.Views.UploadsBase = Backbone.View.extend({
   onUploadProgress: function(data) {
     console.log(data.percent);
     console.log(data.message);
+
+    if (!this.$('.progress .progress-bar').hasClass('progress-bar-info')) {
+      this.$('.progress .progress-bar').removeClass('progress-bar-success').addClass('progress-bar-info');
+    }
+    this.$('.progress').addClass('active');
     this.$('.progress .progress-bar').css('width', '' + data.percent + '%');
+
     this.$('.message').html(data.message);
     if (data.percent === 100) {
       return this._xhr = null;
@@ -64,9 +70,9 @@ App.Views.UploadsBase = Backbone.View.extend({
   },
 
   onSync: function(event) {
-    // this.renderUpdate();
+    this.renderUpdate();
     // Note: after create (sync) ping-loop needs to be started.
-    this.ping();  
+    this.ping();
   },
     
   ping: function() {
@@ -87,13 +93,16 @@ App.Views.UploadsBase = Backbone.View.extend({
     this.model.sync('read', this.model, {
       success: (function(_this) {
         return function(data) {
-          if ((_this.model.progress || 0) === data.upload.progress) {
+          if ((_this.model.attributes.progress || 0) === data.upload.progress) {
             _this.pollCount = (_this.pollCount || 0) + 1;
           } else {
             _this.pollCount = 0;
           }
+          
           _this.model.set("progress", data.upload.progress);
           _this.model.set("status", data.upload.status);
+          _this.renderUpdate();
+          
           if (!(_this.model.hasProgress() && (_this.pollCount || 0) < 50)) {
             _this.stop();
             _this.renderUpdate();
@@ -115,22 +124,21 @@ App.Views.UploadsBase = Backbone.View.extend({
     this.$('.message').html(this.model.message());
     this.$('.alert-slug-link').html("<a href=\"" + this.model.attributes.slug + "\" target=\"_blank\">http://voyz.es/" + this.model.attributes.slug + "</a>");
     this.$('.alert-slug').show();
+    
+    // progress bar
+    console.log("progress (" + this.model.attributes.progress + "%)");
+    this.$('.progress .progress-bar').removeClass('progress-bar-info').addClass('progress-bar-success');
     this.$('.progress .progress-bar').css('width', "" + this.model.attributes.progress + "%");
     if (hasProgress) {
-      this.$('.progress').addClass('active');
+      this.$('.progress').addClass('active').addClass('progress-striped');
     } else {
-      this.$('.progress').removeClass('active');
+      this.$('.progress').removeClass('active').removeClass('progress-striped');
     }
     
     if (this.model.hasFinished()) {
       this.$('.status').removeClass('label-info').addClass('label-success');
     } else if (this.model.hasStopped()) {
       this.$('.status').removeClass('label-info').removeClass('label-success').removeClass('label-warning').addClass('label-danger');
-    }
-    
-    if (!this.$('.progress .progress-bar').hasClass('progress-bar-success')) {
-      this.$('.progress .progress-bar').removeClass('progress-bar-info');
-      this.$('.progress .progress-bar').addClass('progress-bar-success');
     }
     
     // dropdown

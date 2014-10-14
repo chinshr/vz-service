@@ -38,7 +38,7 @@ class Api::Account::UploadsController < Api::Account::ApplicationController
   # [DELETE] /api/account/uploads/1(.:format)
   def destroy
     @upload = current_user.uploads.find(params[:id])
-    @upload = Upload.destroy(@upload)
+    @upload.destroy
     respond_with @upload
   end
   

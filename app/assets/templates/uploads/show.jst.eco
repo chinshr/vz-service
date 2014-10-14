@@ -1,7 +1,7 @@
 <!--div class="tile show-tile col-lg-4 col-md-4 col-sm-4" -->
   <div class="flipper">
     <div class="panel show-panel">
-      <div class="progress progress-striped active">
+      <div class="progress <%= if @progress && @progress < 100: %> progress-striped <% end %> active">
         <div class="progress-bar progress-bar-success" style="width: <%= @progress %>%"></div>
       </div>
       <div class="panel-heading">

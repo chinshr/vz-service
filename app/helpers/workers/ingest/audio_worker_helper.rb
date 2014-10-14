@@ -25,10 +25,12 @@ module Workers::Ingest::AudioWorkerHelper
       loop do
         begin
           chunk = @queue.pop_with_timeout(@chunk_timeout)
-          if !history[chunk.engine.class.superclass.name] || history[chunk.engine.class.superclass.name] < chunk.id
+
+          # if !history[chunk.engine.class.superclass.name] || history[chunk.engine.class.superclass.name] < chunk.id
+          if history.select {|k, v| v == chunk.id}.keys == 3 && history.values.sum >= chunk.id * 3
             increment_progress(chunk)
-            history[chunk.engine.class.superclass.name] = chunk.id
           end
+          history[chunk.engine.class.superclass.name] = chunk.id
         rescue ThreadError => ex
           break
         end
@@ -82,7 +84,9 @@ module Workers::Ingest::AudioWorkerHelper
     def google_speech_transcribe_file(filename)
       audio = Speech::AudioToText.new(filename, {
         engine: :google_speech_engine, 
-        chunk_size: @chunk_size, verbose: Rails.env.development?
+        chunk_size: @chunk_size, verbose: Rails.env.development?,
+        version: "v2",
+        key: APP_CONFIG["GOOGLE_SPEECH_API_KEY"]
       })
       transcribe_file(audio)
     end
@@ -90,7 +94,7 @@ module Workers::Ingest::AudioWorkerHelper
     def att_speech_transcribe_file(filename)
       audio = Speech::AudioToText.new(filename, {
         engine: :att_speech_engine, chunk_size: @chunk_size, 
-        api_key: "tgcqoeaecj4ff052a9ee8g0mzt9xti7p", secret_key: "j7caqnrtvtiiqhtl1nhlmyp5li0dclxg", 
+        api_key: APP_CONFIG["ATT_SPEECH_API_KEY"], secret_key: APP_CONFIG["ATT_SPEECH_SECRET_KEY"], 
         mode: "standard", verbose: Rails.env.development?
       })
       transcribe_file(audio)
@@ -99,8 +103,9 @@ module Workers::Ingest::AudioWorkerHelper
     def nuance_dragon_transcribe_file(filename)
       audio = Speech::AudioToText.new(filename, {
         engine: :nuance_dragon_engine, chunk_size: @chunk_size, 
-        base_url: "https://dictation.nuancemobility.net:443", app_id: "NMDPTRIAL_chinshr20140326185635", 
-        app_key: "edb1acb2e50d02417b643e6dce510ea9dd565c4ad4725dcb8d807c96fe6304eb14b09ef9bea03a390578a6d3cab57ca70bd8f1df4b4eabd8cf276ecd8a72b99f",
+        base_url: "https://dictation.nuancemobility.net:443", 
+        app_id: APP_CONFIG["NUANCE_DRAGON_APP_ID"], 
+        app_key: APP_CONFIG["NUANCE_DRAGON_APP_KEY"],
         verbose: Rails.env.development?
       })
       transcribe_file(audio)
