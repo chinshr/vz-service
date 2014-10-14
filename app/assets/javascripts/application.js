@@ -25,6 +25,7 @@
 //= require lib/backbone/backbone.validation
 //= require lib/backbone/backbone.validation.config
 //= require lib/s3upload
+//= require web/documents
 //= require app
 //= require_tree ../templates
 //= require_tree ./models

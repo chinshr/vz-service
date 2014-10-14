@@ -122,11 +122,23 @@ App.Views.UploadsBase = Backbone.View.extend({
     hasProgress = hasProgress || this._hasProgress();
     
     this.$('.message').html(this.model.message());
-    this.$('.alert-slug-link').html("<a href=\"" + this.model.attributes.slug + "\" target=\"_blank\">http://voyz.es/" + this.model.attributes.slug + "</a>");
-    this.$('.alert-slug').show();
+    
+    if (this.model.hasFinished()) {
+      // action buttons
+      this.$('.action-edit').prop('disabled', false);
+      this.$('.action-preview').prop('disabled', false);
+
+      // slug
+      this.$('.slug i').html("<a href=\"" + this.model.attributes.slug + "\" target=\"_blank\">http://voyz.es/" + this.model.attributes.slug + "</a>");
+      this.$('.slug').show();
+    } else {
+      this.$('.action-edit').prop('disabled', true);
+      this.$('.action-preview').prop('disabled', true);
+    }
     
     // progress bar
     console.log("progress (" + this.model.attributes.progress + "%)");
+    
     this.$('.progress .progress-bar').removeClass('progress-bar-info').addClass('progress-bar-success');
     this.$('.progress .progress-bar').css('width', "" + this.model.attributes.progress + "%");
     if (hasProgress) {

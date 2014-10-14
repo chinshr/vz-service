@@ -12,7 +12,7 @@
           <label for="" class="control-label hidden">Add files</label>
           <button id="files-proxy" class="btn btn-primary btn-lg btn-file-upload"><i class="glyphicon glyphicon-cloud-upload"></i>&nbsp;Add files...</button>
           <input type="file" id="files" name="files[]" multiple />
-          <div class="email-file-upload-holder">or email to <a href="mailto:my@voyz.es?subject=Document title&body=—%0DAttach all your audio files you want transcribed for English United States (en-US)." class="xbtn xbtn-link btn-email-upload">my@voyz.es</a></div>
+          <div class="email-file-upload-holder">or send to <a href="mailto:my@voyz.es?subject=Document title&body=—%0DAttach all your audio files you want transcribed for English United States (en-US)." class="xbtn xbtn-link btn-email-upload">my@voyz.es</a></div>
         </div><!-- .form-group-file-upload -->
 
         <div class="form-group form-group-locale">

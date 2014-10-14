@@ -273,6 +273,17 @@ body.account {
           color: #a1882b;
         }
         
+        .slug {
+          i {
+            font-size: 10px;
+            color: #555;
+            
+            a {
+              font-size: 12px;
+              padding-left: 3px;
+            }
+          }
+        }
       }
       
       &.show-panel {
