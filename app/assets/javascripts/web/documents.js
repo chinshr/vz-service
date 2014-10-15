@@ -10,9 +10,6 @@
 /* Tooltips */
 $(document).ready(function() {
   $('.btn-tlb').tooltip({});
-
-  $('.btn').popover({});
-  
   $("#popoverExampleTwo").popover({
     html : true, 
     content: function() {
@@ -117,7 +114,6 @@ var wavesurfer = Object.create(WaveSurfer);
 
 $(document).ready(function() {
   return;
-
   /* waveform load progress bar */
   (function () {
     var progressDiv = document.querySelector('#player-progress-bar');

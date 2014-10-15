@@ -4,13 +4,18 @@ window.App = {
   Views: {},
   Routers: {},
   initialize: function() {
-    new App.Routers.Dashboard();
-    Backbone.history.start();
+    if (window.location.pathname == "/dashboard") {
+      new App.Routers.Dashboard();
+    } else if (window.location.pathname == "/documents") {
+      new App.Routers.Documents();
+    }
+    
+    if (!Backbone.History.started) {
+      Backbone.history.start({pushState: !!(window.history && history.pushState), root: window.location.pathname});
+    }
   }
 }
 
 $(document).ready(function() {
   App.initialize();
 });
-  
-
