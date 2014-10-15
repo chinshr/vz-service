@@ -1,6 +1,7 @@
 class Web::DocumentsController < Web::ApplicationController
-  before_filter :load_document!
-  before_filter :authenticate_user!, :if => :document_private?
+  before_filter :load_document
+  before_filter :authenticate_user!, :if => :must_authenticate?
+  before_filter :authorized
   
   def show
     @document = Document.where(slug: params[:id]).first!
@@ -16,13 +17,19 @@ class Web::DocumentsController < Web::ApplicationController
   end
   
   protected
-  
-  def load_document!
+
+  def load_document
     @document = Document.where(slug: params[:id]).first!
   end
   
-  def document_private?
-    @document.privacy.include?(:private)
+  def must_authenticate?
+    @document.privacy_public? ? false : true
+  end
+  
+  def authorized
+    if 
+    render status: :unauthorized
+    return
   end
   
 end

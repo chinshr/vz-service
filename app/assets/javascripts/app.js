@@ -6,12 +6,10 @@ window.App = {
   initialize: function() {
     if (window.location.pathname == "/dashboard") {
       new App.Routers.Dashboard();
-    } else if (window.location.pathname == "/documents") {
+      Backbone.history.start({pushState: !!(window.history && history.pushState), root: "/dashboard"});
+    } else if (window.location.pathname.match(/^\/documents/) >= 0) {
       new App.Routers.Documents();
-    }
-    
-    if (!Backbone.History.started) {
-      Backbone.history.start({pushState: !!(window.history && history.pushState), root: window.location.pathname});
+      Backbone.history.start({pushState: !!(window.history && history.pushState), root: "/documents"});
     }
   }
 }

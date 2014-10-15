@@ -30,10 +30,17 @@ class DocumentTest < ActiveSupport::TestCase
       @document.privacy = :public
       @document.save and @document = Document.find_by_id(@document.id)
       assert_equal ["public"], @document.privacy
+      assert_equal true, @document.privacy_public?
 
       @document.privacy = "private"
       @document.save and @document = Document.find_by_id(@document.id)
       assert_equal ["private"], @document.privacy
+      assert_equal true, @document.privacy_private?
+
+      @document.privacy = "unlisted"
+      @document.save and @document = Document.find_by_id(@document.id)
+      assert_equal ["unlisted"], @document.privacy
+      assert_equal true, @document.privacy_unlisted?
     end
   end
   

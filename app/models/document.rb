@@ -35,6 +35,18 @@ class Document < ActiveRecord::Base
     PRIVACY_SETTINGS.keys.reject {|d| ((privacy_mask || 0) & self.class.privacy_mask(d)).zero?}
   end
   
+  def privacy_private?
+    privacy.include?("private")
+  end
+
+  def privacy_public?
+    privacy.include?("public")
+  end
+
+  def privacy_unlisted?
+    privacy.include?("unlisted")
+  end
+  
   def trancribed?
     ingests.all? {|i| i.finished?}
   end
