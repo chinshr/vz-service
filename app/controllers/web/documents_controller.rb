@@ -1,35 +1,38 @@
 class Web::DocumentsController < Web::ApplicationController
-  before_filter :load_document
-  before_filter :authenticate_user!, :if => :must_authenticate?
-  before_filter :authorized
+  include Pundit
+  before_action :load_document
+  before_action :authenticate_user_with_action!
   
   def show
-    @document = Document.where(slug: params[:id]).first!
+    authorize @document
   end
 
   def edit
-    @document = Document.where(slug: params[:id]).first!
+    authorize @document
   end
   
   def stream
-    @document = Document.where(slug: params[:id]).first!
     redirect_to @document.tracks.last.stream_url
   end
   
   protected
 
   def load_document
-    @document = Document.where(slug: params[:id]).first!
+    @document = Document.where("documents.slug = ? OR documents.id = ?", params[:id], params[:id].to_i).first!
   end
   
-  def must_authenticate?
+  def authenticate_user_with_action!
+    case action_name 
+    when "show" then authenticate_user! if must_authenticate_with_show?
+    when "edit" then authenticate_user! if must_authenticate_with_edit?
+    end
+  end
+  
+  def must_authenticate_with_show?
     @document.privacy_public? ? false : true
   end
-  
-  def authorized
-    if 
-    render status: :unauthorized
-    return
+
+  def must_authenticate_with_edit?
+    true
   end
-  
 end

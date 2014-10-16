@@ -31,7 +31,7 @@ Voyzes::Application.routes.draw do
       resource :billing, :only => :show
     end
 
-    resources :documents, :only => [:edit]
+    resources :documents
 
     get "/:id" => 'documents#show'
     get "/:id/edit" => 'documents#edit'

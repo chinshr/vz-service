@@ -25,8 +25,8 @@ class Api::Response
 
   def error(exception)
     if exception.is_a?(Exception)
-      self.code        =  Api::Code.code_for(exception)
-      self.http_status =  Api::Code.http_status_for(exception)
+      self.code        = Api::Code.code_for(exception)
+      self.http_status = Api::Code.http_status_for(exception)
       self.messages    = Api::Code.message_for(exception)
 =begin
     elsif exception.is_a?(Api::Exception)

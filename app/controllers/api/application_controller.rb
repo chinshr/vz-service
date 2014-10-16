@@ -17,6 +17,10 @@ class Api::ApplicationController < ApplicationController
     process_exception(exception)
   end
   
+  rescue_from Pundit::NotAuthorizedError do |exception|
+    process_exception(exception)
+  end
+  
   protected
   
   def api_response(data = nil)
