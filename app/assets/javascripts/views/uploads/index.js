@@ -100,7 +100,7 @@ App.Views.UploadsIndex = Backbone.View.extend({
       files_dropped: options.files_dropped,
       file_list: options.file_list,
       file_dom_selector: options.file_dom_selector,
-      s3_sign_put_url: 'api/account/uploads/signput.json',
+      s3_sign_put_url: 'api/account/uploads/sign_s3.json',
       
       onProgress: (function(_this) {
         return function(xhr, file, percent, message) {

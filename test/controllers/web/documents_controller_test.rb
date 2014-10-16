@@ -2,7 +2,7 @@ require 'test_helper'
 
 class Web::DocumentsControllerTest < ActionController::TestCase
 
-  context "show" do
+  context "GET /documents/:id" do
     context "when document is public" do
       setup do
         @document = FactoryGirl.create(:document, {:privacy => [:"public"]})
@@ -52,7 +52,7 @@ class Web::DocumentsControllerTest < ActionController::TestCase
     end
   end
 
-  context "edit" do
+  context "GET /documents/:id/edit" do
     context "when document is public" do
       setup do
         @document = FactoryGirl.create(:document, {:privacy => [:"public"]})

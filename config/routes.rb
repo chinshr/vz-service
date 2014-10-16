@@ -31,7 +31,7 @@ Voyzes::Application.routes.draw do
       resource :billing, :only => :show
     end
 
-    resources :documents
+    resources :documents, :only => [:show, :edit]
 
     get "/:id" => 'documents#show'
     get "/:id/edit" => 'documents#edit'
@@ -51,7 +51,7 @@ Voyzes::Application.routes.draw do
     namespace :account do
       resources :uploads do
         collection do
-          get "signput"
+          get "sign_s3"
           get "count"
         end
       end

@@ -224,15 +224,15 @@ class Api::Account::UploadsControllerTest < ActionController::TestCase
     
   end
 
-  context "GET /api/account/upload/signput" do
-    should "get signput" do
-      get :signput, :format => :json
+  context "GET /api/account/upload/sign_s3" do
+    should "get sign_s3" do
+      get :sign_s3, :format => :json
       assert_response :success
     end
 
-    should "NOT get signput when signed out" do
+    should "NOT get sign_s3 when signed out" do
       sign_out :user
-      get :signput, :format => :json
+      get :sign_s3, :format => :json
       assert_response :unauthorized
     end
   end
