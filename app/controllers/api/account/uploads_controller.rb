@@ -23,19 +23,19 @@ class Api::Account::UploadsController < Api::Account::ApplicationController
     render :json => {:count => current_user.uploads.filter(params).count}
   end
 
-  # [GET] /api/account/uploads/1(.:format)
+  # [GET] /api/account/uploads/:id(.:format)
   def show
     @upload = current_user.uploads.find(params[:id])
     respond_with @upload
   end
 
-  # [PUT] /api/account/uploads/1(.:format)
+  # [PUT] /api/account/uploads/:id(.:format)
   def update
     @upload = current_user.uploads.update(params[:id], update_params)
     respond_with @upload
   end
 
-  # [DELETE] /api/account/uploads/1(.:format)
+  # [DELETE] /api/account/uploads/:id(.:format)
   def destroy
     @upload = current_user.uploads.find(params[:id])
     @upload.destroy
@@ -56,7 +56,6 @@ class Api::Account::UploadsController < Api::Account::ApplicationController
       signed_request: CGI::escape("#{APP_CONFIG['S3_URL']}#{APP_CONFIG['S3_INBOUND_BUCKET']}/#{object_name}?AWSAccessKeyId=#{APP_CONFIG['S3_KEY']}&Expires=#{expires}&Signature=#{signature}"),
       url: "#{APP_CONFIG['S3_URL']}#{APP_CONFIG['S3_INBOUND_BUCKET']}/#{object_name}"
     }
-
     respond_with @sign_s3
   end
   

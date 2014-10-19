@@ -30,13 +30,12 @@ module Api::Code
   # and
   # http://msdn.microsoft.com/en-us/library/windowsazure/dd179357.aspx
   @@error_codes = {
-
     '1'   => {:http => 200, :message => I18n.t('api.error_code.success')},
     '-1'  => {:http => 400, :message => I18n.t('api.error_code.unknown')},
     '-2'  => {:http => 422, :message => I18n.t('api.error_code.argument_missing'), :class => "ArgumentError"},
     '-3'  => {:http => 400, :message => I18n.t('api.error_code.validation_error')},
     '-4'  => {:http => 404, :message => I18n.t('api.error_code.record_not_found'), :class => "ActiveRecord::RecordNotFound"},
-    '-5'  => {:http => 401, :message => I18n.t('api.error_code.authorization_error.generic')},
+    '-5'  => {:http => 401, :message => I18n.t('api.error_code.authorization_error.generic'), :class => "Pundit::NotAuthorizedError"},
     '-6'  => {:http => 403, :message => I18n.t('api.error_code.saml_error')},
     '-7'  => {:http => 422, :message => I18n.t('api.error_code.argument_unsupported')},
     '-8'  => {:http => 422, :message => I18n.t('api.error_code.ownership_invalid')},

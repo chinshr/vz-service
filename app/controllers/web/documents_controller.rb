@@ -1,6 +1,6 @@
 class Web::DocumentsController < Web::ApplicationController
   include Pundit
-  before_action :load_document
+  before_action :load_document, :only => [:show, :edit, :update, :destroy]
   before_action :authenticate_user_with_action!
   
   def show

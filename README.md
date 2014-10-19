@@ -228,6 +228,7 @@ Business Resources
   - Transcribe Wreally -- http://transcribe.wreally.com
   - ASU Oral History Project -- http://gaialab.asu.edu/OHP
   - Hearing aid -- http://www.transcense.com
+  - Not a competitor but a great conversion tool -- cloudconvert.org
 * HIPAA compliance (box notes is): http://en.wikipedia.org/wiki/Health_Insurance_Portability_and_Accountability_Act
 * Dictaphone ebay buying guide -- http://www.ebay.com/gds/Dictaphone-Buying-Guide-/10000000177630514/g.html
 * Transition browser compatibility -- http://www.sitepoint.com/css3-animation-javascript-event-handlers/
