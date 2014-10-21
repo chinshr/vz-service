@@ -60,7 +60,7 @@ class Api::DocumentsControllerTest < ActionController::TestCase
     should "get public document when not signed in" do
       get :show, :id => @document1, format: :json
       assert_response :success
-      assert_response_body_with_attributes
+      assert_response_body_attributes_with "document"
     end
 
     should "not get private document when not signed in" do
@@ -87,7 +87,7 @@ class Api::DocumentsControllerTest < ActionController::TestCase
       put :update, {:id => @document2.id, :document => {:title => "La fiesta!", :description => "Entrevista en la fiesta.", 
         :tag_list => ["entrevista", "fiesta"], locale: "es-AR", :privacy => "private", :content => "Es el contenido."}, format: :json}
       assert_response :success
-      assert_response_body_with_attributes
+      assert_response_body_attributes_with "document"
       assert_equal "La fiesta!", @document2.reload.title
       assert_equal "Entrevista en la fiesta.", @document2.reload.description
       assert_equal ["entrevista", "fiesta"], @document2.reload.tag_list
@@ -120,7 +120,7 @@ class Api::DocumentsControllerTest < ActionController::TestCase
       assert_difference 'Document.count', -1 do
         delete :destroy, {id: @document2, format: :json}
         assert_response :success
-        assert_response_body_with_attributes
+        assert_response_body_attributes_with "document"
       end
     end
 
@@ -142,12 +142,6 @@ class Api::DocumentsControllerTest < ActionController::TestCase
   
   protected
   
-  def assert_response_body_with_attributes(envelope = "document")
-    body = response_body
-    assert body.has_key?(envelope.to_s), "should have envelope '#{envelope}'"
-    assert_attributes body[envelope.to_s]
-  end
-
   def assert_attributes(attributes)
     %w(id title description).each do |attribute|
       assert attributes.has_key?(attribute), "should containt attribute '#{attribute}' in '#{attributes}'"

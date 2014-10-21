@@ -67,6 +67,10 @@ class ActionController::TestCase
     assert body.has_key?(envelope.to_s), "should have envelope '#{envelope}'"
     assert_attributes body[envelope.to_s]
   end
+  
+  def assert_attributes(attributes)
+    flunk "Missing implementation of assert_attributes."
+  end
 
 end
 
