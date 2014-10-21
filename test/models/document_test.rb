@@ -44,6 +44,31 @@ class DocumentTest < ActiveSupport::TestCase
     end
   end
   
+  context "scopes" do
+    should "recent" do
+      @document1 = FactoryGirl.create(:document, :privacy => [:private])
+      @document2 = FactoryGirl.create(:document, :privacy => [:public])
+      assert_equal [@document2, @document1], Document.recent.to_a
+      assert_equal [@document2, @document1], Document.recent(2).to_a
+      assert_equal [@document2], Document.recent(1).to_a
+    end
+    
+    should "with_privacy" do
+      @document1 = FactoryGirl.create(:document, :privacy => [:private])
+      @document2 = FactoryGirl.create(:document, :privacy => [:public])
+      assert_equal [@document1], Document.with_privacy(:private).to_a
+      assert_equal [@document2], Document.with_privacy(:public).to_a
+    end
+
+    should "with_user_privacy" do
+      @user = FactoryGirl.create(:user)
+      @document1 = FactoryGirl.create(:document, :privacy => [:private], :user => @user)
+      @document2 = FactoryGirl.create(:document, :privacy => [:public])
+      assert_equal [@document1, @document2], Document.with_user_privacy(@user).to_a
+      assert_equal [@document2], Document.with_user_privacy(nil).to_a
+    end
+  end
+  
   context "document with ingests" do
     setup do
       @document = FactoryGirl.create(:document)

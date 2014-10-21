@@ -201,7 +201,7 @@ class Api::Account::UploadsControllerTest < ActionController::TestCase
     end
   end
 
-  context "DELETE /api/account/uploads" do
+  context "DELETE /api/account/uploads/:id" do
     should "destroy upload" do
       upload = FactoryGirl.create(:upload_audio)
       upload.user = @user and upload.save

@@ -22,4 +22,9 @@ class ApplicationController < ActionController::Base
       super
     end
   end
+  
+  def load_document
+    @document = Document.where("documents.slug = ? OR documents.id = ?", params[:id], params[:id].to_i).first!
+  end
+  
 end

@@ -1,5 +1,7 @@
 class Document < ActiveRecord::Base
-  SLUG_LENGTH = 6
+  include Model::Filter
+
+  SLUG_LENGTH      = 6
   PRIVACY_SETTINGS = {'public' => 0, 'private' => 1, 'unlisted' => 2}
 
   belongs_to :user
@@ -12,7 +14,25 @@ class Document < ActiveRecord::Base
   validates :slug, presence: true, uniqueness: {case_sensitive: false}
   validates :title, presence: true, length: {maximum: 255}
   
+  # public scopes
+  filtered_scopes :sort_order, :reverse_sort
+  scope :sort_order, lambda {|param| 
+    case param.first[0]  # E.g. get first key of {"id"=>"asc"}
+    when "id"
+      order(self.arel_table[:id].send(param.first[1].to_sym).to_sql)
+    when "title"
+      order(self.arel_table[:title].send(param.first[1].to_sym).to_sql)
+    when "created_at"
+      order(self.arel_table[:created_at].send(param.first[1].to_sym).to_sql)
+    else
+      raise ArgumentError, "Ignored unrecognized value 'sort_order[]=#{param}'."
+    end
+  }
+  scope :reverse_sort, lambda {|param| all.reverse_order if Model::Helper.booleanize(param)}
+  # private scopes
   scope :recent, lambda {|n = 5| order("documents.created_at DESC").limit(n)}
+  scope :with_privacy, lambda {|privacy| where("privacy_mask & #{privacy_mask(privacy)} > 0") }
+  scope :with_user_privacy, lambda {|user| user && user.id ? where("documents.privacy_mask & #{privacy_mask("public")} > 0 OR documents.user_id = ?", user) : with_privacy("public") }
   
   before_validation :generate_slug, :on => :create
   before_save :set_tag_owner
@@ -58,10 +78,12 @@ class Document < ActiveRecord::Base
   def duration
     chunks.sum(:duration)
   end
-  
+
+=begin  
   def content
     chunks.best.text
   end
+=end
 
   protected
   

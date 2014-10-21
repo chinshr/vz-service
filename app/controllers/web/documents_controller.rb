@@ -17,10 +17,6 @@ class Web::DocumentsController < Web::ApplicationController
   
   protected
 
-  def load_document
-    @document = Document.where("documents.slug = ? OR documents.id = ?", params[:id], params[:id].to_i).first!
-  end
-  
   def authenticate_user_with_action!
     case action_name 
     when "show" then authenticate_user! if must_authenticate_with_show?

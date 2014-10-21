@@ -41,7 +41,8 @@ end
 # Use unicorn as the app server
 # gem 'unicorn'
 group :development, :test do
-  gem "debugger"
+  gem 'debugger'
+  gem 'foreman', '~> 0.73.0'
 end
 
 group :test do
