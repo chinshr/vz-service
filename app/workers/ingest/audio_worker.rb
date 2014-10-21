@@ -174,7 +174,7 @@ class Ingest::AudioWorker
       normalize_document_chunk_scores(@ingest.ingestable)
       
       # Update document
-      content = @ingest.ingestable.chunks.map {|sg| sg.text ? sg.text.strip : nil}.compact.join(" ")
+      content = @ingest.ingestable.chunks.best.text # @ingest.ingestable.chunks.map {|sg| sg.text ? sg.text.strip : nil}.compact.join(" ")
       @ingest.ingestable.update_attribute(:content, content)
       
       # Sweep files we don't need anymore
