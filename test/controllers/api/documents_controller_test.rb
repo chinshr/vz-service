@@ -120,6 +120,7 @@ class Api::DocumentsControllerTest < ActionController::TestCase
       assert_difference 'Document.count', -1 do
         delete :destroy, {id: @document2, format: :json}
         assert_response :success
+        assert_response_body_with_attributes
       end
     end
 
