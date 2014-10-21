@@ -15,7 +15,7 @@ class Api::Account::UploadsControllerTest < ActionController::TestCase
               :file_type => "audio/wav", :file_size => 225284, :type => "audio", :locale => "en-UK", :privacy => "private"}, 
               format: :json
             assert_response :success
-            assert_response_body_with_upload_and_attributes
+            assert_response_body_attributes_with "upload"
     
             upload = Upload.last
             assert_equal @user.id, upload.user.id
@@ -150,7 +150,7 @@ class Api::Account::UploadsControllerTest < ActionController::TestCase
       upload.user = @user and upload.save
       get :show, :id => upload.id, format: :json
       assert_response :success
-      assert_response_body_with_upload_and_attributes
+      assert_response_body_attributes_with "upload"
     end
 
     should "get 404 not found error with invalid :id" do
@@ -175,7 +175,7 @@ class Api::Account::UploadsControllerTest < ActionController::TestCase
       put :update, {:id => upload.id, :upload => {:title => "La fiesta!", :description => "Entrevista en la fiesta.", 
         :tag_list => ["entrevista", "fiesta"], locale: "es-AR", :privacy => "private"}, format: :json}
       assert_response :success
-      assert_response_body_with_upload_and_attributes
+      assert_response_body_attributes_with "upload"
       assert_equal "La fiesta!", upload.reload.title
       assert_equal "Entrevista en la fiesta.", upload.reload.description
       assert_equal ["entrevista", "fiesta"], upload.reload.tag_list
@@ -195,7 +195,7 @@ class Api::Account::UploadsControllerTest < ActionController::TestCase
       upload.user = @user and upload.save
       put :update, {:id => upload.id, :upload => {:event => "remove"}, format: :json}
       assert_response :success
-      assert_response_body_with_upload_and_attributes
+      assert_response_body_attributes_with "upload"
       assert_equal 7, response_body["upload"]["status"]
       assert_equal ["remove"], response_body["upload"]["events"]
     end
@@ -211,6 +211,7 @@ class Api::Account::UploadsControllerTest < ActionController::TestCase
             delete :destroy, {id: upload.id, format: :json}
             assert_response :success
             assert_equal :removing, upload.ingest.reload.state
+            assert_response_body_attributes_with "upload"
           end
         end
       end
@@ -238,12 +239,6 @@ class Api::Account::UploadsControllerTest < ActionController::TestCase
   end
   
   protected
-
-  def assert_response_body_with_upload_and_attributes(envelope = "upload")
-    body = response_body
-    assert body.has_key?(envelope.to_s), "should have envelope '#{envelope}'"
-    assert_attributes body[envelope.to_s]
-  end
 
   def assert_attributes(attributes)
     %w(file_name file_type file_size s3_url locale slug title description tag_list privacy status type progress events updated_at created_at).each do |attribute|

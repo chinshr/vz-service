@@ -61,5 +61,12 @@ class ActionController::TestCase
     # TODO: if response is JSON.parse else XML
     JSON.parse(response.body)
   end
+  
+  def assert_response_body_attributes_with(envelope)
+    body = response_body
+    assert body.has_key?(envelope.to_s), "should have envelope '#{envelope}'"
+    assert_attributes body[envelope.to_s]
+  end
+
 end
 
