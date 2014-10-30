@@ -15,7 +15,6 @@ class Api::DocumentsController < Api::ApplicationController
 
   # [GET] /api/documents/:id(.:format)
   def show
-    debugger
     authorize @document
     respond_with @document
   end
