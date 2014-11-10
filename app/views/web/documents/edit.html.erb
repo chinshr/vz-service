@@ -1,6 +1,5 @@
-<div class="container">
-  
-  <div id="document-loading" class="document-loading-overlay row" style="display: none">
+<div id="document" class="container">
+  <div id="document-loading" class="document-loading-overlay row" style="display: xnone">
     <div id="initial-load-error" style="display: none">
       <p>Sorry, we were unable to load your note.</p>
       <p class="reason">Please try again later.</p>
@@ -19,32 +18,8 @@
     <p title="Loading..." id="loading" style="display: none">Loading...</p>
 
     <noscript>&lt;strong&gt;Sorry, you have to enable JavaScript in order to use this.&lt;/strong&gt;</noscript>
-  </div><!-- .document-loading-overlay -->
-  
-  <div class="document-overlay row">
-    <div class="col-md-1 gutter">
-      <div class="note-head user-initials" id="188274716" title="Juergen Fesslmeier" data-bucket-number="0" style="opacity: 1; background-color: rgb(242, 44, 68);">JF</div>
-    </div><!-- .gutter -->
-    <div class="document-container col-md-10">
-      <div class="title-editor-container">
-        <h1><div id="title-editor" class="editor"><%= @document.title %></div></h1>
-      </div><!-- title-editor-container -->
-      <div class="content-editor-container">
-        <div id="content-editor" class="content-holder editor">
-          <%= @document.content %>
-        </div>
-      </div><!-- .content-editor-container -->
-    </div><!-- .document-container -->
-  </div><!-- .document-overlay -->
-</div><!-- .container -->
+  </div><!-- #document-loading .document-loading-overlay -->
 
-<% if false %>
-<div class="row">
-  <div id="" class="col-md-8">
-    <%= render "content", edit: true %>
-  </div>
-  <div class="col-md-4">
-    <%= render "sidebar", edit: true %>
-  </div>
-</div>
-<% end %>
+  <div id="document-edit">
+  </div><!-- .document-edit -->
+</div><!-- #document .container -->

@@ -215,10 +215,12 @@ Development Resources
   - CSS3 animation events -- http://www.sitepoint.com/css3-animation-javascript-event-handlers/
 * Installing CMU Sphinx
   - Ruby Pocketsphinx server -- https://github.com/alumae/ruby-pocketsphinx-server
+  - Ruby Pocketsphinx gem -- https://github.com/watsonbox/pocketsphinx-ruby
   - Another Sinatra Pocketsphinx project -- https://github.com/janika/sinatra_speech
   - Speech Recognizer -- https://github.com/alumae/speech_recognizer
   - Install Sphinx and Pocketsphinx -- https://mattze96.safe-ws.de/blog/?p=640
   - GST Speech API -- https://github.com/alumae/GST-Speech-API
+* Customer interaction and customer messaging, that codeship uses -- www.intercom.io
 
 Business Resources
 ------------------
