@@ -142,9 +142,9 @@ class Api::DocumentsControllerTest < ActionController::TestCase
   
   protected
   
-  def assert_attributes(attributes)
-    %w(id title description).each do |attribute|
-      assert attributes.has_key?(attribute), "should containt attribute '#{attribute}' in '#{attributes}'"
+  def assert_attributes(params, expected_attributes = [])
+    (expected_attributes + %w(id title description)).each do |attribute|
+      assert params.has_key?(attribute), "should containt attribute '#{attribute}' in '#{params}'"
     end
   end
 end

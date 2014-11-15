@@ -4,11 +4,11 @@
   </div><!-- .gutter -->
   <div class="document-container col-md-10">
     <div class="title-editor-container">
-      <h1><div id="title-editor" class="editor"><%= @document.title %></div></h1>
+      <h1><div id="title-editor" class="editor"><%= @title %></div></h1>
     </div><!-- title-editor-container -->
     <div class="content-editor-container">
       <div id="content-editor" class="content-holder editor">
-        <%= @document.content %>
+        <%= @content %>
       </div>
     </div><!-- .content-editor-container -->
   </div><!-- .document-container -->

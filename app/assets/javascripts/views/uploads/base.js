@@ -4,29 +4,29 @@ App.Views.UploadsBase = Backbone.View.extend({
     'mouseenter .show-panel': 'hover',
     'mouseleave .show-panel': 'hover'
   },
-  
+
   initialize: function() {
     this.interval = null;
     this.listenTo(this.model, 'upload:progress', this.onUploadProgress);
     this.listenTo(this.model, 'destroy', this.remove);
     this.listenToOnce(this.model, 'sync', this.onSync);
   },
-      
+
   render: function(attributes) {
     this.$el.html(this.template(_.extend(this.model.attributes, {
-      message: this.model.message(), 
+      message: this.model.message(),
       events: this.permissibleEvents()
     })));
-    
+
     _.defer((function(_this) {
       return function() {
         _this.renderUpdate();
       }
     })(this));
-    
+
     return this;
   },
-  
+
   remove: function() {
     // overload remove
     this.$el.remove();
@@ -34,7 +34,7 @@ App.Views.UploadsBase = Backbone.View.extend({
     this.stop();
     return this;
   },
-  
+
   hover: function(e) {
     if (e.type === 'mouseenter') {
       return $(e.currentTarget).find('.panel-background').addClass('hover');
@@ -74,7 +74,7 @@ App.Views.UploadsBase = Backbone.View.extend({
     // Note: after create (sync) ping-loop needs to be started.
     this.ping();
   },
-    
+
   ping: function() {
     this.stop();
     this.interval = setInterval((function(_this) {
@@ -84,11 +84,11 @@ App.Views.UploadsBase = Backbone.View.extend({
       };
     })(this), 2500 + parseInt(Math.random() * 1000));
   },
-      
+
   stop: function() {
     return window.clearInterval(this.interval);
   },
-      
+
   poll: function() {
     this.model.sync('read', this.model, {
       success: (function(_this) {
@@ -98,11 +98,11 @@ App.Views.UploadsBase = Backbone.View.extend({
           } else {
             _this.pollCount = 0;
           }
-          
+
           _this.model.set("progress", data.upload.progress);
           _this.model.set("status", data.upload.status);
           _this.renderUpdate();
-          
+
           if (!(_this.model.hasProgress() && (_this.pollCount || 0) < 50)) {
             _this.stop();
             _this.renderUpdate();
@@ -120,9 +120,9 @@ App.Views.UploadsBase = Backbone.View.extend({
 
   renderUpdate: function(hasProgress) {
     hasProgress = hasProgress || this._hasProgress();
-    
+
     this.$('.message').html(this.model.message());
-    
+
     if (this.model.hasFinished()) {
       // action buttons
       this.$('.action-edit').prop('disabled', false);
@@ -135,10 +135,10 @@ App.Views.UploadsBase = Backbone.View.extend({
       this.$('.action-edit').prop('disabled', true);
       this.$('.action-preview').prop('disabled', true);
     }
-    
+
     // progress bar
     console.log("progress (" + this.model.attributes.progress + "%)");
-    
+
     this.$('.progress .progress-bar').removeClass('progress-bar-info').addClass('progress-bar-success');
     this.$('.progress .progress-bar').css('width', "" + this.model.attributes.progress + "%");
     if (hasProgress) {
@@ -146,13 +146,13 @@ App.Views.UploadsBase = Backbone.View.extend({
     } else {
       this.$('.progress').removeClass('active').removeClass('progress-striped');
     }
-    
+
     if (this.model.hasFinished()) {
       this.$('.status').removeClass('label-info').addClass('label-success');
     } else if (this.model.hasStopped()) {
       this.$('.status').removeClass('label-info').removeClass('label-success').removeClass('label-warning').addClass('label-danger');
     }
-    
+
     // dropdown
     if (this._hasProgress()) {
       this.$('.action-stop').parent().removeClass('disabled');
@@ -165,7 +165,7 @@ App.Views.UploadsBase = Backbone.View.extend({
     } else {
       this.$('.action-start').parent().addClass('disabled');
     }
-    
+
     // privacy
     if (this.model.attributes.privacy === "private") {
       this.$('.icon-privacy').
@@ -177,11 +177,11 @@ App.Views.UploadsBase = Backbone.View.extend({
         addClass('icon-public').addClass('glyphicon-book');
     }
   },
-  
+
   _hasProgress: function() {
     return this._hasUploadProgress() || this.model.hasProgress();
   },
-  
+
   _hasUploadProgress: function() {
     return !!this._xhr;
   }

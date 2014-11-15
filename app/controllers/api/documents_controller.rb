@@ -15,8 +15,11 @@ class Api::DocumentsController < Api::ApplicationController
 
   # [GET] /api/documents/:id(.:format)
   def show
+=begin
     authorize @document
     respond_with @document
+=end
+    render status: 404
   end
 
   # [PUT] /api/documents/:id(.:format)

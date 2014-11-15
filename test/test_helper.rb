@@ -31,7 +31,7 @@ Warden.test_mode!
 
 class ActiveSupport::TestCase
   require "mocha/setup"
-  
+
   ActiveRecord::Migration.check_pending!
 
   # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
@@ -41,11 +41,11 @@ class ActiveSupport::TestCase
   # fixtures :all
 
   # Add more helper methods to be used by all tests here...
-  include Shoulda::Matchers::ActiveRecord 
-  extend Shoulda::Matchers::ActiveRecord 
-  include Shoulda::Matchers::ActiveModel 
-  extend Shoulda::Matchers::ActiveModel 
-  
+  include Shoulda::Matchers::ActiveRecord
+  extend Shoulda::Matchers::ActiveRecord
+  include Shoulda::Matchers::ActiveModel
+  extend Shoulda::Matchers::ActiveModel
+
   setup do
     stub_request(:get, "freegeoip.net/json/95.63.14.59").
       with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Ruby'}).
@@ -56,23 +56,22 @@ end
 class ActionController::TestCase
   include Devise::TestHelpers
   include Warden::Test::Helpers
-  
+
   protected
-  
+
   def response_body
     # TODO: if response is JSON.parse else XML
     JSON.parse(response.body)
   end
-  
-  def assert_response_body_attributes_with(envelope)
+
+  def assert_response_body_attributes_with(envelope, expected_attributes = [])
     body = response_body
     assert body.has_key?(envelope.to_s), "should have envelope '#{envelope}'"
-    assert_attributes body[envelope.to_s]
-  end
-  
-  def assert_attributes(attributes)
-    flunk "Missing implementation of assert_attributes."
+    assert_attributes body[envelope.to_s], Array.wrap(expected_attributes).flatten
   end
 
+  def assert_attributes(params, expected_attributes = [])
+    flunk "Missing implementation for assert_attributes."
+  end
 end
 

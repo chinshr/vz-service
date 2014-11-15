@@ -10,13 +10,13 @@ class Document < ActiveRecord::Base
   has_many :tracks, :through => :ingests
 
   acts_as_ordered_taggable_on :tags, :auto
-  
+
   validates :slug, presence: true, uniqueness: {case_sensitive: false}
   validates :title, presence: true, length: {maximum: 255}
-  
+
   # public scopes
   filtered_scopes :sort_order, :reverse_sort
-  scope :sort_order, lambda {|param| 
+  scope :sort_order, lambda {|param|
     case param.first[0]  # E.g. get first key of {"id"=>"asc"}
     when "id"
       order(self.arel_table[:id].send(param.first[1].to_sym).to_sql)
@@ -33,28 +33,28 @@ class Document < ActiveRecord::Base
   scope :recent, lambda {|n = 5| order("documents.created_at DESC").limit(n)}
   scope :with_privacy, lambda {|privacy| where("privacy_mask & #{privacy_mask(privacy)} > 0") }
   scope :with_user_privacy, lambda {|user| user && user.id ? where("documents.privacy_mask & #{privacy_mask("public")} > 0 OR documents.user_id = ?", user) : with_privacy("public") }
-  
+
   before_validation :generate_slug, :on => :create
   before_save :set_tag_owner
-  
+
   class << self
-    
+
     def privacy_mask(number)
       numbers = PRIVACY_SETTINGS.map {|k,v| number.is_a?(Fixnum) ? v : k}
       index   = numbers.index(number.is_a?(Fixnum) ? number : number.to_s)
       index ? 2**index : 0
     end
-    
+
   end
-  
+
   def privacy=(values)
     self.privacy_mask = ([values].flatten.map(&:to_s) & PRIVACY_SETTINGS.keys).sum {|d| self.class.privacy_mask(d)}
   end
-  
+
   def privacy
     PRIVACY_SETTINGS.keys.reject {|d| ((privacy_mask || 0) & self.class.privacy_mask(d)).zero?}
   end
-  
+
   def privacy_private?
     privacy.include?("private")
   end
@@ -66,34 +66,38 @@ class Document < ActiveRecord::Base
   def privacy_unlisted?
     privacy.include?("unlisted")
   end
-  
+
   def trancribed?
-    ingests.all? {|i| i.finished?}
+    ingests.order(id: :desc).first.finished?
   end
-  
+
+  def track
+    tracks.order(id: :desc).first
+  end
+
   def score
-    chunks.average(:score) 
+    chunks.average(:score)
   end
-  
+
   def duration
     chunks.sum(:duration)
   end
 
-=begin  
+=begin
   def content
     chunks.best.text
   end
 =end
 
   protected
-  
+
   def generate_slug
     chars = [('a'..'z'), ('A'..'Z'), ('0'..'9')].map {|i| i.to_a}.flatten
     self.slug = String.new.tap {|s| 1.upto(SLUG_LENGTH) {|i| s << chars[rand(chars.size - 1)]}} unless chars.empty?
   end
-  
+
   def set_tag_owner
     # Set the owner of some tags based on the current tag_list
     set_owner_tag_list_on(user, :tags, self.tag_list) if changes[:tag_list]
-  end  
+  end
 end

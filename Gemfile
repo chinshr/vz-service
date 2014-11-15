@@ -43,6 +43,8 @@ end
 group :development, :test do
   gem 'debugger'
   gem 'foreman', '~> 0.73.0'
+  # gem 'pry-rails'
+  # gem 'pry-nav'
 end
 
 group :test do
