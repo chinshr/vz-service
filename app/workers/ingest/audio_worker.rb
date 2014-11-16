@@ -5,7 +5,7 @@ require "speech"
 class Ingest::AudioWorker
   include Sidekiq::Worker
   include Workers::Ingest::AudioWorkerHelper
-  
+
   sidekiq_options :queue => :default, :retry => false, :backtrace => true
 
   STAGES = {
@@ -13,18 +13,18 @@ class Ingest::AudioWorker
     :move_object_from_inbound_to_outbound_bucket => 5,
     :download_object_from_outbound_bucket        => 10,
     :normalize_original_audio_file               => 15,
-    :noise_reduce_audio_file                     => 20, 
+    :noise_reduce_audio_file                     => 20,
     :create_mp3_and_upload                       => 25,
     :transcribe                                  => 99,
     :finalize                                    => 100
   }
-  
+
   def initialize(ingest_id = nil)
     AWS.config(
       :access_key_id     => APP_CONFIG['S3_KEY'],    # '*** Provide access key ***'
       :secret_access_key => APP_CONFIG['S3_SECRET']  # '*** Provide secret key ***'
     )
-    
+
     # For server debugging purposes
     @ingest               = Ingest::Audio.find(ingest_id) if ingest_id
     @mp3_bitrate          = 128    # in kbits
@@ -32,7 +32,7 @@ class Ingest::AudioWorker
     @vad_silence_segments = 20     # in ms
     @vad_noise_reduce     = false  # noise reduce, true or false (note: true only works with 25ms silence segments)
   end
-  
+
   def perform(ingest_id, options = {})
     options.symbolize_keys!
     @ingest = Ingest::Audio.find(ingest_id)
@@ -110,7 +110,7 @@ class Ingest::AudioWorker
       Rails.logger.info "--> before sox_normalize_audio"
       # Noise cancel and normalize it
       sox_normalize_audio single_channel_audio_file_fullpath, normalized_audio_file_fullpath
-      
+
       # Delete the single channel file
       Rails.logger.info "--> delete single_channel_audio_file_fullpath"
       delete_file_if_exists single_channel_audio_file_fullpath
@@ -122,18 +122,18 @@ class Ingest::AudioWorker
       FileUtils.copy(normalized_audio_file_fullpath, noise_reduced_wav_audio_file_fullpath)
     end
   end
-  
+
   def old_noise_reduce_audio_file!
     stage! :noise_reduce_audio_file do
       # Convert to raw headerless PCM and down sample to 16-bit
       ffmpeg_downsample_and_convert_to_pcm(normalized_audio_file_fullpath, pcm_audio_file_fullpath)
-      
+
       # Figure out none speech sections
       qio_silence_flags(pcm_audio_file_fullpath, silence_file_full_path)
-      
+
       # Apply the QIO NR with silence file
       qio_noise_reduce(pcm_audio_file_fullpath, silence_file_full_path, noise_reduced_pcm_audio_file_fullpath)
-      
+
       # Convert PCM back to WAV
       ffmpeg_convert_pcm_to_wav(noise_reduced_pcm_audio_file_fullpath, noise_reduced_wav_audio_file_fullpath)
 
@@ -143,18 +143,18 @@ class Ingest::AudioWorker
       delete_file_if_exists noise_reduced_pcm_audio_file_fullpath
     end
   end
-  
+
   def create_mp3_and_upload!
     stage! :create_mp3_and_upload do
       # Convert to mp3
       ffmpeg_convert_to_mp3 noise_reduced_wav_audio_file_fullpath, mp3_audio_file_fullpath
-      
+
       # Upload mp3
       s3_upload_object(mp3_audio_file_fullpath, APP_CONFIG['S3_OUTBOUND_BUCKET'], mp3_audio_file)
-      
+
       # Update s3 references
       @ingest.track.update_attribute(:s3_mp3_url, outbound_url(mp3_audio_file))
-      
+
       # Remove mp3 file locally
       delete_file_if_exists mp3_audio_file_fullpath
     end
@@ -164,33 +164,33 @@ class Ingest::AudioWorker
     stage! :transcribe do
       # Remove previous chunks (in case we reprocessing)
       @ingest.ingestable.chunks.destroy_all
-      
+
       # Start the stranscription with normalization
-      transcribe = Transcribe.new(@ingest, :chunk_size => @chunk_size, 
+      transcribe = Transcribe.new(@ingest, :chunk_size => @chunk_size,
         :chunk_timeout => 15, :progress_thresholds => STAGES[:transcribe])
       transcribe.perform(noise_reduced_wav_audio_file_fullpath)
-      
+
       # Normalize chunk scores
       normalize_document_chunk_scores(@ingest.ingestable)
-      
+
       # Update document
       content = @ingest.ingestable.chunks.best.text # @ingest.ingestable.chunks.map {|sg| sg.text ? sg.text.strip : nil}.compact.join(" ")
       @ingest.ingestable.update_attribute(:content, content)
-      
+
       # Sweep files we don't need anymore
       delete_file_if_exists normalized_audio_file_fullpath
       delete_file_if_exists original_audio_file_fullpath
     end
   end
-  
+
   def finalize!
     stage! :finalize do
       @ingest.finish!
     end
   end
-  
+
   protected
-  
+
   def stage!(stage_name, message = nil)
     if can_stage?(stage_name)
       log! stage_name, header_with("starting", stage_name, message)
@@ -203,7 +203,7 @@ class Ingest::AudioWorker
       log! stage_name, header_with("finished", stage_name, message) if block_given?
     end
   end
-  
+
   def can_stage?(stage_name)
     if @ingest && !@ingest.terminate?
       if @ingest.stage && @ingest.started?
@@ -218,7 +218,7 @@ class Ingest::AudioWorker
   end
 
   def header_with(noun, stage_name, message = nil)
-    if message 
+    if message
       "*** #{noun} #{stage_name.to_s.upcase} at #{Time.now.utc}: #{message}"
     else
       "*** #{noun} #{stage_name.to_s.upcase} at #{Time.now.utc}"
@@ -229,11 +229,11 @@ class Ingest::AudioWorker
     Rails.logger.info "** stage #{stage_name}: #{message}" if @ingest && Rails.env.development?
     @ingest.log! stage_name, message if @ingest
   end
-  
+
   def s3_key
     @ingest.s3_key if @ingest
   end
-  
+
   def s3_url
     @ingest.track.s3_url if @ingest
   end
@@ -257,7 +257,7 @@ class Ingest::AudioWorker
   def single_channel_audio_file
     "#{@ingest.track.s3_key}.single-channel" if @ingest
   end
-  
+
   def single_channel_audio_file_fullpath
     File.join("/tmp", single_channel_audio_file) if single_channel_audio_file
   end
@@ -269,11 +269,11 @@ class Ingest::AudioWorker
   def normalized_audio_file_fullpath
     File.join("/tmp", normalized_audio_file) if normalized_audio_file
   end
-  
+
   def pcm_audio_file
     "#{@ingest.track.s3_key}.pcm" if @ingest
   end
-  
+
   def pcm_audio_file_fullpath
     File.join("/tmp", pcm_audio_file) if pcm_audio_file
   end
@@ -281,7 +281,7 @@ class Ingest::AudioWorker
   def silence_file
     "#{@ingest.track.s3_key}.s" if @ingest
   end
-  
+
   def silence_file_full_path
     File.join("/tmp", silence_file) if silence_file
   end
@@ -293,7 +293,7 @@ class Ingest::AudioWorker
   def noise_reduced_pcm_audio_file_fullpath
     File.join("/tmp", noise_reduced_pcm_audio_file) if noise_reduced_pcm_audio_file
   end
-  
+
   def noise_reduced_wav_audio_file
     "#{@ingest.track.s3_key}.nr.wav" if @ingest
   end
@@ -301,7 +301,7 @@ class Ingest::AudioWorker
   def noise_reduced_wav_audio_file_fullpath
     File.join("/tmp", noise_reduced_wav_audio_file) if noise_reduced_wav_audio_file
   end
-  
+
   def outbound_url(key)
     File.join(APP_CONFIG['S3_URL'], APP_CONFIG['S3_OUTBOUND_BUCKET'], key)
   end
@@ -309,13 +309,13 @@ class Ingest::AudioWorker
   def inbound_url(key)
     File.join(APP_CONFIG['S3_URL'], APP_CONFIG['S3_INBOUND_BUCKET'], key)
   end
-  
+
   def run_all_stages
     Ingest::AudioWorker::STAGES.keys.each do |stage|
       send("#{stage}!".to_sym)
     end
   end
-  
+
   def remove_all_files_and_s3_objects
     # remove local files
     delete_file_if_exists original_audio_file_fullpath

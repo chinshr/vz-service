@@ -78,18 +78,18 @@ class DocumentTest < ActiveSupport::TestCase
 
     should "have finshed transcribing" do
       @ingest.update_attribute(:aasm_state, "finished")
-      assert_equal true, @document.trancribed?
+      assert_equal true, @document.transcribed?
     end
 
     should "not have finshed transcribing" do
       @ingest.update_attribute(:aasm_state, "started")
-      assert_equal false, @document.trancribed?
+      assert_equal false, @document.transcribed?
     end
 
     should "not have finshed transcribing with multiple ingests" do
       @started = FactoryGirl.create(:ingest_audio, :ingestable => @document, :aasm_state => "started")
       @ingest.update_attribute(:aasm_state, "finished")
-      assert_equal false, @document.trancribed?
+      assert_equal false, @document.transcribed?
     end
   end
 

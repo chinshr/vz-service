@@ -64,13 +64,16 @@ class ActionController::TestCase
     JSON.parse(response.body)
   end
 
-  def assert_response_body_attributes_with(envelope, expected_attributes = [])
+  def assert_response_body_attributes_with(envelope, expected_attributes = {})
     body = response_body
     assert body.has_key?(envelope.to_s), "should have envelope '#{envelope}'"
-    assert_attributes body[envelope.to_s], Array.wrap(expected_attributes).flatten
+    expected_attributes = Array.wrap(expected_attributes)
+      .inject({}) {|r,i| r[i] = nil; r} unless expected_attributes.is_a?(Hash)
+    expected_attributes.stringify_keys!
+    assert_attributes body[envelope.to_s], expected_attributes
   end
 
-  def assert_attributes(params, expected_attributes = [])
+  def assert_attributes(params, expected_attributes = {})
     flunk "Missing implementation for assert_attributes."
   end
 end

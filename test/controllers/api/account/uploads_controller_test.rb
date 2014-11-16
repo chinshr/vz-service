@@ -5,23 +5,23 @@ class Api::Account::UploadsControllerTest < ActionController::TestCase
     @user = FactoryGirl.create :user
     sign_in :user, @user
   end
-  
+
   context "POST /api/account/uploads" do
     should "create audio upload when signed in" do
       assert_difference 'Document.count', 1 do
         assert_difference 'Ingest::Audio.count', 1 do
           assert_difference 'Upload::Audio.count', 1 do
-            post :create, :upload => {:file_name => "i-like-pickles.wav", :s3_url => "http://s3.amazonaws.com/qscribe-uploads/8enYwMjB0B", 
-              :file_type => "audio/wav", :file_size => 225284, :type => "audio", :locale => "en-UK", :privacy => "private"}, 
+            post :create, :upload => {:file_name => "i-like-pickles.wav", :s3_url => "http://s3.amazonaws.com/qscribe-uploads/8enYwMjB0B",
+              :file_type => "audio/wav", :file_size => 225284, :type => "audio", :locale => "en-UK", :privacy => "private"},
               format: :json
             assert_response :success
             assert_response_body_attributes_with "upload"
-    
+
             upload = Upload.last
             assert_equal @user.id, upload.user.id
-            assert_equal "Upload::Audio", upload.type 
-            assert_equal "audio/wav", upload.file_type 
-            assert_equal "i-like-pickles.wav", upload.file_name 
+            assert_equal "Upload::Audio", upload.type
+            assert_equal "audio/wav", upload.file_type
+            assert_equal "i-like-pickles.wav", upload.file_name
             assert_equal 225284, upload.file_size
             assert_equal "http://s3.amazonaws.com/qscribe-uploads/8enYwMjB0B", upload.s3_url
             assert_equal "en-UK", upload.locale
@@ -31,25 +31,25 @@ class Api::Account::UploadsControllerTest < ActionController::TestCase
         end
       end
     end
-    
+
     should "NOT create audio upload when signed out" do
       sign_out :user
-      post :create, :upload => {:file_name => "i-like-pickles.wav", :s3_url => "http://s3.amazonaws.com/qscribe-uploads/8enYwMjB0B", 
-        :file_type => "audio/wav", :file_size => 225284, :type => "audio", :locale => "en-UK", :privacy => "private"}, 
+      post :create, :upload => {:file_name => "i-like-pickles.wav", :s3_url => "http://s3.amazonaws.com/qscribe-uploads/8enYwMjB0B",
+        :file_type => "audio/wav", :file_size => 225284, :type => "audio", :locale => "en-UK", :privacy => "private"},
         format: :json
       assert_response :unauthorized
     end
 
     should "NOT create audio upload without file_type audio" do
       post :create, :upload => {type: "audio", file_type: "XXX", file_name: "xxx.xxx", file_size: 1,
-        s3_url: "http://s3.amazonaws.com/qscribe-uploads/xxx.xxx"}, 
+        s3_url: "http://s3.amazonaws.com/qscribe-uploads/xxx.xxx"},
         format: :json
       assert_response :unprocessable_entity
     end
 
     should "NOT create audio upload without type" do
       post :create, :upload => {file_type: "XXX", file_name: "xxx.xxx", file_size: 1,
-        s3_url: "http://s3.amazonaws.com/qscribe-uploads/xxx.xxx"}, 
+        s3_url: "http://s3.amazonaws.com/qscribe-uploads/xxx.xxx"},
         format: :json
       assert_response :unprocessable_entity
     end
@@ -62,7 +62,7 @@ class Api::Account::UploadsControllerTest < ActionController::TestCase
       @upload2      = FactoryGirl.create(:upload_audio)
       @upload2.user = @user and @upload2.save
     end
-    
+
     should "get all user's uploads" do
       FactoryGirl.create(:upload_audio)  # another user's upload
       get :index, format: :json
@@ -71,13 +71,13 @@ class Api::Account::UploadsControllerTest < ActionController::TestCase
       assert_equal 2, response_body["uploads"].size, "should only return user's uploads"
       assert_attributes response_body["uploads"].first
     end
-    
+
     should "NOT return uploads when signed out" do
       sign_out :user
       get :index, format: :json
       assert_response :unauthorized
     end
-    
+
     context "filters" do
       should "#any_of_status" do
         @upload2.ingest.update_attribute(:aasm_state, "stopped")
@@ -98,7 +98,7 @@ class Api::Account::UploadsControllerTest < ActionController::TestCase
         assert_attributes response_body["uploads"].first
         assert_not_equal Ingest::STATES[:stopped], response_body["uploads"].first["status"], "should not be 'stopped' = #{Ingest::STATES[:stopped]}"
       end
-      
+
       should "#limit" do
         get :index, :limit => 1, format: :json
         assert_response :success
@@ -113,7 +113,7 @@ class Api::Account::UploadsControllerTest < ActionController::TestCase
           assert response_body.has_key?("uploads"), "should have root"
           assert_equal 2, response_body["uploads"].size
         end
-        
+
         # query "sort_order[created_at]=desc&sort_order[id]=asc"
         # Note: CGI.unescape({:a => "a", :b => ["c", "d", "e"]}.to_query)
         should "sort values and order #id ASC, #created_at DESC" do
@@ -122,12 +122,12 @@ class Api::Account::UploadsControllerTest < ActionController::TestCase
           assert response_body.has_key?("uploads"), "should have root"
           assert_equal 2, response_body["uploads"].size
         end
-        
+
       end
-      
+
     end
   end
-  
+
   context "GET /api/account/uploads/count.json" do
     setup do
       @upload1      = FactoryGirl.create(:upload_audio)
@@ -135,7 +135,7 @@ class Api::Account::UploadsControllerTest < ActionController::TestCase
       @upload2      = FactoryGirl.create(:upload_audio)
       @upload2.user = @user and @upload2.save
     end
-    
+
     should "get count" do
       get :count, format: :json
       assert_response :success
@@ -143,7 +143,7 @@ class Api::Account::UploadsControllerTest < ActionController::TestCase
       assert_equal 2, response_body["count"], "should have count uploads"
     end
   end
-  
+
   context "GET /api/account/uploads/:id" do
     should "get upload with :id" do
       upload = FactoryGirl.create(:upload_audio)
@@ -172,7 +172,7 @@ class Api::Account::UploadsControllerTest < ActionController::TestCase
     should "update upload" do
       upload = FactoryGirl.create(:upload_audio)
       upload.user = @user and upload.save
-      put :update, {:id => upload.id, :upload => {:title => "La fiesta!", :description => "Entrevista en la fiesta.", 
+      put :update, {:id => upload.id, :upload => {:title => "La fiesta!", :description => "Entrevista en la fiesta.",
         :tag_list => ["entrevista", "fiesta"], locale: "es-AR", :privacy => "private"}, format: :json}
       assert_response :success
       assert_response_body_attributes_with "upload"
@@ -183,7 +183,7 @@ class Api::Account::UploadsControllerTest < ActionController::TestCase
       assert_equal "es-AR", upload.reload.locale
       assert_equal ["private"], upload.reload.privacy
     end
-    
+
     should "NOT update upload when signed out" do
       sign_out :user
       put :update, {:id => 1, :upload => {:title => "La fiesta!", :description => "Entrevista en la fiesta.", locale: "es-AR"}, format: :json}
@@ -216,13 +216,13 @@ class Api::Account::UploadsControllerTest < ActionController::TestCase
         end
       end
     end
-    
+
     should "NOT destroy upload when signed out" do
       sign_out :user
       delete :destroy, {id: 1, format: :json}
       assert_response :unauthorized
     end
-    
+
   end
 
   context "GET /api/account/upload/sign_s3" do
@@ -237,12 +237,12 @@ class Api::Account::UploadsControllerTest < ActionController::TestCase
       assert_response :unauthorized
     end
   end
-  
+
   protected
 
-  def assert_attributes(attributes)
-    %w(file_name file_type file_size s3_url locale slug title description tag_list privacy status type progress events updated_at created_at).each do |attribute|
-      assert attributes.has_key?(attribute), "should containt attribute '#{attribute}' in '#{attributes}'"
+  def assert_attributes(response, expected_attributes = {})
+    %w(file_name file_type file_size s3_url locale slug title description tag_list privacy status type progress events updated_at created_at).each do |key|
+      assert response.has_key?(key), "should containt key '#{key}' in response '#{response}'"
     end
   end
 end

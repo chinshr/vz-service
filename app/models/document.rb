@@ -67,8 +67,8 @@ class Document < ActiveRecord::Base
     privacy.include?("unlisted")
   end
 
-  def trancribed?
-    ingests.order(id: :desc).first.finished?
+  def transcribed?
+    !!ingests.order(id: :desc).first.try(:finished?)
   end
 
   def track

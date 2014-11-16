@@ -4,22 +4,27 @@ class Api::DocumentsControllerTest < ActionController::TestCase
   setup do
     @user1              = FactoryGirl.create(:user)
     @user2              = FactoryGirl.create(:user)
-    
+
     @document1          = FactoryGirl.create(:document)
+    @track1             = FactoryGirl.create(:track)
+    @ingest1            = FactoryGirl.create(:ingest_audio, :ingestable => @document1, :track_id => @track1.id)
+
     @document1.privacy  = [:"public"]
     @document1.user     = @user1
     @document1.tag_list = ["brown", "fox", "jumps", "over", "fence"]
     @document1.save
 
     @document2          = FactoryGirl.create(:document)
+    @track2             = FactoryGirl.create(:track)
+    @ingest2            = FactoryGirl.create(:ingest_audio, :ingestable => @document2, :track_id => @track2.id)
     @document2.privacy  = [:"private"]
     @document2.user     = @user2
     @document2.tag_list = ["brown", "cats", "jump", "higher"]
     @document2.save
-    
+
     sign_out :user
   end
-  
+
   context "GET /api/documents" do
     should "all public documents when not signed in" do
       get :index, format: :json
@@ -38,7 +43,7 @@ class Api::DocumentsControllerTest < ActionController::TestCase
       assert_attributes response_body["documents"].first
     end
   end
-  
+
   context "GET /api/documents/count" do
     should "count public documents when no user is signed in" do
       get :count, format: :json
@@ -61,6 +66,7 @@ class Api::DocumentsControllerTest < ActionController::TestCase
       get :show, :id => @document1, format: :json
       assert_response :success
       assert_response_body_attributes_with "document"
+      assert response_body['document']['track']['mp3_stream_url'], "should have stream URL"
     end
 
     should "not get private document when not signed in" do
@@ -80,11 +86,11 @@ class Api::DocumentsControllerTest < ActionController::TestCase
       assert_response :unauthorized
     end
   end
-  
+
   context "PUT /api/documents/:id" do
     should "update user 2's document when signed in as user 2" do
       sign_in :user, @user2
-      put :update, {:id => @document2.id, :document => {:title => "La fiesta!", :description => "Entrevista en la fiesta.", 
+      put :update, {:id => @document2.id, :document => {:title => "La fiesta!", :description => "Entrevista en la fiesta.",
         :tag_list => ["entrevista", "fiesta"], locale: "es-AR", :privacy => "private", :content => "Es el contenido."}, format: :json}
       assert_response :success
       assert_response_body_attributes_with "document"
@@ -95,7 +101,7 @@ class Api::DocumentsControllerTest < ActionController::TestCase
       assert_equal ["private"], @document2.reload.privacy
       assert_equal "Es el contenido.", @document2.reload.content
     end
-    
+
     should "NOT update when no user is signed in " do
       put :update, {:id => @document1.id, :document => {:title => "No autorizado!"}, format: :json}
       assert_response :unauthorized
@@ -131,7 +137,7 @@ class Api::DocumentsControllerTest < ActionController::TestCase
         assert_response :unauthorized
       end
     end
-    
+
     should "NOT destroy when not signed in" do
       assert_no_difference 'Document.count' do
         delete :destroy, {id: @document1, format: :json}
@@ -139,12 +145,16 @@ class Api::DocumentsControllerTest < ActionController::TestCase
       end
     end
   end
-  
+
   protected
-  
-  def assert_attributes(params, expected_attributes = [])
-    (expected_attributes + %w(id title description)).each do |attribute|
-      assert params.has_key?(attribute), "should containt attribute '#{attribute}' in '#{params}'"
+
+  def assert_attributes(params, expected_attributes = {})
+    (expected_attributes.keys + %w(id title description)).each do |attribute|
+      assert params.has_key?(attribute), "should containt key '#{attribute}' in response '#{params}'"
+    end
+
+    expected_attributes.each do |key, value|
+      assert_equal value, params[key], "'#{key}' should contain '#{value}', but was '#{params[key]}'"
     end
   end
 end

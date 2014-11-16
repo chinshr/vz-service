@@ -8,7 +8,7 @@ class Web::DocumentsControllerTest < ActionController::TestCase
         @document = FactoryGirl.create(:document, {:privacy => [:"public"]})
         assert_equal ["public"], @document.privacy
       end
-      
+
       should "load without user session" do
         get :show, :id => @document.slug
         assert_response :success
@@ -26,7 +26,7 @@ class Web::DocumentsControllerTest < ActionController::TestCase
         assert_response :success
       end
     end
-    
+
     context "when document is private" do
       setup do
         @document = FactoryGirl.create(:document, {:privacy => [:"private"]})
@@ -43,7 +43,7 @@ class Web::DocumentsControllerTest < ActionController::TestCase
         get :show, :id => @document.slug
         assert_response :redirect
       end
-      
+
       should "raise unauthorized with other signed in user" do
         sign_in FactoryGirl.create(:user)
         get :show, :id => @document.slug
@@ -76,7 +76,7 @@ class Web::DocumentsControllerTest < ActionController::TestCase
         assert_response :unauthorized
       end
     end
-    
+
   end
 
 end
