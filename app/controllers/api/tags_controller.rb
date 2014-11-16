@@ -1,5 +1,5 @@
 class Api::TagsController < Api::ApplicationController
-  
+
   # [GET] /api/tags(.:format)
   def index
     @tags = ActsAsTaggableOn::Tag.filter(params)
@@ -10,5 +10,5 @@ class Api::TagsController < Api::ApplicationController
   def count
     render :json => {:count => ActsAsTaggableOn::Tag.filter(params).count}
   end
-  
+
 end

@@ -10,7 +10,7 @@ Voyzes::Application.routes.draw do
   devise_scope :user do
     put "/users/confirmation" => "confirmations#update", :as => :update_user_confirmation
   end
-  
+
   # sidekick
   mount Sidekiq::Web, at: "/sidekiq"
 
@@ -37,19 +37,19 @@ Voyzes::Application.routes.draw do
     get "/:id/edit" => 'documents#edit'
     get "/:id/stream" => 'documents#stream'
   end
-  
+
   namespace :api do
     resources :tags, :only => :index do
       collection do
         get "count"
       end
     end
-    
+
     resources :documents, :only => [:index, :show, :update, :destroy] do
       collection do
         get "count"
       end
-      resources :tracks, :only => :index
+      resources :tracks, :only => [:index, :show]
     end
     namespace :account do
       resources :uploads do
