@@ -40,75 +40,6 @@ $(document).ready(function() {
   
 });
 
-
-/* Quill Editor */
-$(document).ready(function() {
-  return;
-  var titleEditor = new Quill('#title-editor', {
-    'modules': {
-    },
-    'styles': '/assets/web/quill-title-editor.css'
-  });
-
-  var contentEditor = new Quill('#content-editor', {
-    'modules': {
-      'toolbar': {
-        container: '#content-editor-toolbar-container'
-      },
-    },
-    'styles': '/assets/web/quill-content-editor.css'
-  });
-  
-  contentEditor.addContainer('spacer-container');
-  contentEditor.onModuleLoad('toolbar', function(toolbar) {
-    $('#content-editor iframe').contents().find('body').css('overflow', 'hidden');
-  });
-  
-  var moveUserInitials = function() {
-    var sel = contentEditor.root.ownerDocument.getSelection();
-    if (sel && sel.rangeCount > 0) {
-      var selrg = sel.getRangeAt(0);
-      if (selrg) {
-        var rects = selrg.getClientRects();
-        if (rects.length > 0) {
-          var ui = $(".user-initials");
-          ui.stop().animate({
-            top: 100 - (ui.height() / 2) + rects[0].top
-          }, 50);
-        }
-      }
-    }
-  }
-  
-  contentEditor.on('text-change', function(delta, source) {
-    // expand window
-    $('#content-editor').height(contentEditor.root.ownerDocument.body.scrollHeight);
-    
-    moveUserInitials();
-  });
-  
-  contentEditor.on('selection-change', function(range) {
-    if (range) {
-      if (range.start == range.end) {
-        // console.log('User cursor is on', range.start);
-        moveUserInitials();
-      } else {
-        // var text = editor.getText(range.start, range.end);
-        // console.log('User has highlighted', text);
-      }
-    } else {
-      // console.log('Cursor not in the editor');
-    }
-  });
-  
-  var keyboard = contentEditor.getModule('keyboard');
-  keyboard.addHotkey({key: 32, metaKey: true, shiftKey: true}, function(range) {
-    console.log('user hit Shift+Cmd+Space');
-    return true;   // return false will prevent other listeners from receiving the event
-  });
-  
-});
-
 /* player */
 var wavesurfer = Object.create(WaveSurfer);
 
@@ -279,24 +210,5 @@ wavesurfer.on('finish', function () {
     }
   });
   
-}());
-
-// Flash mark when it's played over
-wavesurfer.on('mark', function (marker) {
-  if (marker.timer) { return; }
-
-  marker.timer = setTimeout(function () {
-    var origColor = marker.color;
-    marker.update({ color: 'yellow' });
-
-    setTimeout(function () {
-        marker.update({ color: origColor });
-        delete marker.timer;
-    }, 100);
-  }, 100);
-});
-
-wavesurfer.on('error', function (err) {
-  console.error(err);
-});
+}()); /* end bind buttons */
 
