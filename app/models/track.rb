@@ -26,10 +26,12 @@ class Track < ActiveRecord::Base
     s3_mp3_url ? s3_mp3_url.split("/").last : nil
   end
 
+  # dropbox-dev.voyzes.com -> http://s3.amazonaws.com/dropbox-dev.voyzes.com/6s8l775jqc.128.mp3?AWSAccessKey…OUXPZ7ZQ&Expires=1418179793&Signature=ihPMw6fUy%2FW%2BG4V%2FSQWcws3izBk%3D
+  # secure-dev.voyzes.com  -> http://s3.amazonaws.com/secure-dev.voyzes.com/6s8l775jqc.128.mp3
   def mp3_stream_url
     s3 = AWS::S3.new
     object = s3.buckets[APP_CONFIG['S3_OUTBOUND_BUCKET']].objects[s3_mp3_key]
-    object.url_for(:get, {:expires => 20.minutes.from_now, :secure => true}).to_s
+    object.url_for(:get, {:expires => 20.minutes.from_now, :secure => false, :response_content_type => "audio/mpeg"}).to_s
   end
 
 end

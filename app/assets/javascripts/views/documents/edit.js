@@ -6,6 +6,7 @@ App.Views.DocumentsEdit = Backbone.View.extend({
   },
 
   initialize: function() {
+    $(document).on('click', _.bind(this.playerToolbarHandler, this));
     this.listenTo(this.model, 'change', this.render);
 
     this.model.fetch({
@@ -34,9 +35,11 @@ App.Views.DocumentsEdit = Backbone.View.extend({
 
     if (this.model.ok) {
       this.initEditor();
+      this.initPlayer();
       $('#document-loading').hide();
       $('#document-edit').show();
     } else if (this.model.errors) {
+      $('#loading').hide();
       $('#document-load-error').show();
     }
 
@@ -44,6 +47,18 @@ App.Views.DocumentsEdit = Backbone.View.extend({
   },
 
   initPlayer: function() {
+    var options = {
+      container     : $('#waveform').get(0),  // document.querySelector('#waveform'),
+      height        : 40,
+      waveColor     : '#ddd', // 'violet',
+      progressColor : '#fff', // '#3f6169', // '#fff',
+      loaderColor   : '#555',
+      cursorColor   : '#5492ce',
+      markerWidth   : 1,
+      audioRate     : 1,
+      normalize     : true
+    };
+
     /* Progress Bar */
     var progressDiv = document.querySelector('#player-progress-bar');
     var progressBar = progressDiv.querySelector('.progress-bar');
@@ -62,33 +77,11 @@ App.Views.DocumentsEdit = Backbone.View.extend({
     this.wavesurfer.on('destroy', hideProgress);
     this.wavesurfer.on('error', hideProgress);
 
-    this.wavesurfer.init({
-      container     : $('#waveform').get(0),  // document.querySelector('#waveform'),
-      height        : 40,
-      waveColor     : '#ddd', // 'violet',
-      progressColor : '#fff', // '#3f6169', // '#fff',
-      loaderColor   : '#555',
-      cursorColor   : '#5492ce',
-      markerWidth   : 1,
-      audioRate     : 1,
-      normalize     : true
-    });
-
-    this.wavesurfer.load(this.model.attributes.track.mp3_stream_url);
-
-    this.wavesurfer.backend.on('audioprocess', function onFinish(time) {
-      if (time >= wavesurfer.getDuration() - 0.01) {
-        $('.player-play-pause').addClass('fa-play').removeClass('fa-pause');
-        wavesurfer.un('audioprogress', onFinish);
-        wavesurfer.stop();
-      }
-    });
-
     // Play at once when ready
     // Won't work on iOS until you touch the page
-    this.wavesurfer.on('ready', function () {
-      // wavesurfer.play();
-    });
+    this.wavesurfer.on('ready', _.bind(function onReady() {
+      this.wavesurfer.play();
+    }, this));
 
     // Do something when the clip is over
     this.wavesurfer.on('finish', function () {
@@ -110,9 +103,25 @@ App.Views.DocumentsEdit = Backbone.View.extend({
       }, 100);
     });
 
-    wavesurfer.on('error', function (err) {
+    this.wavesurfer.on('error', function (err) {
       console.error(err);
     });
+
+    this.wavesurfer.init(options);
+
+    this.wavesurfer.backend.on('audioprocess', _.bind(function onFinish(time) {
+      if (time >= this.wavesurfer.getDuration() - 0.01) {
+        $('.player-play-pause').addClass('fa-play').removeClass('fa-pause');
+        this.wavesurfer.un('audioprogress', onFinish);
+        this.wavesurfer.stop();
+      }
+    }, this));
+
+    console.log('stream URL -> ' + this.model.attributes.track.mp3_stream_url);
+    // this.wavesurfer.load(this.model.attributes.track.mp3_stream_url);
+    // this.wavesurfer.load("http://localhost:3000/6s8l775jqc.128.mp3");
+    // this.wavesurfer.load("http://localhost:3000/samples/i-like-pickles.wav");
+    this.wavesurfer.load("https://s3-eu-west-1.amazonaws.com/soundmites/f5/4779e0c3a111e3b368f97e5bff4d34/coincidence.mp3");
   },
 
   initEditor: function() {
@@ -184,22 +193,7 @@ App.Views.DocumentsEdit = Backbone.View.extend({
     }
   },
 
-  playerKeyboardHandler: function(e) {
-    var map = {
-      // 32: 'toggle-play-pause',       // space  NOTE: took this out as it interfers on other pages
-      // 37: 'step-backward',       // left
-      // 39: 'step-forward'       // right
-    };
-    
-    if (e.keyCode in map) {
-      console.log(e.keyCode);
-      var handler = this.wsHandlers[map[e.keyCode]];
-      e.preventDefault();
-      handler && handler(e);
-    }
-  },
-
-  wsHandlers = {
+  wsHandlers: {
     'toggle-play-pause': function (event) {
       if ($(event.target).hasClass('fa-play')) {
         $(event.target).addClass('fa-pause').removeClass('fa-play');
@@ -263,4 +257,27 @@ App.Views.DocumentsEdit = Backbone.View.extend({
       }
     }
   },
+
+  playerKeyboardHandler: function(e) {
+    var map = {
+      // 32: 'toggle-play-pause',       // space  NOTE: took this out as it interfers on other pages
+      // 37: 'step-backward',       // left
+      // 39: 'step-forward'       // right
+    };
+
+    if (e.keyCode in map) {
+      console.log(e.keyCode);
+      var handler = this.wsHandlers[map[e.keyCode]];
+      e.preventDefault();
+      handler && _.bind(handler, this)(e);
+    }
+  },
+
+  playerToolbarHandler: function (e) {
+    var action = e.target.dataset && e.target.dataset.action;
+    if (action && action in this.wsHandlers) {
+      _.bind(this.wsHandlers[action], this)(e);
+    }
+  },
+
 });
