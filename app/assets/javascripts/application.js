@@ -24,6 +24,7 @@
 //= require backbone
 //= require lib/backbone/backbone.validation
 //= require lib/backbone/backbone.validation.config
+//= require lib/simply-toast
 //= require lib/s3upload
 //= require web/documents
 //= require app
@@ -34,22 +35,29 @@
 //= require_tree ./routers
 //= require_tree ./web
 
+$.extend(true, $.notify.defaultOptions, {
+  "align": "center",
+  "offset": {
+    "from": "top"
+  }
+});
 
-jQuery.extend({
-  /* 
-   *  E.g. $.alert("This is an error!", "error"); 
+$.extend({
+  /*
+   *  E.g. $.alert("This is an error!", "error");
    */
   alert: function(text, options) {
     options = _.extend(options || {}, {});
-    
+    var title = options.title || "";
+
     var html = '<div id="alert-modal" class="modal fade alert-modal bs-example-modal-sm">' +
       '<div class="modal-dialog">' +
         '<div class="modal-content">' +
-          (!!title ? 
+          (!!title ?
           '<div class="modal-header">' +
             '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>' +
             '<h4 class="modal-title">' + title + '</h4>' +
-          '</div>' : "" ) +
+          '</div>' : '') +
           '<div class="modal-body">' +
             '<p>' + text + '</p>' +
           '</div>' +
@@ -59,23 +67,23 @@ jQuery.extend({
         '</div><!-- /.modal-content -->' +
       '</div><!-- /.modal-dialog -->' +
     '</div><!-- /.modal -->';
-    
+
     $("#alert-modal").remove();
     $('body').append(html);
     $('#alert-modal').modal();
   },
-  
-  /* 
-   *  E.g. $.confirm("This is an error!", function(result) { result ? true : false }); 
+
+  /*
+   *  E.g. $.confirm("This is an error!", function(result) { result ? true : false });
    */
   confirm: function(text, callback) {
     var title;
     //options = _.extend(options || {}, {});
-    
+
     var html = '<div id="confirm-modal" class="modal fade confirm-modal bs-example-modal-sm">' +
       '<div class="modal-dialog">' +
         '<div class="modal-content">' +
-          (!!title ? 
+          (!!title ?
           '<div class="modal-header">' +
             '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>' +
             '<h4 class="modal-title">' + title + '</h4>' +
@@ -90,11 +98,11 @@ jQuery.extend({
         '</div><!-- /.modal-content -->' +
       '</div><!-- /.modal-dialog -->' +
     '</div><!-- /.modal -->';
-    
+
     $("#confirm-modal").remove();
     $('body').append(html);
     $('#confirm-modal').modal({
-      
+
     });
     $("#confirm-modal .btn-ok").bind("click", function() {
       callback(true);
