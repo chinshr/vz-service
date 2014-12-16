@@ -315,7 +315,7 @@ App.Views.DocumentsEdit = Backbone.View.extend({
   },
 
   save: function() {
-    $.notify("Document saved.", "warning");
+    $.notify("Document saved.");
     this.stopSaving();
   },
 

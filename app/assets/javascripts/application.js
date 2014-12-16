@@ -39,7 +39,9 @@ $.extend(true, $.notify.defaultOptions, {
   "align": "center",
   "offset": {
     "from": "top"
-  }
+  },
+  "delay": 1500,
+  "type": "warning"
 });
 
 $.extend({

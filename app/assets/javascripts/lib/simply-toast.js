@@ -26,7 +26,7 @@
     css[options.offset.from] = offsetSum + 'px';
 
     var $alert = $(html).css(css)
-              .appendTo(options.appendTo);
+      .appendTo(options.appendTo);
 
     switch (options.align) {
       case "center":
