@@ -5,7 +5,7 @@ module Workers::Ingest::AudioWorkerHelper
 
   class Transcribe
     attr_accessor :ingest, :filename
-    
+
     def initialize(ingest, options = {})
       @ingest             = ingest
       @queue              = QueueWithTimeout.new
@@ -15,7 +15,7 @@ module Workers::Ingest::AudioWorkerHelper
       @progress_threshold = options[:progress_threshold] || 100
       @mutex              = Mutex.new
     end
-    
+
     def perform(filename)
       history = {}
       @threads << Thread.new { google_speech_transcribe_file(filename) }
@@ -41,15 +41,15 @@ module Workers::Ingest::AudioWorkerHelper
       @ingest.set_progress!(@progress_threshold * 100)
       @threads
     end
-    
+
     protected
-    
+
     def increment_progress(chunk)
       @mutex.synchronize do
         @ingest.increment_progress! 1, chunk.splitter.chunks.size, @progress_threshold
       end
     end
-    
+
     def transcribe_file(audio)
       ActiveRecord::Base.connection_pool.with_connection do
         start_time = BigDecimal.new("0.0")
@@ -78,12 +78,12 @@ module Workers::Ingest::AudioWorkerHelper
           end
         end
       end
-      
+
     end
-    
+
     def google_speech_transcribe_file(filename)
       audio = Speech::AudioToText.new(filename, {
-        engine: :google_speech_engine, 
+        engine: :google_speech_engine,
         chunk_size: @chunk_size, verbose: Rails.env.development?,
         version: "v2",
         key: APP_CONFIG["GOOGLE_SPEECH_API_KEY"]
@@ -93,8 +93,8 @@ module Workers::Ingest::AudioWorkerHelper
 
     def att_speech_transcribe_file(filename)
       audio = Speech::AudioToText.new(filename, {
-        engine: :att_speech_engine, chunk_size: @chunk_size, 
-        api_key: APP_CONFIG["ATT_SPEECH_API_KEY"], secret_key: APP_CONFIG["ATT_SPEECH_SECRET_KEY"], 
+        engine: :att_speech_engine, chunk_size: @chunk_size,
+        api_key: APP_CONFIG["ATT_SPEECH_API_KEY"], secret_key: APP_CONFIG["ATT_SPEECH_SECRET_KEY"],
         mode: "standard", verbose: Rails.env.development?
       })
       transcribe_file(audio)
@@ -102,16 +102,16 @@ module Workers::Ingest::AudioWorkerHelper
 
     def nuance_dragon_transcribe_file(filename)
       audio = Speech::AudioToText.new(filename, {
-        engine: :nuance_dragon_engine, chunk_size: @chunk_size, 
-        base_url: "https://dictation.nuancemobility.net:443", 
-        app_id: APP_CONFIG["NUANCE_DRAGON_APP_ID"], 
+        engine: :nuance_dragon_engine, chunk_size: @chunk_size,
+        base_url: "https://dictation.nuancemobility.net:443",
+        app_id: APP_CONFIG["NUANCE_DRAGON_APP_ID"],
         app_key: APP_CONFIG["NUANCE_DRAGON_APP_KEY"],
         verbose: Rails.env.development?
       })
       transcribe_file(audio)
     end
   end
-    
+
   def normalize_document_chunk_scores(document)
     document.chunks.group_by(&:position).each do |position, grouped_chunks|
       levenshtein_array = grouped_chunks.each_index.inject([]) do |column, column_index|
@@ -139,15 +139,15 @@ module Workers::Ingest::AudioWorkerHelper
       end
     end
   end
-  
+
   # S3
-  
+
   def s3_copy_object(source_bucket_name, destination_bucket_name, source_key, destination_key = nil)
     s3 = AWS::S3.new
     destination_key = source_key if destination_key.blank?
     s3.buckets[source_bucket_name].objects[source_key].copy_to(destination_key, :bucket_name => destination_bucket_name)
   end
-  
+
   def s3_download_object(source_bucket_name, source_key, destination_filename)
     s3 = AWS::S3.new
     File.open(destination_filename, 'wb') do |file|
@@ -156,7 +156,7 @@ module Workers::Ingest::AudioWorkerHelper
       end
     end
   end
-  
+
   def s3_copy_object_if_exists(source_bucket_name, destination_bucket_name, source_key, destination_key = nil)
     s3 = AWS::S3.new
     destination_key = source_key if destination_key.blank?
@@ -164,13 +164,13 @@ module Workers::Ingest::AudioWorkerHelper
       s3.buckets[source_bucket_name].objects[source_key].copy_to(destination_key, :bucket_name => destination_bucket_name)
     end
   end
-  
-  def s3_delete_object(bucket_name, key) 
+
+  def s3_delete_object(bucket_name, key)
     s3 = AWS::S3.new
     s3.buckets[bucket_name].objects.delete(key)
   end
 
-  def s3_delete_object_if_exists(bucket_name, key) 
+  def s3_delete_object_if_exists(bucket_name, key)
     s3 = AWS::S3.new
     if bucket_name.present? && key.present? && s3.buckets[bucket_name].objects[key].exists?
       s3.buckets[bucket_name].objects.delete(key)
@@ -179,11 +179,11 @@ module Workers::Ingest::AudioWorkerHelper
   rescue AWS::S3::Errors::NoSuchKey => ex
     false
   end
-  
+
   def s3_upload_object(local_file, bucket_name, key = nil)
     s3 = AWS::S3.new
     AWS.config.http_handler.pool.empty!
-    
+
     key = File.basename(local_file) unless key
     Rails.logger.info "-->> start s3 upload: #{local_file}, #{bucket_name}, #{key}"
     if false
@@ -193,11 +193,16 @@ module Workers::Ingest::AudioWorkerHelper
     end
     Rails.logger.info "-->> finished s3 upload: #{local_file}, #{bucket_name}, #{key}"
   end
-  
-  # ffmpeg
-  
+
+  #-- ffmpeg
+
   def ffmpeg_convert_to_mp3(source_file, mp3_file)
-    cmd = "ffmpeg -y -i #{source_file} -f mp2 -b #{@mp3_bitrate}k #{mp3_file}   >/dev/null 2>&1"
+    # https://trac.ffmpeg.org/wiki/Encode/MP3
+    # ffmpeg -i input.wav -codec:a libmp3lame -qscale:a 2 output.mp3
+    # ffmpeg -i input.wav -codec:a libmp3lame -b:a 128k output.mp3
+    # => ffmpeg -i input.avi -vn -ar 44100 -ac 2 -ab 192 -f mp3 output.mp3
+    # cmd = "ffmpeg -y -i #{source_file} -f mp2 -b #{@mp3_bitrate}k #{mp3_file}   >/dev/null 2>&1"
+    cmd = "ffmpeg -y -i #{source_file} -vn -ab #{@mp3_bitrate}k -f mp3 #{mp3_file}   >/dev/null 2>&1"
 
     Rails.logger.info "-> $ #{cmd}"
     if system(cmd)
@@ -206,7 +211,7 @@ module Workers::Ingest::AudioWorkerHelper
       raise "Failed converting audio to mp3 with bitrate #{@mp3_bitrate}k: #{source_file}\n#{cmd}"
     end
   end
-  
+
   def ffmpeg_convert_to_wav_and_strip_audio_channel(input_file, output_file)
     cmd = "ffmpeg -i #{input_file} -y -f wav -ac 1 #{output_file}   >/dev/null 2>&1"
 
@@ -217,7 +222,7 @@ module Workers::Ingest::AudioWorkerHelper
       raise "Failed convert audio to wav and strip audio channel: #{input_file}\n#{cmd}"
     end
   end
-  
+
   def ffmpeg_downsample_and_convert_to_pcm(input_file, output_file)
     cmd = "ffmpeg -i #{input_file} -ar 16000 -y -f s16le -acodec pcm_s16le #{output_file}"
 
@@ -240,14 +245,14 @@ module Workers::Ingest::AudioWorkerHelper
     end
   end
 
-  # SOX
-  
+  #-- SOX
+
   def sox_normalize_audio(input_file, output_file)
     cmd = "sox #{input_file} #{output_file} \\" +
       "remix - \\" +
       "highpass 100 \\" +
       "norm \\" +
-      "compand 0.05,0.2 6:-54,-90,-36,-36,-24,-24,0,-12 0 -90 0.1 \\" + 
+      "compand 0.05,0.2 6:-54,-90,-36,-36,-24,-24,0,-12 0 -90 0.1 \\" +
       "vad -T 0.6 -p 0.2 -t 5 \\" +
       "fade 0.1 \\" +
       "reverse \\" +
@@ -264,8 +269,8 @@ module Workers::Ingest::AudioWorkerHelper
     end
   end
 
-  # QIO noise reduction
-  
+  #-- QIO noise reduction
+
   def qio_silence_flags(input_file, output_file)
     vad_params = if @vad_silence_segments == 25 && @vad_noise_reduce
       "-S 1 -Length 25 \\" +
@@ -280,10 +285,10 @@ module Workers::Ingest::AudioWorkerHelper
       "-VADweights #{ENV['AURORACALC']}/parameters/vad/net.tim-fin-tic-spn-rand.54i+50h+2o.mel-delay+dct+lpf.wts.head \\" +
       "-VADnorm #{ENV['AURORACALC']}/parameters/vad/tim-fin-tic-spn-rand.mel-delay+dct+lpf.norms \\"
     end
-    
+
     cmd = "silence_flags \\" +
       vad_params +
-      "-fs 16000 \\" + 
+      "-fs 16000 \\" +
       "-swapin 0 \\" +
       "-i #{input_file} -o #{output_file} "
 
@@ -301,7 +306,7 @@ module Workers::Ingest::AudioWorkerHelper
     else
       "-Length #{@vad_silence_segments} \\"
     end
-    
+
     cmd = "nr -fs 16000 -swapin 0 -swapout 0 \\" +
       length_and_shift +
       "-Ssilfile #{silence_file} \\" +
@@ -315,18 +320,18 @@ module Workers::Ingest::AudioWorkerHelper
     end
   end
 
-  # file management
-  
+  #-- file management
+
   def delete_file_if_exists(file)
     File.delete(file) if file && File.exist?(file) && !Rails.env.development?
   end
-  
+
   def remove_all_s3_objects
     s3_delete_object_if_exists(APP_CONFIG['S3_INBOUND_BUCKET'], @ingest.upload.s3_key) if @ingest.upload
     s3_delete_object_if_exists(APP_CONFIG['S3_OUTBOUND_BUCKET'], @ingest.track.s3_key) if @ingest.track
     s3_delete_object_if_exists(APP_CONFIG['S3_OUTBOUND_BUCKET'], @ingest.track.s3_mp3_key) if @ingest.track
   end
-  
+
   def exception_logger(exception)
     errors = ""
     errors += ("=" * 80) + "\n"
@@ -337,7 +342,7 @@ module Workers::Ingest::AudioWorkerHelper
     log!(@ingest.stage || :errors, errors) if @ingest
     Rails.logger.error errors
   end
-  
+
   def when_liberated
     return unless @ingest
     counter = 0
@@ -349,9 +354,9 @@ module Workers::Ingest::AudioWorkerHelper
     end
     yield unless @ingest.busy?
   end
-  
+
   def liberate!
-    @ingest.update_attributes(busy: false) if @ingest 
+    @ingest.update_attributes(busy: false) if @ingest
   end
-  
+
 end

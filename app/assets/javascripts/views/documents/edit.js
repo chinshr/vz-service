@@ -118,10 +118,10 @@ App.Views.DocumentsEdit = Backbone.View.extend({
     }, this));
 
     console.log('stream URL -> ' + this.model.attributes.track.mp3_stream_url);
-    // this.wavesurfer.load(this.model.attributes.track.mp3_stream_url);
+    this.wavesurfer.load(this.model.attributes.track.mp3_stream_url);
     // this.wavesurfer.load("http://localhost:3000/6s8l775jqc.128.mp3");
     // this.wavesurfer.load("http://localhost:3000/samples/i-like-pickles.wav");
-    this.wavesurfer.load("https://s3-eu-west-1.amazonaws.com/soundmites/f5/4779e0c3a111e3b368f97e5bff4d34/coincidence.mp3");
+    // this.wavesurfer.load("https://s3-eu-west-1.amazonaws.com/soundmites/f5/4779e0c3a111e3b368f97e5bff4d34/coincidence.mp3");
   },
 
   initEditor: function() {
