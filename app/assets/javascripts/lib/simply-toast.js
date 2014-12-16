@@ -1,7 +1,5 @@
-(function()
-{
-  $.notify = function(message, type, options)
-  {
+(function() {
+  $.notify = function(message, type, options) {
     options = $.extend(true, {}, $.notify.defaultOptions, options);
 
     var html = '<div class="simply-toast alert alert-' + (type ? type : options.type) + ' ' + (options.customClass ? options.customClass : '') +'">';
@@ -16,8 +14,7 @@
       return offsetSum = Math.max(offsetSum, parseInt($(this).css(options.offset.from)) + this.offsetHeight + options.spacing);
     });
 
-    var css =
-    {
+    var css = {
       'position': (options.appendTo === 'body' ? 'fixed' : 'absolute'),
       'margin': 0,
       'z-index': '9999',
@@ -31,8 +28,7 @@
     var $alert = $(html).css(css)
               .appendTo(options.appendTo);
 
-    switch (options.align)
-    {
+    switch (options.align) {
       case "center":
         $alert.css(
         {
@@ -46,17 +42,15 @@
       default:
         $alert.css("right", "20px");
     }
-    
+
     if($alert.fadeIn) $alert.fadeIn();
     else $alert.css({display: 'block', opacity: 1});
-    
-    function removeAlert()
-    {
+
+    function removeAlert() {
       $.notify.remove($alert);
     }
 
-    if(options.delay > 0)
-    {
+    if(options.delay > 0) {
       setTimeout(removeAlert, options.delay);
     }
 
@@ -65,8 +59,7 @@
     return $alert;
   };
 
-  $.notify.remove = function($alert)
-  {
+  $.notify.remove = function($alert) {
     if($alert.fadeOut)
     {
       return $alert.fadeOut(function()

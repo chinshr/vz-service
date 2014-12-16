@@ -131,6 +131,16 @@ App.Views.DocumentsEdit = Backbone.View.extend({
       'styles': '/assets/web/quill-title-editor.css'
     });
 
+    this.titleEditor.on('text-change', (function(_this) {
+      return function(delta, source) {
+        if (source == 'api') {
+          console.log("An API call triggered this change.");
+        } else if (source == 'user') {
+          _this.saving();
+        }
+      };
+    })(this));
+
     this.contentEditor = new Quill('#content-editor', {
       'modules': {
         'toolbar': {
@@ -139,6 +149,16 @@ App.Views.DocumentsEdit = Backbone.View.extend({
       },
       'styles': '/assets/web/quill-content-editor.css'
     });
+
+    this.contentEditor.on('text-change', (function(_this) {
+      return function(delta, source) {
+        if (source == 'api') {
+          console.log("An API call triggered this change.");
+        } else if (source == 'user') {
+          _this.saving();
+        }
+      };
+    })(this));
 
     this.contentEditor.addContainer('spacer-container');
     this.contentEditor.onModuleLoad('toolbar', function(toolbar) {
@@ -278,6 +298,25 @@ App.Views.DocumentsEdit = Backbone.View.extend({
     if (action && action in this.wsHandlers) {
       _.bind(this.wsHandlers[action], this)(e);
     }
+  },
+
+  saving: function() {
+    this.stopSaving();
+    this.saveInterval = setInterval((function(_this) {
+      return function() {
+        console.log("=> about to save.");
+        return _this.save();
+      };
+    })(this), 1000);
+  },
+
+  stopSaving: function() {
+    return window.clearInterval(this.saveInterval);
+  },
+
+  save: function() {
+    $.notify("Document saved.", "warning");
+    this.stopSaving();
   },
 
 });

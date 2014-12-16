@@ -44,7 +44,7 @@ $.extend(true, $.notify.defaultOptions, {
 
 $.extend({
   /*
-   *  E.g. $.alert("This is an error!", "error");
+   *  E.g. $.alert("This is an error!", {"title": "error"});
    */
   alert: function(text, options) {
     options = _.extend(options || {}, {});
