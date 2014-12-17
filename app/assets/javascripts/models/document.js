@@ -11,7 +11,7 @@ App.Models.Document = Backbone.Model.extend({
 
   toJSON: function() {
     return {
-      upload: _.clone(this.attributes) 
+      document: _.clone(this.attributes) 
     }
   },
 

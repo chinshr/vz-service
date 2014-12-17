@@ -7,13 +7,12 @@ App.Views.DocumentsEdit = Backbone.View.extend({
 
   initialize: function() {
     $(document).on('click', _.bind(this.playerToolbarHandler, this));
-    this.listenTo(this.model, 'change', this.render);
-
     this.model.fetch({
       success: (function(_this) {
         return function(model, response, options) {
           console.log("=> fetched: success");
           _this.model.ok = true;
+          _this.listenTo(_this.model, 'change', _this.saving);
           _this.render();
         }
       })(this),
@@ -136,7 +135,8 @@ App.Views.DocumentsEdit = Backbone.View.extend({
         if (source == 'api') {
           console.log("An API call triggered this change.");
         } else if (source == 'user') {
-          _this.saving();
+          _this.model.set({title: $.trim(this.getText())})
+          //_this.saving();
         }
       };
     })(this));
@@ -315,8 +315,18 @@ App.Views.DocumentsEdit = Backbone.View.extend({
   },
 
   save: function() {
-    $.notify("Document saved.");
     this.stopSaving();
-  },
-
+    this.model.sync('update', this.model, {
+      success: (function(_this) {
+        return function(data) {
+          $.notify("Document saved.");
+        };
+      })(this),
+      error: (function(_this) {
+        return function(model) {
+          $.notify("Error when saving document.", 'error');
+        };
+      })(this)
+    });
+  }
 });
