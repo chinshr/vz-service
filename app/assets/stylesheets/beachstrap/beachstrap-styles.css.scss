@@ -170,7 +170,6 @@ nav {
   }
 }
 
-
 /* ====================== MAIN ========================= */
 
 #main {
@@ -458,47 +457,30 @@ footer{
 /* Extra small devices (phones, up to 480px) */
 /* No media query since this is the default in Bootstrap */
 
-@media (max-width: 480px) {
+@media only screen and (min-width: 1024px) and (max-width: 1199px){
+  /* iPad Landscape */
+}
+
+@media only screen and (min-width: 768px) and (max-width: 1023px) {
+  /* iPad Portrait */
   header {
-    min-height:50px;
+    nav ul.nav {
+      font-size: 15px !important;
 
-    h1#logo {
-      position: relative;
-      top:-6px;
+      li {
+        padding-left: 10px !important;
+        padding-right: 10px !important;
+      }
+
+      li:nth-child(4) {
+        display: none;
+      }
     }
-
-    a.mini-nav{
-      position: relative;
-      top:-8px;
-      /* 	line-height: 0; */
-    }
-  }
-
-  #main {
-    min-height:500px !important;
-
-    .cont-wrapper{
-      top:100px;
-    }
-
-    p.intro {
-      text-align: center;
-      font-size:32px;
-      line-height:38px;
-    }
-  }
-
-  .btn-db {
-    margin-top:10px;
-  }
-
-  footer p, footer .sn-links {
-    text-align: center;
   }
 }
 
-@media (max-width:991px) {
-
+@media only screen and (min-width: 480px) and (max-width: 767px){
+  /* iPhone Portrait /*
   header {
     a.mini-nav {
       font-size: 28px;
@@ -513,9 +495,9 @@ footer{
       margin-top:40px;
       display: none;
     }
-    
+
     nav ul.nav {
-      li{
+      li {
         display: block;
         text-align: center;
         margin:0;
@@ -523,17 +505,16 @@ footer{
         width: 100%;
         border-top:1px solid rgba(255, 255, 255, 0.2);
 
-        &:hover{
+        &:hover {
           background: rgba(0.255, 0.255, 0.255, 0.2);
         }
 
-        a{
+        a {
           display: block;
           width:100%;
         }
       }
     }
-
   }
 
   h1 {
@@ -604,6 +585,68 @@ footer{
   }
 }
 
+@media only screen and (min-width: 0px) and (max-width: 479px){
+  /* iPhone all */
+  header {
+    nav ul.nav {
+      li {
+        position: relative !important;
+        display: block !important;
+      }
+    }
+  }
+}
+
+@media only screen and (min-width: 0px) and (max-width: 479px){
+  /* iPhone Landscape */
+  header {
+    min-height:50px;
+
+    nav ul.nav {
+      li {
+        position: relative !important;
+        display: block !important;
+      }
+    }
+
+    h1#logo {
+      position: relative;
+      top:-6px;
+    }
+
+    a.mini-nav {
+      position: relative;
+      top:-8px;
+      /*  line-height: 0; */
+    }
+  }
+
+  #main {
+    min-height:500px !important;
+
+    .cont-wrapper{
+      top:100px;
+    }
+
+    p.intro {
+      text-align: center;
+      font-size:32px;
+      line-height:38px;
+    }
+  }
+
+  .btn-db {
+    margin-top:10px;
+  }
+
+  footer p, footer .sn-links {
+    text-align: center;
+  }
+}
+
+@media (max-width:768px) {
+}
+
 /* Small devices (tablets, 768px and up) */
 @media (min-width: 768px) {
   #home {
@@ -612,4 +655,3 @@ footer{
     }
   }
 }
-

@@ -2,11 +2,12 @@ App.Views.DocumentsEdit = Backbone.View.extend({
   template: JST['documents/edit'],
 
   events: {
-    'keydown #document': 'playerKeyboardHandler',
+//    'keydown #document': 'playerKeyboardHandler',
   },
 
   initialize: function() {
     $(document).on('click', _.bind(this.playerToolbarHandler, this));
+    $(document).on('keydown', _.bind(this.playerKeyboardHandler, this));
     this.model.fetch({
       success: (function(_this) {
         return function(model, response, options) {
@@ -213,7 +214,11 @@ App.Views.DocumentsEdit = Backbone.View.extend({
     }
   },
 
-  wsHandlers: {
+  keyboardMap: [
+    {key: 32, metaKey: true, shiftKey: true, action: 'toggle-play-pause'}
+  ],
+
+  eventHandlers: {
     'toggle-play-pause': function (event) {
       if ($(event.target).hasClass('fa-play')) {
         $(event.target).addClass('fa-pause').removeClass('fa-play');
@@ -278,25 +283,26 @@ App.Views.DocumentsEdit = Backbone.View.extend({
     }
   },
 
-  playerKeyboardHandler: function(e) {
+  playerKeyboardHandler: function(event) {
     var map = {
       // 32: 'toggle-play-pause',       // space  NOTE: took this out as it interfers on other pages
-      // 37: 'step-backward',       // left
-      // 39: 'step-forward'       // right
+      // 37: 'step-backward',           // left
+      // 39: 'step-forward'             // right
     };
 
-    if (e.keyCode in map) {
-      console.log(e.keyCode);
-      var handler = this.wsHandlers[map[e.keyCode]];
-      e.preventDefault();
-      handler && _.bind(handler, this)(e);
+    console.log("=> key: " + event.keyCode + " key");
+    if (event.keyCode in map) {
+      console.log("=> match: " + event.keyCode + " with '" + map[event.keyCode] + "'");
+      var handler = this.eventHandlers[map[event.keyCode]];
+      event.preventDefault();
+      handler && _.bind(handler, this)(event);
     }
   },
 
-  playerToolbarHandler: function (e) {
-    var action = e.target.dataset && e.target.dataset.action;
-    if (action && action in this.wsHandlers) {
-      _.bind(this.wsHandlers[action], this)(e);
+  playerToolbarHandler: function (event) {
+    var action = event.target.dataset && event.target.dataset.action;
+    if (action && action in this.eventHandlers) {
+      _.bind(this.eventHandlers[action], this)(event);
     }
   },
 
