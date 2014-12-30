@@ -128,7 +128,7 @@ form {
 @import 'application-header';
 
 header {
-  background-color: rgba(21.255, 26.255, 40.255, 0.8);
+  background-color: rgba(21, 26, 40, 0.8);
 }
 
 nav {
@@ -137,7 +137,7 @@ nav {
       height: 70px;
 
       &.active {
-        background-color: rgba(55, 61, 68, 0.8) !important;
+        xbackground-color: rgba(55, 61, 68, 0.8) !important;
       }
     }
   }
@@ -465,7 +465,7 @@ footer{
   /* iPad Portrait */
   header {
     nav ul.nav {
-      font-size: 15px !important;
+      font-size: 16px !important;
 
       li {
         padding-left: 10px !important;
@@ -585,13 +585,25 @@ footer{
   }
 }
 
-@media only screen and (min-width: 0px) and (max-width: 479px){
-  /* iPhone all */
+@media only screen and (min-width: 0px) and (max-width: 768px){
+  /* when menu is minimized */
   header {
-    nav ul.nav {
-      li {
-        position: relative !important;
-        display: block !important;
+    nav {
+      xbackground-color: rgba(55, 61, 68, 0.8) !important;
+      .collapse {
+      }
+
+      ul.nav {
+        li {
+          padding: 15px !important;
+          height: auto !important;
+
+          a {
+            border: 0 !important;
+          }
+          position: relative !important;
+          display: block !important;
+        }
       }
     }
   }
