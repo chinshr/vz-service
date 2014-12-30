@@ -156,7 +156,9 @@ App.Views.DocumentsEdit = Backbone.View.extend({
         if (source == 'api') {
           console.log("An API call triggered this change.");
         } else if (source == 'user') {
-          _this.saving();
+          _this.model.set({content: $.trim(this.getHTML())})
+
+          // _this.saving();
         }
       };
     })(this));

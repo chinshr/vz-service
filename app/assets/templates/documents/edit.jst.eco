@@ -8,7 +8,7 @@
     </div><!-- title-editor-container -->
     <div class="content-editor-container">
       <div id="content-editor" class="content-holder editor">
-        <%= @content %>
+        <%- @content %>
       </div>
     </div><!-- .content-editor-container -->
   </div><!-- .document-container -->

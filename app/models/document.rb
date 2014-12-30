@@ -89,6 +89,19 @@ class Document < ActiveRecord::Base
   end
 =end
 
+  def html
+  end
+
+  def rich_text
+    [
+      {value: "Hello World", attributes: {offset: 1232234, duration: 123}}
+    ]
+  end
+
+  def text
+    # nokogiri
+  end
+
   protected
 
   def generate_slug
