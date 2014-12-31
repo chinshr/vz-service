@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140925203539) do
+ActiveRecord::Schema.define(version: 20141230010509) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -90,8 +90,9 @@ ActiveRecord::Schema.define(version: 20140925203539) do
     t.string   "locale",       limit: 5, default: "en-US", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.text     "content"
+    t.text     "html"
     t.integer  "user_id"
+    t.text     "rich_text"
   end
 
   add_index "documents", ["created_at"], name: "index_documents_on_created_at", using: :btree

@@ -5,7 +5,7 @@
 <div id="content-editor-container" class="well">
   <h1><%= @document.title %></h1>
   <div id="inline-content" class="<%= edit ? 'editor' : '' %>">
-    <%= @document.content %>
+    <%= raw(@document.html) %>
   </div>
 </div>
 <% else %>

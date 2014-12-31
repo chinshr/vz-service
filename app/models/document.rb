@@ -1,8 +1,13 @@
+require "fuzzy_match"
+require "matrix"
+
 class Document < ActiveRecord::Base
   include Model::Filter
 
   SLUG_LENGTH      = 6
   PRIVACY_SETTINGS = {'public' => 0, 'private' => 1, 'unlisted' => 2}
+
+  serialize :rich_text, Array
 
   belongs_to :user
   has_many :ingests, as: :ingestable
@@ -83,24 +88,47 @@ class Document < ActiveRecord::Base
     chunks.sum(:duration)
   end
 
+  def update_content_from(grouped_chunks)
+    self.update_attributes(html: grouped_chunks.text, rich_text: grouped_chunks.rich_text)
+  end
+
+  def normalize_chunk_scores!
+    self.chunks.group_by(&:position).each do |position, grouped_chunks|
+      levenshtein_array = grouped_chunks.each_index.inject([]) do |column, column_index|
+        column << grouped_chunks.each_index.inject([]) do |row, row_index|
+          row << if grouped_chunks[column_index].text && grouped_chunks[row_index].text
+            grouped_chunks[column_index].text.levenshtein_similar(grouped_chunks[row_index].text)
+          else
+            0.0
+          end
+        end
+      end
+
+      levenshtein_matrix = Matrix.rows(levenshtein_array)
+      combined_word_count = grouped_chunks.map(&:text).inject(0) {|r, e| r += e.to_s.split.size}
+      eigen_array = grouped_chunks.each_index.inject([]) do |v, index|
+        v << (combined_word_count.to_f > 0 ? grouped_chunks[index].text.to_s.split.size / combined_word_count.to_f : 1.0)
+      end
+      eigen_vector = Vector.elements(eigen_array, true)
+      score_vector = levenshtein_matrix * eigen_vector
+
+      # update chunk score
+      score_vector.each_with_index do |vector_score, index|
+        grouped_chunks[index].score = vector_score
+        grouped_chunks[index].save if grouped_chunks[index].changed?
+      end
+    end
+  end
+
 =begin
-  def content
-    chunks.best.text
+  def rich_text=(value)
+    if value.is_a?(String)
+      self.serialized_attributes["rich_text"] = JSON.parse(value, {symbolize_names: false})
+    else
+      self.serialized_attributes["rich_text"] = value
+    end
   end
 =end
-
-  def html
-  end
-
-  def rich_text
-    [
-      {value: "Hello World", attributes: {offset: 1232234, duration: 123}}
-    ]
-  end
-
-  def text
-    # nokogiri
-  end
 
   protected
 

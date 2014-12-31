@@ -140,4 +140,59 @@ class DocumentTest < ActiveSupport::TestCase
     assert_equal @track2, @document.track
   end
 
+  should "set/get content as rich_text array structure" do
+    document = FactoryGirl.create(:document)
+    assert_equal [], document.rich_text
+    hash = {"insert" => "Das ist", "attributes" => {"offset" => 0, "duration" => 1.2}}
+    document.rich_text << hash
+    document.save
+    document = Document.find(document.id)
+    assert_equal hash, document.rich_text.first
+  end
+
+  should "set/get content as rich_text with attributes" do
+    document = FactoryGirl.create(:document)
+    array = [{"insert" => "Das ist", "attributes" => {"offset" => 0, "duration" => 1.2}}]
+    document.attributes = {"rich_text" => array}
+    document.save
+    document = Document.find(document.id)
+    assert_equal array, document.rich_text
+  end
+
+  should "set/get content as html" do
+    document = FactoryGirl.create(:document, html: "Hello <b>World</b><i>!</i>")
+    assert_equal "Hello <b>World</b><i>!</i>", document.html
+  end
+
+  context "chunks" do
+    setup do
+      @document = FactoryGirl.create(:document)
+      Document::Chunk::GoogleSpeech.create(:position => 1, :offset => 0,  :text => "I hate to say", :score => 0.80, :document => @document)
+      Document::Chunk::GoogleSpeech.create(:position => 2, :offset => 10, :text => "that macaronies are", :score => 0.65, :document => @document)
+      Document::Chunk::GoogleSpeech.create(:position => 3, :offset => 20, :text => "the best food in the world", :score => 0.85, :document => @document)
+
+      Document::Chunk::AttSpeech.create(:position => 1, :offset => 0,  :text => "I have to pray", :score => 0.70, :document => @document)
+      Document::Chunk::AttSpeech.create(:position => 2, :offset => 10, :text => "cat maths are", :score => 0.70, :document => @document)
+      Document::Chunk::AttSpeech.create(:position => 3, :offset => 20, :text => "the best mushrooms in the whirlwind.", :score => 0.95, :document => @document)
+
+      Document::Chunk::NuanceDragon.create(:position => 1, :offset => 0,  :text => "I have say", :score => 0, :document => @document)
+      Document::Chunk::NuanceDragon.create(:position => 2, :offset => 10,  :text => "that some macaronies are", :score => 0, :document => @document)
+      Document::Chunk::NuanceDragon.create(:position => 3, :offset => 20,  :text => "the cesty food in the world", :score => 0, :document => @document)
+    end
+
+    should "normalize chunk scores" do
+      assert_equal "the best mushrooms in the whirlwind.", @document.chunks.order(score: :desc).first.text
+      @document.normalize_chunk_scores!
+      assert_equal "the best food in the world", @document.chunks.order(score: :desc).first.text
+    end
+
+    should "update from chunks" do
+      @document.normalize_chunk_scores!
+
+      @document.update_content_from @document.chunks.best
+      assert_equal [{:insert=>"I hate to say"}, {:insert=>"that macaronies are"}, {:insert=>"the best food in the world"}], 
+        @document.rich_text
+    end
+  end
+
 end

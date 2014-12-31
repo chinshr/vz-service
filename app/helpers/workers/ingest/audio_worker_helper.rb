@@ -112,34 +112,6 @@ module Workers::Ingest::AudioWorkerHelper
     end
   end
 
-  def normalize_document_chunk_scores(document)
-    document.chunks.group_by(&:position).each do |position, grouped_chunks|
-      levenshtein_array = grouped_chunks.each_index.inject([]) do |column, column_index|
-        column << grouped_chunks.each_index.inject([]) do |row, row_index|
-          row << if grouped_chunks[column_index].text && grouped_chunks[row_index].text
-            grouped_chunks[column_index].text.levenshtein_similar(grouped_chunks[row_index].text)
-          else
-            0.0
-          end
-        end
-      end
-
-      levenshtein_matrix = Matrix.rows(levenshtein_array)
-      combined_word_count = grouped_chunks.map(&:text).inject(0) {|r, e| r += e.to_s.split.size}
-      eigen_array = grouped_chunks.each_index.inject([]) do |v, index|
-        v << (combined_word_count.to_f > 0 ? grouped_chunks[index].text.to_s.split.size / combined_word_count.to_f : 1.0)
-      end
-      eigen_vector = Vector.elements(eigen_array, true)
-      score_vector = levenshtein_matrix * eigen_vector
-
-      # update chunk score
-      score_vector.each_with_index do |vector_score, index|
-        grouped_chunks[index].score = vector_score
-        grouped_chunks[index].save if grouped_chunks[index].changed?
-      end
-    end
-  end
-
   # S3
 
   def s3_copy_object(source_bucket_name, destination_bucket_name, source_key, destination_key = nil)

@@ -91,7 +91,8 @@ class Api::DocumentsControllerTest < ActionController::TestCase
     should "update user 2's document when signed in as user 2" do
       sign_in :user, @user2
       put :update, {:id => @document2.id, :document => {:title => "La fiesta!", :description => "Entrevista en la fiesta.",
-        :tag_list => ["entrevista", "fiesta"], locale: "es-AR", :privacy => "private", :content => "Es el contenido."}, format: :json}
+        :tag_list => ["entrevista", "fiesta"], locale: "es-AR", :privacy => "private", :html => "<p>Es el contenido.</p>",
+        :rich_text => '[{"insert": "Es el contenido", "attributes": {"offset": 0, "duration": 1.5}}]'}, format: :json}
       assert_response :success
       assert_response_body_attributes_with "document"
       assert_equal "La fiesta!", @document2.reload.title
@@ -99,7 +100,8 @@ class Api::DocumentsControllerTest < ActionController::TestCase
       assert_equal ["entrevista", "fiesta"], @document2.reload.tag_list
       assert_equal "es-AR", @document2.reload.locale
       assert_equal ["private"], @document2.reload.privacy
-      assert_equal "Es el contenido.", @document2.reload.content
+      assert_equal "<p>Es el contenido.</p>", @document2.reload.html
+      assert_equal [{"insert" => "Es el contenido", "attributes" => {"offset" => 0, "duration" => 1.5}}], @document2.reload.rich_text
     end
 
     should "NOT update when no user is signed in " do
@@ -149,7 +151,7 @@ class Api::DocumentsControllerTest < ActionController::TestCase
   protected
 
   def assert_attributes(params, expected_attributes = {})
-    (expected_attributes.keys + %w(id title description)).each do |attribute|
+    (expected_attributes.keys + %w(id title description html rich_text)).each do |attribute|
       assert params.has_key?(attribute), "should containt key '#{attribute}' in response '#{params}'"
     end
 

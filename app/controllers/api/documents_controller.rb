@@ -1,7 +1,7 @@
 class Api::DocumentsController < Api::ApplicationController
   include Pundit
   before_action :load_document, :only => [:show, :edit, :update, :destroy]
-  
+
   # [GET] /api/documents(.:format)
   def index
     @documents = Document.with_user_privacy(current_user).filter(params)
@@ -36,6 +36,12 @@ class Api::DocumentsController < Api::ApplicationController
   protected
 
   def update_params
-    params.require(:document).permit(:title, :description, {:tag_list => []}, :locale, :privacy, :content)
+    @update_params ||= begin
+      ps = params.require(:document).permit(:title, :description, {:tag_list => []},  :locale, :privacy, :html, :rich_text)
+      if raw = ps.try(:[], :rich_text)
+        ps[:rich_text] = JSON.parse(raw, {symbolize_names: false}) if raw.is_a?(String)
+      end
+      ps.to_hash
+    end
   end
 end

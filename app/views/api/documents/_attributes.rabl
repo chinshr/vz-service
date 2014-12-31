@@ -1,1 +1,1 @@
-attributes :id, :title, :description, :content
+attributes :id, :title, :description, :html, :rich_text

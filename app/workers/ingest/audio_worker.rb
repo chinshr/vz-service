@@ -165,17 +165,21 @@ class Ingest::AudioWorker
       # Remove previous chunks (in case we reprocessing)
       @ingest.ingestable.chunks.destroy_all
 
-      # Start the stranscription with normalization
+      # Start the transcription with normalization
       transcribe = Transcribe.new(@ingest, :chunk_size => @chunk_size,
         :chunk_timeout => 15, :progress_thresholds => STAGES[:transcribe])
       transcribe.perform(noise_reduced_wav_audio_file_fullpath)
 
       # Normalize chunk scores
-      normalize_document_chunk_scores(@ingest.ingestable)
+      @ingest.ingestable.normalize_chunk_scores
+      #normalize_document_chunk_scores(@ingest.ingestable)
 
-      # Update document
-      content = @ingest.ingestable.chunks.best.text # @ingest.ingestable.chunks.map {|sg| sg.text ? sg.text.strip : nil}.compact.join(" ")
-      @ingest.ingestable.update_attribute(:content, content)
+      # Update document content
+      #content = @ingest.ingestable.chunks.best.text # @ingest.ingestable.chunks.map {|sg| sg.text ? sg.text.strip : nil}.compact.join(" ")
+
+      @ingest.ingestable.update_content_from(@ingest.ingestable.chunks.best)
+
+      #@ingest.ingestable.update_attribute(:content, content)
 
       # Sweep files we don't need anymore
       delete_file_if_exists normalized_audio_file_fullpath
