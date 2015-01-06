@@ -53,7 +53,13 @@ class Document::Chunk < ActiveRecord::Base
     end
 
     def rich_text
-      self.all.map {|c| {insert: c.text}}
+      self.all.map do |chunk|
+        json = {"insert" => chunk.text, "attributes" => {"offset" => chunk.offset}}
+        json["attributes"]["duration"] = chunk.duration if chunk.duration
+        json["attributes"]["start_time"] = chunk.start_time if chunk.start_time
+        json["attributes"]["end_time"] = chunk.end_time if chunk.end_time
+        json
+      end
     end
   end
 end

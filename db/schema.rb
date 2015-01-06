@@ -92,7 +92,7 @@ ActiveRecord::Schema.define(version: 20141230010509) do
     t.datetime "updated_at"
     t.text     "html"
     t.integer  "user_id"
-    t.text     "rich_text"
+    t.json     "rich_text"
   end
 
   add_index "documents", ["created_at"], name: "index_documents_on_created_at", using: :btree

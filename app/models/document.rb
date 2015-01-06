@@ -7,8 +7,6 @@ class Document < ActiveRecord::Base
   SLUG_LENGTH      = 6
   PRIVACY_SETTINGS = {'public' => 0, 'private' => 1, 'unlisted' => 2}
 
-  serialize :rich_text, Array
-
   belongs_to :user
   has_many :ingests, as: :ingestable
   has_many :chunks, dependent: :destroy
@@ -119,16 +117,6 @@ class Document < ActiveRecord::Base
       end
     end
   end
-
-=begin
-  def rich_text=(value)
-    if value.is_a?(String)
-      self.serialized_attributes["rich_text"] = JSON.parse(value, {symbolize_names: false})
-    else
-      self.serialized_attributes["rich_text"] = value
-    end
-  end
-=end
 
   protected
 

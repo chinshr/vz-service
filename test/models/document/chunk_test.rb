@@ -4,19 +4,19 @@ class Document::ChunkTest < ActiveSupport::TestCase
   context "associations" do
     should belong_to :document
   end
-  
+
   context "validations" do
     should validate_presence_of :document
     should validate_presence_of :offset
   end
-  
+
   should "have response" do
     segment = FactoryGirl.create(:document_chunk)
     assert_equal 0, segment.response['status']
     assert_equal "I like pickles", segment.text
     assert_equal 0.59, segment.score
   end
-  
+
   context "scopes" do
     setup do
       @document = FactoryGirl.create(:document)
@@ -32,7 +32,7 @@ class Document::ChunkTest < ActiveSupport::TestCase
       @c8 = Document::Chunk::NuanceDragon.create(:position => 2, :offset => 0,  :text => "that some macaronies are", :score => 0.63, :document => @document)
       @c9 = Document::Chunk::NuanceDragon.create(:position => 3, :offset => 0,  :text => "the best food in the world", :score => 0.87, :document => @document)
     end
-    
+
     should "scope best scores" do
       assert_equal 3, @document.chunks.best.count
       assert_equal [@c1, @c5, @c9], @document.chunks.best
@@ -42,7 +42,7 @@ class Document::ChunkTest < ActiveSupport::TestCase
       assert_equal 3, @document.chunks.worst.count
       assert_equal [@c7, @c8, @c6], @document.chunks.worst
     end
-    
+
     should "transform chunks to best text string" do
       assert_equal "I hate to say that macaronies are the best food in the world", @document.chunks.best.text
     end
@@ -50,14 +50,19 @@ class Document::ChunkTest < ActiveSupport::TestCase
     should "transform chunks to worst text string" do
       assert_equal "I have say that some macaronies are the best mushrooms in the whirlwind.", @document.chunks.worst.text
     end
+
+    should "transform chunks to rich_text JSON" do
+      assert_equal [{"insert"=>"I hate to say", "attributes"=>{"offset"=>0}}, {"insert"=>"that macaronies are", "attributes"=>{"offset"=>10}}, {"insert"=>"the best food in the world", "attributes"=>{"offset"=>0}}], @document.chunks.best.rich_text
+    end
+
   end
-  
+
   should "get class from engine name" do
     assert_equal "Document::Chunk::GoogleSpeech", Document::Chunk.type_from_engine_class_for("Speech::Engines::GoogleSpeechEngine")
     assert_equal "Document::Chunk::AttSpeech", Document::Chunk.type_from_engine_class_for("Speech::Engines::AttSpeechEngine")
     assert_equal "Document::Chunk::NuanceDragon", Document::Chunk.type_from_engine_class_for("Speech::Engines::NuanceDragonEngine")
   end
-  
+
   context "speech engines" do
     setup do
       @ingest = FactoryGirl.create(:ingest_audio)
@@ -74,14 +79,14 @@ class Document::ChunkTest < ActiveSupport::TestCase
         :processing_status => 3
       }
     end
-    
+
     should "create GoogleSpeech segment" do
       assert_difference "Document::Chunk::GoogleSpeech.count", 1 do
         @ingest.ingestable.chunks.create(@attributes.merge({:type => "Document::Chunk::GoogleSpeech"}))
         assert_equal Document::Chunk::GoogleSpeech, @ingest.ingestable.chunks.first.class
       end
     end
-    
+
     should "create AttSpeech segment" do
       assert_difference "Document::Chunk::AttSpeech.count", 1 do
         @ingest.ingestable.chunks.create(@attributes.merge({:type => "Document::Chunk::AttSpeech"}))
@@ -95,6 +100,6 @@ class Document::ChunkTest < ActiveSupport::TestCase
         assert_equal Document::Chunk::NuanceDragon, @ingest.ingestable.chunks.first.class
       end
     end
-    
+
   end
 end

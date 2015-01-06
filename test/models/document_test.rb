@@ -141,13 +141,13 @@ class DocumentTest < ActiveSupport::TestCase
   end
 
   should "set/get content as rich_text array structure" do
-    document = FactoryGirl.create(:document)
+    document = FactoryGirl.create(:document, rich_text: [])
     assert_equal [], document.rich_text
     hash = {"insert" => "Das ist", "attributes" => {"offset" => 0, "duration" => 1.2}}
-    document.rich_text << hash
+    document.rich_text = [hash]
     document.save
     document = Document.find(document.id)
-    assert_equal hash, document.rich_text.first
+    assert_equal [hash], document.rich_text
   end
 
   should "set/get content as rich_text with attributes" do
