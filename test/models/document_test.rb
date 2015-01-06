@@ -190,7 +190,7 @@ class DocumentTest < ActiveSupport::TestCase
       @document.normalize_chunk_scores!
 
       @document.update_content_from @document.chunks.best
-      assert_equal [{:insert=>"I hate to say"}, {:insert=>"that macaronies are"}, {:insert=>"the best food in the world"}], 
+      assert_equal [{"insert"=>"I hate to say", "attributes"=>{"offset"=>0}}, {"insert"=>"that macaronies are", "attributes"=>{"offset"=>10}}, {"insert"=>"the best food in the world", "attributes"=>{"offset"=>20}}], 
         @document.rich_text
     end
   end
