@@ -164,6 +164,11 @@ class DocumentTest < ActiveSupport::TestCase
     assert_equal "Hello <b>World</b><i>!</i>", document.html
   end
 
+  should "set/get content as text" do
+    document = FactoryGirl.create(:document, text: "Hello World!")
+    assert_equal "Hello World!", document.text
+  end
+
   context "chunks" do
     setup do
       @document = FactoryGirl.create(:document)
