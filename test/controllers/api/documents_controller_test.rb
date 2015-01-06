@@ -89,10 +89,20 @@ class Api::DocumentsControllerTest < ActionController::TestCase
 
   context "PUT /api/documents/:id" do
     should "update user 2's document when signed in as user 2" do
+      html_content = "<p>Es el contenido.</p>"
+      text_content = "Es el contenido."
+      rich_text_content = {"startLength"=>0, "endLength"=>15, "ops"=>[{"value"=>"Es el contenido.", "attributes"=>{"italic"=>true}}]}
       sign_in :user, @user2
-      put :update, {:id => @document2.id, :document => {:title => "La fiesta!", :description => "Entrevista en la fiesta.",
-        :tag_list => ["entrevista", "fiesta"], locale: "es-AR", :privacy => "private", :html => "<p>Es el contenido.</p>",
-        :rich_text => '[{"insert": "Es el contenido", "attributes": {"offset": 0, "duration": 1.5}}]'}, format: :json}
+      put :update, {:id => @document2.id, :document => {
+        title: "La fiesta!",
+        description: "Entrevista en la fiesta.",
+        tag_list: ["entrevista", "fiesta"],
+        locale: "es-AR",
+        privacy: "private",
+        html: html_content,
+        rich_text: rich_text_content,
+        text: text_content
+      }, format: :json}
       assert_response :success
       assert_response_body_attributes_with "document"
       assert_equal "La fiesta!", @document2.reload.title
@@ -100,8 +110,9 @@ class Api::DocumentsControllerTest < ActionController::TestCase
       assert_equal ["entrevista", "fiesta"], @document2.reload.tag_list
       assert_equal "es-AR", @document2.reload.locale
       assert_equal ["private"], @document2.reload.privacy
-      assert_equal "<p>Es el contenido.</p>", @document2.reload.html
-      assert_equal [{"insert" => "Es el contenido", "attributes" => {"offset" => 0, "duration" => 1.5}}], @document2.reload.rich_text
+      assert_equal html_content, @document2.reload.html
+      assert_equal text_content, @document2.reload.text
+      assert_equal rich_text_content, @document2.reload.rich_text
     end
 
     should "NOT update when no user is signed in " do
@@ -151,7 +162,7 @@ class Api::DocumentsControllerTest < ActionController::TestCase
   protected
 
   def assert_attributes(params, expected_attributes = {})
-    (expected_attributes.keys + %w(id title description html rich_text)).each do |attribute|
+    (expected_attributes.keys + %w(id title description html rich_text text)).each do |attribute|
       assert params.has_key?(attribute), "should containt key '#{attribute}' in response '#{params}'"
     end
 

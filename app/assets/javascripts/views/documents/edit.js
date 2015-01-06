@@ -151,13 +151,20 @@ App.Views.DocumentsEdit = Backbone.View.extend({
       'styles': '/assets/web/quill-content-editor.css'
     });
 
+    if (this.model.attributes.rich_text) {
+      this.contentEditor.setContents(this.model.attributes.rich_text);
+    } else if(this.model.attributes.html) {
+      this.contentEditor.setHTML(this.model.attributes.html);
+    } else if(this.model.attributes.text) {
+      this.contentEditor.setText(this.model.attributes.text);
+    }
+
     this.contentEditor.on('text-change', (function(_this) {
       return function(delta, source) {
         if (source == 'api') {
           console.log("An API call triggered this change.");
         } else if (source == 'user') {
-          _this.model.set({html: $.trim(this.getHTML()), rich_text: this.getContents()})
-
+          _this.model.set({html: $.trim(this.getHTML()), rich_text: this.getContents(), text: this.getText()})
           // _this.saving();
         }
       };

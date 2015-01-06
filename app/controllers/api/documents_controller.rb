@@ -36,12 +36,12 @@ class Api::DocumentsController < Api::ApplicationController
   protected
 
   def update_params
-    @update_params ||= begin
-      ps = params.require(:document).permit(:title, :description, {:tag_list => []},  :locale, :privacy, :html, :rich_text)
-      if raw = ps.try(:[], :rich_text)
-        ps[:rich_text] = JSON.parse(raw, {symbolize_names: false}) if raw.is_a?(String)
-      end
-      ps.to_hash
+    params.require(:document).permit(*whitelisted_keys).tap do |whitelisted|
+      whitelisted[:rich_text] = params[:document][:rich_text] if params[:document][:rich_text]
     end
+  end
+
+  def whitelisted_keys
+    [:title, :description, {:tag_list => []}, :locale, :privacy, :html, :rich_text, :text]
   end
 end
