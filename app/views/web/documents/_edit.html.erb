@@ -1,15 +1,8 @@
 <div class="document-overlay row">
   <div class="col-md-1 gutter">
-    <div class="note-head user-initials" id="188274716" title="Juergen Fesslmeier" data-bucket-number="0" style="opacity: 1; background-color: rgb(242, 44, 68);">JF</div>
+    <div class="note-head user-initials" id="<%= current_user.id %>" title="<%= current_user.name %>" data-bucket-number="0" style="opacity: 1; background-color: rgb(242, 44, 68);"><%= current_user.initials %></div>
   </div><!-- .gutter -->
-  <div class="document-container col-md-10">
-    <div class="title-editor-container">
-      <h1><div id="title-editor" class="editor"><%= @document.title %></div></h1>
-    </div><!-- title-editor-container -->
-    <div class="content-editor-container">
-      <div id="content-editor" class="content-holder editor">
-        <%= @document.content %>
-      </div>
-    </div><!-- .content-editor-container -->
-  </div><!-- .document-container -->
+  <div id="document-container" class="document-container col-md-10">
+    <!-- backbone template -->
+  </div><!-- #document-container .document-container -->
 </div><!-- .document-overlay -->

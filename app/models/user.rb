@@ -59,6 +59,14 @@ class User < ActiveRecord::Base
     confirmed? || confirmation_validation?
   end
 
+  def name
+    [first_name, last_name].reject(&:blank?).join(" ")
+  end
+
+  def initials
+    [first_name.try(:[], 0), last_name.try(:[], 0)].reject(&:blank?).join.upcase
+  end
+
   protected
 
   def has_ip_address?

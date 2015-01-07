@@ -9,6 +9,6 @@ App.Routers.Documents = Backbone.Router.extend({
     this.model = new App.Models.Document({id: id});
     view = new App.Views.DocumentsEdit({model: this.model});
     console.log('=> documents/edit/:' + id);
-    return $('#document-edit').html(view.render().el);
+    return $('#document-container').html(view.render().el);
   }
 });
