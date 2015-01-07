@@ -3,13 +3,13 @@
     <div class="note-head user-initials" id="188274716" title="Juergen Fesslmeier" data-bucket-number="0" style="opacity: 1; background-color: rgb(242, 44, 68);">JF</div>
   </div><!-- .gutter -->
   <div class="document-container col-md-10">
-    <div class="title-editor-container">
+    <div class="title-container title-editor-container">
       <h1><div id="title-editor" class="editor"><%= @title %></div></h1>
-    </div><!-- title-editor-container -->
-    <div class="content-editor-container">
+    </div><!-- title-container title-editor-container -->
+    <div class="content-container content-editor-container">
       <div id="content-editor" class="content-holder editor">
         <%- @content %>
       </div>
-    </div><!-- .content-editor-container -->
+    </div><!-- .content-container .content-editor-container -->
   </div><!-- .document-container -->
 </div><!-- .document-overlay -->

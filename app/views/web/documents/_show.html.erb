@@ -1,0 +1,17 @@
+<div class="document-overlay row">
+  <div class="col-md-1 gutter">
+    <% if false %>
+    <div class="note-head user-initials" id="188274716" title="Juergen Fesslmeier" data-bucket-number="0" style="opacity: 1; background-color: rgb(242, 44, 68);">JF</div>
+    <% end %>
+  </div><!-- .gutter -->
+  <div class="document-container col-md-10">
+    <div class="title-container title-viewer-container">
+      <h1><div id="title-viewer" class="viewer"><%= @document.title %></div></h1>
+    </div><!-- .title-container .title-viewer-container -->
+    <div class="content-container content-viewer-container">
+      <div id="content-viewer" class="content-holder viewer">
+        <%= raw(@document.html) %>
+      </div>
+    </div><!-- .content-editor-container -->
+  </div><!-- .document-container -->
+</div><!-- .document-overlay -->
