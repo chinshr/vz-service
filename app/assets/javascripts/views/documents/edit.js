@@ -142,6 +142,11 @@ App.Views.DocumentsEdit = Backbone.View.extend({
       };
     })(this));
 
+    if (this.model.attributes.title) {
+      // this.titleEditor.setText(this.model.attributes.title);  // v0.9.x
+      this.titleEditor.setHTML(this.model.attributes.title);
+    }
+
     this.contentEditor = new Quill('#content-editor', {
       'modules': {
         'toolbar': {
@@ -199,12 +204,17 @@ App.Views.DocumentsEdit = Backbone.View.extend({
       }
     })(this));
 
-    var keyboard = this.contentEditor.getModule('keyboard');
-    keyboard.addHotkey({key: 32, metaKey: true, shiftKey: true}, function(range) {
-      console.log('user hit Shift+Cmd+Space');
-      return true;   // return false will prevent other listeners from receiving the event
-    });
-
+    var contentEditorKeyboard = this.contentEditor.getModule('keyboard');
+    var titleEditorKeyboard   = this.titleEditor.getModule('keyboard');
+    for (var i = 0; i < this.keyboardEvents.length; i++) {
+      var key = this.keyboardEvents[i];
+      if (key.name && this.eventHandlers[key.name]) {
+        contentEditorKeyboard.addHotkey({key: key.key, metaKey: key.metaKey, shiftKey: key.shiftKey}, 
+          _.bind(this.eventHandlers[key.name], this));
+        titleEditorKeyboard.addHotkey({key: key.key, metaKey: key.metaKey, shiftKey: key.shiftKey}, 
+          _.bind(this.eventHandlers[key.name], this));
+      }
+    }
   },
 
   moveUserInitials: function() {
@@ -223,8 +233,10 @@ App.Views.DocumentsEdit = Backbone.View.extend({
     }
   },
 
-  keyboardMap: [
-    {key: 32, metaKey: true, shiftKey: true, action: 'toggle-play-pause'}
+  keyboardEvents: [
+    {key: 32, ctrlKey: false, altKey: false, metaKey: true, shiftKey: true, name: 'toggle-play-pause'},  // Shift+Cmd+Space
+    {key: 37, ctrlKey: false, altKey: false, metaKey: true, shiftKey: true, name: 'step-backward'},      // Shift+Cmd+Left-Cursor
+    {key: 39, ctrlKey: false, altKey: false, metaKey: true, shiftKey: true, name: 'step-forward'},       // Shift+Cmd+Right-Cursor
   ],
 
   eventHandlers: {
@@ -293,16 +305,11 @@ App.Views.DocumentsEdit = Backbone.View.extend({
   },
 
   playerKeyboardHandler: function(event) {
-    var map = {
-      // 32: 'toggle-play-pause',       // space  NOTE: took this out as it interfers on other pages
-      // 37: 'step-backward',           // left
-      // 39: 'step-forward'             // right
-    };
+    var match = _.where(this.keyboardEvents, {key: event.keyCode, ctrlKey: event.ctrlKey,
+      metaKey: event.metaKey, shiftKey: event.shiftKey, altKey: event.altKey});
 
-    console.log("=> key: " + event.keyCode + " key");
-    if (event.keyCode in map) {
-      console.log("=> match: " + event.keyCode + " with '" + map[event.keyCode] + "'");
-      var handler = this.eventHandlers[map[event.keyCode]];
+    if (match.length > 0) {
+      var handler = this.eventHandlers[match[0].name];
       event.preventDefault();
       handler && _.bind(handler, this)(event);
     }
