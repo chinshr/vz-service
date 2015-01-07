@@ -180,11 +180,35 @@ App.Views.DocumentsEdit = Backbone.View.extend({
       $('#content-editor iframe').contents().find('body').css('overflow', 'hidden');
     });
 
+    this.titleEditor.on('text-change', (function(_this) {
+      return function(delta, source) {
+        // expand window
+        $('#title-editor').height(_this.titleEditor.root.ownerDocument.body.scrollHeight);
+        _this.moveUserInitials(this, 43);
+      }
+    })(this));
+
     this.contentEditor.on('text-change', (function(_this) {
       return function(delta, source) {
         // expand window
         $('#content-editor').height(_this.contentEditor.root.ownerDocument.body.scrollHeight);
-        _this.moveUserInitials();
+        _this.moveUserInitials(this);
+      }
+    })(this));
+
+    this.titleEditor.on('selection-change', (function(_this) {
+      return function(range) {
+        if (range) {
+          if (range.start == range.end) {
+            // console.log('User cursor is on', range.start);
+            _this.moveUserInitials(this, 43);
+          } else {
+            // var text = editor.getText(range.start, range.end);
+            // console.log('User has highlighted', text);
+          }
+        } else {
+          // console.log('Cursor not in the editor');
+        }
       }
     })(this));
 
@@ -193,7 +217,7 @@ App.Views.DocumentsEdit = Backbone.View.extend({
         if (range) {
           if (range.start == range.end) {
             // console.log('User cursor is on', range.start);
-            _this.moveUserInitials();
+            _this.moveUserInitials(this);
           } else {
             // var text = editor.getText(range.start, range.end);
             // console.log('User has highlighted', text);
@@ -217,8 +241,9 @@ App.Views.DocumentsEdit = Backbone.View.extend({
     }
   },
 
-  moveUserInitials: function() {
-    var sel = this.contentEditor.root.ownerDocument.getSelection();
+  moveUserInitials: function(editor, margin) {
+    margin = margin || 103;
+    var sel = editor.root.ownerDocument.getSelection();
     if (sel && sel.rangeCount > 0) {
       var selrg = sel.getRangeAt(0);
       if (selrg) {
@@ -226,7 +251,7 @@ App.Views.DocumentsEdit = Backbone.View.extend({
         if (rects.length > 0) {
           var ui = $(".user-initials");
           ui.stop().animate({
-            top: 100 - (ui.height() / 2) + rects[0].top
+            top: margin - (ui.height() / 2) + rects[0].top
           }, 50);
         }
       }
