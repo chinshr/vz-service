@@ -99,14 +99,24 @@ module Web::ApplicationHelper
   def key_cmd(string, key = nil, modifiers = nil)
     modifiers = [modifiers].flatten
     modifiers = modifiers.inject([]) do |ms, e|
+      # {ctrlKey: false, altKey: false, metaKey: true, shiftKey: true}
       ms << case e
-      when :meta_key then "⌘"
+      when :meta_key  then "⌘"
       when :shift_key then "⇧"
-      when :alt_key then "⌥"
+      when :alt_key   then "⌥"
+      when :ctrl_key  then "⌃"
       end
     end
     modifiers = modifiers.reject(&:blank?).inject('') {|s, m| s += m.to_s}
     key = key.blank? ? "" : (modifiers.blank? ? "(#{key.to_s})" : "(#{modifiers}-#{key})")
     "#{string.to_s.humanize} #{key}".html_safe
+  end
+
+  def edit?
+    action_name == "edit"
+  end
+
+  def show?
+    action_name == "show"
   end
 end

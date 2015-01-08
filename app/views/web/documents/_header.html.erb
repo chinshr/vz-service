@@ -21,6 +21,7 @@
       </div><!-- .navbar-header -->
 
       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <% if edit? %>
         <ul id="content-editor-toolbar-container" class="nav navbar-nav toolbar-nav">
           <!-- font-style -->
           <li><button title="<%= key_cmd(:bold, 'B', :meta_key) %>" type="button" class="btn btn-md btn-tlb ql-bold fa fa-bold" data-toggle="tooltip" data-placement="bottom"></button></li>
@@ -41,6 +42,7 @@
           <li><button title="<%= key_cmd(:numbered_list) %>" type="button" class="btn btn-md btn-tlb ql-list fa fa-list-ol" data-toggle="tooltip" data-placement="bottom"></button></li>
           <li><button title="<%= key_cmd(:bulleted_list) %>" type="button" class="btn btn-md btn-tlb ql-bullet fa fa-list-ul" data-toggle="tooltip" data-placement="bottom"></button></li>
         </ul>
+        <% end %>
 
         <ul id="media-player-toolbar-container" class="nav navbar-nav toolbar-nav audio-player-nav">
           <!-- player -->
