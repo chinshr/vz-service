@@ -1,6 +1,4 @@
-App.Views.DocumentsEdit = Backbone.View.extend({
-  template: JST['documents/edit'],
-
+App.Views.DocumentsBase = Backbone.View.extend({
   events: {},
 
   handlers: {
