@@ -262,6 +262,7 @@ App.Views.DocumentsEdit = Backbone.View.extend({
     {key: 32, ctrlKey: false, altKey: false, metaKey: true, shiftKey: true, name: 'toggle-play-pause'},  // Shift+Cmd+Space
     {key: 37, ctrlKey: false, altKey: false, metaKey: true, shiftKey: true, name: 'step-backward'},      // Shift+Cmd+Left-Cursor
     {key: 39, ctrlKey: false, altKey: false, metaKey: true, shiftKey: true, name: 'step-forward'},       // Shift+Cmd+Right-Cursor
+    {key: 83, ctrlKey: false, altKey: false, metaKey: true, shiftKey: true, name: 'save'},               // Shift+Cmd+S
   ],
 
   eventHandlers: {
@@ -326,13 +327,17 @@ App.Views.DocumentsEdit = Backbone.View.extend({
         $(event.target).addClass('fa-angle-double-up').removeClass('fa-angle-up').removeClass('fa-angle-douple-down').removeClass('fa-angle-douple-up');
         this.wavesurfer.backend.setPlaybackRate(1);
       }
-    }
+    },
+    'save': function () {
+      this.save();
+    },
+
   },
 
   playerKeyboardHandler: function(event) {
     var match = _.where(this.keyboardEvents, {key: event.keyCode, ctrlKey: event.ctrlKey,
       metaKey: event.metaKey, shiftKey: event.shiftKey, altKey: event.altKey});
-
+    //console.log(event.keyCode);
     if (match.length > 0) {
       var handler = this.eventHandlers[match[0].name];
       event.preventDefault();
