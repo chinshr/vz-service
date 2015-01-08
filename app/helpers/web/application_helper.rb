@@ -40,21 +40,21 @@ module Web::ApplicationHelper
   def terms_of_service_to_markdown
     markdown(File.read(Rails.root + "TERMS-OF-SERVICE.md"))
   end
-  
+
   # E.g. devise sessions
   def dom_controller_class
     controller.class.name.split("::").map {|e| e.gsub("Controller", "").underscore.dasherize}.join(" ")
   end
-  
+
   # E.g. new-user
   def dom_controller_action_class
     action_name.dasherize
   end
-  
+
   def dom_active_class(current_controller)
     controller.is_a?(current_controller) ? "active" : ""
   end
-  
+
   def dom_alert_class(key)
     case key.to_s
     when "alert" then "danger"
@@ -62,12 +62,12 @@ module Web::ApplicationHelper
       key
     end
   end
-  
+
   def account_controller?
     controller.is_a?(Web::Account::ApplicationController) ||
       controller.is_a?(Doorkeeper::ApplicationsController)
   end
-  
+
   def render_header
     render_recursive_partial("header")
   end
@@ -75,9 +75,9 @@ module Web::ApplicationHelper
   def render_footer
     render_recursive_partial("footer")
   end
-  
+
   def render_recursive_partial(file)
-    path = params[:controller].split("/") 
+    path = params[:controller].split("/")
     while !path.empty? do
       if File.exists?(Rails.root.join("app", "views", path.join("/"), "_#{file}.html.erb"))
         return render "#{path.join("/")}/#{file}"
@@ -86,11 +86,11 @@ module Web::ApplicationHelper
       end
     end
   end
-  
+
   def random_login_quote
     FAMOUS_QUOTES[rand(FAMOUS_QUOTES.size.to_i)]
   end
-  
+
   # E.g.
   #
   #  :bold, 'B', :meta_key
