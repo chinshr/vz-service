@@ -67,6 +67,11 @@ class User < ActiveRecord::Base
     [first_name.try(:[], 0), last_name.try(:[], 0)].reject(&:blank?).join.upcase
   end
 
+  def css_rgb
+    digest = Digest::SHA1.hexdigest(self.name.upcase)
+    "rgb(#{digest[0..1].hex}, #{digest[2..3].hex}, #{digest[4..5].hex})"
+  end
+
   protected
 
   def has_ip_address?

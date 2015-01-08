@@ -44,14 +44,19 @@ class UserTest < ActiveSupport::TestCase
   end
 
   should "have initials" do
-    user = FactoryGirl.create(:user, first_name: "jürgen", last_name: "feßlmeier")
+    user = User.new(first_name: "jürgen", last_name: "feßlmeier")
     assert_equal "JF", user.initials
 
-    user.attributes = {first_name: "Jürgen", last_name: nil}
+    user = User.new(first_name: "jürgen")
     assert_equal "J", user.initials
 
-    user.attributes = {first_name: nil, last_name: nil}
+    user = User.new
     assert_equal "", user.initials
+  end
+
+  should "have css_rgb" do
+    user = User.new(first_name: "jürgen", last_name: "feßlmeier")
+    assert_equal "rgb(58, 69, 133)", user.css_rgb
   end
 
 end
