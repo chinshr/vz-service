@@ -232,11 +232,11 @@ App.Views.DocumentsEdit = Backbone.View.extend({
     var titleEditorKeyboard   = this.titleEditor.getModule('keyboard');
     for (var i = 0; i < this.keyboardEvents.length; i++) {
       var key = this.keyboardEvents[i];
-      if (key.name && this.eventHandlers[key.name]) {
+      if (key.name && this.handlers[key.name]) {
         contentEditorKeyboard.addHotkey({key: key.key, metaKey: key.metaKey, shiftKey: key.shiftKey}, 
-          _.bind(this.eventHandlers[key.name], this));
+          _.bind(this.handlers[key.name], this));
         titleEditorKeyboard.addHotkey({key: key.key, metaKey: key.metaKey, shiftKey: key.shiftKey}, 
-          _.bind(this.eventHandlers[key.name], this));
+          _.bind(this.handlers[key.name], this));
       }
     }
   },
@@ -265,7 +265,7 @@ App.Views.DocumentsEdit = Backbone.View.extend({
     {key: 83, ctrlKey: false, altKey: false, metaKey: true, shiftKey: true, name: 'save'},               // Shift+Cmd+S
   ],
 
-  eventHandlers: {
+  handlers: {
     'toggle-play-pause': function (event) {
       if ($(event.target).hasClass('fa-play')) {
         $(event.target).addClass('fa-pause').removeClass('fa-play');
@@ -339,7 +339,7 @@ App.Views.DocumentsEdit = Backbone.View.extend({
       metaKey: event.metaKey, shiftKey: event.shiftKey, altKey: event.altKey});
     //console.log(event.keyCode);
     if (match.length > 0) {
-      var handler = this.eventHandlers[match[0].name];
+      var handler = this.handlers[match[0].name];
       event.preventDefault();
       handler && _.bind(handler, this)(event);
     }
@@ -347,8 +347,8 @@ App.Views.DocumentsEdit = Backbone.View.extend({
 
   playerToolbarHandler: function (event) {
     var action = event.target.dataset && event.target.dataset.action;
-    if (action && action in this.eventHandlers) {
-      _.bind(this.eventHandlers[action], this)(event);
+    if (action && action in this.handlers) {
+      _.bind(this.handlers[action], this)(event);
     }
   },
 
