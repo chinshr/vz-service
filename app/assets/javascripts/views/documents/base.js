@@ -101,22 +101,6 @@ App.Views.DocumentsBase = Backbone.View.extend({
     this.wavesurfer = Object.create(WaveSurfer);
   },
 
-  render: function() {
-    this.$el.html(this.template(this.model.attributes));
-
-    if (this.model.ok) {
-      this.initEditor();
-      this.initPlayer();
-      $('#document-loading').hide();
-      $('#document-edit').show();
-    } else if (this.model.errors) {
-      $('#loading').hide();
-      $('#document-load-error').show();
-    }
-
-    return this;
-  },
-
   initPlayer: function() {
     var options = {
       container     : $('#waveform').get(0),  // document.querySelector('#waveform'),
