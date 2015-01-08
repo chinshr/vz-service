@@ -68,7 +68,7 @@ class User < ActiveRecord::Base
   end
 
   def css_rgb
-    digest = Digest::SHA1.hexdigest(self.name.upcase)
+    digest = Digest::SHA1.hexdigest("#{id.to_i + 1}")
     "rgb(#{digest[0..1].hex}, #{digest[2..3].hex}, #{digest[4..5].hex})"
   end
 

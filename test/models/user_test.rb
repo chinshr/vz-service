@@ -55,8 +55,8 @@ class UserTest < ActiveSupport::TestCase
   end
 
   should "have css_rgb" do
-    user = User.new(first_name: "jürgen", last_name: "feßlmeier")
-    assert_equal "rgb(58, 69, 133)", user.css_rgb
+    user = FactoryGirl.create(:user, id: 6666)
+    assert_equal "rgb(118, 242, 7)", user.css_rgb
   end
 
 end
