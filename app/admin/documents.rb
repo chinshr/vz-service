@@ -1,9 +1,9 @@
 ActiveAdmin.register Document do
   permit_params :title, :description, :privacy_mask, :locale
-  
+
   scope :all
   scope :recent
-  
+
   index do
     column :id
     column :title
@@ -12,8 +12,8 @@ ActiveAdmin.register Document do
     end
     column :locale
     column :created_at
-    
-    default_actions
+
+    actions
   end
-  
+
 end

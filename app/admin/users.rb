@@ -10,6 +10,6 @@ ActiveAdmin.register User do
     column :sign_in_count
     column :failed_attempts
     column :created_at
-    default_actions
+    actions
   end
 end

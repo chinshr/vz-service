@@ -22,15 +22,11 @@ class Document::Chunk < ActiveRecord::Base
 
   # public scopes
   filtered_scopes :any_of_type
-  scope :any_of_type, lambda {|params| where(:type => type_for(params))}
+  scope :any_of_type, -> (params) {where(:type => type_for(params))}
   # private scopes
-  scope :transcribed, lambda {where(:processing_status => STATES[:transcribed])}
-  scope :best, lambda {
+  scope :transcribed, -> {where(:processing_status => STATES[:transcribed])}
+  scope :best, -> {
     joins("JOIN (SELECT position, MAX(score) AS max_score FROM document_chunks p GROUP BY p.position) y ON y.position = document_chunks.position AND y.max_score = document_chunks.score").
-    order(:position)
-  }
-  scope :worst, lambda {
-    joins("JOIN (SELECT position, MIN(score) AS min_score FROM document_chunks p GROUP BY p.position) y ON y.position = document_chunks.position AND y.min_score = document_chunks.score").
     order(:position)
   }
 
