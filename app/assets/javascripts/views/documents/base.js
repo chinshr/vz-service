@@ -183,7 +183,7 @@ App.Views.DocumentsBase = Backbone.View.extend({
     this.titleEditor = new Quill('#title-editor', {
       'modules': {
       },
-      'styles': '/assets/web/quill-title-editor.css'
+      'styles': false // '/assets/web/quill-title-editor.css'
     });
 
     this.titleEditor.on('text-change', (function(_this) {
@@ -208,7 +208,7 @@ App.Views.DocumentsBase = Backbone.View.extend({
           container: '#content-editor-toolbar-container'
         },
       },
-      'styles': '/assets/web/quill-content-editor.css'
+      'styles': false  // '/assets/web/quill-content-editor.css'
     });
 
     if (this.model.attributes.rich_text) {
@@ -225,7 +225,6 @@ App.Views.DocumentsBase = Backbone.View.extend({
           console.log("An API call triggered this change.");
         } else if (source == 'user') {
           _this.model.set({html: $.trim(this.getHTML()), rich_text: this.getContents(), text: this.getText()})
-          // _this.saving();
         }
       };
     })(this));
@@ -238,15 +237,15 @@ App.Views.DocumentsBase = Backbone.View.extend({
     this.titleEditor.on('text-change', (function(_this) {
       return function(delta, source) {
         // expand window
-        $('#title-editor').height(_this.titleEditor.root.ownerDocument.body.scrollHeight);
-        _this.moveUserInitials(this, 43);
+        // $('#title-editor').height(_this.titleEditor.root.ownerDocument.body.scrollHeight);
+        _this.moveUserInitials(this, -75);
       }
     })(this));
 
     this.contentEditor.on('text-change', (function(_this) {
       return function(delta, source) {
         // expand window
-        $('#content-editor').height(_this.contentEditor.root.ownerDocument.body.scrollHeight);
+        // $('#content-editor').height(_this.contentEditor.root.ownerDocument.body.scrollHeight);
         _this.moveUserInitials(this);
       }
     })(this));
@@ -256,7 +255,7 @@ App.Views.DocumentsBase = Backbone.View.extend({
         if (range) {
           if (range.start == range.end) {
             // console.log('User cursor is on', range.start);
-            _this.moveUserInitials(this, 43);
+            _this.moveUserInitials(this, -75);
           } else {
             // var text = editor.getText(range.start, range.end);
             // console.log('User has highlighted', text);
@@ -297,7 +296,7 @@ App.Views.DocumentsBase = Backbone.View.extend({
   },
 
   moveUserInitials: function(editor, margin) {
-    margin = margin || 103;
+    margin = margin || -85;
     var sel = editor.root.ownerDocument.getSelection();
     if (sel && sel.rangeCount > 0) {
       var selrg = sel.getRangeAt(0);
@@ -307,7 +306,7 @@ App.Views.DocumentsBase = Backbone.View.extend({
           var ui = $(".user-initials");
           ui.stop().animate({
             top: margin - (ui.height() / 2) + rects[0].top
-          }, 50);
+          }, 0);
         }
       }
     }
