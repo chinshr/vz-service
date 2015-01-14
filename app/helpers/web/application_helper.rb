@@ -2,17 +2,17 @@ module Web::ApplicationHelper
   MARKDOWN_OPTIONS = {:autolink => true, :space_after_headers => true, :fenced_code_blocks => true}
   FAMOUS_QUOTES = [
     ["Shoot for the moon. Even if you miss, you'll land among the stars.", "Les Brown"],
-    ["It's the possibility of having a dream come true that makes life interesting.", "Paulo Coelho, Alchemist"],
+    ["It's the possibility of having a dream come true that makes life interesting.", "Paulo Coelho"],
     ["Ignore people who say it can't be done.", "Elaine Rideout"],
     ["Don't let anyone steal your dream. It's your dream, not theirs.", "Dan Zadra"],
     ["At least once a day, allow yourself the freedom to think and dream for yourself.", "Albert Einstein"],
-    ["The two most important days in your life are the day you are born and the day you find out why. ", "Mark Twain"],
+    ["The two most important days in your life are the day you are born and the day you find out why.", "Mark Twain"],
     ["Strive not to be a success, but rather to be of value.", "Albert Einstein"],
     ["Life is what happens to you while you’re busy making other plans.", "John Lennon"],
     ["We become what we think about.", "Earl Nightingale"],
-    ["Your time is limited, so don’t waste it living someone else’s life.", "Steve Jobs"],
-    ["Everything you’ve ever wanted is on the other side of fear.", "George Addair"],
-    ["Start where you are. Use what you have.  Do what you can.", "Arthur Ashe"],
+    ["Your time is limited, so don't waste it living someone else's life.", "Steve Jobs"],
+    ["Everything you've ever wanted is on the other side of fear.", "George Addair"],
+    ["Start where you are. Use what you have. Do what you can.", "Arthur Ashe"],
     ["When I let go of what I am, I become what I might be.", "Lao Tzu"],
     ["Too many of us are not living our dreams because we are living our fears.", "Les Brown"],
     ["A person who never made a mistake never tried anything new.", "Albert Einstein"],
@@ -21,10 +21,11 @@ module Web::ApplicationHelper
     ["Remember that not getting what you want is sometimes a wonderful stroke of luck.", "Dalai Lama"],
     ["Our lives begin to end the day we become silent about things that matter.", "Martin Luther King Jr."],
     ["Do what you can, where you are, with what you have.", "Teddy Roosevelt"],
-    ["If you do what you’ve always done, you’ll get what you’ve always gotten.", "Tony Robbins"],
-    ["The question isn’t who is going to let me; it’s who is going to stop me.", "Ayn Rand"],
-    ["It’s not the years in your life that count. It’s the life in your years.", "Abraham Lincoln"],
+    ["If you do what you've always done, you'll get what you've always gotten.", "Tony Robbins"],
+    ["The question isn't who is going to let me; it's who is going to stop me.", "Ayn Rand"],
+    ["It's not the years in your life that count. It's the life in your years.", "Abraham Lincoln"],
     ["The only way to do great work is to love what you do.", "Steve Jobs"],
+    ["Failure is the condiment that gives success its flavor.", "Truman Capote"],
     ["If you can dream it, you can achieve it.", "Zig Ziglar"]
   ]
 

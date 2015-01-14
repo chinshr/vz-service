@@ -1,15 +1,14 @@
-
-/*! Quill Editor v0.15.3
+/*! Quill Editor v0.19.8
  *  https://quilljs.com/
  *  Copyright (c) 2014, Jason Chen
  *  Copyright (c) 2013, salesforce.com
  */
-!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.Quill=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"M4+//f":[function(_dereq_,module,exports){
+!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.Quill=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 (function (global){
 /**
  * @license
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
- * Build: `lodash modern include="difference,flatten,intersection,last,all,each,invoke,map,pluck,reduce,bind,defer,partial,clone,defaults,has,keys,omit,values,isArray,isElement,isEqual,isNumber,isObject,isString,uniqueId" --debug --output .build/lodash.js`
+ * Build: `lodash modern include="difference,intersection,last,all,each,invoke,map,reduce,bind,defer,partial,clone,extend,defaults,omit,values,isElement,isEqual,isNumber,isObject,isString,uniqueId" --debug --output .build/lodash.js`
  * Copyright 2012-2013 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.5.2 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2013 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
@@ -1406,25 +1405,6 @@
   };
 
   /**
-   * Checks if the specified property name exists as a direct property of `object`,
-   * instead of an inherited property.
-   *
-   * @static
-   * @memberOf _
-   * @category Objects
-   * @param {Object} object The object to inspect.
-   * @param {string} key The name of the property to check.
-   * @returns {boolean} Returns `true` if key is a direct property, else `false`.
-   * @example
-   *
-   * _.has({ 'a': 1, 'b': 2, 'c': 3 }, 'b');
-   * // => true
-   */
-  function has(object, key) {
-    return object ? hasOwnProperty.call(object, key) : false;
-  }
-
-  /**
    * Checks if `value` is a DOM element.
    *
    * @static
@@ -1845,28 +1825,6 @@
   }
 
   /**
-   * Retrieves the value of a specified property from all elements in the collection.
-   *
-   * @static
-   * @memberOf _
-   * @type Function
-   * @category Collections
-   * @param {Array|Object|string} collection The collection to iterate over.
-   * @param {string} property The name of the property to pluck.
-   * @returns {Array} Returns a new array of property values.
-   * @example
-   *
-   * var characters = [
-   *   { 'name': 'barney', 'age': 36 },
-   *   { 'name': 'fred',   'age': 40 }
-   * ];
-   *
-   * _.pluck(characters, 'name');
-   * // => ['barney', 'fred']
-   */
-  var pluck = map;
-
-  /**
    * Reduces a collection to a value which is the accumulated result of running
    * each element in the collection through the callback, where each successive
    * callback execution consumes the return value of the previous execution. If
@@ -1940,60 +1898,6 @@
    */
   function difference(array) {
     return baseDifference(array, baseFlatten(arguments, true, true, 1));
-  }
-
-  /**
-   * Flattens a nested array (the nesting can be to any depth). If `isShallow`
-   * is truey, the array will only be flattened a single level. If a callback
-   * is provided each element of the array is passed through the callback before
-   * flattening. The callback is bound to `thisArg` and invoked with three
-   * arguments; (value, index, array).
-   *
-   * If a property name is provided for `callback` the created "_.pluck" style
-   * callback will return the property value of the given element.
-   *
-   * If an object is provided for `callback` the created "_.where" style callback
-   * will return `true` for elements that have the properties of the given object,
-   * else `false`.
-   *
-   * @static
-   * @memberOf _
-   * @category Arrays
-   * @param {Array} array The array to flatten.
-   * @param {boolean} [isShallow=false] A flag to restrict flattening to a single level.
-   * @param {Function|Object|string} [callback=identity] The function called
-   *  per iteration. If a property name or object is provided it will be used
-   *  to create a "_.pluck" or "_.where" style callback, respectively.
-   * @param {*} [thisArg] The `this` binding of `callback`.
-   * @returns {Array} Returns a new flattened array.
-   * @example
-   *
-   * _.flatten([1, [2], [3, [[4]]]]);
-   * // => [1, 2, 3, 4];
-   *
-   * _.flatten([1, [2], [3, [[4]]]], true);
-   * // => [1, 2, 3, [[4]]];
-   *
-   * var characters = [
-   *   { 'name': 'barney', 'age': 30, 'pets': ['hoppy'] },
-   *   { 'name': 'fred',   'age': 40, 'pets': ['baby puss', 'dino'] }
-   * ];
-   *
-   * // using "_.pluck" callback shorthand
-   * _.flatten(characters, 'pets');
-   * // => ['hoppy', 'baby puss', 'dino']
-   */
-  function flatten(array, isShallow, callback, thisArg) {
-    // juggle arguments
-    if (typeof isShallow != 'boolean' && isShallow != null) {
-      thisArg = callback;
-      callback = (typeof isShallow != 'function' && thisArg && thisArg[isShallow] === array) ? null : isShallow;
-      isShallow = false;
-    }
-    if (callback != null) {
-      array = map(array, callback, thisArg);
-    }
-    return baseFlatten(array, isShallow);
   }
 
   /**
@@ -2465,7 +2369,6 @@
   lodash.defaults = defaults;
   lodash.defer = defer;
   lodash.difference = difference;
-  lodash.flatten = flatten;
   lodash.forEach = forEach;
   lodash.forIn = forIn;
   lodash.forOwn = forOwn;
@@ -2475,7 +2378,6 @@
   lodash.map = map;
   lodash.omit = omit;
   lodash.partial = partial;
-  lodash.pluck = pluck;
   lodash.property = property;
   lodash.values = values;
 
@@ -2489,7 +2391,6 @@
   // add functions that return unwrapped values when chaining
   lodash.clone = clone;
   lodash.every = every;
-  lodash.has = has;
   lodash.identity = identity;
   lodash.indexOf = indexOf;
   lodash.isArguments = isArguments;
@@ -2557,10 +2458,8 @@
   }
 }.call(this));
 
-}).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],"lodash":[function(_dereq_,module,exports){
-module.exports=_dereq_('M4+//f');
-},{}],3:[function(_dereq_,module,exports){
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{}],2:[function(_dereq_,module,exports){
 /*!
  * EventEmitter2
  * https://github.com/hij1nx/EventEmitter2
@@ -3135,2381 +3034,1023 @@ module.exports=_dereq_('M4+//f');
   }
 }();
 
-},{}],4:[function(_dereq_,module,exports){
-(function() {
-  var Delta, InsertOp, Op, RetainOp, jsdiff, _;
+},{}],3:[function(_dereq_,module,exports){
+var diff = _dereq_('fast-diff');
+var is = _dereq_('./is');
+var op = _dereq_('./op');
 
-  _ = _dereq_('lodash');
 
-  jsdiff = _dereq_('diff');
+var NULL_CHARACTER = String.fromCharCode(0);  // Placeholder char for embed in diff()
 
-  Op = _dereq_('./op');
 
-  InsertOp = _dereq_('./insert');
+var Delta = function (ops) {
+  // Assume we are given a well formed ops
+  if (is.array(ops)) {
+    this.ops = ops;
+  } else if (is.object(ops) && is.array(ops.ops)) {
+    this.ops = ops.ops;
+  } else {
+    this.ops = [];
+  }
+};
 
-  RetainOp = _dereq_('./retain');
 
-  Delta = (function() {
-    var _insertInsertCase, _retainRetainCase;
+Delta.prototype.insert = function (text, attributes) {
+  var newOp = {};
+  if (is.string(text)) {
+    if (text.length === 0) return this;
+    newOp.insert = text;
+  } else if (is.number(text)) {
+    newOp.insert = text;
+  }
+  if (is.object(attributes) && Object.keys(attributes).length > 0) newOp.attributes = attributes;
+  return this.push(newOp);
+};
 
-    Delta.getIdentity = function(length) {
-      return new Delta(length, length, [new RetainOp(0, length)]);
-    };
+Delta.prototype['delete'] = function (length) {
+  if (length <= 0) return this;
+  return this.push({ 'delete': length });
+};
 
-    Delta.getInitial = function(contents) {
-      return new Delta(0, contents.length, [new InsertOp(contents)]);
-    };
+Delta.prototype.retain = function (length, attributes) {
+  if (length <= 0) return this;
+  var newOp = { retain: length };
+  if (is.object(attributes) && Object.keys(attributes).length > 0) newOp.attributes = attributes;
+  return this.push(newOp);
+};
 
-    Delta.isDelta = function(delta) {
-      var op, _i, _len, _ref;
-      if ((delta != null) && typeof delta === "object" && typeof delta.startLength === "number" && typeof delta.endLength === "number" && typeof delta.ops === "object") {
-        _ref = delta.ops;
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          op = _ref[_i];
-          if (!(Op.isRetain(op) || Op.isInsert(op))) {
-            return false;
-          }
-        }
-        return true;
-      }
-      return false;
-    };
-
-    Delta.makeDelta = function(obj) {
-      return new Delta(obj.startLength, obj.endLength, _.map(obj.ops, function(op) {
-        if (Op.isInsert(op)) {
-          return new InsertOp(op.value, op.attributes);
-        } else if (Op.isRetain(op)) {
-          return new RetainOp(op.start, op.end, op.attributes);
-        } else {
-          return null;
-        }
-      }));
-    };
-
-    Delta.makeDeleteDelta = function(startLength, index, length) {
-      var ops;
-      ops = [];
-      if (0 < index) {
-        ops.push(new RetainOp(0, index));
-      }
-      if (index + length < startLength) {
-        ops.push(new RetainOp(index + length, startLength));
-      }
-      return new Delta(startLength, ops);
-    };
-
-    Delta.makeInsertDelta = function(startLength, index, value, attributes) {
-      var ops;
-      ops = [new InsertOp(value, attributes)];
-      if (0 < index) {
-        ops.unshift(new RetainOp(0, index));
-      }
-      if (index < startLength) {
-        ops.push(new RetainOp(index, startLength));
-      }
-      return new Delta(startLength, ops);
-    };
-
-    Delta.makeRetainDelta = function(startLength, index, length, attributes) {
-      var ops;
-      ops = [new RetainOp(index, index + length, attributes)];
-      if (0 < index) {
-        ops.unshift(new RetainOp(0, index));
-      }
-      if (index + length < startLength) {
-        ops.push(new RetainOp(index + length, startLength));
-      }
-      return new Delta(startLength, ops);
-    };
-
-    function Delta(startLength, endLength, ops) {
-      var length;
-      this.startLength = startLength;
-      this.endLength = endLength;
-      this.ops = ops;
-      if (this.ops == null) {
-        this.ops = this.endLength;
-        this.endLength = null;
-      }
-      this.ops = _.map(this.ops, function(op) {
-        if (Op.isRetain(op)) {
-          return op;
-        } else if (Op.isInsert(op)) {
-          return op;
-        } else {
-          throw new Error("Creating delta with invalid op. Expecting an insert or retain.");
-        }
-      });
-      this.compact();
-      length = _.reduce(this.ops, function(count, op) {
-        return count + op.getLength();
-      }, 0);
-      if ((this.endLength != null) && length !== this.endLength) {
-        throw new Error("Expecting end length of " + length);
-      } else {
-        this.endLength = length;
+Delta.prototype.push = function (newOp) {
+  var index = this.ops.length;
+  var lastOp = this.ops[index - 1];
+  newOp = op.clone(newOp);
+  if (is.object(lastOp)) {
+    if (is.number(newOp['delete']) && is.number(lastOp['delete'])) {
+      this.ops[index - 1] = { 'delete': lastOp['delete'] + newOp['delete'] };
+      return this;
+    }
+    // Since it does not matter if we insert before or after deleting at the same index,
+    // always prefer to insert first
+    if (is.number(lastOp['delete']) && (is.string(newOp.insert) || is.number(newOp.insert))) {
+      index -= 1;
+      lastOp = this.ops[index - 1];
+      if (!is.object(lastOp)) {
+        this.ops.unshift(newOp);
+        return this;
       }
     }
+    if (is.equal(newOp.attributes, lastOp.attributes)) {
+      if (is.string(newOp.insert) && is.string(lastOp.insert)) {
+        this.ops[index - 1] = { insert: lastOp.insert + newOp.insert };
+        if (is.object(newOp.attributes)) this.ops[index - 1].attributes = newOp.attributes
+        return this;
+      } else if (is.number(newOp.retain) && is.number(lastOp.retain)) {
+        this.ops[index - 1] = { retain: lastOp.retain + newOp.retain };
+        if (is.object(newOp.attributes)) this.ops[index - 1].attributes = newOp.attributes
+        return this;
+      }
+    }
+  }
+  this.ops.splice(index, 0, newOp);
+  return this;
+};
 
-    Delta.prototype.apply = function(insertFn, deleteFn, applyAttrFn, context) {
-      var index, offset, retains;
-      if (insertFn == null) {
-        insertFn = (function() {});
-      }
-      if (deleteFn == null) {
-        deleteFn = (function() {});
-      }
-      if (applyAttrFn == null) {
-        applyAttrFn = (function() {});
-      }
-      if (context == null) {
-        context = null;
-      }
-      if (this.isIdentity()) {
-        return;
-      }
-      index = 0;
-      offset = 0;
-      retains = [];
-      _.each(this.ops, (function(_this) {
-        return function(op) {
-          if (Op.isInsert(op)) {
-            insertFn.call(context, index + offset, op.value, op.attributes);
-            return offset += op.getLength();
-          } else if (Op.isRetain(op)) {
-            if (op.start > index) {
-              deleteFn.call(context, index + offset, op.start - index);
-              offset -= op.start - index;
-            }
-            retains.push(new RetainOp(op.start + offset, op.end + offset, op.attributes));
-            return index = op.end;
-          }
-        };
-      })(this));
-      if (this.endLength < this.startLength + offset) {
-        deleteFn.call(context, this.endLength, this.startLength + offset - this.endLength);
-      }
-      return _.each(retains, (function(_this) {
-        return function(op) {
-          _.each(op.attributes, function(value, format) {
-            if (value === null) {
-              return applyAttrFn.call(context, op.start, op.end - op.start, format, value);
-            }
-          });
-          return _.each(op.attributes, function(value, format) {
-            if (value != null) {
-              return applyAttrFn.call(context, op.start, op.end - op.start, format, value);
-            }
-          });
-        };
-      })(this));
-    };
+Delta.prototype.chop = function () {
+  var lastOp = this.ops[this.ops.length - 1];
+  if (lastOp && lastOp.retain && !lastOp.attributes) {
+    this.ops.pop();
+  }
+  return this;
+};
 
-    Delta.prototype.applyToText = function(text) {
-      var appliedText, delta, op, result, _i, _len, _ref;
-      delta = this;
-      if (text.length !== delta.startLength) {
-        throw new Error("Start length of delta: " + delta.startLength + " is not equal to the text: " + text.length);
-      }
-      appliedText = [];
-      _ref = delta.ops;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        op = _ref[_i];
-        if (Op.isInsert(op)) {
-          appliedText.push(op.value);
+Delta.prototype.length = function () {
+  return this.ops.reduce(function (length, elem) {
+    return length + op.length(elem);
+  }, 0);
+};
+
+Delta.prototype.slice = function (start, end) {
+  start = start || 0;
+  if (!is.number(end)) end = Infinity;
+  var delta = new Delta();
+  var iter = op.iterator(this.ops);
+  var index = 0;
+  while (index < end && iter.hasNext()) {
+    var nextOp;
+    if (index < start) {
+      nextOp = iter.next(start - index);
+    } else {
+      nextOp = iter.next(end - index);
+      delta.push(nextOp);
+    }
+    index += op.length(nextOp);
+  }
+  return delta;
+};
+
+
+Delta.prototype.compose = function (other) {
+  var thisIter = op.iterator(this.ops);
+  var otherIter = op.iterator(other.ops);
+  this.ops = [];
+  while (thisIter.hasNext() || otherIter.hasNext()) {
+    if (otherIter.peekType() === 'insert') {
+      this.push(otherIter.next());
+    } else if (thisIter.peekType() === 'delete') {
+      this.push(thisIter.next());
+    } else {
+      var length = Math.min(thisIter.peekLength(), otherIter.peekLength());
+      var thisOp = thisIter.next(length);
+      var otherOp = otherIter.next(length);
+      if (is.number(otherOp.retain)) {
+        var newOp = {};
+        if (is.number(thisOp.retain)) {
+          newOp.retain = length;
         } else {
-          appliedText.push(text.substring(op.start, op.end));
+          newOp.insert = thisOp.insert;
         }
+        // Preserve null when composing with a retain, otherwise remove it for inserts
+        var attributes = op.attributes.compose(thisOp.attributes, otherOp.attributes, is.number(thisOp.retain));
+        if (attributes) newOp.attributes = attributes;
+        this.push(newOp);
+      // Other op should be delete, we could be an insert or retain
+      // Insert + delete cancels out
+      } else if (is.number(otherOp['delete']) && is.number(thisOp.retain)) {
+        this.push(otherOp);
       }
-      result = appliedText.join("");
-      if (delta.endLength !== result.length) {
-        throw new Error("End length of delta: " + delta.endLength + " is not equal to result text: " + result.length);
-      }
-      return result;
-    };
+    }
+  }
+  return this.chop();
+};
 
-    Delta.prototype.canCompose = function(delta) {
-      return Delta.isDelta(delta) && this.endLength === delta.startLength;
-    };
-
-    Delta.prototype.compact = function() {
-      var compacted;
-      compacted = [];
-      _.each(this.ops, function(op) {
-        var last;
-        if (op.getLength() === 0) {
-          return;
-        }
-        if (compacted.length === 0) {
-          return compacted.push(op);
-        } else {
-          last = _.last(compacted);
-          if (Op.isInsert(last) && Op.isInsert(op) && last.attributesMatch(op)) {
-            return compacted[compacted.length - 1] = new InsertOp(last.value + op.value, op.attributes);
-          } else if (Op.isRetain(last) && Op.isRetain(op) && last.end === op.start && last.attributesMatch(op)) {
-            return compacted[compacted.length - 1] = new RetainOp(last.start, op.end, op.attributes);
-          } else {
-            return compacted.push(op);
-          }
-        }
-      });
-      return this.ops = compacted;
-    };
-
-    Delta.prototype.compose = function(deltaB) {
-      var composed, deltaA, opInB, opsInRange, _i, _len, _ref;
-      if (!this.canCompose(deltaB)) {
-        throw new Error('Cannot compose delta');
-      }
-      deltaA = this;
-      composed = [];
-      _ref = deltaB.ops;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        opInB = _ref[_i];
-        if (Op.isInsert(opInB)) {
-          composed.push(opInB);
-        } else if (Op.isRetain(opInB)) {
-          opsInRange = deltaA.getOpsAt(opInB.start, opInB.getLength());
-          opsInRange = _.map(opsInRange, function(opInA) {
-            if (Op.isInsert(opInA)) {
-              return new InsertOp(opInA.value, opInA.composeAttributes(opInB.attributes));
-            } else {
-              return new RetainOp(opInA.start, opInA.end, opInA.composeAttributes(opInB.attributes));
-            }
-          });
-          composed = composed.concat(opsInRange);
-        } else {
-          throw new Error('Invalid op in deltaB when composing');
-        }
-      }
-      return new Delta(deltaA.startLength, deltaB.endLength, composed);
-    };
-
-    Delta.prototype.decompose = function(deltaA) {
-      var decomposeAttributes, deltaB, deltaC, insertDelta, offset, ops;
-      deltaC = this;
-      if (!Delta.isDelta(deltaA)) {
-        throw new Error("Decompose called when deltaA is not a Delta, type: " + typeof deltaA);
-      }
-      if (deltaA.startLength !== this.startLength) {
-        throw new Error("startLength " + deltaA.startLength + " / startLength " + this.startLength + " mismatch");
-      }
-      if (!_.all(deltaA.ops, (function(op) {
-        return Op.isInsert(op);
-      }))) {
-        throw new Error("DeltaA has retain in decompose");
-      }
-      if (!_.all(deltaC.ops, (function(op) {
-        return Op.isInsert(op);
-      }))) {
-        throw new Error("DeltaC has retain in decompose");
-      }
-      decomposeAttributes = function(attrA, attrC) {
-        var decomposedAttributes, key, value;
-        decomposedAttributes = {};
-        for (key in attrC) {
-          value = attrC[key];
-          if (attrA[key] === void 0 || attrA[key] !== value) {
-            if (attrA[key] !== null && typeof attrA[key] === 'object' && value !== null && typeof value === 'object') {
-              decomposedAttributes[key] = decomposeAttributes(attrA[key], value);
-            } else {
-              decomposedAttributes[key] = value;
-            }
-          }
-        }
-        for (key in attrA) {
-          value = attrA[key];
-          if (attrC[key] === void 0) {
-            decomposedAttributes[key] = null;
-          }
-        }
-        return decomposedAttributes;
-      };
-      insertDelta = deltaA.diff(deltaC);
-      ops = [];
-      offset = 0;
-      _.each(insertDelta.ops, function(op) {
-        var offsetC, opsInC;
-        opsInC = deltaC.getOpsAt(offset, op.getLength());
-        offsetC = 0;
-        _.each(opsInC, function(opInC) {
-          var d, offsetA, opsInA;
-          if (Op.isInsert(op)) {
-            d = new InsertOp(op.value.substring(offsetC, offsetC + opInC.getLength()), opInC.attributes);
-            ops.push(d);
-          } else if (Op.isRetain(op)) {
-            opsInA = deltaA.getOpsAt(op.start + offsetC, opInC.getLength());
-            offsetA = 0;
-            _.each(opsInA, function(opInA) {
-              var attributes, e, start;
-              attributes = decomposeAttributes(opInA.attributes, opInC.attributes);
-              start = op.start + offsetA + offsetC;
-              e = new RetainOp(start, start + opInA.getLength(), attributes);
-              ops.push(e);
-              return offsetA += opInA.getLength();
-            });
-          } else {
-            throw new Error("Invalid delta in deltaB when composing");
-          }
-          return offsetC += opInC.getLength();
-        });
-        return offset += op.getLength();
-      });
-      deltaB = new Delta(insertDelta.startLength, insertDelta.endLength, ops);
-      return deltaB;
-    };
-
-    Delta.prototype.diff = function(other) {
-      var diff, finalLength, insertDelta, ops, originalLength, textA, textC, _ref;
-      _ref = _.map([this, other], function(delta) {
-        return _.map(delta.ops, function(op) {
-          if (op.value != null) {
-            return op.value;
-          } else {
-            return "";
-          }
-        }).join('');
-      }), textA = _ref[0], textC = _ref[1];
-      if (!(textA === '' && textC === '')) {
-        diff = jsdiff.diffChars(textA, textC);
-        if (diff.length <= 0) {
-          throw new Error("diffToDelta called with diff with length <= 0");
-        }
-        originalLength = 0;
-        finalLength = 0;
-        ops = [];
-        _.each(diff, function(part) {
-          if (part.added) {
-            ops.push(new InsertOp(part.value));
-            return finalLength += part.value.length;
-          } else if (part.removed) {
-            return originalLength += part.value.length;
-          } else {
-            ops.push(new RetainOp(originalLength, originalLength + part.value.length));
-            originalLength += part.value.length;
-            return finalLength += part.value.length;
-          }
-        });
-        insertDelta = new Delta(originalLength, finalLength, ops);
-      } else {
-        insertDelta = new Delta(0, 0, []);
-      }
-      return insertDelta;
-    };
-
-    _insertInsertCase = function(elemA, elemB, indexes, aIsRemote) {
-      var length, results;
-      results = _.extend({}, indexes);
-      length = Math.min(elemA.getLength(), elemB.getLength());
-      if (aIsRemote) {
-        results.transformOp = new RetainOp(results.indexA, results.indexA + length);
-        results.indexA += length;
-        if (length === elemA.getLength()) {
-          results.elemIndexA++;
-        } else if (length < elemA.getLength()) {
-          results.elemA = _.last(elemA.split(length));
-        } else {
-          throw new Error("Invalid elem length in transform");
-        }
-      } else {
-        results.transformOp = _.first(elemB.split(length));
-        results.indexB += length;
-        if (length === elemB.getLength()) {
-          results.elemIndexB++;
-        } else {
-          results.elemB = _.last(elemB.split(length));
-        }
-      }
-      return results;
-    };
-
-    _retainRetainCase = function(elemA, elemB, indexes) {
-      var addedAttributes, elemIndexA, elemIndexB, errMsg, indexA, indexB, length, results;
-      indexA = indexes.indexA, indexB = indexes.indexB, elemIndexA = indexes.elemIndexA, elemIndexB = indexes.elemIndexB;
-      results = _.extend({}, indexes);
-      if (elemA.end < elemB.start) {
-        results.indexA += elemA.getLength();
-        results.elemIndexA++;
-      } else if (elemB.end < elemA.start) {
-        results.indexB += elemB.getLength();
-        results.elemIndexB++;
-      } else {
-        if (elemA.start < elemB.start) {
-          results.indexA += elemB.start - elemA.start;
-          elemA = results.elemA = new RetainOp(elemB.start, elemA.end, elemA.attributes);
-        } else if (elemB.start < elemA.start) {
-          results.indexB += elemA.start - elemB.start;
-          elemB = results.elemB = new RetainOp(elemA.start, elemB.end, elemB.attributes);
-        }
-        errMsg = "RetainOps must have same start length in transform";
-        if (elemA.start !== elemB.start) {
-          throw new Error(errMsg);
-        }
-        length = Math.min(elemA.end, elemB.end) - elemA.start;
-        addedAttributes = elemA.addAttributes(elemB.attributes);
-        results.transformOp = new RetainOp(results.indexA, results.indexA + length, addedAttributes);
-        results.indexA += length;
-        results.indexB += length;
-        if (elemA.end === elemB.end) {
-          results.elemIndexA++;
-          results.elemIndexB++;
-        } else if (elemA.end < elemB.end) {
-          results.elemIndexA++;
-          results.elemB = _.last(elemB.split(length));
-        } else {
-          results.elemIndexB++;
-          results.elemA = _.last(elemA.split(length));
-        }
-      }
-      if (results.elemIndexA !== indexes.elemIndexA) {
-        results.elemA = null;
-      }
-      if (results.elemIndexB !== indexes.elemIndexB) {
-        results.elemB = null;
-      }
-      return results;
-    };
-
-    Delta.prototype.transform = function(deltaA, aIsRemote) {
-      var deltaB, elemA, elemB, elemIndexA, elemIndexB, errMsg, indexA, indexB, results, transformEndLength, transformOps, transformStartLength, _applyResults, _buildIndexes;
-      if (aIsRemote == null) {
-        aIsRemote = false;
-      }
-      if (!Delta.isDelta(deltaA)) {
-        errMsg = "Transform called when deltaA is not a Delta, type: ";
-        throw new Error(errMsg + typeof deltaA);
-      }
-      deltaA = new Delta(deltaA.startLength, deltaA.endLength, deltaA.ops);
-      deltaB = new Delta(this.startLength, this.endLength, this.ops);
-      transformOps = [];
-      indexA = indexB = 0;
-      elemIndexA = elemIndexB = 0;
-      _applyResults = function(results) {
-        if (results.indexA != null) {
-          indexA = results.indexA;
-        }
-        if (results.indexB != null) {
-          indexB = results.indexB;
-        }
-        if (results.elemIndexA != null) {
-          elemIndexA = results.elemIndexA;
-        }
-        if (results.elemIndexB != null) {
-          elemIndexB = results.elemIndexB;
-        }
-        if (results.elemA != null) {
-          deltaA.ops[elemIndexA] = results.elemA;
-        }
-        if (results.elemB != null) {
-          deltaB.ops[elemIndexB] = results.elemB;
-        }
-        if (results.transformOp != null) {
-          return transformOps.push(results.transformOp);
-        }
-      };
-      _buildIndexes = function() {
-        return {
-          indexA: indexA,
-          indexB: indexB,
-          elemIndexA: elemIndexA,
-          elemIndexB: elemIndexB
-        };
-      };
-      while (elemIndexA < deltaA.ops.length && elemIndexB < deltaB.ops.length) {
-        elemA = deltaA.ops[elemIndexA];
-        elemB = deltaB.ops[elemIndexB];
-        if (Op.isInsert(elemA) && Op.isInsert(elemB)) {
-          results = _insertInsertCase(elemA, elemB, _buildIndexes(), aIsRemote);
-          _applyResults(results);
-        } else if (Op.isRetain(elemA) && Op.isRetain(elemB)) {
-          results = _retainRetainCase(elemA, elemB, _buildIndexes());
-          _applyResults(results);
-        } else if (Op.isInsert(elemA) && Op.isRetain(elemB)) {
-          transformOps.push(new RetainOp(indexA, indexA + elemA.getLength()));
-          indexA += elemA.getLength();
-          elemIndexA++;
-        } else if (Op.isRetain(elemA) && Op.isInsert(elemB)) {
-          transformOps.push(elemB);
-          indexB += elemB.getLength();
-          elemIndexB++;
-        }
-      }
-      while (elemIndexA < deltaA.ops.length) {
-        elemA = deltaA.ops[elemIndexA];
-        if (Op.isInsert(elemA)) {
-          transformOps.push(new RetainOp(indexA, indexA + elemA.getLength()));
-        }
-        indexA += elemA.getLength();
-        elemIndexA++;
-      }
-      while (elemIndexB < deltaB.ops.length) {
-        elemB = deltaB.ops[elemIndexB];
-        if (Op.isInsert(elemB)) {
-          transformOps.push(elemB);
-        }
-        indexB += elemB.getLength();
-        elemIndexB++;
-      }
-      transformStartLength = deltaA.endLength;
-      transformEndLength = _.reduce(transformOps, function(transformEndLength, op) {
-        return transformEndLength + op.getLength();
-      }, 0);
-      return new Delta(transformStartLength, transformEndLength, transformOps);
-    };
-
-    Delta.prototype.getOpsAt = function(index, length) {
-      var changes, getLength, offset, op, opLength, start, _i, _len, _ref;
-      changes = [];
-      if ((this.savedOpOffset != null) && this.savedOpOffset < index) {
-        offset = this.savedOpOffset;
-      } else {
-        offset = this.savedOpOffset = this.savedOpIndex = 0;
-      }
-      _ref = this.ops.slice(this.savedOpIndex);
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        op = _ref[_i];
-        if (offset >= index + length) {
+Delta.prototype.diff = function (other) {
+  var strings = [this.ops, other.ops].map(function (ops) {
+    return ops.map(function (op) {
+      if (is.string(op.insert)) return op.insert;
+      if (is.number(op.insert)) return NULL_CHARACTER;
+      var prep = ops === other.ops ? 'on' : 'with';
+      throw new Error('diff() called ' + prep + ' non-document');
+    }).join('');
+  });
+  var diffResult = diff(strings[0], strings[1]);
+  var thisIter = op.iterator(this.ops);
+  var otherIter = op.iterator(other.ops);
+  var delta = new Delta();
+  diffResult.forEach(function (component) {
+    var length = component[1].length;
+    while (length > 0) {
+      var opLength = 0;
+      switch (component[0]) {
+        case diff.INSERT:
+          opLength = Math.min(otherIter.peekLength(), length);
+          delta.push(otherIter.next(opLength));
           break;
-        }
-        opLength = op.getLength();
-        if (index < offset + opLength) {
-          start = Math.max(index - offset, 0);
-          getLength = Math.min(opLength - start, index + length - offset - start);
-          changes.push(op.getAt(start, getLength));
-        }
-        offset += opLength;
-        this.savedOpIndex += 1;
-        this.savedOpOffset += opLength;
-      }
-      return changes;
-    };
-
-    Delta.prototype.invert = function(deltaB) {
-      var deltaA, deltaC, inverse;
-      if (!this.isInsertsOnly()) {
-        throw new Error("Invert called on invalid delta containing non-insert ops");
-      }
-      deltaA = this;
-      deltaC = deltaA.compose(deltaB);
-      inverse = deltaA.decompose(deltaC);
-      return inverse;
-    };
-
-    Delta.prototype.isEqual = function(other) {
-      if (!other) {
-        return false;
-      }
-      if (this.startLength !== other.startLength || this.endLength !== other.endLength) {
-        return false;
-      }
-      if (!_.isArray(other.ops) || this.ops.length !== other.ops.length) {
-        return false;
-      }
-      return _.all(this.ops, function(op, i) {
-        return op.isEqual(other.ops[i]);
-      });
-    };
-
-    Delta.prototype.isIdentity = function() {
-      var index, op, _i, _len, _ref;
-      if (this.startLength === this.endLength) {
-        if (this.ops.length === 0) {
-          return true;
-        }
-        index = 0;
-        _ref = this.ops;
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          op = _ref[_i];
-          if (!Op.isRetain(op)) {
-            return false;
-          }
-          if (op.start !== index) {
-            return false;
-          }
-          if (!(op.numAttributes() === 0 || (op.numAttributes() === 1 && _.has(op.attributes, 'authorId')))) {
-            return false;
-          }
-          index = op.end;
-        }
-        if (index !== this.endLength) {
-          return false;
-        }
-        return true;
-      }
-      return false;
-    };
-
-    Delta.prototype.isInsertsOnly = function() {
-      return _.every(this.ops, function(op) {
-        return Op.isInsert(op);
-      });
-    };
-
-    Delta.prototype.merge = function(other) {
-      var ops;
-      ops = _.map(other.ops, (function(_this) {
-        return function(op) {
-          if (Op.isRetain(op)) {
-            return new RetainOp(op.start + _this.startLength, op.end + _this.startLength, op.attributes);
+        case diff.DELETE:
+          opLength = Math.min(length, thisIter.peekLength());
+          thisIter.next(opLength);
+          delta['delete'](opLength);
+          break;
+        case diff.EQUAL:
+          opLength = Math.min(thisIter.peekLength(), otherIter.peekLength(), length);
+          var thisOp = thisIter.next(opLength);
+          var otherOp = otherIter.next(opLength);
+          if (thisOp.insert === otherOp.insert) {
+            delta.retain(opLength, op.attributes.diff(thisOp.attributes, otherOp.attributes));
           } else {
-            return op;
+            delta.push(otherOp)['delete'](opLength);
           }
-        };
-      })(this));
-      ops = this.ops.concat(ops);
-      return new Delta(this.startLength + other.startLength, ops);
-    };
-
-    Delta.prototype.split = function(index) {
-      var leftOps, rightOps;
-      if (!this.isInsertsOnly()) {
-        throw new Error("Split only implemented for inserts only");
+          break;
       }
-      if (!(0 <= index && index <= this.endLength)) {
-        throw new Error("Split at invalid index");
-      }
-      leftOps = [];
-      rightOps = [];
-      _.reduce(this.ops, function(offset, op) {
-        var left, right, _ref;
-        if (offset + op.getLength() <= index) {
-          leftOps.push(op);
-        } else if (offset >= index) {
-          rightOps.push(op);
-        } else {
-          _ref = op.split(index - offset), left = _ref[0], right = _ref[1];
-          leftOps.push(left);
-          rightOps.push(right);
-        }
-        return offset + op.getLength();
-      }, 0);
-      return [new Delta(0, leftOps), new Delta(0, rightOps)];
-    };
-
-    Delta.prototype.toString = function() {
-      return "{(" + this.startLength + "->" + this.endLength + ") [" + (this.ops.join(', ')) + "]}";
-    };
-
-    return Delta;
-
-  })();
-
-  module.exports = Delta;
-
-}).call(this);
-
-},{"./insert":6,"./op":7,"./retain":8,"diff":11,"lodash":"M4+//f"}],5:[function(_dereq_,module,exports){
-(function() {
-  var Delta, DeltaGenerator, InsertOp, RetainOp, getUtils, setDomain, _, _domain;
-
-  _ = _dereq_('lodash');
-
-  Delta = _dereq_('./delta');
-
-  InsertOp = _dereq_('./insert');
-
-  RetainOp = _dereq_('./retain');
-
-  _domain = {
-    alphabet: "abcdefghijklmnopqrstuvwxyz\n\n\n\n  ",
-    booleanAttributes: {
-      'bold': [true, false],
-      'italic': [true, false],
-      'strike': [true, false]
-    },
-    nonBooleanAttributes: {
-      'back-color': ['white', 'black', 'red', 'blue', 'lime', 'teal', 'magenta', 'yellow'],
-      'fore-color': ['white', 'black', 'red', 'blue', 'lime', 'teal', 'magenta', 'yellow'],
-      'font-name': ['monospace', 'serif'],
-      'font-size': ['huge', 'large', 'small']
-    },
-    defaultAttributeValue: {
-      'back-color': 'white',
-      'fore-color': 'black',
-      'font-name': 'san-serif',
-      'font-size': 'normal'
+      length -= opLength;
     }
-  };
+  });
+  return delta.chop();
+};
 
-  setDomain = function(domain) {
-    if (domain != null) {
-      return _domain = domain;
-    }
-  };
-
-  getUtils = function(domain) {
-    domain = domain || _domain;
-    if (domain == null) {
-      throw new Error("Must provide DeltaGenerator with a domain.");
-    }
-    if (domain.alphabet == null) {
-      throw new Error("Domain must define alphabet.");
-    }
-    if (domain.booleanAttributes == null) {
-      throw new Error("Domain must define booleanAttributes.");
-    }
-    if (domain.nonBooleanAttributes == null) {
-      throw new Error("Domain must define nonBooleanAttributes.");
-    }
-    if (domain.defaultAttributeValue == null) {
-      throw new Error("Domain must define defaultAttributeValue.");
-    }
-    return {
-      getDomain: function(domain) {
-        return _domain;
-      },
-      getRandomString: function(length) {
-        var _i, _ref, _results;
-        return _.map((function() {
-          _results = [];
-          for (var _i = 0, _ref = length - 1; 0 <= _ref ? _i <= _ref : _i >= _ref; 0 <= _ref ? _i++ : _i--){ _results.push(_i); }
-          return _results;
-        }).apply(this), function() {
-          return domain.alphabet[_.random(0, domain.alphabet.length - 1)];
-        }).join('');
-      },
-      getRandomLength: function() {
-        var rand;
-        rand = Math.random();
-        if (rand < 0.6) {
-          return _.random(1, 2);
-        } else if (rand < 0.8) {
-          return _.random(3, 4);
-        } else if (rand < 0.9) {
-          return _.random(5, 9);
-        } else {
-          return _.random(10, 50);
-        }
-      },
-      insertAt: function(delta, insertionPoint, insertions) {
-        var charIndex, head, op, opIndex, tail, _i, _len, _ref, _ref1;
-        charIndex = opIndex = 0;
-        _ref = delta.ops;
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          op = _ref[_i];
-          if (charIndex === insertionPoint) {
-            break;
-          }
-          if (insertionPoint < charIndex + op.getLength()) {
-            _ref1 = op.split(insertionPoint - charIndex), head = _ref1[0], tail = _ref1[1];
-            delta.ops.splice(opIndex, 1, head, tail);
-            opIndex++;
-            break;
-          }
-          charIndex += op.getLength();
-          opIndex++;
-        }
-        delta.ops.splice(opIndex, 0, new InsertOp(insertions));
-        delta.endLength += insertions.length;
-        return delta.compact();
-      },
-      deleteAt: function(delta, deletionPoint, numToDelete) {
-        var charIndex, curDelete, head, newText, op, ops, reachedDeletionPoint, tail, _i, _len, _ref;
-        charIndex = 0;
-        ops = [];
-        _ref = delta.ops;
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          op = _ref[_i];
-          reachedDeletionPoint = charIndex === deletionPoint || deletionPoint < charIndex + op.getLength();
-          if (numToDelete > 0 && reachedDeletionPoint) {
-            curDelete = Math.min(numToDelete, op.getLength() - (deletionPoint - charIndex));
-            numToDelete -= curDelete;
-            if (InsertOp.isInsert(op)) {
-              newText = op.value.substring(0, deletionPoint - charIndex) + op.value.substring(deletionPoint - charIndex + curDelete);
-              if (newText.length > 0) {
-                ops.push(new InsertOp(newText));
-              }
-            } else {
-              if (!RetainOp.isRetain(op)) {
-                throw new Error("Expected retain but got " + op);
-              }
-              head = new RetainOp(op.start, op.start + deletionPoint - charIndex, _.clone(op.attributes));
-              tail = new RetainOp(op.start + deletionPoint - charIndex + curDelete, op.end, _.clone(op.attributes));
-              if (head.start < head.end) {
-                ops.push(head);
-              }
-              if (tail.start < tail.end) {
-                ops.push(tail);
-              }
-            }
-            deletionPoint += curDelete;
-          } else {
-            ops.push(op);
-          }
-          charIndex += op.getLength();
-        }
-        delta.ops = ops;
-        return delta.endLength = _.reduce(ops, function(length, op) {
-          return length + op.getLength();
-        }, 0);
-      },
-      formatAt: function(delta, formatPoint, numToFormat, attrs, reference) {
-        var attr, charIndex, cur, curFormat, head, op, ops, reachedFormatPoint, tail, _formatBooleanAttribute, _formatNonBooleanAttribute, _i, _j, _len, _len1, _limitScope, _ref, _ref1, _splitOpInThree;
-        _splitOpInThree = function(elem, splitAt, length, reference) {
-          var cur, curStr, head, headStr, marker, newCur, op, origOps, tail, tailStr, _i, _len;
-          if (InsertOp.isInsert(elem)) {
-            headStr = elem.value.substring(0, splitAt);
-            head = new InsertOp(headStr, _.clone(elem.attributes));
-            curStr = elem.value.substring(splitAt, splitAt + length);
-            cur = new InsertOp(curStr, _.clone(elem.attributes));
-            tailStr = elem.value.substring(splitAt + length);
-            tail = new InsertOp(tailStr, _.clone(elem.attributes));
-            if (curStr.indexOf('\n') !== -1) {
-              newCur = curStr.substring(0, curStr.indexOf('\n'));
-              tailStr = curStr.substring(curStr.indexOf('\n')) + tailStr;
-              cur = new InsertOp(newCur, _.clone(elem.attributes));
-              tail = new InsertOp(tailStr, _.clone(elem.attributes));
-            }
-          } else {
-            if (!RetainOp.isRetain(elem)) {
-              throw new Error("Expected retain but got " + elem);
-            }
-            head = new RetainOp(elem.start, elem.start + splitAt, _.clone(elem.attributes));
-            cur = new RetainOp(head.end, head.end + length, _.clone(elem.attributes));
-            tail = new RetainOp(cur.end, elem.end, _.clone(elem.attributes));
-            origOps = reference.getOpsAt(cur.start, cur.getLength());
-            if (!_.every(origOps, function(op) {
-              return InsertOp.isInsert(op);
-            })) {
-              throw new Error("Non insert op in backref");
-            }
-            marker = cur.start;
-            for (_i = 0, _len = origOps.length; _i < _len; _i++) {
-              op = origOps[_i];
-              if (InsertOp.isInsert(op)) {
-                if (op.value.indexOf('\n') !== -1) {
-                  cur = new RetainOp(cur.start, marker + op.value.indexOf('\n'), _.clone(cur.attributes));
-                  tail = new RetainOp(marker + op.value.indexOf('\n'), tail.end, _.clone(tail.attributes));
-                  break;
-                } else {
-                  marker += op.getLength();
-                }
-              } else {
-                throw new Error("Got retainOp in reference delta!");
-              }
-            }
-          }
-          return [head, cur, tail];
-        };
-        _limitScope = function(op, tail, attr, referenceOps) {
-          var length, refOp, val, _i, _len, _results;
-          length = 0;
-          val = referenceOps[0].attributes[attr];
-          _results = [];
-          for (_i = 0, _len = referenceOps.length; _i < _len; _i++) {
-            refOp = referenceOps[_i];
-            if (refOp.attributes[attr] !== val) {
-              op.end = op.start + length;
-              tail.start = op.end;
-              break;
-            } else {
-              _results.push(length += refOp.getLength());
-            }
-          }
-          return _results;
-        };
-        _formatBooleanAttribute = function(op, tail, attr, reference) {
-          var referenceOps;
-          if (InsertOp.isInsert(op)) {
-            if (op.attributes[attr] != null) {
-              return delete op.attributes[attr];
-            } else {
-              return op.attributes[attr] = true;
-            }
-          } else {
-            if (!RetainOp.isRetain(op)) {
-              throw new Error("Expected retain but got " + op);
-            }
-            if (op.attributes[attr] != null) {
-              return delete op.attributes[attr];
-            } else {
-              referenceOps = reference.getOpsAt(op.start, op.getLength());
-              if (!_.every(referenceOps, function(op) {
-                return InsertOp.isInsert(op);
-              })) {
-                throw new Error("Formatting a retain that does not refer to an insert.");
-              }
-              if (referenceOps.length > 0) {
-                _limitScope(op, tail, attr, referenceOps);
-                if (referenceOps[0].attributes[attr] != null) {
-                  if (!referenceOps[0].attributes[attr]) {
-                    throw new Error("Boolean attribute on reference delta should only be true!");
-                  }
-                  return op.attributes[attr] = null;
-                } else {
-                  return op.attributes[attr] = true;
-                }
-              }
-            }
-          }
-        };
-        _formatNonBooleanAttribute = (function(_this) {
-          return function(op, tail, attr, reference) {
-            var getNewAttrVal, referenceOps;
-            getNewAttrVal = function(prevVal) {
-              if (prevVal != null) {
-                return _.first(_.shuffle(_.without(domain.nonBooleanAttributes[attr], prevVal)));
-              } else {
-                return _.first(_.shuffle(_.without(domain.nonBooleanAttributes[attr], domain.defaultAttributeValue[attr])));
-              }
-            };
-            if (InsertOp.isInsert(op)) {
-              return op.attributes[attr] = getNewAttrVal(attr, op.attributes[attr]);
-            } else {
-              if (!RetainOp.isRetain(op)) {
-                throw new Error("Expected retain but got " + op);
-              }
-              referenceOps = reference.getOpsAt(op.start, op.getLength());
-              if (!_.every(referenceOps, function(op) {
-                return InsertOp.isInsert(op);
-              })) {
-                throw new Error("Formatting a retain that does not refer to an insert.");
-              }
-              if (referenceOps.length > 0) {
-                _limitScope(op, tail, attr, referenceOps);
-                if ((op.attributes[attr] != null) && Math.random() < 0.5) {
-                  return delete op.attributes[attr];
-                } else {
-                  return op.attributes[attr] = getNewAttrVal(op.attributes[attr]);
-                }
-              }
-            }
-          };
-        })(this);
-        charIndex = 0;
-        ops = [];
-        _ref = delta.ops;
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          op = _ref[_i];
-          reachedFormatPoint = charIndex === formatPoint || charIndex + op.getLength() > formatPoint;
-          if (numToFormat > 0 && reachedFormatPoint) {
-            curFormat = Math.min(numToFormat, op.getLength() - (formatPoint - charIndex));
-            numToFormat -= curFormat;
-            _ref1 = _splitOpInThree(op, formatPoint - charIndex, curFormat, reference), head = _ref1[0], cur = _ref1[1], tail = _ref1[2];
-            ops.push(head);
-            ops.push(cur);
-            ops.push(tail);
-            for (_j = 0, _len1 = attrs.length; _j < _len1; _j++) {
-              attr = attrs[_j];
-              if (_.has(domain.booleanAttributes, attr)) {
-                _formatBooleanAttribute(cur, tail, attr, reference);
-              } else if (_.has(domain.nonBooleanAttributes, attr)) {
-                _formatNonBooleanAttribute(cur, tail, attr, reference);
-              } else {
-                throw new Error("Received unknown attribute: " + attr);
-              }
-            }
-            formatPoint += curFormat;
-          } else {
-            ops.push(op);
-          }
-          charIndex += op.getLength();
-        }
-        delta.endLength = _.reduce(ops, function(length, delta) {
-          return length + delta.getLength();
-        }, 0);
-        delta.ops = ops;
-        return delta.compact();
-      },
-      addRandomOp: function(newDelta, referenceDelta) {
-        var attrs, finalIndex, numAttrs, opIndex, opLength, rand, shuffled_attrs;
-        finalIndex = referenceDelta.endLength - 1;
-        opIndex = _.random(0, finalIndex);
-        rand = Math.random();
-        if (rand < 0.5) {
-          opLength = this.getRandomLength();
-          this.insertAt(newDelta, opIndex, this.getRandomString(opLength));
-        } else if (rand < 0.75) {
-          if (referenceDelta.endLength <= 1) {
-            return newDelta;
-          }
-          opIndex = _.random(0, finalIndex - 1);
-          opLength = _.random(1, finalIndex - opIndex);
-          this.deleteAt(newDelta, opIndex, opLength);
-        } else {
-          shuffled_attrs = _.shuffle(_.keys(domain.booleanAttributes).concat(_.keys(domain.nonBooleanAttributes)));
-          numAttrs = _.random(1, shuffled_attrs.length);
-          attrs = shuffled_attrs.slice(0, numAttrs);
-          opLength = _.random(1, finalIndex - opIndex);
-          this.formatAt(newDelta, opIndex, opLength, attrs, referenceDelta);
-        }
-        return newDelta;
-      },
-      getRandomDelta: function(referenceDelta, numOps) {
-        var i, newDelta, _i;
-        newDelta = new Delta(referenceDelta.endLength, referenceDelta.endLength, [new RetainOp(0, referenceDelta.endLength)]);
-        numOps || (numOps = _.random(1, 10));
-        for (i = _i = 0; 0 <= numOps ? _i < numOps : _i > numOps; i = 0 <= numOps ? ++_i : --_i) {
-          this.addRandomOp(newDelta, referenceDelta);
-        }
-        return newDelta;
-      }
-    };
-  };
-
-  DeltaGenerator = {
-    setDomain: setDomain,
-    getUtils: getUtils
-  };
-
-  module.exports = DeltaGenerator;
-
-}).call(this);
-
-},{"./delta":4,"./insert":6,"./retain":8,"lodash":"M4+//f"}],6:[function(_dereq_,module,exports){
-(function() {
-  var InsertOp, Op, _,
-    __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
-
-  _ = _dereq_('lodash');
-
-  Op = _dereq_('./op');
-
-  InsertOp = (function(_super) {
-    __extends(InsertOp, _super);
-
-    function InsertOp(value, attributes) {
-      this.value = value;
-      if (attributes == null) {
-        attributes = {};
-      }
-      this.attributes = _.clone(attributes);
-    }
-
-    InsertOp.prototype.getAt = function(start, length) {
-      return new InsertOp(this.value.substr(start, length), this.attributes);
-    };
-
-    InsertOp.prototype.getLength = function() {
-      return this.value.length;
-    };
-
-    InsertOp.prototype.isEqual = function(other) {
-      return (other != null) && this.value === other.value && _.isEqual(this.attributes, other.attributes);
-    };
-
-    InsertOp.prototype.join = function(other) {
-      if (_.isEqual(this.attributes, other.attributes)) {
-        return new InsertOp(this.value + second.value, this.attributes);
+Delta.prototype.transform = function (other, priority) {
+  priority = !!priority;
+  if (is.number(other)) {
+    return this.transformPosition(other, priority);
+  }
+  var thisIter = op.iterator(this.ops);
+  var otherIter = op.iterator(other.ops);
+  var delta = new Delta();
+  while (thisIter.hasNext() || otherIter.hasNext()) {
+    if (thisIter.peekType() === 'insert' && (priority || otherIter.peekType() !== 'insert')) {
+      delta.retain(op.length(thisIter.next()));
+    } else if (otherIter.peekType() === 'insert') {
+      delta.push(otherIter.next());
+    } else {
+      var length = Math.min(thisIter.peekLength(), otherIter.peekLength());
+      var thisOp = thisIter.next(length);
+      var otherOp = otherIter.next(length);
+      if (thisOp['delete']) {
+        // Our delete either makes their delete redundant or removes their retain
+        continue;
+      } else if (otherOp['delete']) {
+        delta.push(otherOp);
       } else {
-        throw Error;
+        // We retain either their retain or insert
+        delta.retain(length, op.attributes.transform(thisOp.attributes, otherOp.attributes, priority));
       }
-    };
-
-    InsertOp.prototype.split = function(offset) {
-      var left, right;
-      left = new InsertOp(this.value.substr(0, offset), this.attributes);
-      right = new InsertOp(this.value.substr(offset), this.attributes);
-      return [left, right];
-    };
-
-    InsertOp.prototype.toString = function() {
-      return "{" + this.value + ", " + (this.printAttributes()) + "}";
-    };
-
-    return InsertOp;
-
-  })(Op);
-
-  module.exports = InsertOp;
-
-}).call(this);
-
-},{"./op":7,"lodash":"M4+//f"}],7:[function(_dereq_,module,exports){
-(function() {
-  var Op, _;
-
-  _ = _dereq_('lodash');
-
-  Op = (function() {
-    Op.isInsert = function(i) {
-      return (i != null) && typeof i.value === "string";
-    };
-
-    Op.isRetain = function(r) {
-      return (r != null) && typeof r.start === "number" && typeof r.end === "number";
-    };
-
-    function Op(attributes) {
-      if (attributes == null) {
-        attributes = {};
-      }
-      this.attributes = _.clone(attributes);
     }
+  }
+  return delta.chop();
+};
 
-    Op.prototype.addAttributes = function(attributes) {
-      var addedAttributes, key, value;
-      addedAttributes = {};
-      for (key in attributes) {
-        value = attributes[key];
-        if (this.attributes[key] === void 0) {
-          addedAttributes[key] = value;
+Delta.prototype.transformPosition = function (index, priority) {
+  priority = !!priority;
+  var thisIter = op.iterator(this.ops);
+  var offset = 0;
+  while (thisIter.hasNext() && offset <= index) {
+    var length = thisIter.peekLength();
+    var nextType = thisIter.peekType();
+    thisIter.next();
+    if (nextType === 'delete') {
+      index -= Math.min(length, index - offset);
+      continue;
+    } else if (nextType === 'insert' && (offset < index || !priority)) {
+      index += length;
+    }
+    offset += length;
+  }
+  return index;
+};
+
+
+module.exports = Delta;
+
+},{"./is":4,"./op":5,"fast-diff":6}],4:[function(_dereq_,module,exports){
+module.exports = {
+  equal: function (a, b) {
+    if (a === b) return true;
+    if (a == null && b == null) return true;
+    if (a == null || b == null) return false;
+    if (Object.keys(a).length != Object.keys(b).length) return false;
+    for(var key in a) {
+      // Only compare one level deep
+      if (a[key] !== b[key]) return false;
+    }
+    return true;
+  },
+
+  array: function (value) {
+    return Array.isArray(value);
+  },
+
+  number: function (value) {
+    if (typeof value === 'number') return true;
+    if (typeof value === 'object' && Object.prototype.toString.call(value) === '[object Number]') return true;
+    return false;
+  },
+
+  object: function (value) {
+    if (!value) return false;
+    return (typeof value === 'function' || typeof value === 'object');
+  },
+
+  string: function (value) {
+    if (typeof value === 'string') return true;
+    if (typeof value === 'object' && Object.prototype.toString.call(value) === '[object String]') return true;
+    return false;
+  }
+};
+
+},{}],5:[function(_dereq_,module,exports){
+var is = _dereq_('./is');
+
+
+var lib = {
+  attributes: {
+    clone: function (attributes, keepNull) {
+      if (!is.object(attributes)) return {};
+      return Object.keys(attributes).reduce(function (memo, key) {
+        if (attributes[key] !== undefined && (attributes[key] !== null || keepNull)) {
+          memo[key] = attributes[key];
+        }
+        return memo;
+      }, {});
+    },
+
+    compose: function (a, b, keepNull) {
+      if (!is.object(a)) a = {};
+      if (!is.object(b)) b = {};
+      var attributes = this.clone(b, keepNull);
+      for (var key in a) {
+        if (a[key] !== undefined && b[key] === undefined) {
+          attributes[key] = a[key];
         }
       }
-      return addedAttributes;
-    };
+      return Object.keys(attributes).length > 0 ? attributes : undefined;
+    },
 
-    Op.prototype.attributesMatch = function(other) {
-      var otherAttributes;
-      otherAttributes = other.attributes || {};
-      return _.isEqual(this.attributes, otherAttributes);
-    };
+    diff: function(a, b) {
+      if (!is.object(a)) a = {};
+      if (!is.object(b)) b = {};
+      var attributes = Object.keys(a).concat(Object.keys(b)).reduce(function (attributes, key) {
+        if (a[key] !== b[key]) {
+          attributes[key] = b[key] === undefined ? null : b[key];
+        }
+        return attributes;
+      }, {});
+      return Object.keys(attributes).length > 0 ? attributes : undefined;
+    },
 
-    Op.prototype.composeAttributes = function(attributes) {
-      var resolveAttributes;
-      resolveAttributes = (function(_this) {
-        return function(oldAttrs, newAttrs) {
-          var key, resolvedAttrs, value;
-          if (!newAttrs) {
-            return oldAttrs;
-          }
-          resolvedAttrs = _.clone(oldAttrs);
-          for (key in newAttrs) {
-            value = newAttrs[key];
-            if (Op.isInsert(_this) && value === null) {
-              delete resolvedAttrs[key];
-            } else if (typeof value !== 'undefined') {
-              if (typeof resolvedAttrs[key] === 'object' && typeof value === 'object' && _.all([resolvedAttrs[key], newAttrs[key]], (function(val) {
-                return val !== null;
-              }))) {
-                resolvedAttrs[key] = resolveAttributes(resolvedAttrs[key], value);
-              } else {
-                resolvedAttrs[key] = value;
-              }
-            }
-          }
-          return resolvedAttrs;
-        };
-      })(this);
-      return resolveAttributes(this.attributes, attributes);
-    };
-
-    Op.prototype.numAttributes = function() {
-      return _.keys(this.attributes).length;
-    };
-
-    Op.prototype.printAttributes = function() {
-      return JSON.stringify(this.attributes);
-    };
-
-    return Op;
-
-  })();
-
-  module.exports = Op;
-
-}).call(this);
-
-},{"lodash":"M4+//f"}],8:[function(_dereq_,module,exports){
-(function() {
-  var Op, RetainOp, _,
-    __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
-
-  _ = _dereq_('lodash');
-
-  Op = _dereq_('./op');
-
-  RetainOp = (function(_super) {
-    __extends(RetainOp, _super);
-
-    function RetainOp(start, end, attributes) {
-      this.start = start;
-      this.end = end;
-      if (attributes == null) {
-        attributes = {};
-      }
-      this.attributes = _.clone(attributes);
+    transform: function (a, b, priority) {
+      if (!is.object(a)) return b;
+      if (!is.object(b)) return undefined;
+      if (!priority) return b;  // b simply overwrites us without priority
+      var attributes = Object.keys(b).reduce(function (attributes, key) {
+        if (a[key] === undefined) attributes[key] = b[key];  // null is a valid value
+        return attributes;
+      }, {});
+      return Object.keys(attributes).length > 0 ? attributes : undefined;
     }
+  },
 
-    RetainOp.prototype.getAt = function(start, length) {
-      return new RetainOp(this.start + start, this.start + start + length, this.attributes);
-    };
+  clone: function (op) {
+    var newOp = this.attributes.clone(op);
+    if (is.object(newOp.attributes)) {
+      newOp.attributes = this.attributes.clone(newOp.attributes, true);
+    }
+    return newOp;
+  },
 
-    RetainOp.prototype.getLength = function() {
-      return this.end - this.start;
-    };
+  iterator: function (ops) {
+    return new Iterator(ops);
+  },
 
-    RetainOp.prototype.isEqual = function(other) {
-      return (other != null) && this.start === other.start && this.end === other.end && _.isEqual(this.attributes, other.attributes);
-    };
+  length: function (op) {
+    if (is.number(op['delete'])) {
+      return op['delete'];
+    } else if (is.number(op.retain)) {
+      return op.retain;
+    } else {
+      return is.string(op.insert) ? op.insert.length : 1;
+    }
+  }
+};
 
-    RetainOp.prototype.split = function(offset) {
-      var left, right;
-      left = new RetainOp(this.start, this.start + offset, this.attributes);
-      right = new RetainOp(this.start + offset, this.end, this.attributes);
-      return [left, right];
-    };
 
-    RetainOp.prototype.toString = function() {
-      return "{{" + this.start + " - " + this.end + "), " + (this.printAttributes()) + "}";
-    };
+function Iterator(ops) {
+  this.ops = ops;
+  this.index = 0;
+  this.offset = 0;
+};
 
-    return RetainOp;
+Iterator.prototype.hasNext = function () {
+  return this.peekLength() < Infinity;
+};
 
-  })(Op);
+Iterator.prototype.next = function (length) {
+  if (!length) length = Infinity;
+  var nextOp = this.ops[this.index];
+  if (nextOp) {
+    var offset = this.offset;
+    var opLength = lib.length(nextOp)
+    if (length >= opLength - offset) {
+      length = opLength - offset;
+      this.index += 1;
+      this.offset = 0;
+    } else {
+      this.offset += length;
+    }
+    if (is.number(nextOp['delete'])) {
+      return { 'delete': length };
+    } else {
+      var retOp = {};
+      if (nextOp.attributes) {
+        retOp.attributes = nextOp.attributes;
+      }
+      if (is.number(nextOp.retain)) {
+        retOp.retain = length;
+      } else if (is.string(nextOp.insert)) {
+        retOp.insert = nextOp.insert.substr(offset, length);
+      } else {
+        // offset should === 0, length should === 1
+        retOp.insert = nextOp.insert;
+      }
+      return retOp;
+    }
+  } else {
+    return { retain: Infinity };
+  }
+};
 
-  module.exports = RetainOp;
+Iterator.prototype.peekLength = function () {
+  if (this.ops[this.index]) {
+    // Should never return 0 if our index is being managed correctly
+    return lib.length(this.ops[this.index]) - this.offset;
+  } else {
+    return Infinity;
+  }
+};
 
-}).call(this);
+Iterator.prototype.peekType = function () {
+  if (this.ops[this.index]) {
+    if (is.number(this.ops[this.index]['delete'])) {
+      return 'delete';
+    } else if (is.number(this.ops[this.index].retain)) {
+      return 'retain';
+    } else {
+      return 'insert';
+    }
+  }
+  return 'retain';
+};
 
-},{"./op":7,"lodash":"M4+//f"}],9:[function(_dereq_,module,exports){
-(function() {
-  module.exports = {
-    Delta: _dereq_('./delta'),
-    DeltaGen: _dereq_('./delta_generator'),
-    Op: _dereq_('./op'),
-    InsertOp: _dereq_('./insert'),
-    RetainOp: _dereq_('./retain')
-  };
 
-}).call(this);
+module.exports = lib;
 
-},{"./delta":4,"./delta_generator":5,"./insert":6,"./op":7,"./retain":8}],10:[function(_dereq_,module,exports){
-module.exports = _dereq_('./build/tandem-core')
-
-},{"./build/tandem-core":9}],11:[function(_dereq_,module,exports){
-/* See LICENSE file for terms of use */
-
-/*
- * Text diff implementation.
+},{"./is":4}],6:[function(_dereq_,module,exports){
+/**
+ * This library modifies the diff-patch-match library by Neil Fraser
+ * by removing the patch and match functionality and certain advanced
+ * options in the diff function. The original license is as follows:
  *
- * This library supports the following APIS:
- * JsDiff.diffChars: Character by character diff
- * JsDiff.diffWords: Word (as defined by \b regex) diff which ignores whitespace
- * JsDiff.diffLines: Line based diff
+ * ===
  *
- * JsDiff.diffCss: Diff targeted at CSS content
+ * Diff Match and Patch
  *
- * These methods are based on the implementation proposed in
- * "An O(ND) Difference Algorithm and its Variations" (Myers, 1986).
- * http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.4.6927
+ * Copyright 2006 Google Inc.
+ * http://code.google.com/p/google-diff-match-patch/
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-var JsDiff = (function() {
-  /*jshint maxparams: 5*/
-  function clonePath(path) {
-    return { newPos: path.newPos, components: path.components.slice(0) };
-  }
-  function removeEmpty(array) {
-    var ret = [];
-    for (var i = 0; i < array.length; i++) {
-      if (array[i]) {
-        ret.push(array[i]);
-      }
+
+
+/**
+ * The data structure representing a diff is an array of tuples:
+ * [[DIFF_DELETE, 'Hello'], [DIFF_INSERT, 'Goodbye'], [DIFF_EQUAL, ' world.']]
+ * which means: delete 'Hello', add 'Goodbye' and keep ' world.'
+ */
+var DIFF_DELETE = -1;
+var DIFF_INSERT = 1;
+var DIFF_EQUAL = 0;
+
+
+/**
+ * Find the differences between two texts.  Simplifies the problem by stripping
+ * any common prefix or suffix off the texts before diffing.
+ * @param {string} text1 Old string to be diffed.
+ * @param {string} text2 New string to be diffed.
+ * @return {Array} Array of diff tuples.
+ */
+function diff_main(text1, text2) {
+  // Check for equality (speedup).
+  if (text1 == text2) {
+    if (text1) {
+      return [[DIFF_EQUAL, text1]];
     }
-    return ret;
-  }
-  function escapeHTML(s) {
-    var n = s;
-    n = n.replace(/&/g, '&amp;');
-    n = n.replace(/</g, '&lt;');
-    n = n.replace(/>/g, '&gt;');
-    n = n.replace(/"/g, '&quot;');
-
-    return n;
+    return [];
   }
 
-  var Diff = function(ignoreWhitespace) {
-    this.ignoreWhitespace = ignoreWhitespace;
-  };
-  Diff.prototype = {
-      diff: function(oldString, newString) {
-        // Handle the identity case (this is due to unrolling editLength == 0
-        if (newString === oldString) {
-          return [{ value: newString }];
-        }
-        if (!newString) {
-          return [{ value: oldString, removed: true }];
-        }
-        if (!oldString) {
-          return [{ value: newString, added: true }];
-        }
+  // Trim off common prefix (speedup).
+  var commonlength = diff_commonPrefix(text1, text2);
+  var commonprefix = text1.substring(0, commonlength);
+  text1 = text1.substring(commonlength);
+  text2 = text2.substring(commonlength);
 
-        newString = this.tokenize(newString);
-        oldString = this.tokenize(oldString);
+  // Trim off common suffix (speedup).
+  commonlength = diff_commonSuffix(text1, text2);
+  var commonsuffix = text1.substring(text1.length - commonlength);
+  text1 = text1.substring(0, text1.length - commonlength);
+  text2 = text2.substring(0, text2.length - commonlength);
 
-        var newLen = newString.length, oldLen = oldString.length;
-        var maxEditLength = newLen + oldLen;
-        var bestPath = [{ newPos: -1, components: [] }];
+  // Compute the diff on the middle block.
+  var diffs = diff_compute_(text1, text2);
 
-        // Seed editLength = 0
-        var oldPos = this.extractCommon(bestPath[0], newString, oldString, 0);
-        if (bestPath[0].newPos+1 >= newLen && oldPos+1 >= oldLen) {
-          return bestPath[0].components;
-        }
+  // Restore the prefix and suffix.
+  if (commonprefix) {
+    diffs.unshift([DIFF_EQUAL, commonprefix]);
+  }
+  if (commonsuffix) {
+    diffs.push([DIFF_EQUAL, commonsuffix]);
+  }
+  diff_cleanupMerge(diffs);
+  return diffs;
+};
 
-        for (var editLength = 1; editLength <= maxEditLength; editLength++) {
-          for (var diagonalPath = -1*editLength; diagonalPath <= editLength; diagonalPath+=2) {
-            var basePath;
-            var addPath = bestPath[diagonalPath-1],
-                removePath = bestPath[diagonalPath+1];
-            oldPos = (removePath ? removePath.newPos : 0) - diagonalPath;
-            if (addPath) {
-              // No one else is going to attempt to use this value, clear it
-              bestPath[diagonalPath-1] = undefined;
-            }
 
-            var canAdd = addPath && addPath.newPos+1 < newLen;
-            var canRemove = removePath && 0 <= oldPos && oldPos < oldLen;
-            if (!canAdd && !canRemove) {
-              bestPath[diagonalPath] = undefined;
-              continue;
-            }
+/**
+ * Find the differences between two texts.  Assumes that the texts do not
+ * have any common prefix or suffix.
+ * @param {string} text1 Old string to be diffed.
+ * @param {string} text2 New string to be diffed.
+ * @return {Array} Array of diff tuples.
+ */
+function diff_compute_(text1, text2) {
+  var diffs;
 
-            // Select the diagonal that we want to branch from. We select the prior
-            // path whose position in the new string is the farthest from the origin
-            // and does not pass the bounds of the diff graph
-            if (!canAdd || (canRemove && addPath.newPos < removePath.newPos)) {
-              basePath = clonePath(removePath);
-              this.pushComponent(basePath.components, oldString[oldPos], undefined, true);
-            } else {
-              basePath = clonePath(addPath);
-              basePath.newPos++;
-              this.pushComponent(basePath.components, newString[basePath.newPos], true, undefined);
-            }
+  if (!text1) {
+    // Just add some text (speedup).
+    return [[DIFF_INSERT, text2]];
+  }
 
-            var oldPos = this.extractCommon(basePath, newString, oldString, diagonalPath);
+  if (!text2) {
+    // Just delete some text (speedup).
+    return [[DIFF_DELETE, text1]];
+  }
 
-            if (basePath.newPos+1 >= newLen && oldPos+1 >= oldLen) {
-              return basePath.components;
-            } else {
-              bestPath[diagonalPath] = basePath;
-            }
+  var longtext = text1.length > text2.length ? text1 : text2;
+  var shorttext = text1.length > text2.length ? text2 : text1;
+  var i = longtext.indexOf(shorttext);
+  if (i != -1) {
+    // Shorter text is inside the longer text (speedup).
+    diffs = [[DIFF_INSERT, longtext.substring(0, i)],
+             [DIFF_EQUAL, shorttext],
+             [DIFF_INSERT, longtext.substring(i + shorttext.length)]];
+    // Swap insertions for deletions if diff is reversed.
+    if (text1.length > text2.length) {
+      diffs[0][0] = diffs[2][0] = DIFF_DELETE;
+    }
+    return diffs;
+  }
+
+  if (shorttext.length == 1) {
+    // Single character string.
+    // After the previous speedup, the character can't be an equality.
+    return [[DIFF_DELETE, text1], [DIFF_INSERT, text2]];
+  }
+
+  // Check to see if the problem can be split in two.
+  var hm = diff_halfMatch_(text1, text2);
+  if (hm) {
+    // A half-match was found, sort out the return data.
+    var text1_a = hm[0];
+    var text1_b = hm[1];
+    var text2_a = hm[2];
+    var text2_b = hm[3];
+    var mid_common = hm[4];
+    // Send both pairs off for separate processing.
+    var diffs_a = diff_main(text1_a, text2_a);
+    var diffs_b = diff_main(text1_b, text2_b);
+    // Merge the results.
+    return diffs_a.concat([[DIFF_EQUAL, mid_common]], diffs_b);
+  }
+
+  return diff_bisect_(text1, text2);
+};
+
+
+/**
+ * Find the 'middle snake' of a diff, split the problem in two
+ * and return the recursively constructed diff.
+ * See Myers 1986 paper: An O(ND) Difference Algorithm and Its Variations.
+ * @param {string} text1 Old string to be diffed.
+ * @param {string} text2 New string to be diffed.
+ * @return {Array} Array of diff tuples.
+ * @private
+ */
+function diff_bisect_(text1, text2) {
+  // Cache the text lengths to prevent multiple calls.
+  var text1_length = text1.length;
+  var text2_length = text2.length;
+  var max_d = Math.ceil((text1_length + text2_length) / 2);
+  var v_offset = max_d;
+  var v_length = 2 * max_d;
+  var v1 = new Array(v_length);
+  var v2 = new Array(v_length);
+  // Setting all elements to -1 is faster in Chrome & Firefox than mixing
+  // integers and undefined.
+  for (var x = 0; x < v_length; x++) {
+    v1[x] = -1;
+    v2[x] = -1;
+  }
+  v1[v_offset + 1] = 0;
+  v2[v_offset + 1] = 0;
+  var delta = text1_length - text2_length;
+  // If the total number of characters is odd, then the front path will collide
+  // with the reverse path.
+  var front = (delta % 2 != 0);
+  // Offsets for start and end of k loop.
+  // Prevents mapping of space beyond the grid.
+  var k1start = 0;
+  var k1end = 0;
+  var k2start = 0;
+  var k2end = 0;
+  for (var d = 0; d < max_d; d++) {
+    // Walk the front path one step.
+    for (var k1 = -d + k1start; k1 <= d - k1end; k1 += 2) {
+      var k1_offset = v_offset + k1;
+      var x1;
+      if (k1 == -d || (k1 != d && v1[k1_offset - 1] < v1[k1_offset + 1])) {
+        x1 = v1[k1_offset + 1];
+      } else {
+        x1 = v1[k1_offset - 1] + 1;
+      }
+      var y1 = x1 - k1;
+      while (x1 < text1_length && y1 < text2_length &&
+             text1.charAt(x1) == text2.charAt(y1)) {
+        x1++;
+        y1++;
+      }
+      v1[k1_offset] = x1;
+      if (x1 > text1_length) {
+        // Ran off the right of the graph.
+        k1end += 2;
+      } else if (y1 > text2_length) {
+        // Ran off the bottom of the graph.
+        k1start += 2;
+      } else if (front) {
+        var k2_offset = v_offset + delta - k1;
+        if (k2_offset >= 0 && k2_offset < v_length && v2[k2_offset] != -1) {
+          // Mirror x2 onto top-left coordinate system.
+          var x2 = text1_length - v2[k2_offset];
+          if (x1 >= x2) {
+            // Overlap detected.
+            return diff_bisectSplit_(text1, text2, x1, y1);
           }
         }
-      },
-
-      pushComponent: function(components, value, added, removed) {
-        var last = components[components.length-1];
-        if (last && last.added === added && last.removed === removed) {
-          // We need to clone here as the component clone operation is just
-          // as shallow array clone
-          components[components.length-1] =
-            {value: this.join(last.value, value), added: added, removed: removed };
-        } else {
-          components.push({value: value, added: added, removed: removed });
-        }
-      },
-      extractCommon: function(basePath, newString, oldString, diagonalPath) {
-        var newLen = newString.length,
-            oldLen = oldString.length,
-            newPos = basePath.newPos,
-            oldPos = newPos - diagonalPath;
-        while (newPos+1 < newLen && oldPos+1 < oldLen && this.equals(newString[newPos+1], oldString[oldPos+1])) {
-          newPos++;
-          oldPos++;
-
-          this.pushComponent(basePath.components, newString[newPos], undefined, undefined);
-        }
-        basePath.newPos = newPos;
-        return oldPos;
-      },
-
-      equals: function(left, right) {
-        var reWhitespace = /\S/;
-        if (this.ignoreWhitespace && !reWhitespace.test(left) && !reWhitespace.test(right)) {
-          return true;
-        } else {
-          return left === right;
-        }
-      },
-      join: function(left, right) {
-        return left + right;
-      },
-      tokenize: function(value) {
-        return value;
-      }
-  };
-
-  var CharDiff = new Diff();
-
-  var WordDiff = new Diff(true);
-  var WordWithSpaceDiff = new Diff();
-  WordDiff.tokenize = WordWithSpaceDiff.tokenize = function(value) {
-    return removeEmpty(value.split(/(\s+|\b)/));
-  };
-
-  var CssDiff = new Diff(true);
-  CssDiff.tokenize = function(value) {
-    return removeEmpty(value.split(/([{}:;,]|\s+)/));
-  };
-
-  var LineDiff = new Diff();
-  LineDiff.tokenize = function(value) {
-    var retLines = [],
-        lines = value.split(/^/m);
-
-    for(var i = 0; i < lines.length; i++) {
-      var line = lines[i],
-          lastLine = lines[i - 1];
-
-      // Merge lines that may contain windows new lines
-      if (line == '\n' && lastLine && lastLine[lastLine.length - 1] === '\r') {
-        retLines[retLines.length - 1] += '\n';
-      } else if (line) {
-        retLines.push(line);
       }
     }
 
-    return retLines;
-  };
-
-  return {
-    Diff: Diff,
-
-    diffChars: function(oldStr, newStr) { return CharDiff.diff(oldStr, newStr); },
-    diffWords: function(oldStr, newStr) { return WordDiff.diff(oldStr, newStr); },
-    diffWordsWithSpace: function(oldStr, newStr) { return WordWithSpaceDiff.diff(oldStr, newStr); },
-    diffLines: function(oldStr, newStr) { return LineDiff.diff(oldStr, newStr); },
-
-    diffCss: function(oldStr, newStr) { return CssDiff.diff(oldStr, newStr); },
-
-    createPatch: function(fileName, oldStr, newStr, oldHeader, newHeader) {
-      var ret = [];
-
-      ret.push('Index: ' + fileName);
-      ret.push('===================================================================');
-      ret.push('--- ' + fileName + (typeof oldHeader === 'undefined' ? '' : '\t' + oldHeader));
-      ret.push('+++ ' + fileName + (typeof newHeader === 'undefined' ? '' : '\t' + newHeader));
-
-      var diff = LineDiff.diff(oldStr, newStr);
-      if (!diff[diff.length-1].value) {
-        diff.pop();   // Remove trailing newline add
+    // Walk the reverse path one step.
+    for (var k2 = -d + k2start; k2 <= d - k2end; k2 += 2) {
+      var k2_offset = v_offset + k2;
+      var x2;
+      if (k2 == -d || (k2 != d && v2[k2_offset - 1] < v2[k2_offset + 1])) {
+        x2 = v2[k2_offset + 1];
+      } else {
+        x2 = v2[k2_offset - 1] + 1;
       }
-      diff.push({value: '', lines: []});   // Append an empty value to make cleanup easier
-
-      function contextLines(lines) {
-        return lines.map(function(entry) { return ' ' + entry; });
+      var y2 = x2 - k2;
+      while (x2 < text1_length && y2 < text2_length &&
+             text1.charAt(text1_length - x2 - 1) ==
+             text2.charAt(text2_length - y2 - 1)) {
+        x2++;
+        y2++;
       }
-      function eofNL(curRange, i, current) {
-        var last = diff[diff.length-2],
-            isLast = i === diff.length-2,
-            isLastOfType = i === diff.length-3 && (current.added !== last.added || current.removed !== last.removed);
-
-        // Figure out if this is the last line for the given file and missing NL
-        if (!/\n$/.test(current.value) && (isLast || isLastOfType)) {
-          curRange.push('\\ No newline at end of file');
+      v2[k2_offset] = x2;
+      if (x2 > text1_length) {
+        // Ran off the left of the graph.
+        k2end += 2;
+      } else if (y2 > text2_length) {
+        // Ran off the top of the graph.
+        k2start += 2;
+      } else if (!front) {
+        var k1_offset = v_offset + delta - k2;
+        if (k1_offset >= 0 && k1_offset < v_length && v1[k1_offset] != -1) {
+          var x1 = v1[k1_offset];
+          var y1 = v_offset + x1 - k1_offset;
+          // Mirror x2 onto top-left coordinate system.
+          x2 = text1_length - x2;
+          if (x1 >= x2) {
+            // Overlap detected.
+            return diff_bisectSplit_(text1, text2, x1, y1);
+          }
         }
       }
+    }
+  }
+  // Diff took too long and hit the deadline or
+  // number of diffs equals number of characters, no commonality at all.
+  return [[DIFF_DELETE, text1], [DIFF_INSERT, text2]];
+};
 
-      var oldRangeStart = 0, newRangeStart = 0, curRange = [],
-          oldLine = 1, newLine = 1;
-      for (var i = 0; i < diff.length; i++) {
-        var current = diff[i],
-            lines = current.lines || current.value.replace(/\n$/, '').split('\n');
-        current.lines = lines;
 
-        if (current.added || current.removed) {
-          if (!oldRangeStart) {
-            var prev = diff[i-1];
-            oldRangeStart = oldLine;
-            newRangeStart = newLine;
+/**
+ * Given the location of the 'middle snake', split the diff in two parts
+ * and recurse.
+ * @param {string} text1 Old string to be diffed.
+ * @param {string} text2 New string to be diffed.
+ * @param {number} x Index of split point in text1.
+ * @param {number} y Index of split point in text2.
+ * @return {Array} Array of diff tuples.
+ */
+function diff_bisectSplit_(text1, text2, x, y) {
+  var text1a = text1.substring(0, x);
+  var text2a = text2.substring(0, y);
+  var text1b = text1.substring(x);
+  var text2b = text2.substring(y);
 
-            if (prev) {
-              curRange = contextLines(prev.lines.slice(-4));
-              oldRangeStart -= curRange.length;
-              newRangeStart -= curRange.length;
+  // Compute both diffs serially.
+  var diffs = diff_main(text1a, text2a);
+  var diffsb = diff_main(text1b, text2b);
+
+  return diffs.concat(diffsb);
+};
+
+
+/**
+ * Determine the common prefix of two strings.
+ * @param {string} text1 First string.
+ * @param {string} text2 Second string.
+ * @return {number} The number of characters common to the start of each
+ *     string.
+ */
+function diff_commonPrefix(text1, text2) {
+  // Quick check for common null cases.
+  if (!text1 || !text2 || text1.charAt(0) != text2.charAt(0)) {
+    return 0;
+  }
+  // Binary search.
+  // Performance analysis: http://neil.fraser.name/news/2007/10/09/
+  var pointermin = 0;
+  var pointermax = Math.min(text1.length, text2.length);
+  var pointermid = pointermax;
+  var pointerstart = 0;
+  while (pointermin < pointermid) {
+    if (text1.substring(pointerstart, pointermid) ==
+        text2.substring(pointerstart, pointermid)) {
+      pointermin = pointermid;
+      pointerstart = pointermin;
+    } else {
+      pointermax = pointermid;
+    }
+    pointermid = Math.floor((pointermax - pointermin) / 2 + pointermin);
+  }
+  return pointermid;
+};
+
+
+/**
+ * Determine the common suffix of two strings.
+ * @param {string} text1 First string.
+ * @param {string} text2 Second string.
+ * @return {number} The number of characters common to the end of each string.
+ */
+function diff_commonSuffix(text1, text2) {
+  // Quick check for common null cases.
+  if (!text1 || !text2 ||
+      text1.charAt(text1.length - 1) != text2.charAt(text2.length - 1)) {
+    return 0;
+  }
+  // Binary search.
+  // Performance analysis: http://neil.fraser.name/news/2007/10/09/
+  var pointermin = 0;
+  var pointermax = Math.min(text1.length, text2.length);
+  var pointermid = pointermax;
+  var pointerend = 0;
+  while (pointermin < pointermid) {
+    if (text1.substring(text1.length - pointermid, text1.length - pointerend) ==
+        text2.substring(text2.length - pointermid, text2.length - pointerend)) {
+      pointermin = pointermid;
+      pointerend = pointermin;
+    } else {
+      pointermax = pointermid;
+    }
+    pointermid = Math.floor((pointermax - pointermin) / 2 + pointermin);
+  }
+  return pointermid;
+};
+
+
+/**
+ * Do the two texts share a substring which is at least half the length of the
+ * longer text?
+ * This speedup can produce non-minimal diffs.
+ * @param {string} text1 First string.
+ * @param {string} text2 Second string.
+ * @return {Array.<string>} Five element Array, containing the prefix of
+ *     text1, the suffix of text1, the prefix of text2, the suffix of
+ *     text2 and the common middle.  Or null if there was no match.
+ */
+function diff_halfMatch_(text1, text2) {
+  var longtext = text1.length > text2.length ? text1 : text2;
+  var shorttext = text1.length > text2.length ? text2 : text1;
+  if (longtext.length < 4 || shorttext.length * 2 < longtext.length) {
+    return null;  // Pointless.
+  }
+
+  /**
+   * Does a substring of shorttext exist within longtext such that the substring
+   * is at least half the length of longtext?
+   * Closure, but does not reference any external variables.
+   * @param {string} longtext Longer string.
+   * @param {string} shorttext Shorter string.
+   * @param {number} i Start index of quarter length substring within longtext.
+   * @return {Array.<string>} Five element Array, containing the prefix of
+   *     longtext, the suffix of longtext, the prefix of shorttext, the suffix
+   *     of shorttext and the common middle.  Or null if there was no match.
+   * @private
+   */
+  function diff_halfMatchI_(longtext, shorttext, i) {
+    // Start with a 1/4 length substring at position i as a seed.
+    var seed = longtext.substring(i, i + Math.floor(longtext.length / 4));
+    var j = -1;
+    var best_common = '';
+    var best_longtext_a, best_longtext_b, best_shorttext_a, best_shorttext_b;
+    while ((j = shorttext.indexOf(seed, j + 1)) != -1) {
+      var prefixLength = diff_commonPrefix(longtext.substring(i),
+                                           shorttext.substring(j));
+      var suffixLength = diff_commonSuffix(longtext.substring(0, i),
+                                           shorttext.substring(0, j));
+      if (best_common.length < suffixLength + prefixLength) {
+        best_common = shorttext.substring(j - suffixLength, j) +
+            shorttext.substring(j, j + prefixLength);
+        best_longtext_a = longtext.substring(0, i - suffixLength);
+        best_longtext_b = longtext.substring(i + prefixLength);
+        best_shorttext_a = shorttext.substring(0, j - suffixLength);
+        best_shorttext_b = shorttext.substring(j + prefixLength);
+      }
+    }
+    if (best_common.length * 2 >= longtext.length) {
+      return [best_longtext_a, best_longtext_b,
+              best_shorttext_a, best_shorttext_b, best_common];
+    } else {
+      return null;
+    }
+  }
+
+  // First check if the second quarter is the seed for a half-match.
+  var hm1 = diff_halfMatchI_(longtext, shorttext,
+                             Math.ceil(longtext.length / 4));
+  // Check again based on the third quarter.
+  var hm2 = diff_halfMatchI_(longtext, shorttext,
+                             Math.ceil(longtext.length / 2));
+  var hm;
+  if (!hm1 && !hm2) {
+    return null;
+  } else if (!hm2) {
+    hm = hm1;
+  } else if (!hm1) {
+    hm = hm2;
+  } else {
+    // Both matched.  Select the longest.
+    hm = hm1[4].length > hm2[4].length ? hm1 : hm2;
+  }
+
+  // A half-match was found, sort out the return data.
+  var text1_a, text1_b, text2_a, text2_b;
+  if (text1.length > text2.length) {
+    text1_a = hm[0];
+    text1_b = hm[1];
+    text2_a = hm[2];
+    text2_b = hm[3];
+  } else {
+    text2_a = hm[0];
+    text2_b = hm[1];
+    text1_a = hm[2];
+    text1_b = hm[3];
+  }
+  var mid_common = hm[4];
+  return [text1_a, text1_b, text2_a, text2_b, mid_common];
+};
+
+
+/**
+ * Reorder and merge like edit sections.  Merge equalities.
+ * Any edit section can move as long as it doesn't cross an equality.
+ * @param {Array} diffs Array of diff tuples.
+ */
+function diff_cleanupMerge(diffs) {
+  diffs.push([DIFF_EQUAL, '']);  // Add a dummy entry at the end.
+  var pointer = 0;
+  var count_delete = 0;
+  var count_insert = 0;
+  var text_delete = '';
+  var text_insert = '';
+  var commonlength;
+  while (pointer < diffs.length) {
+    switch (diffs[pointer][0]) {
+      case DIFF_INSERT:
+        count_insert++;
+        text_insert += diffs[pointer][1];
+        pointer++;
+        break;
+      case DIFF_DELETE:
+        count_delete++;
+        text_delete += diffs[pointer][1];
+        pointer++;
+        break;
+      case DIFF_EQUAL:
+        // Upon reaching an equality, check for prior redundancies.
+        if (count_delete + count_insert > 1) {
+          if (count_delete !== 0 && count_insert !== 0) {
+            // Factor out any common prefixies.
+            commonlength = diff_commonPrefix(text_insert, text_delete);
+            if (commonlength !== 0) {
+              if ((pointer - count_delete - count_insert) > 0 &&
+                  diffs[pointer - count_delete - count_insert - 1][0] ==
+                  DIFF_EQUAL) {
+                diffs[pointer - count_delete - count_insert - 1][1] +=
+                    text_insert.substring(0, commonlength);
+              } else {
+                diffs.splice(0, 0, [DIFF_EQUAL,
+                                    text_insert.substring(0, commonlength)]);
+                pointer++;
+              }
+              text_insert = text_insert.substring(commonlength);
+              text_delete = text_delete.substring(commonlength);
+            }
+            // Factor out any common suffixies.
+            commonlength = diff_commonSuffix(text_insert, text_delete);
+            if (commonlength !== 0) {
+              diffs[pointer][1] = text_insert.substring(text_insert.length -
+                  commonlength) + diffs[pointer][1];
+              text_insert = text_insert.substring(0, text_insert.length -
+                  commonlength);
+              text_delete = text_delete.substring(0, text_delete.length -
+                  commonlength);
             }
           }
-          curRange.push.apply(curRange, lines.map(function(entry) { return (current.added?'+':'-') + entry; }));
-          eofNL(curRange, i, current);
-
-          if (current.added) {
-            newLine += lines.length;
+          // Delete the offending records and add the merged ones.
+          if (count_delete === 0) {
+            diffs.splice(pointer - count_insert,
+                count_delete + count_insert, [DIFF_INSERT, text_insert]);
+          } else if (count_insert === 0) {
+            diffs.splice(pointer - count_delete,
+                count_delete + count_insert, [DIFF_DELETE, text_delete]);
           } else {
-            oldLine += lines.length;
+            diffs.splice(pointer - count_delete - count_insert,
+                count_delete + count_insert, [DIFF_DELETE, text_delete],
+                [DIFF_INSERT, text_insert]);
           }
+          pointer = pointer - count_delete - count_insert +
+                    (count_delete ? 1 : 0) + (count_insert ? 1 : 0) + 1;
+        } else if (pointer !== 0 && diffs[pointer - 1][0] == DIFF_EQUAL) {
+          // Merge this equality with the previous one.
+          diffs[pointer - 1][1] += diffs[pointer][1];
+          diffs.splice(pointer, 1);
         } else {
-          if (oldRangeStart) {
-            // Close out any changes that have been output (or join overlapping)
-            if (lines.length <= 8 && i < diff.length-2) {
-              // Overlapping
-              curRange.push.apply(curRange, contextLines(lines));
-            } else {
-              // end the range and output
-              var contextSize = Math.min(lines.length, 4);
-              ret.push(
-                  '@@ -' + oldRangeStart + ',' + (oldLine-oldRangeStart+contextSize)
-                  + ' +' + newRangeStart + ',' + (newLine-newRangeStart+contextSize)
-                  + ' @@');
-              ret.push.apply(ret, curRange);
-              ret.push.apply(ret, contextLines(lines.slice(0, contextSize)));
-              if (lines.length <= 4) {
-                eofNL(ret, i, current);
-              }
-
-              oldRangeStart = 0;  newRangeStart = 0; curRange = [];
-            }
-          }
-          oldLine += lines.length;
-          newLine += lines.length;
+          pointer++;
         }
-      }
-
-      return ret.join('\n') + '\n';
-    },
-
-    applyPatch: function(oldStr, uniDiff) {
-      var diffstr = uniDiff.split('\n');
-      var diff = [];
-      var remEOFNL = false,
-          addEOFNL = false;
-
-      for (var i = (diffstr[0][0]==='I'?4:0); i < diffstr.length; i++) {
-        if(diffstr[i][0] === '@') {
-          var meh = diffstr[i].split(/@@ -(\d+),(\d+) \+(\d+),(\d+) @@/);
-          diff.unshift({
-            start:meh[3],
-            oldlength:meh[2],
-            oldlines:[],
-            newlength:meh[4],
-            newlines:[]
-          });
-        } else if(diffstr[i][0] === '+') {
-          diff[0].newlines.push(diffstr[i].substr(1));
-        } else if(diffstr[i][0] === '-') {
-          diff[0].oldlines.push(diffstr[i].substr(1));
-        } else if(diffstr[i][0] === ' ') {
-          diff[0].newlines.push(diffstr[i].substr(1));
-          diff[0].oldlines.push(diffstr[i].substr(1));
-        } else if(diffstr[i][0] === '\\') {
-          if (diffstr[i-1][0] === '+') {
-            remEOFNL = true;
-          } else if(diffstr[i-1][0] === '-') {
-            addEOFNL = true;
-          }
-        }
-      }
-
-      var str = oldStr.split('\n');
-      for (var i = diff.length - 1; i >= 0; i--) {
-        var d = diff[i];
-        for (var j = 0; j < d.oldlength; j++) {
-          if(str[d.start-1+j] !== d.oldlines[j]) {
-            return false;
-          }
-        }
-        Array.prototype.splice.apply(str,[d.start-1,+d.oldlength].concat(d.newlines));
-      }
-
-      if (remEOFNL) {
-        while (!str[str.length-1]) {
-          str.pop();
-        }
-      } else if (addEOFNL) {
-        str.push('');
-      }
-      return str.join('\n');
-    },
-
-    convertChangesToXML: function(changes){
-      var ret = [];
-      for ( var i = 0; i < changes.length; i++) {
-        var change = changes[i];
-        if (change.added) {
-          ret.push('<ins>');
-        } else if (change.removed) {
-          ret.push('<del>');
-        }
-
-        ret.push(escapeHTML(change.value));
-
-        if (change.added) {
-          ret.push('</ins>');
-        } else if (change.removed) {
-          ret.push('</del>');
-        }
-      }
-      return ret.join('');
-    },
-
-    // See: http://code.google.com/p/google-diff-match-patch/wiki/API
-    convertChangesToDMP: function(changes){
-      var ret = [], change;
-      for ( var i = 0; i < changes.length; i++) {
-        change = changes[i];
-        ret.push([(change.added ? 1 : change.removed ? -1 : 0), change.value]);
-      }
-      return ret;
-    }
-  };
-})();
-
-if (typeof module !== 'undefined') {
-    module.exports = JsDiff;
-}
-
-},{}],12:[function(_dereq_,module,exports){
-//  Underscore.string
-//  (c) 2010 Esa-Matti Suuronen <esa-matti aet suuronen dot org>
-//  Underscore.string is freely distributable under the terms of the MIT license.
-//  Documentation: https://github.com/epeli/underscore.string
-//  Some code is borrowed from MooTools and Alexandru Marasteanu.
-//  Version '2.3.2'
-
-!function(root, String){
-  'use strict';
-
-  // Defining helper functions.
-
-  var nativeTrim = String.prototype.trim;
-  var nativeTrimRight = String.prototype.trimRight;
-  var nativeTrimLeft = String.prototype.trimLeft;
-
-  var parseNumber = function(source) { return source * 1 || 0; };
-
-  var strRepeat = function(str, qty){
-    if (qty < 1) return '';
-    var result = '';
-    while (qty > 0) {
-      if (qty & 1) result += str;
-      qty >>= 1, str += str;
-    }
-    return result;
-  };
-
-  var slice = [].slice;
-
-  var defaultToWhiteSpace = function(characters) {
-    if (characters == null)
-      return '\\s';
-    else if (characters.source)
-      return characters.source;
-    else
-      return '[' + _s.escapeRegExp(characters) + ']';
-  };
-
-  // Helper for toBoolean
-  function boolMatch(s, matchers) {
-    var i, matcher, down = s.toLowerCase();
-    matchers = [].concat(matchers);
-    for (i = 0; i < matchers.length; i += 1) {
-      matcher = matchers[i];
-      if (!matcher) continue;
-      if (matcher.test && matcher.test(s)) return true;
-      if (matcher.toLowerCase() === down) return true;
+        count_insert = 0;
+        count_delete = 0;
+        text_delete = '';
+        text_insert = '';
+        break;
     }
   }
-
-  var escapeChars = {
-    lt: '<',
-    gt: '>',
-    quot: '"',
-    amp: '&',
-    apos: "'"
-  };
-
-  var reversedEscapeChars = {};
-  for(var key in escapeChars) reversedEscapeChars[escapeChars[key]] = key;
-  reversedEscapeChars["'"] = '#39';
-
-  // sprintf() for JavaScript 0.7-beta1
-  // http://www.diveintojavascript.com/projects/javascript-sprintf
-  //
-  // Copyright (c) Alexandru Marasteanu <alexaholic [at) gmail (dot] com>
-  // All rights reserved.
-
-  var sprintf = (function() {
-    function get_type(variable) {
-      return Object.prototype.toString.call(variable).slice(8, -1).toLowerCase();
-    }
-
-    var str_repeat = strRepeat;
-
-    var str_format = function() {
-      if (!str_format.cache.hasOwnProperty(arguments[0])) {
-        str_format.cache[arguments[0]] = str_format.parse(arguments[0]);
-      }
-      return str_format.format.call(null, str_format.cache[arguments[0]], arguments);
-    };
-
-    str_format.format = function(parse_tree, argv) {
-      var cursor = 1, tree_length = parse_tree.length, node_type = '', arg, output = [], i, k, match, pad, pad_character, pad_length;
-      for (i = 0; i < tree_length; i++) {
-        node_type = get_type(parse_tree[i]);
-        if (node_type === 'string') {
-          output.push(parse_tree[i]);
-        }
-        else if (node_type === 'array') {
-          match = parse_tree[i]; // convenience purposes only
-          if (match[2]) { // keyword argument
-            arg = argv[cursor];
-            for (k = 0; k < match[2].length; k++) {
-              if (!arg.hasOwnProperty(match[2][k])) {
-                throw new Error(sprintf('[_.sprintf] property "%s" does not exist', match[2][k]));
-              }
-              arg = arg[match[2][k]];
-            }
-          } else if (match[1]) { // positional argument (explicit)
-            arg = argv[match[1]];
-          }
-          else { // positional argument (implicit)
-            arg = argv[cursor++];
-          }
-
-          if (/[^s]/.test(match[8]) && (get_type(arg) != 'number')) {
-            throw new Error(sprintf('[_.sprintf] expecting number but found %s', get_type(arg)));
-          }
-          switch (match[8]) {
-            case 'b': arg = arg.toString(2); break;
-            case 'c': arg = String.fromCharCode(arg); break;
-            case 'd': arg = parseInt(arg, 10); break;
-            case 'e': arg = match[7] ? arg.toExponential(match[7]) : arg.toExponential(); break;
-            case 'f': arg = match[7] ? parseFloat(arg).toFixed(match[7]) : parseFloat(arg); break;
-            case 'o': arg = arg.toString(8); break;
-            case 's': arg = ((arg = String(arg)) && match[7] ? arg.substring(0, match[7]) : arg); break;
-            case 'u': arg = Math.abs(arg); break;
-            case 'x': arg = arg.toString(16); break;
-            case 'X': arg = arg.toString(16).toUpperCase(); break;
-          }
-          arg = (/[def]/.test(match[8]) && match[3] && arg >= 0 ? '+'+ arg : arg);
-          pad_character = match[4] ? match[4] == '0' ? '0' : match[4].charAt(1) : ' ';
-          pad_length = match[6] - String(arg).length;
-          pad = match[6] ? str_repeat(pad_character, pad_length) : '';
-          output.push(match[5] ? arg + pad : pad + arg);
-        }
-      }
-      return output.join('');
-    };
-
-    str_format.cache = {};
-
-    str_format.parse = function(fmt) {
-      var _fmt = fmt, match = [], parse_tree = [], arg_names = 0;
-      while (_fmt) {
-        if ((match = /^[^\x25]+/.exec(_fmt)) !== null) {
-          parse_tree.push(match[0]);
-        }
-        else if ((match = /^\x25{2}/.exec(_fmt)) !== null) {
-          parse_tree.push('%');
-        }
-        else if ((match = /^\x25(?:([1-9]\d*)\$|\(([^\)]+)\))?(\+)?(0|'[^$])?(-)?(\d+)?(?:\.(\d+))?([b-fosuxX])/.exec(_fmt)) !== null) {
-          if (match[2]) {
-            arg_names |= 1;
-            var field_list = [], replacement_field = match[2], field_match = [];
-            if ((field_match = /^([a-z_][a-z_\d]*)/i.exec(replacement_field)) !== null) {
-              field_list.push(field_match[1]);
-              while ((replacement_field = replacement_field.substring(field_match[0].length)) !== '') {
-                if ((field_match = /^\.([a-z_][a-z_\d]*)/i.exec(replacement_field)) !== null) {
-                  field_list.push(field_match[1]);
-                }
-                else if ((field_match = /^\[(\d+)\]/.exec(replacement_field)) !== null) {
-                  field_list.push(field_match[1]);
-                }
-                else {
-                  throw new Error('[_.sprintf] huh?');
-                }
-              }
-            }
-            else {
-              throw new Error('[_.sprintf] huh?');
-            }
-            match[2] = field_list;
-          }
-          else {
-            arg_names |= 2;
-          }
-          if (arg_names === 3) {
-            throw new Error('[_.sprintf] mixing positional and named placeholders is not (yet) supported');
-          }
-          parse_tree.push(match);
-        }
-        else {
-          throw new Error('[_.sprintf] huh?');
-        }
-        _fmt = _fmt.substring(match[0].length);
-      }
-      return parse_tree;
-    };
-
-    return str_format;
-  })();
-
-
-
-  // Defining underscore.string
-
-  var _s = {
-
-    VERSION: '2.3.0',
-
-    isBlank: function(str){
-      if (str == null) str = '';
-      return (/^\s*$/).test(str);
-    },
-
-    stripTags: function(str){
-      if (str == null) return '';
-      return String(str).replace(/<\/?[^>]+>/g, '');
-    },
-
-    capitalize : function(str){
-      str = str == null ? '' : String(str);
-      return str.charAt(0).toUpperCase() + str.slice(1);
-    },
-
-    chop: function(str, step){
-      if (str == null) return [];
-      str = String(str);
-      step = ~~step;
-      return step > 0 ? str.match(new RegExp('.{1,' + step + '}', 'g')) : [str];
-    },
-
-    clean: function(str){
-      return _s.strip(str).replace(/\s+/g, ' ');
-    },
-
-    count: function(str, substr){
-      if (str == null || substr == null) return 0;
-
-      str = String(str);
-      substr = String(substr);
-
-      var count = 0,
-        pos = 0,
-        length = substr.length;
-
-      while (true) {
-        pos = str.indexOf(substr, pos);
-        if (pos === -1) break;
-        count++;
-        pos += length;
-      }
-
-      return count;
-    },
-
-    chars: function(str) {
-      if (str == null) return [];
-      return String(str).split('');
-    },
-
-    swapCase: function(str) {
-      if (str == null) return '';
-      return String(str).replace(/\S/g, function(c){
-        return c === c.toUpperCase() ? c.toLowerCase() : c.toUpperCase();
-      });
-    },
-
-    escapeHTML: function(str) {
-      if (str == null) return '';
-      return String(str).replace(/[&<>"']/g, function(m){ return '&' + reversedEscapeChars[m] + ';'; });
-    },
-
-    unescapeHTML: function(str) {
-      if (str == null) return '';
-      return String(str).replace(/\&([^;]+);/g, function(entity, entityCode){
-        var match;
-
-        if (entityCode in escapeChars) {
-          return escapeChars[entityCode];
-        } else if (match = entityCode.match(/^#x([\da-fA-F]+)$/)) {
-          return String.fromCharCode(parseInt(match[1], 16));
-        } else if (match = entityCode.match(/^#(\d+)$/)) {
-          return String.fromCharCode(~~match[1]);
-        } else {
-          return entity;
-        }
-      });
-    },
-
-    escapeRegExp: function(str){
-      if (str == null) return '';
-      return String(str).replace(/([.*+?^=!:${}()|[\]\/\\])/g, '\\$1');
-    },
-
-    splice: function(str, i, howmany, substr){
-      var arr = _s.chars(str);
-      arr.splice(~~i, ~~howmany, substr);
-      return arr.join('');
-    },
-
-    insert: function(str, i, substr){
-      return _s.splice(str, i, 0, substr);
-    },
-
-    include: function(str, needle){
-      if (needle === '') return true;
-      if (str == null) return false;
-      return String(str).indexOf(needle) !== -1;
-    },
-
-    join: function() {
-      var args = slice.call(arguments),
-        separator = args.shift();
-
-      if (separator == null) separator = '';
-
-      return args.join(separator);
-    },
-
-    lines: function(str) {
-      if (str == null) return [];
-      return String(str).split("\n");
-    },
-
-    reverse: function(str){
-      return _s.chars(str).reverse().join('');
-    },
-
-    startsWith: function(str, starts){
-      if (starts === '') return true;
-      if (str == null || starts == null) return false;
-      str = String(str); starts = String(starts);
-      return str.length >= starts.length && str.slice(0, starts.length) === starts;
-    },
-
-    endsWith: function(str, ends){
-      if (ends === '') return true;
-      if (str == null || ends == null) return false;
-      str = String(str); ends = String(ends);
-      return str.length >= ends.length && str.slice(str.length - ends.length) === ends;
-    },
-
-    succ: function(str){
-      if (str == null) return '';
-      str = String(str);
-      return str.slice(0, -1) + String.fromCharCode(str.charCodeAt(str.length-1) + 1);
-    },
-
-    titleize: function(str){
-      if (str == null) return '';
-      str  = String(str).toLowerCase();
-      return str.replace(/(?:^|\s|-)\S/g, function(c){ return c.toUpperCase(); });
-    },
-
-    camelize: function(str){
-      return _s.trim(str).replace(/[-_\s]+(.)?/g, function(match, c){ return c ? c.toUpperCase() : ""; });
-    },
-
-    underscored: function(str){
-      return _s.trim(str).replace(/([a-z\d])([A-Z]+)/g, '$1_$2').replace(/[-\s]+/g, '_').toLowerCase();
-    },
-
-    dasherize: function(str){
-      return _s.trim(str).replace(/([A-Z])/g, '-$1').replace(/[-_\s]+/g, '-').toLowerCase();
-    },
-
-    classify: function(str){
-      return _s.titleize(String(str).replace(/[\W_]/g, ' ')).replace(/\s/g, '');
-    },
-
-    humanize: function(str){
-      return _s.capitalize(_s.underscored(str).replace(/_id$/,'').replace(/_/g, ' '));
-    },
-
-    trim: function(str, characters){
-      if (str == null) return '';
-      if (!characters && nativeTrim) return nativeTrim.call(str);
-      characters = defaultToWhiteSpace(characters);
-      return String(str).replace(new RegExp('\^' + characters + '+|' + characters + '+$', 'g'), '');
-    },
-
-    ltrim: function(str, characters){
-      if (str == null) return '';
-      if (!characters && nativeTrimLeft) return nativeTrimLeft.call(str);
-      characters = defaultToWhiteSpace(characters);
-      return String(str).replace(new RegExp('^' + characters + '+'), '');
-    },
-
-    rtrim: function(str, characters){
-      if (str == null) return '';
-      if (!characters && nativeTrimRight) return nativeTrimRight.call(str);
-      characters = defaultToWhiteSpace(characters);
-      return String(str).replace(new RegExp(characters + '+$'), '');
-    },
-
-    truncate: function(str, length, truncateStr){
-      if (str == null) return '';
-      str = String(str); truncateStr = truncateStr || '...';
-      length = ~~length;
-      return str.length > length ? str.slice(0, length) + truncateStr : str;
-    },
-
-    /**
-     * _s.prune: a more elegant version of truncate
-     * prune extra chars, never leaving a half-chopped word.
-     * @author github.com/rwz
-     */
-    prune: function(str, length, pruneStr){
-      if (str == null) return '';
-
-      str = String(str); length = ~~length;
-      pruneStr = pruneStr != null ? String(pruneStr) : '...';
-
-      if (str.length <= length) return str;
-
-      var tmpl = function(c){ return c.toUpperCase() !== c.toLowerCase() ? 'A' : ' '; },
-        template = str.slice(0, length+1).replace(/.(?=\W*\w*$)/g, tmpl); // 'Hello, world' -> 'HellAA AAAAA'
-
-      if (template.slice(template.length-2).match(/\w\w/))
-        template = template.replace(/\s*\S+$/, '');
-      else
-        template = _s.rtrim(template.slice(0, template.length-1));
-
-      return (template+pruneStr).length > str.length ? str : str.slice(0, template.length)+pruneStr;
-    },
-
-    words: function(str, delimiter) {
-      if (_s.isBlank(str)) return [];
-      return _s.trim(str, delimiter).split(delimiter || /\s+/);
-    },
-
-    pad: function(str, length, padStr, type) {
-      str = str == null ? '' : String(str);
-      length = ~~length;
-
-      var padlen  = 0;
-
-      if (!padStr)
-        padStr = ' ';
-      else if (padStr.length > 1)
-        padStr = padStr.charAt(0);
-
-      switch(type) {
-        case 'right':
-          padlen = length - str.length;
-          return str + strRepeat(padStr, padlen);
-        case 'both':
-          padlen = length - str.length;
-          return strRepeat(padStr, Math.ceil(padlen/2)) + str
-                  + strRepeat(padStr, Math.floor(padlen/2));
-        default: // 'left'
-          padlen = length - str.length;
-          return strRepeat(padStr, padlen) + str;
-        }
-    },
-
-    lpad: function(str, length, padStr) {
-      return _s.pad(str, length, padStr);
-    },
-
-    rpad: function(str, length, padStr) {
-      return _s.pad(str, length, padStr, 'right');
-    },
-
-    lrpad: function(str, length, padStr) {
-      return _s.pad(str, length, padStr, 'both');
-    },
-
-    sprintf: sprintf,
-
-    vsprintf: function(fmt, argv){
-      argv.unshift(fmt);
-      return sprintf.apply(null, argv);
-    },
-
-    toNumber: function(str, decimals) {
-      if (!str) return 0;
-      str = _s.trim(str);
-      if (!str.match(/^-?\d+(?:\.\d+)?$/)) return NaN;
-      return parseNumber(parseNumber(str).toFixed(~~decimals));
-    },
-
-    numberFormat : function(number, dec, dsep, tsep) {
-      if (isNaN(number) || number == null) return '';
-
-      number = number.toFixed(~~dec);
-      tsep = typeof tsep == 'string' ? tsep : ',';
-
-      var parts = number.split('.'), fnums = parts[0],
-        decimals = parts[1] ? (dsep || '.') + parts[1] : '';
-
-      return fnums.replace(/(\d)(?=(?:\d{3})+$)/g, '$1' + tsep) + decimals;
-    },
-
-    strRight: function(str, sep){
-      if (str == null) return '';
-      str = String(str); sep = sep != null ? String(sep) : sep;
-      var pos = !sep ? -1 : str.indexOf(sep);
-      return ~pos ? str.slice(pos+sep.length, str.length) : str;
-    },
-
-    strRightBack: function(str, sep){
-      if (str == null) return '';
-      str = String(str); sep = sep != null ? String(sep) : sep;
-      var pos = !sep ? -1 : str.lastIndexOf(sep);
-      return ~pos ? str.slice(pos+sep.length, str.length) : str;
-    },
-
-    strLeft: function(str, sep){
-      if (str == null) return '';
-      str = String(str); sep = sep != null ? String(sep) : sep;
-      var pos = !sep ? -1 : str.indexOf(sep);
-      return ~pos ? str.slice(0, pos) : str;
-    },
-
-    strLeftBack: function(str, sep){
-      if (str == null) return '';
-      str += ''; sep = sep != null ? ''+sep : sep;
-      var pos = str.lastIndexOf(sep);
-      return ~pos ? str.slice(0, pos) : str;
-    },
-
-    toSentence: function(array, separator, lastSeparator, serial) {
-      separator = separator || ', ';
-      lastSeparator = lastSeparator || ' and ';
-      var a = array.slice(), lastMember = a.pop();
-
-      if (array.length > 2 && serial) lastSeparator = _s.rtrim(separator) + lastSeparator;
-
-      return a.length ? a.join(separator) + lastSeparator + lastMember : lastMember;
-    },
-
-    toSentenceSerial: function() {
-      var args = slice.call(arguments);
-      args[3] = true;
-      return _s.toSentence.apply(_s, args);
-    },
-
-    slugify: function(str) {
-      if (str == null) return '';
-
-      var from  = "ąàáäâãåæăćęèéëêìíïîłńòóöôõøśșțùúüûñçżź",
-          to    = "aaaaaaaaaceeeeeiiiilnoooooosstuuuunczz",
-          regex = new RegExp(defaultToWhiteSpace(from), 'g');
-
-      str = String(str).toLowerCase().replace(regex, function(c){
-        var index = from.indexOf(c);
-        return to.charAt(index) || '-';
-      });
-
-      return _s.dasherize(str.replace(/[^\w\s-]/g, ''));
-    },
-
-    surround: function(str, wrapper) {
-      return [wrapper, str, wrapper].join('');
-    },
-
-    quote: function(str, quoteChar) {
-      return _s.surround(str, quoteChar || '"');
-    },
-
-    unquote: function(str, quoteChar) {
-      quoteChar = quoteChar || '"';
-      if (str[0] === quoteChar && str[str.length-1] === quoteChar)
-        return str.slice(1,str.length-1);
-      else return str;
-    },
-
-    exports: function() {
-      var result = {};
-
-      for (var prop in this) {
-        if (!this.hasOwnProperty(prop) || prop.match(/^(?:include|contains|reverse)$/)) continue;
-        result[prop] = this[prop];
-      }
-
-      return result;
-    },
-
-    repeat: function(str, qty, separator){
-      if (str == null) return '';
-
-      qty = ~~qty;
-
-      // using faster implementation if separator is not needed;
-      if (separator == null) return strRepeat(String(str), qty);
-
-      // this one is about 300x slower in Google Chrome
-      for (var repeat = []; qty > 0; repeat[--qty] = str) {}
-      return repeat.join(separator);
-    },
-
-    naturalCmp: function(str1, str2){
-      if (str1 == str2) return 0;
-      if (!str1) return -1;
-      if (!str2) return 1;
-
-      var cmpRegex = /(\.\d+)|(\d+)|(\D+)/g,
-        tokens1 = String(str1).toLowerCase().match(cmpRegex),
-        tokens2 = String(str2).toLowerCase().match(cmpRegex),
-        count = Math.min(tokens1.length, tokens2.length);
-
-      for(var i = 0; i < count; i++) {
-        var a = tokens1[i], b = tokens2[i];
-
-        if (a !== b){
-          var num1 = parseInt(a, 10);
-          if (!isNaN(num1)){
-            var num2 = parseInt(b, 10);
-            if (!isNaN(num2) && num1 - num2)
-              return num1 - num2;
-          }
-          return a < b ? -1 : 1;
-        }
-      }
-
-      if (tokens1.length === tokens2.length)
-        return tokens1.length - tokens2.length;
-
-      return str1 < str2 ? -1 : 1;
-    },
-
-    levenshtein: function(str1, str2) {
-      if (str1 == null && str2 == null) return 0;
-      if (str1 == null) return String(str2).length;
-      if (str2 == null) return String(str1).length;
-
-      str1 = String(str1); str2 = String(str2);
-
-      var current = [], prev, value;
-
-      for (var i = 0; i <= str2.length; i++)
-        for (var j = 0; j <= str1.length; j++) {
-          if (i && j)
-            if (str1.charAt(j - 1) === str2.charAt(i - 1))
-              value = prev;
-            else
-              value = Math.min(current[j], current[j - 1], prev) + 1;
-          else
-            value = i + j;
-
-          prev = current[j];
-          current[j] = value;
-        }
-
-      return current.pop();
-    },
-
-    toBoolean: function(str, trueValues, falseValues) {
-      if (typeof str === "number") str = "" + str;
-      if (typeof str !== "string") return !!str;
-      str = _s.trim(str);
-      if (boolMatch(str, trueValues || ["true", "1"])) return true;
-      if (boolMatch(str, falseValues || ["false", "0"])) return false;
-    }
-  };
-
-  // Aliases
-
-  _s.strip    = _s.trim;
-  _s.lstrip   = _s.ltrim;
-  _s.rstrip   = _s.rtrim;
-  _s.center   = _s.lrpad;
-  _s.rjust    = _s.lpad;
-  _s.ljust    = _s.rpad;
-  _s.contains = _s.include;
-  _s.q        = _s.quote;
-  _s.toBool   = _s.toBoolean;
-
-  // Exporting
-
-  // CommonJS module is defined
-  if (typeof exports !== 'undefined') {
-    if (typeof module !== 'undefined' && module.exports)
-      module.exports = _s;
-
-    exports._s = _s;
+  if (diffs[diffs.length - 1][1] === '') {
+    diffs.pop();  // Remove the dummy entry at the end.
   }
 
-  // Register as a named module with AMD.
-  if (typeof define === 'function' && define.amd)
-    define('underscore.string', [], function(){ return _s; });
+  // Second pass: look for single edits surrounded on both sides by equalities
+  // which can be shifted sideways to eliminate an equality.
+  // e.g: A<ins>BA</ins>C -> <ins>AB</ins>AC
+  var changes = false;
+  pointer = 1;
+  // Intentionally ignore the first and last element (don't need checking).
+  while (pointer < diffs.length - 1) {
+    if (diffs[pointer - 1][0] == DIFF_EQUAL &&
+        diffs[pointer + 1][0] == DIFF_EQUAL) {
+      // This is a single edit surrounded by equalities.
+      if (diffs[pointer][1].substring(diffs[pointer][1].length -
+          diffs[pointer - 1][1].length) == diffs[pointer - 1][1]) {
+        // Shift the edit over the previous equality.
+        diffs[pointer][1] = diffs[pointer - 1][1] +
+            diffs[pointer][1].substring(0, diffs[pointer][1].length -
+                                        diffs[pointer - 1][1].length);
+        diffs[pointer + 1][1] = diffs[pointer - 1][1] + diffs[pointer + 1][1];
+        diffs.splice(pointer - 1, 1);
+        changes = true;
+      } else if (diffs[pointer][1].substring(0, diffs[pointer + 1][1].length) ==
+          diffs[pointer + 1][1]) {
+        // Shift the edit over the next equality.
+        diffs[pointer - 1][1] += diffs[pointer + 1][1];
+        diffs[pointer][1] =
+            diffs[pointer][1].substring(diffs[pointer + 1][1].length) +
+            diffs[pointer + 1][1];
+        diffs.splice(pointer + 1, 1);
+        changes = true;
+      }
+    }
+    pointer++;
+  }
+  // If shifts were made, the diff needs reordering and another shift sweep.
+  if (changes) {
+    diff_cleanupMerge(diffs);
+  }
+};
 
 
-  // Integrate with Underscore.js if defined
-  // or create our own underscore object.
-  root._ = root._ || {};
-  root._.string = root._.str = _s;
-}(this, String);
+var diff = diff_main;
+diff.INSERT = DIFF_INSERT;
+diff.DELETE = DIFF_DELETE;
+diff.EQUAL = DIFF_EQUAL;
 
-},{}],13:[function(_dereq_,module,exports){
-module.exports={
-  "name": "quilljs",
-  "version": "0.15.3",
-  "description": "Cross browser rich text editor",
-  "author": "Jason Chen <jhchen7@gmail.com>",
-  "homepage": "http://quilljs.com",
-  "contributors": [
-    "Byron Milligan <byronner@gmail.com>",
-    "Keegan Poppen <keegan.poppen@gmail.com>"
-  ],
-  "main": "index.js",
-  "dependencies": {
-    "eventemitter2": "~0.4.13",
-    "lodash": "~2.4.1",
-    "tandem-core": "~0.6.2",
-    "underscore.string": "~2.3.3"
-  },
-  "devDependencies": {
-    "coffee-script": "~1.7.1",
-    "coffeeify": "~0.6.0",
-    "connect": "~3.0.1",
-    "grunt": "~0.4.3",
-    "grunt-browserify": "~2.1.0",
-    "grunt-contrib-clean": "~0.5.0",
-    "grunt-contrib-coffee": "~0.10.1",
-    "grunt-contrib-compress": "~0.9.1",
-    "grunt-contrib-concat": "~0.4.0",
-    "grunt-contrib-copy": "~0.5.0",
-    "grunt-contrib-stylus": "~0.18.0",
-    "grunt-contrib-uglify": "~0.4.0",
-    "grunt-karma": "~0.8.0",
-    "grunt-lodash": "~0.3.0",
-    "grunt-protractor-runner": "~0.2.4",
-    "grunt-shell": "~0.7.0",
-    "harp": "~0.12.1",
-    "istanbul": "~0.2.6",
-    "jquery": "~2.1.1",
-    "karma": "~0.12.0",
-    "karma-chrome-launcher": "~0.1.2",
-    "karma-coffee-preprocessor": "~0.2.1",
-    "karma-coverage": "~0.2.0",
-    "karma-firefox-launcher": "~0.1.3",
-    "karma-html2js-preprocessor": "~0.1.0",
-    "karma-jasmine": "~0.2.0",
-    "karma-phantomjs-launcher": "~0.1.2",
-    "karma-safari-launcher": "~0.1.1",
-    "karma-sauce-launcher": "~0.2.2",
-    "load-grunt-tasks": "~0.4.0",
-    "protractor": "~0.23.0",
-    "stylus": "~0.47.1",
-    "watchify": "~0.10.2"
-  },
-  "engines": {
-    "node": ">=0.10"
-  },
-  "license": "BSD-3-Clause",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/quilljs/quill"
-  },
-  "bugs": {
-    "url": "https://github.com/quilljs/quill/issues"
-  },
-  "scripts": {
-    "prepublish": "grunt coffee:src",
-    "postpublish": "grunt clean:coffee",
-    "test": "grunt test"
-  },
-  "keywords": [
-    "editor",
-    "rich text",
-    "wysiwyg"
-  ]
-}
 
-},{}],14:[function(_dereq_,module,exports){
-var DOM, Document, Format, Line, LinkedList, Normalizer, Tandem, Utils, _;
+module.exports = diff;
+
+},{}],7:[function(_dereq_,module,exports){
+module.exports={"version":"0.19.8"}
+},{}],8:[function(_dereq_,module,exports){
+var Delta, Document, Format, Line, LinkedList, Normalizer, dom, _;
 
 _ = _dereq_('lodash');
 
-DOM = _dereq_('./dom');
+Delta = _dereq_('rich-text/lib/delta');
+
+dom = _dereq_('../lib/dom');
 
 Format = _dereq_('./format');
 
 Line = _dereq_('./line');
 
-LinkedList = _dereq_('./lib/linked-list');
+LinkedList = _dereq_('../lib/linked-list');
 
-Normalizer = _dereq_('./normalizer');
-
-Utils = _dereq_('./utils');
-
-Tandem = _dereq_('tandem-core');
+Normalizer = _dereq_('../lib/normalizer');
 
 Document = (function() {
   function Document(root, options) {
@@ -5529,7 +4070,7 @@ Document = (function() {
     if (this.formats[name] != null) {
       console.warn('Overwriting format', name, this.formats[name]);
     }
-    return this.formats[name] = new Format(this.root.ownerDocument, config);
+    return this.formats[name] = new Format(config);
   };
 
   Document.prototype.appendLine = function(lineNode) {
@@ -5548,7 +4089,7 @@ Document = (function() {
 
   Document.prototype.findLine = function(node) {
     var line;
-    while ((node != null) && (DOM.BLOCK_TAGS[node.tagName] == null)) {
+    while ((node != null) && (dom.BLOCK_TAGS[node.tagName] == null)) {
       node = node.parentNode;
     }
     line = node != null ? this.lineMap[node.id] : null;
@@ -5564,7 +4105,7 @@ Document = (function() {
     if (!(this.lines.length > 0)) {
       return [null, index];
     }
-    length = this.toDelta().endLength;
+    length = this.toDelta().length();
     if (index === length) {
       return [this.lines.last, this.lines.last.length];
     }
@@ -5582,16 +4123,29 @@ Document = (function() {
     return [null, index];
   };
 
+  Document.prototype.getHTML = function() {
+    var container, html;
+    html = this.root.innerHTML;
+    html = html.replace(/\>\s+\</g, '>&nbsp;<');
+    container = document.createElement('div');
+    container.innerHTML = html;
+    _.each(container.querySelectorAll("." + Line.CLASS_NAME), function(node) {
+      dom(node).removeClass(Line.CLASS_NAME);
+      return node.removeAttribute('id');
+    });
+    return container.innerHTML;
+  };
+
   Document.prototype.insertLineBefore = function(newLineNode, refLine) {
     var line;
     line = new Line(this, newLineNode);
     if (refLine != null) {
-      if (!DOM.isElement(newLineNode.parentNode)) {
+      if (!dom(newLineNode.parentNode).isElement()) {
         this.root.insertBefore(newLineNode, refLine.node);
       }
       this.lines.insertAfter(refLine.prev, line);
     } else {
-      if (!DOM.isElement(newLineNode.parentNode)) {
+      if (!dom(newLineNode.parentNode).isElement()) {
         this.root.appendChild(newLineNode);
       }
       this.lines.append(line);
@@ -5603,10 +4157,10 @@ Document = (function() {
   Document.prototype.mergeLines = function(line, lineToMerge) {
     if (lineToMerge.length > 1) {
       if (line.length === 1) {
-        DOM.removeNode(line.leaves.last.node);
+        dom(line.leaves.last.node).remove();
       }
-      _.each(DOM.getChildNodes(lineToMerge.node), function(child) {
-        if (child.tagName !== DOM.DEFAULT_BREAK_TAG) {
+      _.each(dom(lineToMerge.node).childNodes(), function(child) {
+        if (child.tagName !== dom.DEFAULT_BREAK_TAG) {
           return line.node.appendChild(child);
         }
       });
@@ -5626,7 +4180,7 @@ Document = (function() {
     var lineNode, lines, _results;
     lines = this.lines.toArray();
     lineNode = this.root.firstChild;
-    if ((lineNode != null) && (DOM.LIST_TAGS[lineNode.tagName] != null)) {
+    if ((lineNode != null) && (dom.LIST_TAGS[lineNode.tagName] != null)) {
       lineNode = lineNode.firstChild;
     }
     _.each(lines, (function(_this) {
@@ -5636,7 +4190,7 @@ Document = (function() {
           if (line.node.parentNode === _this.root || ((_ref = line.node.parentNode) != null ? _ref.parentNode : void 0) === _this.root) {
             lineNode = Normalizer.normalizeLine(lineNode);
             newLine = _this.insertLineBefore(lineNode, line);
-            lineNode = Utils.getNextLineNode(lineNode, _this.root);
+            lineNode = dom(lineNode).nextLineNode(_this.root);
           } else {
             return _this.removeLine(line);
           }
@@ -5645,24 +4199,24 @@ Document = (function() {
           line.node = Normalizer.normalizeLine(line.node);
           line.rebuild();
         }
-        return lineNode = Utils.getNextLineNode(lineNode, _this.root);
+        return lineNode = dom(lineNode).nextLineNode(_this.root);
       };
     })(this));
     _results = [];
     while (lineNode != null) {
       lineNode = Normalizer.normalizeLine(lineNode);
       this.appendLine(lineNode);
-      _results.push(lineNode = Utils.getNextLineNode(lineNode, this.root));
+      _results.push(lineNode = dom(lineNode).nextLineNode(this.root));
     }
     return _results;
   };
 
   Document.prototype.removeLine = function(line) {
     if (line.node.parentNode != null) {
-      if (DOM.LIST_TAGS[line.node.parentNode.tagName] && line.node.parentNode.childNodes.length === 1) {
-        DOM.removeNode(line.node.parentNode);
+      if (dom.LIST_TAGS[line.node.parentNode.tagName] && line.node.parentNode.childNodes.length === 1) {
+        dom(line.node.parentNode).remove();
       } else {
-        DOM.removeNode(line.node);
+        dom(line.node).remove();
       }
     }
     delete this.lineMap[line.id];
@@ -5681,7 +4235,7 @@ Document = (function() {
   Document.prototype.splitLine = function(line, offset) {
     var lineNode1, lineNode2, newLine, _ref;
     offset = Math.min(offset, line.length - 1);
-    _ref = Utils.splitNode(line.node, offset, true), lineNode1 = _ref[0], lineNode2 = _ref[1];
+    _ref = dom(line.node).split(offset, true), lineNode1 = _ref[0], lineNode2 = _ref[1];
     line.node = lineNode1;
     line.rebuild();
     newLine = this.insertLineBefore(lineNode2, line.next);
@@ -5691,12 +4245,15 @@ Document = (function() {
   };
 
   Document.prototype.toDelta = function() {
-    var lines, ops;
+    var delta, lines;
     lines = this.lines.toArray();
-    ops = _.flatten(_.map(lines, function(line) {
-      return _.clone(line.delta.ops);
-    }), true);
-    return new Tandem.Delta(0, ops);
+    delta = new Delta();
+    _.each(lines, function(line) {
+      return _.each(line.delta.ops, function(op) {
+        return delta.push(op);
+      });
+    });
+    return delta;
   };
 
   return Document;
@@ -5706,478 +4263,44 @@ Document = (function() {
 module.exports = Document;
 
 
-},{"./dom":15,"./format":17,"./lib/linked-list":20,"./line":23,"./normalizer":33,"./utils":39,"lodash":"M4+//f","tandem-core":10}],15:[function(_dereq_,module,exports){
-var DOM, lastKeyEvent, _;
+
+},{"../lib/dom":16,"../lib/linked-list":17,"../lib/normalizer":18,"./format":10,"./line":12,"lodash":1,"rich-text/lib/delta":3}],9:[function(_dereq_,module,exports){
+var Document, Editor, Line, Selection, dom, _;
 
 _ = _dereq_('lodash');
 
-_.str = _dereq_('underscore.string');
-
-lastKeyEvent = null;
-
-DOM = {
-  ELEMENT_NODE: 1,
-  NOBREAK_SPACE: "&nbsp;",
-  TEXT_NODE: 3,
-  ZERO_WIDTH_NOBREAK_SPACE: "\uFEFF",
-  DEFAULT_BLOCK_TAG: 'P',
-  DEFAULT_BREAK_TAG: 'BR',
-  DEFAULT_INLINE_TAG: 'SPAN',
-  EMBED_TEXT: '!',
-  FONT_SIZES: {
-    '10px': 1,
-    '13px': 2,
-    '16px': 3,
-    '18px': 4,
-    '24px': 5,
-    '32px': 6,
-    '48px': 7
-  },
-  KEYS: {
-    BACKSPACE: 8,
-    TAB: 9,
-    ENTER: 13,
-    ESCAPE: 27,
-    LEFT: 37,
-    UP: 38,
-    RIGHT: 39,
-    DOWN: 40,
-    DELETE: 46
-  },
-  BLOCK_TAGS: {
-    'ADDRESS': 'ADDRESS',
-    'ARTICLE': 'ARTICLE',
-    'ASIDE': 'ASIDE',
-    'AUDIO': 'AUDIO',
-    'BLOCKQUOTE': 'BLOCKQUOTE',
-    'CANVAS': 'CANVAS',
-    'DD': 'DD',
-    'DIV': 'DIV',
-    'DL': 'DL',
-    'FIGCAPTION': 'FIGCAPTION',
-    'FIGURE': 'FIGURE',
-    'FOOTER': 'FOOTER',
-    'FORM': 'FORM',
-    'H1': 'H1',
-    'H2': 'H2',
-    'H3': 'H3',
-    'H4': 'H4',
-    'H5': 'H5',
-    'H6': 'H6',
-    'HEADER': 'HEADER',
-    'HGROUP': 'HGROUP',
-    'LI': 'LI',
-    'OL': 'OL',
-    'OUTPUT': 'OUTPUT',
-    'P': 'P',
-    'PRE': 'PRE',
-    'SECTION': 'SECTION',
-    'TABLE': 'TABLE',
-    'TBODY': 'TBODY',
-    'TD': 'TD',
-    'TFOOT': 'TFOOT',
-    'TH': 'TH',
-    'THEAD': 'THEAD',
-    'TR': 'TR',
-    'UL': 'UL',
-    'VIDEO': 'VIDEO'
-  },
-  EMBED_TAGS: {
-    'IMG': 'IMG'
-  },
-  LIST_TAGS: {
-    'OL': 'OL',
-    'UL': 'UL'
-  },
-  VOID_TAGS: {
-    'AREA': 'AREA',
-    'BASE': 'BASE',
-    'BR': 'BR',
-    'COL': 'COL',
-    'COMMAND': 'COMMAND',
-    'EMBED': 'EMBED',
-    'HR': 'HR',
-    'IMG': 'IMG',
-    'INPUT': 'INPUT',
-    'KEYGEN': 'KEYGEN',
-    'LINK': 'LINK',
-    'META': 'META',
-    'PARAM': 'PARAM',
-    'SOURCE': 'SOURCE',
-    'TRACK': 'TRACK',
-    'WBR': 'WBR'
-  },
-  addClass: function(node, cssClass) {
-    if (DOM.hasClass(node, cssClass)) {
-      return;
-    }
-    if (node.classList != null) {
-      return node.classList.add(cssClass);
-    } else if (node.className != null) {
-      return node.className = _.str.trim(node.className + ' ' + cssClass);
-    }
-  },
-  addEventListener: function(node, eventName, listener) {
-    return node.addEventListener(eventName, function(event) {
-      var arg, propogate;
-      arg = lastKeyEvent && (eventName === 'keydown' || eventName === 'keyup') ? lastKeyEvent : event;
-      propogate = listener(arg);
-      if (!propogate) {
-        event.preventDefault();
-        event.stopPropagation();
-      }
-      return propogate;
-    });
-  },
-  addStyles: function(node, styles) {
-    styles = _.defaults(styles, DOM.getStyles(node));
-    return DOM.setStyles(node, styles);
-  },
-  clearAttributes: function(node, exception) {
-    if (exception == null) {
-      exception = [];
-    }
-    if (_.isString(exception)) {
-      exception = [exception];
-    }
-    return _.each(DOM.getAttributes(node), function(value, name) {
-      if (!(_.indexOf(exception, name) > -1)) {
-        return node.removeAttribute(name);
-      }
-    });
-  },
-  getAttributes: function(node) {
-    var attr, attributes, i, value, _i, _len, _ref;
-    if (node.attributes == null) {
-      return {};
-    }
-    attributes = {};
-    _ref = node.attributes;
-    for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
-      value = _ref[i];
-      attr = node.attributes[i];
-      attributes[attr.name] = attr.value;
-    }
-    return attributes;
-  },
-  getChildNodes: function(parent) {
-    return _.map(parent.childNodes);
-  },
-  getChildren: function(parent) {
-    return _.map(parent.children);
-  },
-  getDescendants: function(parent) {
-    return _.map(parent.getElementsByTagName('*'));
-  },
-  getClasses: function(node) {
-    return node.className.split(/\s+/);
-  },
-  getDefaultOption: function(select) {
-    return select.querySelector('option[selected]');
-  },
-  getSelectValue: function(select) {
-    if (select.selectedIndex > -1) {
-      return select.options[select.selectedIndex].value;
-    } else {
-      return '';
-    }
-  },
-  getStyles: function(node) {
-    var obj, styleString;
-    styleString = node.getAttribute('style') || '';
-    obj = _.reduce(styleString.split(';'), function(styles, str) {
-      var name, value, _ref;
-      _ref = str.split(':'), name = _ref[0], value = _ref[1];
-      if (name && value) {
-        name = _.str.trim(name);
-        value = _.str.trim(value);
-        styles[name.toLowerCase()] = value;
-      }
-      return styles;
-    }, {});
-    return obj;
-  },
-  getText: function(node) {
-    switch (node.nodeType) {
-      case DOM.ELEMENT_NODE:
-        if (node.tagName === DOM.DEFAULT_BREAK_TAG) {
-          return "";
-        }
-        if (DOM.EMBED_TAGS[node.tagName] != null) {
-          return DOM.EMBED_TEXT;
-        }
-        if (node.textContent != null) {
-          return node.textContent;
-        }
-        return "";
-      case DOM.TEXT_NODE:
-        return node.data || "";
-      default:
-        return "";
-    }
-  },
-  getTextNodes: function(root) {
-    var node, nodes, walker;
-    walker = root.ownerDocument.createTreeWalker(root, NodeFilter.SHOW_TEXT, null, false);
-    nodes = [];
-    while (node = walker.nextNode()) {
-      nodes.push(node);
-    }
-    return nodes;
-  },
-  getWindow: function(node) {
-    return node.ownerDocument.defaultView || node.ownerDocument.parentWindow;
-  },
-  hasClass: function(node, cssClass) {
-    if (node.classList != null) {
-      return node.classList.contains(cssClass);
-    } else if (node.className != null) {
-      return _.indexOf(DOM.getClasses(node), cssClass) > -1;
-    }
-    return false;
-  },
-  isElement: function(node) {
-    return (node != null ? node.nodeType : void 0) === DOM.ELEMENT_NODE;
-  },
-  isTextNode: function(node) {
-    return (node != null ? node.nodeType : void 0) === DOM.TEXT_NODE;
-  },
-  moveChildren: function(newParent, oldParent) {
-    return _.each(DOM.getChildNodes(oldParent), function(child) {
-      return newParent.appendChild(child);
-    });
-  },
-  normalize: function(node) {
-    var curNode, newText, nextNode, _results;
-    curNode = node.firstChild;
-    _results = [];
-    while (curNode != null) {
-      nextNode = curNode.nextSibling;
-      if (DOM.isTextNode(curNode)) {
-        if (DOM.getText(curNode).length === 0) {
-          DOM.removeNode(curNode);
-        } else if (DOM.isTextNode(nextNode)) {
-          nextNode = nextNode.nextSibling;
-          newText = DOM.getText(curNode) + DOM.getText(curNode.nextSibling);
-          DOM.setText(curNode, newText);
-          DOM.removeNode(curNode.nextSibling);
-        }
-      }
-      _results.push(curNode = nextNode);
-    }
-    return _results;
-  },
-  isIE: function(maxVersion) {
-    var version;
-    version = document.documentMode;
-    return version && maxVersion >= version;
-  },
-  isIOS: function() {
-    return /iPhone|iPad/i.test(navigator.userAgent);
-  },
-  removeClass: function(node, cssClass) {
-    var classArray;
-    if (!DOM.hasClass(node, cssClass)) {
-      return;
-    }
-    if (node.classList != null) {
-      return node.classList.remove(cssClass);
-    } else if (node.className != null) {
-      classArray = DOM.getClasses(node);
-      classArray.splice(_.indexOf(classArray, cssClass), 1);
-      return node.className = classArray.join(' ');
-    }
-  },
-  removeNode: function(node) {
-    var _ref;
-    return (_ref = node.parentNode) != null ? _ref.removeChild(node) : void 0;
-  },
-  replaceNode: function(newNode, oldNode) {
-    oldNode.parentNode.replaceChild(newNode, oldNode);
-    return newNode;
-  },
-  resetSelect: function(select, trigger) {
-    var option;
-    if (trigger == null) {
-      trigger = true;
-    }
-    option = DOM.getDefaultOption(select);
-    if (option != null) {
-      option.selected = true;
-    } else {
-      select.selectedIndex = 0;
-    }
-    if (trigger) {
-      return DOM.triggerEvent(select, 'change');
-    }
-  },
-  selectOption: function(select, option, trigger) {
-    var value;
-    if (trigger == null) {
-      trigger = true;
-    }
-    value = _.isElement(option) ? option.value : option;
-    if (value) {
-      select.value = value;
-    } else {
-      select.selectedIndex = -1;
-    }
-    if (trigger) {
-      return DOM.triggerEvent(select, 'change');
-    }
-  },
-  setAttributes: function(node, attributes) {
-    return _.each(attributes, function(value, name) {
-      return node.setAttribute(name, value);
-    });
-  },
-  setStyles: function(node, styles) {
-    var styleString;
-    styleString = _.map(styles, function(style, name) {
-      return "" + name + ": " + style;
-    }).join('; ') + ';';
-    return node.setAttribute('style', styleString);
-  },
-  setText: function(node, text) {
-    switch (node.nodeType) {
-      case DOM.ELEMENT_NODE:
-        return node.textContent = text;
-      case DOM.TEXT_NODE:
-        return node.data = text;
-    }
-  },
-  switchTag: function(node, newTag) {
-    var attributes, newNode;
-    newTag = newTag.toUpperCase();
-    if (node.tagName === newTag) {
-      return node;
-    }
-    newNode = node.ownerDocument.createElement(newTag);
-    attributes = DOM.getAttributes(node);
-    if (DOM.VOID_TAGS[newTag] == null) {
-      this.moveChildren(newNode, node);
-    }
-    node.parentNode.replaceChild(newNode, node);
-    _.each(attributes, function(value, name) {
-      return newNode.setAttribute(name, value);
-    });
-    return newNode;
-  },
-  toggleClass: function(node, className, state) {
-    if (state == null) {
-      state = !DOM.hasClass(node, className);
-    }
-    if (state) {
-      return DOM.addClass(node, className);
-    } else {
-      return DOM.removeClass(node, className);
-    }
-  },
-  triggerEvent: function(elem, eventName, options) {
-    var event, initFn, modifiers;
-    if (options == null) {
-      options = {};
-    }
-    if (_.indexOf(['keypress', 'keydown', 'keyup'], eventName) < 0) {
-      event = elem.ownerDocument.createEvent('Event');
-      event.initEvent(eventName, options.bubbles, options.cancelable);
-    } else {
-      event = elem.ownerDocument.createEvent('KeyboardEvent');
-      lastKeyEvent = _.clone(options);
-      if (_.isNumber(options.key)) {
-        lastKeyEvent.which = options.key;
-      } else if (_.isString(options.key)) {
-        lastKeyEvent.which = options.key.toUpperCase().charCodeAt(0);
-      } else {
-        lastKeyEvent.which = 0;
-      }
-      if (DOM.isIE(10)) {
-        modifiers = [];
-        if (options.altKey) {
-          modifiers.push('Alt');
-        }
-        if (options.ctrlKey) {
-          modifiers.push('Control');
-        }
-        if (options.metaKey) {
-          modifiers.push('Meta');
-        }
-        if (options.shiftKey) {
-          modifiers.push('Shift');
-        }
-        event.initKeyboardEvent(eventName, options.bubbles, options.cancelable, elem.ownerDocument.defaultView.window, 0, 0, modifiers.join(' '), null, null);
-      } else {
-        initFn = _.isFunction(event.initKeyboardEvent) ? 'initKeyboardEvent' : 'initKeyEvent';
-        event[initFn](eventName, options.bubbles, options.cancelable, elem.ownerDocument.defaultView.window, options.ctrlKey, options.altKey, options.shiftKey, options.metaKey, 0, 0);
-      }
-    }
-    elem.dispatchEvent(event);
-    return lastKeyEvent = null;
-  },
-  unwrap: function(node) {
-    var next, ret;
-    ret = node.firstChild;
-    next = node.nextSibling;
-    _.each(DOM.getChildNodes(node), function(child) {
-      return node.parentNode.insertBefore(child, next);
-    });
-    DOM.removeNode(node);
-    return ret;
-  },
-  wrap: function(wrapper, node) {
-    var parent;
-    if (node.parentNode != null) {
-      node.parentNode.insertBefore(wrapper, node);
-    }
-    parent = wrapper;
-    while (parent.firstChild != null) {
-      parent = wrapper.firstChild;
-    }
-    parent.appendChild(node);
-    return parent;
-  }
-};
-
-module.exports = DOM;
-
-
-},{"lodash":"M4+//f","underscore.string":12}],16:[function(_dereq_,module,exports){
-var DOM, Document, Editor, Line, Renderer, Selection, Tandem, _;
-
-_ = _dereq_('lodash');
-
-DOM = _dereq_('./dom');
+dom = _dereq_('../lib/dom');
 
 Document = _dereq_('./document');
 
 Line = _dereq_('./line');
 
-Renderer = _dereq_('./renderer');
-
 Selection = _dereq_('./selection');
 
-Tandem = _dereq_('tandem-core');
-
 Editor = (function() {
-  function Editor(iframeContainer, quill, options) {
-    this.iframeContainer = iframeContainer;
+  Editor.sources = {
+    API: 'api',
+    SILENT: 'silent',
+    USER: 'user'
+  };
+
+  function Editor(root, quill, options) {
+    this.root = root;
     this.quill = quill;
     this.options = options != null ? options : {};
-    this.renderer = new Renderer(this.iframeContainer, this.options);
-    this.root = this.renderer.root;
+    this.root.setAttribute('id', this.options.id);
     this.doc = new Document(this.root, this.options);
     this.delta = this.doc.toDelta();
-    this.selection = new Selection(this.doc, this.renderer.iframe, this.quill);
+    this.selection = new Selection(this.doc, this.quill);
     this.timer = setInterval(_.bind(this.checkUpdate, this), this.options.pollInterval);
-    this.quill.on(this.quill.constructor.events.SELECTION_CHANGE, (function(_this) {
-      return function(range) {
-        return _this.savedRange = range;
-      };
-    })(this));
     if (!this.options.readOnly) {
       this.enable();
     }
   }
+
+  Editor.prototype.destroy = function() {
+    return clearInterval(this.timer);
+  };
 
   Editor.prototype.disable = function() {
     return this.enable(false);
@@ -6191,53 +4314,102 @@ Editor = (function() {
   };
 
   Editor.prototype.applyDelta = function(delta, source) {
-    var localDelta, tempDelta;
+    var localDelta;
     localDelta = this._update();
     if (localDelta) {
-      tempDelta = localDelta;
-      localDelta = localDelta.transform(delta, true);
-      delta = delta.transform(tempDelta, false);
-      this.delta = this.doc.toDelta();
+      delta = localDelta.transform(delta, true);
+      localDelta = delta.transform(localDelta, false);
     }
-    if (!delta.isIdentity()) {
-      if (delta.startLength !== this.delta.endLength) {
-        console.warn("Trying to apply delta to incorrect doc length", delta, this.delta);
-      }
+    if (delta.ops.length > 0) {
       delta = this._trackDelta((function(_this) {
         return function() {
-          delta.apply(_this._insertAt, _this._deleteAt, _this._formatAt, _this);
+          var index;
+          index = 0;
+          _.each(delta.ops, function(op) {
+            if (_.isString(op.insert)) {
+              _this._insertAt(index, op.insert, op.attributes);
+              return index += op.insert.length;
+            } else if (_.isNumber(op.insert)) {
+              _this._insertAt(index, dom.EMBED_TEXT, op.attributes);
+              return index += 1;
+            } else if (_.isNumber(op["delete"])) {
+              return _this._deleteAt(index, op["delete"]);
+            } else if (_.isNumber(op.retain)) {
+              _.each(op.attributes, function(value, name) {
+                return _this._formatAt(index, op.retain, name, value);
+              });
+              return index += op.retain;
+            }
+          });
           return _this.selection.shiftAfter(0, 0, _.bind(_this.doc.optimizeLines, _this.doc));
         };
       })(this));
       this.delta = this.doc.toDelta();
       this.innerHTML = this.root.innerHTML;
-      if (delta && source !== 'silent') {
+      if (delta && source !== Editor.sources.SILENT) {
         this.quill.emit(this.quill.constructor.events.TEXT_CHANGE, delta, source);
       }
     }
-    if (localDelta && !localDelta.isIdentity() && source !== 'silent') {
-      return this.quill.emit(this.quill.constructor.events.TEXT_CHANGE, localDelta, 'user');
+    if (localDelta && localDelta.ops.length > 0 && source !== Editor.sources.SILENT) {
+      return this.quill.emit(this.quill.constructor.events.TEXT_CHANGE, localDelta, Editor.sources.USER);
     }
   };
 
   Editor.prototype.checkUpdate = function(source) {
-    var delta, oldDelta;
+    var delta;
     if (source == null) {
       source = 'user';
     }
-    if ((this.renderer.iframe.parentNode == null) || (this.root.parentNode == null)) {
+    if (this.root.parentNode == null) {
       return clearInterval(this.timer);
     }
     delta = this._update();
     if (delta) {
-      oldDelta = this.delta;
-      this.delta = oldDelta.compose(delta);
+      this.delta.compose(delta);
       this.quill.emit(this.quill.constructor.events.TEXT_CHANGE, delta, source);
     }
     if (delta) {
-      source = 'silent';
+      source = Editor.sources.SILENT;
     }
     return this.selection.update(source);
+  };
+
+  Editor.prototype.focus = function() {
+    if (this.selection.range != null) {
+      return this.selection.setRange(this.selection.range);
+    } else {
+      return this.root.focus();
+    }
+  };
+
+  Editor.prototype.getBounds = function(index) {
+    var bounds, containerBounds, leaf, offset, range, side, _ref;
+    this.checkUpdate();
+    _ref = this.doc.findLeafAt(index, true), leaf = _ref[0], offset = _ref[1];
+    if (leaf == null) {
+      throw new Error('Invalid index');
+    }
+    containerBounds = this.root.parentNode.getBoundingClientRect();
+    side = 'left';
+    if (leaf.length === 0) {
+      bounds = leaf.node.parentNode.getBoundingClientRect();
+    } else {
+      range = document.createRange();
+      if (offset < leaf.length) {
+        range.setStart(leaf.node, offset);
+        range.setEnd(leaf.node, offset + 1);
+      } else {
+        range.setStart(leaf.node, offset - 1);
+        range.setEnd(leaf.node, offset);
+        side = 'right';
+      }
+      bounds = range.getBoundingClientRect();
+    }
+    return {
+      height: bounds.height,
+      left: bounds[side] - containerBounds.left,
+      top: bounds.top - containerBounds.top
+    };
   };
 
   Editor.prototype.getDelta = function() {
@@ -6302,14 +4474,14 @@ Editor = (function() {
     return this.selection.shiftAfter(index, text.length, (function(_this) {
       return function() {
         var line, lineTexts, offset, _ref;
-        text = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+        text = text.replace(/\r\n?/g, '\n');
         lineTexts = text.split('\n');
         _ref = _this.doc.findLineAt(index), line = _ref[0], offset = _ref[1];
         return _.each(lineTexts, function(lineText, i) {
           var nextLine;
           if ((line == null) || line.length <= offset) {
             if (i < lineTexts.length - 1 || lineText.length > 0) {
-              line = _this.doc.appendLine(_this.root.ownerDocument.createElement(DOM.DEFAULT_BLOCK_TAG));
+              line = _this.doc.appendLine(document.createElement(dom.DEFAULT_BLOCK_TAG));
               offset = 0;
               line.insertText(offset, lineText, formatting);
               line.format(formatting);
@@ -6332,37 +4504,11 @@ Editor = (function() {
   };
 
   Editor.prototype._trackDelta = function(fn) {
-    var decompose, decomposeA, decomposeB, decomposeLeft, decomposeRight, ignored, lengthA, lengthB, newDelta, newIndex, newLeftDelta, newRightDelta, oldIndex, oldLeftDelta, oldRightDelta, _ref, _ref1, _ref2, _ref3, _ref4;
-    oldIndex = (_ref = this.savedRange) != null ? _ref.start : void 0;
+    var delta, newDelta;
     fn();
     newDelta = this.doc.toDelta();
-    try {
-      newIndex = (_ref1 = this.selection.getRange()) != null ? _ref1.start : void 0;
-      if ((oldIndex != null) && (newIndex != null) && oldIndex <= this.delta.endLength && newIndex <= newDelta.endLength) {
-        _ref2 = this.delta.split(oldIndex), oldLeftDelta = _ref2[0], oldRightDelta = _ref2[1];
-        _ref3 = newDelta.split(newIndex), newLeftDelta = _ref3[0], newRightDelta = _ref3[1];
-        decomposeLeft = newLeftDelta.decompose(oldLeftDelta);
-        decomposeRight = newRightDelta.decompose(oldRightDelta);
-        decomposeA = decomposeLeft.merge(decomposeRight);
-      }
-    } catch (_error) {
-      ignored = _error;
-    }
-    decomposeB = newDelta.decompose(this.delta);
-    if (decomposeA && decomposeB) {
-      _ref4 = _.map([decomposeA, decomposeB], function(delta) {
-        return _.reduce(delta.ops, function(count, op) {
-          if (op.value != null) {
-            count += op.value.length;
-          }
-          return count;
-        }, 0);
-      }), lengthA = _ref4[0], lengthB = _ref4[1];
-      decompose = lengthA < lengthA ? decomposeA : decomposeB;
-    } else {
-      decompose = decomposeA || decomposeB;
-    }
-    return decompose;
+    delta = this.delta.diff(newDelta);
+    return delta;
   };
 
   Editor.prototype._update = function() {
@@ -6377,10 +4523,10 @@ Editor = (function() {
       };
     })(this));
     this.innerHTML = this.root.innerHTML;
-    if (delta.isIdentity()) {
-      return false;
-    } else {
+    if (delta.ops.length > 0) {
       return delta;
+    } else {
+      return false;
     }
   };
 
@@ -6391,14 +4537,13 @@ Editor = (function() {
 module.exports = Editor;
 
 
-},{"./document":14,"./dom":15,"./line":23,"./renderer":35,"./selection":36,"lodash":"M4+//f","tandem-core":10}],17:[function(_dereq_,module,exports){
-var DOM, Format, Utils, _;
+
+},{"../lib/dom":16,"./document":8,"./line":12,"./selection":13,"lodash":1}],10:[function(_dereq_,module,exports){
+var Format, dom, _;
 
 _ = _dereq_('lodash');
 
-DOM = _dereq_('./dom');
-
-Utils = _dereq_('./utils');
+dom = _dereq_('../lib/dom');
 
 Format = (function() {
   Format.types = {
@@ -6440,8 +4585,8 @@ Format = (function() {
     size: {
       style: 'fontSize',
       "default": '13px',
-      prepare: function(doc, value) {
-        return doc.execCommand('fontSize', false, Utils.convertFontSize(value));
+      prepare: function(value) {
+        return document.execCommand('fontSize', false, dom.convertFontSize(value));
       }
     },
     link: {
@@ -6471,13 +4616,12 @@ Format = (function() {
     }
   };
 
-  function Format(document, config) {
-    this.document = document;
+  function Format(config) {
     this.config = config;
   }
 
   Format.prototype.add = function(node, value) {
-    var formatNode, parentNode, _ref, _ref1;
+    var formatNode, inline, parentNode, _ref, _ref1;
     if (!value) {
       return this.remove(node);
     }
@@ -6485,35 +4629,37 @@ Format = (function() {
       return node;
     }
     if (_.isString(this.config.parentTag)) {
-      parentNode = this.document.createElement(this.config.parentTag);
-      DOM.wrap(parentNode, node);
+      parentNode = document.createElement(this.config.parentTag);
+      dom(node).wrap(parentNode);
       if (node.parentNode.tagName === ((_ref = node.parentNode.previousSibling) != null ? _ref.tagName : void 0)) {
-        Utils.mergeNodes(node.parentNode.previousSibling, node.parentNode);
+        dom(node.parentNode.previousSibling).merge(node.parentNode);
       }
       if (node.parentNode.tagName === ((_ref1 = node.parentNode.nextSibling) != null ? _ref1.tagName : void 0)) {
-        Utils.mergeNodes(node.parentNode, node.parentNode.nextSibling);
+        dom(node.parentNode).merge(node.parentNode.nextSibling);
       }
     }
     if (_.isString(this.config.tag)) {
-      formatNode = this.document.createElement(this.config.tag);
-      if (DOM.VOID_TAGS[formatNode.tagName] != null) {
+      formatNode = document.createElement(this.config.tag);
+      if (dom.VOID_TAGS[formatNode.tagName] != null) {
         if (node.parentNode != null) {
-          node.parentNode.insertBefore(formatNode, node);
+          dom(node).replace(formatNode);
         }
-        DOM.removeNode(node);
         node = formatNode;
       } else if (this.isType(Format.types.LINE)) {
-        node = DOM.switchTag(node, this.config.tag);
+        node = dom(node).switchTag(this.config.tag);
       } else {
-        node = DOM.wrap(formatNode, node);
+        dom(node).wrap(formatNode);
+        node = formatNode;
       }
     }
     if (_.isString(this.config.style) || _.isString(this.config.attribute) || _.isString(this.config["class"])) {
       if (_.isString(this.config["class"])) {
         node = this.remove(node);
       }
-      if (DOM.isTextNode(node)) {
-        node = DOM.wrap(this.document.createElement(DOM.DEFAULT_INLINE_TAG), node);
+      if (dom(node).isTextNode()) {
+        inline = document.createElement(dom.DEFAULT_INLINE_TAG);
+        dom(node).wrap(inline);
+        node = inline;
       }
       if (_.isString(this.config.style)) {
         if (value !== this.config["default"]) {
@@ -6524,7 +4670,7 @@ Format = (function() {
         node.setAttribute(this.config.attribute, value);
       }
       if (_.isString(this.config["class"])) {
-        DOM.addClass(node, this.config["class"] + value);
+        dom(node).addClass(this.config["class"] + value);
       }
     }
     return node;
@@ -6536,7 +4682,7 @@ Format = (function() {
 
   Format.prototype.match = function(node) {
     var c, _i, _len, _ref, _ref1;
-    if (!DOM.isElement(node)) {
+    if (!dom(node).isElement()) {
       return false;
     }
     if (_.isString(this.config.parentTag) && ((_ref = node.parentNode) != null ? _ref.tagName : void 0) !== this.config.parentTag) {
@@ -6552,7 +4698,7 @@ Format = (function() {
       return false;
     }
     if (_.isString(this.config["class"])) {
-      _ref1 = DOM.getClasses(node);
+      _ref1 = dom(node).classes();
       for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
         c = _ref1[_i];
         if (c.indexOf(this.config["class"]) === 0) {
@@ -6566,9 +4712,9 @@ Format = (function() {
 
   Format.prototype.prepare = function(value) {
     if (_.isString(this.config.prepare)) {
-      return this.document.execCommand(this.config.prepare, false, value);
+      return document.execCommand(this.config.prepare, false, value);
     } else if (_.isFunction(this.config.prepare)) {
-      return this.config.prepare(this.document, value);
+      return this.config.prepare(value);
     }
   };
 
@@ -6587,38 +4733,37 @@ Format = (function() {
       node.removeAttribute(this.config.attribute);
     }
     if (_.isString(this.config["class"])) {
-      _ref = DOM.getClasses(node);
+      _ref = dom(node).classes();
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         c = _ref[_i];
         if (c.indexOf(this.config["class"]) === 0) {
-          DOM.removeClass(node, c);
+          dom(node).removeClass(c);
         }
-      }
-      if (!node.getAttribute('class')) {
-        node.removeAttribute('class');
       }
     }
     if (_.isString(this.config.tag)) {
       if (this.isType(Format.types.LINE)) {
-        if (node.previousSibling != null) {
-          Utils.splitAncestors(node, node.parentNode.parentNode);
+        if (_.isString(this.config.parentTag)) {
+          if (node.previousSibling != null) {
+            dom(node).splitAncestors(node.parentNode.parentNode);
+          }
+          if (node.nextSibling != null) {
+            dom(node.nextSibling).splitAncestors(node.parentNode.parentNode);
+          }
         }
-        if (node.nextSibling != null) {
-          Utils.splitAncestors(node.nextSibling, node.parentNode.parentNode);
-        }
-        node = DOM.switchTag(node, DOM.DEFAULT_BLOCK_TAG);
+        node = dom(node).switchTag(dom.DEFAULT_BLOCK_TAG);
       } else {
-        node = DOM.switchTag(node, DOM.DEFAULT_INLINE_TAG);
-        if (DOM.EMBED_TAGS[this.config.tag] != null) {
-          DOM.setText(node, DOM.EMBED_TEXT);
+        node = dom(node).switchTag(dom.DEFAULT_INLINE_TAG);
+        if (dom.EMBED_TAGS[this.config.tag] != null) {
+          dom(node).text(dom.EMBED_TEXT);
         }
       }
     }
     if (_.isString(this.config.parentTag)) {
-      DOM.unwrap(node.parentNode);
+      dom(node.parentNode).unwrap();
     }
-    if (node.tagName === DOM.DEFAULT_INLINE_TAG && !node.hasAttributes()) {
-      node = DOM.unwrap(node);
+    if (node.tagName === dom.DEFAULT_INLINE_TAG && !node.hasAttributes()) {
+      node = dom(node).unwrap();
     }
     return node;
   };
@@ -6633,7 +4778,7 @@ Format = (function() {
     } else if (_.isString(this.config.style)) {
       return node.style[this.config.style] || void 0;
     } else if (_.isString(this.config["class"])) {
-      _ref = DOM.getClasses(node);
+      _ref = dom(node).classes();
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         c = _ref[_i];
         if (c.indexOf(this.config["class"]) === 0) {
@@ -6653,41 +4798,36 @@ Format = (function() {
 module.exports = Format;
 
 
-},{"./dom":15,"./utils":39,"lodash":"M4+//f"}],18:[function(_dereq_,module,exports){
-var DOM, Format, Leaf, LinkedList, Utils, _,
+
+},{"../lib/dom":16,"lodash":1}],11:[function(_dereq_,module,exports){
+var Format, Leaf, LinkedList, dom, _,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
 _ = _dereq_('lodash');
 
-DOM = _dereq_('./dom');
+dom = _dereq_('../lib/dom');
 
 Format = _dereq_('./format');
 
-LinkedList = _dereq_('./lib/linked-list');
-
-Utils = _dereq_('./utils');
+LinkedList = _dereq_('../lib/linked-list');
 
 Leaf = (function(_super) {
   __extends(Leaf, _super);
 
-  Leaf.ID_PREFIX = 'leaf-';
+  Leaf.ID_PREFIX = 'ql-leaf-';
 
   Leaf.isLeafNode = function(node) {
-    return DOM.isTextNode(node) || (node.firstChild == null);
+    return dom(node).isTextNode() || (node.firstChild == null);
   };
 
   function Leaf(node, formats) {
     this.node = node;
     this.formats = _.clone(formats);
     this.id = _.uniqueId(Leaf.ID_PREFIX);
-    this.text = DOM.getText(this.node);
+    this.text = dom(this.node).text();
     this.length = this.text.length;
   }
-
-  Leaf.prototype.getFormats = function() {
-    return this.formats;
-  };
 
   Leaf.prototype.deleteText = function(offset, length) {
     var textNode;
@@ -6696,27 +4836,27 @@ Leaf = (function(_super) {
     }
     this.text = this.text.slice(0, offset) + this.text.slice(offset + length);
     this.length = this.text.length;
-    if (DOM.EMBED_TAGS[this.node.tagName] != null) {
-      textNode = this.node.ownerDocument.createTextNode(this.text);
-      return this.node = DOM.replaceNode(textNode, this.node);
+    if (dom.EMBED_TAGS[this.node.tagName] != null) {
+      textNode = document.createTextNode(this.text);
+      return this.node = dom(this.node).replace(textNode);
     } else {
-      return DOM.setText(this.node, this.text);
+      return dom(this.node).text(this.text);
     }
   };
 
   Leaf.prototype.insertText = function(offset, text) {
     var textNode;
     this.text = this.text.slice(0, offset) + text + this.text.slice(offset);
-    if (DOM.isTextNode(this.node)) {
-      DOM.setText(this.node, this.text);
+    if (dom(this.node).isTextNode()) {
+      dom(this.node).text(this.text);
     } else {
-      textNode = this.node.ownerDocument.createTextNode(text);
-      if (this.node.tagName === DOM.DEFAULT_BREAK_TAG) {
-        DOM.replaceNode(textNode, this.node);
+      textNode = document.createTextNode(text);
+      if (this.node.tagName === dom.DEFAULT_BREAK_TAG) {
+        this.node = dom(this.node).replace(textNode);
       } else {
         this.node.appendChild(textNode);
+        this.node = textNode;
       }
-      this.node = textNode;
     }
     return this.length = this.text.length;
   };
@@ -6728,12 +4868,537 @@ Leaf = (function(_super) {
 module.exports = Leaf;
 
 
-},{"./dom":15,"./format":17,"./lib/linked-list":20,"./utils":39,"lodash":"M4+//f"}],19:[function(_dereq_,module,exports){
-var ColorPicker, DOM, Picker,
+
+},{"../lib/dom":16,"../lib/linked-list":17,"./format":10,"lodash":1}],12:[function(_dereq_,module,exports){
+var Delta, Format, Leaf, Line, LinkedList, Normalizer, dom, _,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-DOM = _dereq_('../dom');
+_ = _dereq_('lodash');
+
+Delta = _dereq_('rich-text/lib/delta');
+
+dom = _dereq_('../lib/dom');
+
+Format = _dereq_('./format');
+
+Leaf = _dereq_('./leaf');
+
+Line = _dereq_('./line');
+
+LinkedList = _dereq_('../lib/linked-list');
+
+Normalizer = _dereq_('../lib/normalizer');
+
+Line = (function(_super) {
+  __extends(Line, _super);
+
+  Line.CLASS_NAME = 'ql-line';
+
+  Line.ID_PREFIX = 'ql-line-';
+
+  function Line(doc, node) {
+    this.doc = doc;
+    this.node = node;
+    this.id = _.uniqueId(Line.ID_PREFIX);
+    this.formats = {};
+    dom(this.node).addClass(Line.CLASS_NAME);
+    this.rebuild();
+    Line.__super__.constructor.call(this, this.node);
+  }
+
+  Line.prototype.buildLeaves = function(node, formats) {
+    return _.each(dom(node).childNodes(), (function(_this) {
+      return function(node) {
+        var nodeFormats;
+        node = Normalizer.normalizeNode(node);
+        nodeFormats = _.clone(formats);
+        _.each(_this.doc.formats, function(format, name) {
+          if (!format.isType(Format.types.LINE) && format.match(node)) {
+            return nodeFormats[name] = format.value(node);
+          }
+        });
+        if (Leaf.isLeafNode(node)) {
+          return _this.leaves.append(new Leaf(node, nodeFormats));
+        } else {
+          return _this.buildLeaves(node, nodeFormats);
+        }
+      };
+    })(this));
+  };
+
+  Line.prototype.deleteText = function(offset, length) {
+    var deleteLength, leaf, _ref;
+    if (!(length > 0)) {
+      return;
+    }
+    _ref = this.findLeafAt(offset), leaf = _ref[0], offset = _ref[1];
+    while ((leaf != null) && length > 0) {
+      deleteLength = Math.min(length, leaf.length - offset);
+      leaf.deleteText(offset, deleteLength);
+      length -= deleteLength;
+      leaf = leaf.next;
+      offset = 0;
+    }
+    return this.rebuild();
+  };
+
+  Line.prototype.findLeaf = function(leafNode) {
+    var curLeaf;
+    curLeaf = this.leaves.first;
+    while (curLeaf != null) {
+      if (curLeaf.node === leafNode) {
+        return curLeaf;
+      }
+      curLeaf = curLeaf.next;
+    }
+    return null;
+  };
+
+  Line.prototype.findLeafAt = function(offset, inclusive) {
+    var leaf;
+    if (inclusive == null) {
+      inclusive = false;
+    }
+    if (offset >= this.length - 1) {
+      return [this.leaves.last, this.leaves.last.length];
+    }
+    leaf = this.leaves.first;
+    while (leaf != null) {
+      if (offset < leaf.length || (offset === leaf.length && inclusive)) {
+        return [leaf, offset];
+      }
+      offset -= leaf.length;
+      leaf = leaf.next;
+    }
+    return [this.leaves.last, offset - this.leaves.last.length];
+  };
+
+  Line.prototype.format = function(name, value) {
+    var formats;
+    if (_.isObject(name)) {
+      formats = name;
+    } else {
+      formats = {};
+      formats[name] = value;
+    }
+    _.each(formats, (function(_this) {
+      return function(value, name) {
+        var excludeFormat, format;
+        format = _this.doc.formats[name];
+        if (format == null) {
+          return;
+        }
+        if (format.isType(Format.types.LINE)) {
+          if (format.config.exclude && _this.formats[format.config.exclude]) {
+            excludeFormat = _this.doc.formats[format.config.exclude];
+            if (excludeFormat != null) {
+              _this.node = excludeFormat.remove(_this.node);
+              delete _this.formats[format.config.exclude];
+            }
+          }
+          _this.node = format.add(_this.node, value);
+        }
+        if (value) {
+          return _this.formats[name] = value;
+        } else {
+          return delete _this.formats[name];
+        }
+      };
+    })(this));
+    return this.resetContent();
+  };
+
+  Line.prototype.formatText = function(offset, length, name, value) {
+    var format, leaf, leafOffset, leftNode, nextLeaf, rightNode, targetNode, _ref, _ref1, _ref2;
+    _ref = this.findLeafAt(offset), leaf = _ref[0], leafOffset = _ref[1];
+    format = this.doc.formats[name];
+    if (!((format != null) && format.config.type !== Format.types.LINE)) {
+      return;
+    }
+    while ((leaf != null) && length > 0) {
+      nextLeaf = leaf.next;
+      if ((value && leaf.formats[name] !== value) || (!value && (leaf.formats[name] != null))) {
+        targetNode = leaf.node;
+        if (leaf.formats[name] != null) {
+          dom(targetNode).splitAncestors(this.node);
+          while (!format.match(targetNode)) {
+            targetNode = targetNode.parentNode;
+          }
+        }
+        if (leafOffset > 0) {
+          _ref1 = dom(targetNode).split(leafOffset), leftNode = _ref1[0], targetNode = _ref1[1];
+        }
+        if (leaf.length > leafOffset + length) {
+          _ref2 = dom(targetNode).split(length), targetNode = _ref2[0], rightNode = _ref2[1];
+        }
+        format.add(targetNode, value);
+      }
+      length -= leaf.length - leafOffset;
+      leafOffset = 0;
+      leaf = nextLeaf;
+    }
+    return this.rebuild();
+  };
+
+  Line.prototype.insertText = function(offset, text, formats) {
+    var leaf, leafOffset, nextNode, node, prevNode, _ref, _ref1;
+    if (formats == null) {
+      formats = {};
+    }
+    if (!(text.length > 0)) {
+      return;
+    }
+    _ref = this.findLeafAt(offset), leaf = _ref[0], leafOffset = _ref[1];
+    if (_.isEqual(leaf.formats, formats)) {
+      leaf.insertText(leafOffset, text);
+      return this.resetContent();
+    } else {
+      node = _.reduce(formats, (function(_this) {
+        return function(node, value, name) {
+          var format;
+          format = _this.doc.formats[name];
+          if (format != null) {
+            node = format.add(node, value);
+          }
+          return node;
+        };
+      })(this), document.createTextNode(text));
+      _ref1 = dom(leaf.node).split(leafOffset), prevNode = _ref1[0], nextNode = _ref1[1];
+      if (nextNode) {
+        nextNode = dom(nextNode).splitAncestors(this.node).get();
+      }
+      this.node.insertBefore(node, nextNode);
+      return this.rebuild();
+    }
+  };
+
+  Line.prototype.optimize = function() {
+    Normalizer.optimizeLine(this.node);
+    return this.rebuild();
+  };
+
+  Line.prototype.rebuild = function(force) {
+    if (force == null) {
+      force = false;
+    }
+    if (!force && (this.outerHTML != null) && this.outerHTML === this.node.outerHTML) {
+      if (_.all(this.leaves.toArray(), (function(_this) {
+        return function(leaf) {
+          return dom(leaf.node).isAncestor(_this.node);
+        };
+      })(this))) {
+        return false;
+      }
+    }
+    this.node = Normalizer.normalizeNode(this.node);
+    if (dom(this.node).length() === 0 && !this.node.querySelector(dom.DEFAULT_BREAK_TAG)) {
+      this.node.appendChild(document.createElement(dom.DEFAULT_BREAK_TAG));
+    }
+    this.leaves = new LinkedList();
+    this.formats = _.reduce(this.doc.formats, (function(_this) {
+      return function(formats, format, name) {
+        if (format.isType(Format.types.LINE)) {
+          if (format.match(_this.node)) {
+            formats[name] = format.value(_this.node);
+          } else {
+            delete formats[name];
+          }
+        }
+        return formats;
+      };
+    })(this), this.formats);
+    this.buildLeaves(this.node, {});
+    this.resetContent();
+    return true;
+  };
+
+  Line.prototype.resetContent = function() {
+    if (this.node.id !== this.id) {
+      this.node.id = this.id;
+    }
+    this.outerHTML = this.node.outerHTML;
+    this.length = 1;
+    this.delta = new Delta();
+    _.each(this.leaves.toArray(), (function(_this) {
+      return function(leaf) {
+        _this.length += leaf.length;
+        if (dom.EMBED_TAGS[leaf.node.tagName] != null) {
+          return _this.delta.insert(1, leaf.formats);
+        } else {
+          return _this.delta.insert(leaf.text, leaf.formats);
+        }
+      };
+    })(this));
+    return this.delta.insert('\n', this.formats);
+  };
+
+  return Line;
+
+})(LinkedList.Node);
+
+module.exports = Line;
+
+
+
+},{"../lib/dom":16,"../lib/linked-list":17,"../lib/normalizer":18,"./format":10,"./leaf":11,"./line":12,"lodash":1,"rich-text/lib/delta":3}],13:[function(_dereq_,module,exports){
+var Leaf, Normalizer, Range, Selection, dom, _;
+
+_ = _dereq_('lodash');
+
+dom = _dereq_('../lib/dom');
+
+Leaf = _dereq_('./leaf');
+
+Normalizer = _dereq_('../lib/normalizer');
+
+Range = _dereq_('../lib/range');
+
+Selection = (function() {
+  function Selection(doc, emitter) {
+    this.doc = doc;
+    this.emitter = emitter;
+    this.focus = false;
+    this.range = new Range(0, 0);
+    this.nullDelay = false;
+    this.update('silent');
+  }
+
+  Selection.prototype.checkFocus = function() {
+    return document.activeElement === this.doc.root;
+  };
+
+  Selection.prototype.getRange = function(ignoreFocus) {
+    var end, nativeRange, start;
+    if (ignoreFocus == null) {
+      ignoreFocus = false;
+    }
+    if (this.checkFocus()) {
+      nativeRange = this._getNativeRange();
+      if (nativeRange == null) {
+        return null;
+      }
+      start = this._positionToIndex(nativeRange.startContainer, nativeRange.startOffset);
+      if (nativeRange.startContainer === nativeRange.endContainer && nativeRange.startOffset === nativeRange.endOffset) {
+        end = start;
+      } else {
+        end = this._positionToIndex(nativeRange.endContainer, nativeRange.endOffset);
+      }
+      return new Range(Math.min(start, end), Math.max(start, end));
+    } else if (ignoreFocus) {
+      return this.range;
+    } else {
+      return null;
+    }
+  };
+
+  Selection.prototype.preserve = function(fn) {
+    var endNode, endOffset, nativeRange, startNode, startOffset, _ref, _ref1, _ref2, _ref3;
+    nativeRange = this._getNativeRange();
+    if ((nativeRange != null) && this.checkFocus()) {
+      _ref = this._encodePosition(nativeRange.startContainer, nativeRange.startOffset), startNode = _ref[0], startOffset = _ref[1];
+      _ref1 = this._encodePosition(nativeRange.endContainer, nativeRange.endOffset), endNode = _ref1[0], endOffset = _ref1[1];
+      fn();
+      _ref2 = this._decodePosition(startNode, startOffset), startNode = _ref2[0], startOffset = _ref2[1];
+      _ref3 = this._decodePosition(endNode, endOffset), endNode = _ref3[0], endOffset = _ref3[1];
+      return this._setNativeRange(startNode, startOffset, endNode, endOffset);
+    } else {
+      return fn();
+    }
+  };
+
+  Selection.prototype.setRange = function(range, source) {
+    var endNode, endOffset, startNode, startOffset, _ref, _ref1, _ref2;
+    if (range != null) {
+      _ref = this._indexToPosition(range.start), startNode = _ref[0], startOffset = _ref[1];
+      if (range.isCollapsed()) {
+        _ref1 = [startNode, startOffset], endNode = _ref1[0], endOffset = _ref1[1];
+      } else {
+        _ref2 = this._indexToPosition(range.end), endNode = _ref2[0], endOffset = _ref2[1];
+      }
+      this._setNativeRange(startNode, startOffset, endNode, endOffset);
+    } else {
+      this._setNativeRange(null);
+    }
+    return this.update(source);
+  };
+
+  Selection.prototype.shiftAfter = function(index, length, fn) {
+    var range;
+    range = this.getRange();
+    fn();
+    if (range != null) {
+      range.shift(index, length);
+      return this.setRange(range, 'silent');
+    }
+  };
+
+  Selection.prototype.update = function(source) {
+    var emit, focus, range, toEmit;
+    focus = this.checkFocus();
+    range = this.getRange(true);
+    emit = source !== 'silent' && (!Range.compare(range, this.range) || focus !== this.focus);
+    toEmit = focus ? range : null;
+    if (toEmit === null && source === 'user' && !this.nullDelay) {
+      return this.nullDelay = true;
+    } else {
+      this.nullDelay = false;
+      this.range = range;
+      this.focus = focus;
+      if (emit) {
+        return this.emitter.emit(this.emitter.constructor.events.SELECTION_CHANGE, toEmit, source);
+      }
+    }
+  };
+
+  Selection.prototype._decodePosition = function(node, offset) {
+    var childIndex;
+    if (dom(node).isElement()) {
+      childIndex = dom(node.parentNode).childNodes().indexOf(node);
+      offset += childIndex;
+      node = node.parentNode;
+    }
+    return [node, offset];
+  };
+
+  Selection.prototype._encodePosition = function(node, offset) {
+    var text;
+    while (true) {
+      if (dom(node).isTextNode() || node.tagName === dom.DEFAULT_BREAK_TAG || (dom.EMBED_TAGS[node.tagName] != null)) {
+        return [node, offset];
+      } else if (offset < node.childNodes.length) {
+        node = node.childNodes[offset];
+        offset = 0;
+      } else if (node.childNodes.length === 0) {
+        if (Normalizer.TAGS[node.tagName] == null) {
+          text = document.createTextNode('');
+          node.appendChild(text);
+          node = text;
+        }
+        return [node, 0];
+      } else {
+        node = node.lastChild;
+        if (dom(node).isElement()) {
+          if (node.tagName === dom.DEFAULT_BREAK_TAG || (dom.EMBED_TAGS[node.tagName] != null)) {
+            return [node, 1];
+          } else {
+            offset = node.childNodes.length;
+          }
+        } else {
+          return [node, dom(node).length()];
+        }
+      }
+    }
+  };
+
+  Selection.prototype._getNativeRange = function() {
+    var range, selection;
+    selection = document.getSelection();
+    if ((selection != null ? selection.rangeCount : void 0) > 0) {
+      range = selection.getRangeAt(0);
+      if (dom(range.startContainer).isAncestor(this.doc.root, true)) {
+        if (range.startContainer === range.endContainer || dom(range.endContainer).isAncestor(this.doc.root, true)) {
+          return range;
+        }
+      }
+    }
+    return null;
+  };
+
+  Selection.prototype._indexToPosition = function(index) {
+    var leaf, offset, _ref;
+    if (this.doc.lines.length === 0) {
+      return [this.doc.root, 0];
+    }
+    _ref = this.doc.findLeafAt(index, true), leaf = _ref[0], offset = _ref[1];
+    return this._decodePosition(leaf.node, offset);
+  };
+
+  Selection.prototype._positionToIndex = function(node, offset) {
+    var leaf, leafNode, leafOffset, line, lineOffset, _ref;
+    _ref = this._encodePosition(node, offset), leafNode = _ref[0], offset = _ref[1];
+    line = this.doc.findLine(leafNode);
+    if (line == null) {
+      return 0;
+    }
+    leaf = line.findLeaf(leafNode);
+    lineOffset = 0;
+    while (line.prev != null) {
+      line = line.prev;
+      lineOffset += line.length;
+    }
+    if (leaf == null) {
+      return lineOffset;
+    }
+    leafOffset = 0;
+    while (leaf.prev != null) {
+      leaf = leaf.prev;
+      leafOffset += leaf.length;
+    }
+    return lineOffset + leafOffset + offset;
+  };
+
+  Selection.prototype._setNativeRange = function(startNode, startOffset, endNode, endOffset) {
+    var nativeRange, selection;
+    selection = document.getSelection();
+    if (!selection) {
+      return;
+    }
+    if (startNode != null) {
+      if (!this.checkFocus()) {
+        this.doc.root.focus();
+      }
+      nativeRange = this._getNativeRange();
+      if ((nativeRange == null) || startNode !== nativeRange.startContainer || startOffset !== nativeRange.startOffset || endNode !== nativeRange.endContainer || endOffset !== nativeRange.endOffset) {
+        selection.removeAllRanges();
+        nativeRange = document.createRange();
+        nativeRange.setStart(startNode, startOffset);
+        nativeRange.setEnd(endNode, endOffset);
+        return selection.addRange(nativeRange);
+      }
+    } else {
+      selection.removeAllRanges();
+      return this.doc.root.blur();
+    }
+  };
+
+  return Selection;
+
+})();
+
+module.exports = Selection;
+
+
+
+},{"../lib/dom":16,"../lib/normalizer":18,"../lib/range":20,"./leaf":11,"lodash":1}],14:[function(_dereq_,module,exports){
+_dereq_('./modules/authorship');
+
+_dereq_('./modules/image-tooltip');
+
+_dereq_('./modules/keyboard');
+
+_dereq_('./modules/link-tooltip');
+
+_dereq_('./modules/multi-cursor');
+
+_dereq_('./modules/paste-manager');
+
+_dereq_('./modules/toolbar');
+
+_dereq_('./modules/tooltip');
+
+_dereq_('./modules/undo-manager');
+
+module.exports = _dereq_('./quill');
+
+
+
+},{"./modules/authorship":21,"./modules/image-tooltip":22,"./modules/keyboard":23,"./modules/link-tooltip":24,"./modules/multi-cursor":25,"./modules/paste-manager":26,"./modules/toolbar":27,"./modules/tooltip":28,"./modules/undo-manager":29,"./quill":30}],15:[function(_dereq_,module,exports){
+var ColorPicker, Picker, dom,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+dom = _dereq_('./dom');
 
 Picker = _dereq_('./picker');
 
@@ -6742,7 +5407,7 @@ ColorPicker = (function(_super) {
 
   function ColorPicker() {
     ColorPicker.__super__.constructor.apply(this, arguments);
-    DOM.addClass(this.container, 'ql-color-picker');
+    dom(this.container).addClass('ql-color-picker');
   }
 
   ColorPicker.prototype.buildItem = function(picker, option, index) {
@@ -6759,7 +5424,675 @@ ColorPicker = (function(_super) {
 module.exports = ColorPicker;
 
 
-},{"../dom":15,"./picker":21}],20:[function(_dereq_,module,exports){
+
+},{"./dom":16,"./picker":19}],16:[function(_dereq_,module,exports){
+var SelectWrapper, Wrapper, dom, lastKeyEvent, _,
+  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+_ = _dereq_('lodash');
+
+lastKeyEvent = null;
+
+Wrapper = (function() {
+  function Wrapper(node) {
+    this.node = node;
+    this.trigger = __bind(this.trigger, this);
+  }
+
+  Wrapper.prototype.addClass = function(cssClass) {
+    if (this.hasClass(cssClass)) {
+      return;
+    }
+    if (this.node.classList != null) {
+      this.node.classList.add(cssClass);
+    } else if (this.node.className != null) {
+      this.node.className = (this.node.className + ' ' + cssClass).trim();
+    }
+    return this;
+  };
+
+  Wrapper.prototype.attributes = function(attributes) {
+    var attr, i, value, _i, _len, _ref;
+    if (attributes) {
+      _.each(attributes, (function(_this) {
+        return function(value, name) {
+          return _this.node.setAttribute(name, value);
+        };
+      })(this));
+      return this;
+    } else {
+      if (this.node.attributes == null) {
+        return {};
+      }
+      attributes = {};
+      _ref = this.node.attributes;
+      for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
+        value = _ref[i];
+        attr = this.node.attributes[i];
+        attributes[attr.name] = attr.value;
+      }
+      return attributes;
+    }
+  };
+
+  Wrapper.prototype.child = function(offset) {
+    var child, length;
+    child = this.node.firstChild;
+    length = dom(child).length();
+    while (child != null) {
+      if (offset < length) {
+        break;
+      }
+      offset -= length;
+      child = child.nextSibling;
+      length = dom(child).length();
+    }
+    if (child == null) {
+      child = this.node.lastChild;
+      offset = dom(child).length();
+    }
+    return [child, offset];
+  };
+
+  Wrapper.prototype.childNodes = function() {
+    return _.map(this.node.childNodes);
+  };
+
+  Wrapper.prototype.classes = function() {
+    return this.node.className.split(/\s+/);
+  };
+
+  Wrapper.prototype.descendants = function() {
+    return _.map(this.node.getElementsByTagName('*'));
+  };
+
+  Wrapper.prototype.get = function() {
+    return this.node;
+  };
+
+  Wrapper.prototype.hasClass = function(cssClass) {
+    if (this.node.classList != null) {
+      return this.node.classList.contains(cssClass);
+    } else if (this.node.className != null) {
+      return this.classes().indexOf(cssClass) > -1;
+    }
+    return false;
+  };
+
+  Wrapper.prototype.isAncestor = function(ancestor, inclusive) {
+    var node;
+    if (inclusive == null) {
+      inclusive = false;
+    }
+    if (ancestor === this.node) {
+      return inclusive;
+    }
+    node = this.node;
+    while (node) {
+      if (node === ancestor) {
+        return true;
+      }
+      node = node.parentNode;
+    }
+    return false;
+  };
+
+  Wrapper.prototype.isElement = function() {
+    var _ref;
+    return ((_ref = this.node) != null ? _ref.nodeType : void 0) === dom.ELEMENT_NODE;
+  };
+
+  Wrapper.prototype.isTextNode = function() {
+    var _ref;
+    return ((_ref = this.node) != null ? _ref.nodeType : void 0) === dom.TEXT_NODE;
+  };
+
+  Wrapper.prototype.length = function() {
+    var length;
+    if (this.node == null) {
+      return 0;
+    }
+    length = this.text().length;
+    if (this.isElement()) {
+      length += this.node.querySelectorAll(Object.keys(dom.EMBED_TAGS).join(',')).length;
+    }
+    return length;
+  };
+
+  Wrapper.prototype.merge = function(node) {
+    var $node;
+    $node = dom(node);
+    if (this.isElement()) {
+      $node.moveChildren(this.node);
+      this.normalize();
+    } else {
+      this.text(this.text() + $node.text());
+    }
+    $node.remove();
+    return this;
+  };
+
+  Wrapper.prototype.moveChildren = function(newParent) {
+    _.each(this.childNodes(), function(child) {
+      return newParent.appendChild(child);
+    });
+    return this;
+  };
+
+  Wrapper.prototype.nextLineNode = function(root) {
+    var nextNode;
+    nextNode = this.node.nextSibling;
+    if ((nextNode == null) && this.node.parentNode !== root) {
+      nextNode = this.node.parentNode.nextSibling;
+    }
+    if ((nextNode != null) && (dom.LIST_TAGS[nextNode.tagName] != null)) {
+      nextNode = nextNode.firstChild;
+    }
+    return nextNode;
+  };
+
+  Wrapper.prototype.normalize = function() {
+    var $node, curNode, followingNode, nextNode;
+    curNode = this.node.firstChild;
+    while (curNode != null) {
+      nextNode = curNode.nextSibling;
+      $node = dom(curNode);
+      if ((nextNode != null) && dom(nextNode).isTextNode()) {
+        if ($node.text().length === 0) {
+          $node.remove();
+        } else if ($node.isTextNode()) {
+          followingNode = nextNode.nextSibling;
+          $node.merge(nextNode);
+          nextNode = followingNode;
+        }
+      }
+      curNode = nextNode;
+    }
+    return this;
+  };
+
+  Wrapper.prototype.on = function(eventName, listener) {
+    this.node.addEventListener(eventName, (function(_this) {
+      return function(event) {
+        var arg, propagate;
+        arg = lastKeyEvent && (eventName === 'keydown' || eventName === 'keyup') ? lastKeyEvent : event;
+        propagate = listener.call(_this.node, arg);
+        if (!propagate) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+        return propagate;
+      };
+    })(this));
+    return this;
+  };
+
+  Wrapper.prototype.remove = function() {
+    var _ref;
+    if ((_ref = this.node.parentNode) != null) {
+      _ref.removeChild(this.node);
+    }
+    this.node = null;
+    return null;
+  };
+
+  Wrapper.prototype.removeClass = function(cssClass) {
+    var classArray;
+    if (!this.hasClass(cssClass)) {
+      return;
+    }
+    if (this.node.classList != null) {
+      this.node.classList.remove(cssClass);
+    } else if (this.node.className != null) {
+      classArray = this.classes();
+      classArray.splice(classArray.indexOf(cssClass), 1);
+      this.node.className = classArray.join(' ');
+    }
+    if (!this.node.getAttribute('class')) {
+      this.node.removeAttribute('class');
+    }
+    return this;
+  };
+
+  Wrapper.prototype.replace = function(newNode) {
+    this.node.parentNode.replaceChild(newNode, this.node);
+    this.node = newNode;
+    return newNode;
+  };
+
+  Wrapper.prototype.splitAncestors = function(root, force) {
+    var nextNode, parentClone, parentNode, refNode;
+    if (force == null) {
+      force = false;
+    }
+    if (this.node === root || this.node.parentNode === root) {
+      return this;
+    }
+    if ((this.node.previousSibling != null) || force) {
+      parentNode = this.node.parentNode;
+      parentClone = parentNode.cloneNode(false);
+      parentNode.parentNode.insertBefore(parentClone, parentNode.nextSibling);
+      refNode = this.node;
+      while (refNode != null) {
+        nextNode = refNode.nextSibling;
+        parentClone.appendChild(refNode);
+        refNode = nextNode;
+      }
+      return dom(parentClone).splitAncestors(root);
+    } else {
+      return dom(this.node.parentNode).splitAncestors(root);
+    }
+  };
+
+  Wrapper.prototype.split = function(offset, force) {
+    var after, child, childLeft, childRight, left, nextRight, nodeLength, right, _ref, _ref1;
+    if (force == null) {
+      force = false;
+    }
+    nodeLength = this.length();
+    offset = Math.max(0, offset);
+    offset = Math.min(offset, nodeLength);
+    if (!(force || offset !== 0)) {
+      return [this.node.previousSibling, this.node, false];
+    }
+    if (!(force || offset !== nodeLength)) {
+      return [this.node, this.node.nextSibling, false];
+    }
+    if (this.node.nodeType === dom.TEXT_NODE) {
+      after = this.node.splitText(offset);
+      return [this.node, after, true];
+    } else {
+      left = this.node;
+      right = this.node.cloneNode(false);
+      this.node.parentNode.insertBefore(right, left.nextSibling);
+      _ref = this.child(offset), child = _ref[0], offset = _ref[1];
+      _ref1 = dom(child).split(offset), childLeft = _ref1[0], childRight = _ref1[1];
+      while (childRight !== null) {
+        nextRight = childRight.nextSibling;
+        right.appendChild(childRight);
+        childRight = nextRight;
+      }
+      return [left, right, true];
+    }
+  };
+
+  Wrapper.prototype.styles = function(styles, overwrite) {
+    var obj, styleString;
+    if (overwrite == null) {
+      overwrite = false;
+    }
+    if (styles) {
+      if (!overwrite) {
+        styles = _.defaults(styles, this.styles());
+      }
+      styleString = _.map(styles, function(style, name) {
+        return "" + name + ": " + style;
+      }).join('; ') + ';';
+      this.node.setAttribute('style', styleString);
+      return this;
+    } else {
+      styleString = this.node.getAttribute('style') || '';
+      obj = _.reduce(styleString.split(';'), function(styles, str) {
+        var name, value, _ref;
+        _ref = str.split(':'), name = _ref[0], value = _ref[1];
+        if (name && value) {
+          name = name.trim();
+          value = value.trim();
+          styles[name.toLowerCase()] = value;
+        }
+        return styles;
+      }, {});
+      return obj;
+    }
+  };
+
+  Wrapper.prototype.switchTag = function(newTag) {
+    var attributes, newNode;
+    newTag = newTag.toUpperCase();
+    if (this.node.tagName === newTag) {
+      return this;
+    }
+    newNode = document.createElement(newTag);
+    attributes = this.attributes();
+    if (dom.VOID_TAGS[newTag] == null) {
+      this.moveChildren(newNode);
+    }
+    this.replace(newNode);
+    return this.attributes(attributes).get();
+  };
+
+  Wrapper.prototype.text = function(text) {
+    if (text != null) {
+      switch (this.node.nodeType) {
+        case dom.ELEMENT_NODE:
+          this.node.textContent = text;
+          break;
+        case dom.TEXT_NODE:
+          this.node.data = text;
+      }
+      return this;
+    } else {
+      switch (this.node.nodeType) {
+        case dom.ELEMENT_NODE:
+          if (this.node.tagName === dom.DEFAULT_BREAK_TAG) {
+            return "";
+          }
+          if (dom.EMBED_TAGS[this.node.tagName] != null) {
+            return dom.EMBED_TEXT;
+          }
+          if (this.node.textContent != null) {
+            return this.node.textContent;
+          }
+          return "";
+        case dom.TEXT_NODE:
+          return this.node.data || "";
+        default:
+          return "";
+      }
+    }
+  };
+
+  Wrapper.prototype.textNodes = function() {
+    var textNode, textNodes, walker;
+    walker = document.createTreeWalker(this.node, NodeFilter.SHOW_TEXT, null, false);
+    textNodes = [];
+    while (textNode = walker.nextNode()) {
+      textNodes.push(textNode);
+    }
+    return textNodes;
+  };
+
+  Wrapper.prototype.toggleClass = function(className, state) {
+    if (state == null) {
+      state = !this.hasClass(className);
+    }
+    if (state) {
+      this.addClass(className);
+    } else {
+      this.removeClass(className);
+    }
+    return this;
+  };
+
+  Wrapper.prototype.trigger = function(eventName, options) {
+    var event, initFn, modifiers;
+    if (options == null) {
+      options = {};
+    }
+    if (['keypress', 'keydown', 'keyup'].indexOf(eventName) < 0) {
+      event = document.createEvent('Event');
+      event.initEvent(eventName, options.bubbles, options.cancelable);
+    } else {
+      event = document.createEvent('KeyboardEvent');
+      lastKeyEvent = _.clone(options);
+      if (_.isNumber(options.key)) {
+        lastKeyEvent.which = options.key;
+      } else if (_.isString(options.key)) {
+        lastKeyEvent.which = options.key.toUpperCase().charCodeAt(0);
+      } else {
+        lastKeyEvent.which = 0;
+      }
+      if (dom.isIE(10)) {
+        modifiers = [];
+        if (options.altKey) {
+          modifiers.push('Alt');
+        }
+        if (options.ctrlKey) {
+          modifiers.push('Control');
+        }
+        if (options.metaKey) {
+          modifiers.push('Meta');
+        }
+        if (options.shiftKey) {
+          modifiers.push('Shift');
+        }
+        event.initKeyboardEvent(eventName, options.bubbles, options.cancelable, window, 0, 0, modifiers.join(' '), null, null);
+      } else {
+        initFn = _.isFunction(event.initKeyboardEvent) ? 'initKeyboardEvent' : 'initKeyEvent';
+        event[initFn](eventName, options.bubbles, options.cancelable, window, options.ctrlKey, options.altKey, options.shiftKey, options.metaKey, 0, 0);
+      }
+    }
+    this.node.dispatchEvent(event);
+    lastKeyEvent = null;
+    return this;
+  };
+
+  Wrapper.prototype.unwrap = function() {
+    var next, ret;
+    ret = this.node.firstChild;
+    next = this.node.nextSibling;
+    _.each(this.childNodes(), (function(_this) {
+      return function(child) {
+        return _this.node.parentNode.insertBefore(child, next);
+      };
+    })(this));
+    this.remove();
+    return ret;
+  };
+
+  Wrapper.prototype.wrap = function(wrapper) {
+    var parent;
+    if (this.node.parentNode != null) {
+      this.node.parentNode.insertBefore(wrapper, this.node);
+    }
+    parent = wrapper;
+    while (parent.firstChild != null) {
+      parent = wrapper.firstChild;
+    }
+    parent.appendChild(this.node);
+    return this;
+  };
+
+  return Wrapper;
+
+})();
+
+SelectWrapper = (function(_super) {
+  __extends(SelectWrapper, _super);
+
+  function SelectWrapper() {
+    return SelectWrapper.__super__.constructor.apply(this, arguments);
+  }
+
+  SelectWrapper.prototype["default"] = function() {
+    return this.node.querySelector('option[selected]');
+  };
+
+  SelectWrapper.prototype.option = function(option, trigger) {
+    var child, i, value, _i, _len, _ref;
+    if (trigger == null) {
+      trigger = true;
+    }
+    value = _.isElement(option) ? option.value : option;
+    if (value) {
+      value = value.replace(/[^\w]+/g, '');
+      _ref = this.node.children;
+      for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
+        child = _ref[i];
+        if (child.value.replace(/[^\w]+/g, '') === value) {
+          this.node.selectedIndex = i;
+          break;
+        }
+      }
+    } else {
+      this.node.selectedIndex = -1;
+    }
+    if (trigger) {
+      this.trigger('change');
+    }
+    return this;
+  };
+
+  SelectWrapper.prototype.reset = function(trigger) {
+    var option;
+    if (trigger == null) {
+      trigger = true;
+    }
+    option = this["default"]();
+    if (option != null) {
+      option.selected = true;
+    } else {
+      this.node.selectedIndex = 0;
+    }
+    if (trigger) {
+      this.trigger('change');
+    }
+    return this;
+  };
+
+  SelectWrapper.prototype.value = function() {
+    if (this.node.selectedIndex > -1) {
+      return this.node.options[this.node.selectedIndex].value;
+    } else {
+      return '';
+    }
+  };
+
+  return SelectWrapper;
+
+})(Wrapper);
+
+dom = function(node) {
+  if ((node != null ? node.tagName : void 0) === 'SELECT') {
+    return new SelectWrapper(node);
+  } else {
+    return new Wrapper(node);
+  }
+};
+
+dom = _.extend(dom, {
+  ELEMENT_NODE: 1,
+  NOBREAK_SPACE: "&nbsp;",
+  TEXT_NODE: 3,
+  ZERO_WIDTH_NOBREAK_SPACE: "\uFEFF",
+  DEFAULT_BLOCK_TAG: 'DIV',
+  DEFAULT_BREAK_TAG: 'BR',
+  DEFAULT_INLINE_TAG: 'SPAN',
+  EMBED_TEXT: '!',
+  FONT_SIZES: {
+    '10px': 1,
+    '13px': 2,
+    '16px': 3,
+    '18px': 4,
+    '24px': 5,
+    '32px': 6,
+    '48px': 7
+  },
+  KEYS: {
+    BACKSPACE: 8,
+    TAB: 9,
+    ENTER: 13,
+    ESCAPE: 27,
+    LEFT: 37,
+    UP: 38,
+    RIGHT: 39,
+    DOWN: 40,
+    DELETE: 46
+  },
+  BLOCK_TAGS: {
+    'ADDRESS': 'ADDRESS',
+    'ARTICLE': 'ARTICLE',
+    'ASIDE': 'ASIDE',
+    'AUDIO': 'AUDIO',
+    'BLOCKQUOTE': 'BLOCKQUOTE',
+    'CANVAS': 'CANVAS',
+    'DD': 'DD',
+    'DIV': 'DIV',
+    'DL': 'DL',
+    'FIGCAPTION': 'FIGCAPTION',
+    'FIGURE': 'FIGURE',
+    'FOOTER': 'FOOTER',
+    'FORM': 'FORM',
+    'H1': 'H1',
+    'H2': 'H2',
+    'H3': 'H3',
+    'H4': 'H4',
+    'H5': 'H5',
+    'H6': 'H6',
+    'HEADER': 'HEADER',
+    'HGROUP': 'HGROUP',
+    'LI': 'LI',
+    'OL': 'OL',
+    'OUTPUT': 'OUTPUT',
+    'P': 'P',
+    'PRE': 'PRE',
+    'SECTION': 'SECTION',
+    'TABLE': 'TABLE',
+    'TBODY': 'TBODY',
+    'TD': 'TD',
+    'TFOOT': 'TFOOT',
+    'TH': 'TH',
+    'THEAD': 'THEAD',
+    'TR': 'TR',
+    'UL': 'UL',
+    'VIDEO': 'VIDEO'
+  },
+  EMBED_TAGS: {
+    'IMG': 'IMG'
+  },
+  LINE_TAGS: {
+    'DIV': 'DIV',
+    'LI': 'LI'
+  },
+  LIST_TAGS: {
+    'OL': 'OL',
+    'UL': 'UL'
+  },
+  VOID_TAGS: {
+    'AREA': 'AREA',
+    'BASE': 'BASE',
+    'BR': 'BR',
+    'COL': 'COL',
+    'COMMAND': 'COMMAND',
+    'EMBED': 'EMBED',
+    'HR': 'HR',
+    'IMG': 'IMG',
+    'INPUT': 'INPUT',
+    'KEYGEN': 'KEYGEN',
+    'LINK': 'LINK',
+    'META': 'META',
+    'PARAM': 'PARAM',
+    'SOURCE': 'SOURCE',
+    'TRACK': 'TRACK',
+    'WBR': 'WBR'
+  },
+  convertFontSize: function(size) {
+    var i, s, sources, targets;
+    if (_.isString(size) && size.indexOf('px') > -1) {
+      sources = Object.keys(dom.FONT_SIZES);
+      targets = _.values(dom.FONT_SIZES);
+    } else {
+      targets = Object.keys(dom.FONT_SIZES);
+      sources = _.values(dom.FONT_SIZES);
+    }
+    for (i in sources) {
+      s = sources[i];
+      if (parseInt(size) <= parseInt(s)) {
+        return targets[i];
+      }
+    }
+    return _.last(targets);
+  },
+  isIE: function(maxVersion) {
+    var version;
+    version = document.documentMode;
+    return version && maxVersion >= version;
+  },
+  isIOS: function() {
+    return /iPhone|iPad/i.test(navigator.userAgent);
+  },
+  isMac: function() {
+    return /Mac/i.test(navigator.platform);
+  }
+});
+
+module.exports = dom;
+
+
+
+},{"lodash":1}],17:[function(_dereq_,module,exports){
 var LinkedList, Node;
 
 Node = (function() {
@@ -6850,39 +6183,253 @@ LinkedList = (function() {
 module.exports = LinkedList;
 
 
-},{}],21:[function(_dereq_,module,exports){
-var DOM, Normalizer, Picker, _;
+
+},{}],18:[function(_dereq_,module,exports){
+var Normalizer, dom, _;
 
 _ = _dereq_('lodash');
 
-DOM = _dereq_('../dom');
+dom = _dereq_('./dom');
 
-Normalizer = _dereq_('../normalizer');
+Normalizer = {
+  ALIASES: {
+    'STRONG': 'B',
+    'EM': 'I',
+    'DEL': 'S',
+    'STRIKE': 'S'
+  },
+  ATTRIBUTES: {
+    'color': 'color',
+    'face': 'fontFamily',
+    'size': 'fontSize'
+  },
+  STYLES: {
+    'background-color': 'background-color',
+    'color': 'color',
+    'font-family': 'font-family',
+    'font-size': 'font-size',
+    'text-align': 'text-align'
+  },
+  TAGS: {
+    'DIV': 'DIV',
+    'BR': 'BR',
+    'SPAN': 'SPAN',
+    'B': 'B',
+    'I': 'I',
+    'S': 'S',
+    'U': 'U',
+    'A': 'A',
+    'IMG': 'IMG',
+    'OL': 'OL',
+    'UL': 'UL',
+    'LI': 'LI'
+  },
+  handleBreaks: function(lineNode) {
+    var breaks;
+    breaks = _.map(lineNode.querySelectorAll(dom.DEFAULT_BREAK_TAG));
+    _.each(breaks, (function(_this) {
+      return function(br) {
+        if ((br.nextSibling != null) && (!dom.isIE(10) || (br.previousSibling != null))) {
+          return dom(br.nextSibling).splitAncestors(lineNode.parentNode);
+        }
+      };
+    })(this));
+    return lineNode;
+  },
+  normalizeLine: function(lineNode) {
+    lineNode = Normalizer.wrapInline(lineNode);
+    lineNode = Normalizer.handleBreaks(lineNode);
+    lineNode = Normalizer.pullBlocks(lineNode);
+    lineNode = Normalizer.normalizeNode(lineNode);
+    Normalizer.unwrapText(lineNode);
+    if ((lineNode != null) && (dom.LIST_TAGS[lineNode.tagName] != null)) {
+      lineNode = lineNode.firstChild;
+    }
+    return lineNode;
+  },
+  normalizeNode: function(node) {
+    if (dom(node).isTextNode()) {
+      return node;
+    }
+    _.each(Normalizer.ATTRIBUTES, function(style, attribute) {
+      var value;
+      if (node.hasAttribute(attribute)) {
+        value = node.getAttribute(attribute);
+        if (attribute === 'size') {
+          value = dom.convertFontSize(value);
+        }
+        node.style[style] = value;
+        return node.removeAttribute(attribute);
+      }
+    });
+    Normalizer.whitelistStyles(node);
+    return Normalizer.whitelistTags(node);
+  },
+  optimizeLine: function(lineNode) {
+    var lineNodeLength, node, nodes, _results;
+    lineNode.normalize();
+    lineNodeLength = dom(lineNode).length();
+    nodes = dom(lineNode).descendants();
+    _results = [];
+    while (nodes.length > 0) {
+      node = nodes.pop();
+      if ((node != null ? node.parentNode : void 0) == null) {
+        continue;
+      }
+      if (dom.EMBED_TAGS[node.tagName] != null) {
+        continue;
+      }
+      if (node.tagName === dom.DEFAULT_BREAK_TAG) {
+        if (lineNodeLength !== 0) {
+          _results.push(dom(node).remove());
+        } else {
+          _results.push(void 0);
+        }
+      } else if (dom(node).length() === 0) {
+        nodes.push(node.nextSibling);
+        _results.push(dom(node).unwrap());
+      } else if ((node.previousSibling != null) && node.tagName === node.previousSibling.tagName) {
+        if (_.isEqual(dom(node).attributes(), dom(node.previousSibling).attributes())) {
+          nodes.push(node.firstChild);
+          _results.push(dom(node.previousSibling).merge(node));
+        } else {
+          _results.push(void 0);
+        }
+      } else {
+        _results.push(void 0);
+      }
+    }
+    return _results;
+  },
+  pullBlocks: function(lineNode) {
+    var curNode;
+    curNode = lineNode.firstChild;
+    while (curNode != null) {
+      if ((dom.BLOCK_TAGS[curNode.tagName] != null) && curNode.tagName !== 'LI') {
+        if (curNode.previousSibling != null) {
+          dom(curNode).splitAncestors(lineNode.parentNode);
+        }
+        if (curNode.nextSibling != null) {
+          dom(curNode.nextSibling).splitAncestors(lineNode.parentNode);
+        }
+        if ((dom.LIST_TAGS[curNode.tagName] == null) || !curNode.firstChild) {
+          dom(curNode).unwrap();
+          Normalizer.pullBlocks(lineNode);
+        } else {
+          dom(curNode.parentNode).unwrap();
+          if (lineNode.parentNode == null) {
+            lineNode = curNode;
+          }
+        }
+        break;
+      }
+      curNode = curNode.nextSibling;
+    }
+    return lineNode;
+  },
+  stripComments: function(html) {
+    return html.replace(/<!--[\s\S]*?-->/g, '');
+  },
+  stripWhitespace: function(html) {
+    html = html.trim();
+    html = html.replace(/(\r?\n|\r)+/g, ' ');
+    html = html.replace(/\>\s+\</g, '><');
+    return html;
+  },
+  whitelistStyles: function(node) {
+    var original, styles;
+    original = dom(node).styles();
+    styles = _.omit(original, function(value, key) {
+      return Normalizer.STYLES[key] == null;
+    });
+    if (Object.keys(styles).length < Object.keys(original).length) {
+      if (Object.keys(styles).length > 0) {
+        return dom(node).styles(styles, true);
+      } else {
+        return node.removeAttribute('style');
+      }
+    }
+  },
+  whitelistTags: function(node) {
+    if (!dom(node).isElement()) {
+      return node;
+    }
+    if (Normalizer.ALIASES[node.tagName] != null) {
+      node = dom(node).switchTag(Normalizer.ALIASES[node.tagName]);
+    } else if (Normalizer.TAGS[node.tagName] == null) {
+      if (dom.BLOCK_TAGS[node.tagName] != null) {
+        node = dom(node).switchTag(dom.DEFAULT_BLOCK_TAG);
+      } else if (!node.hasAttributes() && (node.firstChild != null)) {
+        node = dom(node).unwrap();
+      } else {
+        node = dom(node).switchTag(dom.DEFAULT_INLINE_TAG);
+      }
+    }
+    return node;
+  },
+  wrapInline: function(lineNode) {
+    var blockNode, nextNode;
+    if (dom.BLOCK_TAGS[lineNode.tagName] != null) {
+      return lineNode;
+    }
+    blockNode = document.createElement(dom.DEFAULT_BLOCK_TAG);
+    lineNode.parentNode.insertBefore(blockNode, lineNode);
+    while ((lineNode != null) && (dom.BLOCK_TAGS[lineNode.tagName] == null)) {
+      nextNode = lineNode.nextSibling;
+      blockNode.appendChild(lineNode);
+      lineNode = nextNode;
+    }
+    return blockNode;
+  },
+  unwrapText: function(lineNode) {
+    var spans;
+    spans = _.map(lineNode.querySelectorAll(dom.DEFAULT_INLINE_TAG));
+    return _.each(spans, function(span) {
+      if (!span.hasAttributes()) {
+        return dom(span).unwrap();
+      }
+    });
+  }
+};
+
+module.exports = Normalizer;
+
+
+
+},{"./dom":16,"lodash":1}],19:[function(_dereq_,module,exports){
+var Normalizer, Picker, dom, _;
+
+_ = _dereq_('lodash');
+
+dom = _dereq_('./dom');
+
+Normalizer = _dereq_('./normalizer');
 
 Picker = (function() {
   Picker.TEMPLATE = '<span class="ql-picker-label"></span><span class="ql-picker-options"></span>';
 
   function Picker(select) {
     this.select = select;
-    this.container = this.select.ownerDocument.createElement('span');
+    this.container = document.createElement('span');
     this.buildPicker();
-    DOM.addClass(this.container, 'ql-picker');
+    dom(this.container).addClass('ql-picker');
     this.select.style.display = 'none';
     this.select.parentNode.insertBefore(this.container, this.select);
-    DOM.addEventListener(this.select.ownerDocument, 'click', (function(_this) {
+    dom(document).on('click', (function(_this) {
       return function() {
         _this.close();
         return true;
       };
     })(this));
-    DOM.addEventListener(this.label, 'click', (function(_this) {
+    dom(this.label).on('click', (function(_this) {
       return function() {
-        return _.defer(function() {
-          return DOM.toggleClass(_this.container, 'ql-expanded');
+        _.defer(function() {
+          return dom(_this.container).toggleClass('ql-expanded');
         });
+        return false;
       };
     })(this));
-    DOM.addEventListener(this.select, 'change', (function(_this) {
+    dom(this.select).on('change', (function(_this) {
       return function() {
         var item, option;
         if (_this.select.selectedIndex > -1) {
@@ -6890,32 +6437,30 @@ Picker = (function() {
           option = _this.select.options[_this.select.selectedIndex];
         }
         _this.selectItem(item, false);
-        return DOM.toggleClass(_this.label, 'ql-active', option !== DOM.getDefaultOption(_this.select));
+        return dom(_this.label).toggleClass('ql-active', option !== dom(_this.select)["default"]());
       };
     })(this));
   }
 
   Picker.prototype.buildItem = function(picker, option, index) {
     var item;
-    item = this.select.ownerDocument.createElement('span');
+    item = document.createElement('span');
     item.setAttribute('data-value', option.getAttribute('value'));
-    DOM.addClass(item, 'ql-picker-item');
-    DOM.setText(item, DOM.getText(option));
-    if (this.select.selectedIndex === index) {
-      this.selectItem(item, false);
-    }
-    DOM.addEventListener(item, 'click', (function(_this) {
+    dom(item).addClass('ql-picker-item').text(dom(option).text()).on('click', (function(_this) {
       return function() {
         _this.selectItem(item, true);
         return _this.close();
       };
     })(this));
+    if (this.select.selectedIndex === index) {
+      this.selectItem(item, false);
+    }
     return item;
   };
 
   Picker.prototype.buildPicker = function() {
     var picker;
-    _.each(DOM.getAttributes(this.select), (function(_this) {
+    _.each(dom(this.select).attributes(), (function(_this) {
       return function(value, name) {
         return _this.container.setAttribute(name, value);
       };
@@ -6933,20 +6478,20 @@ Picker = (function() {
   };
 
   Picker.prototype.close = function() {
-    return DOM.removeClass(this.container, 'ql-expanded');
+    return dom(this.container).removeClass('ql-expanded');
   };
 
   Picker.prototype.selectItem = function(item, trigger) {
     var selected, value;
     selected = this.container.querySelector('.ql-selected');
     if (selected != null) {
-      DOM.removeClass(selected, 'ql-selected');
+      dom(selected).removeClass('ql-selected');
     }
     if (item != null) {
       value = item.getAttribute('data-value');
-      DOM.addClass(item, 'ql-selected');
-      DOM.setText(this.label, DOM.getText(item));
-      DOM.selectOption(this.select, value, trigger);
+      dom(item).addClass('ql-selected');
+      dom(this.label).text(dom(item).text());
+      dom(this.select).option(value, trigger);
       return this.label.setAttribute('data-value', value);
     } else {
       this.label.innerHTML = '&nbsp;';
@@ -6961,7 +6506,8 @@ Picker = (function() {
 module.exports = Picker;
 
 
-},{"../dom":15,"../normalizer":33,"lodash":"M4+//f"}],22:[function(_dereq_,module,exports){
+
+},{"./dom":16,"./normalizer":18,"lodash":1}],20:[function(_dereq_,module,exports){
 var Range, _;
 
 _ = _dereq_('lodash');
@@ -7014,281 +6560,22 @@ Range = (function() {
 module.exports = Range;
 
 
-},{"lodash":"M4+//f"}],23:[function(_dereq_,module,exports){
-var DOM, Format, Leaf, Line, LinkedList, Normalizer, Tandem, Utils, _,
-  __hasProp = {}.hasOwnProperty,
-  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-_ = _dereq_('lodash');
+},{"lodash":1}],21:[function(_dereq_,module,exports){
+var Authorship, Delta, Quill, dom, _;
 
-DOM = _dereq_('./dom');
+Quill = _dereq_('../quill');
 
-Format = _dereq_('./format');
+_ = Quill.require('lodash');
 
-Leaf = _dereq_('./leaf');
+dom = Quill.require('dom');
 
-Line = _dereq_('./line');
-
-LinkedList = _dereq_('./lib/linked-list');
-
-Normalizer = _dereq_('./normalizer');
-
-Utils = _dereq_('./utils');
-
-Tandem = _dereq_('tandem-core');
-
-Line = (function(_super) {
-  __extends(Line, _super);
-
-  Line.CLASS_NAME = 'line';
-
-  Line.ID_PREFIX = 'line-';
-
-  function Line(doc, node) {
-    this.doc = doc;
-    this.node = node;
-    this.id = _.uniqueId(Line.ID_PREFIX);
-    this.formats = {};
-    DOM.addClass(this.node, Line.CLASS_NAME);
-    this.rebuild();
-    Line.__super__.constructor.call(this, this.node);
-  }
-
-  Line.prototype.buildLeaves = function(node, formats) {
-    return _.each(DOM.getChildNodes(node), (function(_this) {
-      return function(node) {
-        var nodeFormats;
-        node = Normalizer.normalizeNode(node);
-        nodeFormats = _.clone(formats);
-        _.each(_this.doc.formats, function(format, name) {
-          if (!format.isType(Format.types.LINE) && format.match(node)) {
-            return nodeFormats[name] = format.value(node);
-          }
-        });
-        if (Leaf.isLeafNode(node)) {
-          return _this.leaves.append(new Leaf(node, nodeFormats));
-        } else {
-          return _this.buildLeaves(node, nodeFormats);
-        }
-      };
-    })(this));
-  };
-
-  Line.prototype.deleteText = function(offset, length) {
-    var deleteLength, leaf, _ref;
-    if (!(length > 0)) {
-      return;
-    }
-    _ref = this.findLeafAt(offset), leaf = _ref[0], offset = _ref[1];
-    while ((leaf != null) && length > 0) {
-      deleteLength = Math.min(length, leaf.length - offset);
-      leaf.deleteText(offset, deleteLength);
-      length -= deleteLength;
-      leaf = leaf.next;
-      offset = 0;
-    }
-    return this.rebuild();
-  };
-
-  Line.prototype.findLeaf = function(leafNode) {
-    var curLeaf;
-    curLeaf = this.leaves.first;
-    while (curLeaf != null) {
-      if (curLeaf.node === leafNode) {
-        return curLeaf;
-      }
-      curLeaf = curLeaf.next;
-    }
-    return null;
-  };
-
-  Line.prototype.findLeafAt = function(offset, inclusive) {
-    var leaf;
-    if (inclusive == null) {
-      inclusive = false;
-    }
-    if (offset >= this.length - 1) {
-      return [this.leaves.last, this.leaves.last.length];
-    }
-    leaf = this.leaves.first;
-    while (leaf != null) {
-      if (offset < leaf.length || (offset === leaf.length && inclusive)) {
-        return [leaf, offset];
-      }
-      offset -= leaf.length;
-      leaf = leaf.next;
-    }
-    return [this.leaves.last, offset - this.leaves.last.length];
-  };
-
-  Line.prototype.format = function(name, value) {
-    var formats;
-    if (_.isObject(name)) {
-      formats = name;
-    } else {
-      formats = {};
-      formats[name] = value;
-    }
-    _.each(formats, (function(_this) {
-      return function(value, name) {
-        var excludeFormat, format;
-        format = _this.doc.formats[name];
-        if (format.isType(Format.types.LINE)) {
-          if (format.config.exclude && _this.formats[format.config.exclude]) {
-            excludeFormat = _this.doc.formats[format.config.exclude];
-            if (excludeFormat != null) {
-              _this.node = excludeFormat.remove(_this.node);
-              delete _this.formats[format.config.exclude];
-            }
-          }
-          _this.node = format.add(_this.node, value);
-        }
-        if (value) {
-          return _this.formats[name] = value;
-        } else {
-          return delete _this.formats[name];
-        }
-      };
-    })(this));
-    return this.resetContent();
-  };
-
-  Line.prototype.formatText = function(offset, length, name, value) {
-    var format, leaf, leafOffset, leftNode, nextLeaf, rightNode, targetNode, _ref, _ref1, _ref2;
-    _ref = this.findLeafAt(offset), leaf = _ref[0], leafOffset = _ref[1];
-    format = this.doc.formats[name];
-    if (!((format != null) && format.config.type !== Format.types.LINE)) {
-      return;
-    }
-    while ((leaf != null) && length > 0) {
-      nextLeaf = leaf.next;
-      if ((value && leaf.formats[name] !== value) || (!value && (leaf.formats[name] != null))) {
-        targetNode = leaf.node;
-        if (leaf.formats[name] != null) {
-          Utils.splitAncestors(targetNode, this.node);
-          while (!format.match(targetNode)) {
-            targetNode = targetNode.parentNode;
-          }
-        }
-        if (leafOffset > 0) {
-          _ref1 = Utils.splitNode(targetNode, leafOffset), leftNode = _ref1[0], targetNode = _ref1[1];
-        }
-        if (leaf.length > leafOffset + length) {
-          _ref2 = Utils.splitNode(targetNode, length), targetNode = _ref2[0], rightNode = _ref2[1];
-        }
-        format.add(targetNode, value);
-      }
-      length -= leaf.length - leafOffset;
-      leafOffset = 0;
-      leaf = nextLeaf;
-    }
-    return this.rebuild();
-  };
-
-  Line.prototype.insertText = function(offset, text, formats) {
-    var leaf, leafOffset, nextNode, node, prevNode, _ref, _ref1;
-    if (formats == null) {
-      formats = {};
-    }
-    if (!(text.length > 0)) {
-      return;
-    }
-    _ref = this.findLeafAt(offset), leaf = _ref[0], leafOffset = _ref[1];
-    if (_.isEqual(leaf.formats, formats)) {
-      leaf.insertText(leafOffset, text);
-      return this.resetContent();
-    } else {
-      node = _.reduce(formats, (function(_this) {
-        return function(node, value, name) {
-          return _this.doc.formats[name].add(node, value);
-        };
-      })(this), this.node.ownerDocument.createTextNode(text));
-      _ref1 = Utils.splitNode(leaf.node, leafOffset), prevNode = _ref1[0], nextNode = _ref1[1];
-      if (nextNode) {
-        nextNode = Utils.splitAncestors(nextNode, this.node);
-      }
-      this.node.insertBefore(node, nextNode);
-      return this.rebuild();
-    }
-  };
-
-  Line.prototype.optimize = function() {
-    Normalizer.optimizeLine(this.node);
-    return this.rebuild();
-  };
-
-  Line.prototype.rebuild = function(force) {
-    if (force == null) {
-      force = false;
-    }
-    if (!force && (this.outerHTML != null) && this.outerHTML === this.node.outerHTML) {
-      if (_.all(this.leaves.toArray(), function(leaf) {
-        return leaf.node.parentNode != null;
-      })) {
-        return false;
-      }
-    }
-    this.node = Normalizer.normalizeNode(this.node);
-    if (Utils.getNodeLength(this.node) === 0 && !this.node.querySelector(DOM.DEFAULT_BREAK_TAG)) {
-      this.node.appendChild(this.node.ownerDocument.createElement(DOM.DEFAULT_BREAK_TAG));
-    }
-    this.leaves = new LinkedList();
-    this.formats = _.reduce(this.doc.formats, (function(_this) {
-      return function(formats, format, name) {
-        if (format.isType(Format.types.LINE)) {
-          if (format.match(_this.node)) {
-            formats[name] = format.value(_this.node);
-          } else {
-            delete formats[name];
-          }
-        }
-        return formats;
-      };
-    })(this), this.formats);
-    this.buildLeaves(this.node, {});
-    this.resetContent();
-    return true;
-  };
-
-  Line.prototype.resetContent = function() {
-    var ops;
-    if (this.node.id !== this.id) {
-      this.node.id = this.id;
-    }
-    this.outerHTML = this.node.outerHTML;
-    this.length = 1;
-    ops = _.map(this.leaves.toArray(), (function(_this) {
-      return function(leaf) {
-        _this.length += leaf.length;
-        return new Tandem.InsertOp(leaf.text, leaf.formats);
-      };
-    })(this));
-    ops.push(new Tandem.InsertOp('\n', this.formats));
-    return this.delta = new Tandem.Delta(0, this.length, ops);
-  };
-
-  return Line;
-
-})(LinkedList.Node);
-
-module.exports = Line;
-
-
-},{"./dom":15,"./format":17,"./leaf":18,"./lib/linked-list":20,"./line":23,"./normalizer":33,"./utils":39,"lodash":"M4+//f","tandem-core":10}],24:[function(_dereq_,module,exports){
-var Authorship, DOM, Format, Tandem, _;
-
-_ = _dereq_('lodash');
-
-DOM = _dereq_('../dom');
-
-Format = _dereq_('../format');
-
-Tandem = _dereq_('tandem-core');
+Delta = Quill.require('delta');
 
 Authorship = (function() {
   Authorship.DEFAULTS = {
     authorId: null,
-    color: 'blue',
+    color: 'transparent',
     enabled: false
   };
 
@@ -7309,23 +6596,25 @@ Authorship = (function() {
     }
     this.quill.on(this.quill.constructor.events.PRE_EVENT, (function(_this) {
       return function(eventName, delta, origin) {
-        var attribute, authorDelta;
+        var authorDelta, authorFormat;
         if (eventName === _this.quill.constructor.events.TEXT_CHANGE && origin === 'user') {
-          _.each(delta.ops, function(op) {
-            if (Tandem.InsertOp.isInsert(op) || _.keys(op.attributes).length > 0) {
-              return op.attributes['author'] = _this.options.authorId;
-            }
-          });
-          authorDelta = new Tandem.Delta(delta.endLength, [new Tandem.RetainOp(0, delta.endLength)]);
-          attribute = {
+          authorDelta = new Delta();
+          authorFormat = {
             author: _this.options.authorId
           };
-          delta.apply(function(index, text) {
-            return authorDelta = authorDelta.compose(Tandem.Delta.makeRetainDelta(delta.endLength, index, text.length, attribute));
-          }, (function() {}), function(index, length, name, value) {
-            return authorDelta = authorDelta.compose(Tandem.Delta.makeRetainDelta(delta.endLength, index, length, attribute));
+          _.each(delta.ops, function(op) {
+            if (op["delete"] != null) {
+              return;
+            }
+            if ((op.insert != null) || ((op.retain != null) && (op.attributes != null))) {
+              op.attributes || (op.attributes = {});
+              op.attributes.author = _this.options.authorId;
+              return authorDelta.retain(op.retain || op.insert.length || 1, authorFormat);
+            } else {
+              return authorDelta.retain(op.retain);
+            }
           });
-          return _this.quill.updateContents(authorDelta, 'silent');
+          return _this.quill.updateContents(authorDelta, Quill.sources.SILENT);
         }
       };
     })(this));
@@ -7338,14 +6627,16 @@ Authorship = (function() {
     styles[".authorship .author-" + id] = {
       "background-color": "" + color
     };
-    return this.quill.addStyles(styles);
+    return this.quill.theme.addStyles(styles);
   };
 
   Authorship.prototype.attachButton = function(button) {
-    return DOM.addEventListener(button, 'click', (function(_this) {
+    var $button;
+    $button = dom(button);
+    return $button.on('click', (function(_this) {
       return function() {
-        DOM.toggleClass(button, 'ql-on');
-        return _this.enable(DOM.hasClass(button, 'ql-on'));
+        $button.toggleClass('ql-on');
+        return _this.enable($dom.hasClass('ql-on'));
       };
     })(this));
   };
@@ -7354,7 +6645,7 @@ Authorship = (function() {
     if (enabled == null) {
       enabled = true;
     }
-    return DOM.toggleClass(this.quill.root, 'authorship', enabled);
+    return dom(this.quill.root).toggleClass('authorship', enabled);
   };
 
   Authorship.prototype.disable = function() {
@@ -7365,91 +6656,49 @@ Authorship = (function() {
 
 })();
 
+Quill.registerModule('authorship', Authorship);
+
 module.exports = Authorship;
 
 
-},{"../dom":15,"../format":17,"lodash":"M4+//f","tandem-core":10}],25:[function(_dereq_,module,exports){
-var DOM, ImageTooltip, Tooltip, _,
+
+},{"../quill":30}],22:[function(_dereq_,module,exports){
+var Delta, ImageTooltip, Quill, Tooltip, dom, _,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-_ = _dereq_('lodash');
-
-DOM = _dereq_('../dom');
+Quill = _dereq_('../quill');
 
 Tooltip = _dereq_('./tooltip');
+
+_ = Quill.require('lodash');
+
+dom = Quill.require('dom');
+
+Delta = Quill.require('delta');
 
 ImageTooltip = (function(_super) {
   __extends(ImageTooltip, _super);
 
   ImageTooltip.DEFAULTS = {
-    styles: {
-      '.image-tooltip-container': {
-        'margin': '25px',
-        'padding': '10px',
-        'width': '300px'
-      },
-      '.image-tooltip-container:after': {
-        'clear': 'both',
-        'content': '""',
-        'display': 'table'
-      },
-      '.image-tooltip-container .preview': {
-        'margin': '10px 0px',
-        'position': 'relative',
-        'border': '1px dashed #000',
-        'height': '200px'
-      },
-      '.image-tooltip-container .preview span': {
-        'display': 'inline-block',
-        'position': 'absolute',
-        'text-align': 'center',
-        'top': '40%',
-        'width': '100%'
-      },
-      '.image-tooltip-container img': {
-        'bottom': '0',
-        'left': '0',
-        'margin': 'auto',
-        'max-height': '100%',
-        'max-width': '100%',
-        'position': 'absolute',
-        'right': '0',
-        'top': '0'
-      },
-      '.image-tooltip-container .input': {
-        'box-sizing': 'border-box',
-        'width': '100%'
-      },
-      '.image-tooltip-container a': {
-        'border': '1px solid black',
-        'box-sizing': 'border-box',
-        'display': 'inline-block',
-        'float': 'left',
-        'padding': '5px',
-        'text-align': 'center',
-        'width': '50%'
-      }
-    },
     template: '<input class="input" type="textbox"> <div class="preview"> <span>Preview</span> </div> <a href="javascript:;" class="cancel">Cancel</a> <a href="javascript:;" class="insert">Insert</a>'
   };
 
   function ImageTooltip(quill, options) {
     this.quill = quill;
     this.options = options;
-    this.options.styles = _.defaults(this.options.styles, Tooltip.DEFAULTS.styles);
     this.options = _.defaults(this.options, Tooltip.DEFAULTS);
     ImageTooltip.__super__.constructor.call(this, this.quill, this.options);
     this.preview = this.container.querySelector('.preview');
     this.textbox = this.container.querySelector('.input');
-    DOM.addClass(this.container, 'image-tooltip-container');
+    dom(this.container).addClass('ql-image-tooltip');
     this.initListeners();
   }
 
   ImageTooltip.prototype.initListeners = function() {
-    DOM.addEventListener(this.container.querySelector('.insert'), 'click', _.bind(this.insertImage, this));
-    DOM.addEventListener(this.container.querySelector('.cancel'), 'click', _.bind(this.hide, this));
-    DOM.addEventListener(this.textbox, 'input', _.bind(this._preview, this));
+    dom(this.container.querySelector('.insert')).on('click', _.bind(this.insertImage, this));
+    dom(this.container.querySelector('.cancel')).on('click', _.bind(this.hide, this));
+    dom(this.textbox).on('input', _.bind(this._preview, this));
     this.initTextbox(this.textbox, this.insertImage, this.hide);
     return this.quill.onModuleLoad('toolbar', (function(_this) {
       return function(toolbar) {
@@ -7499,14 +6748,14 @@ ImageTooltip = (function(_super) {
     if (this.preview.firstChild.tagName === 'IMG') {
       return this.preview.firstChild.setAttribute('src', this.textbox.value);
     } else {
-      img = this.preview.ownerDocument.createElement('img');
+      img = document.createElement('img');
       img.setAttribute('src', this.textbox.value);
       return this.preview.replaceChild(img, this.preview.firstChild);
     }
   };
 
   ImageTooltip.prototype._matchImageURL = function(url) {
-    return /^https?:\/\/.+\.(jp?g|gif|png)$/.test(url);
+    return /^https?:\/\/.+\.(jpe?g|gif|png)$/.test(url);
   };
 
   ImageTooltip.prototype._normalizeURL = function(url) {
@@ -7520,19 +6769,22 @@ ImageTooltip = (function(_super) {
 
 })(Tooltip);
 
+Quill.registerModule('image-tooltip', ImageTooltip);
+
 module.exports = ImageTooltip;
 
 
-},{"../dom":15,"./tooltip":31,"lodash":"M4+//f"}],26:[function(_dereq_,module,exports){
-var DOM, Keyboard, Line, Tandem, _;
 
-_ = _dereq_('lodash');
+},{"../quill":30,"./tooltip":28}],23:[function(_dereq_,module,exports){
+var Delta, Keyboard, Quill, dom, _;
 
-DOM = _dereq_('../dom');
+Quill = _dereq_('../quill');
 
-Line = _dereq_('../line');
+_ = Quill.require('lodash');
 
-Tandem = _dereq_('tandem-core');
+dom = Quill.require('dom');
+
+Delta = Quill.require('delta');
 
 Keyboard = (function() {
   Keyboard.hotkeys = {
@@ -7541,15 +6793,14 @@ Keyboard = (function() {
       metaKey: true
     },
     INDENT: {
-      key: DOM.KEYS.TAB,
-      shiftKey: false
+      key: dom.KEYS.TAB
     },
     ITALIC: {
       key: 'I',
       metaKey: true
     },
     OUTDENT: {
-      key: DOM.KEYS.TAB,
+      key: dom.KEYS.TAB,
       shiftKey: true
     },
     UNDERLINE: {
@@ -7566,17 +6817,24 @@ Keyboard = (function() {
     this._initDeletes();
   }
 
-  Keyboard.prototype.addHotkey = function(hotkey, callback) {
-    var which, _base;
-    hotkey = _.isObject(hotkey) ? _.clone(hotkey) : {
-      key: hotkey
-    };
-    hotkey.callback = callback;
-    which = _.isNumber(hotkey.key) ? hotkey.key : hotkey.key.toUpperCase().charCodeAt(0);
-    if ((_base = this.hotkeys)[which] == null) {
-      _base[which] = [];
+  Keyboard.prototype.addHotkey = function(hotkeys, callback) {
+    if (!Array.isArray(hotkeys)) {
+      hotkeys = [hotkeys];
     }
-    return this.hotkeys[which].push(hotkey);
+    return _.each(hotkeys, (function(_this) {
+      return function(hotkey) {
+        var which, _base;
+        hotkey = _.isObject(hotkey) ? _.clone(hotkey) : {
+          key: hotkey
+        };
+        hotkey.callback = callback;
+        which = _.isNumber(hotkey.key) ? hotkey.key : hotkey.key.toUpperCase().charCodeAt(0);
+        if ((_base = _this.hotkeys)[which] == null) {
+          _base[which] = [];
+        }
+        return _this.hotkeys[which].push(hotkey);
+      };
+    })(this));
   };
 
   Keyboard.prototype.toggleFormat = function(range, format) {
@@ -7587,12 +6845,13 @@ Keyboard = (function() {
       delta = this.quill.getContents(range);
     }
     value = delta.ops.length === 0 || !_.all(delta.ops, function(op) {
-      return op.attributes[format];
+      var _ref;
+      return (_ref = op.attributes) != null ? _ref[format] : void 0;
     });
     if (range.isCollapsed()) {
       this.quill.prepareFormat(format, value);
     } else {
-      this.quill.formatText(range, format, value, 'user');
+      this.quill.formatText(range, format, value, Quill.sources.USER);
     }
     toolbar = this.quill.getModule('toolbar');
     if (toolbar != null) {
@@ -7601,11 +6860,20 @@ Keyboard = (function() {
   };
 
   Keyboard.prototype._initDeletes = function() {
-    return _.each([DOM.KEYS.DELETE, DOM.KEYS.BACKSPACE], (function(_this) {
-      return function(key) {
-        return _this.addHotkey(key, function() {
-          return _this.quill.getLength() > 1;
-        });
+    return this.addHotkey([dom.KEYS.DELETE, dom.KEYS.BACKSPACE], (function(_this) {
+      return function(range, hotkey) {
+        var start;
+        if ((range != null) && _this.quill.getLength() > 1) {
+          if (range.start !== range.end) {
+            _this.quill.deleteText(range.start, range.end, Quill.sources.USER);
+          } else {
+            start = hotkey.key === dom.KEYS.BACKSPACE ? range.start - 1 : range.start;
+            if (start >= 0) {
+              _this.quill.deleteText(start, start + 1, Quill.sources.USER);
+            }
+          }
+        }
+        return false;
       };
     })(this));
   };
@@ -7633,19 +6901,24 @@ Keyboard = (function() {
   };
 
   Keyboard.prototype._initListeners = function() {
-    return DOM.addEventListener(this.quill.root, 'keydown', (function(_this) {
+    return dom(this.quill.root).on('keydown', (function(_this) {
       return function(event) {
-        var prevent, range;
+        var prevent;
         prevent = false;
-        range = _this.quill.getSelection();
         _.each(_this.hotkeys[event.which], function(hotkey) {
-          if ((hotkey.metaKey != null) && (event.metaKey !== hotkey.metaKey && event.ctrlKey !== hotkey.metaKey)) {
+          var metaKey;
+          metaKey = dom.isMac() ? event.metaKey : event.metaKey || event.ctrlKey;
+          if (!!hotkey.metaKey !== !!metaKey) {
             return;
           }
-          if ((hotkey.shiftKey != null) && event.shiftKey !== hotkey.shiftKey) {
+          if (!!hotkey.shiftKey !== !!event.shiftKey) {
             return;
           }
-          return prevent = hotkey.callback(range) === false || prevent;
+          if (!!hotkey.altKey !== !!event.altKey) {
+            return;
+          }
+          prevent = hotkey.callback(_this.quill.getSelection(), hotkey, event) === false || prevent;
+          return true;
         });
         return !prevent;
       };
@@ -7657,21 +6930,8 @@ Keyboard = (function() {
     if (shift == null) {
       shift = false;
     }
-    delta = Tandem.Delta.makeDelta({
-      startLength: this.quill.getLength(),
-      ops: [
-        {
-          start: 0,
-          end: range.start
-        }, {
-          value: "\t"
-        }, {
-          start: range.end,
-          end: this.quill.getLength()
-        }
-      ]
-    });
-    this.quill.updateContents(delta);
+    delta = new Delta().retain(range.start).insert("\t")["delete"](range.end - range.start).retain(this.quill.getLength() - range.end);
+    this.quill.updateContents(delta, Quill.sources.USER);
     return this.quill.setSelection(range.start + 1, range.start + 1);
   };
 
@@ -7679,49 +6939,39 @@ Keyboard = (function() {
 
 })();
 
+Quill.registerModule('keyboard', Keyboard);
+
 module.exports = Keyboard;
 
 
-},{"../dom":15,"../line":23,"lodash":"M4+//f","tandem-core":10}],27:[function(_dereq_,module,exports){
-var DOM, LinkTooltip, Tooltip, _,
+
+},{"../quill":30}],24:[function(_dereq_,module,exports){
+var LinkTooltip, Quill, Tooltip, dom, _,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-_ = _dereq_('lodash');
-
-DOM = _dereq_('../dom');
+Quill = _dereq_('../quill');
 
 Tooltip = _dereq_('./tooltip');
+
+_ = Quill.require('lodash');
+
+dom = Quill.require('dom');
 
 LinkTooltip = (function(_super) {
   __extends(LinkTooltip, _super);
 
   LinkTooltip.DEFAULTS = {
     maxLength: 50,
-    styles: {
-      '.link-tooltip-container': {
-        'padding': '5px 10px'
-      },
-      '.link-tooltip-container input.input': {
-        'width': '170px'
-      },
-      '.link-tooltip-container input.input, .link-tooltip-container a.done, .link-tooltip-container.editing a.url, .link-tooltip-container.editing a.change': {
-        'display': 'none'
-      },
-      '.link-tooltip-container.editing input.input, .link-tooltip-container.editing a.done': {
-        'display': 'inline-block'
-      }
-    },
     template: '<span class="title">Visit URL:&nbsp;</span> <a href="#" class="url" target="_blank" href="about:blank"></a> <input class="input" type="text"> <span>&nbsp;&#45;&nbsp;</span> <a href="javascript:;" class="change">Change</a> <a href="javascript:;" class="done">Done</a>'
   };
 
   function LinkTooltip(quill, options) {
     this.quill = quill;
     this.options = options;
-    this.options.styles = _.defaults(this.options.styles, Tooltip.DEFAULTS.styles);
     this.options = _.defaults(this.options, Tooltip.DEFAULTS);
     LinkTooltip.__super__.constructor.call(this, this.quill, this.options);
-    DOM.addClass(this.container, 'link-tooltip-container');
+    dom(this.container).addClass('ql-link-tooltip');
     this.textbox = this.container.querySelector('.input');
     this.link = this.container.querySelector('.url');
     this.initListeners();
@@ -7744,8 +6994,8 @@ LinkTooltip = (function(_super) {
         }
       };
     })(this));
-    DOM.addEventListener(this.container.querySelector('.done'), 'click', _.bind(this.saveLink, this));
-    DOM.addEventListener(this.container.querySelector('.change'), 'click', (function(_this) {
+    dom(this.container.querySelector('.done')).on('click', _.bind(this.saveLink, this));
+    dom(this.container.querySelector('.change')).on('click', (function(_this) {
       return function() {
         return _this.setMode(_this.link.href, true);
       };
@@ -7781,18 +7031,18 @@ LinkTooltip = (function(_super) {
     }
     if (edit) {
       this.textbox.value = url;
-      this.textbox.focus();
       _.defer((function(_this) {
         return function() {
+          _this.textbox.focus();
           return _this.textbox.setSelectionRange(url.length, url.length);
         };
       })(this));
     } else {
       this.link.href = url;
       text = url.length > this.options.maxLength ? url.slice(0, this.options.maxLength) + '...' : url;
-      DOM.setText(this.link, text);
+      dom(this.link).text(text);
     }
-    return DOM.toggleClass(this.container, 'editing', edit);
+    return dom(this.container).toggleClass('editing', edit);
   };
 
   LinkTooltip.prototype._findAnchor = function(range) {
@@ -7825,7 +7075,7 @@ LinkTooltip = (function(_super) {
   };
 
   LinkTooltip.prototype._normalizeURL = function(url) {
-    if (!/^https?:\/\//.test(url)) {
+    if (!/^(https?:\/\/|mailto:)/.test(url)) {
       url = 'http://' + url;
     }
     return url;
@@ -7841,21 +7091,24 @@ LinkTooltip = (function(_super) {
 
 })(Tooltip);
 
+Quill.registerModule('link-tooltip', LinkTooltip);
+
 module.exports = LinkTooltip;
 
 
-},{"../dom":15,"./tooltip":31,"lodash":"M4+//f"}],28:[function(_dereq_,module,exports){
-var DOM, EventEmitter2, MultiCursor, Utils, _,
+
+},{"../quill":30,"./tooltip":28}],25:[function(_dereq_,module,exports){
+var EventEmitter2, MultiCursor, Quill, dom, _,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-_ = _dereq_('lodash');
+Quill = _dereq_('../quill');
 
 EventEmitter2 = _dereq_('eventemitter2').EventEmitter2;
 
-DOM = _dereq_('../dom');
+_ = Quill.require('lodash');
 
-Utils = _dereq_('../utils');
+dom = Quill.require('dom');
 
 MultiCursor = (function(_super) {
   __extends(MultiCursor, _super);
@@ -7875,49 +7128,12 @@ MultiCursor = (function(_super) {
     this.quill = quill;
     this.options = options;
     this.cursors = {};
-    this.container = this.quill.addContainer('cursor-container', true);
-    this.quill.addStyles({
-      '.cursor-container': {
-        'position': 'absolute',
-        'left': '0',
-        'top': '0',
-        'z-index': '1000'
-      },
-      '.cursor': {
-        'margin-left': '-1px',
-        'position': 'absolute'
-      },
-      '.cursor-flag': {
-        'bottom': '100%',
-        'position': 'absolute',
-        'white-space': 'nowrap'
-      },
-      '.cursor-name': {
-        'display': 'inline-block',
-        'color': 'white',
-        'padding': '2px 8px'
-      },
-      '.cursor-caret': {
-        'height': '100%',
-        'position': 'absolute',
-        'width': '2px'
-      },
-      '.cursor.hidden .cursor-flag': {
-        'display': 'none'
-      },
-      '.cursor.top > .cursor-flag': {
-        'bottom': 'auto',
-        'top': '100%'
-      },
-      '.cursor.right > .cursor-flag': {
-        'right': '-2px'
-      }
-    });
+    this.container = this.quill.addContainer('ql-multi-cursor', true);
     this.quill.on(this.quill.constructor.events.TEXT_CHANGE, _.bind(this._applyDelta, this));
   }
 
   MultiCursor.prototype.clearCursors = function() {
-    _.each(_.keys(this.cursors), _.bind(this.removeCursor, this));
+    _.each(Object.keys(this.cursors), _.bind(this.removeCursor, this));
     return this.cursors = {};
   };
 
@@ -7925,11 +7141,11 @@ MultiCursor = (function(_super) {
     var cursor;
     cursor = this.cursors[userId];
     cursor.index = index;
-    DOM.removeClass(cursor.elem, 'hidden');
+    dom(cursor.elem).removeClass('hidden');
     clearTimeout(cursor.timer);
     cursor.timer = setTimeout((function(_this) {
       return function() {
-        DOM.addClass(cursor.elem, 'hidden');
+        dom(cursor.elem).addClass('hidden');
         return cursor.timer = null;
       };
     })(this), this.options.timeout);
@@ -7993,17 +7209,22 @@ MultiCursor = (function(_super) {
   };
 
   MultiCursor.prototype._applyDelta = function(delta) {
-    delta.apply((function(_this) {
-      return function(index, text, formatting) {
-        return _this.shiftCursors(index, text.length, formatting['author']);
-      };
-    })(this), (function(_this) {
-      return function(index, length) {
-        return _this.shiftCursors(index, -1 * length, null);
-      };
-    })(this), (function(_this) {
-      return function(index, length, name, value) {
-        return _this.shiftCursors(index, 0, null);
+    var index;
+    index = 0;
+    _.each(delta.ops, (function(_this) {
+      return function(op) {
+        var length, _ref;
+        length = 0;
+        if (op.insert != null) {
+          length = op.insert.length || 1;
+          _this.shiftCursors(index, length, (_ref = op.attributes) != null ? _ref['author'] : void 0);
+        } else if (op["delete"] != null) {
+          _this.shiftCursors(index, -1 * op["delete"], null);
+        } else if (op.retain != null) {
+          _this.shiftCursors(index, 0, null);
+          length = op.retain;
+        }
+        return index += length;
       };
     })(this));
     return this.update();
@@ -8011,119 +7232,91 @@ MultiCursor = (function(_super) {
 
   MultiCursor.prototype._buildCursor = function(name, color) {
     var cursor, cursorCaret, cursorFlag, cursorName;
-    cursor = this.container.ownerDocument.createElement('span');
-    DOM.addClass(cursor, 'cursor');
+    cursor = document.createElement('span');
+    dom(cursor).addClass('cursor');
     cursor.innerHTML = this.options.template;
     cursorFlag = cursor.querySelector('.cursor-flag');
     cursorName = cursor.querySelector('.cursor-name');
-    DOM.setText(cursorName, name);
+    dom(cursorName).text(name);
     cursorCaret = cursor.querySelector('.cursor-caret');
     cursorCaret.style.backgroundColor = cursorName.style.backgroundColor = color;
     this.container.appendChild(cursor);
     return cursor;
   };
 
-  MultiCursor.prototype._moveCursor = function(cursor, reference, side) {
+  MultiCursor.prototype._updateCursor = function(cursor) {
     var bounds, flag;
-    if (side == null) {
-      side = 'left';
-    }
-    bounds = reference.getBoundingClientRect();
-    cursor.elem.style.top = bounds.top + 'px';
-    cursor.elem.style.left = bounds[side] + 'px';
+    bounds = this.quill.getBounds(cursor.index);
+    cursor.elem.style.top = (bounds.top - this.quill.container.scrollTop) + 'px';
+    cursor.elem.style.left = bounds.left + 'px';
     cursor.elem.style.height = bounds.height + 'px';
     flag = cursor.elem.querySelector('.cursor-flag');
-    DOM.toggleClass(cursor.elem, 'top', parseInt(cursor.elem.style.top) <= flag.offsetHeight);
-    DOM.toggleClass(cursor.elem, 'left', parseInt(cursor.elem.style.left) <= flag.offsetWidth);
-    DOM.toggleClass(cursor.elem, 'right', this.quill.root.offsetWidth - parseInt(cursor.elem.style.left) <= flag.offsetWidth);
+    dom(cursor.elem).toggleClass('top', parseInt(cursor.elem.style.top) <= flag.offsetHeight).toggleClass('left', parseInt(cursor.elem.style.left) <= flag.offsetWidth).toggleClass('right', this.quill.root.offsetWidth - parseInt(cursor.elem.style.left) <= flag.offsetWidth);
     return this.emit(MultiCursor.events.CURSOR_MOVED, cursor);
-  };
-
-  MultiCursor.prototype._updateCursor = function(cursor) {
-    var didSplit, guide, leaf, leftNode, offset, rightNode, _ref, _ref1;
-    this.quill.editor.checkUpdate();
-    _ref = this.quill.editor.doc.findLeafAt(cursor.index, true), leaf = _ref[0], offset = _ref[1];
-    guide = this.container.ownerDocument.createElement('span');
-    if (leaf != null) {
-      _ref1 = Utils.splitNode(leaf.node, offset), leftNode = _ref1[0], rightNode = _ref1[1], didSplit = _ref1[2];
-      DOM.setText(guide, DOM.ZERO_WIDTH_NOBREAK_SPACE);
-      leaf.node.parentNode.insertBefore(guide, rightNode);
-    } else {
-      DOM.setText(guide, DOM.NOBREAK_SPACE);
-      this.quill.root.appendChild(guide);
-    }
-    this._moveCursor(cursor, guide);
-    DOM.removeNode(guide);
-    if (didSplit) {
-      DOM.normalize(leaf.node.parentNode);
-    }
-    return this.quill.editor.selection.update('silent');
   };
 
   return MultiCursor;
 
 })(EventEmitter2);
 
+Quill.registerModule('multi-cursor', MultiCursor);
+
 module.exports = MultiCursor;
 
 
-},{"../dom":15,"../utils":39,"eventemitter2":3,"lodash":"M4+//f"}],29:[function(_dereq_,module,exports){
-var DOM, Document, PasteManager, Tandem, _;
 
-_ = _dereq_('lodash');
+},{"../quill":30,"eventemitter2":2}],26:[function(_dereq_,module,exports){
+var Delta, Document, PasteManager, Quill, dom, _;
 
-DOM = _dereq_('../dom');
+Quill = _dereq_('../quill');
 
-Document = _dereq_('../document');
+Document = _dereq_('../core/document');
 
-Tandem = _dereq_('tandem-core');
+_ = Quill.require('lodash');
+
+dom = Quill.require('dom');
+
+Delta = Quill.require('delta');
 
 PasteManager = (function() {
   function PasteManager(quill, options) {
     this.quill = quill;
     this.options = options;
-    this.container = this.quill.addContainer('paste-container');
+    this.container = this.quill.addContainer('ql-paste-manager');
     this.container.setAttribute('contenteditable', true);
-    this.quill.addStyles({
-      '.paste-container': {
-        'left': '-10000px',
-        'position': 'absolute',
-        'top': '50%'
-      }
-    });
-    DOM.addEventListener(this.quill.root, 'paste', _.bind(this._paste, this));
+    dom(this.quill.root).on('paste', _.bind(this._paste, this));
   }
 
   PasteManager.prototype._paste = function() {
-    var iframe, oldDocLength, range, scrollY;
+    var oldDocLength, range;
     oldDocLength = this.quill.getLength();
     range = this.quill.getSelection();
     if (range == null) {
       return;
     }
-    this.container.innerHTML = "";
-    iframe = this.quill.root.ownerDocument.defaultView;
-    scrollY = iframe.scrollY;
     this.container.focus();
     return _.defer((function(_this) {
       return function() {
-        var delta, doc, lengthAdded;
+        var delta, doc, lengthAdded, line, lineBottom, offset, windowBottom, _ref;
         doc = new Document(_this.container, _this.quill.options);
         delta = doc.toDelta();
-        delta = delta.compose(Tandem.Delta.makeDeleteDelta(delta.endLength, delta.endLength - 1, 1));
-        lengthAdded = delta.endLength;
+        lengthAdded = delta.length() - 1;
+        delta.compose(new Delta().retain(lengthAdded)["delete"](1));
         if (range.start > 0) {
-          delta.ops.unshift(new Tandem.RetainOp(0, range.start));
+          delta.ops.unshift({
+            retain: range.start
+          });
         }
-        if (range.end < oldDocLength) {
-          delta.ops.push(new Tandem.RetainOp(range.end, oldDocLength));
-        }
-        delta.endLength += _this.quill.getLength() - (range.end - range.start);
-        delta.startLength = oldDocLength;
+        delta["delete"](range.end - range.start);
         _this.quill.updateContents(delta, 'user');
-        _this.quill.focus();
         _this.quill.setSelection(range.start + lengthAdded, range.start + lengthAdded);
-        return iframe.scrollTo(0, scrollY);
+        _ref = _this.quill.editor.doc.findLineAt(range.start + lengthAdded), line = _ref[0], offset = _ref[1];
+        lineBottom = line.node.getBoundingClientRect().bottom;
+        windowBottom = document.documentElement.clientHeight;
+        if (lineBottom > windowBottom) {
+          line.node.scrollIntoView(false);
+        }
+        return _this.container.innerHTML = "";
       };
     })(this));
   };
@@ -8132,17 +7325,20 @@ PasteManager = (function() {
 
 })();
 
+Quill.registerModule('paste-manager', PasteManager);
+
 module.exports = PasteManager;
 
 
-},{"../document":14,"../dom":15,"lodash":"M4+//f","tandem-core":10}],30:[function(_dereq_,module,exports){
-var DOM, Toolbar, Utils, _;
 
-_ = _dereq_('lodash');
+},{"../core/document":8,"../quill":30}],27:[function(_dereq_,module,exports){
+var Quill, Toolbar, dom, _;
 
-DOM = _dereq_('../dom');
+Quill = _dereq_('../quill');
 
-Utils = _dereq_('../utils');
+_ = Quill.require('lodash');
+
+dom = Quill.require('dom');
 
 Toolbar = (function() {
   Toolbar.DEFAULTS = {
@@ -8181,6 +7377,11 @@ Toolbar = (function() {
   function Toolbar(quill, options) {
     this.quill = quill;
     this.options = options;
+    if (_.isString(this.options) || _.isElement(this.options)) {
+      this.options = {
+        container: this.options
+      };
+    }
     if (this.options.container == null) {
       throw new Error('container required for toolbar', this.options);
     }
@@ -8205,19 +7406,32 @@ Toolbar = (function() {
             _this.quill.formatText(range, format, value, 'user');
           }
           return _.defer(function() {
-            _this.updateActive(range);
+            _this.updateActive(range, ['bullet', 'list']);
             return _this.setActive(format, value);
           });
         });
       };
     })(this));
-    this.quill.on(this.quill.constructor.events.SELECTION_CHANGE, _.bind(this.updateActive, this));
-    DOM.addClass(this.container, 'ql-toolbar-container');
-    if (DOM.isIOS()) {
-      DOM.addClass(this.container, 'ios');
+    this.quill.on(this.quill.constructor.events.SELECTION_CHANGE, (function(_this) {
+      return function(range) {
+        if (range != null) {
+          return _this.updateActive(range);
+        }
+      };
+    })(this));
+    this.quill.onModuleLoad('keyboard', (function(_this) {
+      return function(keyboard) {
+        return keyboard.addHotkey([dom.KEYS.BACKSPACE, dom.KEYS.DELETE, dom.KEYS.ENTER], function() {
+          return _.defer(_.bind(_this.updateActive, _this));
+        });
+      };
+    })(this));
+    dom(this.container).addClass('ql-toolbar');
+    if (dom.isIOS()) {
+      dom(this.container).addClass('ios');
     }
-    if (DOM.isIE(11) || DOM.isIOS()) {
-      DOM.addEventListener(this.container, 'mousedown', (function(_this) {
+    if (dom.isIE(11)) {
+      dom(this.container).on('mousedown', (function(_this) {
         return function() {
           return false;
         };
@@ -8239,10 +7453,10 @@ Toolbar = (function() {
       return;
     }
     this.inputs[format] = input;
-    return DOM.addEventListener(input, eventName, (function(_this) {
+    return dom(input).on(eventName, (function(_this) {
       return function() {
         var range, value;
-        value = eventName === 'change' ? DOM.getSelectValue(input) : !DOM.hasClass(input, 'ql-active');
+        value = eventName === 'change' ? dom(input).value() : !dom(input).hasClass('ql-active');
         _this.preventUpdate = true;
         _this.quill.focus();
         range = _this.quill.getSelection();
@@ -8256,39 +7470,49 @@ Toolbar = (function() {
   };
 
   Toolbar.prototype.setActive = function(format, value) {
-    var input, selectValue;
+    var $input, input, selectValue, _ref;
     input = this.inputs[format];
     if (input == null) {
       return;
     }
+    $input = dom(input);
     if (input.tagName === 'SELECT') {
       this.triggering = true;
-      selectValue = DOM.getSelectValue(input);
-      if (_.isArray(value)) {
+      selectValue = $input.value(input);
+      if (value == null) {
+        value = (_ref = $input["default"]()) != null ? _ref.value : void 0;
+      }
+      if (Array.isArray(value)) {
         value = '';
       }
       if (value !== selectValue) {
         if (value != null) {
-          DOM.selectOption(input, value);
+          $input.option(value);
         } else {
-          DOM.resetSelect(input);
+          $input.reset();
         }
       }
       return this.triggering = false;
     } else {
-      return DOM.toggleClass(input, 'ql-active', value || false);
+      return $input.toggleClass('ql-active', value || false);
     }
   };
 
-  Toolbar.prototype.updateActive = function(range) {
+  Toolbar.prototype.updateActive = function(range, formats) {
     var activeFormats;
+    if (formats == null) {
+      formats = null;
+    }
+    range || (range = this.quill.getSelection());
     if (!((range != null) && !this.preventUpdate)) {
       return;
     }
     activeFormats = this._getActive(range);
     return _.each(this.inputs, (function(_this) {
       return function(input, format) {
-        _this.setActive(format, activeFormats[format]);
+        if (!Array.isArray(formats) || formats.indexOf(format) > -1) {
+          _this.setActive(format, activeFormats[format]);
+        }
         return true;
       };
     })(this));
@@ -8335,15 +7559,15 @@ Toolbar = (function() {
   Toolbar.prototype._intersectFormats = function(formatsArr) {
     return _.reduce(formatsArr.slice(1), function(activeFormats, formats) {
       var activeKeys, added, formatKeys, intersection, missing;
-      activeKeys = _.keys(activeFormats);
-      formatKeys = _.keys(formats);
+      activeKeys = Object.keys(activeFormats);
+      formatKeys = formats != null ? Object.keys(formats) : {};
       intersection = _.intersection(activeKeys, formatKeys);
       missing = _.difference(activeKeys, formatKeys);
       added = _.difference(formatKeys, activeKeys);
       _.each(intersection, function(name) {
         if (Toolbar.formats.SELECT[name] != null) {
-          if (_.isArray(activeFormats[name])) {
-            if (_.indexOf(activeFormats[name], formats[name]) < 0) {
+          if (Array.isArray(activeFormats[name])) {
+            if (activeFormats[name].indexOf(formats[name]) < 0) {
               return activeFormats[name].push(formats[name]);
             }
           } else if (activeFormats[name] !== formats[name]) {
@@ -8354,7 +7578,7 @@ Toolbar = (function() {
       _.each(missing, function(name) {
         if (Toolbar.formats.TOGGLE[name] != null) {
           return delete activeFormats[name];
-        } else if ((Toolbar.formats.SELECT[name] != null) && !_.isArray(activeFormats[name])) {
+        } else if ((Toolbar.formats.SELECT[name] != null) && !Array.isArray(activeFormats[name])) {
           return activeFormats[name] = [activeFormats[name]];
         }
       });
@@ -8371,34 +7595,26 @@ Toolbar = (function() {
 
 })();
 
+Quill.registerModule('toolbar', Toolbar);
+
 module.exports = Toolbar;
 
 
-},{"../dom":15,"../utils":39,"lodash":"M4+//f"}],31:[function(_dereq_,module,exports){
-var DOM, Normalizer, Tooltip, _;
 
-_ = _dereq_('lodash');
+},{"../quill":30}],28:[function(_dereq_,module,exports){
+var Normalizer, Quill, Tooltip, dom, _;
 
-DOM = _dereq_('../dom');
+Quill = _dereq_('../quill');
 
-Normalizer = _dereq_('../normalizer');
+Normalizer = _dereq_('../lib/normalizer');
+
+_ = Quill.require('lodash');
+
+dom = Quill.require('dom');
 
 Tooltip = (function() {
   Tooltip.DEFAULTS = {
     offset: 10,
-    styles: {
-      '.tooltip': {
-        'background-color': '#fff',
-        'border': '1px solid #000',
-        'top': '0px',
-        'white-space': 'nowrap',
-        'z-index': '2000'
-      },
-      '.tooltip a': {
-        'cursor': 'pointer',
-        'text-decoration': 'none'
-      }
-    },
     template: ''
   };
 
@@ -8407,11 +7623,9 @@ Tooltip = (function() {
   function Tooltip(quill, options) {
     this.quill = quill;
     this.options = options;
-    this.quill.addStyles(this.options.styles);
-    this.container = this.quill.addContainer('tooltip');
+    this.container = this.quill.addContainer('ql-tooltip');
     this.container.innerHTML = Normalizer.stripWhitespace(this.options.template);
-    this.container.style.position = 'absolute';
-    DOM.addEventListener(this.quill.root, 'focus', _.bind(this.hide, this));
+    dom(this.quill.root).on('focus', _.bind(this.hide, this));
     this.hide();
     this.quill.on(this.quill.constructor.events.TEXT_CHANGE, (function(_this) {
       return function(delta, source) {
@@ -8424,12 +7638,12 @@ Tooltip = (function() {
   }
 
   Tooltip.prototype.initTextbox = function(textbox, enterCallback, escapeCallback) {
-    return DOM.addEventListener(textbox, 'keyup', (function(_this) {
+    return dom(textbox).on('keyup', (function(_this) {
       return function(event) {
         switch (event.which) {
-          case DOM.KEYS.ENTER:
+          case dom.KEYS.ENTER:
             return enterCallback.call(_this);
-          case DOM.KEYS.ESCAPE:
+          case dom.KEYS.ESCAPE:
             return escapeCallback.call(_this);
           default:
             return true;
@@ -8446,75 +7660,56 @@ Tooltip = (function() {
     return this.range = null;
   };
 
+  Tooltip.prototype.position = function(reference) {
+    var left, offsetBottom, offsetLeft, offsetTop, parentBounds, referenceBounds, top;
+    if (reference != null) {
+      referenceBounds = reference.getBoundingClientRect();
+      parentBounds = this.quill.container.getBoundingClientRect();
+      offsetLeft = referenceBounds.left - parentBounds.left;
+      offsetTop = referenceBounds.top - parentBounds.top;
+      offsetBottom = referenceBounds.bottom - parentBounds.bottom;
+      left = offsetLeft + referenceBounds.width / 2 - this.container.offsetWidth / 2;
+      top = offsetTop + referenceBounds.height + this.options.offset;
+      if (top + this.container.offsetHeight > this.quill.container.offsetHeight) {
+        top = offsetTop - this.container.offsetHeight - this.options.offset;
+      }
+      left = Math.max(0, Math.min(left, this.quill.container.offsetWidth - this.container.offsetWidth));
+      top = Math.max(0, Math.min(top, this.quill.container.offsetHeight - this.container.offsetHeight));
+    } else {
+      left = this.quill.container.offsetWidth / 2 - this.container.offsetWidth / 2;
+      top = this.quill.container.offsetHeight / 2 - this.container.offsetHeight / 2;
+    }
+    top += this.quill.container.scrollTop;
+    return [left, top];
+  };
+
   Tooltip.prototype.show = function(reference) {
-    var left, top, _ref, _ref1;
+    var left, top, _ref;
     this.range = this.quill.getSelection();
-    _ref = this._position(reference), left = _ref[0], top = _ref[1];
-    _ref1 = this._limit(left, top), left = _ref1[0], top = _ref1[1];
-    left += this.quill.root.ownerDocument.defaultView.window.pageXOffset;
-    top += this.quill.root.ownerDocument.defaultView.window.pageYOffset;
+    _ref = this.position(reference), left = _ref[0], top = _ref[1];
     this.container.style.left = "" + left + "px";
     this.container.style.top = "" + top + "px";
     return this.container.focus();
-  };
-
-  Tooltip.prototype._getBounds = function() {
-    var bounds, scrollX, scrollY;
-    bounds = this.quill.root.getBoundingClientRect();
-    scrollX = this.quill.root.ownerDocument.defaultView.window.pageXOffset;
-    scrollY = this.quill.root.ownerDocument.defaultView.window.pageYOffset;
-    return {
-      left: bounds.left + scrollX,
-      right: bounds.right + scrollX,
-      top: bounds.top + scrollY,
-      bottom: bounds.bottom + scrollY,
-      width: bounds.width,
-      height: bounds.height
-    };
-  };
-
-  Tooltip.prototype._limit = function(left, top) {
-    var editorRect, toolbarRect;
-    editorRect = this._getBounds();
-    toolbarRect = this.container.getBoundingClientRect();
-    left = Math.min(editorRect.right - toolbarRect.width, left);
-    left = Math.max(editorRect.left, left);
-    top = Math.min(editorRect.bottom - toolbarRect.height, top);
-    top = Math.max(editorRect.top, top);
-    return [left, top];
-  };
-
-  Tooltip.prototype._position = function(reference) {
-    var editorRect, left, referenceBounds, toolbarRect, top;
-    toolbarRect = this.container.getBoundingClientRect();
-    editorRect = this._getBounds();
-    if (reference != null) {
-      referenceBounds = reference.getBoundingClientRect();
-      left = referenceBounds.left + referenceBounds.width / 2 - toolbarRect.width / 2;
-      top = referenceBounds.top + referenceBounds.height + this.options.offset;
-      if (top + toolbarRect.height > editorRect.bottom) {
-        top = referenceBounds.top - toolbarRect.height - this.options.offset;
-      }
-    } else {
-      left = editorRect.left + editorRect.width / 2 - toolbarRect.width / 2;
-      top = editorRect.top + editorRect.height / 2 - toolbarRect.height / 2;
-    }
-    return [left, top];
   };
 
   return Tooltip;
 
 })();
 
+Quill.registerModule('tooltip', Tooltip);
+
 module.exports = Tooltip;
 
 
-},{"../dom":15,"../normalizer":33,"lodash":"M4+//f"}],32:[function(_dereq_,module,exports){
-var Tandem, UndoManager, _;
 
-_ = _dereq_('lodash');
+},{"../lib/normalizer":18,"../quill":30}],29:[function(_dereq_,module,exports){
+var Delta, Quill, UndoManager, _;
 
-Tandem = _dereq_('tandem-core');
+Quill = _dereq_('../quill');
+
+_ = Quill.require('lodash');
+
+Delta = Quill.require('delta');
 
 UndoManager = (function() {
   UndoManager.DEFAULTS = {
@@ -8525,8 +7720,7 @@ UndoManager = (function() {
   UndoManager.hotkeys = {
     UNDO: {
       key: 'Z',
-      metaKey: true,
-      shiftKey: false
+      metaKey: true
     },
     REDO: {
       key: 'Z',
@@ -8539,7 +7733,7 @@ UndoManager = (function() {
     this.quill = quill;
     this.options = options != null ? options : {};
     this.lastRecorded = 0;
-    this.emittedDelta = null;
+    this.ignoreChange = false;
     this.clear();
     this.initListeners();
   }
@@ -8548,10 +7742,12 @@ UndoManager = (function() {
     this.quill.onModuleLoad('keyboard', (function(_this) {
       return function(keyboard) {
         keyboard.addHotkey(UndoManager.hotkeys.UNDO, function() {
+          _this.quill.editor.checkUpdate();
           _this.undo();
           return false;
         });
         return keyboard.addHotkey(UndoManager.hotkeys.REDO, function() {
+          _this.quill.editor.checkUpdate();
           _this.redo();
           return false;
         });
@@ -8559,8 +7755,7 @@ UndoManager = (function() {
     })(this));
     return this.quill.on(this.quill.constructor.events.TEXT_CHANGE, (function(_this) {
       return function(delta, origin) {
-        if (delta.isEqual(_this.emittedDelta)) {
-          _this.emittedDelta = null;
+        if (_this.ignoreChange) {
           return;
         }
         _this.record(delta, _this.oldDelta);
@@ -8579,22 +7774,17 @@ UndoManager = (function() {
 
   UndoManager.prototype.record = function(changeDelta, oldDelta) {
     var change, ignored, timestamp, undoDelta;
-    if (changeDelta.isIdentity()) {
+    if (!(changeDelta.ops.length > 0)) {
       return;
     }
     this.stack.redo = [];
     try {
-      undoDelta = oldDelta.invert(changeDelta);
+      undoDelta = this.quill.getContents().diff(this.oldDelta);
       timestamp = new Date().getTime();
       if (this.lastRecorded + this.options.delay > timestamp && this.stack.undo.length > 0) {
         change = this.stack.undo.pop();
-        if (undoDelta.canCompose(change.undo) && change.redo.canCompose(changeDelta)) {
-          undoDelta = undoDelta.compose(change.undo);
-          changeDelta = change.redo.compose(changeDelta);
-        } else {
-          this.clear();
-          this.lastRecorded = timestamp;
-        }
+        undoDelta = undoDelta.compose(change.undo);
+        changeDelta = change.redo.compose(changeDelta);
       } else {
         this.lastRecorded = timestamp;
       }
@@ -8607,6 +7797,7 @@ UndoManager = (function() {
       }
     } catch (_error) {
       ignored = _error;
+      console.warn('Could not record change... clearing undo stack.');
       return this.clear();
     }
   };
@@ -8620,14 +7811,20 @@ UndoManager = (function() {
   };
 
   UndoManager.prototype._getLastChangeIndex = function(delta) {
-    var lastIndex;
+    var index, lastIndex;
     lastIndex = 0;
-    delta.apply(function(index, text) {
-      return lastIndex = Math.max(index + text.length, lastIndex);
-    }, function(index, length) {
-      return lastIndex = Math.max(index, lastIndex);
-    }, function(index, length) {
-      return lastIndex = Math.max(index + length, lastIndex);
+    index = 0;
+    _.each(delta.ops, function(op) {
+      if (op.insert != null) {
+        return lastIndex = Math.max(index + (op.insert.length || 1), lastIndex);
+      } else if (op["delete"] != null) {
+        return lastIndex = Math.max(index, lastIndex);
+      } else if (op.retain != null) {
+        if (op.attributes != null) {
+          lastIndex = Math.max(index + op.retain, lastIndex);
+        }
+        return index += op.retain;
+      }
     });
     return lastIndex;
   };
@@ -8637,11 +7834,12 @@ UndoManager = (function() {
     if (this.stack[source].length > 0) {
       change = this.stack[source].pop();
       this.lastRecorded = 0;
-      this.emittedDelta = change[source];
+      this.ignoreChange = true;
       this.quill.updateContents(change[source], 'user');
-      this.emittedDelta = null;
+      this.ignoreChange = false;
       index = this._getLastChangeIndex(change[source]);
       this.quill.setSelection(index, index);
+      this.oldDelta = this.quill.getContents();
       return this.stack[dest].push(change);
     }
   };
@@ -8650,258 +7848,33 @@ UndoManager = (function() {
 
 })();
 
+Quill.registerModule('undo-manager', UndoManager);
+
 module.exports = UndoManager;
 
 
-},{"lodash":"M4+//f","tandem-core":10}],33:[function(_dereq_,module,exports){
-var DOM, Normalizer, Utils, _;
 
-_ = _dereq_('lodash');
-
-DOM = _dereq_('./dom');
-
-Utils = _dereq_('./utils');
-
-Normalizer = {
-  ALIASES: {
-    'STRONG': 'B',
-    'EM': 'I',
-    'DEL': 'S',
-    'STRIKE': 'S'
-  },
-  ATTRIBUTES: {
-    'color': 'color',
-    'face': 'fontFamily',
-    'size': 'fontSize'
-  },
-  STYLES: {
-    'background-color': 'background-color',
-    'color': 'color',
-    'font-family': 'font-family',
-    'font-size': 'font-size',
-    'text-align': 'text-align'
-  },
-  TAGS: {
-    'P': 'P',
-    'BR': 'BR',
-    'SPAN': 'SPAN',
-    'B': 'B',
-    'I': 'I',
-    'S': 'S',
-    'U': 'U',
-    'A': 'A',
-    'IMG': 'IMG',
-    'UL': 'UL',
-    'LI': 'LI'
-  },
-  handleBreaks: function(lineNode) {
-    var breaks;
-    breaks = _.map(lineNode.querySelectorAll(DOM.DEFAULT_BREAK_TAG));
-    _.each(breaks, (function(_this) {
-      return function(br) {
-        if ((br.nextSibling != null) && (!DOM.isIE(10) || (br.previousSibling != null))) {
-          return Utils.splitAncestors(br.nextSibling, lineNode.parentNode);
-        }
-      };
-    })(this));
-    return lineNode;
-  },
-  normalizeLine: function(lineNode) {
-    lineNode = Normalizer.wrapInline(lineNode);
-    lineNode = Normalizer.handleBreaks(lineNode);
-    lineNode = Normalizer.pullBlocks(lineNode);
-    lineNode = Normalizer.normalizeNode(lineNode);
-    Normalizer.unwrapText(lineNode);
-    return lineNode;
-  },
-  normalizeNode: function(node) {
-    if (DOM.isTextNode(node)) {
-      return node;
-    }
-    _.each(Normalizer.ATTRIBUTES, function(style, attribute) {
-      var value;
-      if (node.hasAttribute(attribute)) {
-        value = node.getAttribute(attribute);
-        if (attribute === 'size') {
-          value = Utils.convertFontSize(value);
-        }
-        node.style[style] = value;
-        return node.removeAttribute(attribute);
-      }
-    });
-    Normalizer.whitelistStyles(node);
-    return Normalizer.whitelistTags(node);
-  },
-  optimizeLine: function(lineNode) {
-    var lineNodeLength, node, nodes, _results;
-    lineNodeLength = Utils.getNodeLength(lineNode);
-    nodes = DOM.getDescendants(lineNode);
-    _results = [];
-    while (nodes.length > 0) {
-      node = nodes.pop();
-      if ((node != null ? node.parentNode : void 0) == null) {
-        continue;
-      }
-      if (DOM.EMBED_TAGS[node.tagName] != null) {
-        continue;
-      }
-      if (node.tagName === DOM.DEFAULT_BREAK_TAG) {
-        if (lineNodeLength !== 0) {
-          _results.push(DOM.removeNode(node));
-        } else {
-          _results.push(void 0);
-        }
-      } else if (Utils.getNodeLength(node) === 0) {
-        nodes.push(node.nextSibling);
-        _results.push(DOM.unwrap(node));
-      } else if ((node.previousSibling != null) && node.tagName === node.previousSibling.tagName) {
-        if (_.isEqual(DOM.getAttributes(node), DOM.getAttributes(node.previousSibling))) {
-          nodes.push(node.firstChild);
-          _results.push(Utils.mergeNodes(node.previousSibling, node));
-        } else {
-          _results.push(void 0);
-        }
-      } else {
-        _results.push(void 0);
-      }
-    }
-    return _results;
-  },
-  pullBlocks: function(lineNode) {
-    var curNode;
-    curNode = lineNode.firstChild;
-    while (curNode != null) {
-      if ((DOM.BLOCK_TAGS[curNode.tagName] != null) && curNode.tagName !== 'LI') {
-        if (curNode.previousSibling != null) {
-          Utils.splitAncestors(curNode, lineNode.parentNode);
-        }
-        if (curNode.nextSibling != null) {
-          Utils.splitAncestors(curNode.nextSibling, lineNode.parentNode);
-        }
-        if (DOM.LIST_TAGS[curNode.tagName] == null) {
-          DOM.unwrap(curNode);
-          Normalizer.pullBlocks(lineNode);
-        } else {
-          DOM.unwrap(curNode.parentNode);
-          if (lineNode.parentNode == null) {
-            lineNode = curNode;
-          }
-        }
-        break;
-      }
-      curNode = curNode.nextSibling;
-    }
-    return lineNode;
-  },
-  stripComments: function(html) {
-    return html.replace(/<!--[\s\S]*?-->/g, '');
-  },
-  stripWhitespace: function(html) {
-    html = html.replace(/^\s+/, '').replace(/\s+$/, '');
-    html = html.replace(/\>\s+\</g, '><');
-    return html;
-  },
-  whitelistStyles: function(node) {
-    var original, styles;
-    original = DOM.getStyles(node);
-    styles = _.omit(original, function(value, key) {
-      return Normalizer.STYLES[key] == null;
-    });
-    if (_.keys(styles).length < _.keys(original).length) {
-      if (_.keys(styles).length > 0) {
-        return DOM.setStyles(node, styles);
-      } else {
-        return node.removeAttribute('style');
-      }
-    }
-  },
-  whitelistTags: function(node) {
-    if (!DOM.isElement(node)) {
-      return node;
-    }
-    if (Normalizer.ALIASES[node.tagName] != null) {
-      node = DOM.switchTag(node, Normalizer.ALIASES[node.tagName]);
-    }
-    if (Normalizer.TAGS[node.tagName] == null) {
-      if (DOM.BLOCK_TAGS[node.tagName] != null) {
-        node = DOM.switchTag(node, DOM.DEFAULT_BLOCK_TAG);
-      } else if (!node.hasAttributes() && (node.firstChild != null)) {
-        node = DOM.unwrap(node);
-      } else {
-        node = DOM.switchTag(node, DOM.DEFAULT_INLINE_TAG);
-      }
-    }
-    return node;
-  },
-  wrapInline: function(lineNode) {
-    var blockNode, nextNode;
-    if (DOM.BLOCK_TAGS[lineNode.tagName] != null) {
-      return lineNode;
-    }
-    blockNode = lineNode.ownerDocument.createElement(DOM.DEFAULT_BLOCK_TAG);
-    lineNode.parentNode.insertBefore(blockNode, lineNode);
-    while ((lineNode != null) && (DOM.BLOCK_TAGS[lineNode.tagName] == null)) {
-      nextNode = lineNode.nextSibling;
-      blockNode.appendChild(lineNode);
-      lineNode = nextNode;
-    }
-    return blockNode;
-  },
-  unwrapText: function(lineNode) {
-    var spans;
-    spans = _.map(lineNode.querySelectorAll(DOM.DEFAULT_INLINE_TAG));
-    return _.each(spans, function(span) {
-      var attributes;
-      attributes = DOM.getAttributes(span);
-      if (_.keys(attributes).length === 0) {
-        return DOM.unwrap(span);
-      }
-    });
-  }
-};
-
-module.exports = Normalizer;
-
-
-},{"./dom":15,"./utils":39,"lodash":"M4+//f"}],34:[function(_dereq_,module,exports){
-var DOM, Editor, EventEmitter2, Format, Modules, Quill, Range, Tandem, Themes, pkg, _,
+},{"../quill":30}],30:[function(_dereq_,module,exports){
+var Delta, Editor, EventEmitter2, Format, Quill, Range, dom, pkg, _,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   __slice = [].slice;
 
 _ = _dereq_('lodash');
 
-_.str = _dereq_('underscore.string');
-
 pkg = _dereq_('../package.json');
+
+Delta = _dereq_('rich-text/lib/delta');
 
 EventEmitter2 = _dereq_('eventemitter2').EventEmitter2;
 
-DOM = _dereq_('./dom');
+dom = _dereq_('./lib/dom');
 
-Editor = _dereq_('./editor');
+Editor = _dereq_('./core/editor');
 
-Format = _dereq_('./format');
+Format = _dereq_('./core/format');
 
 Range = _dereq_('./lib/range');
-
-Tandem = _dereq_('tandem-core');
-
-Modules = {
-  Authorship: _dereq_('./modules/authorship'),
-  ImageTooltip: _dereq_('./modules/image-tooltip'),
-  Keyboard: _dereq_('./modules/keyboard'),
-  LinkTooltip: _dereq_('./modules/link-tooltip'),
-  MultiCursor: _dereq_('./modules/multi-cursor'),
-  PasteManager: _dereq_('./modules/paste-manager'),
-  Toolbar: _dereq_('./modules/toolbar'),
-  UndoManager: _dereq_('./modules/undo-manager')
-};
-
-Themes = {
-  Default: _dereq_('./themes/default'),
-  Snow: _dereq_('./themes/snow')
-};
 
 Quill = (function(_super) {
   __extends(Quill, _super);
@@ -8910,9 +7883,9 @@ Quill = (function(_super) {
 
   Quill.editors = [];
 
-  Quill.Module = Modules;
+  Quill.modules = [];
 
-  Quill.Theme = Themes;
+  Quill.themes = [];
 
   Quill.DEFAULTS = {
     formats: ['align', 'bold', 'italic', 'strike', 'underline', 'color', 'background', 'font', 'size', 'link', 'image', 'bullet', 'list'],
@@ -8923,7 +7896,8 @@ Quill = (function(_super) {
     },
     pollInterval: 100,
     readOnly: false,
-    theme: 'default'
+    styles: {},
+    theme: 'base'
   };
 
   Quill.events = {
@@ -8934,36 +7908,64 @@ Quill = (function(_super) {
     TEXT_CHANGE: 'text-change'
   };
 
-  Quill.sources = {
-    API: 'api',
-    SILENT: 'silent',
-    USER: 'user'
+  Quill.sources = Editor.sources;
+
+  Quill.registerModule = function(name, module) {
+    if (Quill.modules[name] != null) {
+      console.warn("Overwriting " + name + " module");
+    }
+    return Quill.modules[name] = module;
+  };
+
+  Quill.registerTheme = function(name, theme) {
+    if (Quill.themes[name] != null) {
+      console.warn("Overwriting " + name + " theme");
+    }
+    return Quill.themes[name] = theme;
+  };
+
+  Quill.require = function(name) {
+    switch (name) {
+      case 'lodash':
+        return _;
+      case 'delta':
+        return Delta;
+      case 'dom':
+        return dom;
+      default:
+        return null;
+    }
   };
 
   function Quill(container, options) {
     var html, moduleOptions, themeClass;
+    this.container = container;
     if (options == null) {
       options = {};
     }
-    if (_.isString(container)) {
-      container = document.querySelector(container);
+    if (_.isString(this.container)) {
+      this.container = document.querySelector(container);
     }
-    if (container == null) {
+    if (this.container == null) {
       throw new Error('Invalid Quill container');
     }
     moduleOptions = _.defaults(options.modules || {}, Quill.DEFAULTS.modules);
-    html = container.innerHTML;
+    html = this.container.innerHTML;
+    this.container.innerHTML = '';
     this.options = _.defaults(options, Quill.DEFAULTS);
     this.options.modules = moduleOptions;
-    this.options.id = this.id = "quill-" + (Quill.editors.length + 1);
+    this.options.id = this.id = "ql-editor-" + (Quill.editors.length + 1);
     this.options.emitter = this;
     this.modules = {};
-    this.editor = new Editor(container, this, this.options);
-    this.root = this.editor.doc.root;
+    this.root = this.addContainer('ql-editor');
+    this.editor = new Editor(this.root, this, this.options);
     Quill.editors.push(this);
     this.setHTML(html, Quill.sources.SILENT);
-    themeClass = _.str.capitalize(_.str.camelize(this.options.theme));
-    this.theme = new Quill.Theme[themeClass](this, this.options);
+    themeClass = Quill.themes[this.options.theme];
+    if (themeClass == null) {
+      throw new Error("Cannot load " + this.options.theme + " theme. Are you sure you registered it?");
+    }
+    this.theme = new themeClass(this, this.options);
     _.each(this.options.modules, (function(_this) {
       return function(option, name) {
         return _this.addModule(name, option);
@@ -8971,11 +7973,30 @@ Quill = (function(_super) {
     })(this));
   }
 
+  Quill.prototype.destroy = function() {
+    var html;
+    html = this.getHTML();
+    _.each(this.modules, function(module, name) {
+      if (_.isFunction(module.destroy)) {
+        return module.destroy();
+      }
+    });
+    this.editor.destroy();
+    this.removeAllListeners();
+    Quill.editors.splice(_.indexOf(Quill.editors, this), 1);
+    return this.container.innerHTML = html;
+  };
+
   Quill.prototype.addContainer = function(className, before) {
+    var container, refNode;
     if (before == null) {
       before = false;
     }
-    return this.editor.renderer.addContainer(className, before);
+    refNode = before ? this.root : null;
+    container = document.createElement('div');
+    dom(container).addClass(className);
+    this.container.insertBefore(container, refNode);
+    return container;
   };
 
   Quill.prototype.addFormat = function(name, format) {
@@ -8983,23 +8004,18 @@ Quill = (function(_super) {
   };
 
   Quill.prototype.addModule = function(name, options) {
-    var className, moduleClass;
-    className = _.str.capitalize(_.str.camelize(name));
-    moduleClass = Quill.Module[className];
+    var moduleClass;
+    moduleClass = Quill.modules[name];
     if (moduleClass == null) {
-      throw new Error("Cannot load " + name + " module. Are you sure you included it?");
+      throw new Error("Cannot load " + name + " module. Are you sure you registered it?");
     }
-    if (!_.isObject(options)) {
+    if (options === true) {
       options = {};
     }
     options = _.defaults(options, this.theme.constructor.OPTIONS[name] || {}, moduleClass.DEFAULTS || {});
     this.modules[name] = new moduleClass(this, options);
     this.emit(Quill.events.MODULE_INIT, name, this.modules[name]);
     return this.modules[name];
-  };
-
-  Quill.prototype.addStyles = function(styles) {
-    return this.editor.renderer.addStyles(styles);
   };
 
   Quill.prototype.deleteText = function(start, end, source) {
@@ -9011,7 +8027,7 @@ Quill = (function(_super) {
     if (!(end > start)) {
       return;
     }
-    delta = Tandem.Delta.makeDeleteDelta(this.getLength(), start, end - start);
+    delta = new Delta().retain(start)["delete"](end - start);
     return this.editor.applyDelta(delta, source);
   };
 
@@ -9024,7 +8040,7 @@ Quill = (function(_super) {
   };
 
   Quill.prototype.focus = function() {
-    return this.root.focus();
+    return this.editor.focus();
   };
 
   Quill.prototype.formatLine = function(start, end, name, value, source) {
@@ -9050,12 +8066,15 @@ Quill = (function(_super) {
         return formats;
       };
     })(this), formats);
-    delta = Tandem.Delta.makeRetainDelta(this.getLength(), start, end - start, formats);
+    delta = new Delta().retain(start).retain(end - start, formats);
     return this.editor.applyDelta(delta, source);
   };
 
+  Quill.prototype.getBounds = function(index) {
+    return this.editor.getBounds(index);
+  };
+
   Quill.prototype.getContents = function(start, end) {
-    var ops;
     if (start == null) {
       start = 0;
     }
@@ -9065,21 +8084,16 @@ Quill = (function(_super) {
     if (_.isObject(start)) {
       end = start.end;
       start = start.start;
-    } else {
-      if (end == null) {
-        end = this.getLength();
-      }
     }
-    ops = this.editor.getDelta().getOpsAt(start, end - start);
-    return new Tandem.Delta(0, ops);
+    return this.editor.getDelta().slice(start, end);
   };
 
   Quill.prototype.getHTML = function() {
-    return this.root.innerHTML;
+    return this.editor.doc.getHTML();
   };
 
   Quill.prototype.getLength = function() {
-    return this.editor.getDelta().endLength;
+    return this.editor.getDelta().length();
   };
 
   Quill.prototype.getModule = function(name) {
@@ -9098,11 +8112,17 @@ Quill = (function(_super) {
     if (end == null) {
       end = null;
     }
-    return _.pluck(this.getContents(start, end).ops, 'value').join('');
+    return _.map(this.getContents(start, end).ops, function(op) {
+      if (_.isString(op.insert)) {
+        return op.insert;
+      } else {
+        return '';
+      }
+    }).join('');
   };
 
   Quill.prototype.insertEmbed = function(index, type, url, source) {
-    return this.insertText(index, DOM.EMBED_TEXT, type, url, source);
+    return this.insertText(index, dom.EMBED_TEXT, type, url, source);
   };
 
   Quill.prototype.insertText = function(index, text, name, value, source) {
@@ -9111,7 +8131,7 @@ Quill = (function(_super) {
     if (!(text.length > 0)) {
       return;
     }
-    delta = Tandem.Delta.makeInsertDelta(this.getLength(), index, text, formats);
+    delta = new Delta().retain(index).insert(text, formats);
     return this.editor.applyDelta(delta, source);
   };
 
@@ -9147,14 +8167,18 @@ Quill = (function(_super) {
     if (source == null) {
       source = Quill.sources.API;
     }
-    if (_.isArray(delta)) {
+    if (Array.isArray(delta)) {
       delta = {
-        startLength: this.getLength(),
-        ops: delta
+        ops: delta.slice()
       };
     } else {
-      delta.startLength = this.getLength();
+      delta = {
+        ops: delta.ops.slice()
+      };
     }
+    delta.ops.push({
+      "delete": this.getLength()
+    });
     return this.updateContents(delta, source);
   };
 
@@ -9162,8 +8186,8 @@ Quill = (function(_super) {
     if (source == null) {
       source = Quill.sources.API;
     }
-    if (!html) {
-      html = "<" + DOM.DEFAULT_BLOCK_TAG + "><" + DOM.DEFAULT_BREAK_TAG + "></" + DOM.DEFAULT_BLOCK_TAG + ">";
+    if (!html.trim()) {
+      html = "<" + dom.DEFAULT_BLOCK_TAG + "><" + dom.DEFAULT_BREAK_TAG + "></" + dom.DEFAULT_BLOCK_TAG + ">";
     }
     this.editor.doc.setHTML(html);
     return this.editor.checkUpdate(source);
@@ -9183,11 +8207,19 @@ Quill = (function(_super) {
     return this.editor.selection.setRange(range, source);
   };
 
+  Quill.prototype.setText = function(text, source) {
+    var delta;
+    if (source == null) {
+      source = Quill.sources.API;
+    }
+    delta = new Delta().insert(text);
+    return this.setContents(delta, source);
+  };
+
   Quill.prototype.updateContents = function(delta, source) {
     if (source == null) {
       source = Quill.sources.API;
     }
-    delta = Tandem.Delta.makeDelta(delta);
     return this.editor.applyDelta(delta, source);
   };
 
@@ -9212,102 +8244,29 @@ Quill = (function(_super) {
 
 })(EventEmitter2);
 
+Quill.registerTheme('base', _dereq_('./themes/base'));
+
+Quill.registerTheme('snow', _dereq_('./themes/snow'));
+
 module.exports = Quill;
 
 
-},{"../package.json":13,"./dom":15,"./editor":16,"./format":17,"./lib/range":22,"./modules/authorship":24,"./modules/image-tooltip":25,"./modules/keyboard":26,"./modules/link-tooltip":27,"./modules/multi-cursor":28,"./modules/paste-manager":29,"./modules/toolbar":30,"./modules/undo-manager":32,"./themes/default":37,"./themes/snow":38,"eventemitter2":3,"lodash":"M4+//f","tandem-core":10,"underscore.string":12}],35:[function(_dereq_,module,exports){
-var DEFAULT_STYLES, DOM, LIST_STYLES, Normalizer, Renderer, Utils, rule, _;
+
+},{"../package.json":7,"./core/editor":9,"./core/format":10,"./lib/dom":16,"./lib/range":20,"./themes/base":32,"./themes/snow":33,"eventemitter2":2,"lodash":1,"rich-text/lib/delta":3}],31:[function(_dereq_,module,exports){
+module.exports = ".ql-image-tooltip{padding:10px;width:300px}.ql-image-tooltip:after{clear:both;content:\"\";display:table}.ql-image-tooltip a{border:1px solid #000;box-sizing:border-box;display:inline-block;float:left;padding:5px;text-align:center;width:50%}.ql-image-tooltip img{bottom:0;left:0;margin:auto;max-height:100%;max-width:100%;position:absolute;right:0;top:0}.ql-image-tooltip .input{box-sizing:border-box;width:100%}.ql-image-tooltip .preview{margin:10px 0;position:relative;border:1px dashed #000;height:200px}.ql-image-tooltip .preview span{display:inline-block;position:absolute;text-align:center;top:40%;width:100%}.ql-link-tooltip{padding:5px 10px}.ql-link-tooltip input.input{width:170px}.ql-link-tooltip a.done,.ql-link-tooltip input.input{display:none}.ql-link-tooltip.editing a.done,.ql-link-tooltip.editing input.input{display:inline-block}.ql-link-tooltip.editing a.change,.ql-link-tooltip.editing a.url{display:none}.ql-multi-cursor{position:absolute;left:0;top:0;z-index:1000}.ql-multi-cursor .cursor{margin-left:-1px;position:absolute}.ql-multi-cursor .cursor-flag{bottom:100%;position:absolute;white-space:nowrap}.ql-multi-cursor .cursor-name{display:inline-block;color:#fff;padding:2px 8px}.ql-multi-cursor .cursor-caret{height:100%;position:absolute;width:2px}.ql-multi-cursor .cursor.hidden .cursor-flag{display:none}.ql-multi-cursor .cursor.top .cursor-flag{bottom:auto;top:100%}.ql-multi-cursor .cursor.right .cursor-flag{right:-2px}.ql-paste-manager{left:-100000px;position:absolute;top:50%}.ql-toolbar{box-sizing:border-box}.ql-tooltip{background-color:#fff;border:1px solid #000;box-sizing:border-box;position:absolute;top:0;white-space:nowrap;z-index:2000}.ql-tooltip a{cursor:pointer;text-decoration:none}.ql-container{box-sizing:border-box;cursor:text;font-family:Helvetica,Arial,sans-serif;font-size:13px;height:100%;line-height:1.42;margin:0;overflow-x:hidden;overflow-y:auto;padding:12px 15px;position:relative}.ql-editor{box-sizing:border-box;min-height:100%;outline:0;tab-size:4;white-space:pre-wrap}.ql-editor div{margin:0;padding:0}.ql-editor a{text-decoration:underline}.ql-editor b{font-weight:700}.ql-editor i{font-style:italic}.ql-editor s{text-decoration:line-through}.ql-editor u{text-decoration:underline}.ql-editor img{max-width:100%}.ql-editor blockquote,.ql-editor ol,.ql-editor ul{margin:0 0 0 2em;padding:0}.ql-editor ol{list-style-type:decimal}.ql-editor ul{list-style-type:disc}.ql-editor.ql-ie-10 br,.ql-editor.ql-ie-9 br{display:none}";
+},{}],32:[function(_dereq_,module,exports){
+var BaseTheme, baseStyles, dom, _;
 
 _ = _dereq_('lodash');
 
-DOM = _dereq_('./dom');
+dom = _dereq_('../../lib/dom');
 
-Utils = _dereq_('./utils');
+baseStyles = _dereq_('./base.styl');
 
-Normalizer = _dereq_('./normalizer');
+BaseTheme = (function() {
+  BaseTheme.OPTIONS = {};
 
-DEFAULT_STYLES = {
-  'html': {
-    'height': '100%',
-    'width': '100%'
-  },
-  'body': {
-    'box-sizing': 'border-box',
-    'cursor': 'text',
-    'font-family': "'Helvetica', 'Arial', sans-serif",
-    'font-size': '13px',
-    'height': '100%',
-    'line-height': '1.42',
-    'margin': '0px',
-    'overflow-x': 'hidden',
-    'overflow-y': 'auto',
-    'padding': '12px 15px'
-  },
-  '.editor-container': {
-    'height': '100%',
-    'outline': 'none',
-    'position': 'relative',
-    'tab-size': '4',
-    'white-space': 'pre-wrap'
-  },
-  '.editor-container p': {
-    'margin': '0',
-    'padding': '0'
-  },
-  '.editor-container a': {
-    'text-decoration': 'underline'
-  },
-  '.editor-container b': {
-    'font-weight': 'bold'
-  },
-  '.editor-container i': {
-    'font-style': 'italic'
-  },
-  '.editor-container s': {
-    'text-decoration': 'line-through'
-  },
-  '.editor-container u': {
-    'text-decoration': 'underline'
-  },
-  '.editor-container img': {
-    'max-width': '100%'
-  },
-  '.editor-container blockquote': {
-    'margin': '0 0 0 2em',
-    'padding': '0'
-  },
-  '.editor-container ol': {
-    'margin': '0 0 0 2em',
-    'padding': '0',
-    'list-style-type': 'decimal'
-  },
-  '.editor-container ul': {
-    'margin': '0 0 0 2em',
-    'padding': '0',
-    'list-style-type': 'disc'
-  }
-};
-
-LIST_STYLES = ['decimal', 'lower-alpha', 'lower-roman'];
-
-rule = '.editor-container ol > li';
-
-_.each([1, 2, 3, 4, 5, 6, 7, 8, 9], function(i) {
-  rule += ' > ol';
-  DEFAULT_STYLES[rule] = {
-    'list-style-type': LIST_STYLES[i % 3]
-  };
-  return rule += ' > li';
-});
-
-if (Utils.isIE(10)) {
-  DEFAULT_STYLES[DOM.DEFAULT_BREAK_TAG] = {
-    'display': 'none'
-  };
-}
-
-Renderer = (function() {
-  Renderer.objToCss = function(obj) {
+  BaseTheme.objToCss = function(obj) {
     return _.map(obj, function(value, key) {
       var innerStr;
       innerStr = _.map(value, function(innerValue, innerKey) {
@@ -9317,344 +8276,41 @@ Renderer = (function() {
     }).join("\n");
   };
 
-  Renderer.buildFrame = function(container) {
-    var iframe, iframeDoc, root;
-    iframe = container.ownerDocument.createElement('iframe');
-    DOM.setAttributes(iframe, {
-      frameBorder: '0',
-      height: '100%',
-      width: '100%',
-      title: 'Quill Rich Text Editor',
-      role: 'presentation'
-    });
-    container.appendChild(iframe);
-    iframeDoc = iframe.contentWindow.document;
-    iframeDoc.open();
-    iframeDoc.write('<!DOCTYPE html>');
-    iframeDoc.close();
-    root = iframeDoc.createElement('div');
-    iframeDoc.body.appendChild(root);
-    return [root, iframe];
-  };
-
-  function Renderer(container, options) {
-    var _ref;
-    this.container = container;
-    this.options = options != null ? options : {};
-    this.container.innerHTML = '';
-    _ref = Renderer.buildFrame(this.container), this.root = _ref[0], this.iframe = _ref[1];
-    this.root.id = this.options.id;
-    DOM.addClass(this.root, 'editor-container');
-    DOM.addClass(this.container, 'ql-container');
-    DOM.addEventListener(this.container, 'focus', (function(_this) {
-      return function() {
-        return _this.root.focus();
-      };
-    })(this));
-    if (DOM.isIOS()) {
-      DOM.addStyles(this.container, {
-        'overflow': 'auto',
-        '-webkit-overflow-scrolling': 'touch'
-      });
-    }
-    this.addStyles(DEFAULT_STYLES);
-    if (this.options.styles != null) {
-      _.defer(_.bind(this.addStyles, this, this.options.styles));
-    }
-  }
-
-  Renderer.prototype.addContainer = function(className, before) {
-    var container, refNode;
-    if (before == null) {
-      before = false;
-    }
-    refNode = before ? this.root : null;
-    container = this.root.ownerDocument.createElement('div');
-    DOM.addClass(container, className);
-    this.root.parentNode.insertBefore(container, refNode);
-    return container;
-  };
-
-  Renderer.prototype.addStyles = function(css) {
-    var link, style;
-    if (typeof css === 'object') {
-      style = this.root.ownerDocument.createElement('style');
-      style.type = 'text/css';
-      css = Renderer.objToCss(css);
-      style.appendChild(this.root.ownerDocument.createTextNode(css));
-      return this.root.ownerDocument.head.appendChild(style);
-    } else if (typeof css === 'string') {
-      link = this.root.ownerDocument.createElement('link');
-      DOM.setAttributes(link, {
-        type: 'text/css',
-        rel: 'stylesheet',
-        href: css
-      });
-      return this.root.ownerDocument.head.appendChild(link);
-    }
-  };
-
-  return Renderer;
-
-})();
-
-module.exports = Renderer;
-
-
-},{"./dom":15,"./normalizer":33,"./utils":39,"lodash":"M4+//f"}],36:[function(_dereq_,module,exports){
-var DOM, Leaf, Normalizer, Range, Selection, Utils, _;
-
-_ = _dereq_('lodash');
-
-DOM = _dereq_('./dom');
-
-Leaf = _dereq_('./leaf');
-
-Normalizer = _dereq_('./normalizer');
-
-Range = _dereq_('./lib/range');
-
-Utils = _dereq_('./utils');
-
-Selection = (function() {
-  function Selection(doc, iframe, emitter) {
-    this.doc = doc;
-    this.iframe = iframe;
-    this.emitter = emitter;
-    this.document = this.doc.root.ownerDocument;
-    this.range = this.getRange();
-    this.nullDelay = false;
-  }
-
-  Selection.prototype.checkFocus = function() {
-    if (this.document.activeElement !== this.doc.root) {
-      return false;
-    }
-    if ((document.activeElement != null) && document.activeElement.tagName === 'IFRAME') {
-      return document.activeElement === this.iframe;
-    }
-    return true;
-  };
-
-  Selection.prototype.getRange = function() {
-    var end, nativeRange, start;
-    if (!this.checkFocus()) {
-      return null;
-    }
-    nativeRange = this._getNativeRange();
-    if (nativeRange == null) {
-      return null;
-    }
-    start = this._positionToIndex(nativeRange.startContainer, nativeRange.startOffset);
-    if (nativeRange.startContainer === nativeRange.endContainer && nativeRange.startOffset === nativeRange.endOffset) {
-      end = start;
-    } else {
-      end = this._positionToIndex(nativeRange.endContainer, nativeRange.endOffset);
-    }
-    return new Range(Math.min(start, end), Math.max(start, end));
-  };
-
-  Selection.prototype.preserve = function(fn) {
-    var endNode, endOffset, nativeRange, startNode, startOffset, _ref, _ref1, _ref2, _ref3;
-    nativeRange = this._getNativeRange();
-    if ((nativeRange != null) && this.checkFocus()) {
-      _ref = this._encodePosition(nativeRange.startContainer, nativeRange.startOffset), startNode = _ref[0], startOffset = _ref[1];
-      _ref1 = this._encodePosition(nativeRange.endContainer, nativeRange.endOffset), endNode = _ref1[0], endOffset = _ref1[1];
-      fn();
-      _ref2 = this._decodePosition(startNode, startOffset), startNode = _ref2[0], startOffset = _ref2[1];
-      _ref3 = this._decodePosition(endNode, endOffset), endNode = _ref3[0], endOffset = _ref3[1];
-      return this._setNativeRange(startNode, startOffset, endNode, endOffset);
-    } else {
-      return fn();
-    }
-  };
-
-  Selection.prototype.setRange = function(range, source) {
-    var endNode, endOffset, startNode, startOffset, _ref, _ref1, _ref2;
-    if (range != null) {
-      _ref = this._indexToPosition(range.start), startNode = _ref[0], startOffset = _ref[1];
-      if (range.isCollapsed()) {
-        _ref1 = [startNode, startOffset], endNode = _ref1[0], endOffset = _ref1[1];
-      } else {
-        _ref2 = this._indexToPosition(range.end), endNode = _ref2[0], endOffset = _ref2[1];
-      }
-      this._setNativeRange(startNode, startOffset, endNode, endOffset);
-    } else {
-      this._setNativeRange(null);
-    }
-    return this.update(source);
-  };
-
-  Selection.prototype.shiftAfter = function(index, length, fn) {
-    var range;
-    range = this.getRange();
-    fn();
-    if (range != null) {
-      range.shift(index, length);
-      return this.setRange(range, 'silent');
-    }
-  };
-
-  Selection.prototype.update = function(source) {
-    var emit, range;
-    range = this.getRange();
-    emit = source !== 'silent' && !Range.compare(range, this.range);
-    if (range === null && source === 'user' && !this.nullDelay) {
-      return this.nullDelay = true;
-    } else {
-      this.nullDelay = false;
-      this.range = range;
-      if (emit) {
-        return this.emitter.emit(this.emitter.constructor.events.SELECTION_CHANGE, range, source);
-      }
-    }
-  };
-
-  Selection.prototype._decodePosition = function(node, offset) {
-    var childIndex;
-    if (DOM.isElement(node)) {
-      childIndex = _.indexOf(DOM.getChildNodes(node.parentNode), node);
-      offset += childIndex;
-      node = node.parentNode;
-    }
-    return [node, offset];
-  };
-
-  Selection.prototype._encodePosition = function(node, offset) {
-    var text;
-    while (true) {
-      if (DOM.isTextNode(node) || node.tagName === DOM.DEFAULT_BREAK_TAG || (DOM.EMBED_TAGS[node.tagName] != null)) {
-        return [node, offset];
-      } else if (offset < node.childNodes.length) {
-        node = node.childNodes[offset];
-        offset = 0;
-      } else if (node.childNodes.length === 0) {
-        if (Normalizer.TAGS[node.tagName] == null) {
-          text = node.ownerDocument.createTextNode('');
-          node.appendChild(text);
-          node = text;
-        }
-        return [node, 0];
-      } else {
-        node = node.lastChild;
-        if (DOM.isElement(node)) {
-          if (node.tagName === DOM.DEFAULT_BREAK_TAG || (DOM.EMBED_TAGS[node.tagName] != null)) {
-            return [node, 1];
-          } else {
-            offset = node.childNodes.length;
-          }
-        } else {
-          return [node, Utils.getNodeLength(node)];
-        }
-      }
-    }
-  };
-
-  Selection.prototype._getNativeSelection = function() {
-    if (this.document.getSelection != null) {
-      return this.document.getSelection();
-    } else {
-      return null;
-    }
-  };
-
-  Selection.prototype._getNativeRange = function() {
-    var selection;
-    selection = this._getNativeSelection();
-    if ((selection != null ? selection.rangeCount : void 0) > 0) {
-      return selection.getRangeAt(0);
-    } else {
-      return null;
-    }
-  };
-
-  Selection.prototype._indexToPosition = function(index) {
-    var leaf, offset, _ref;
-    if (this.doc.lines.length === 0) {
-      return [this.doc.root, 0];
-    }
-    _ref = this.doc.findLeafAt(index, true), leaf = _ref[0], offset = _ref[1];
-    return this._decodePosition(leaf.node, offset);
-  };
-
-  Selection.prototype._positionToIndex = function(node, offset) {
-    var leaf, leafNode, leafOffset, line, lineOffset, _ref;
-    _ref = this._encodePosition(node, offset), leafNode = _ref[0], offset = _ref[1];
-    line = this.doc.findLine(leafNode);
-    if (line == null) {
-      return 0;
-    }
-    leaf = line.findLeaf(leafNode);
-    lineOffset = 0;
-    while (line.prev != null) {
-      line = line.prev;
-      lineOffset += line.length;
-    }
-    if (leaf == null) {
-      return lineOffset;
-    }
-    leafOffset = 0;
-    while (leaf.prev != null) {
-      leaf = leaf.prev;
-      leafOffset += leaf.length;
-    }
-    return lineOffset + leafOffset + offset;
-  };
-
-  Selection.prototype._setNativeRange = function(startNode, startOffset, endNode, endOffset) {
-    var nativeRange, selection;
-    selection = this._getNativeSelection();
-    if (!selection) {
-      return;
-    }
-    if (startNode != null) {
-      this.doc.root.focus();
-      nativeRange = this._getNativeRange();
-      if ((nativeRange == null) || startNode !== nativeRange.startContainer || startOffset !== nativeRange.startOffset || endNode !== nativeRange.endContainer || endOffset !== nativeRange.endOffset) {
-        if (nativeRange != null) {
-          selection.removeAllRanges();
-        }
-        selection.removeAllRanges();
-        nativeRange = this.document.createRange();
-        nativeRange.setStart(startNode, startOffset);
-        nativeRange.setEnd(endNode, endOffset);
-        selection.addRange(nativeRange);
-        return this.doc.root.focus();
-      }
-    } else {
-      selection.removeAllRanges();
-      return this.doc.root.blur();
-    }
-  };
-
-  return Selection;
-
-})();
-
-module.exports = Selection;
-
-
-},{"./dom":15,"./leaf":18,"./lib/range":22,"./normalizer":33,"./utils":39,"lodash":"M4+//f"}],37:[function(_dereq_,module,exports){
-var DefaultTheme;
-
-DefaultTheme = (function() {
-  DefaultTheme.OPTIONS = {};
-
-  function DefaultTheme(quill) {
+  function BaseTheme(quill, options) {
+    var version;
     this.quill = quill;
-    this.editor = this.quill.editor;
-    this.editorContainer = this.editor.root;
+    this.options = options;
+    dom(this.quill.container).addClass('ql-container');
+    if (this.options.styles) {
+      this.addStyles(baseStyles + BaseTheme.objToCss(this.options.styles));
+    }
+    if (dom.isIE(10)) {
+      version = dom.isIE(9) ? '9' : '10';
+      dom(this.quill.root).addClass('ql-ie-' + version);
+    }
   }
 
-  return DefaultTheme;
+  BaseTheme.prototype.addStyles = function(css) {
+    var style;
+    if (_.isObject(css)) {
+      css = BaseTheme.objToCss(css);
+    }
+    style = document.createElement('style');
+    style.type = 'text/css';
+    style.appendChild(document.createTextNode(css));
+    return document.head.appendChild(style);
+  };
+
+  return BaseTheme;
 
 })();
 
-module.exports = DefaultTheme;
+module.exports = BaseTheme;
 
 
-},{}],38:[function(_dereq_,module,exports){
-var ColorPicker, DOM, DefaultTheme, Picker, SnowTheme, _,
+
+},{"../../lib/dom":16,"./base.styl":31,"lodash":1}],33:[function(_dereq_,module,exports){
+var BaseTheme, ColorPicker, Picker, SnowTheme, dom, _,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
@@ -9662,9 +8318,9 @@ _ = _dereq_('lodash');
 
 ColorPicker = _dereq_('../../lib/color-picker');
 
-DefaultTheme = _dereq_('../default');
+BaseTheme = _dereq_('../base');
 
-DOM = _dereq_('../../dom');
+dom = _dereq_('../../lib/dom');
 
 Picker = _dereq_('../../lib/picker');
 
@@ -9679,84 +8335,11 @@ SnowTheme = (function(_super) {
     }
   };
 
-  SnowTheme.STYLES = {
-    '.snow .image-tooltip-container a': {
-      'border': '1px solid #06c'
-    },
-    '.snow .image-tooltip-container a.insert': {
-      'background-color': '#06c',
-      'color': '#fff'
-    },
-    '.snow .cursor-name': {
-      'border-radius': '4px',
-      'font-size': '11px',
-      'font-family': 'Arial',
-      'margin-left': '-50%',
-      'padding': '4px 10px'
-    },
-    '.snow .cursor-triangle': {
-      'border-left': '4px solid transparent',
-      'border-right': '4px solid transparent',
-      'height': '0px',
-      'margin-left': '-3px',
-      'width': '0px'
-    },
-    '.snow .cursor.left .cursor-name': {
-      'margin-left': '-8px'
-    },
-    '.snow .cursor.right .cursor-flag': {
-      'right': 'auto'
-    },
-    '.snow .cursor.right .cursor-name': {
-      'margin-left': '-100%',
-      'margin-right': '-8px'
-    },
-    '.snow .cursor-triangle.bottom': {
-      'border-top': '4px solid transparent',
-      'display': 'block',
-      'margin-bottom': '-1px'
-    },
-    '.snow .cursor-triangle.top': {
-      'border-bottom': '4px solid transparent',
-      'display': 'none',
-      'margin-top': '-1px'
-    },
-    '.snow .cursor.top .cursor-triangle.bottom': {
-      'display': 'none'
-    },
-    '.snow .cursor.top .cursor-triangle.top': {
-      'display': 'block'
-    },
-    '.snow a': {
-      'color': '#06c'
-    },
-    '.snow .tooltip': {
-      'border': '1px solid #ccc',
-      'box-shadow': '0px 0px 5px #ddd',
-      'color': '#222'
-    },
-    '.snow .tooltip a': {
-      'color': '#06c'
-    },
-    '.snow .tooltip .input': {
-      'border': '1px solid #ccc',
-      'margin': '0px',
-      'padding': '5px'
-    },
-    '.snow .image-tooltip-container .preview': {
-      'border-color': '#ccc',
-      'color': '#ccc'
-    },
-    '.snow .link-tooltip-container a, .snow .link-tooltip-container span': {
-      'display': 'inline-block',
-      'line-height': '25px'
-    }
-  };
-
-  function SnowTheme(quill) {
+  function SnowTheme(quill, options) {
     this.quill = quill;
+    this.options = options;
     SnowTheme.__super__.constructor.apply(this, arguments);
-    this.quill.addStyles(SnowTheme.STYLES);
+    dom(this.quill.container).addClass('ql-snow');
     this.pickers = [];
     this.quill.on(this.quill.constructor.events.SELECTION_CHANGE, (function(_this) {
       return function(range) {
@@ -9765,7 +8348,6 @@ SnowTheme = (function(_super) {
         }
       };
     })(this));
-    DOM.addClass(this.quill.root.ownerDocument.body, 'snow');
     this.quill.onModuleLoad('multi-cursor', _.bind(this.extendMultiCursor, this));
     this.quill.onModuleLoad('toolbar', _.bind(this.extendToolbar, this));
   }
@@ -9780,6 +8362,7 @@ SnowTheme = (function(_super) {
   };
 
   SnowTheme.prototype.extendToolbar = function(module) {
+    dom(module.container).addClass('ql-snow');
     _.each(['color', 'background', 'font', 'size', 'align'], (function(_this) {
       return function(format) {
         var picker, select;
@@ -9798,7 +8381,7 @@ SnowTheme = (function(_super) {
             picker = new ColorPicker(select);
             _.each(picker.container.querySelectorAll('.ql-picker-item'), function(item, i) {
               if (i < 7) {
-                return DOM.addClass(item, 'ql-primary-color');
+                return dom(item).addClass('ql-primary-color');
               }
             });
         }
@@ -9807,159 +8390,20 @@ SnowTheme = (function(_super) {
         }
       };
     })(this));
-    return _.each(DOM.getTextNodes(module.container), function(node) {
-      if (DOM.getText(node).trim().length === 0) {
-        return DOM.removeNode(node);
+    return _.each(dom(module.container).textNodes(), function(node) {
+      if (dom(node).text().trim().length === 0) {
+        return dom(node).remove();
       }
     });
   };
 
   return SnowTheme;
 
-})(DefaultTheme);
+})(BaseTheme);
 
 module.exports = SnowTheme;
 
 
-},{"../../dom":15,"../../lib/color-picker":19,"../../lib/picker":21,"../default":37,"lodash":"M4+//f"}],39:[function(_dereq_,module,exports){
-var DOM, Utils, _;
 
-_ = _dereq_('lodash');
-
-DOM = _dereq_('./dom');
-
-Utils = {
-  convertFontSize: function(size) {
-    var i, s, sources, targets;
-    if (_.isString(size) && size.indexOf('px') > -1) {
-      sources = _.keys(DOM.FONT_SIZES);
-      targets = _.values(DOM.FONT_SIZES);
-    } else {
-      targets = _.keys(DOM.FONT_SIZES);
-      sources = _.values(DOM.FONT_SIZES);
-    }
-    for (i in sources) {
-      s = sources[i];
-      if (parseInt(size) <= parseInt(s)) {
-        return targets[i];
-      }
-    }
-    return _.last(targets);
-  },
-  getChildAtOffset: function(node, offset) {
-    var child, length;
-    child = node.firstChild;
-    length = Utils.getNodeLength(child);
-    while (child != null) {
-      if (offset < length) {
-        break;
-      }
-      offset -= length;
-      child = child.nextSibling;
-      length = Utils.getNodeLength(child);
-    }
-    if (child == null) {
-      child = node.lastChild;
-      offset = Utils.getNodeLength(child);
-    }
-    return [child, offset];
-  },
-  getNextLineNode: function(curNode, root) {
-    var nextNode;
-    nextNode = curNode.nextSibling;
-    if ((nextNode == null) && curNode.parentNode !== root) {
-      nextNode = curNode.parentNode.nextSibling;
-    }
-    if ((nextNode != null) && (DOM.LIST_TAGS[nextNode.tagName] != null)) {
-      nextNode = nextNode.firstChild;
-    }
-    return nextNode;
-  },
-  getNodeLength: function(node) {
-    var length;
-    if (node == null) {
-      return 0;
-    }
-    length = DOM.getText(node).length;
-    if (DOM.isElement(node)) {
-      length += node.querySelectorAll(_.keys(DOM.EMBED_TAGS).join(',')).length;
-    }
-    return length;
-  },
-  isIE: function(maxVersion) {
-    var version;
-    version = document.documentMode;
-    return version && maxVersion >= version;
-  },
-  mergeNodes: function(newNode, oldNode) {
-    var text;
-    if (DOM.isElement(newNode)) {
-      DOM.moveChildren(newNode, oldNode);
-      DOM.normalize(newNode);
-    } else {
-      text = DOM.getText(newNode) + DOM.getText(oldNode);
-      DOM.setText(newNode, text);
-    }
-    return DOM.removeNode(oldNode);
-  },
-  splitAncestors: function(refNode, root, force) {
-    var nextNode, parentClone, parentNode;
-    if (force == null) {
-      force = false;
-    }
-    if (refNode === root || refNode.parentNode === root) {
-      return refNode;
-    }
-    if ((refNode.previousSibling != null) || force) {
-      parentNode = refNode.parentNode;
-      parentClone = parentNode.cloneNode(false);
-      parentNode.parentNode.insertBefore(parentClone, parentNode.nextSibling);
-      while (refNode != null) {
-        nextNode = refNode.nextSibling;
-        parentClone.appendChild(refNode);
-        refNode = nextNode;
-      }
-      return Utils.splitAncestors(parentClone, root);
-    } else {
-      return Utils.splitAncestors(refNode.parentNode, root);
-    }
-  },
-  splitNode: function(node, offset, force) {
-    var after, child, childLeft, childRight, left, nextRight, nodeLength, right, _ref, _ref1;
-    if (force == null) {
-      force = false;
-    }
-    nodeLength = Utils.getNodeLength(node);
-    offset = Math.max(0, offset);
-    offset = Math.min(offset, nodeLength);
-    if (!(force || offset !== 0)) {
-      return [node.previousSibling, node, false];
-    }
-    if (!(force || offset !== nodeLength)) {
-      return [node, node.nextSibling, false];
-    }
-    if (node.nodeType === DOM.TEXT_NODE) {
-      after = node.splitText(offset);
-      return [node, after, true];
-    } else {
-      left = node;
-      right = node.cloneNode(false);
-      node.parentNode.insertBefore(right, left.nextSibling);
-      _ref = Utils.getChildAtOffset(node, offset), child = _ref[0], offset = _ref[1];
-      _ref1 = Utils.splitNode(child, offset), childLeft = _ref1[0], childRight = _ref1[1];
-      while (childRight !== null) {
-        nextRight = childRight.nextSibling;
-        right.appendChild(childRight);
-        childRight = nextRight;
-      }
-      return [left, right, true];
-    }
-  }
-};
-
-module.exports = Utils;
-
-
-},{"./dom":15,"lodash":"M4+//f"}]},{},[34])
-(34)
+},{"../../lib/color-picker":15,"../../lib/dom":16,"../../lib/picker":19,"../base":32,"lodash":1}]},{},[14])(14)
 });

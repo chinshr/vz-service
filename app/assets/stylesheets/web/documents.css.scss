@@ -169,6 +169,20 @@ body.documents {
     } /* nav */
   } /* header */
 
+  #document {
+    height: 100%;
+    position: absolute;
+    top: 0;
+
+    #document-show, #document-edit {
+      height: 100%;
+
+      .document-overlay {
+        height: 100%
+      }
+    }
+  }
+
   .container {
     margin-top: 95px;
 
@@ -210,6 +224,22 @@ body.documents {
             line-height: 40px;
             padding-bottom: 10px;
           }
+
+          #title-editor {
+            padding: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+
+          #title-editor .ql-editor {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-weight: bold;
+            font-size: 28px;
+            color: #444;
+            -webkit-font-smoothing: antialiased;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
         }
 
         .content-container {
@@ -221,6 +251,28 @@ body.documents {
 
           .content-holder {
             overflow: hidden;
+          }
+
+          #content-editor {
+            padding: 0;
+          }
+
+          .ql-editor, .editor-container {
+            overflow: hidden !important;
+          }
+
+          #content-editor .ql-editor {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-weight: normal;
+            font-size: 16px;
+            line-height: 1.5em;
+            -webkit-font-smoothing: antialiased;
+          }
+
+          .xspacer-container {
+            height: 100px;
+            display: block;
+            clear: both;
           }
         }
 
