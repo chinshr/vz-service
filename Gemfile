@@ -1,14 +1,14 @@
 source 'https://rubygems.org'
-ruby '2.0.0'
+ruby '2.1.1'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '4.0.5'
+gem 'rails', '4.1.9' # '4.0.5'
 
 # Use postgresql as the database for Active Record
 gem 'pg'
 
 # Use SCSS for stylesheets
-gem 'sass-rails', '~> 4.0.0'
+gem 'sass-rails', '~> 4.0.3'
 
 # Use Uglifier as compressor for JavaScript assets
 gem 'uglifier', '>= 1.3.0'
@@ -19,10 +19,11 @@ gem 'coffee-rails', '~> 4.0.0'
 # See https://github.com/sstephenson/execjs#readme for more supported runtimes
 # gem 'therubyracer', platforms: :ruby
 
-# Use jquery as the JavaScript library
-gem 'jquery-rails'
-gem 'jquery-ui-rails'
-gem 'raptor-editor-rails'
+group :assets do
+  # Use jquery as the JavaScript library
+  gem 'jquery-rails'
+  gem 'jquery-ui-rails'
+end
 
 # Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
 # gem 'turbolinks'
@@ -41,21 +42,22 @@ end
 # Use unicorn as the app server
 # gem 'unicorn'
 group :development, :test do
-  gem 'debugger'
+  gem 'pry-rails'
+  gem 'pry-nav'
   gem 'foreman', '~> 0.73.0'
   # gem 'pry-rails'
   # gem 'pry-nav'
 end
 
 group :test do
-  gem 'mocha', :require => false  #'~> 0.12.8', 
+  gem 'mocha', :require => false
   gem 'shoulda'
   gem 'shoulda-context'
-  gem 'shoulda-matchers'#, '1.4.1'
+  gem 'shoulda-matchers'
   gem 'factory_girl_rails'
   gem 'minitest'
   gem 'simplecov', :require => false
-  gem 'turn'
+  #gem 'turn'
   gem 'test_after_commit'
   gem 'webmock'
 end
@@ -87,8 +89,16 @@ gem 'uuid'
 gem 'curb'
 gem 'json'
 gem 'devise'
-gem 'activeadmin', github: 'gregbell/active_admin'
-gem 'rails4_client_side_validations'
+
+#gem 'activeadmin', github: 'gregbell/active_admin'
+gem 'activeadmin', github: 'activeadmin'
+# <hack> for Rails 4.1
+gem "formtastic", github: "justinfrench/formtastic"
+gem "polyamorous", :github => "activerecord-hackery/polyamorous"
+#gem "ransack", github: "activerecord-hackery/ransack", branch: "rails-4.1"
+# </hack> for Rails 4.1
+
+#gem 'client_side_validations', github: "tagliala/client_side_validations", branch: "rails4"
 gem 'geocoder'
 gem 'gmaps4rails'
 gem 'nokogiri'

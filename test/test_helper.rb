@@ -32,8 +32,6 @@ Warden.test_mode!
 class ActiveSupport::TestCase
   require "mocha/setup"
 
-  ActiveRecord::Migration.check_pending!
-
   # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
   #
   # Note: You'll currently still have to declare fixtures explicitly in integration tests

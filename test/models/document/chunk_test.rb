@@ -38,17 +38,8 @@ class Document::ChunkTest < ActiveSupport::TestCase
       assert_equal [@c1, @c5, @c9], @document.chunks.best
     end
 
-    should "scope worst scores" do
-      assert_equal 3, @document.chunks.worst.count
-      assert_equal [@c7, @c8, @c6], @document.chunks.worst
-    end
-
     should "transform chunks to best text string" do
       assert_equal "I hate to say that macaronies are the best food in the world", @document.chunks.best.text
-    end
-
-    should "transform chunks to worst text string" do
-      assert_equal "I have say that some macaronies are the best mushrooms in the whirlwind.", @document.chunks.worst.text
     end
 
     should "transform chunks to rich_text JSON" do
