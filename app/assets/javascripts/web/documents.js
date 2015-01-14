@@ -31,11 +31,8 @@ $(document).ready(function() {
     content: '<button id="close-me">Close Me!</button>'
   });
 
-/*
-  $('.xbtn-popover').click(function() {
+  $('.btn-popover').click(function() {
     $('#' + $(this).data('target')).toggle();
   });
-*/
-  
 });
 
