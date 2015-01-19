@@ -34,5 +34,10 @@ $(document).ready(function() {
   $('.btn-popover').click(function() {
     $('#' + $(this).data('target')).toggle();
   });
+
 });
 
+// dropdown
+$(document).ready(function() {
+  $('.dropdown-toggle').dropdown();
+});

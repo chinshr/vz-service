@@ -31,11 +31,12 @@ Voyzes::Application.routes.draw do
       resource :billing, :only => :show
     end
 
-    resources :documents, :only => [:show, :edit]
-
+    resources :documents, only: [:show, :edit], path: ""
+=begin
     get "/:id" => 'documents#show'
     get "/:id/edit" => 'documents#edit'
     get "/:id/stream" => 'documents#stream'
+=end
   end
 
   namespace :api do
