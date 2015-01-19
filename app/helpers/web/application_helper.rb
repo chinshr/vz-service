@@ -26,7 +26,8 @@ module Web::ApplicationHelper
     ["It's not the years in your life that count. It's the life in your years.", "Abraham Lincoln"],
     ["The only way to do great work is to love what you do.", "Steve Jobs"],
     ["Failure is the condiment that gives success its flavor.", "Truman Capote"],
-    ["If you can dream it, you can achieve it.", "Zig Ziglar"]
+    ["If you can dream it, you can achieve it.", "Zig Ziglar"],
+    ["Pull the string, and it will follow you wherever. Push it, and it will go nowhere at all.", "Dwight Eisenhower"]
   ]
 
   def markdown(text)
