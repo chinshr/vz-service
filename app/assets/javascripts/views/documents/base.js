@@ -305,7 +305,7 @@ App.Views.DocumentsBase = Backbone.View.extend({
         if (rects.length > 0) {
           var ui = $(".user-initials");
           ui.stop().animate({
-            top: margin - (ui.height() / 2) + rects[0].top
+            top: margin - (ui.height() / 2) + window.scrollY + rects[0].top
           }, 0);
         }
       }
