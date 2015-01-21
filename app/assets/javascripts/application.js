@@ -39,7 +39,7 @@ var VZ = (function(){
   return {};
 })();
 
-VZ.social = (function(){
+VZ.sc = (function() {
   var url = '//voyz.es' + document.location.pathname;
 
     /* Facebook init */ 
@@ -59,7 +59,7 @@ VZ.social = (function(){
     return window.twttr || (t = { _e: [], ready: function(f){ t._e.push(f); } });
   }(document, "script", "twitter-wjs"));
 
-  $(function() {
+  var bind = function bind() {
     $('.social-box .facebook a').attr("href",'http://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(url))
     .on('click', function(e) {
       var href = this.getAttribute('data-href');
@@ -70,8 +70,14 @@ VZ.social = (function(){
       // DotBo.trackEvent("Facebook Button Clicked", { url : fburl });
       return false;
     });
+  };
+
+  $(function() {
+    bind();
   });
 
+  VZ.social = {};
+  VZ.social.bind = bind;
 })();
 
 $.extend(true, $.notify.defaultOptions, {

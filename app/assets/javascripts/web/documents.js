@@ -31,12 +31,13 @@ $(document).ready(function() {
     content: function() {
       return $('#' + $(this).data('target') + " .popover-content").html();
     }
-  }).on('shown.bs.popover', function(e){
-    $.alert("Hello@");
-    // var popover = jQuery(this);
-    // jQuery(this).parent().find('div.popover .close').on('click', function(e){
-    //   popover.popover('hide');
-    // });
+  }).on('shown.bs.popover', function(e) {
+/*
+    var popover = jQuery(this);
+    jQuery(this).parent().find('div.popover .close').on('click', function(e){
+      popover.popover('hide');
+    });
+*/
   });
 
   // $('.xbtn-popover').popover('toggle');
