@@ -35,6 +35,45 @@
 //= require_tree ./routers
 //= require_tree ./web
 
+var VZ = (function(){
+  return {};
+})();
+
+VZ.social = (function(){
+  var url = '//voyz.es' + document.location.pathname;
+
+    /* Facebook init */ 
+  (function(d, debug){
+     var js, id = 'facebook-jssdk', ref = d.getElementsByTagName('script')[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement('script'); js.id = id; js.async = true;
+     js.src = "//connect.facebook.net/en_US/all" + (debug ? "/debug" : "") + ".js";
+     ref.parentNode.insertBefore(js, ref);
+  }(document, /* debug */ false));
+
+  /* Twitter init */ 
+  window.twttr = (function (d,s,id) {
+    var t={}, js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return; js=d.createElement(s); js.id=id;
+    js.src="//platform.twitter.com/widgets.js"; fjs.parentNode.insertBefore(js, fjs);
+    return window.twttr || (t = { _e: [], ready: function(f){ t._e.push(f); } });
+  }(document, "script", "twitter-wjs"));
+
+  $(function() {
+    $('.social-box .facebook a').attr("href",'http://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(url))
+    .on('click', function(e) {
+      var href = this.getAttribute('data-href');
+      var fburl = decodeURIComponent(href.substring(href.indexOf("u=") + 2));
+
+      // if (VZ.trackingCodes && ('facebook' in VZ.trackingCodes)) href += "%3Fr%3D" + VZ.trackingCodes.facebook;
+      window.open(href, 'sharer', "toolbar=no,menubar=no,scrollbars=no,location=no,directories=no,width=626,height=300");
+      // DotBo.trackEvent("Facebook Button Clicked", { url : fburl });
+      return false;
+    });
+  });
+
+})();
+
 $.extend(true, $.notify.defaultOptions, {
   "align": "center",
   "offset": {

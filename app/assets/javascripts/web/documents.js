@@ -10,30 +10,36 @@
 /* Tooltips */
 $(document).ready(function() {
   $('.btn-tlb').tooltip({});
-  $("#popoverExampleTwo").popover({
-    html : true, 
-    content: function() {
-      return $('#popoverExampleTwoHiddenContent').html();
-    },
-    title: function() {
-      return $('#popoverExampleTwoHiddenTitle').html();
-    }
-  });
 });
 
 // popover
 $(document).ready(function() {
 
-  $('.btn-popover').popover({
+  $('.xbtn-popover').popover({
     html: true,
     title: 'Hello',
     placement: 'bottom',
     content: '<button id="close-me">Close Me!</button>'
   });
 
-  $('.btn-popover').click(function() {
-    $('#' + $(this).data('target')).toggle();
+  $('.btn-popover').popover({ 
+    html : true, 
+    placement: 'bottom',
+    title: function() {
+      return $('#' + $(this).data('target') + " .popover-title").html();
+    },
+    content: function() {
+      return $('#' + $(this).data('target') + " .popover-content").html();
+    }
+  }).on('shown.bs.popover', function(e){
+    $.alert("Hello@");
+    // var popover = jQuery(this);
+    // jQuery(this).parent().find('div.popover .close').on('click', function(e){
+    //   popover.popover('hide');
+    // });
   });
+
+  // $('.xbtn-popover').popover('toggle');
 
 });
 
