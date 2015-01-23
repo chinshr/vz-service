@@ -171,7 +171,105 @@ body.documents {
         }
       }
     } /* nav */
+
+
   } /* header */
+
+  .popover {
+    .popover-content {
+
+      .social-box {
+        xmargin: 0 0 17px -7px;
+        overflow: hidden;
+
+        ul.social-networks {
+          width: 100%;
+          margin: 0;
+          padding: 0;
+          list-style: none;
+          display: inline-block;
+          vertical-align: top;
+          overflow: hidden;
+
+          li {
+            display: inline-block;
+            vertical-align: middle;
+            xmargin: 0 -3px 0 0;
+            border: 0;
+            padding: 0;
+
+            a {
+              width: 36px;
+              height: 36px;
+              line-height: 36px;
+              min-width: 36px;
+              display: block;
+              overflow: hidden;
+              color: #fff;
+              white-space: nowrap;
+              text-decoration: none;
+              text-align: center;
+              font-size: 18px;
+              outline: 0;
+            }
+
+            &.facebook {
+              a {
+                background-color: #2f609c;
+              }
+            }
+
+            &.twitter {
+              a {
+                background-color: #55acee;
+              }
+            }
+
+            &.linkedin {
+              a {
+                background-color: #0074a1;
+              }
+            }
+
+            &.google-plus {
+              a {
+                background-color: #d24231;
+              }
+            }
+
+            &.email {
+              background-color: #089e00;
+            }
+          }
+        }
+      } /* .social-box */
+
+      .share-link-container {
+        p {
+          margin: 0 0 7px 0;
+          white-space: normal;
+        }
+
+        input {
+          -moz-box-sizing: border-box;
+          -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+          box-shadow: inset 0 1px 1px rgba(0, 0, 0, .2);
+          border: 1px solid rgba(0, 0, 0, .3);
+          border-top: 1px solid rgba(0, 0, 0, .4);
+          border-bottom: 1px solid rgba(0, 0, 0, .2);
+          border-radius: 3px;
+          padding: 7px;
+          transition: border linear .2s, box-shadow linear .2s;
+          outline: none;
+        }
+
+        .width-full {
+          width: 100%;
+        }
+      } /* .share-link-container */
+    } /* popover-content */
+  } /* .popover */
 
   #document {
     height: 100%;
@@ -185,7 +283,7 @@ body.documents {
         height: 100%
       }
     }
-  }
+  } /* #document */
 
   .container {
     margin-top: 95px;

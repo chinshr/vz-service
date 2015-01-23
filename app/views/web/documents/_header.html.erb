@@ -72,18 +72,26 @@
 
         <div id="navbar-right" class="navbar-flush-right">
           <button id="share-button" class="btn btn-popover btn-default btn-with-border" data-container="body" data-toggle="popover" data-placement="bottom" data-target="share-popover"><i class="fa fa-share"></i>Share</button>
-          <!-- Popover content -->
           <div id="share-popover" class="popover fade bottom in" role="tooltip">
-            <h3 class="popover-title">Hello World!</h3>
+            <!-- <h3 class="popover-title">Share!</h3> -->
             <div class="popover-content">
               <div class="social-box">
-                <div class="facebook"><a href="#">Facebook</a></div>
+                <ul class="social-networks">
+                  <li class="facebook"><a class="fa fa-facebook" href="#" data-href=""></a></li>
+                  <li class="twitter"><a class="fa fa-twitter" href="#" data-href="" ></a></li>
+                  <li class="linkedin"><a class="fa fa-linkedin" href="#" data-href=""></a></li>
+                  <li class="google-plus"><a class="fa fa-google-plus" href="#" data-href=""></a></li>
+                  <li class="email"><a class="fa fa-envelope" href="#" data-href=""></a></li>
+                </ul>
+              </div><!-- .social-box -->
+              <div class="share-link-container">
+                <p>Copy and paste the link below to share this document.</p>
+                <input type="url" class="width-full" readonly="readonly" value="">
               </div>
-            </div>
-          </div>
+            </div><!-- popover-content -->
+          </div><!-- #share-popover .popover -->
         </div><!-- navbar-flush-right -->
       </div><!-- .collapse .navbar-collapse -->
-
     </nav>
   </div><!-- .container-fluid -->
 </header><!-- header -->
