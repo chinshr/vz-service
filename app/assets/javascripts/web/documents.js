@@ -15,15 +15,9 @@ $(document).ready(function() {
 // popover
 $(document).ready(function() {
 
-  $('.xbtn-popover').popover({
-    html: true,
-    title: 'Hello',
-    placement: 'bottom',
-    content: '<button id="close-me">Close Me!</button>'
-  });
-
   $('.btn-popover').popover({ 
-    html : true, 
+    container: 'body',
+    html : true,
     placement: 'bottom',
     title: function() {
       return $('#' + $(this).data('target') + " .popover-title").html();
@@ -32,6 +26,7 @@ $(document).ready(function() {
       return $('#' + $(this).data('target') + " .popover-content").html();
     }
   }).on('shown.bs.popover', function(e) {
+    VZ.social.bind();
 /*
     var popover = jQuery(this);
     jQuery(this).parent().find('div.popover .close').on('click', function(e){
@@ -39,8 +34,6 @@ $(document).ready(function() {
     });
 */
   });
-
-  // $('.xbtn-popover').popover('toggle');
 
 });
 

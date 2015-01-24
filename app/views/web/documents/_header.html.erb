@@ -75,18 +75,18 @@
           <div id="share-popover" class="popover fade bottom in" role="tooltip">
             <!-- <h3 class="popover-title">Share!</h3> -->
             <div class="popover-content">
-              <div class="social-box">
+              <div class="social-container">
                 <ul class="social-networks">
                   <li class="facebook"><a class="fa fa-facebook" href="#" data-href=""></a></li>
                   <li class="twitter"><a class="fa fa-twitter" href="#" data-href="" ></a></li>
                   <li class="linkedin"><a class="fa fa-linkedin" href="#" data-href=""></a></li>
-                  <li class="google-plus"><a class="fa fa-google-plus" href="#" data-href=""></a></li>
+                  <!-- <li class="google-plus"><a class="fa fa-google-plus" href="#" data-href=""></a></li> -->
                   <li class="email"><a class="fa fa-envelope" href="#" data-href=""></a></li>
                 </ul>
-              </div><!-- .social-box -->
+              </div><!-- .social-container -->
               <div class="share-link-container">
                 <p>Copy and paste the link below to share this document.</p>
-                <input type="url" class="width-full" readonly="readonly" value="">
+                <input type="url" class="width-full" readonly="readonly" value="<%= web_document_url(@document.slug) %>">
               </div>
             </div><!-- popover-content -->
           </div><!-- #share-popover .popover -->
