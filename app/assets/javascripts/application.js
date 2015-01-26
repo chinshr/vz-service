@@ -38,7 +38,9 @@
 var VZ = (function() {
   var config = {
     domain: "voyz.es",
-    twitter: {hashtag: "voyzes", hashtags: "voyzes"}
+    name: "VOYZ.ES",
+    twitter: {hashtag: "voyzes", hashtags: "voyzes", prefix: "See what I found on VOYZ.ES "},
+    linkedin: {prefix: "See what I found on VOYZ.ES "}
   };
 
   var isProduction = document.location.href.indexOf("www." + config.domain) > 0;
@@ -113,11 +115,21 @@ VZ._social = (function() {
     return window.twttr || (t = { _e: [], ready: function(f){ t._e.push(f); } });
   }(document, "script", "twitter-wjs"));
 
-  var hashtag = VZ.config.twitter.hashtag;
-  var hashtags = VZ.config.twitter.hashtags;
-  var tweetPrefix = "Check out what I found on VOYZ.ES ";
+  /* linkedin init */
+  (function(d, s) {
+    var t = d.createElement(s);
+    t.type  = "text/javascript";
+    t.src   = "//platform.linkedin.com/in.js";
+    t.lang  = "en_US";
+    t.async = true;
+    d.getElementsByTagName("head")[0].appendChild(t);
+  }(document, 'script'));
 
   var setupTwitter = function setupTwitter(tweetURL, openAfterSetup) {
+    var hashtag = VZ.config.twitter.hashtag,
+      hashtags = VZ.config.twitter.hashtags,
+      tweetPrefix = VZ.config.twitter.prefix;
+
     if (!('isTweetURLSet' in this)) {this.isTweetURLSet = false;}
     if (!tweetURL && this.isTweetURLSet) {return;}
     var url = VZ.baseURL + (tweetURL ? tweetURL : document.location.pathname);
@@ -128,23 +140,30 @@ VZ._social = (function() {
     var href = 'https://twitter.com/intent/tweet?related=' + hashtag + '&url=' + encodeURIComponent(url) + '&text=' + encodeURIComponent(tweetPrefix + title) + '&hashtags=' + encodeURIComponent(hashtags);
     $('.social-networks .twitter a').attr("data-href", href);
     this.isTweetURLSet = true;
+  }
 
-    if (openAfterSetup) {
-      window.open(href, '', 'height=600,width=500');
-    } else {
-      $('.social-networks .twitter a').click(function(e) {
-        e.preventDefault();
-        window.open(href, '', 'height=600,width=500');
-      });
-    }
+  var setupLinkedIn = function setupLinkedIn(shareURL, openAfterSetup) {
+    if (!('isLinkedInURLSet' in this)) {this.isLinkedInURLSet = false;}
+    if (!shareURL && this.isLinkedInURLSet) {return;}
+    var url  = VZ.baseURL + (shareURL ? shareURL : document.location.pathname),
+      title  = $('head meta[property="og:title"]').attr("content") || "";
+      image  = $('head meta[property="og:image"]').attr("content");
+      prefix = VZ.config.linkedin.prefix;
+
+    if (trackingCodes && ('linkedin' in trackingCodes)) {url += "?r=" + trackingCodes.linkedin;}
+    var href = 'https://www.linkedin.com/cws/share?url=' + encodeURIComponent(url) + '&text=' + encodeURIComponent(prefix + title);
+    $('.social-networks .linkedin a').attr("data-href", href);
+    this.isLinkedInURLSet = true;
   }
 
   var bind = function bind() {
+    // http://stackoverflow.com/questions/25619418/how-do-i-implement-basic-share-social-buttons-with-font-awesome-fonts
+
     // facebook
     $('.social-networks .facebook a').attr("href",'http://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(url))
     .on('click', function(e) {
-      var href = this.getAttribute('data-href'),
-        fburl = decodeURIComponent(href.substring(href.indexOf("u=") + 2));
+      var href = $(this).attr("href"),
+        fburl = decodeURIComponent( href.substring(href.indexOf("u=")+2) );
 
       if (trackingCodes && ('facebook' in trackingCodes)) {
         href += "%3Fr%3D" + trackingCodes.facebook;
@@ -164,9 +183,23 @@ VZ._social = (function() {
       if (trackingCodes && ('twitter' in trackingCodes)) {
         tw_url += "?r=" + trackingCodes.twitter;
       }
-      href = 'https://twitter.com/intent/tweet?related=dotandbo&url='+encodeURIComponent(tw_url)+'&text='+encodeURIComponent(tweetPrefix)+'&hashtags='+encodeURIComponent(hashtags);
+      href = 'https://twitter.com/intent/tweet?related=' + 'voyzes' + '&url='+encodeURIComponent(tw_url)+'&text='+encodeURIComponent(tweetPrefix)+'&hashtags='+encodeURIComponent(hashtags);
       window.open(href, '', 'height=500,width=450');
       VZ.trackEvent("twitter-button-clicked", {url : tw_url});
+    });
+
+    // linkedin
+    setupLinkedIn();
+    $('.social-networks .linkedin a').on('click', function(e) {
+      e.preventDefault();
+      var href = this.getAttribute('data-href');
+      var li_url = decodeURIComponent(href.substring(href.lastIndexOf("url=") + 4));
+      if (trackingCodes && ('linkedin' in trackingCodes)) {
+        li_url += "?r=" + trackingCodes.linkedin;
+      }
+      href = 'https://www.linkedin.com/cws/share?url=' + encodeURIComponent(li_url) + '&text=' + encodeURIComponent(VZ.config.linkedin.prefix);
+      window.open(href, '', 'height=500,width=450');
+      VZ.trackEvent("linkedin-button-clicked", {url : li_url});
     });
 
   };
@@ -175,11 +208,8 @@ VZ._social = (function() {
     bind();
   });
 
-  VZ.social = {twitter: {}};
+  VZ.social = {facebook: {}, twitter: {}, linkedin: {}};
   VZ.social.bind = bind;
-  VZ.social.twitter.hashtag = hashtag;
-  VZ.social.twitter.setup = setupTwitter;
-  // VZ.social.hashtag = hashtag;
 })();
 
 $.extend(true, $.notify.defaultOptions, {
