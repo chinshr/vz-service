@@ -71,7 +71,9 @@
         </ul>
 
         <div id="navbar-right" class="navbar-flush-right">
-          <button id="share-button" class="btn btn-popover btn-default btn-with-border" data-container="body" data-toggle="popover" data-placement="bottom" data-target="share-popover"><i class="fa fa-share"></i>Share</button>
+<!--           <button id="share-button" title="Share" type="button" class="btn btn-popover btn-default btn-with-border" data-toggle="popover" data-placement="bottom"></button>
+ -->
+          <button id="share-button" class="btn btn-popover btn-default btn-share fa fa-share" type="button" data-container="body" data-toggle="popover tooltip" data-placement="bottom" data-target="share-popover"></button>
           <div id="share-popover" class="popover fade bottom in" role="tooltip">
             <!-- <h3 class="popover-title">Share!</h3> -->
             <div class="popover-content">
@@ -85,7 +87,11 @@
                 </ul>
               </div><!-- .social-container -->
               <div class="share-link-container">
-                <p>Copy and paste the link below to share this document.</p>
+                <% if @document.privacy_private? %>
+                <p><i class="fa fa-lock"></i>This document is private and can only be viewed by the owner.</p>
+                <% else %>
+                <p><i class="fa fa-info"></i>Copy and paste the link below to share this document.</p>
+                <% end %>
                 <input type="url" class="width-full" readonly="readonly" value="<%= web_document_url(@document.slug) %>">
               </div>
             </div><!-- popover-content -->

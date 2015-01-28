@@ -151,13 +151,14 @@ body.documents {
         float: right;
         margin-top: 8px;
 
-        .btn-with-border {
+        .btn-with-border, .btn-share {
           background-color: transparent;
           border-color: #ddd;
           color: #ddd;
           font-size: 14px;
           font-weight: normal;
           text-transform: uppercase;
+          padding: 9px;
 
           i {
             padding-right: 5px;
@@ -261,6 +262,10 @@ body.documents {
           white-space: normal;
           font-size: 11px;
           color: #dbdbdb;
+
+          i {
+            margin-right: 4px;
+          }
         }
 
         input {
