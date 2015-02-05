@@ -44,6 +44,20 @@ class ActiveSupport::TestCase
   include Shoulda::Matchers::ActiveModel
   extend Shoulda::Matchers::ActiveModel
 
+  def assert_error_on(record, *fields)
+    record.valid?
+    fields.each do |field|
+      assert !record.errors[field.to_sym].empty?, "expected errors on #{field}"
+    end
+  end
+
+  def assert_no_error_on(record, *fields)
+    record.valid?
+    fields.each do |field|
+      assert record.errors[field.to_sym].empty?, "expected no errors on #{field}"
+    end
+  end
+
   setup do
     stub_request(:get, "freegeoip.net/json/95.63.14.59").
       with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Ruby'}).

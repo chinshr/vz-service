@@ -23,6 +23,8 @@ Voyzes::Application.routes.draw do
     get '/terms/privacy-policy' => "terms#privacy_policy"
     get '/terms/terms-of-service' => "terms#terms_of_service"
 
+    resources :registrations, :only => :create
+
     # Web:Account::Application
     get "/account" => 'account/application#index'  # => redirects /dashboard
     resource :dashboard, :only => :show, :controller => "account/dashboards"

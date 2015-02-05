@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150106163912) do
+ActiveRecord::Schema.define(version: 20150205203002) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -161,6 +161,36 @@ ActiveRecord::Schema.define(version: 20150106163912) do
   add_index "messages", ["sender_id"], name: "index_messages_on_sender_id", using: :btree
   add_index "messages", ["type"], name: "index_messages_on_type", using: :btree
   add_index "messages", ["uid"], name: "index_messages_on_uid", using: :btree
+
+  create_table "registrations", force: true do |t|
+    t.string   "email"
+    t.string   "locale",       limit: 8
+    t.string   "country_code", limit: 2
+    t.string   "ip_address"
+    t.string   "first_name"
+    t.string   "last_name"
+    t.string   "time_zone"
+    t.decimal  "lat",                    precision: 11, scale: 8
+    t.decimal  "lng",                    precision: 11, scale: 8
+    t.string   "address"
+    t.string   "city"
+    t.string   "postal_code"
+    t.string   "region_code"
+    t.string   "type"
+    t.string   "uid"
+    t.string   "referrer_uid"
+    t.boolean  "opt_in",                                          default: false, null: false
+    t.text     "fields"
+    t.text     "user_data"
+    t.string   "region_name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "registrations", ["email"], name: "index_registrations_on_email", unique: true, using: :btree
+  add_index "registrations", ["referrer_uid"], name: "index_registrations_on_referrer_uid", using: :btree
+  add_index "registrations", ["type"], name: "index_registrations_on_type", using: :btree
+  add_index "registrations", ["uid"], name: "index_registrations_on_uid", using: :btree
 
   create_table "taggings", force: true do |t|
     t.integer  "tag_id"

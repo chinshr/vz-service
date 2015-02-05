@@ -29,3 +29,7 @@ en:
           attributes:
             file_type:
               audio_expected: "is not an audio file"
+        registration:
+          attributes:
+            email:
+              email_format: not a valid email address
