@@ -49,31 +49,6 @@
 
   <body data-spy="scroll" data-offset="70" data-target="#navigation" class="<%= dom_controller_class %> <%= dom_controller_action_class %> selected-main-item">
     <div id="content">
-      <%#
-      <header>
-        <div class="container">
-          <div class="row">
-            <div class="col-lg-3 col-md-3 col-sm-10 col-xs-9">
-              <h1 id="logo">VOYZ.ES</h1>
-            </div><!-- end 2 -->
-            <div class="col-sm-2 col-xs-3 visible-sm text-right visible-xs">
-              <a href="#" title="nav" class="mini-nav"><i class="fa fa-reorder"></i></a>
-            </div>
-
-            <div class="col-lg-6 col-lg-offset-3 col-md-7 col-md-offset-2 col-sm-12 col-xs-12">
-              <nav id="navigation">
-                <ul class="nav">
-                  <li class="active"><a href="#main" title="Home">Home</a></li>
-                  <li><a href="#work" title="Work">What We Do</a></li>
-                  <li><a href="#our-team" title="Our Team">About Us</a></li>
-                </ul>
-              </nav>
-            </div><!-- end 12 -->
-          </div><!-- end row -->
-        </div><!-- end container -->
-      </header>
-      %>
-      
       <header>
         <div class="container">
           <nav class="navbar navbar-default" id="navigation" role="navigation">
@@ -111,13 +86,28 @@
             <div class="col-lg-7 col-lg-offset-5 col-md-8 col-md-offset-4 col-sm-10 col-sm-offset-1 col-xs-12">
               <div class="cont-wrapper">
                 <p class="intro">Your conversations <br/>deserve a place to be found</p>
-                <p class="btn-wrp">
-                  <% if Rails.env.production? %>
-                  <a href="https://www.youtube.com/watch?v=w2oLFpcMPlo" class="c2a-button youtube" onClick="_gaq.push(['_trackEvent', 'Videos', 'Play', 'Knight Talk: Ana María Carrano']);"><i class="glyphicon glyphicon-play"></i></a>
-                  <% else %>
-                  <a href="https://www.youtube.com/watch?v=w2oLFpcMPlo" class="c2a-button youtube"><i class="glyphicon glyphicon-play"></i></a>
-                  <% end %>
-                </p>
+                <div class="actions">
+                  <div class="play-wrapper">
+                    <% if Rails.env.production? %>
+                    <a href="https://www.youtube.com/watch?v=w2oLFpcMPlo" class="c2a-button youtube" onClick="_gaq.push(['_trackEvent', 'Videos', 'Play', 'Knight Talk: Ana María Carrano']);"><i class="glyphicon glyphicon-play"></i></a>
+                    <% else %>
+                    <a href="https://www.youtube.com/watch?v=w2oLFpcMPlo" class="c2a-button youtube"><i class="glyphicon glyphicon-play"></i></a>
+                    <% end %>
+                  </div><!-- .play-wrapper -->
+                  <div class="registration-form">
+                    <h4>Want to get early access?</h4>
+                    <%= form_for(@registration || Registration.new, {:url => web_registrations_path, :validate => true, :remote => true}) do |f| %>
+                      <div class="form-group">
+                        <%= f.email_field :email, :autofocus => "autofocus", :autocapitalize => "off", :autocomplete => "off", :autocorrect => "off", :spellcheck => false, :class => "form-control first", :placeholder => "Enter your email address to register", :"data-error-style" => "inline" %>
+                      </div>
+                      <%= f.hidden_field :time_zone %>
+                      <%#= f.submit "Notify me!", :class => "btn btn-lg btn-primary btn-block" %>
+                    <% end %>
+                  </div>
+                  <div class="registration-success">
+                    <h4>Thanks for your interest, you will hear back from us shortly!</h4>
+                  </div>
+                </div><!-- .actions -->
               </div><!-- end cont wrapper -->
             </div><!-- end 8 -->
           </div>

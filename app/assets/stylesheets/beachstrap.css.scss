@@ -25,11 +25,11 @@ body.pages {
       }
     }
   }
-  
+
   h1, #our-team h2, ul.nav {
     text-transform: uppercase;
   }
-  
+
   ul.nav {
     padding-left: 0;
   }
@@ -39,19 +39,19 @@ body.pages {
     width: auto;
     height: auto;
   }
-  
+
   .modal-body {
     position: relative;
     overflow-y: auto;
     max-height: 400px;
     padding: 15px;
-    
+
     .video-wrapper {
       position: relative;
       padding-bottom: 56.25%; /* 16:9 */
       padding-top: 0px;
       height: 0;
-      
+
       iframe {
         position: absolute;
         top: 0;
@@ -61,7 +61,7 @@ body.pages {
       }
     }
   }
-  
+
   #main {
     .cont-gradient {
       position: absolute;
@@ -73,7 +73,7 @@ body.pages {
       background: linear-gradient(90deg, rgba(63, 98, 105, 0) 0%, rgba(63, 98, 105, 0.1) 50%, rgba(63, 98, 105, 0.6) 100%);
       background-color: transparent;
     }
-    
+
     .cont-wrapper {
       position: relative;
       top: 230px;
@@ -81,10 +81,88 @@ body.pages {
       width: 100%;
     }
 
-    p.btn-wrp {
-      line-height: 50px;
-      text-align: center;
-      margin: 50px 0;
+    .actions {
+
+      .play-wrapper {
+        display: inline;
+        float: left;
+        width: 50%;
+        text-align: center;
+        line-height: 50px;
+        margin: 30px 0;
+
+        .c2a-button {
+          color: #fff;
+          background-color: transparent;
+          border: 5px solid $color-white;
+          border-radius: 5px;
+
+          &:hover {
+            background-color: #fff;
+            xborder: 3px solid $color-light-blue;
+            color: #8A6847;
+            text-decoration: none;
+            @include transition(background-color .2s ease);
+          }
+        }
+
+        .c2a-button.youtube {
+          padding: 26px 28px;
+          border-radius: 100%;
+          font-size: 35px;
+
+          i {
+            padding: 0 0 0 3px;
+          }
+        }
+      } /* .play-wrapper */
+
+      .registration-form, .registration-success {
+        display: inline;
+        float: left;
+        width: 50%;
+        margin: auto 0;
+
+        h4 {
+          margin: 0 0 10px 0;
+          font-size: 18px;
+          line-height: 1.4em;
+          color: #fff;
+        }
+
+        input {
+          padding: 20px 10px;
+          @include transition(opacity 1s ease);
+          opacity: 0.3;
+
+          &:hover {
+            opacity: 0.9;
+          }
+        }
+
+        .form-group {
+          .error-block {}
+
+          &.has-error {
+            input {
+              border-color: red;
+            }
+
+            .help-block {
+              color: red;
+            }
+          }
+          &.has-success {
+            input {
+            }
+          }
+        }
+
+      } /* .registration-form, .registration-success */
+
+      .registration-success {
+        display: none;
+      }
     }
 
     p.intro {
@@ -92,9 +170,10 @@ body.pages {
       text-transform: uppercase;
       font-size: 34px;
       font-weight: 300;
-      letter-spacing: 1px;
       text-shadow: none;
       line-height: 1.6em;
+      letter-spacing: 0px;
+
 
       i {
         text-transform: none;
@@ -104,7 +183,7 @@ body.pages {
         font-size: 20px;
       }
     }
-    
+
     @media (max-width: 768px) {
       .cont-gradient {
         top: 180px;
@@ -114,12 +193,12 @@ body.pages {
         top: 180px;
         right: 20px;
       }
-      
+
       p.intro {
         font-size: 30px;
       }
     }
-    
+
     @media (max-width: 480px) {
       .cont-gradient {
         top: 130px;
@@ -129,37 +208,13 @@ body.pages {
         top: 130px;
         right: 0px;
       }
-      
+
       p.intro {
         font-size: 24px;
       }
     }
+  } /* #main */
 
-    .c2a-button {
-      color: #fff;
-      background-color: transparent;
-      border: 5px solid $color-white;
-      border-radius: 5px;
-
-      &:hover {
-        background-color: #fff;
-        xborder: 3px solid $color-light-blue;
-        color: #8A6847;
-        text-decoration: none;
-        @include transition(background-color .2s ease);
-      }
-    }
-    .c2a-button.youtube {
-      padding: 26px 28px;
-      border-radius: 100%;
-      font-size: 35px;
-      
-      i {
-        padding: 0 0 0 3px;
-      }
-    }
-  }
-  
   #home {
     .container {
       .row {
@@ -183,7 +238,7 @@ body.pages {
       padding: 0;
       right: 0;
     }
-  }
+  } /* #home */
 
   #parallax {
     h2 {
@@ -201,7 +256,7 @@ body.pages {
         line-height: 1.4em;
       }
     }
-    
+
     button.btn-circle {
       width: 130px;
       height: 130px;
@@ -222,7 +277,7 @@ body.pages {
       background: -o-linear-gradient(rgba(255, 255, 255, 1), rgba(52, 52, 52, 1)); /* For Opera 11.1 to 12.0 */
       background: -moz-linear-gradient(rgba(255, 255, 255, 1), rgba(52, 52, 52, 1)); /* For Firefox 3.6 to 15 */
       background: linear-gradient(rgba(200, 200, 200, 1), rgba(52, 52, 52, 1)); /* Standard syntax */
-      
+
       i {
         font-size: 2em;
         margin: 0;
@@ -234,7 +289,7 @@ body.pages {
     .staff-row {
       margin-bottom: 50px;
     }
-    
+
     .about-intro {
       margin-bottom: 20px;
     }

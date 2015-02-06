@@ -15,6 +15,9 @@
 //= require jquery-ui/core
 //= require jquery-ui/widget
 //= require lib/bootstrap
+//= require lib/rails.validations
+//= require lib/rails.validations.bootstrap
+//= require lib/detect_timezone
 //= require lib/beachstrap/waypoints.min.js
 //= require lib/beachstrap/beachstrap-script
 //= require lib/beachstrap/jquery.nav

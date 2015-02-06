@@ -4,7 +4,7 @@ FactoryGirl.define do
     sequence(:file_name) {|n| "sample-#{n}.m4a"}
     file_type "audio/x-m4a"
     file_size 62676
-    sequence(:s3_url) {|n| "http://s3.amazonaws.com/dropbox/sample-#{n}.m4a"} 
+    sequence(:s3_url) {|n| "http://s3.amazonaws.com/dropbox/sample-#{n}.m4a"}
     before(:create) do |upload|
       upload.build_ingest(type: "Ingest::Audio", upload: upload, ingestable: FactoryGirl.create(:document))
     end
@@ -34,7 +34,7 @@ FactoryGirl.define do
       segment.response = {"status" => 0, "id" => "ce178ea89f8b17d8e8298c9c7814700a-1", "hypotheses" => [["I like pickles", 0.59408695], ["I like turtles", 0.34534354], ["I like tickles", nil], ["I like to Kohl's", nil]]}
     end
   end
-  
+
   factory :message do
     from "sender@example.com"
     to "receiver@example.com"
@@ -43,7 +43,7 @@ FactoryGirl.define do
   factory :inbound_message, :class => "Message::Inbound", :parent => :message do
     to "inbound@example.com"
   end
-  
+
   factory :user do
     sequence(:email) {|n| "test-#{n}@example.com"}
     sequence(:first_name) {|n| "first-name-#{n}"}
@@ -51,10 +51,45 @@ FactoryGirl.define do
     confirmed_at Time.now.utc - 1.day
     current_sign_in_ip "95.63.14.59"
   end
-  
+
   factory :track do
     sequence(:s3_url) {|n| "http://s3.amazonaws.com/private/zp66vfwg21-#{n}"}
     sequence(:s3_mp3_url) {|n| "http://s3.amazonaws.com/private/zp66vfwg21-#{n}-128kbps-mp3"}
   end
-  
+
+  factory :registration do
+    # sequence(:email) {|n| "user#{n}@example.com" }
+    email "test@example.com"
+    locale 'en'
+    country_code 'US'
+    ip_address "127.0.0.1"
+    time_zone "Paris"
+    lat 48.864715
+    lng 2.373047
+    city "Paris"
+    postal_code "1456"
+    region_code "01"
+    region_name "Paris City"
+  end
+
+  factory :social_registration do
+    email "test@facebook.com"
+    locale 'en'
+    country_code 'US'
+    ip_address "127.0.0.1"
+    time_zone "Buenos Aires"
+    lat -34.5875
+    lng -58.6725
+    city "Buenos Aires"
+    postal_code "1640"
+    region_code "07"
+    region_name "Distrito Federal"
+    first_name "Hans"
+    last_name "Zimmer"
+    opt_in false
+    type "social_registration"
+    uid "1234567890"
+    referrer_uid "0123456789"
+  end
+
 end

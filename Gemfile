@@ -98,7 +98,8 @@ gem "polyamorous", :github => "activerecord-hackery/polyamorous"
 #gem "ransack", github: "activerecord-hackery/ransack", branch: "rails-4.1"
 # </hack> for Rails 4.1
 
-#gem 'client_side_validations', github: "tagliala/client_side_validations", branch: "rails4"
+# gem 'client_side_validations', github: "tagliala/client_side_validations", branch: "rails4"
+gem 'client_side_validations', github: "DavyJonesLocker/client_side_validations"
 gem 'geocoder'
 gem 'gmaps4rails'
 gem 'nokogiri'

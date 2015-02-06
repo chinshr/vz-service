@@ -1,4 +1,12 @@
 GIT
+  remote: git://github.com/DavyJonesLocker/client_side_validations.git
+  revision: 979e6a9c938354ba33a12d32d285ea04f49c9014
+  specs:
+    client_side_validations (4.2.0)
+      jquery-rails (>= 3.1.2, < 5.0.0)
+      rails (>= 4.0.0, < 4.3.0)
+
+GIT
   remote: git://github.com/activeadmin/activeadmin.git
   revision: 7aef260921d418d904d2dba9b1a97eed893e9019
   specs:
@@ -362,6 +370,7 @@ DEPENDENCIES
   aws-sdk (~> 1.6.0)
   backbone-on-rails
   backbone-support
+  client_side_validations!
   coderay
   coffee-rails (~> 4.0.0)
   curb
