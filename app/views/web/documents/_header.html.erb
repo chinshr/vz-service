@@ -82,13 +82,12 @@
                   <li class="facebook"><a class="fa fa-facebook" href="#" data-href=""></a></li>
                   <li class="twitter"><a class="fa fa-twitter" href="#" data-href="" ></a></li>
                   <li class="linkedin"><a class="fa fa-linkedin" href="#" data-href=""></a></li>
-                  <!-- <li class="google-plus"><a class="fa fa-google-plus" href="#" data-href=""></a></li> -->
                   <li class="email"><a class="fa fa-envelope" href="#" data-href=""></a></li>
-                </ul>
+                </ul><!-- .social-networks -->
               </div><!-- .social-container -->
               <div class="share-link-container">
                 <% if @document.privacy_private? %>
-                <p><i class="fa fa-lock"></i>This document is private and can only be viewed by the owner.</p>
+                <p><i class="fa fa-lock"></i>This document is private and may only be viewed by the owner.</p>
                 <% else %>
                 <p><i class="fa fa-info"></i>Copy and paste the link below to share this document.</p>
                 <% end %>

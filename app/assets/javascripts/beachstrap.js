@@ -24,6 +24,7 @@
 //= require lib/beachstrap/jquery.scrollTo
 //= require lib/beachstrap/holder
 //= require lib/beachstrap/bootstrap.youtubepopup
+//= require web/common
 
 $(function() {
   $(".youtube").YouTubeModal({autoplay:1, width:680, height:380, color: "#151a28", controls: 0, theme: "dark", 
