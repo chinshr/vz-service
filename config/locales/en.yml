@@ -32,4 +32,6 @@ en:
         registration:
           attributes:
             email:
+              blank: can't be empty
+              taken: has already registered
               email_format: not a valid email address

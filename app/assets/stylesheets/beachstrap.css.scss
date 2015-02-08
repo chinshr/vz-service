@@ -128,7 +128,7 @@ body.pages {
           font-size: 18px;
           line-height: 1.4em;
           color: #fff;
-          font-weight: 500;
+          font-weight: 600;
         }
 
         input {
@@ -237,8 +237,12 @@ body.pages {
         } /* .social-container */
       } /* .registration-form, .registration-success */
 
+      .registration-form {
+        display: nxone;
+      }
+
       .registration-success {
-        display: xnone;
+        display: none;
       }
     }
 
