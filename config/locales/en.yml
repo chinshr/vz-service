@@ -32,6 +32,6 @@ en:
         registration:
           attributes:
             email:
-              blank: can't be empty
-              taken: has already registered
-              email_format: not a valid email address
+              blank: "sorry, but that's not enough"
+              taken: "has already been registered"
+              email_format: "not a valid email address"

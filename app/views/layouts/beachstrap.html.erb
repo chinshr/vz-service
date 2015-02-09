@@ -95,7 +95,7 @@
                     <% end %>
                   </div><!-- .play-wrapper -->
                   <div class="registration-form">
-                    <h4>Want to get early access?</h4>
+                    <h4>Want to join the beta list?</h4>
                     <%= form_for(@registration || Registration.new, {:url => web_registrations_path, :validate => true, :remote => true}) do |f| %>
                       <div class="form-group">
                         <%= f.email_field :email, :autofocus => "autofocus", :autocapitalize => "off", :autocomplete => "off", :autocorrect => "off", :spellcheck => false, :class => "form-control first", :placeholder => "Enter your email address to register", :"data-error-style" => "inline" %>
