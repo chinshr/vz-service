@@ -228,29 +228,39 @@ body.documents {
             &.facebook {
               a {
                 background-color: #2f609c;
+
+                &:hover {
+                  background-color: #295488;
+                }
               }
             }
 
             &.twitter {
               a {
                 background-color: #55acee;
+
+                &:hover {
+                  background-color: #3ea1ec;
+                }
               }
             }
 
             &.linkedin {
               a {
                 background-color: #0074a1;
-              }
-            }
 
-            &.google-plus {
-              a {
-                background-color: #d24231;
+                &:hover {
+                  background-color: #006288;
+                }
               }
             }
 
             &.email {
               background-color: #089e00;
+
+              &:hover {
+                background-color: #078500;
+              }
             }
           }
         }
