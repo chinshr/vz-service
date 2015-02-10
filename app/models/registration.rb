@@ -39,6 +39,7 @@ class Registration < ActiveRecord::Base
 
   before_save :geocode, :if => :has_ip_address?, :unless => :geocoded?
   before_save :reverse_geocode, :if => :geocoded?
+  after_commit :after_enter_pending, on: :create
 
   class << self
     def instance_for(*attrs, &block)
@@ -112,6 +113,10 @@ class Registration < ActiveRecord::Base
   def enter_declined
     self.accepted_at = nil
     self.declined_at = Time.zone.now
+  end
+
+  def after_enter_pending
+    RegistrationMailer.confirmation(self).deliver
   end
 
 end

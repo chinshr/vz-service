@@ -1,6 +1,10 @@
 require 'test_helper'
 
 class RegistrationTest < ActiveSupport::TestCase
+  setup do 
+    ActionMailer::Base.deliveries.clear
+  end
+
   should "validate email formatting" do
     registration = Registration.new :email => "test@example.com"
     assert_no_error_on registration, :email
@@ -39,6 +43,7 @@ class RegistrationTest < ActiveSupport::TestCase
   context "state machine" do
     setup do
       @registration = FactoryGirl.create(:registration)
+      assert_equal 1, ActionMailer::Base.deliveries.size
     end
 
     should "be pending" do
