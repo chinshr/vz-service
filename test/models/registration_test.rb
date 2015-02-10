@@ -35,4 +35,35 @@ class RegistrationTest < ActiveSupport::TestCase
     assert_equal "1640", reg.postal_code
     assert_equal "de-DE", reg.locale
   end
+
+  context "state machine" do
+    setup do
+      @registration = FactoryGirl.create(:registration)
+    end
+
+    should "be pending" do
+      assert_equal "pending", @registration.aasm_state
+    end
+
+    should "accept! and be accepted" do
+      assert_equal true, @registration.accept!
+      assert_equal "accepted", @registration.aasm_state
+      assert_not_nil @registration.accepted_at
+    end
+
+    should "decline! and be declined" do
+      assert_equal true, @registration.decline!
+      assert_equal "declined", @registration.aasm_state
+      assert_not_nil @registration.declined_at
+    end
+
+    should "decline! then accept! and be accepted" do
+      assert_equal true, @registration.decline!
+      assert_equal "declined", @registration.aasm_state
+      assert_equal true, @registration.accept!
+      assert_equal "accepted", @registration.aasm_state
+      assert_nil @registration.declined_at
+      assert_not_nil @registration.accepted_at
+    end
+  end
 end

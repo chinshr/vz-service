@@ -1,4 +1,6 @@
 class Registration < ActiveRecord::Base
+  include AASM
+
   geocoded_by :ip_address, :latitude  => :lat, :longitude => :lng
   reverse_geocoded_by :lat, :lng do |record, results|
     if geo = results.first
@@ -9,6 +11,21 @@ class Registration < ActiveRecord::Base
       record.region_code  = geo.state_code
       record.country_code = geo.country_code
     end
+  end
+
+  aasm column: 'aasm_state' do
+    state :pending, initial: true
+    state :accepted, :enter => :enter_accepted
+    state :declined, :enter => :enter_declined
+
+    event :accept do
+      transitions :from => [:pending, :declined], :to => :accepted
+    end
+
+    event :decline do
+      transitions :from => [:pending, :accepted], :to => :declined
+    end
+
   end
 
   validates :email, uniqueness: true, presence: true, email_format: true
@@ -86,4 +103,15 @@ class Registration < ActiveRecord::Base
   def has_ip_address?
     ip_address.present?
   end
+
+  def enter_accepted
+    self.declined_at = nil
+    self.accepted_at = Time.zone.now
+  end
+
+  def enter_declined
+    self.accepted_at = nil
+    self.declined_at = Time.zone.now
+  end
+
 end

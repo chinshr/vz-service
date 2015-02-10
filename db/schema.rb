@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150205203002) do
+ActiveRecord::Schema.define(version: 20150210161623) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -179,14 +179,18 @@ ActiveRecord::Schema.define(version: 20150205203002) do
     t.string   "type"
     t.string   "uid"
     t.string   "referrer_uid"
-    t.boolean  "opt_in",                                          default: false, null: false
+    t.boolean  "opt_in",                                          default: false,     null: false
     t.text     "fields"
     t.text     "user_data"
     t.string   "region_name"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "aasm_state",                                      default: "pending", null: false
+    t.datetime "accepted_at"
+    t.datetime "declined_at"
   end
 
+  add_index "registrations", ["aasm_state"], name: "index_registrations_on_aasm_state", using: :btree
   add_index "registrations", ["email"], name: "index_registrations_on_email", unique: true, using: :btree
   add_index "registrations", ["referrer_uid"], name: "index_registrations_on_referrer_uid", using: :btree
   add_index "registrations", ["type"], name: "index_registrations_on_type", using: :btree
