@@ -15,7 +15,7 @@ class Registration < ActiveRecord::Base
 
   aasm column: 'aasm_state' do
     state :pending, initial: true
-    state :accepted, :enter => :enter_accepted
+    state :accepted, :enter => :enter_accepted, :after_enter => :after_enter_accepted
     state :declined, :enter => :enter_declined
 
     event :accept do
@@ -108,6 +108,10 @@ class Registration < ActiveRecord::Base
   def enter_accepted
     self.declined_at = nil
     self.accepted_at = Time.zone.now
+  end
+
+  def after_enter_accepted
+    RegistrationMailer.accepted(self).deliver
   end
 
   def enter_declined
