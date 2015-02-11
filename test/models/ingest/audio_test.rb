@@ -5,7 +5,7 @@ class Ingest::AudioTest < ActiveSupport::TestCase
     Ingest::AudioWorker.jobs.clear
     ActionMailer::Base.deliveries.clear
   end
-  
+
   should "delegate to document getters" do
     document = FactoryGirl.create(:document)
     ingest = FactoryGirl.create(:ingest_audio, :ingestable => document)
@@ -13,7 +13,7 @@ class Ingest::AudioTest < ActiveSupport::TestCase
     assert_equal document.description, ingest.description
     assert_equal document.tag_list, ingest.tag_list
   end
-  
+
   should "delegate to document setters" do
     document = FactoryGirl.create(:document)
     ingest = FactoryGirl.create(:ingest_audio, :ingestable => document)
@@ -24,7 +24,7 @@ class Ingest::AudioTest < ActiveSupport::TestCase
     assert_equal document.description, ingest.description
     assert_equal document.tag_list, ingest.tag_list
   end
-  
+
   should "have segments and remove messages when reset" do
     document = FactoryGirl.create(:document)
     ingest   = FactoryGirl.create(:ingest_audio, :ingestable => document)
@@ -45,15 +45,15 @@ class Ingest::AudioTest < ActiveSupport::TestCase
     assert_equal :reset, ingest.state
     assert_equal true, ingest.messages.empty?
   end
-  
+
   should "create worker process with state machine" do
     ingest = FactoryGirl.create(:ingest_audio)
     Ingest::AudioWorker.jobs.clear
-    
+
     ingest.start!  # inside model!
     assert_equal :starting, ingest.state
     assert_equal 1, Ingest::AudioWorker.jobs.size
-    
+
     ingest.process!  # inside worker!
     assert_equal :started, ingest.state
     Ingest::AudioWorker.jobs.clear
@@ -61,34 +61,34 @@ class Ingest::AudioTest < ActiveSupport::TestCase
     ingest.stop!  # inside model!
     assert_equal :stopping, ingest.state
     assert_equal 1, Ingest::AudioWorker.jobs.size
-    
+
     ingest.process!  # inside worker!
     assert_equal :stopped, ingest.state
     Ingest::AudioWorker.jobs.clear
-    
+
     ingest.reset!  # inside model!
     assert_equal :resetting, ingest.state
     assert_equal 1, Ingest::AudioWorker.jobs.size
     assert_equal 0, ingest.iteration
-    
+
     ingest.process!  # inside worker!
     assert_equal :reset, ingest.state
     Ingest::AudioWorker.jobs.clear
     assert_equal 1, ingest.iteration
   end
-  
+
   should "finish process with user" do
     ingest = FactoryGirl.create(:ingest_audio, :user => FactoryGirl.create(:user))
-    
+
     ingest.start!  # inside model!
     assert_equal :starting, ingest.state
-    
+
     ingest.process!  # inside worker!
     assert_equal :started, ingest.state
-  
+
     ingest.finish!  # inside worker!
     assert_equal :finished, ingest.state
-    
+
     assert_equal 1, ActionMailer::Base.deliveries.size
     assert_equal "Finished, '#{ingest.upload.file_name}' has been transcribed.", ActionMailer::Base.deliveries[0].subject
   end
