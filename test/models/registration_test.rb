@@ -44,6 +44,7 @@ class RegistrationTest < ActiveSupport::TestCase
     setup do
       @registration = FactoryGirl.create(:registration)
       assert_equal 1, ActionMailer::Base.deliveries.size
+      ActionMailer::Base.deliveries.clear
     end
 
     should "be pending" do
@@ -54,12 +55,14 @@ class RegistrationTest < ActiveSupport::TestCase
       assert_equal true, @registration.accept!
       assert_equal "accepted", @registration.aasm_state
       assert_not_nil @registration.accepted_at
+      assert_equal 1, ActionMailer::Base.deliveries.size
     end
 
     should "decline! and be declined" do
       assert_equal true, @registration.decline!
       assert_equal "declined", @registration.aasm_state
       assert_not_nil @registration.declined_at
+      assert_equal 0, ActionMailer::Base.deliveries.size
     end
 
     should "decline! then accept! and be accepted" do
@@ -69,6 +72,7 @@ class RegistrationTest < ActiveSupport::TestCase
       assert_equal "accepted", @registration.aasm_state
       assert_nil @registration.declined_at
       assert_not_nil @registration.accepted_at
+      assert_equal 1, ActionMailer::Base.deliveries.size
     end
   end
 end
