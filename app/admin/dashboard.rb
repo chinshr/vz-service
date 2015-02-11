@@ -1,33 +1,77 @@
 ActiveAdmin.register_page "Dashboard" do
-
   menu :priority => 1, :label => proc{ I18n.t("active_admin.dashboard") }
 
   content :title => proc{ I18n.t("active_admin.dashboard") } do
-    div :class => "blank_slate_container", :id => "dashboard_default_message" do
-      span :class => "blank_slate" do
-        span I18n.t("active_admin.dashboard_welcome.welcome")
-        small I18n.t("active_admin.dashboard_welcome.call_to_action")
+    # div :class => "blank_slate_container", :id => "dashboard_default_message" do
+    #   span :class => "blank_slate" do
+    #     span I18n.t("active_admin.dashboard_welcome.welcome")
+    #     small I18n.t("active_admin.dashboard_welcome.call_to_action")
+    #   end
+    # end
+
+    # Here is an example of a simple dashboard with columns and panels.
+
+    columns do
+      column do
+        panel "Recent registrations", priority: 2 do
+          table_for Registration.order(aasm_state: :desc).recent(5) do |t|
+            t.column(:email) {|r| link_to(r.email, [:admin, r])}
+            t.column(:state) {|r| status_tag(r.aasm_state.to_s, {:pending => :grey, :accepted => :ok, :declined => :error}[r.aasm_state.to_sym])}
+          end
+          div do
+            link_to "See all...", admin_registrations_path
+          end
+        end
+
+        # panel "Recent Documents" do
+        #   ul do
+        #     Document.recent(5).map do |document|
+        #       li link_to(document.title, admin_document_path(document))
+        #     end
+        #   end
+        # end
+      end
+
+      column do
+        panel "Quick Stats", priority: 1 do
+          ul do
+            li do
+              "%s organic registrations" % Registration.organic.count
+            end
+            li do
+              "%s accepted, %s declined, %s pending registrations" % [Registration.accepted.count, Registration.declined.count, Registration.pending.count]
+            end
+            li do
+              "%s total, %s confirmed users" % [User.count, User.confirmed.count]
+            end
+            li do
+              "%s total, %s public, %s private documents" % [Document.count, Document.with_privacy("public").count, Document.with_privacy("private").count]
+            end
+          end
+        end
+
+        # panel "Info" do
+        #   para "Welcome to ActiveAdmin."
+        # end
       end
     end
 
-    # Here is an example of a simple dashboard with columns and panels.
-    #
-    # columns do
-    #   column do
-    #     panel "Recent Posts" do
-    #       ul do
-    #         Post.recent(5).map do |post|
-    #           li link_to(post.title, admin_post_path(post))
-    #         end
-    #       end
-    #     end
-    #   end
+    columns do
+      column do
+        panel "Registrations Chart", priority: 4 do
+          div :class => "chart_container" do
+            render "chart"
+          end
+        end
+      end
 
-    #   column do
-    #     panel "Info" do
-    #       para "Welcome to ActiveAdmin."
-    #     end
-    #   end
-    # end
+      column do
+        panel "Registration Locations", priority: 5 do
+          div do
+            #render "map"
+          end
+        end
+      end
+    end
   end # content
 end

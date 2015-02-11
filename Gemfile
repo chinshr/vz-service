@@ -66,7 +66,7 @@ group :production do
   gem 'rails_12factor'
 end
 
-gem "modernizr-rails"
+gem 'modernizr-rails'
 
 gem 'aws-sdk', '~> 1.6.0'
 gem 'aws-s3'
@@ -93,8 +93,8 @@ gem 'devise'
 #gem 'activeadmin', github: 'gregbell/active_admin'
 gem 'activeadmin', github: 'activeadmin'
 # <hack> for Rails 4.1
-gem "formtastic", github: "justinfrench/formtastic"
-gem "polyamorous", :github => "activerecord-hackery/polyamorous"
+gem 'formtastic', github: "justinfrench/formtastic"
+gem 'polyamorous', :github => "activerecord-hackery/polyamorous"
 #gem "ransack", github: "activerecord-hackery/ransack", branch: "rails-4.1"
 # </hack> for Rails 4.1
 
@@ -116,3 +116,4 @@ gem 'redcarpet'
 gem 'coderay'
 gem 'acts-as-taggable-on'
 gem 'pundit'
+gem 'highcharts-rails', "~> 3.0.0"

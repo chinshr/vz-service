@@ -183,6 +183,8 @@ GEM
     heroku-api (0.3.22)
       excon (~> 0.38)
       multi_json (~> 1.8)
+    highcharts-rails (3.0.10)
+      railties (>= 3.1)
     hike (1.2.3)
     hitimes (1.2.2)
     htmlentities (4.3.3)
@@ -385,6 +387,7 @@ DEPENDENCIES
   gingerice
   gmaps4rails
   griddler!
+  highcharts-rails (~> 3.0.0)
   jquery-rails
   jquery-ui-rails
   json

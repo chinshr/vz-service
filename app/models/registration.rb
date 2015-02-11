@@ -58,7 +58,18 @@ class Registration < ActiveRecord::Base
       where('date(created_at) = ?', date).count
     end
 
-    private
+    def to_gmaps4rails(&block)
+      output = "["
+      json_array = []
+      all.each do |object|
+        json = Gmaps4rails.create_json(object, &block)
+        json_array << json.to_s unless json.nil?
+      end
+      output << json_array * (",")
+      output << "]"
+    end
+
+  private
 
     def normalize_params(attributes = {})
       attributes, result = (attributes || {}).symbolize_keys, {}
