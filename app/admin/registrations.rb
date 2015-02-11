@@ -9,6 +9,11 @@ ActiveAdmin.register Registration do
     column :locale
     column :ip_address
     column :created_at
+    column(:state) do |resource|
+      colors = {:pending => :grey, :accepted => :ok, :declined => :error}
+      status_tag(resource.aasm_state.to_s, colors[resource.aasm_state.to_sym])
+    end
+
     # default_actions
     column do |resource|
       links = link_to I18n.t('active_admin.view'), resource_path(resource), :class => "member_link view_link"
