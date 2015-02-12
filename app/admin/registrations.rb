@@ -1,7 +1,8 @@
 ActiveAdmin.register Registration do
-
   scope :all
   scope :recent
+  scope :accepted
+  scope :declined
 
   index do
     column :email
