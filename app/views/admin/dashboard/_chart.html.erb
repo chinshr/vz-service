@@ -26,12 +26,12 @@ $(function() {
       }
     },
     series: [
-      <% {"Registrations" => Registration.organic, "Users" => User}.each do |name, registrations| %>
+      <% {"Registrations" => Registration.organic, "Users" => User}.each do |name, scope| %>
       {
         name: "<%= name %>",
         pointInterval: <%= 1.day * 1000 %>,
         pointStart: <%= start_date.to_time.to_i * 1000 %>,
-        data: <%= registrations_chart_series(registrations, start_date) %>
+        data: <%= scoped_chart_series(scope, start_date) %>
       },
       <% end %>
     ]
