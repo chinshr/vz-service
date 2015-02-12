@@ -1,4 +1,7 @@
 class User < ActiveRecord::Base
+  cattr_accessor :force_registration_validation
+  @@force_registration_validation = false
+
   # Include default devise modules. Others available are:
   # :lockable, :timeoutable and :omniauthable
   devise :database_authenticatable, :registerable,
@@ -23,8 +26,9 @@ class User < ActiveRecord::Base
 
   acts_as_tagger
 
-  validates :first_name, presence: true, :if => :confirmed_or_confirmation_validation?
-  validates :last_name, presence: true, :if => :confirmed_or_confirmation_validation?
+  validates :first_name, presence: true, if: :confirmed_or_confirmation_validation?
+  validates :last_name, presence: true, if: :confirmed_or_confirmation_validation?
+  validate :valid_registration, on: :create, if: :should_perform_registration_validation?
 
   scope :confirmed, lambda {where("users.confirmed_at IS NOT NULL")}
 
@@ -72,7 +76,7 @@ class User < ActiveRecord::Base
     "rgb(#{digest[0..1].hex}, #{digest[2..3].hex}, #{digest[4..5].hex})"
   end
 
-  protected
+protected
 
   def has_ip_address?
     ip_address.present?
@@ -80,5 +84,15 @@ class User < ActiveRecord::Base
 
   def ip_address
     current_sign_in_ip || last_sign_in_ip
+  end
+
+  def should_perform_registration_validation?
+    !!self.class.force_registration_validation
+  end
+
+  def valid_registration
+    unless Registration.accepted.where(email: self.email).any?
+      errors.add(:email, "not in beta program")
+    end
   end
 end
