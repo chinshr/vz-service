@@ -28,7 +28,7 @@ class User < ActiveRecord::Base
 
   validates :first_name, presence: true, if: :confirmed_or_confirmation_validation?
   validates :last_name, presence: true, if: :confirmed_or_confirmation_validation?
-  validate :valid_registration, on: :create, if: :should_perform_registration_validation?
+  validate :valid_registration, if: :should_perform_registration_validation?
 
   scope :confirmed, lambda {where("users.confirmed_at IS NOT NULL")}
 
