@@ -474,6 +474,11 @@
     
     <%= javascript_include_tag "beachstrap" %>
     <%= javascript_tag do %>
+      $(function() {
+        $("form input[name='registration[time_zone]']").val(jstz.determine_timezone().name());
+      });
+    <% end %>
+    <%= javascript_tag do %>
       var _gaq = _gaq || [];
       _gaq.push(['_setAccount', 'UA-48375934-1']);
       _gaq.push(['_trackPageview']);
