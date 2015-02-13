@@ -60,22 +60,16 @@ class UserTest < ActiveSupport::TestCase
   end
 
   context "force registration" do
-    setup do
-      User.force_registration_validation = true
-    end
-
-    teardown do
-      User.force_registration_validation = false
-    end
-
     should "not be valid without previous registration" do
       user = FactoryGirl.build(:user, first_name: "Jürgen", last_name: "Feßlmeier", email: "juergen@example.com")
+      user.force_registration_validation = true
       assert_equal false, user.valid?, "should not be valid"
     end
 
     should "not be valid with pending registration" do
       registration = FactoryGirl.build(:registration, email: "juergen@example.com")
       user = FactoryGirl.build(:user, first_name: "J", last_name: "F", email: "juergen@example.com")
+      user.force_registration_validation = true
       assert_equal false, user.valid?, "should not be valid"
     end
 
@@ -83,6 +77,7 @@ class UserTest < ActiveSupport::TestCase
       registration = FactoryGirl.build(:registration, email: "juergen@example.com")
       assert_equal true, registration.decline!
       user = FactoryGirl.build(:user, first_name: "J", last_name: "F", email: "juergen@example.com")
+      user.force_registration_validation = true
       assert_equal false, user.valid?, "should not be valid"
     end
 
@@ -90,6 +85,7 @@ class UserTest < ActiveSupport::TestCase
       registration = FactoryGirl.build(:registration, email: "juergen@example.com")
       assert_equal true, registration.accept!
       user = FactoryGirl.build(:user, first_name: "J", last_name: "F", email: "juergen@example.com")
+      user.force_registration_validation = true
       assert_equal true, user.valid?, "should be valid"
     end
   end

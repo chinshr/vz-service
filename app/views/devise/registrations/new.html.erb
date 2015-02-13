@@ -22,7 +22,7 @@
       <div class="panel-body">
         <div class="form-group">
           <%= f.label :email, "Email address" %>
-          <%= f.email_field :email, :autofocus => "autofocus", :autocapitalize => "off", :autocomplete => "off", :autocorrect => "off", :spellcheck => false, :class => "form-control first last", :placeholder => "Enter email address", :"data-error-style" => "inline" %>
+          <%= f.email_field :email, :autofocus => "autofocus", :autocapitalize => "off", :autocomplete => "off", :autocorrect => "off", :spellcheck => false, :class => "form-control first last", :placeholder => "Enter email address", :validate => true, :"data-error-style" => "inline" %>
         </div>
         <div class="form-group sr-only">
           <%= f.label :time_zone, :class => "sr-only" %>

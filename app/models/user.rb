@@ -1,6 +1,5 @@
 class User < ActiveRecord::Base
-  cattr_accessor :force_registration_validation
-  @@force_registration_validation = false
+  attr_accessor :force_registration_validation
 
   # Include default devise modules. Others available are:
   # :lockable, :timeoutable and :omniauthable
@@ -26,14 +25,15 @@ class User < ActiveRecord::Base
 
   acts_as_tagger
 
+  validates :email, uniqueness: true, presence: true, email_format: true
   validates :first_name, presence: true, if: :confirmed_or_confirmation_validation?
   validates :last_name, presence: true, if: :confirmed_or_confirmation_validation?
-  validate :valid_registration, if: :should_perform_registration_validation?
+  validate :valid_registration, on: :create, if: :should_perform_registration_validation?
 
   scope :confirmed, lambda {where("users.confirmed_at IS NOT NULL")}
 
-  before_save :geocode, :if => :has_ip_address?, :unless => :geocoded?
-  before_save :reverse_geocode, :if => :geocoded?
+  before_save :geocode, if: :has_ip_address?, unless: :geocoded?
+  before_save :reverse_geocode, if: :geocoded?
 
   def password_required?
     # previous = !persisted? || !password.nil? || !password_confirmation.nil?
@@ -87,7 +87,7 @@ protected
   end
 
   def should_perform_registration_validation?
-    !!self.class.force_registration_validation
+    !Rails.env.test? || @force_registration_validation
   end
 
   def valid_registration
