@@ -6,4 +6,4 @@ require "speech"
 require "queue_with_timeout"
 require "patches"
 require "email_format_validator"
-
+require "registration_validator"

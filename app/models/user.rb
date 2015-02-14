@@ -26,9 +26,10 @@ class User < ActiveRecord::Base
   acts_as_tagger
 
   validates :email, uniqueness: true, presence: true, email_format: true
+  validates :email, registration: true, on: :create, if: :should_perform_registration_validation?
   validates :first_name, presence: true, if: :confirmed_or_confirmation_validation?
   validates :last_name, presence: true, if: :confirmed_or_confirmation_validation?
-  validate :valid_registration, on: :create, if: :should_perform_registration_validation?
+  #validate :valid_registration, on: :create, if: :should_perform_registration_validation?
 
   scope :confirmed, lambda {where("users.confirmed_at IS NOT NULL")}
 

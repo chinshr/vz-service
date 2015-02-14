@@ -24,6 +24,8 @@ en:
 
   activerecord:
     errors:
+      messages:
+        register_email: "has not pre-registered"
       models:
         upload:
           attributes:
@@ -32,6 +34,6 @@ en:
         registration:
           attributes:
             email:
-              blank: "sorry, but that's not enough"
+              blank: "sorry, but we need a little more"
               taken: "has already been registered"
               email_format: "not a valid email address"
