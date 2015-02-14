@@ -29,7 +29,6 @@ class User < ActiveRecord::Base
   validates :email, registration: true, on: :create, if: :should_perform_registration_validation?
   validates :first_name, presence: true, if: :confirmed_or_confirmation_validation?
   validates :last_name, presence: true, if: :confirmed_or_confirmation_validation?
-  #validate :valid_registration, on: :create, if: :should_perform_registration_validation?
 
   scope :confirmed, lambda {where("users.confirmed_at IS NOT NULL")}
 
@@ -89,11 +88,5 @@ protected
 
   def should_perform_registration_validation?
     !Rails.env.test? || @force_registration_validation
-  end
-
-  def valid_registration
-    unless Registration.accepted.where(email: self.email).any?
-      errors.add(:email, "not in beta program")
-    end
   end
 end
