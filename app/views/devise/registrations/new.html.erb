@@ -1,9 +1,22 @@
 <%# Signup %>
 <% content_for :javascript_includes do %>
   <%= javascript_tag do %>
+
+  window.ClientSideValidations.validators.remote['registration'] = function(element, options) {
+    if ($.ajax({
+      url: '/validators/registration',
+      data: { id: element.val() },
+      // async *must* be false
+      async: false
+    }).status == 404) {
+      return options.message;
+    }
+  }
+
   $(function() {
     $("form input[name='user[time_zone]']").val(jstz.determine_timezone().name());
   });
+
   <% end %>
 <% end %>
 
