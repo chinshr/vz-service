@@ -25,7 +25,7 @@ en:
   activerecord:
     errors:
       messages:
-        register_email: "has not pre-registered"
+        registration: "has not yet been accepted to the beta program"
       models:
         upload:
           attributes:
