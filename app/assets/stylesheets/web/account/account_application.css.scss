@@ -20,7 +20,7 @@ body.account {
       margin: 0px 0px 10px 0px;
       text-transform: uppercase;
     }
-    
+
     button.close {
       position: absolute;
       right: 20px;
@@ -28,7 +28,7 @@ body.account {
       color: #fff;
       text-shadow: none;
     }
-      
+
     h1, p {
       text-shadow: 0px 1px 3px rgba(0, 0, 0, 0.9);
     }
@@ -37,18 +37,18 @@ body.account {
       font-size: 22px;
       margin: 0px 0px 40px 0px;
       color: #fff;
-      
+
       font-weight: 400;
       font-style: normal;
       line-height: 28px;
     }
-    
+
     ul.list-inline li {
       display: inline;
       margin: 0px 10px;
       line-height: 28px;
     }
-    
+
     ul li a {
       border-radius: 3px;
       opacity: 0.7;
@@ -94,7 +94,7 @@ body.account {
     -webkit-box-shadow: inset 0 1px 0px rgba(0,0,0,.075), 0 0 8px rgba(102, 175, 233, .6) !important;
             box-shadow: inset 0 1px 0px rgba(0,0,0,.075), 0 0 8px rgba(102, 175, 233, .6) !important;
   }
-  
+
   ul.select2-choices {
     background-image: none;
     border-color: #66afe9 !important;
@@ -103,12 +103,12 @@ body.account {
     li.select2-search-choice {
       margin-top: 4px !important;
       margin-bottom: 4px !important;
-      
+
       a.select2-search-choice-close {
         top: 3px;
       }
     }
-    
+
     li.select2-search-field {
       height: 28px;
     }
@@ -123,9 +123,9 @@ body.account {
     margin-top: 0 !important;
     padding-left: 10px !important;
   }
-  
+
   /* ====================== TILES & PANELS ========================= */
-  
+
   &.hover #hover-overlay {
     position: absolute;
     top: 0;
@@ -136,7 +136,7 @@ body.account {
     z-index: 100;
     @include transition(background-color .2s ease);
   }
-  
+
   .upload-grid {
     font-family: "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
     min-height: 300px;
@@ -145,21 +145,21 @@ body.account {
     input, select, .select2-drop, .select2-result-label {
       font-family: "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
     }
-    
+
     .upload-tile {
       z-index: 101;
     }
-    
+
     .tile {
       perspective: 1000px;
-      
+
       .flipper {
         transition: 0.6s;
         transform-style: preserve-3d;
         -webkit-transform-style: preserve-3d;
         position: relative;
       }
-      
+
       &.flip {
         .flipper {
           transform: rotateY(180deg);
@@ -167,19 +167,19 @@ body.account {
         }
       }
     }
-    
+
     .panel {
       @include transition(box-shadow .2s ease);
 
       backface-visibility: hidden;
 
       border-radius: 3px !important;
-      
+
       &.show-panel {
         xposition: absolute;
         xtop: 0;
         xleft: 0;
-        
+
         z-index: 2;
         /* for firefox 31 */
         transform: rotateY(0deg);
@@ -189,10 +189,10 @@ body.account {
         xposition: absolute;
         xtop: 0;
         xleft: 0;
-        
+
         transform: rotateY(0deg); /* -> 180deg */
       }
-      
+
       &:hover {
         box-shadow: 0px 0px 15px #777;
       };
@@ -202,7 +202,7 @@ body.account {
         height: 4px;
         margin-bottom: 0;
       }
-      
+
       .btn i {
         color: #fff;
         margin-right: 3px;
@@ -211,17 +211,17 @@ body.account {
       .chosen-container-single .chosen-single {
         height: 33px;
         padding-top: 4px;
-        
+
         b {
           margin-top: 4px;
         }
       }
-      
+
       span.label {
         font-weight: normal;
         padding: 3px 7px;
       }
-        
+
       .cog {
         float: right;
         font-size: 18px;
@@ -240,7 +240,7 @@ body.account {
         filter: alpha(opacity=50);
         opacity: .5;
       }
-      
+
       button.cog {
         -webkit-appearance: none;
         padding: 0;
@@ -248,7 +248,7 @@ body.account {
         background: transparent;
         border: 0;
       }
-      
+
       .panel-heading {
         h3 {
           font-family: "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
@@ -259,25 +259,25 @@ body.account {
           margin: 0 0 10px 0;
           border-bottom: 0;
         }
-        
+
         .icon-privacy {
           font-size: 14px;
           margin-right: 5px;
-        } 
-        
+        }
+
         .icon-public {
           color: #777;
         }
-        
+
         .icon-private {
           color: #a1882b;
         }
-        
+
         .slug {
           i {
             font-size: 10px;
             color: #555;
-            
+
             a {
               font-size: 12px;
               padding-left: 3px;
@@ -285,22 +285,22 @@ body.account {
           }
         }
       }
-      
+
       &.show-panel {
         xborder: 3px dashed #999;
       }
-      
+
       &.upload-panel {
         border: 3px dashed #ccc;
         box-shadow: none;
         background-color: transparent;
         margin: 2px;
         @include transition(background-color box-shadow .2s ease);
-        
+
         select, input {
           background-color: transparent;
         }
-          
+
         &.hover {
           background-color: #fff;
           border-color: #d2d2d2;
@@ -322,7 +322,7 @@ body.account {
           background-color: transparent;
           border-bottom-color: transparent;
         }
-        
+
         .panel-footer {
           background-color: transparent;
         }
@@ -332,7 +332,7 @@ body.account {
           font-weight: bold;
           border-bottom-color: transparent;
         }
-        
+
         .upload-panel-separator {
           font-size: 16px;
           color: #999;
@@ -340,7 +340,7 @@ body.account {
           margin: 0 auto 25px auto;
           text-align: center;
         }
-        
+
         .form-group-file-upload {
           margin: 35px 0 40px 0;
 
@@ -348,7 +348,7 @@ body.account {
             position: absolute;
             top: -1000px;
           }
-          
+
           .btn-file-upload {
             outline: 0;
             display: block;
@@ -356,25 +356,25 @@ body.account {
             width: 150px;
             border-radius: 300px;
           }
-          
+
           .email-file-upload-holder {
             display: block;
             text-align: center;
           }
         }
-        
+
       } /* upload-panel */
-      
+
       .panel-background {
         height: 100%;
         width: 100%;
         position: relative;
         overflow: hidden;
         border-radius: 0px 0px 3px 3px;
-        
+
         .description-holder {
           @include transition(all .5s ease-in-out);
-          
+
           position: absolute;
           top: 0;
           left: 0;
@@ -385,7 +385,7 @@ body.account {
           -moz-transform-style: preserve-3d;
           transform-style: preserve-3d;
           padding: 15px;
-          
+
           p {
             position: relative;
             top: 50%;
@@ -394,7 +394,7 @@ body.account {
             -ms-transform: translateY(-50%);
             -o-transform: translateY(-50%);
             transform: translateY(-50%);
-            
+
             margin: 0;
             font-family: $font-family;
             font-size: 24px;
@@ -406,7 +406,7 @@ body.account {
             text-align: center;
           }
         }
-        
+
         .action-panel {
           overflow: hidden;
           background: transparent;
@@ -445,7 +445,7 @@ body.account {
           }
 
         } /* action-panel */
-        
+
         &.hover {
           .description-holder {
             p {
@@ -453,7 +453,7 @@ body.account {
               text-shadow: none;
             }
           }
-          
+
           .action-panel {
             .action-panel-bg-holder {
               img {
@@ -484,13 +484,13 @@ body.account {
           } /* .action-panel */
         } /* &hover */
       } /* panel-background */
-      
+
       .panel-footer {
         .form-group {
           margin-bottom: 0;
         }
       }
-      
+
       ul.tag-list {
         min-height: 26px;
         margin: 0;
@@ -510,10 +510,10 @@ body.account {
           xpadding: 3px 5px;
           xmargin: 3px 5px 3px 0;
         }
-        
+
         li.tag {
           @include transition(all .2s ease-in-out);
-          
+
           float: left;
           border: 0;
           border-radius: 5px;
@@ -524,14 +524,14 @@ body.account {
           padding-top: 3px;
           padding-bottom: 3px;
           cursor: default;
-          
+
           display: list-item;
           text-align: -webkit-match-parent;
-          
+
           &:hover {
             background-color: #868d91;
           }
-          
+
           a {
             padding: 0 10px;
             line-height: 21px;
@@ -542,17 +542,17 @@ body.account {
             text-decoration: none;
             color: #212124;
             font-weight: 400;
-            
+
             &:hover {
               color: #fff
             };
           }
         }
       }
-      
+
       ul.dropdown-menu {
         margin: 25px 0 0 0;
-        
+
         li {
           a {
             i {
@@ -561,11 +561,51 @@ body.account {
           }
         }
       }
-      
-    } /* panel */
-    
-    
+    } /* .panel */
+  } /* .upload-grid */
+
+  .sub-header {
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
   }
 
-} 
+  #split-view {
+    .sidebar {
+      display: none;
+
+      @media (min-width: 768px) {
+        position: fixed;
+        top: 70px;
+        bottom: 0;
+        left: 0;
+        z-index: 1000;
+        display: block;
+        padding: 20px;
+        overflow-x: hidden;
+        overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+        background-color: #f5f5f5;
+        border-right: 1px solid #eee;
+      }
+
+      .nav-sidebar {
+        margin-right: -21px; /* 20px padding + 1px border */
+        margin-bottom: 20px;
+        margin-left: -20px;
+      }
+
+      .nav-sidebar > li > a {
+        padding-right: 20px;
+        padding-left: 20px;
+      }
+
+      .nav-sidebar > .active > a,
+      .nav-sidebar > .active > a:hover,
+      .nav-sidebar > .active > a:focus {
+        color: #fff;
+        background-color: #428bca;
+      }
+
+    } /* .sidebar */
+  } /* split-view */
+}
 
