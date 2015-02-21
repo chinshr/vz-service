@@ -1,6 +1,10 @@
+<% content_for :navbar_tag do %>
+<a class="navbar-tag" href="/dashboard">Account</a>
+<% end %>
+
 <h2>User Profile</h2>
 
-<%= form_for(current_user, :as => :profile, :url => web_account_profile_path, :html => {:method => :put, :class => "form-horizontal", :role => "form"}) do |f| %>
+<%= form_for(current_user, :as => :user, :url => web_account_profile_path, :html => {:method => :put, :class => "form-horizontal", :role => "form"}) do |f| %>
   <div class="form-group">
     <div class="col-lg-10">
       <%= f.label :first_name %>
@@ -12,6 +16,14 @@
     <div class="col-lg-10">
       <%= f.label :last_name %>
       <%= f.text_field :last_name, :class => "form-control", :placeholder => "Enter last name" %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <div class="col-lg-10">
+      <%= f.label :time_zone %>
+      <%#= f.time_zone_select :time_zone, ActiveSupport::TimeZone.all.sort, {model: ActiveSupport::TimeZone}, {class: "form-control"} %>
+      <%= f.select :time_zone, ActiveSupport::TimeZone.all.sort_by {|tz| tz.to_s}.map {|tz| [tz.to_s, tz.tzinfo.identifier]}, {}, {class: "form-control"} %>
     </div>
   </div>
 

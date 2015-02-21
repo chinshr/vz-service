@@ -1,0 +1,26 @@
+<% content_for :navbar_tag do %>
+<a class="navbar-tag" href="/dashboard">Account</a>
+<% end %>
+
+<h3>Billing History</h3>
+
+<table class="table table-hover table-condensed">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Date</th>
+      <th>Plan</th>
+      <th>Amount (USD)</th>
+      <th>Invoice</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr id="transaction_1">
+        <td><%= 1 %></td>
+        <td><%= Date.today.to_s %></td>
+        <td><%= link_to "Gold", "#" %></td>
+        <td><%= "$9.99" %></td>
+        <td><%= link_to "534522134", "#" %></td>
+      </tr>
+  </tbody>
+</table>

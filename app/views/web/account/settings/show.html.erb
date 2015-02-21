@@ -1,3 +1,7 @@
+<% content_for :navbar_tag do %>
+<a class="navbar-tag" href="/dashboard">Account</a>
+<% end %>
+
 <h2>Settings</h2>
 
 <%= form_for(current_user, :as => :user, :url => web_account_settings_path, :html => { :method => :put, :class => "form-horizontal", :role => "form" }) do |f| %>

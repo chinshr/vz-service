@@ -2,6 +2,13 @@
 <div id="split-view" class="row">
   <div class="col-sm-3 col-md-2 sidebar">
     <ul class="nav nav-sidebar xnav-pills nav-stacked">
+      <li class="<%= dom_active_class(Web::Account::DashboardsController) %>">
+        <a href="<%= web_dashboard_path %>">
+          <i class="glyphicon glyphicon-dashboard"></i>&nbsp;&nbsp;
+          Dashboard
+        </a>
+      </li>
+
       <li class="<%= dom_active_class(Web::Account::ProfilesController) %>">
         <a href="<%= web_account_profile_path %>">
           <i class="glyphicon glyphicon-user"></i>&nbsp;&nbsp;
@@ -9,26 +16,18 @@
         </a>
       </li>
 
-      <li class="<%= "foobar" %>">
-        <a href="<%= "#" %>">
+      <li class="<%= dom_active_class(Web::Account::SettingsController) %>">
+        <a href="<%= web_account_settings_path %>">
           <i class="glyphicon glyphicon-cog"></i>&nbsp;&nbsp;
           Account Settings
         </a>
       </li>
 
-      <li class="<%= "foobar" %>">
-        <a href="<%= "#" %>">
-          <i class="glyphicon glyphicon-font"></i>&nbsp;&nbsp;
-          Applications
+      <li class="<%= dom_active_class(Web::Account::BillingsController) %>">
+        <a href="<%= web_account_billing_path %>">
+          <i class="glyphicon glyphicon-usd"></i>&nbsp;&nbsp;
+          Billing Information
           <span class="badge pull-right"><%= 3 %></span>
-        </a>
-      </li>
-
-      <li class="<%= "foobar" %>">
-        <a href="<%= "#" %>">
-          <i class="glyphicon glyphicon-phone"></i>&nbsp;&nbsp;
-          Devices
-          <span class="badge pull-right"><%= 6 %></span>
         </a>
       </li>
     </ul>
