@@ -121,4 +121,9 @@ module Web::ApplicationHelper
   def show?
     action_name == "show"
   end
+
+  def use_account_split_view?
+    controller.is_a?(Web::Account::ApplicationController) && !controller.is_a?(Web::Account::DashboardsController)
+  end
+
 end

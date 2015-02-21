@@ -570,6 +570,8 @@ body.account {
   }
 
   #split-view {
+    background-color: #fff;
+
     .sidebar {
       display: none;
 
@@ -606,6 +608,10 @@ body.account {
       }
 
     } /* .sidebar */
+
+    .main {
+      top: 70px;
+    }
   } /* split-view */
 }
 

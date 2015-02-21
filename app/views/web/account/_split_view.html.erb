@@ -1,0 +1,39 @@
+<%# http://getbootstrap.com/examples/dashboard/ %>
+<div id="split-view" class="row">
+  <div class="col-sm-3 col-md-2 sidebar">
+    <ul class="nav nav-sidebar xnav-pills nav-stacked">
+      <li class="<%= dom_active_class(Web::Account::ProfilesController) %>">
+        <a href="<%= web_account_profile_path %>">
+          <i class="glyphicon glyphicon-user"></i>&nbsp;&nbsp;
+          User Profile
+        </a>
+      </li>
+
+      <li class="<%= "foobar" %>">
+        <a href="<%= "#" %>">
+          <i class="glyphicon glyphicon-cog"></i>&nbsp;&nbsp;
+          Account Settings
+        </a>
+      </li>
+
+      <li class="<%= "foobar" %>">
+        <a href="<%= "#" %>">
+          <i class="glyphicon glyphicon-font"></i>&nbsp;&nbsp;
+          Applications
+          <span class="badge pull-right"><%= 3 %></span>
+        </a>
+      </li>
+
+      <li class="<%= "foobar" %>">
+        <a href="<%= "#" %>">
+          <i class="glyphicon glyphicon-phone"></i>&nbsp;&nbsp;
+          Devices
+          <span class="badge pull-right"><%= 6 %></span>
+        </a>
+      </li>
+    </ul>
+  </div>
+  <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+  <%= yield %>
+  </div>
+</div>
