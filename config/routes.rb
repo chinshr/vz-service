@@ -29,8 +29,9 @@ Voyzes::Application.routes.draw do
     get "/account" => 'account/application#index'  # => redirects /dashboard
     resource :dashboard, :only => :show, :controller => "account/dashboards"
     namespace :account do
-      resource :profile, :only => [:show, :update]
-      resource :billing, :only => :show
+      resource :profile, only: [:show, :update]
+      resource :billing, only: [:show]
+      resource :settings, only: [:show, :edit, :update]
     end
 
     resources :documents, only: [:show, :edit], path: ""

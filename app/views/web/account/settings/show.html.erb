@@ -1,0 +1,49 @@
+<h2>Settings</h2>
+
+<%= form_for(current_user, :as => :user, :url => web_account_settings_path, :html => { :method => :put, :class => "form-horizontal", :role => "form" }) do |f| %>
+  <%#= devise_error_messages! %>
+
+  <div class="form-group">
+    <div class="col-lg-10">
+      <%= f.label :current_password %>
+      <%= f.password_field :current_password, :class => "form-control", :placeholder => "Enter current password" %>
+      <span class="help-block">We need your current password to confirm your changes.</span>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <div class="col-lg-10">
+      <%= f.label :email %>
+      <%= f.text_field :email, :class => "form-control", :placeholder => "Enter email" %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <div class="col-lg-10">
+      <%= f.label :password %>
+      <%= f.password_field :password, :class => "form-control", :autocomplete => "off", :placeholder => "Enter new password" %>
+      <span class="help-block">Leave blank if you don't want to change it.</span>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <div class="col-lg-10">
+      <%= f.label :password_confirmation %>
+      <%= f.password_field :password_confirmation, :class => "form-control", :placeholder => "Repeat new password" %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <div class="col-lg-offset-2 col-lg-10">
+      <button type="submit" class="btn btn-primary">Save Changes</button>
+    </div>
+  </div>
+<% end %>
+<!--
+
+<h3>Cancel my account</h3>
+
+<p>Unhappy? <%= button_to "Cancel my account", registration_path(:user), :data => { :confirm => "Are you sure?" }, :method => :delete %></p>
+
+<%= link_to "Back", :back %>
+-->
