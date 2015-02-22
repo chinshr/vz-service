@@ -22,7 +22,13 @@
           <% if current_user %>
           <ul class="nav navbar-nav navbar-right">
             <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><img class="avatar" ng-src="https://www.gravatar.com/avatar/7bd6975cb131c69ce17b3b77e2e465c5.jpg?d=retro&amp;size=80" src="https://www.gravatar.com/avatar/7bd6975cb131c69ce17b3b77e2e465c5.jpg?d=retro&amp;size=80"><span>Account Settings </span><b class="caret"></b></a>
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                <%= image_tag(avatar_url(current_user), class: "avatar") %>
+<!--
+                <img class="avatar" ng-src="https://www.gravatar.com/avatar/7bd6975cb131c69ce17b3b77e2e465c5.jpg?d=retro&amp;size=80" src="https://www.gravatar.com/avatar/7bd6975cb131c69ce17b3b77e2e465c5.jpg?d=retro&amp;size=80">
+-->
+                 <span>Account Settings </span><b class="caret"></b>
+              </a>
               <ul class="dropdown-menu">
                 <li><a href="<%= web_dashboard_path %>"><span class="badge badge-warning pull-right">3</span>Dashboard</a></li>
                 <li><a href="<%= web_account_profile_path %>">User Profile</a></li>

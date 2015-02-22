@@ -126,4 +126,17 @@ module Web::ApplicationHelper
     controller.is_a?(Web::Account::ApplicationController) && !controller.is_a?(Web::Account::DashboardsController)
   end
 
+  def default_avatar_url(user)
+    "#{root_url}images/a#{(user.id % 11).to_s.rjust(2, "0")}.png"
+  end
+
+  def avatar_url(user, options = {})
+    if user.avatar_url.present?
+      user.avatar_url
+    else
+      options.reverse_merge!({size: 96, default_url: default_avatar_url(user)})
+      gravatar_id = Digest::MD5::hexdigest(user.email).downcase
+      "//gravatar.com/avatar/#{gravatar_id}.png?s=#{options[:size]}&d=#{CGI.escape(options[:default_url])}"
+    end
+  end
 end
