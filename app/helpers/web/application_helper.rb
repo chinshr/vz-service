@@ -127,16 +127,28 @@ module Web::ApplicationHelper
   end
 
   def default_avatar_url(user)
-    "#{root_url}images/a#{(user.id % 11).to_s.rjust(2, "0")}.png"
+    gender = ["m", "f"][user.id % 1]
+    "#{root_url}assets/av/#{gender}#{((user.id % 8) + 1).to_s.rjust(2, "0")}.png"
+  end
+
+  def https?
+    !!request.protocol.match(/^https/i)
   end
 
   def avatar_url(user, options = {})
     if user.avatar_url.present?
       user.avatar_url
     else
+      # gravatar doc: https://en.gravatar.com/site/implement/images/
+      # default avatars: http://www.iconarchive.com/show/face-avatars-icons-by-hopstarter/Male-Face-D1-icon.html
       options.reverse_merge!({size: 96, default_url: default_avatar_url(user)})
-      gravatar_id = Digest::MD5::hexdigest(user.email).downcase
-      "//gravatar.com/avatar/#{gravatar_id}.png?s=#{options[:size]}&d=#{CGI.escape(options[:default_url])}"
+      gravatar_id   = Digest::MD5::hexdigest(user.email).downcase
+      gravatar_root = https? ? "https://secure.gravatar.com/" : "http://gravatar.com/"
+      if Rails.env.development?
+        options[:default_url]
+      else
+        "#{gravatar_root}avatar/#{gravatar_id}.png?s=#{options[:size]}&d=#{CGI.escape(options[:default_url])}"
+      end
     end
   end
 end
