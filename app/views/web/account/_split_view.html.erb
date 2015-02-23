@@ -1,6 +1,6 @@
 <%# http://getbootstrap.com/examples/dashboard/ %>
 <div id="split-view" class="row">
-  <div class="col-sm-3 col-md-2 sidebar">
+  <div class="col-sm-4 col-md-3 sidebar">
     <ul class="nav nav-sidebar xnav-pills nav-stacked">
       <li class="<%= dom_active_class(Web::Account::DashboardsController) %>">
         <a href="<%= web_dashboard_path %>">
@@ -32,7 +32,8 @@
       </li>
     </ul>
   </div>
-  <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-  <%= yield %>
+  <div class="col-sm-8 col-sm-offset-4 col-md-9 col-md-offset-3 main">
+    <div class="xclearfix"></div>
+    <%= yield %>
   </div>
 </div>
