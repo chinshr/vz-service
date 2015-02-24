@@ -71,10 +71,16 @@ class User < ActiveRecord::Base
     [first_name.try(:[], 0), last_name.try(:[], 0)].reject(&:blank?).join.upcase
   end
 
-  def css_rgb
+  def css_rgb_color
     digest = Digest::SHA1.hexdigest("#{id.to_i + 1}")
     "rgb(#{digest[0..1].hex}, #{digest[2..3].hex}, #{digest[4..5].hex})"
   end
+
+  def css_hex_color
+    digest = Digest::SHA1.hexdigest("#{id.to_i + 1}")
+    "##{digest[0..1]}#{digest[2..3]}#{digest[4..5]}"
+  end
+
 
 protected
 

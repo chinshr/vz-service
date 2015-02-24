@@ -26,6 +26,7 @@
 //= require lib/backbone/backbone.validation.config
 //= require lib/simply-toast
 //= require lib/s3upload
+//= require lib/bootstrap-colorpicker
 //= require web/documents
 //= require app
 //= require_tree ../templates

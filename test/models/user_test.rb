@@ -56,7 +56,7 @@ class UserTest < ActiveSupport::TestCase
 
   should "have css_rgb" do
     user = FactoryGirl.create(:user, id: 6666)
-    assert_equal "rgb(118, 242, 7)", user.css_rgb
+    assert_equal "rgb(118, 242, 7)", user.css_rgb_color
   end
 
   context "force registration" do
