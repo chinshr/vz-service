@@ -4,7 +4,7 @@
 
 <h1 class="page-header">User Profile</h1>
 
-<%= form_for(current_user, :as => :user, :url => web_account_profile_path, :html => {:method => :put, :class => "form-horizontal", :role => "form"}) do |f| %>
+<%= form_for(current_user, {as: :user, url: web_account_profile_path, html: {method: :put, class: "form-horizontal", role: "form", validate: true, remote: true}}) do |f| %>
   <div class="form-group">
     <%= f.label :first_name %>
     <%= f.text_field :first_name, :class => "form-control", :placeholder => "Enter first name" %>
