@@ -679,6 +679,15 @@ body.account {
           margin-top: 40px;
         }
       }
+
+      .avatar {
+        border-radius: 300px;
+        width: 96px;
+        height: 96px;
+        display: block;
+        overflow: hidden;
+      }
+
     }
   } /* split-view */
 }
