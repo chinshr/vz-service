@@ -2,7 +2,7 @@
 <a class="navbar-tag" href="/dashboard">Account</a>
 <% end %>
 
-<h1 class="page-header">Settings</h1>
+<h1 class="page-header">Account Settings</h1>
 
 <%= form_for(current_user, :as => :user, :url => web_account_settings_path, :html => { :method => :put, :class => "form-horizontal", :role => "form" }) do |f| %>
   <%#= devise_error_messages! %>

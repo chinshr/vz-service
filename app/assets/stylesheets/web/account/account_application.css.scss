@@ -598,9 +598,10 @@ body.account {
       .nav-sidebar > li > a {
         padding-right: 20px;
         padding-left: 20px;
-        font-size: 18px;
+        font-size: 16px;
         color: #fff;
         vertical-align: middle;
+        text-transform: uppercase;
 
         &:hover {
           background-color: #292d33;
@@ -682,10 +683,16 @@ body.account {
 
       .avatar {
         border-radius: 300px;
+        border-width: 3px;
         width: 96px;
         height: 96px;
         display: block;
         overflow: hidden;
+        margin-left: 8px;
+      }
+
+      .input-group-inline {
+        float: left;
       }
 
     }

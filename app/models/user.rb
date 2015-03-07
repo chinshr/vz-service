@@ -77,10 +77,11 @@ class User < ActiveRecord::Base
   end
 
   def css_hex_color
-    digest = Digest::SHA1.hexdigest("#{id.to_i + 1}")
-    "##{digest[0..1]}#{digest[2..3]}#{digest[4..5]}"
+    self[:css_hex_color] || begin
+      digest = Digest::SHA1.hexdigest("#{id.to_i + 1}")
+      "##{digest[0..1]}#{digest[2..3]}#{digest[4..5]}"
+    end
   end
-
 
 protected
 
