@@ -1,4 +1,5 @@
 class Web::Account::SettingsController < Web::Account::ApplicationController
+
   # PUT /resource
   # We need to use a copy of the resource because we don't want to change
   # the current user in place.
@@ -61,8 +62,8 @@ protected
 
   # Get message for given
   def find_message(kind, options = {})
-    options[:scope] = "devise.registrations"
-    options[:default] = Array(options[:default]).unshift(kind.to_sym)
+    options[:scope]         = "devise.registrations"
+    options[:default]       = Array(options[:default]).unshift(kind.to_sym)
     options[:resource_name] = resource_name
     options = devise_i18n_options(options) if respond_to?(:devise_i18n_options, true)
     I18n.t("#{options[:resource_name]}.#{kind}", options)

@@ -52,16 +52,18 @@
 </head>
 <body class="<%= dom_controller_class %> <%= dom_controller_action_class %>">
   <div id="content">
+    <%= render "web/shared/flash" %>
+
     <%= render_recursive_partial("header") %>
 
     <% if use_account_split_view? %>
 
-      <%# Used for account split views, not for dashboard %>
-      <%= render_recursive_partial("split_view") %>
+    <%# Used for account split views, not for dashboard %>
+    <%= render_recursive_partial("split_view") %>
 
     <% else %>
 
-      <%= yield %>
+    <%= yield %>
 
     <% end %>
 
