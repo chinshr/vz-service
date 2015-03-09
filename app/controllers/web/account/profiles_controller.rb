@@ -9,7 +9,7 @@ class Web::Account::ProfilesController < Web::Account::ApplicationController
 protected
 
   def account_profile_params
-    params.require(:user).permit(:first_name, :last_name, :time_zone, :css_hex_color)
+    params.require(:user).permit(:first_name, :last_name, :time_zone, :css_hex_color, :initials)
   end
 
 end

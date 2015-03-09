@@ -68,7 +68,9 @@ class User < ActiveRecord::Base
   end
 
   def initials
-    [first_name.try(:[], 0), last_name.try(:[], 0)].reject(&:blank?).join.upcase
+    self[:initials] || begin
+      [first_name.try(:[], 0), last_name.try(:[], 0)].reject(&:blank?).join.upcase
+    end
   end
 
   def css_rgb_color
