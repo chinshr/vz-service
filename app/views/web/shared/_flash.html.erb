@@ -12,16 +12,32 @@
   }
 %>
 <% if type == :javascript %>
-  <%= javascript_tag do %>
-    var flash = <%= raw flash.to_hash.to_json %>;
-  <% end %>
   <% if remote %>
 
     <%= content_for :javascript_includes do %>
       <%= javascript_tag do %>
-      $('<%= on %>').on('ajax:complete', function(e, data, status, xhr) {
-        for (key in flash) {
-          $.notify(flash[key], 'info', <%= raw(notifier_options.to_json) %>);
+      $('<%= on %>').on('ajax:complete', function(event, request, status) {
+        var message = request.getResponseHeader("X-Message");
+        var type = request.getResponseHeader("X-Message-Type");
+        var toNotifierType = function(key) {
+          switch(key) {
+            case 'notice':
+              return 'info';
+              break;
+            case 'success':
+              return 'success';
+              break;
+            case 'error':
+              return 'danger';
+              break;
+            default:
+              return 'info';
+          }
+        }
+        console.log(type);
+        console.log(message);
+        if (message && type) {
+          $.notify(message, toNotifierType(type), <%= raw(notifier_options.to_json) %>);
         }
       });
       <% end %>

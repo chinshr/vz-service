@@ -14,6 +14,7 @@ class Web::Account::SettingsController < Web::Account::ApplicationController
       sign_in resource_name, @user, :bypass => true
       respond_with @user, :location => after_update_path_for(@user)
     else
+      set_flash_message :notice, :not_updated
       clean_up_passwords @user
       respond_with @user
     end

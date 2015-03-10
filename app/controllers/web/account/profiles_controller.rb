@@ -2,8 +2,8 @@ class Web::Account::ProfilesController < Web::Account::ApplicationController
 
   def update
     @user = current_user
-    flash[:notice] = "Sucessfully updated."
     if @user = User.update(@user.id, account_profile_params)
+      flash[:success] = "Sucessfully updated."
       respond_with @user, :location => web_account_profile_path
     else
       respond_with @user
