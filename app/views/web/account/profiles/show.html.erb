@@ -4,8 +4,8 @@
 
 <h1 class="page-header">User Profile</h1>
 
-<%= form_for(current_user, {as: :user, url: web_account_profile_path, html: {method: :put, class: "form-horizontal", role: "form", validate: true, remote: false}}) do |f| %>
-
+<%= form_for(current_user, {as: :user, url: web_account_profile_path, validate: true, remote: true, html: {method: :put, class: "form-horizontal", role: "form"}}) do |f| %>
+  <%= render "web/shared/flash", remote: true, on: "#edit_user" %>
   <div class="form-group">
     <div class="input-group avatar-picker col-sm-4 col-md-2">
       <%= image_tag(avatar_url(current_user, {size: 96}), class: "avatar", style: "background-color: #{current_user.css_hex_color}; border-color: #{current_user.css_hex_color};") %>
@@ -16,13 +16,13 @@
       <%= f.text_field :css_hex_color, :class => "form-control", value: current_user.css_hex_color %>
       <span class="input-group-addon"><i></i></span>
       <%= content_for :javascript_includes do %>
-      <script>
-        $(function(){
-          $('.color-picker').colorpicker();
-        }).on('changeColor.colorpicker', function(event) {
-          $(".avatar").attr("style", "background-color: " + event.color.toHex() + "; border-color: " + event.color.toHex() + ";");
-        });
-      </script>
+        <%= javascript_tag do %>
+          $(function(){
+            $('.color-picker').colorpicker();
+          }).on('changeColor.colorpicker', function(event) {
+            $(".avatar").attr("style", "background-color: " + event.color.toHex() + "; border-color: " + event.color.toHex() + ";");
+          });
+        <% end %>
       <% end %>
     </div>
   </div>

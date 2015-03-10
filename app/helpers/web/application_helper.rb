@@ -151,4 +151,15 @@ module Web::ApplicationHelper
       end
     end
   end
+
+  def notifier_type_from(key)
+    case key.to_s
+    when /notice/i then 'info'      # blue
+    when /success/i then 'success'  # green
+    when /error/i then 'danger'     # red
+    when /alert/i then 'warning'    # yellow
+    else
+      'warning'
+    end
+  end
 end

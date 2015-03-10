@@ -47,15 +47,6 @@ header {
 
 /* ====================== THEME ========================= */
 
-/*
-
-Bootsrap Google Plus Style Theme from Bootply.com http://bootply.com/templates
-https://github.com/iatek/bootstrap-google-plus
-License: GPL
-Target Version: Bootstrap 3.0.2
-
-*/
-
 /* to optimize performance load fonts from LINK in HEAD */
 /*
 @import url(http://fonts.googleapis.com/css?family=Roboto:400);
@@ -205,5 +196,9 @@ h3,h4,h5 {
       font-size: 26px;
     }
   }
+}
 
+.simply-toast {
+  padding: 15px;
+  border-radius: $btn-default-radius;
 }

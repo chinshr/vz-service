@@ -1,3 +1,45 @@
+<%
+  type             ||= :javascript
+  remote           ||= false
+  notifier_options ||= {
+    customClass: "#{dom_controller_class} #{dom_controller_action_class}",
+    offset: {
+      from: "top",
+      amount: 20
+    },
+    align: "right",
+    delay: 1500,
+  }
+%>
+<% if type == :javascript %>
+  <%= javascript_tag do %>
+    var flash = <%= raw flash.to_hash.to_json %>;
+  <% end %>
+  <% if remote %>
+
+    <%= content_for :javascript_includes do %>
+      <%= javascript_tag do %>
+      $('<%= on %>').on('ajax:complete', function(e, data, status, xhr) {
+        for (key in flash) {
+          $.notify(flash[key], 'info', <%= raw(notifier_options.to_json) %>);
+        }
+      });
+      <% end %>
+    <% end %>
+  <% else %>
+    <%= content_for :javascript_includes do %>
+      <%= javascript_tag do %>
+
+        $(function() {
+        <% flash.each do |key, message| %>
+          $.notify('<%= message %>', '<%= notifier_type_from(key) %>', <%= raw(notifier_options.to_json) %>);
+        <% end %>
+        });
+
+      <% end %>
+    <% end %>
+  <% end %>
+<% elsif type == :html %>
 <div class="row">
   <% flash.each do |key, message| %>
     <div class="col-md-12">
@@ -8,3 +50,4 @@
     </div>
   <% end %>
 </div>
+<% end %>
