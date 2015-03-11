@@ -26,6 +26,7 @@
 //= require lib/beachstrap/bootstrap.youtubepopup
 //= require web/common
 
+/*
 VZ._registration = (function() {
   var interval;
 
@@ -61,11 +62,12 @@ VZ._registration = (function() {
     $('.registration-form input#registration_email').bind('keyup', function(event) {
       stop();
       if (event.keyCode != 13) {
-        interval = setInterval(trigger, 2000);
+        interval = setInterval(trigger, 5000);
       }
     });
   });
 })();
+*/
 
 $(function() {
   $(".youtube").YouTubeModal({autoplay:1, width:680, height:380, color: "#151a28", controls: 0, theme: "dark", 

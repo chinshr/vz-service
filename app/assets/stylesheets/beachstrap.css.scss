@@ -127,21 +127,54 @@ body.pages {
           margin: 0 0 10px 0;
           font-size: 18px;
           line-height: 1.4em;
-          color: #fff;
+          color: #ddd;
           font-weight: 600;
         }
 
-        input {
-          padding: 20px 10px;
-          @include transition(opacity 1s ease);
-          opacity: 0.3;
-
-          &:hover {
-            opacity: 0.9;
-          }
-        }
 
         .form-group {
+          input {
+            padding: 20px 10px;
+            border: 0;
+          }
+
+          ::-webkit-input-placeholder {
+            color: #333;
+          }
+
+          :-moz-placeholder { /* Firefox 18- */
+            color: #333;
+          }
+
+          ::-moz-placeholder {  /* Firefox 19+ */
+            color: #333;
+          }
+
+          :-ms-input-placeholder {
+            color: #333;
+          }
+
+          .input-group {
+            border: 0;
+            @include transition(opacity 1s ease);
+            opacity: 0.3;
+
+            &:hover {
+              opacity: 0.9;
+            }
+
+            .input-group-addon {
+              border: 0;
+              padding-left: 10px;
+              padding-right: 10px;
+
+              .btn-submit {
+                border-radius: 100%;
+                padding: 5px;
+              }
+            }
+          }
+
           .error-block {}
 
           &.has-error {

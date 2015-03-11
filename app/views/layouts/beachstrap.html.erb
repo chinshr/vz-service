@@ -98,7 +98,12 @@
                     <h4>Want to join the beta list?</h4>
                     <%= form_for(@registration || Registration.new, {:url => web_registrations_path, :validate => true, :remote => true}) do |f| %>
                       <div class="form-group">
-                        <%= f.email_field :email, :autofocus => "autofocus", :autocapitalize => "off", :autocomplete => "off", :autocorrect => "off", :spellcheck => false, :class => "form-control first", :placeholder => "Enter your email address to register", :"data-error-style" => "inline" %>
+                        <div class="input-group">
+                          <%= f.email_field :email, :autofocus => "autofocus", :autocapitalize => "off", :autocomplete => "off", :autocorrect => "off", :spellcheck => false, :class => "form-control first", :placeholder => "Enter your email address to register", :"data-error-style" => "inline" %>
+                          <span type="submit" class="input-group-addon">
+                            <button class="btn btn-submit glyphicon glyphicon-arrow-right"></button>
+                          </span>
+                        </div>
                       </div>
                       <%= f.hidden_field :time_zone %>
                       <%#= f.submit "Notify me!", :class => "btn btn-lg btn-primary btn-block" %>
