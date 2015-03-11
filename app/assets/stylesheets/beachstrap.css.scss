@@ -136,6 +136,10 @@ body.pages {
           input {
             padding: 20px 10px;
             border: 0;
+            border-top-left-radius: $btn-default-radius;
+            border-bottom-left-radius: $btn-default-radius;
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
           }
 
           ::-webkit-input-placeholder {
@@ -165,6 +169,10 @@ body.pages {
 
             .input-group-addon {
               border: 0;
+              border-top-left-radius: 0;
+              border-bottom-left-radius: 0;
+              border-top-right-radius: $btn-default-radius;
+              border-bottom-right-radius: $btn-default-radius;
               padding-left: 10px;
               padding-right: 10px;
 
