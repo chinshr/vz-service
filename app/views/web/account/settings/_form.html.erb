@@ -4,7 +4,7 @@
 
 <h1 class="page-header">Account Settings</h1>
 
-<%= form_for(current_user, {as: :user, url: web_account_settings_path, validate: true, remote: true, html: {method: :put, class: "form-horizontal", role: "form"}}) do |f| %>
+<%= form_for(current_user, {as: :user, url: web_account_settings_path, validate: true, remote: false, html: {method: :put, class: "form-horizontal", role: "form"}}) do |f| %>
   <%= render "web/shared/flash", remote: true, on: "#user_current_password" %>
 
   <div class="form-group">

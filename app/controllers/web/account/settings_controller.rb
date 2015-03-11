@@ -65,7 +65,7 @@ protected
   def find_message(kind, options = {})
     options[:scope]         = "devise.registrations"
     options[:default]       = Array(options[:default]).unshift(kind.to_sym)
-    options[:resource_name] = resource_name
+    options[:resource_name] = resource_name.underscore
     options = devise_i18n_options(options) if respond_to?(:devise_i18n_options, true)
     I18n.t("#{options[:resource_name]}.#{kind}", options)
   end

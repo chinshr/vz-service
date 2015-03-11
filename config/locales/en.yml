@@ -22,6 +22,12 @@
 en:
   hello: "Hello world"
 
+  devise:
+    registrations:
+      user:
+        updated: "Updates were saved."
+        not_updated: "No updates were applied."
+        update_needs_confirmation: "Confirmation password required."
   activerecord:
     errors:
       messages:
