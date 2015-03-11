@@ -36,11 +36,11 @@ module Web::ApplicationHelper
   end
 
   def privacy_policy_to_markdown
-    markdown(File.read(Rails.root + "PRIVACY-POLICY.md"))
+    markdown(File.read(Rails.root + "doc/PRIVACY-POLICY.md"))
   end
 
   def terms_of_service_to_markdown
-    markdown(File.read(Rails.root + "TERMS-OF-SERVICE.md"))
+    markdown(File.read(Rails.root + "doc/TERMS-OF-SERVICE.md"))
   end
 
   # E.g. devise sessions
