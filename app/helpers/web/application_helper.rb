@@ -35,11 +35,11 @@ module Web::ApplicationHelper
     markdown.render(text).html_safe
   end
 
-  def privacy_policy_to_markdown
+  def privacy_policy_from_markdown
     markdown(File.read(Rails.root + "doc/PRIVACY-POLICY.md"))
   end
 
-  def terms_of_service_to_markdown
+  def terms_of_service_from_markdown
     markdown(File.read(Rails.root + "doc/TERMS-OF-SERVICE.md"))
   end
 
