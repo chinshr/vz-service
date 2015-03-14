@@ -73,7 +73,7 @@ $(function() {
   $(".youtube").YouTubeModal({autoplay:1, width:680, height:380, color: "#151a28", controls: 0, theme: "dark", 
     title: "Stanford Knight Talk: Ana María Carrano"});
 
-  $('body.pages').on('activate.bs.scrollspy', function (event) {
+  $('body.pages').on('activate.bs.scrollspy', function(event) {
     if (event.target && event.target.id) {
       var body = $('body');
       if (body && body[0] && body[0].className.length > 0) {
@@ -83,4 +83,12 @@ $(function() {
       $('body').addClass(event.target.id);
     }
   })
+
+  $(window).scroll(function() {
+    if ($(window).scrollTop() > 150) {
+      $('body').removeClass('selected-main-item');
+    } else if ($(window).scrollTop() <= 150) {
+      $('body').addClass('selected-main-item');
+    }
+  });
 });
