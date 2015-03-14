@@ -14,13 +14,13 @@ header {
     text-indent: -9999px;
     background: url(/assets/voyzes-logo.png) no-repeat 0 0;
   }
-  
+
   @media (max-width: 480px) {
     #logo {
       margin-left: 15px;
     }
   }
-  
+
   @media (max-width: 768px) {
     #logo {
       margin-left: 15px;
@@ -31,7 +31,7 @@ header {
     &.navbar, &.navbar-collapse {
       border: 0;
     }
-    
+
     a {
       color: $color-white;
       font-weight: 700;
@@ -42,7 +42,7 @@ header {
         text-decoration: none;
       }
     }
-    
+
     ul.nav {
       text-transform: uppercase;
       text-align: right;
@@ -57,14 +57,14 @@ header {
         &:last-child{
           margin-right:0;
         }
-        
+
         a {
           text-decoration: none;
 
           &:hover {
             color: $color-orange;
           }
-          
+
           &:focus {
             color: $color-white;
           }
@@ -74,16 +74,16 @@ header {
           color: $color-orange;
           background-color: #292d33;
         }
-        
+
         &.dropdown {
           padding-left: 45px;
         }
-          
+
         &.dropdown:hover {
           background-color: #373d44;
           @include transition;
         }
-        
+
         &.dropdown.open {
           background-color: #373d44;
         }
@@ -95,7 +95,7 @@ header {
         &.dropdown span {
           margin-left: 10px;
         }
-        
+
         &.dropdown .dropdown-toggle .avatar {
           position: absolute;
           top: 19px;
@@ -106,9 +106,9 @@ header {
           display: block;
           overflow: hidden;
         }
-        
+
       }
-      
+
       .dropdown-menu {
         top: 70px;
         border: none;
@@ -117,22 +117,22 @@ header {
         background-color: #3d444b;
         padding: 0;
         min-width: 236px;
-        
+
         .divider {
           background-color: transparent;
         }
-        
+
         li {
           text-align: left;
           margin: 0;
           padding: 0;
           font-size: 16px;
-          
+
           &.logout a {
             margin: 10px;
           }
         }
-        
+
         & > li > a {
           padding-top: 15px;
           padding-bottom: 15px;
@@ -140,7 +140,7 @@ header {
           text-decoration: none;
           font-weight: bold;
         }
-        
+
         & > li > a:hover,
         & > li > a:focus {
           color: $color-white;
@@ -159,7 +159,7 @@ header {
       }
     } /* ul.nav */
   } /* nav */
-  
+
   nav.navbar-default {
     background-color: transparent;
     margin-top: 0;
@@ -171,11 +171,11 @@ header {
     .navbar-toggle:focus {
       xbackground-color: rgba(55, 61, 68, 0.8);
     }
-    
+
     .navbar-brand {
       width: 115px;
     }
-    
+
     .navbar-brand:hover,
     .navbar-brand:focus {
       color: #5e5e5e;
@@ -192,7 +192,7 @@ header {
       color: #777;
       @include transition(color .2s ease);
     }
-    
+
     .navbar-tag:hover,
     .navbar-tag:focus {
       color: $color-white;
@@ -219,7 +219,7 @@ header {
         &:hover {
           @include transition;
         }
-        
+
         &.active {
           background-color: #373d44;
         }
@@ -257,21 +257,21 @@ header {
     .btn-group {
       text-transform: uppercase;
       margin: 20px;
-      
+
       a {
         font-weight: bold;
       }
-      
+
       a:hover,
       a:focus {
         color: $color-white;
         background-color: transparent;
         @include transition;
       }
-      
+
     }
   } /* nav.navbar-default */
-  
+
 }
 
 /* for high resolution display */
@@ -281,5 +281,5 @@ header {
      background: url(/assets/voyzes-logo@2x.png) no-repeat 0 0 !important;
      background-size: 110px 40px !important;
    }
- } 
+ }
 }

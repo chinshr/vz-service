@@ -5,7 +5,7 @@
     customClass: "#{dom_controller_class} #{dom_controller_action_class}",
     offset: {
       from: "top",
-      amount: 20
+      amount: 10
     },
     align: "right",
     delay: 2500,
@@ -58,12 +58,12 @@
 <% elsif type == :html %>
 <div class="row">
   <% flash.each do |key, message| %>
-    <div class="col-md-12">
-      <div class="alert alert-<%= dom_alert_class(key) %>">
-        <button type="button" class="close" data-dismiss="alert">×</button>
-        <%= message %>
-      </div>
+  <!-- <div class="col-md-12"> -->
+    <div class="alert alert-<%= dom_alert_class(key) %>">
+      <button type="button" class="close" data-dismiss="alert">×</button>
+      <%= message %>
     </div>
+  <!-- </div> -->
   <% end %>
 </div>
 <% end %>

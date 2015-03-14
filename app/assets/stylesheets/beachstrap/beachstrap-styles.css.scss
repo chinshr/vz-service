@@ -125,7 +125,288 @@ form {
 
 /* ====================== HEADER ========================= */
 
-@import 'application-header';
+header {
+  /* background-color: rgba(21.255, 26.255, 40.255, 0.8); */
+  background-color: #292d33;
+  height: 70px;
+  padding: 0;
+  position: fixed;
+  z-index: 200;
+  width:100%;
+  top: 0;
+
+  #logo {
+    margin: 15px 0;
+    padding: 1px 0;
+    text-indent: -9999px;
+    background: url(/assets/voyzes-logo.png) no-repeat 0 0;
+  }
+
+  @media (max-width: 480px) {
+    #logo {
+      margin-left: 15px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    #logo {
+      margin-left: 15px;
+    }
+  }
+
+  @media only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 2/1), only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min-device-pixel-ratio: 2) {
+    #logo {
+      background: url(/assets/voyzes-logo@2x.png) no-repeat 0 0 !important;
+      background-size: 110px 40px !important;
+    }
+  }
+
+  nav {
+    &.navbar, &.navbar-collapse {
+      border: 0;
+    }
+
+    a {
+      color: $color-white;
+      font-weight: 700;
+      @include transition;
+
+      &:hover, &.active{
+        color: $color-orange;
+        text-decoration: none;
+      }
+    }
+
+    ul.nav {
+      text-transform: uppercase;
+      text-align: right;
+      padding-top: 0;
+      font-size: 16px;
+
+      li {
+        display: inline;
+        padding: 25px 15px 25px 15px;
+        xheight: 70px;
+
+        &:last-child{
+          margin-right:0;
+        }
+
+        a {
+          text-decoration: none;
+
+          &:hover {
+            color: $color-orange;
+          }
+
+          &:focus {
+            color: $color-white;
+          }
+        }
+
+        &.active a {
+          color: $color-orange;
+          background-color: #292d33;
+        }
+
+        &.dropdown {
+          padding-left: 45px;
+        }
+
+        &.dropdown:hover {
+          background-color: #373d44;
+          @include transition;
+        }
+
+        &.dropdown.open {
+          background-color: #373d44;
+        }
+
+        &.dropdown.open > a {
+          background-color: transparent !important;
+        }
+
+        &.dropdown span {
+          margin-left: 10px;
+        }
+
+        &.dropdown .dropdown-toggle .avatar {
+          position: absolute;
+          top: 19px;
+          left: 10px;
+          border-radius: 300px;
+          width: 35px;
+          height: 35px;
+          display: block;
+          overflow: hidden;
+        }
+
+      }
+
+      .dropdown-menu {
+        top: 70px;
+        border: none;
+        sbackground-color: #3d444b;
+        sbackground-color: rgba(21.255, 26.255, 40.255, 0.8);
+        background-color: #3d444b;
+        padding: 0;
+        min-width: 236px;
+
+        .divider {
+          background-color: transparent;
+        }
+
+        li {
+          text-align: left;
+          margin: 0;
+          padding: 0;
+          font-size: 16px;
+
+          &.logout a {
+            margin: 10px;
+          }
+        }
+
+        & > li > a {
+          padding-top: 15px;
+          padding-bottom: 15px;
+          color: $color-white;
+          text-decoration: none;
+          font-weight: bold;
+        }
+
+        & > li > a:hover,
+        & > li > a:focus {
+          color: $color-white;
+          text-decoration: none;
+          background-color: #292d33;
+        }
+
+        & > .active > a,
+        & > .active > a:hover,
+        & > .active > a:focus {
+          color: #fff;
+          text-decoration: none;
+          background-color: #428bca;
+          outline: 0;
+        }
+      }
+    } /* ul.nav */
+  } /* nav */
+
+  nav.navbar-default {
+    background-color: transparent;
+    margin-top: 0;
+
+    .navbar-toggle {
+      margin-top: 18px;
+    }
+    .navbar-toggle:hover,
+    .navbar-toggle:focus {
+      xbackground-color: rgba(55, 61, 68, 0.8);
+    }
+
+    .navbar-brand {
+      width: 115px;
+    }
+
+    .navbar-brand:hover,
+    .navbar-brand:focus {
+      color: #5e5e5e;
+      background-color: transparent;
+    }
+
+    .navbar-tag {
+      margin: 16px 0;
+      text-transform: uppercase;
+      font-weight: 200;
+      font-size: 26px;
+      float: left;
+      width: 250px;
+      color: #777;
+      @include transition(color .2s ease);
+    }
+
+    .navbar-tag:hover,
+    .navbar-tag:focus {
+      color: $color-white;
+      background-color: transparent;
+      @include transition(color .2s ease);
+    }
+
+    @media (max-width: 480px) {
+      .navbar-tag {
+        display: none;
+      }
+    }
+
+    .navbar-text {
+      color: #777;
+    }
+
+    .navbar-nav {
+      li {
+        &.active a {
+          color: $color-orange;
+        }
+
+        &:hover {
+          @include transition;
+        }
+
+        &.active {
+          background-color: #373d44;
+        }
+      }
+    }
+
+    .navbar-nav > li > a {
+      padding-top: 10px;
+      padding-bottom: 10px;
+      color: $color-white;
+      font-weight: bold;
+    }
+
+    .navbar-nav > li > a:hover,
+    .navbar-nav > li > a:focus {
+      color: $color-orange;
+      background-color: transparent;
+      @include transition(color .2s ease);
+    }
+
+    .navbar-nav > .active > a,
+    .navbar-nav > .active > a:hover,
+    .navbar-nav > .active > a:focus {
+      color: $color-orange;
+      background-color: transparent;
+    }
+
+    .navbar-nav > .disabled > a,
+    .navbar-nav > .disabled > a:hover,
+    .navbar-nav > .disabled > a:focus {
+      color: #ccc;
+      background-color: transparent;
+    }
+
+    .btn-group {
+      text-transform: uppercase;
+      margin: 20px;
+
+      a {
+        font-weight: bold;
+      }
+
+      a:hover,
+      a:focus {
+        color: $color-white;
+        background-color: transparent;
+        @include transition;
+      }
+
+    }
+  } /* nav.navbar-default */
+
+}
 
 header {
   background-color: rgba(21, 26, 40, 0.8);
@@ -163,7 +444,7 @@ nav {
   h4 {
     color: #ccc;
   }
-    
+
   .close {
     color: #ccc;
     text-shadow: none;
@@ -213,7 +494,7 @@ nav {
   font-weight:700;
   cursor: pointer;
   border-radius: $btn-default-radius;
-  
+
   @include transition(background-color 0.5s ease);
 
   &:hover{
@@ -247,7 +528,7 @@ nav {
     right: -10px;
     overflow: hidden;
   }
-  
+
   .ipad img{
     position: relative;
     opacity: 0;
