@@ -1,7 +1,7 @@
 App.Views.UploadsShow = App.Views.UploadsBase.extend({
   template: JST['uploads/show'],
   className: 'tile show-tile col-lg-4 col-md-4 col-sm-4',
-  
+
   events: _.extend({
     'click .action-update' : 'flipTile',
     'click .action-edit' : 'onOpenEdit',
@@ -10,7 +10,7 @@ App.Views.UploadsShow = App.Views.UploadsBase.extend({
     'click .action-stop' : 'onStop',
     'click .action-stop' : 'onStart'
   }, App.Views.UploadsBase.prototype.events),
-  
+
   initialize: function() {
     App.Views.UploadsBase.prototype.initialize.call(this); // super
   },
@@ -22,22 +22,22 @@ App.Views.UploadsShow = App.Views.UploadsBase.extend({
     if (!this._hasUploadProgress()) {
       this.ping();
     }
-    
+
     _.defer((function(_this) {
       return function() {
         $('.btn-dropdown-toggle').dropdown();
       }
     })(this));
-    
+
     return this;
   },
-  
+
   flipTile: function() {
     var show     = this;
     var showHTML = show.$el;
     var edit     = new App.Views.UploadsEdit({model: this.model});
     var editHTML = edit.render().$el;
-    
+
     if (Modernizr.csstransforms3d) {
       editHTML.find('.panel').css({
         'transform': 'rotateY(180deg)',
@@ -63,13 +63,13 @@ App.Views.UploadsShow = App.Views.UploadsBase.extend({
   },
 
   onOpenEdit: function() {
-    alert('open edit document');
+    window.location = '/' + this.model.attributes.slug + '/edit';
   },
 
   onOpenPreview: function() {
-    alert('open preview document');
+    window.location = '/' + this.model.attributes.slug;
   },
-  
+
   onStop: function(e) {
     if (this._xhr) {
       this._xhr.abort();
