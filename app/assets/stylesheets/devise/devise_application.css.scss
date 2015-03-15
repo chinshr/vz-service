@@ -9,19 +9,19 @@ body.devise, body.confirmations {
     background: linear-gradient(169deg, #3f6169, #55dcfc);
     background-color: #3f6169;
     width: 100%;
-    
+
     .login-quote {
       margin: 10px 0 25px;
-      
+
       blockquote {
         border: 0;
         margin: 0 auto;
         quotes: none;
         max-width: 460px;
-        
+
         p {
           padding: 0 40px 10px;
-          
+
           font-weight: bold;
           font-style: normal;
           position: relative;
@@ -30,7 +30,7 @@ body.devise, body.confirmations {
           font-size: 18px;
           line-height: 28px;
         }
-        
+
         i {
           font-family: "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
           font-weight: 700;
@@ -45,12 +45,12 @@ body.devise, body.confirmations {
           top: 0;
           left: -10px;
         }
-        
+
         i.bottom {
           bottom: 0;
           right: -20px;
         }
-        
+
         footer {
           font-weight: normal;
           font-style: normal;
@@ -59,7 +59,7 @@ body.devise, body.confirmations {
           text-transform: uppercase;
           color: $color-white;
         }
-      }  
+      }
 
       .text-light {
         color: #fff;
@@ -67,8 +67,8 @@ body.devise, body.confirmations {
     } /* .login-quote */
 
     .tile {
-      font-family: "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
-      
+      xfont-family: "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+
       margin: 25px 0;
       margin: 0 auto;
       max-width: 325px;
@@ -77,16 +77,16 @@ body.devise, body.confirmations {
         font: inherit;
       }
     }
-    
+
     .panel {
       box-shadow: 0 2px 5px rgba(0, 0, 0,.3);
-      
+
       .panel-heading {
         h1 {
           font-size: 52px;
           line-height: 60px;
         }
-        
+
         p {
           color: #555;
           padding: 0 15px;
@@ -95,12 +95,12 @@ body.devise, body.confirmations {
           font-size: 15px;
           text-align: center;
         }
-        
+
         .logo {
           height: 20px;
           width: 108px;
           margin: 15px auto;
-          
+
           a.signup-brand {
             background: url(/assets/voyzes-logo-dark.png) no-repeat;
             display: block;
@@ -112,29 +112,29 @@ body.devise, body.confirmations {
           }
         }
       }
-      
+
       .panel-body {
         margin: 0 15px;
       }
     }
-    
+
     .btn-plain {
       color: #fff;
       border: 2px solid #fff;
       background: transparent;
       text-shadow: none;
-    }  
-    
+    }
+
     .btn-transparent {
       opacity: .8;
       @include transition(opacity .2s ease);
     }
-    
+
     .btn-transparent:active,
     .btn-transparent:hover {
       opacity: 1;
     }
-    
+
     .btn-block {
       width: 100%;
     }
@@ -142,15 +142,15 @@ body.devise, body.confirmations {
     .text-translucent {
       opacity: .5;
     }
-    
+
     .text-light {
       color: #fff;
-      
+
       a {
         color: #fff;
       }
     }
-    
+
     .text-small {
       font-family: "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
       font-weight: 400;
@@ -159,9 +159,9 @@ body.devise, body.confirmations {
       line-height: 20px;
       margin: 0 0 15px 0;
     }
-    
+
   } /* content-primary */
-  
+
   footer.nav-footer {
     display: block;
     text-align: center;
@@ -175,7 +175,7 @@ body.devise, body.confirmations {
       text-align: left;
       margin: 0 auto 10px;
       border: 0;
-      
+
       a {
         display: block;
         background: url(/assets/voyzes-logo-gray-small.png) no-repeat;
@@ -192,28 +192,28 @@ body.devise, body.confirmations {
       padding: 0;
       margin: 0;
       text-align: center;
-      
+
       li {
         display: inline;
         margin: 0 5px;
         font-size: 14px;
         line-height: 1.4em;
-        
+
         a {
           font-weight: 700;
           color: $color-orange;
         }
       }
     }
-    
-    
+
+
   } /* footer */
-  
+
 }
 
 /* for high resolution display */
 @media only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 2/1), only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min-device-pixel-ratio: 2) {
-  
+
   body.devise, body.confirmations {
     .content-primary {
       .panel {
@@ -228,7 +228,7 @@ body.devise, body.confirmations {
       }
     }
   }
-  
+
   footer.nav-footer {
     h5 {
       a {
@@ -239,3 +239,8 @@ body.devise, body.confirmations {
   }
 }
 
+body.sessions.new {
+  .content-primary {
+    padding-top: 30px;
+  }
+}
