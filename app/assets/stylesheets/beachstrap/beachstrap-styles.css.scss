@@ -530,7 +530,7 @@ header {
     overflow: hidden;
   }
 
-  .ipad img{
+  .ipad img {
     position: relative;
     opacity: 0;
     right: 500px;
@@ -542,14 +542,14 @@ header {
     @include slideIn(translateX(500px));
   }
 
-  .text{
+  .text {
     position: relative;
     opacity: 0;
     left: -50px;
     @include transition(all 1.5s ease);
   }
 
-  .text.anim{
+  .text.anim {
     opacity: 1;
     @include slideIn(translateX(50px));
   }
