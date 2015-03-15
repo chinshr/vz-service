@@ -144,7 +144,7 @@ module Web::ApplicationHelper
       options.reverse_merge!({size: 96, default_url: default_avatar_url(user)})
       gravatar_id   = Digest::MD5::hexdigest(user.email).downcase
       gravatar_root = https? ? "https://secure.gravatar.com/" : "http://gravatar.com/"
-      if Rails.env.development?
+      if false && Rails.env.development?
         options[:default_url]
       else
         "#{gravatar_root}avatar/#{gravatar_id}.png?s=#{options[:size]}&d=#{CGI.escape(options[:default_url])}"
