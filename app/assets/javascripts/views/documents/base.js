@@ -295,6 +295,13 @@ App.Views.DocumentsBase = Backbone.View.extend({
     }
   },
 
+  initUserInitials: function() {
+    var ui = $(".user-initials");
+    if (ui.length !== 0 && !ui.is(':visible')) {
+      ui.animate({top: 0, opacity: 1}, 'fast');
+    }
+  },
+
   moveUserInitials: function(editor, margin) {
     margin = margin || -85;
     var sel = editor.root.ownerDocument.getSelection();
