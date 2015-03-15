@@ -127,8 +127,9 @@ form {
 
 header {
   xbackground-color: rgba(21.255, 26.255, 40.255, 0.8);
-  background-color: rgba(21, 26, 40, 0.8);
-  @include transition(background-color 0.5s ease);
+  xbackground-color: rgba(21, 26, 40, 0.8);
+  background-color: rgba(0, 0, 0, 0.7);
+  @include transition(background-color 1s ease);
 
   // background-color: #292d33;
   height: 70px;
@@ -716,16 +717,23 @@ footer{
   background-color: #222327;
   padding:10px 0;
 
-  p{
-    margin:10px 0 0 0;
+  p {
+    margin: 9px 0 0 0;
     color: #fff;
+    font-size: 18px
+
   }
 
-  .sn-links{
+  sup {
+    font-size: 9px;
+    top: -1em;
+  }
+
+  .sn-links {
     margin: 0;
     text-align: right;
 
-    a{
+    a {
       color: #fff;
     }
 

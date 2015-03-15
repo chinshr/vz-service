@@ -41,5 +41,5 @@ en:
           attributes:
             email:
               blank: "we need a valid email address"
-              taken: "has already been registered"
+              taken: "has already registered"
               email_format: "not a valid email address"

@@ -19,7 +19,7 @@ body.pages {
   &.selected-main-item {
     header {
       background-color: transparent;
-      @include transition(background-color 0.5s ease);
+      @include transition(background-color 1s ease);
 
       nav .navbar-nav li {
         background-color: transparent !important;
