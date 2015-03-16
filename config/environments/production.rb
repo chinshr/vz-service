@@ -78,9 +78,9 @@ Voyzes::Application.configure do
 
   # Use default logging formatter so that PID and timestamp are not suppressed.
   config.log_formatter = ::Logger::Formatter.new
-  
-  config.action_mailer.default_url_options = {:host => 'voyzes.herokuapp.com'}
-  
+
+  config.action_mailer.default_url_options = {:host => 'voyz.es'}
+
   config.action_mailer.smtp_settings = {
     :address        => 'smtp.sendgrid.net',
     :port           => '587',
@@ -90,5 +90,5 @@ Voyzes::Application.configure do
     :domain         => 'heroku.com',
     :enable_starttls_auto => true
   }
-  
+
 end
