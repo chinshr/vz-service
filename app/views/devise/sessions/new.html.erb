@@ -4,9 +4,9 @@
 
 <div class="container-fluid content-primary">
   <%= render "devise/shared/login_quote" %>
-  
+
   <div class="tile form-tile animated fadeInUp">
-    <%= form_for(resource, {:as => resource_name, :url => session_path(resource_name), 
+    <%= form_for(resource, {:as => resource_name, :url => session_path(resource_name),
         :html => {:class => "form-signin panel animated fade-in-up"}}) do |f| %>
       <div class="panel-heading">
         <h1 class="logo"><a class="signup-brand" href="/">Login to VOYZ.ES</a></h1>
@@ -25,7 +25,7 @@
         <% if devise_mapping.rememberable? -%>
           <label class="checkbox"><%= f.check_box :remember_me %> <%= f.label :remember_me %></label>
         <% end -%>
-      </div>  
+      </div>
       <div class="panel-footer">
         <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
       </div>
