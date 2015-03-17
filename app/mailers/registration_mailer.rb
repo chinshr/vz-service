@@ -9,7 +9,8 @@ class RegistrationMailer < ActionMailer::Base
 
   def accepted(registration)
     @registration = registration
-    mail(to: @registration.email, subject: "Congrats, you were accepted to the beta program.")
+    mail(to: @registration.email, subject: "Congrats, you were accepted to the beta program.",
+      bcc: APP_CONFIG['ADMIN_EMAIL_ADDRESSES'])
   end
 
 end

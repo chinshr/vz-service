@@ -9,8 +9,8 @@ defaults: &defaults
   EXPIRE_TIME: 300 # 5 minutes
   S3_URL: 'http://s3.amazonaws.com'
   ADMIN_EMAIL_ADDRESSES:
-    - juergen.voyz.es
-    - anamaria.voyz.es
+    - juergen@voyz.es
+    - anamaria@voyz.es
 
 development:
   <<: *defaults
