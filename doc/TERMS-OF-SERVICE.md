@@ -2,7 +2,7 @@
 
 Last updated: March 6, 2015
 
-Please read these Terms and Conditions ("Terms", "Terms and Conditions") carefully before using the http://voyz.es website (the "Service") operated by VOYZ.ES Record Your Life ("us", "we", or "our").
+Please read these Terms and Conditions ("Terms", "Terms and Conditions") carefully before using the http://www.voyz.es website (the "Service") operated by VOYZ.ES Record Your Life<sup>&reg;</sup> ("us", "we", or "our").
 
 Your access to and use of the Service is conditioned on your acceptance of and compliance with these Terms. These Terms apply to all visitors, users and others who access or use the Service.
 
@@ -30,9 +30,9 @@ You may not use as a username the name of another person or entity or that is no
 
 ## Links To Other Web Sites
 
-Our Service may contain links to third-party web sites or services that are not owned or controlled by VOYZ.ES Record Your Life.
+Our Service may contain links to third-party web sites or services that are not owned or controlled by VOYZ.ES Record Your Life<sup>&reg;</sup>.
 
-VOYZ.ES Record Your Life has no control over, and assumes no responsibility for, the content, privacy policies, or practices of any third party web sites or services. You further acknowledge and agree that VOYZ.ES Record Your Life shall not be responsible or liable, directly or indirectly, for any damage or loss caused or alleged to be caused by or in connection with use of or reliance on any such content, goods or services available on or through any such web sites or services.
+VOYZ.ES Record Your Life<sup>&reg;</sup> has no control over, and assumes no responsibility for, the content, privacy policies, or practices of any third party web sites or services. You further acknowledge and agree that VOYZ.ES Record Your Life<sup>&reg;</sup> shall not be responsible or liable, directly or indirectly, for any damage or loss caused or alleged to be caused by or in connection with use of or reliance on any such content, goods or services available on or through any such web sites or services.
 
 We strongly advise you to read the terms and conditions and privacy policies of any third-party web sites or services that you visit.
 
@@ -50,17 +50,17 @@ All provisions of the Terms which by their nature should survive termination sha
 
 ## Indemnification
 
-You agree to defend, indemnify and hold harmless VOYZ.ES Record Your Life and its licensee and licensors, and their employees, contractors, agents, officers and directors, from and against any and all claims, damages, obligations, losses, liabilities, costs or debt, and expenses (including but not limited to attorney's fees), resulting from or arising out of a) your use and access of the Service, by you or any person using your account and password, or b) a breach of these Terms.
+You agree to defend, indemnify and hold harmless VOYZ.ES Record Your Life<sup>&reg;</sup> and its licensee and licensors, and their employees, contractors, agents, officers and directors, from and against any and all claims, damages, obligations, losses, liabilities, costs or debt, and expenses (including but not limited to attorney's fees), resulting from or arising out of a) your use and access of the Service, by you or any person using your account and password, or b) a breach of these Terms.
 
 ## Limitation Of Liability
 
-In no event shall VOYZ.ES Record Your Life, nor its directors, employees, partners, agents, suppliers, or affiliates, be liable for any indirect, incidental, special, consequential or punitive damages, including without limitation, loss of profits, data, use, goodwill, or other intangible losses, resulting from (i) your access to or use of or inability to access or use the Service; (ii) any conduct or content of any third party on the Service; (iii) any content obtained from the Service; and (iv) unauthorized access, use or alteration of your transmissions or content, whether based on warranty, contract, tort (including negligence) or any other legal theory, whether or not we have been informed of the possibility of such damage, and even if a remedy set forth herein is found to have failed of its essential purpose.
+In no event shall VOYZ.ES Record Your Life<sup>&reg;</sup>, nor its directors, employees, partners, agents, suppliers, or affiliates, be liable for any indirect, incidental, special, consequential or punitive damages, including without limitation, loss of profits, data, use, goodwill, or other intangible losses, resulting from (i) your access to or use of or inability to access or use the Service; (ii) any conduct or content of any third party on the Service; (iii) any content obtained from the Service; and (iv) unauthorized access, use or alteration of your transmissions or content, whether based on warranty, contract, tort (including negligence) or any other legal theory, whether or not we have been informed of the possibility of such damage, and even if a remedy set forth herein is found to have failed of its essential purpose.
 
 ## Disclaimer
 
 Your use of the Service is at your sole risk. The Service is provided on an "AS IS" and "AS AVAILABLE" basis. The Service is provided without warranties of any kind, whether express or implied, including, but not limited to, implied warranties of merchantability, fitness for a particular purpose, non-infringement or course of performance.
 
-VOYZ.ES Record Your Life its subsidiaries, affiliates, and its licensors do not warrant that a) the Service will function uninterrupted, secure or available at any particular time or location; b) any errors or defects will be corrected; c) the Service is free of viruses or other harmful components; or d) the results of using the Service will meet your requirements.
+VOYZ.ES Record Your Life<sup>&reg;</sup> its subsidiaries, affiliates, and its licensors do not warrant that a) the Service will function uninterrupted, secure or available at any particular time or location; b) any errors or defects will be corrected; c) the Service is free of viruses or other harmful components; or d) the results of using the Service will meet your requirements.
 
 ## Exclusions
 
