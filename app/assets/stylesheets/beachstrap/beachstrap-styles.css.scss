@@ -434,7 +434,7 @@ header {
 /* ====================== MODAL ======================== */
 
 .modal-content {
-  background-color: rgba(21.255, 26.255, 40.255, 0.8);
+  background-color: rgba(21.255, 26.255, 40.255, 1.0);
 }
 
 .modal-header {
@@ -445,7 +445,7 @@ header {
   }
 
   .close {
-    color: #ccc;
+    color: #fff !important;
     text-shadow: none;
   }
 }
