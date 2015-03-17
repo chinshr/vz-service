@@ -1,7 +1,5 @@
 <%#  Change password %>
-<% content_for :header do %>
-  <%= render "shared/web/devise_errors" %>
-<% end %>
+<%= render "web/shared/devise_errors" %>
 
 <div class="container-fluid content-primary">
   <div class="tile form-tile animated fadeInUp">
@@ -12,8 +10,6 @@
         <p>You can now savely change your password.</p>
       </div>
       <div class="panel-body">
-        <%= f.hidden_field :reset_password_token %>
-
         <div class="form-group">
           <%= f.label :password, "New Password" %>
           <%= f.password_field :password, :class => "form-control first", :placeholder => "Password", :autocomplete => "off" %>
@@ -23,6 +19,7 @@
           <%= f.label :password_confirmation, "Confirm New Password" %>
           <%= f.password_field :password_confirmation, :class => "form-control last", :placeholder => "Password Confirmation", :autocomplete => "off" %>
         </div>
+        <%= f.hidden_field :reset_password_token %>
       </div>
       <div class="panel-footer">
         <button class="btn btn-lg btn-primary btn-block" type="submit">Change Password</button>

@@ -126,10 +126,8 @@ form {
 /* ====================== HEADER ========================= */
 
 header {
-  xbackground-color: rgba(21.255, 26.255, 40.255, 0.8);
-  xbackground-color: rgba(21, 26, 40, 0.8);
   background-color: rgba(0, 0, 0, 0.7);
-  @include transition(background-color 1s ease);
+  @include transition(background-color .2s ease);
 
   // background-color: #292d33;
   height: 70px;

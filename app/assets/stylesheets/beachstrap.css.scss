@@ -16,10 +16,16 @@
 @import 'application-custom';
 
 body.pages {
+  &.load-header-contrast {
+    header {
+      background-color: rgba(0, 0, 0, 0.7) !important;
+    }
+  }
+
   &.selected-main-item {
     header {
       background-color: transparent;
-      @include transition(background-color 1s ease);
+      @include transition(background-color .2s ease);
 
       nav .navbar-nav li {
         background-color: transparent !important;

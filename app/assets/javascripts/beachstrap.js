@@ -82,9 +82,14 @@ $(function() {
       }
       $('body').addClass(event.target.id);
     }
-  })
+  });
+
+  if ($(window).scrollTop() > 150) {
+    $('body').addClass('load-header-contrast');
+  }
 
   $(window).scroll(function() {
+    $('body').removeClass('load-header-contrast');
     if ($(window).scrollTop() > 150) {
       $('body').removeClass('selected-main-item');
     } else if ($(window).scrollTop() <= 150) {
