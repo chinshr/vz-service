@@ -454,17 +454,28 @@ header {
 
 #main {
   background: url(/assets/beachstrap/foto-background.jpg) 0 0 no-repeat fixed;
-  min-height:747px;
+  min-height: 747px;
   -webkit-background-size: cover;
   -moz-background-size: cover;
-  background-size:cover;
+  -o-background-size: cover;
+  background-size: cover;
   background-position: center;  /* Internet Explorer 7/8 */
   background-attachment: fixed;
+  @media only screen 
+    and (min-device-width : 768px) 
+    and (max-device-width : 1024px)  {
+    background-attachment: scroll;
+  }
+  @media only screen 
+    and (min-device-width : 375px) 
+    and (max-device-width : 667px) {
+    background-attachment: scroll;
+  }
 
-  .cont-wrapper{
+  .cont-wrapper {
     position: relative;
     width: 100%;
-    top:230px;
+    top: 230px;
 
   }
 
