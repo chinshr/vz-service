@@ -10,7 +10,6 @@ body.account {
   }
 
   .blankstate {
-    xmargin-top: 70px;
     position: relative;
     text-align: center;
     padding: 40px 20px;
@@ -138,12 +137,12 @@ body.account {
   }
 
   .upload-grid {
-    font-family: "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+    // font-family: "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
     min-height: 300px;
     padding: 25px 0;
 
     input, select, .select2-drop, .select2-result-label {
-      font-family: "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+      xfont-family: "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
     }
 
     .upload-tile {
@@ -251,7 +250,7 @@ body.account {
 
       .panel-heading {
         h3 {
-          font-family: "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+          font-family: inherit;
           font-size: 18px;
           line-height: 1.3em;
           font-weight: bold;
