@@ -117,3 +117,4 @@ gem 'coderay'
 gem 'acts-as-taggable-on'
 gem 'pundit'
 gem 'highcharts-rails', "~> 3.0.0"
+gem 'rack-reverse-proxy', require: "rack/reverse_proxy"
