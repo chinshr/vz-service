@@ -281,6 +281,9 @@ body.account {
       }
 
       .panel-heading {
+        border-radius: 0;
+        background-color: #f5f5f5;
+
         h3 {
           font-family: inherit;
           font-size: 18px;
@@ -525,7 +528,7 @@ body.account {
       ul.tag-list {
         min-height: 26px;
         margin: 0;
-        padding: 0 5px 0 0;
+        padding: 4px 5px 0 0;
         overflow: hidden;
         list-style: none;
 
@@ -544,28 +547,27 @@ body.account {
 
         li.tag {
           @include transition(all .2s ease-in-out);
-
           float: left;
           border: 0;
-          border-radius: 5px;
+          border-radius: $btn-default-radius;
           position: relative;
           max-width: 96%;
           margin: 0 5px 5px 0;
           background-color: #cfd6d9;
-          padding-top: 3px;
-          padding-bottom: 3px;
+          xpadding-top: 3px;
+          xpadding-bottom: 3px;
           cursor: default;
-
           display: list-item;
           text-align: -webkit-match-parent;
+          font-size: 12px;
 
           &:hover {
             background-color: #868d91;
           }
 
           a {
-            padding: 0 10px;
-            line-height: 21px;
+            padding: 3px 5px;
+            line-height: 1.4em;
             display: block;
             overflow: hidden;
             white-space: nowrap;

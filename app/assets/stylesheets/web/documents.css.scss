@@ -411,6 +411,39 @@ body.documents {
 
       .gutter {
         .note-head {
+          height: 29px;
+          width: 29px;
+          border-radius: 100%;
+          border: transparent 1px solid;
+          background-size: 29px 29px !important;
+          box-shadow: 0px 1px 1px #999;
+          margin: 0 5px 0 0;
+          cursor: default;
+          position: relative;
+          transition: left 400ms ease, opacity 400ms linear, top 400ms ease;
+          -webkit-transition: left 400ms ease, opacity 400ms linear, top 400ms ease;
+          top: calc(50% - 14px);
+          float: right;
+          // left: 35px;
+          // right: 1px;
+        }
+
+        .user-initials {
+          display: inline-block;
+          color: transparent;
+          line-height: 29px;
+          font-size: 13px;
+          font-family: Helvetica;
+          text-align: center;
+          vertical-align: top;
+
+          &:hover {
+            background-image: none !important;
+            color: white;
+          }
+        }
+/*
+        .note-head {
           height: 28px;
           width: 28px;
           border-radius: 3px;
@@ -422,7 +455,9 @@ body.documents {
           transition: left 400ms ease, opacity 400ms linear, top 400ms ease;
           -webkit-transition: left 400ms ease, opacity 400ms linear, top 400ms ease;
           top: calc(50% - 14px);
-          left: 35px;
+          float: right;
+          // left: 35px;
+          // right: 1px;
         }
 
         .user-initials {
@@ -434,6 +469,7 @@ body.documents {
           text-align: center;
           vertical-align: top;
         }
+*/
       } /* .gutter */
     } /* .document-overlay */
 
