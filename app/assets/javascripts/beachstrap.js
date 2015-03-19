@@ -85,7 +85,7 @@ $(function() {
       VZ.trackEvent('home-page-scroll', 
         {action: 'scroll-to-' + event.target.id, name: event.target.id}, 
         function(event, data) {
-          console.log(event, data);
+          // console.log(event, data);
         }
       );
 
@@ -109,7 +109,7 @@ $(function() {
     VZ.trackEvent('home-page-play-video', 
       {action: 'click-play-video', name: 'Knight Talk: Ana María Carrano'}, 
       function(event, data) {
-        console.log(event, data);
+        // console.log(event, data);
       }
     );
   });
@@ -118,7 +118,7 @@ $(function() {
     VZ.trackEvent('home-page-registration', 
       {action: 'focus-input-email-field'}, 
       function(event, data) {
-        console.log(event, data);
+         //console.log(event, data);
       }
     );
   });
@@ -128,7 +128,7 @@ $(function() {
     VZ.trackEvent('home-page-registration-submit', 
       {action: 'submit-form-success'}, 
       function(event, data) {
-        console.log(event, data);
+        // console.log(event, data);
       }
     );
   });
