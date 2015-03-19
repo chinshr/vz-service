@@ -479,4 +479,10 @@ h3,h4,h5 {
 .simply-toast {
   padding: 15px;
   border-radius: $btn-default-radius;
+  border-width: 0px;
+
+  .close {
+    margin-left: 4px;
+    font-size: 18px;
+  }
 }

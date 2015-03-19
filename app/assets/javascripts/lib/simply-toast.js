@@ -37,10 +37,10 @@
         });
         break;
       case "left":
-        $alert.css("left", "20px");
+        $alert.css("left", "10px");
         break;
       default:
-        $alert.css("right", "20px");
+        $alert.css("right", "10px");
     }
 
     if($alert.fadeIn) $alert.fadeIn();
