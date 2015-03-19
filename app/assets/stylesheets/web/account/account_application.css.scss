@@ -21,6 +21,7 @@ body.account {
 
     .close {
       margin-right: 10px;
+      font-size: 30px;
     }
 
     h1 {
@@ -89,13 +90,19 @@ body.account {
 
   .blankstate-plain {
     background: #242424 url(/assets/backgrounds/cartographer.png) top left repeat;
-    background-color: #242424;
+  }
+
+  /* for high resolution display */
+  @media only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 2/1), only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min-device-pixel-ratio: 2) {
+    .blankstate-plain {
+      background-size: 250px 250px !important;
+    }
   }
 
   .blankstate-secondary {
     background: #242424 url(/assets/backgrounds/cartographer.png) top left repeat;
-    background: -webkit-linear-gradient(180deg, rgba(63, 97, 105, 0) 0%, rgba(63, 97, 105, 0.1) 50%, rgba(63, 97, 105, 0.6) 100%), url(/assets/backgrounds/cartographer.png) top left repeat;
-    background: linear-gradient(180deg, rgba(63, 97, 105, 0) 0%, rgba(63, 97, 105, 0.1) 50%, rgba(63, 97, 105, 0.6) 100%), url(/assets/backgrounds/cartographer.png) top left repeat;
+    background: -webkit-linear-gradient(180deg, rgba(63, 97, 105, 0) 0%, rgba(63, 97, 105, 0.1) 40%, rgba(63, 97, 105, 0.6) 100%), url(/assets/backgrounds/cartographer.png) top left repeat;
+    background: linear-gradient(180deg, rgba(63, 97, 105, 0) 0%, rgba(63, 97, 105, 0.1) 40%, rgba(63, 97, 105, 0.6) 100%), url(/assets/backgrounds/cartographer.png) top left repeat;
     background-color: #242424;
   }
 
