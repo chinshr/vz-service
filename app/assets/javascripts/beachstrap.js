@@ -81,6 +81,14 @@ $(function() {
         body[0].className = $.trim(body[0].className);
       }
       $('body').addClass(event.target.id);
+
+      VZ.trackEvent('home-page-scroll', 
+        {action: 'scroll-to-' + event.target.id, name: event.target.id}, 
+        function(event, data) {
+          console.log(event, data);
+        }
+      );
+
     }
   });
 
@@ -95,5 +103,33 @@ $(function() {
     } else if ($(window).scrollTop() <= 150) {
       $('body').addClass('selected-main-item');
     }
+  });
+
+  $('#play-video').on('click', function() {
+    VZ.trackEvent('home-page-play-video', 
+      {action: 'click-play-video', name: 'Knight Talk: Ana María Carrano'}, 
+      function(event, data) {
+        console.log(event, data);
+      }
+    );
+  });
+
+  $('#registration_email').on('focus', function() {
+    VZ.trackEvent('home-page-registration', 
+      {action: 'focus-input-email-field'}, 
+      function(event, data) {
+        console.log(event, data);
+      }
+    );
+  });
+
+  // #new_registration
+  $('#new_registration').on('submit', function() {
+    VZ.trackEvent('home-page-registration-submit', 
+      {action: 'submit-form-success'}, 
+      function(event, data) {
+        console.log(event, data);
+      }
+    );
   });
 });

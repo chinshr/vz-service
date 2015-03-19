@@ -4,7 +4,8 @@ var VZ = (function() {
     domain: "voyz.es",
     name: "VOYZ.ES",
     twitter: {hashtag: "voyzes", hashtags: "voyzes", prefix: "See what I found on VOYZ.ES "},
-    linkedin: {prefix: "See what I found on VOYZ.ES "}
+    linkedin: {prefix: "See what I found on VOYZ.ES "},
+    google: {analyticsId: 'UA-48375934-1'}
   };
 
   var isProduction = document.location.href.indexOf("www." + config.domain) > 0;
@@ -45,12 +46,40 @@ var VZ = (function() {
 
   var trackingCodes = getCookie("trackingCodes") ? JSON.parse(getCookie("trackingCodes")) : false;
 
+  // Google tracker
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', config.google.analyticsID]);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
   var trackEvent = function trackEvent(name, data, callback) {
+    <% if Rails.env.production? %>
+    if (_gat) {
+      // Google track event
+      // https://developers.google.com/analytics/devguides/collection/gajs/eventTrackerGuide
+      var tracker  = _gat._getTracker(config.google.analyticsID);
+      var category = name;
+      var action   = data['action'] || "unknown-action";
+      var label    = data['name'];
+      // _gaq.push(['_trackEvent', category, action, label]);
+      tracker._trackEvent(category, action, label);
+    }
+    <% end %>
+    if (callback) {
+      callback(name, data);
+    }
+    return data;
   };
 
   return {
     config: config,
     baseURL: location.protocol + "//" + location.hostname + (location.port && ":" + location.port),
+    isProduction: isProduction,
     trackingCodes: trackingCodes,
     trackEvent: trackEvent,
     MD5: MD5,
