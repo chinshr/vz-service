@@ -1,11 +1,21 @@
 $(function() {
+  if (VZ.getCookie('vz-hide-dashboard-welcome', false)) {
+    $('#welcome-container').hide();
+  } else {
+    $('#welcome-container').show();
+  }
+
+  $('#welcome-container .close').on('click', function() {
+    VZ.setCookie('vz-hide-dashboard-welcome', true)
+  });
+
   $('.input-single-searchable').chosen({});
   $('.input-taggable').select2({
     tags: function() { return ["red", "green", "blue"]},
     maximumInputLength: 15,
     tokenSeparators: [","]
   });
-  
+
   var dropTarget = $('#drop-box'),
     body = $('body'),
     showDrag = false,
@@ -16,20 +26,20 @@ $(function() {
     event.originalEvent.stopPropagation()
     body.addClass('hover');
     dropTarget.addClass('hover');
-    showDrag = true; 
+    showDrag = true;
   }).on('dragover', function(event){
     event.originalEvent.preventDefault()
     event.originalEvent.stopPropagation()
-    showDrag = true; 
+    showDrag = true;
   }).on('dragleave', function (event) {
     event.originalEvent.preventDefault()
     event.originalEvent.stopPropagation()
-    showDrag = false; 
+    showDrag = false;
     clearTimeout( timeout );
     timeout = setTimeout(function() {
-      if (!showDrag) { 
-        dropTarget.removeClass('hover'); 
-        body.removeClass('hover'); 
+      if (!showDrag) {
+        dropTarget.removeClass('hover');
+        body.removeClass('hover');
       }
     }, 200 );
   });

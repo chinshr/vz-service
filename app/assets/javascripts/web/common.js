@@ -28,7 +28,7 @@ var VZ = (function() {
     return defaultValue;
   }
 
-  function setCookie(c_name,value, days, minutes){
+  function setCookie(c_name, value, days, minutes){
     if (typeof(value)=='undefined' || ! value){
       document.cookie = encodeURIComponent(c_name) + "=deleted; expires=" + new Date(0).toUTCString()+"; path=/";
       document.cookie = encodeURIComponent(c_name) + "=deleted; expires=" + new Date(0).toUTCString()+"; path=/; domain=." + config.domain;
@@ -55,6 +55,8 @@ var VZ = (function() {
     trackEvent: trackEvent,
     MD5: MD5,
     cookies: cookies,
+    getCookie: getCookie,
+    setCookie: setCookie
   }
 })();
 
