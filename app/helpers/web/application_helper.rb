@@ -147,7 +147,8 @@ module Web::ApplicationHelper
       if false && Rails.env.development?
         options[:default_url]
       else
-        "#{gravatar_root}avatar/#{gravatar_id}.png?s=#{options[:size]}&d=#{CGI.escape(options[:default_url])}"
+        #"#{gravatar_root}avatar/#{gravatar_id}.png?s=#{options[:size]}&d=#{CGI.escape(options[:default_url])}"
+        "#{gravatar_root}avatar/#{gravatar_id}.png?s=#{options[:size]}&d=identicon"
       end
     end
   end
