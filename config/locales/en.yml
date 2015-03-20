@@ -25,8 +25,8 @@ en:
   devise:
     registrations:
       user:
-        updated: "Updates were saved."
-        not_updated: "No updates were applied."
+        updated: "Successfully updated."
+        not_updated: "Changes were not saved."
         update_needs_confirmation: "Confirmation password required."
   activerecord:
     errors:

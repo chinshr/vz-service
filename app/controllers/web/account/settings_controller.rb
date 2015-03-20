@@ -10,11 +10,12 @@ class Web::Account::SettingsController < Web::Account::ApplicationController
     if update_resource(@user, account_update_params)
       flash_key = update_needs_confirmation?(@user, prev_unconfirmed_email) ?
         :update_needs_confirmation : :updated
-      set_flash_message :notice, flash_key
+      set_flash_message :success, flash_key
       sign_in resource_name, @user, :bypass => true
       respond_with @user, :location => after_update_path_for(@user)
     else
-      set_flash_message :notice, :not_updated
+      set_flash_message :error, :not_updated
+      @user.reload  # make sure invalid data is not rendered
       clean_up_passwords @user
       respond_with @user
     end
