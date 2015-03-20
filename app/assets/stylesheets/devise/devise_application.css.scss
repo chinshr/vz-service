@@ -102,7 +102,7 @@ body.devise, body.confirmations {
           margin: 15px auto;
 
           a.signup-brand {
-            background: url(/assets/voyzes-logo-dark.png) no-repeat;
+            background: image-url('voyzes-logo-dark.png') no-repeat;
             display: block;
             height: 20px;
             width: 108px;
@@ -178,7 +178,7 @@ body.devise, body.confirmations {
 
       a {
         display: block;
-        background: url(/assets/voyzes-logo-gray-small.png) no-repeat;
+        background: image-url('voyzes-logo-gray-small.png') no-repeat;
         text-indent: -3000px;
         overflow: hidden;
         text-decoration: none;
@@ -220,7 +220,7 @@ body.devise, body.confirmations {
         .panel-heading {
           .logo {
             a.signup-brand {
-              background: url(/assets/voyzes-logo-dark@2x.png) no-repeat !important;
+              background: image-url('voyzes-logo-dark@2x.png') no-repeat !important;
               background-size: 108px 20px !important;
             }
           }
@@ -232,7 +232,7 @@ body.devise, body.confirmations {
   footer.nav-footer {
     h5 {
       a {
-        background: url(/assets/voyzes-logo-gray-small@2x.png) no-repeat 0 0 !important;
+        background: image-url('voyzes-logo-gray-small@2x.png') no-repeat 0 0 !important;
         background-size: 80px 15px !important;
       }
     }

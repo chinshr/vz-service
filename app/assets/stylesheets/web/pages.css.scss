@@ -61,7 +61,7 @@
       background-position: center;
       background-size: auto;
       background-repeat: no-repeat;
-      background-image: url(/assets/home-hero-bg.jpg);
+      background-image: image-url('home-hero-bg.jpg');
 /*    
       animation: bgmotion 4s;
       animation-fill-mode: forwards;
@@ -112,15 +112,15 @@
     margin: 30px auto;
     
     .upload-audio {
-      background-image: url(/assets/home-upload-audio.jpg);
+      background-image: image-url('home-upload-audio.jpg');
     }
 
     .transcribe {
-      background-image: url(/assets/home-transcribe.jpg);
+      background-image: image-url('home-transcribe.jpg');
     }
 
     .edit-share {
-      background-image: url(/assets/home-edit-share.jpg);
+      background-image: image-url('home-edit-share.jpg');
     }
 
     a {

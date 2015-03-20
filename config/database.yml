@@ -52,3 +52,6 @@ test:
   <<: *shared
   database: qscribe_test
 
+production:
+  <<: *shared
+  database: qscribe_production

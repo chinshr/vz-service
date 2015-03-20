@@ -9,6 +9,7 @@
  * compiled file, but it's generally better to create a new file per style scope.
  *
  *= require bootstrap
+ *= require font-awesome
  *= require chosen
  *= require select2
  *= require select2-bootstrap
@@ -31,7 +32,7 @@
 }
 
 .navbar-brand {
-  background: transparent url(/assets/voyzes-logo-life.png) no-repeat;
+  background: transparent image-url('voyzes-logo-life.png') no-repeat;
   width: 100px;
 }
 
@@ -51,7 +52,7 @@ header {
     margin: 15px 0;
     padding: 1px 0;
     text-indent: -9999px;
-    background: url(/assets/voyzes-logo.png) no-repeat 0 0;
+    background: image-url('voyzes-logo.png') no-repeat 0 0;
   }
 
   @media (max-width: 480px) {
@@ -340,7 +341,7 @@ header {
 @media only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 2/1), only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min-device-pixel-ratio: 2) {
  header {
    #logo {
-     background: url(/assets/voyzes-logo@2x.png) no-repeat 0 0 !important;
+     background: image-url('voyzes-logo@2x.png') no-repeat 0 0 !important;
      background-size: 110px 40px !important;
    }
  }
@@ -348,7 +349,7 @@ header {
 
 header {
   #logo {
-    background: url(/assets/voyzes-logo.png) no-repeat 0 0;
+    background: image-url('voyzes-logo.png') no-repeat 0 0;
   }
 }
 
