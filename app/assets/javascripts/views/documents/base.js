@@ -111,7 +111,8 @@ App.Views.DocumentsBase = Backbone.View.extend({
       cursorColor   : '#5492ce',
       markerWidth   : 1,
       audioRate     : 1,
-      normalize     : true
+      normalize     : true,
+      // backend       : 'MediaElement'
     };
 
     /* Progress Bar */
