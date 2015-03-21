@@ -304,7 +304,7 @@ App.Views.DocumentsBase = Backbone.View.extend({
   },
 
   moveUserInitials: function(editor, margin) {
-    margin = margin || -85;
+    margin = margin || -86;
     var sel = editor.root.ownerDocument.getSelection();
     if (sel && sel.rangeCount > 0) {
       var selrg = sel.getRangeAt(0);
