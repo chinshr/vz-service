@@ -128,8 +128,8 @@ Voyzes::Application.configure do
   config.action_dispatch.rack_cache = {
     metastore:          client,
     entitystore:        client,
-    allow_reload:       true,
-    allow_revalidate:   true,
+    allow_reload:       false,
+    allow_revalidate:   false,
     verbose:            false,
     cache_key:          lambda {|request|
       [request.env["HTTP_HOST"], Rack::Cache::Key.new(request).generate].reject(&:blank?).map {|s| Digest::MD5.hexdigest(s)}.join(":")
