@@ -3,6 +3,14 @@
 body.documents {
   background-color: #fff;
 
+   .simply-toast {
+     &.alert-save {
+       background-color: #292d33;
+       // border: #ddd solid 1px;
+       color: #fff;
+     }
+  }
+
   header {
     height: 50px;
 

@@ -7,6 +7,18 @@
 //= require lib/wavesurfer/drawer.canvas
 //= require lib/quill
 
+/* simply-toast */
+$.extend(true, $.notify.defaultOptions, {
+  "align": "center",
+  "offset": {
+    "from": "top",
+    "amount": 0
+  },
+  "align": "right",
+  "delay": 2000,
+  "type": "warning"
+});
+
 /* Tooltips */
 $(document).ready(function() {
   $('.btn-tlb').tooltip({});
@@ -27,12 +39,6 @@ $(document).ready(function() {
     }
   }).on('shown.bs.popover', function(e) {
     VZ.social.bind();
-/*
-    var popover = jQuery(this);
-    jQuery(this).parent().find('div.popover .close').on('click', function(e){
-      popover.popover('hide');
-    });
-*/
   });
 
 });

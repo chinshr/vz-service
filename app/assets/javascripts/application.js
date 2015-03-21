@@ -36,14 +36,3 @@
 //= require_tree ./views
 //= require_tree ./routers
 //= require_tree ./web
-
-
-/* simply-toast */
-$.extend(true, $.notify.defaultOptions, {
-  "align": "center",
-  "offset": {
-    "from": "top"
-  },
-  "delay": 1500,
-  "type": "warning"
-});

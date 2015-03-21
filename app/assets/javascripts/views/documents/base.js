@@ -357,7 +357,7 @@ App.Views.DocumentsBase = Backbone.View.extend({
     this.model.sync('update', this.model, {
       success: (function(_this) {
         return function(data) {
-          $.notify("Document saved.");
+          $.notify("Document saved.", 'save');
         };
       })(this),
       error: (function(_this) {
