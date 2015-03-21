@@ -26,9 +26,22 @@ Voyzes::Application.configure do
   # This option may cause significant delays in view rendering with a large
   # number of complex assets.
   config.assets.debug = true
-  
+
   config.action_mailer.default_url_options = { :host => 'localhost:3000' }
 
   # Set to :debug to see everything in the log.
   config.log_level = :debug   # :info
+
+  # Rack::Cache
+  config.static_cache_control = "public, max-age=#{12.hours * 60.seconds}"  # default for Chache-Control, e.g. 2592000
+  config.action_dispatch.rack_cache = {
+    metastore:          'file:tmp/cache/rack/meta',
+    entitystore:        'file:tmp/cache/rack/body',
+    allow_reload:       false,
+    allow_revalidate:   false,
+    verbose:            true,
+    cache_key:          lambda {|request|
+      [request.env["HTTP_HOST"], Rack::Cache::Key.new(request).generate].reject(&:blank?).map {|s| Digest::MD5.hexdigest(s)}.join(":")
+    }
+  }
 end
