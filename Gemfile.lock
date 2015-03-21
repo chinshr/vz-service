@@ -248,6 +248,8 @@ GEM
     rabl (0.11.5)
       activesupport (>= 2.3.14)
     rack (1.5.2)
+    rack-cache (1.2)
+      rack (>= 0.4)
     rack-cors (0.3.1)
     rack-protection (1.5.3)
       rack
@@ -404,6 +406,7 @@ DEPENDENCIES
   jquery-rails
   jquery-ui-rails
   json
+  kgio
   minitest
   mocha
   modernizr-rails
@@ -417,6 +420,7 @@ DEPENDENCIES
   psych
   pundit
   rabl
+  rack-cache
   rack-cors
   rack-reverse-proxy
   rails (= 4.1.9)
