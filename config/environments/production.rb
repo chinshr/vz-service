@@ -24,17 +24,33 @@ Voyzes::Application.configure do
   config.serve_static_assets = true # false
 
   # Compress JavaScripts and CSS.
-  config.assets.js_compressor = :uglifier
-  # config.assets.css_compressor = :sass
+  config.assets.enabled = true
 
-  # Do not fallback to assets pipeline if a precompiled asset is missed.
-  config.assets.compile = true # false
+  #Needs to be false on Heroku
+  config.assets.initialize_on_precompile = false
+
+  # Don't fallback to assets pipeline if a precompiled asset is missed
+  # config.assets.compile = true # false
+  config.assets.compile = false
 
   # Generate digests for assets URLs.
   config.assets.digest = true
 
   # Version of your assets, change this if you want to expire all your assets.
-  config.assets.version = '1.0'
+  config.assets.version = '1.1'
+
+  config.static_cache_control = "public, max-age=31536000"
+
+  config.assets.debug = true
+
+  # Compress JavaScripts and CSS
+  config.assets.compress = true
+
+  # Setting compressor currently doesn't work (thx to @carhartl for the tip) https://github.com/rails/sass-rails/issues/104
+  config.assets.css_compressor = :yui
+  config.assets.js_compressor = :uglifier
+  # config.assets.css_compressor = :sass
+
 
   # Specifies the header that your server uses for sending files.
   # config.action_dispatch.x_sendfile_header = "X-Sendfile" # for apache
@@ -56,11 +72,11 @@ Voyzes::Application.configure do
   # config.cache_store = :mem_cache_store
 
   # Enable serving of images, stylesheets, and JavaScripts from an asset server.
-  # config.action_controller.asset_host = "http://assets.example.com"
+  config.action_controller.asset_host = '//d3s2wzxhm1gdg3.cloudfront.net'
 
   # Precompile additional assets.
   # application.js, application.css, and all non-JS/CSS in app/assets folder are already added.
-  # config.assets.precompile += %w( search.js )
+  config.assets.precompile += %w( beachstrap.css beachstrap.js )
 
   # Ignore bad email addresses and do not raise email delivery errors.
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.
@@ -90,5 +106,4 @@ Voyzes::Application.configure do
     :domain         => 'heroku.com',
     :enable_starttls_auto => true
   }
-
 end

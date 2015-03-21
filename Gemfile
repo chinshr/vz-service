@@ -8,13 +8,13 @@ gem 'rails', '4.1.9' # '4.0.5'
 gem 'pg'
 
 # Use SCSS for stylesheets
-gem 'sass-rails', '~> 4.0.3'
+gem 'sass-rails'#, '~> 4.0.3'
 
 # Use Uglifier as compressor for JavaScript assets
-gem 'uglifier', '>= 1.3.0'
+gem 'uglifier'#, '>= 1.3.0'
 
 # Use CoffeeScript for .js.coffee assets and views
-gem 'coffee-rails', '~> 4.0.0'
+gem 'coffee-rails'#, '~> 4.0.0'
 
 # See https://github.com/sstephenson/execjs#readme for more supported runtimes
 # gem 'therubyracer', platforms: :ruby
@@ -23,6 +23,8 @@ group :assets do
   # Use jquery as the JavaScript library
   gem 'jquery-rails'
   gem 'jquery-ui-rails'
+  gem 'yui-compressor'
+  # gem 'compass-rails'
 end
 
 # Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
@@ -45,8 +47,6 @@ group :development, :test do
   gem 'pry-rails'
   gem 'pry-nav'
   gem 'foreman', '~> 0.73.0'
-  # gem 'pry-rails'
-  # gem 'pry-nav'
 end
 
 group :test do
@@ -118,3 +118,6 @@ gem 'acts-as-taggable-on'
 gem 'pundit'
 gem 'highcharts-rails', "~> 3.0.0"
 gem 'rack-reverse-proxy', require: "rack/reverse_proxy"
+gem 'rack-cors', require: 'rack/cors'
+gem 'font_assets'
+gem 'font-awesome-rails'

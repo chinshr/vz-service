@@ -8,6 +8,7 @@ defaults: &defaults
   # S3_INBOUND_BUCKET: <%= ENV.fetch('S3_INBOUND_BUCKET', "/drivethrough") %>
   EXPIRE_TIME: 300 # 5 minutes
   S3_URL: 'http://s3.amazonaws.com'
+  ASSET_HOST: '//d3s2wzxhm1gdg3.cloudfront.net'
   ADMIN_EMAIL_ADDRESSES:
     - juergen@voyz.es
     - anamaria@voyz.es

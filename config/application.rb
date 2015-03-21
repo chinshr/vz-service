@@ -19,12 +19,15 @@ module Voyzes
     # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
     # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
     # config.i18n.default_locale = :de
-    
+
     I18n.enforce_available_locales = true
 
-#    config.autoload_paths += Dir["#{config.root}/lib/**/"]
+    # config.autoload_paths += Dir["#{config.root}/lib/**/"]
 
     # Filter passwords
-    config.filter_parameters += [:password] 
+    config.filter_parameters += [:password]
+
+    # http://kennethjiang.blogspot.com/2014/07/set-up-cors-in-cloudfront-for-custom.html
+    config.font_assets.origin = '*'
   end
 end
