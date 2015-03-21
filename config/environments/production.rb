@@ -114,4 +114,26 @@ Voyzes::Application.configure do
     :socket_timeout => 1.5,
     :socket_failure_delay => 0.2
   }
+
+  # Rack::Cache
+  client = Dalli::Client.new((ENV["MEMCACHIER_SERVERS"] || "").split(","), {
+    :username => ENV["MEMCACHIER_USERNAME"],
+    :password => ENV["MEMCACHIER_PASSWORD"],
+    :failover => true,
+    :socket_timeout => 1.5,
+    :socket_failure_delay => 0.2,
+    :value_max_bytes => 10485760
+  })
+
+  config.action_dispatch.rack_cache = {
+    metastore:          client,
+    entitystore:        client,
+    allow_reload:       true,
+    allow_revalidate:   true,
+    verbose:            false,
+    cache_key:          lambda {|request|
+      [request.env["HTTP_HOST"], Rack::Cache::Key.new(request).generate].reject(&:blank?).map {|s| Digest::MD5.hexdigest(s)}.join(":")
+    }
+  }
+  config.static_cache_control = "public, max-age=#{12.hours * 60.seconds}"
 end
