@@ -14,8 +14,8 @@ class Web::ApplicationController < ApplicationController
   end
 
   def disable_rack_cache_request?
-    !!(request.env["HTTP_HOST"] && request.env["HTTP_HOST"].match(/voyzes\.herokuapp\.com/)) ||
-    !!(request.env['HTTP_X_FORWARDED_HOST'] && env['HTTP_X_FORWARDED_HOST'].match(/voyzes\.herokuapp\.com/)) ||
+    # !!(request.env["HTTP_HOST"] && request.env["HTTP_HOST"].match(/voyzes\.herokuapp\.com/)) ||
+    # !!(request.env['HTTP_X_FORWARDED_HOST'] && env['HTTP_X_FORWARDED_HOST'].match(/voyzes\.herokuapp\.com/)) ||
     Rails.env.development? || Rails.env.test?
   end
 
