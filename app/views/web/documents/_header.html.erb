@@ -33,29 +33,30 @@
         <% if edit? %>
         <ul id="content-editor-toolbar-container" class="nav navbar-nav toolbar-nav">
           <!-- font-style -->
-          <li><button title="<%= key_cmd(:bold, 'B', :meta_key) %>" type="button" class="btn btn-md btn-tlb ql-bold fa fa-bold" data-toggle="tooltip" data-placement="bottom"></button></li>
-          <li><button title="<%= key_cmd(:italic, 'I', :meta_key) %>" type="button" class="btn btn-md btn-tlb ql-italic fa fa-italic" data-toggle="tooltip" data-placement="bottom"></button></li>
-          <li><button title="<%= key_cmd(:underline, 'U', :meta_key) %>" type="button" class="btn btn-md btn-tlb ql-underline fa fa-underline" data-toggle="tooltip" data-placement="bottom"></button></li>
-          <li><button title="<%= key_cmd(:strikethrough, 'S', :meta_key) %>" type="button" class="btn btn-md btn-tlb ql-strike fa fa-strikethrough" data-toggle="tooltip" data-placement="bottom"></button></li>
+          <li><button title="<%= key_cmd(:bold, 'B', :meta_key) %>" type="button" class="btn btn-md btn-tlb ql-bold fa fa-bold fa-fw" data-toggle="tooltip" data-placement="bottom"></button></li>
+          <li><button title="<%= key_cmd(:italic, 'I', :meta_key) %>" type="button" class="btn btn-md btn-tlb ql-italic fa fa-italic fa-fw" data-toggle="tooltip" data-placement="bottom"></button></li>
+          <li><button title="<%= key_cmd(:underline, 'U', :meta_key) %>" type="button" class="btn btn-md btn-tlb ql-underline fa fa-underline fa-fw" data-toggle="tooltip" data-placement="bottom"></button></li>
+          <li><button title="<%= key_cmd(:strikethrough, 'S', :meta_key) %>" type="button" class="btn btn-md btn-tlb ql-strike fa fa-strikethrough fa-fw" data-toggle="tooltip" data-placement="bottom"></button></li>
 
           <li class="separator">&nbsp;</li>
 
           <!-- text-align -->
-          <li><button title="<%= key_cmd(:align_left) %>" type="button" data-value="left" class="btn btn-md btn-tlb ql-align fa fa-align-left" data-toggle="tooltip" data-placement="bottom"></button></li>
-          <li><button title="<%= key_cmd(:align_center) %>" type="button" data-value="center" class="btn btn-md btn-tlb ql-align-center fa fa-align-center" data-toggle="tooltip" data-placement="bottom"></button></li>
-          <li><button title="<%= key_cmd(:align_right) %>" type="button" data-value="right" class="btn btn-md btn-tlb ql-align-right fa fa-align-right" data-toggle="tooltip" data-placement="bottom"></button></li>
+          <li><button title="<%= key_cmd(:align_left) %>" type="button" data-value="left" class="btn btn-md btn-tlb ql-align fa fa-align-left fa-fw" data-toggle="tooltip" data-placement="bottom"></button></li>
+          <li><button title="<%= key_cmd(:align_center) %>" type="button" data-value="center" class="btn btn-md btn-tlb ql-align-center fa fa-align-center fa-fw" data-toggle="tooltip" data-placement="bottom"></button></li>
+          <li><button title="<%= key_cmd(:align_right) %>" type="button" data-value="right" class="btn btn-md btn-tlb ql-align-right fa fa-align-right fa-fw" data-toggle="tooltip" data-placement="bottom"></button></li>
+          <li><button title="<%= key_cmd(:align_justify) %>" type="button" data-value="right" class="btn btn-md btn-tlb ql-align-justify fa fa-align-justify fa-fw" data-toggle="tooltip" data-placement="bottom"></button></li>
 
           <li class="separator">&nbsp;</li>
 
           <!-- lists -->
-          <li><button title="<%= key_cmd(:numbered_list) %>" type="button" class="btn btn-md btn-tlb ql-list fa fa-list-ol" data-toggle="tooltip" data-placement="bottom"></button></li>
-          <li><button title="<%= key_cmd(:bulleted_list) %>" type="button" class="btn btn-md btn-tlb ql-bullet fa fa-list-ul" data-toggle="tooltip" data-placement="bottom"></button></li>
+          <li><button title="<%= key_cmd(:numbered_list) %>" type="button" class="btn btn-md btn-tlb ql-list fa fa-list-ol fa-fw" data-toggle="tooltip" data-placement="bottom"></button></li>
+          <li><button title="<%= key_cmd(:bulleted_list) %>" type="button" class="btn btn-md btn-tlb ql-bullet fa fa-list-ul fa-fw" data-toggle="tooltip" data-placement="bottom"></button></li>
         </ul>
         <% end %>
 
         <ul id="media-player-toolbar-container" class="nav navbar-nav toolbar-nav audio-player-nav">
           <!-- player -->
-          <li><button title="<%= key_cmd(:play, 'Space', [:shift_key, :meta_key]) %>" type="button" class="btn btn-lg btn-tlb fa fa-play player player-play-pause" data-action="toggle-play-pause" data-toggle="tooltip" data-placement="bottom"></button></li>
+          <li><button title="<%= key_cmd(:play, 'Space', [:shift_key, :meta_key]) %>" type="button" class="btn btn-lg btn-tlb fa fa-play fa-fw player player-play-pause" data-action="toggle-play-pause" data-toggle="tooltip" data-placement="bottom"></button></li>
           <li class="waveform-item">
             <div id="waveform" class="waveform-container">
               <div class="progress progress-striped active" id="player-progress-bar">
@@ -64,10 +65,10 @@
               <!-- here goes the waveform -->
             </div>
           </li>
-          <li><button title="<%= key_cmd(:toggle_playback_speed) %>" type="button" class="btn btn-lg btn-tlb fa fa-angle-double-up player player-toggle-playback-rate" data-action="toggle-playback-rate" data-toggle="tooltip" data-placement="bottom"></button></li>
-          <li><button title="<%= key_cmd(:step_backward) %>" type="button" class="btn btn-md btn-tlb fa fa-step-backward player player-step-backward" data-action="step-backward" data-toggle="tooltip" data-placement="bottom"></button></li>
-          <li><button title="<%= key_cmd(:step_forward) %>" type="button" class="btn btn-md btn-tlb fa fa-step-forward player player-step-forward" data-action="step-forward" data-toggle="tooltip" data-placement="bottom"></button></li>
-          <li><button title="<%= key_cmd(:stop) %>" type="button" class="btn btn-md btn-tlb fa fa-stop player player-reset" data-action="reset" data-toggle="tooltip" data-placement="bottom"></button></li>
+          <li><button title="<%= key_cmd(:toggle_playback_speed) %>" type="button" class="btn btn-lg btn-tlb fa fa-fw fa-angle-double-up player player-toggle-playback-rate" data-action="toggle-playback-rate" data-toggle="tooltip" data-placement="bottom"></button></li>
+          <li><button title="<%= key_cmd(:step_backward) %>" type="button" class="btn btn-md btn-tlb fa fa-step-backward fa-fw player player-step-backward" data-action="step-backward" data-toggle="tooltip" data-placement="bottom"></button></li>
+          <li><button title="<%= key_cmd(:step_forward) %>" type="button" class="btn btn-md btn-tlb fa fa-step-forward fa-fw player player-step-forward" data-action="step-forward" data-toggle="tooltip" data-placement="bottom"></button></li>
+          <li><button title="<%= key_cmd(:stop) %>" type="button" class="btn btn-md btn-tlb fa fa-stop fa-fw player player-reset" data-action="reset" data-toggle="tooltip" data-placement="bottom"></button></li>
         </ul>
 
         <div id="navbar-right" class="navbar-flush-right">
