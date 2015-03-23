@@ -33,6 +33,7 @@ Voyzes::Application.configure do
   config.log_level = :debug   # :info
 
   # Rack::Cache
+=begin
   config.static_cache_control = "public, max-age=#{12.hours * 60.seconds}"  # default for Chache-Control, e.g. 2592000
   config.action_dispatch.rack_cache = {
     metastore:          'file:tmp/cache/rack/meta',
@@ -44,4 +45,5 @@ Voyzes::Application.configure do
       [request.env["HTTP_HOST"], Rack::Cache::Key.new(request).generate].reject(&:blank?).map {|s| Digest::MD5.hexdigest(s)}.join(":")
     }
   }
+=end
 end
