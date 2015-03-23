@@ -14,7 +14,6 @@
     <link rel="dns-prefetch" href="//fonts.googleapis.com">
 
     <!-- Bootstrap core CSS -->
-    <%#= stylesheet_link_tag "//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css", "beachstrap" %>
     <%= stylesheet_link_tag "beachstrap" %>
 
     <!-- Add modernizr -->
@@ -476,10 +475,8 @@
 
     </div><!-- end content -->
 
-    <!-- ==================== scripts ============================ -->
-
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-
+    <!-- JavaScripts
+    ================================================== -->
     <%= javascript_include_tag "beachstrap" %>
     <%= yield :javascript_includes %>
     <div id="fb-root"></div>
