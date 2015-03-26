@@ -1,30 +1,37 @@
 class Ingest < ActiveRecord::Base
   include AASM
-  
-  CREATED    = 0
-  STARTING   = 1
-  STARTED    = 2
-  STOPPING   = 3
-  STOPPED    = 4
-  RESETTING  = 5
-  RESET      = 6
-  REMOVING   = 7
-  REMOVED    = 8
-  FINISHED   = 9
-  RESTARTING = 10
-  STATES     = {:created => CREATED, :starting => STARTING, :started => STARTED, :stopping => STOPPING, :stopped => STOPPED,
-    :resetting => RESETTING, :reset =>  RESET, :removing => REMOVING, :removed => REMOVED, :finished => FINISHED, 
-    :restarting => RESTARTING}
-  
+
+  STAGE_INITIALIZE  = 0
+  STAGE_DOWNLOAD    = 1
+  STAGE_TRANSCODE   = 2
+  STAGE_TRANSCRIBE  = 3
+  STAGE_UPLOAD      = 4
+
+  STATE_CREATED     = 0
+  STATE_STARTING    = 1
+  STATE_STARTED     = 2
+  STATE_STOPPING    = 3
+  STATE_STOPPED     = 4
+  STATE_RESETTING   = 5
+  STATE_RESET       = 6
+  STATE_REMOVING    = 7
+  STATE_REMOVED     = 8
+  STATE_FINISHED    = 9
+  STATE_RESTARTING  = 10
+  STATES = {created: STATE_CREATED, starting: STATE_STARTING, started: STATE_STARTED, 
+    stopping: STATE_STOPPING, stopped: STATE_STOPPED, resetting: STATE_RESETTING,
+    reset: STATE_RESET, removing: STATE_REMOVING, removed: STATE_REMOVED, 
+    finished: STATE_FINISHED,  restarting: STATE_RESTARTING}
+
   serialize :messages, Hash
-  
+
   belongs_to :upload, dependent: :destroy
   belongs_to :ingestable, polymorphic: true, dependent: :destroy
   belongs_to :track, dependent: :destroy
-  
+
   validates :upload, presence: true, on: :create
   validates :ingestable, presence: true
-  
+
   aasm column: 'aasm_state' do
     state :created, initial: true
     state :starting, :enter => :enter_starting, :after_enter => :after_enter_starting
@@ -37,15 +44,15 @@ class Ingest < ActiveRecord::Base
     state :removed, :enter => :enter_removed
     state :finished, :enter => :enter_finished
     state :restarting, :after_exit => :after_exit_restarting, :after_enter => :after_enter_restarting
-    
+
     event :start do
       transitions :from => [:created, :stopped, :reset], :to => :starting, :guard => :has_valid_upload?
     end
-    
+
     event :stop do
       transitions :from => :started, :to => :stopping
     end
-    
+
     event :reset do
       transitions :from => [:stopped, :finished], :to => :resetting
     end
@@ -61,45 +68,45 @@ class Ingest < ActiveRecord::Base
       transitions :from => [:removing, :removed], :to => :removed
       transitions :from => :restarting, :to => :started
     end
-    
+
     event :finish do
       transitions :from => [:started, :finished, :stopped], :to => :finished
     end
-    
+
     event :fail do
       transitions :from => [:created, :starting, :started, :stopping, :stopped, :resetting, :reset, :removing], :to => :stopped
     end
-    
+
     event :restart do
       transitions :from => [:starting, :started], :to => :restarting
     end
   end
-  
+
   # e.g. an integer representation of state, like 9 (=finished)
   def status
     self.class::STATES.symbolize_keys[aasm.current_state]
   end
-  
+
   # Alias for AASM current state E.g. :finished
   def state
     aasm.current_state
   end
-  
+
   # permissible events
   def events
     aasm.events(aasm.current_state) - [:process, :fail, :finish]
   end
-  
+
   # force an event
   def event=(value)
     events = Array.wrap(value)
     may_transition?(events) ? call_transition_with(events) : false
   end
-  
+
   def continue_processing?
     !stage.blank? && starting?
   end
-  
+
   def log(name, message)
     raise ArgumentError, "name missing" if name.blank?
     name = name.to_s
@@ -109,12 +116,12 @@ class Ingest < ActiveRecord::Base
       self.messages[name] = [message]
     end
   end
-  
+
   def log!(name, message)
     log(name, message)
     save!
   end
-  
+
   # set_progress! 10 => 10%
   def set_progress!(percent)
     with_lock do
@@ -128,7 +135,7 @@ class Ingest < ActiveRecord::Base
     value = self.class.where(:id=>id).select(attr).first[attr]
     self[attr] = value
   end
-  
+
   # set_progress! 10 => 10%
   # increment_progress! 1, 5, 80 => 26%
   # increment_progress! 1, 5, 80 => 42%
@@ -144,11 +151,11 @@ class Ingest < ActiveRecord::Base
       save(:validate => false)
     end
   end
-  
+
   def progress
     self[:progress].round if self[:progress]
   end
-  
+
   def ingestable_url
     "http://voyz.es/#{ingestable.slug}"
   end
@@ -156,7 +163,7 @@ class Ingest < ActiveRecord::Base
   def edit_ingestable_url
     "http://voyz.es/#{ingestable.slug}/edit"
   end
-  
+
   def signal_terminate!
     update_attribute(:terminate, true)
   end
@@ -179,7 +186,7 @@ class Ingest < ActiveRecord::Base
     self.terminate = false
     self.busy      = false
   end
-  
+
   def after_enter_starting; end
 
   def after_enter_stopping
@@ -189,7 +196,7 @@ class Ingest < ActiveRecord::Base
   def after_enter_resetting
     self.terminate = true
   end
-  
+
   def enter_started
     self.started_at = Time.now.utc
   end
@@ -199,7 +206,7 @@ class Ingest < ActiveRecord::Base
     self.terminate  = false
     self.busy       = false
   end
-  
+
   def enter_reset
     self.reset_at  = Time.now.utc
     self.messages  = {}
@@ -213,33 +220,33 @@ class Ingest < ActiveRecord::Base
   def enter_finished
     self.finished_at = Time.now.utc
   end
-  
+
   def enter_removing
     self.terminate = true
   end
-  
+
   def enter_removed
     self.terminate  = false
     self.removed_at = Time.now.utc
   end
-  
+
   def after_exit_restarting
     update_attributes(messages: {}, stage: nil, iteration: iteration + 1)
   end
-  
+
   def after_enter_restarting
     self.restarted_at = Time.now.utc
     self.terminate    = true
   end
-  
+
   def after_enter_removing
     ::Ingest::RemoveWorker.perform_async(self.id)
   end
-  
+
   def has_valid_upload?
     !!(upload && upload.s3_url)
   end
-  
+
   def may_transition?(events)
     events.present? ? events.any? {|e| send(:"may_#{e}?")} : false
   end
