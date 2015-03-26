@@ -89,4 +89,15 @@ class UserTest < ActiveSupport::TestCase
       assert_equal true, user.valid?, "should be valid"
     end
   end
+
+  context "roles" do
+    should "get and set roles" do
+      user = User.new(:confirmed_at => Time.now.utc)
+      assert_equal [], user.roles
+      user.valid?
+      assert_equal [:user], user.roles
+      user.roles = [:backend]
+      assert_equal [:backend], user.roles
+    end
+  end
 end

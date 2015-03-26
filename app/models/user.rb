@@ -1,4 +1,6 @@
 class User < ActiveRecord::Base
+  include Model::User::Roles
+
   attr_accessor :force_registration_validation
 
   # Include default devise modules. Others available are:
