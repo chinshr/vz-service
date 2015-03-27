@@ -1,6 +1,6 @@
 class Api::Account::UploadsController < Api::Account::ApplicationController
-  before_filter :cors_allow_origin, :only => :signput
-  
+  before_action :cors_allow_origin, :only => :sign_s3
+
   # [POST] /api/account/uploads(.:format)
   def create
     @upload = Upload.new(create_params.permit(:type)) do |u|
@@ -41,7 +41,7 @@ class Api::Account::UploadsController < Api::Account::ApplicationController
     @upload.destroy
     respond_with @upload
   end
-  
+
   # [GET] /api/account/uploads/sign_s3(.:format)
   def sign_s3
     object_name    = params[:s3_object_name]
@@ -58,7 +58,7 @@ class Api::Account::UploadsController < Api::Account::ApplicationController
     }
     respond_with @sign_s3
   end
-  
+
   protected
 
   def create_params
