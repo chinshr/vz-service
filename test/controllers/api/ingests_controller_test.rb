@@ -88,6 +88,30 @@ class Api::IngestsControllerTest < ActionController::TestCase
     end
   end
 
+  context "PUT /api/ingests/:id" do
+    should "update ingest with backend user" do
+      sign_in :user, @user2
+      put :update, {:id => @ingest2.id, :ingest => {
+        stage: "transcribe",
+      }, format: :json}
+      assert_response :success
+      assert_response_body_attributes_with "ingest"
+      assert_equal "transcribe", @ingest2.reload.stage
+    end
+
+    should "NOT update without user" do
+      put :update, {:id => @ingest1.id, :ingest => {:stage => "transcribe"}, format: :json}
+      assert_response :unauthorized
+    end
+
+    should "NOT update without backend user" do
+      sign_in :user, @user1
+      put :update, {:id => @ingest1.id, :ingest => {:stage => "transcribe"}, format: :json}
+      assert_response :unauthorized
+    end
+  end
+
+
   protected
 
   def assert_attributes(params, expected_attributes = {})
