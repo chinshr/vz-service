@@ -1,0 +1,47 @@
+class Api::IngestsController < Api::ApplicationController
+  include Pundit
+  before_action :load_ingest, :only => [:show, :update, :destroy]
+
+  # [GET] /api/ingests(.:format)
+  def index
+    authorize :index
+    @ingests = Ingest.filter(params)
+    respond_with @ingests
+  end
+
+  # [GET] /api/ingests/count(.:format)
+  def count
+    authorize :count
+    render :json => {:count => Ingest.filter(params).count}
+  end
+
+  # [GET] /api/ingests/:id(.:format)
+  def show
+    authorize @ingest
+    respond_with @ingest
+  end
+
+  # [PUT] /api/ingests/:id(.:format)
+  def update
+    authorize @ingest
+    @ingest = Ingest.update(params[:id], update_params)
+    respond_with @ingest
+  end
+
+  # [DELETE] /api/ingests/:id(.:format)
+  def destroy
+    authorize @ingest
+    @ingest.destroy
+    respond_with @ingest
+  end
+
+  protected
+
+  def load_ingest
+    @ingest = Ingest.find(params[:id])
+  end
+
+  def update_params
+    params.require(:ingest).permit(:messages => {}, :stage, :iteration, :busy, :terminate)
+  end
+end
