@@ -2,12 +2,18 @@ class Ingest < ActiveRecord::Base
   include AASM
   include Model::Filter
 
-  STAGE_INITIALIZE  = 0
-  STAGE_DOWNLOAD    = 1
-  STAGE_TRANSCODE   = 2
-  STAGE_TRANSCRIBE  = 3
-  STAGE_UPLOAD      = 4
-  STAGE_CLEANUP     = 5
+  STAGE_LOAD        = 0
+  STAGE_COPY        = 10
+  STAGE_DOWNLOAD    = 20
+  STAGE_TRANSCODE   = 30
+  STAGE_TRANSCRIBE  = 40
+  STAGE_UPLOAD      = 50
+  STAGE_CLEANUP     = 60
+  STAGES = {
+    load: STAGE_LOAD, copy: STAGE_COPY, download: STAGE_DOWNLOAD,
+    transcode: STAGE_TRANSCODE, transcribe: STAGE_TRANSCRIBE,
+    upload: STAGE_UPLOAD, cleanup: STAGE_CLEANUP
+  }
 
   STATE_CREATED     = 0
   STATE_STARTING    = 1
@@ -20,10 +26,12 @@ class Ingest < ActiveRecord::Base
   STATE_REMOVED     = 8
   STATE_FINISHED    = 9
   STATE_RESTARTING  = 10
-  STATES = {created: STATE_CREATED, starting: STATE_STARTING, started: STATE_STARTED, 
+  STATES = {
+    created: STATE_CREATED, starting: STATE_STARTING, started: STATE_STARTED, 
     stopping: STATE_STOPPING, stopped: STATE_STOPPED, resetting: STATE_RESETTING,
     reset: STATE_RESET, removing: STATE_REMOVING, removed: STATE_REMOVED, 
-    finished: STATE_FINISHED,  restarting: STATE_RESTARTING}
+    finished: STATE_FINISHED,  restarting: STATE_RESTARTING
+  }
 
   serialize :messages, Hash
 
