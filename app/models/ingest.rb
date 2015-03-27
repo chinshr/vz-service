@@ -6,6 +6,7 @@ class Ingest < ActiveRecord::Base
   STAGE_TRANSCODE   = 2
   STAGE_TRANSCRIBE  = 3
   STAGE_UPLOAD      = 4
+  STAGE_CLEANUP     = 5
 
   STATE_CREATED     = 0
   STATE_STARTING    = 1
