@@ -56,6 +56,11 @@ Voyzes::Application.routes.draw do
       end
       resources :tracks, :only => [:index, :show]
     end
+    resources :ingests, :only => [:index, :show, :update, :destroy] do
+      collection do
+        get "count"
+      end
+    end
     namespace :account do
       resources :uploads do
         collection do

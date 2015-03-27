@@ -1,10 +1,11 @@
 class Api::IngestsController < Api::ApplicationController
   include Pundit
+  before_action :authenticate_user!
   before_action :load_ingest, :only => [:show, :update, :destroy]
 
   # [GET] /api/ingests(.:format)
   def index
-    authorize :index
+    authorize :ingest
     @ingests = Ingest.filter(params)
     respond_with @ingests
   end
@@ -42,6 +43,6 @@ class Api::IngestsController < Api::ApplicationController
   end
 
   def update_params
-    params.require(:ingest).permit(:messages => {}, :stage, :iteration, :busy, :terminate)
+    params.require(:ingest).permit(:messages, :stage, :iteration, :busy, :terminate)
   end
 end

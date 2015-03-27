@@ -51,6 +51,7 @@ module Model::User::Roles
     end
 
     def validate_roles_assignment
+      return
       #validate only if there was actual change
       if new_record? || changed_attributes["roles_mask"]
         if creator.blank? && roles != [:user]

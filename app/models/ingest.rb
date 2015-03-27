@@ -1,5 +1,6 @@
 class Ingest < ActiveRecord::Base
   include AASM
+  include Model::Filter
 
   STAGE_INITIALIZE  = 0
   STAGE_DOWNLOAD    = 1

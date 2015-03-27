@@ -3,7 +3,7 @@ require 'test_helper'
 class Api::IngestsControllerTest < ActionController::TestCase
   setup do
     @user1              = FactoryGirl.create(:user)
-    @user2              = FactoryGirl.create(:user)
+    @user2              = FactoryGirl.create(:backend_user)
 
     @document1          = FactoryGirl.create(:document)
     @track1             = FactoryGirl.create(:track)
@@ -26,11 +26,23 @@ class Api::IngestsControllerTest < ActionController::TestCase
   end
 
   context "GET /api/ingests" do
+    should "be unauthorized without user" do
+      get :index, format: :json
+      assert_response :unauthorized
+    end
+
+    should "be unauthorized for none backend users" do
+      sign_in :user, @user1
+      get :index, format: :json
+      assert_response :unauthorized
+    end
+
     should "all public documents when not signed in" do
+      sign_in :user, @user2
       get :index, format: :json
       assert_response :success
       assert response_body.has_key?("ingests"), "should have root"
-      assert_equal 1, response_body["ingests"].size, "should have one ingest"
+      assert_equal 4, response_body["ingests"].size, "should have one ingest"
       assert_attributes response_body["ingests"].first
     end
   end

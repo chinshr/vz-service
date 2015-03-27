@@ -52,6 +52,14 @@ FactoryGirl.define do
     current_sign_in_ip "95.63.14.59"
   end
 
+  factory :backend_user, :class => "User", :parent => :user do
+    roles_mask 2
+  end
+
+  factory :admin_user, :class => "User", :parent => :user do
+    roles_mask 3
+  end
+
   factory :track do
     sequence(:s3_url) {|n| "http://s3.amazonaws.com/private/zp66vfwg21-#{n}"}
     sequence(:s3_mp3_url) {|n| "http://s3.amazonaws.com/private/zp66vfwg21-#{n}-128kbps-mp3"}
