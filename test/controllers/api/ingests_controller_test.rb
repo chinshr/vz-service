@@ -47,9 +47,51 @@ class Api::IngestsControllerTest < ActionController::TestCase
     end
   end
 
+  context "GET /api/ingests/count" do
+    should "be unauthorized whithout any user" do
+      get :count, format: :json
+      assert_response :unauthorized
+    end
+
+    should "be unauthorized without backend user" do
+      sign_in :user, @user1
+      get :count, format: :json
+      assert_response :unauthorized
+    end
+
+    should "count ingests when backend user is signed in" do
+      sign_in :user, @user2
+      get :count, format: :json
+      assert_response :success
+      assert response_body.has_key?("count"), "should have root"
+      assert_equal Ingest.count, response_body["count"], "should have count"
+    end
+  end
+
+  context "GET /api/ingests/:id" do
+    should "be unauthorized whithout any user" do
+      get :show, :id => @ingest1.id, format: :json
+      assert_response :unauthorized
+    end
+
+    should "be unauthorized without backend user" do
+      sign_in :user, @user1
+      get :show, :id => @ingest1.id, format: :json
+      assert_response :unauthorized
+    end
+
+    should "get ingest when signed in as backend user" do
+      sign_in :user, @user2
+      get :show, :id => @ingest2.id, format: :json
+      assert_response :success
+      assert_attributes response_body["ingest"]
+    end
+  end
+
   protected
 
   def assert_attributes(params, expected_attributes = {})
+    assert_equal false, params.blank?, "response should not be empty"
     (expected_attributes.keys + %w(id upload_id ingestable_id ingestable_type type status
       updated_at created_at started_at stopped_at restarted_at reset_at removed_at finished_at
       progress messages stage iteration busy track_id terminate)).each do |attribute|

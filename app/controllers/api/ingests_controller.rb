@@ -12,13 +12,13 @@ class Api::IngestsController < Api::ApplicationController
 
   # [GET] /api/ingests/count(.:format)
   def count
-    authorize :count
+    authorize :ingest
     render :json => {:count => Ingest.filter(params).count}
   end
 
   # [GET] /api/ingests/:id(.:format)
   def show
-    authorize @ingest
+    authorize :ingest
     respond_with @ingest
   end
 

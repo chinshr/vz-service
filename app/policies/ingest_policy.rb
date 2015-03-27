@@ -20,6 +20,10 @@ class IngestPolicy < ApplicationPolicy
     backend_role?
   end
 
+  def count?
+    backend_role?
+  end
+
   protected
 
   def backend_role?
