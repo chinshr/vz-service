@@ -111,6 +111,26 @@ class Api::IngestsControllerTest < ActionController::TestCase
     end
   end
 
+  context "DELETE /api/ingests/:id" do
+    should "be unauthorized without user" do
+      delete :destroy, {id: @ingest1, format: :json}
+      assert_response :unauthorized
+    end
+
+    should "be unauthorized without backend user" do
+      sign_in :user, @user1
+      delete :destroy, {id: @ingest1, format: :json}
+      assert_response :unauthorized
+    end
+
+    should "destroy with backend user" do
+      sign_in :user, @user2
+      assert_difference 'Ingest.count', -1 do
+        delete :destroy, {id: @ingest1, format: :json}
+        assert_response :success
+      end
+    end
+  end
 
   protected
 
