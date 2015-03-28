@@ -1,4 +1,4 @@
-module Api::Limit  
+module Api::Limit
   def self.included(base, *params)
     base.send :include, InstanceMethods
     base.before_filter :limit_parameter

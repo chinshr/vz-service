@@ -2,6 +2,7 @@ class Api::IngestsController < Api::ApplicationController
   include Pundit
   before_action :authenticate_user!
   before_action :load_ingest, :only => [:show, :update, :destroy]
+  after_action :verify_authorized
 
   # [GET] /api/ingests(.:format)
   def index
@@ -18,7 +19,7 @@ class Api::IngestsController < Api::ApplicationController
 
   # [GET] /api/ingests/:id(.:format)
   def show
-    authorize :ingest
+    authorize @ingest
     respond_with @ingest
   end
 
