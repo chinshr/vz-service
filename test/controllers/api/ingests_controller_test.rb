@@ -37,7 +37,7 @@ class Api::IngestsControllerTest < ActionController::TestCase
       assert_response :unauthorized
     end
 
-    should "all public documents when not signed in" do
+    should "all ingests when signed in as backend user" do
       sign_in :user, @user2
       get :index, format: :json
       assert_response :success
@@ -128,6 +128,7 @@ class Api::IngestsControllerTest < ActionController::TestCase
       assert_difference 'Ingest.count', -1 do
         delete :destroy, {id: @ingest1, format: :json}
         assert_response :success
+        assert_attributes response_body["ingest"]
       end
     end
   end

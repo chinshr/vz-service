@@ -34,49 +34,53 @@ class AudioWorkerTest
         @ingest.ingestable
       end
 
+      def ingest
+        @ingest
+      end
+
       def transcribe_file(audio)
         ActiveRecord::Base.connection_pool.with_connection do
           if audio.engine.is_a? Speech::Engines::GoogleSpeechEngine
             @mutex.synchronize do
-              Document::Chunk::GoogleSpeech.create(:position => 1, :offset => 0,  :text => "I hate to say", :score => 0.80, :document => document)
+              Ingest::Chunk::GoogleSpeech.create(:position => 1, :offset => 0,  :text => "I hate to say", :score => 0.80, :ingest => ingest)
               @queue.push(AudioWorkerTest::Chunk.new(1, audio.engine, 3))
             end
 
             @mutex.synchronize do
-              Document::Chunk::GoogleSpeech.create(:position => 2, :offset => 10, :text => "that macaronies are", :score => 0.65, :document => document)
+              Ingest::Chunk::GoogleSpeech.create(:position => 2, :offset => 10, :text => "that macaronies are", :score => 0.65, :ingest => ingest)
               @queue.push(AudioWorkerTest::Chunk.new(2, audio.engine, 3))
             end
 
             @mutex.synchronize do
-              Document::Chunk::GoogleSpeech.create(:position => 3, :offset => 20, :text => "the best food in the world", :score => 0.85, :document => document)
+              Ingest::Chunk::GoogleSpeech.create(:position => 3, :offset => 20, :text => "the best food in the world", :score => 0.85, :ingest => ingest)
               @queue.push(AudioWorkerTest::Chunk.new(3, audio.engine, 3))
             end
           elsif audio.engine.is_a? Speech::Engines::AttSpeechEngine
             @mutex.synchronize do
-              Document::Chunk::AttSpeech.create(:position => 1, :offset => 0,  :text => "I have to pray", :score => 0.70, :document => document)
+              Ingest::Chunk::AttSpeech.create(:position => 1, :offset => 0,  :text => "I have to pray", :score => 0.70, :ingest => ingest)
               @queue.push(AudioWorkerTest::Chunk.new(1, audio.engine, 3))
             end
 
             @mutex.synchronize do
-              Document::Chunk::AttSpeech.create(:position => 2, :offset => 10, :text => "cat maths are", :score => 0.70, :document => document)
+              Ingest::Chunk::AttSpeech.create(:position => 2, :offset => 10, :text => "cat maths are", :score => 0.70, :ingest => ingest)
               @queue.push(AudioWorkerTest::Chunk.new(2, audio.engine, 3))
             end
 
             @mutex.synchronize do
-              Document::Chunk::AttSpeech.create(:position => 3, :offset => 20, :text => "the best mushrooms in the whirlwind.", :score => 0.70, :document => document)
+              Ingest::Chunk::AttSpeech.create(:position => 3, :offset => 20, :text => "the best mushrooms in the whirlwind.", :score => 0.70, :ingest => ingest)
               @queue.push(AudioWorkerTest::Chunk.new(3, audio.engine, 3))
             end
           elsif audio.engine.is_a? Speech::Engines::NuanceDragonEngine
             @mutex.synchronize do
-              Document::Chunk::NuanceDragon.create(:position => 1, :offset => 0,  :text => "I have say", :score => 0, :document => document)
+              Ingest::Chunk::NuanceDragon.create(:position => 1, :offset => 0,  :text => "I have say", :score => 0, :ingest => ingest)
               @queue.push(AudioWorkerTest::Chunk.new(1, audio.engine, 3))
             end
             @mutex.synchronize do
-              Document::Chunk::NuanceDragon.create(:position => 2, :offset => 0,  :text => "that some macaronies are", :score => 0, :document => document)
+              Ingest::Chunk::NuanceDragon.create(:position => 2, :offset => 0,  :text => "that some macaronies are", :score => 0, :ingest => ingest)
               @queue.push(AudioWorkerTest::Chunk.new(2, audio.engine, 3))
             end
             @mutex.synchronize do
-              Document::Chunk::NuanceDragon.create(:position => 3, :offset => 0,  :text => "the cesty food in the world", :score => 0, :document => document)
+              Ingest::Chunk::NuanceDragon.create(:position => 3, :offset => 0,  :text => "the cesty food in the world", :score => 0, :ingest => ingest)
               @queue.push(AudioWorkerTest::Chunk.new(3, audio.engine, 3))
             end
           end
@@ -87,6 +91,10 @@ class AudioWorkerTest
 
   def document
     @ingest.ingestable
+  end
+
+  def ingest
+    @ingest
   end
 
   def transcribe!
@@ -105,19 +113,19 @@ class Workers::Ingest::AudioWorkerHelperTest < ActionView::TestCase
     threads = @worker.transcribe!
 
     @ingest.reload
-    assert_equal 9, @ingest.ingestable.chunks.count
-    assert_equal 3, @ingest.ingestable.chunks.any_of_type(:google_speech).count
-    assert_equal 3, @ingest.ingestable.chunks.any_of_type(:att_speech).count
-    assert_equal 3, @ingest.ingestable.chunks.any_of_type(:nuance_dragon).count
+    assert_equal 9, @ingest.chunks.count
+    assert_equal 3, @ingest.chunks.any_of_type(:google_speech).count
+    assert_equal 3, @ingest.chunks.any_of_type(:att_speech).count
+    assert_equal 3, @ingest.chunks.any_of_type(:nuance_dragon).count
     assert_equal 100, @ingest.progress
   end
 
-  should "normalize document chunks" do
+  should "normalize ingest chunks" do
     threads = @worker.transcribe!
-    @ingest.ingestable.normalize_chunk_scores!
+    @ingest.normalize_chunk_scores!
 
-    assert_equal 3, @ingest.ingestable.chunks.best.count
-    assert_equal "I hate to say that macaronies are the best food in the world", @ingest.ingestable.chunks.best.text
+    assert_equal 3, @ingest.chunks.best.count
+    assert_equal "I hate to say that macaronies are the best food in the world", @ingest.chunks.best.text
   end
 
 end

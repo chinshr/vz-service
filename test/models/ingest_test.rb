@@ -54,7 +54,7 @@ class IngestTest < ActiveSupport::TestCase
       assert_not_nil ingest.started_at
       ingest.log! :started, "working"
       ingest.update_attributes(stage: "transcoding")
-      FactoryGirl.create(:document_chunk, :document => ingest.ingestable)
+      FactoryGirl.create(:ingest_chunk, :ingest => ingest)
       assert_equal 0, ingest.iteration
       assert_equal false, ingest.messages.empty?
 
@@ -182,5 +182,57 @@ class IngestTest < ActiveSupport::TestCase
     assert_equal 90, ingest.progress
     ingest.increment_progress! 1, 175, 80
     assert_equal 90, ingest.progress
+  end
+
+  should "calculate average score and duration" do
+    ingest = FactoryGirl.create(:ingest_audio)
+    chunk1 = FactoryGirl.create(:ingest_chunk, :offset => 0, :ingest => ingest, :score => 0)
+    chunk2 = FactoryGirl.create(:ingest_chunk, :offset => 1, :ingest => ingest, :score => 0.5)
+    chunk3 = FactoryGirl.create(:ingest_chunk, :offset => 2, :ingest => ingest, :score => 1)
+    assert_equal 3, ingest.chunks.count
+    assert_equal 0.5, ingest.score.to_f
+    assert_equal 10.53, ingest.duration.to_f
+  end
+
+  should "order chunks by offset" do
+    ingest = FactoryGirl.create(:ingest_audio)
+    chunk3 = FactoryGirl.create(:ingest_chunk, :offset => 2, :ingest => ingest, :score => 1)
+    chunk1 = FactoryGirl.create(:ingest_chunk, :offset => 0, :ingest => ingest, :score => 0)
+    chunk2 = FactoryGirl.create(:ingest_chunk, :offset => 1, :ingest => ingest, :score => 0.5)
+    assert_equal 3, ingest.chunks.count
+    chunks = ingest.chunks.order(:offset)
+    assert_equal chunk1, chunks[0]
+    assert_equal chunk2, chunks[1]
+    assert_equal chunk3, chunks[2]
+  end
+
+  context "chunks" do
+    setup do
+      @ingest = FactoryGirl.create(:ingest_audio)
+      Ingest::Chunk::GoogleSpeech.create(:position => 1, :offset => 0,  :text => "I hate to say", :score => 0.80, :ingest => @ingest)
+      Ingest::Chunk::GoogleSpeech.create(:position => 2, :offset => 10, :text => "that macaronies are", :score => 0.65, :ingest => @ingest)
+      Ingest::Chunk::GoogleSpeech.create(:position => 3, :offset => 20, :text => "the best food in the world", :score => 0.85, :ingest => @ingest)
+
+      Ingest::Chunk::AttSpeech.create(:position => 1, :offset => 0,  :text => "I have to pray", :score => 0.70, :ingest => @ingest)
+      Ingest::Chunk::AttSpeech.create(:position => 2, :offset => 10, :text => "cat maths are", :score => 0.70, :ingest => @ingest)
+      Ingest::Chunk::AttSpeech.create(:position => 3, :offset => 20, :text => "the best mushrooms in the whirlwind.", :score => 0.95, :ingest => @ingest)
+
+      Ingest::Chunk::NuanceDragon.create(:position => 1, :offset => 0,  :text => "I have say", :score => 0, :ingest => @ingest)
+      Ingest::Chunk::NuanceDragon.create(:position => 2, :offset => 10,  :text => "that some macaronies are", :score => 0, :ingest => @ingest)
+      Ingest::Chunk::NuanceDragon.create(:position => 3, :offset => 20,  :text => "the cesty food in the world", :score => 0, :ingest => @ingest)
+    end
+
+    should "normalize chunk scores" do
+      assert_equal "the best mushrooms in the whirlwind.", @ingest.chunks.order(score: :desc).first.text
+      @ingest.normalize_chunk_scores!
+      assert_equal "the best food in the world", @ingest.chunks.order(score: :desc).first.text
+    end
+
+    should "update from chunks" do
+      @ingest.normalize_chunk_scores!
+      @ingest.update_content_from @ingest.chunks.best
+      assert_equal [{"insert"=>"I hate to say", "attributes"=>{"offset"=>0.0}}, {"insert"=>"that macaronies are", "attributes"=>{"offset"=>10.0}}, {"insert"=>"the best food in the world", "attributes"=>{"offset"=>20.0}}], 
+        @ingest.ingestable.rich_text
+    end
   end
 end

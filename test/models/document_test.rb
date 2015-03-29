@@ -3,7 +3,6 @@ require 'test_helper'
 class DocumentTest < ActiveSupport::TestCase
   context "associations" do
     should have_many :ingests
-    should have_many :chunks
     should have_many :tracks
   end
 
@@ -93,28 +92,6 @@ class DocumentTest < ActiveSupport::TestCase
     end
   end
 
-  should "calculate average score and duration" do
-    document = FactoryGirl.create(:document)
-    chunk1 = FactoryGirl.create(:document_chunk, :offset => 0, :document => document, :score => 0)
-    chunk2 = FactoryGirl.create(:document_chunk, :offset => 1, :document => document, :score => 0.5)
-    chunk3 = FactoryGirl.create(:document_chunk, :offset => 2, :document => document, :score => 1)
-    assert_equal 3, document.chunks.count
-    assert_equal 0.5, document.score.to_f
-    assert_equal 10.53, document.duration.to_f
-  end
-
-  should "order chunks by offset" do
-    document = FactoryGirl.create(:document)
-    chunk3 = FactoryGirl.create(:document_chunk, :offset => 2, :document => document, :score => 1)
-    chunk1 = FactoryGirl.create(:document_chunk, :offset => 0, :document => document, :score => 0)
-    chunk2 = FactoryGirl.create(:document_chunk, :offset => 1, :document => document, :score => 0.5)
-    assert_equal 3, document.chunks.count
-    chunks = document.chunks.order(:offset)
-    assert_equal chunk1, chunks[0]
-    assert_equal chunk2, chunks[1]
-    assert_equal chunk3, chunks[2]
-  end
-
   context "tags" do
     should "allow mixed case tags" do
       document = FactoryGirl.create(:document)
@@ -168,36 +145,4 @@ class DocumentTest < ActiveSupport::TestCase
     document = FactoryGirl.create(:document, text: "Hello World!")
     assert_equal "Hello World!", document.text
   end
-
-  context "chunks" do
-    setup do
-      @document = FactoryGirl.create(:document)
-      Document::Chunk::GoogleSpeech.create(:position => 1, :offset => 0,  :text => "I hate to say", :score => 0.80, :document => @document)
-      Document::Chunk::GoogleSpeech.create(:position => 2, :offset => 10, :text => "that macaronies are", :score => 0.65, :document => @document)
-      Document::Chunk::GoogleSpeech.create(:position => 3, :offset => 20, :text => "the best food in the world", :score => 0.85, :document => @document)
-
-      Document::Chunk::AttSpeech.create(:position => 1, :offset => 0,  :text => "I have to pray", :score => 0.70, :document => @document)
-      Document::Chunk::AttSpeech.create(:position => 2, :offset => 10, :text => "cat maths are", :score => 0.70, :document => @document)
-      Document::Chunk::AttSpeech.create(:position => 3, :offset => 20, :text => "the best mushrooms in the whirlwind.", :score => 0.95, :document => @document)
-
-      Document::Chunk::NuanceDragon.create(:position => 1, :offset => 0,  :text => "I have say", :score => 0, :document => @document)
-      Document::Chunk::NuanceDragon.create(:position => 2, :offset => 10,  :text => "that some macaronies are", :score => 0, :document => @document)
-      Document::Chunk::NuanceDragon.create(:position => 3, :offset => 20,  :text => "the cesty food in the world", :score => 0, :document => @document)
-    end
-
-    should "normalize chunk scores" do
-      assert_equal "the best mushrooms in the whirlwind.", @document.chunks.order(score: :desc).first.text
-      @document.normalize_chunk_scores!
-      assert_equal "the best food in the world", @document.chunks.order(score: :desc).first.text
-    end
-
-    should "update from chunks" do
-      @document.normalize_chunk_scores!
-
-      @document.update_content_from @document.chunks.best
-      assert_equal [{"insert"=>"I hate to say", "attributes"=>{"offset"=>0}}, {"insert"=>"that macaronies are", "attributes"=>{"offset"=>10}}, {"insert"=>"the best food in the world", "attributes"=>{"offset"=>20}}], 
-        @document.rich_text
-    end
-  end
-
 end

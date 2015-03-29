@@ -56,7 +56,7 @@ module Workers::Ingest::AudioWorkerHelper
         audio.to_json(:locale => @ingest.locale) do |chunk|
           @mutex.synchronize do
             end_time = start_time + BigDecimal.new(chunk.duration.to_s)
-            @ingest.ingestable.chunks.create({
+            @ingest.chunks.create({
               :type              => Document::Chunk.type_from_engine_class_for(audio.engine.class), # "Document::Chunk::GoogleSpeech",
               :position          => chunk.id,
               :offset            => chunk.offset,

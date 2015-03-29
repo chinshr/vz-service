@@ -21,18 +21,24 @@ FactoryGirl.define do
     association :ingestable, factory: :document
   end
 
-  factory :document_chunk, :class => "Document::Chunk" do
-    association :document
-    offset 0
+  factory :ingest_chunk, :class => "Ingest::Chunk" do
+    association :ingest, factory: :ingest_audio
+    offset 0.0
     duration 3.51
     start_time 0
     end_time 3.51
     text "I like pickles"
     processing_status 0
     score 0.59
-    before(:create) do |segment|
-      segment.response = {"status" => 0, "id" => "ce178ea89f8b17d8e8298c9c7814700a-1", "hypotheses" => [["I like pickles", 0.59408695], ["I like turtles", 0.34534354], ["I like tickles", nil], ["I like to Kohl's", nil]]}
+    before(:create) do |chunk|
+      chunk.response = {"status" => 0, "id" => "ce178ea89f8b17d8e8298c9c7814700a-1", "hypotheses" => [["I like pickles", 0.59408695], ["I like turtles", 0.34534354], ["I like tickles", nil], ["I like to Kohl's", nil]]}
     end
+  end
+
+  factory :ingest_chunk_google_speech, parent: :ingest_chunk, class: "Ingest::Chunk::GoogleSpeech" do
+  end
+
+  factory :ingest_chunk_att_speech, parent: :ingest_chunk, class: "Ingest::Chunk::AttSpeech" do
   end
 
   factory :message do

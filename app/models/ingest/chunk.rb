@@ -1,6 +1,6 @@
-class Document::Chunk < ActiveRecord::Base
+class Ingest::Chunk < ActiveRecord::Base
   include Model::Filter
-  self.table_name = "document_chunks"
+  self.table_name = "ingest_chunks"
 
   STATES = {
     :unprocessed         => Speech::AudioSplitter::AudioChunk::STATUS_UNPROCESSED,
@@ -12,12 +12,9 @@ class Document::Chunk < ActiveRecord::Base
     :transcription_error => Speech::AudioSplitter::AudioChunk::STATUS_TRANSCRIPTION_ERROR
   }
 
-  serialize :response, Hash
-  serialize :processing_errors, Array
+  belongs_to :ingest
 
-  belongs_to :document
-
-  validates :document, presence: true
+  validates :ingest, presence: true
   validates :offset, presence: true
 
   # public scopes
@@ -26,14 +23,18 @@ class Document::Chunk < ActiveRecord::Base
   # private scopes
   scope :transcribed, -> {where(:processing_status => STATES[:transcribed])}
   scope :best, -> {
-    joins("JOIN (SELECT position, MAX(score) AS max_score FROM document_chunks p GROUP BY p.position) y ON y.position = document_chunks.position AND y.max_score = document_chunks.score").
+    joins("JOIN (SELECT position, MAX(score) AS max_score FROM ingest_chunks p GROUP BY p.position) y ON y.position = ingest_chunks.position AND y.max_score = ingest_chunks.score").
     order(:position)
   }
 
   class << self
+    def policy_class
+      Ingest::ChunkPolicy
+    end
+
     def type_for(params)
       [params].flatten.map do |p|
-        "Document::Chunk::#{p.to_s.classify}"
+        "Ingest::Chunk::#{p.to_s.classify}"
       end
     end
 
@@ -50,10 +51,10 @@ class Document::Chunk < ActiveRecord::Base
 
     def rich_text
       self.all.map do |chunk|
-        json = {"insert" => chunk.text, "attributes" => {"offset" => chunk.offset}}
-        json["attributes"]["duration"] = chunk.duration if chunk.duration
-        json["attributes"]["start_time"] = chunk.start_time if chunk.start_time
-        json["attributes"]["end_time"] = chunk.end_time if chunk.end_time
+        json = {"insert" => chunk.text, "attributes" => {"offset" => chunk.offset.to_f}}
+        json["attributes"]["duration"]   = chunk.duration.to_f if chunk.duration
+        json["attributes"]["start_time"] = chunk.start_time.to_f if chunk.start_time
+        json["attributes"]["end_time"]   = chunk.end_time.to_f if chunk.end_time
         json
       end
     end

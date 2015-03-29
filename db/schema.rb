@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150326160353) do
+ActiveRecord::Schema.define(version: 20150328191008) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -60,30 +60,6 @@ ActiveRecord::Schema.define(version: 20150326160353) do
 
   add_index "attachings", ["message_id", "upload_id"], name: "index_attachings_on_message_id_and_upload_id", unique: true, using: :btree
 
-  create_table "document_chunks", force: true do |t|
-    t.integer  "document_id"
-    t.integer  "offset",                                                 null: false
-    t.decimal  "duration",          precision: 11, scale: 5
-    t.decimal  "start_time",        precision: 11, scale: 5
-    t.decimal  "end_time",          precision: 11, scale: 5
-    t.text     "response"
-    t.string   "text"
-    t.float    "score"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.integer  "position"
-    t.string   "type"
-    t.integer  "processing_status",                          default: 0, null: false
-    t.text     "processing_errors"
-  end
-
-  add_index "document_chunks", ["document_id"], name: "index_document_chunks_on_document_id", using: :btree
-  add_index "document_chunks", ["offset"], name: "index_document_chunks_on_offset", using: :btree
-  add_index "document_chunks", ["position"], name: "index_document_chunks_on_position", using: :btree
-  add_index "document_chunks", ["processing_status"], name: "index_document_chunks_on_processing_status", using: :btree
-  add_index "document_chunks", ["score"], name: "index_document_chunks_on_score", using: :btree
-  add_index "document_chunks", ["type"], name: "index_document_chunks_on_type", using: :btree
-
   create_table "documents", force: true do |t|
     t.string   "title"
     t.string   "slug",                                     null: false
@@ -105,6 +81,30 @@ ActiveRecord::Schema.define(version: 20150326160353) do
   add_index "documents", ["title"], name: "index_documents_on_title", using: :btree
   add_index "documents", ["updated_at"], name: "index_documents_on_updated_at", using: :btree
   add_index "documents", ["user_id"], name: "index_documents_on_user_id", using: :btree
+
+  create_table "ingest_chunks", force: true do |t|
+    t.integer  "ingest_id"
+    t.decimal  "offset",            precision: 11, scale: 5,             null: false
+    t.decimal  "duration",          precision: 11, scale: 5
+    t.decimal  "start_time",        precision: 11, scale: 5
+    t.decimal  "end_time",          precision: 11, scale: 5
+    t.string   "text"
+    t.float    "score"
+    t.integer  "position"
+    t.string   "type"
+    t.integer  "processing_status",                          default: 0, null: false
+    t.json     "response"
+    t.json     "processing_errors"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "ingest_chunks", ["ingest_id"], name: "index_ingest_chunks_on_ingest_id", using: :btree
+  add_index "ingest_chunks", ["offset"], name: "index_ingest_chunks_on_offset", using: :btree
+  add_index "ingest_chunks", ["position"], name: "index_ingest_chunks_on_position", using: :btree
+  add_index "ingest_chunks", ["processing_status"], name: "index_ingest_chunks_on_processing_status", using: :btree
+  add_index "ingest_chunks", ["score"], name: "index_ingest_chunks_on_score", using: :btree
+  add_index "ingest_chunks", ["type"], name: "index_ingest_chunks_on_type", using: :btree
 
   create_table "ingests", force: true do |t|
     t.integer  "upload_id"

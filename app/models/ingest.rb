@@ -38,6 +38,7 @@ class Ingest < ActiveRecord::Base
   belongs_to :upload, dependent: :destroy
   belongs_to :ingestable, polymorphic: true, dependent: :destroy
   belongs_to :track, dependent: :destroy
+  has_many :chunks, dependent: :destroy
 
   validates :upload, presence: true, on: :create
   validates :ingestable, presence: true
@@ -89,6 +90,12 @@ class Ingest < ActiveRecord::Base
 
     event :restart do
       transitions :from => [:starting, :started], :to => :restarting
+    end
+  end
+
+  class << self
+    def policy_class
+      IngestPolicy
     end
   end
 
@@ -188,6 +195,48 @@ class Ingest < ActiveRecord::Base
 
   def clear_busy!
     update_attribute(:busy, false)
+  end
+
+  def normalize_chunk_scores!
+    self.chunks.group_by(&:position).each do |position, grouped_chunks|
+      levenshtein_array = grouped_chunks.each_index.inject([]) do |column, column_index|
+        column << grouped_chunks.each_index.inject([]) do |row, row_index|
+          row << if grouped_chunks[column_index].text && grouped_chunks[row_index].text
+            grouped_chunks[column_index].text.levenshtein_similar(grouped_chunks[row_index].text)
+          else
+            0.0
+          end
+        end
+      end
+
+      levenshtein_matrix = Matrix.rows(levenshtein_array)
+      combined_word_count = grouped_chunks.map(&:text).inject(0) {|r, e| r += e.to_s.split.size}
+      eigen_array = grouped_chunks.each_index.inject([]) do |v, index|
+        v << (combined_word_count.to_f > 0 ? grouped_chunks[index].text.to_s.split.size / combined_word_count.to_f : 1.0)
+      end
+      eigen_vector = Vector.elements(eigen_array, true)
+      score_vector = levenshtein_matrix * eigen_vector
+
+      # update chunk score
+      score_vector.each_with_index do |vector_score, index|
+        grouped_chunks[index].score = vector_score
+        grouped_chunks[index].save if grouped_chunks[index].changed?
+      end
+    end
+  end
+
+  def score
+    chunks.average(:score)
+  end
+
+  def duration
+    chunks.sum(:duration)
+  end
+
+  def update_content_from(grouped_chunks)
+    ingestable.with_lock do
+      ingestable.update_attributes(html: grouped_chunks.text, rich_text: grouped_chunks.rich_text)
+    end
   end
 
   protected
