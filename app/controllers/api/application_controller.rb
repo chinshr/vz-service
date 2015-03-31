@@ -4,6 +4,9 @@ class Api::ApplicationController < ApplicationController
   include Api::ApplicationHelper
   helper Api::ApplicationHelper
 
+  before_action :authenticate_user_from_token!
+  before_action :authenticate_user!
+
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :null_session
@@ -21,10 +24,14 @@ class Api::ApplicationController < ApplicationController
     process_exception(exception)
   end
 
+  rescue_from Api::Exception do |exception|
+    process_exception(exception)
+  end
+
   protected
 
-  def api_response(data = nil)
-    @api_response || @api_response = Api::Response.new(data)
+  def api_response(error = nil)
+    @api_response || @api_response = Api::Response.new(error)
   end
 
   def process_exception(exception)
@@ -44,6 +51,44 @@ class Api::ApplicationController < ApplicationController
 
   def version_header
     headers['version'] = Api::Version.to_s
+  end
+
+  # authentication_secret = SecureRandom.urlsafe_base64(nil, false)
+  #
+  # 1. Create `access_id` (hashed email) in User table
+  #
+  # 2. `access_secret` random hash in User table
+  #
+  # 3. API user is authenticating with
+  #
+  #     &token=<access-id> + ':' + <hexdigest(access_secret)>
+  #
+  # Note: In the user's account section we will provide that token
+  # prepared to be consumed.
+  #
+  # 4. Server looks up User by `access_id`
+  #
+  # 5. Reject user if not of role 'backend' or 'developer'.
+  #
+  # 5. Compares user's hexdigest(access_secret) with User access_secret, the
+  #    (2nd) portion of the token.
+  #
+  #    &token = <access_id>:<hexdigest_access_secret>
+  #
+  def authenticate_user_from_token!
+    binding.pry if headers['Authorization']
+    if access_token = params[:token].presence || headers['Authorization'].presence
+      access_id, access_secret = access_token.try(:split, ':')
+      user = access_id && access_secret && User.find_by(access_id: access_id)
+      # Notice how we use Devise.secure_compare to compare the token
+      # in the database with the token given in the params, mitigating
+      # timing attacks.
+      if user && user.roles.any? {|r| [:backend, :developer].include?(r)} && user.secure_compare_access_secret(access_secret)
+        sign_in user, store: false
+      else
+        raise Api::Exception::AuthorizationError.new(I18n.t('api.error_code.authorization_error.platform'))
+      end
+    end
   end
 
 end

@@ -8,3 +8,5 @@ require "patches"
 require "email_format_validator"
 require "registration_validator"
 require "client_side_validations_ext"
+require "digest/md5"
+

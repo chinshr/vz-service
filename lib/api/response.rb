@@ -1,5 +1,5 @@
 class Api::Response
-  attr_accessor :code, :options, :data, :http_status, :deprecated
+  attr_accessor :ok, :code, :options, :data, :http_status, :deprecated
   attr_reader   :messages
 
   # To satisfy rails serialization
@@ -13,7 +13,8 @@ class Api::Response
   end
 
   def cleanup
-    self.code    = 0 # TODO Api::Code::SUCCESS
+    self.ok      = true
+    self.code    = 0
     @messages    = []
     self.data    = {}
     self.options = {:root => nil, :skip_types => true, :indent => 0, :dasherize => false}
@@ -25,9 +26,10 @@ class Api::Response
 
   def error(exception)
     if exception.is_a?(Exception)
+      self.ok          = false
       self.code        = Api::Code.code_for(exception)
       self.http_status = Api::Code.http_status_for(exception)
-      self.messages    = Api::Code.message_for(exception)
+      self.messages    = exception.message || Api::Code.message_for(exception)
 =begin
     elsif exception.is_a?(Api::Exception)
       self.code        = exception.code
@@ -38,9 +40,8 @@ class Api::Response
   end
 
   def to_xml(options = {})
-    prepare_data
     options.reverse_merge!(self.options)
-    self.data.to_xml(options) 
+    self.data.to_xml(options)
   end
 
   # Note: This isn't the best implementation but there are currently no ruby JSON builders that append raw
@@ -49,9 +50,9 @@ class Api::Response
   def to_json(options = {})
     prepare_data
     result = self.data.map do |key, value|
-      %{"#{key}": #{value.to_json(options)}}
+      %{"#{key}":#{value.to_json(options)}}
     end.join(",")
-    "{\"#{self.options[:root]}\": {#{result}}}"
+    "{\"ok\":#{self.ok},\"#{self.options[:root]}\":{#{result}}}"
   end
 
   def messages=(value)
@@ -63,10 +64,10 @@ class Api::Response
   end
 
   private
-  
+
   def prepare_data
     data[:code]    = self.code
-    options[:root] = code < 0 ? "error" : "unknown"
+    options[:root] = code.to_i < 0 ? "error" : "unknown"
     # TODO self.messages = [Api::Code.get_message(self.code)] if @messages.blank? || deprecated
     data.each_value { |value| self.messages = value.messages if value.respond_to?(:messages) }
     data[:messages] = self.messages

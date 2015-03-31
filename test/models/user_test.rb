@@ -59,11 +59,17 @@ class UserTest < ActiveSupport::TestCase
     assert_equal "rgb(118, 242, 7)", user.css_rgb_color
   end
 
-  context "force registration" do
+  context "user registration" do
     should "not be valid without previous registration" do
       user = FactoryGirl.build(:user, first_name: "Jürgen", last_name: "Feßlmeier", email: "juergen@example.com")
       user.force_registration_validation = true
       assert_equal false, user.valid?, "should not be valid"
+    end
+
+    should "skip registration" do
+      user = FactoryGirl.build(:user, first_name: "Jürgen", last_name: "Feßlmeier", email: "juergen@example.com")
+      user.skip_registration_validation = true
+      assert_equal true, user.valid?, "should be valid"
     end
 
     should "not be valid with pending registration" do
@@ -98,6 +104,38 @@ class UserTest < ActiveSupport::TestCase
       assert_equal [:user], user.roles
       user.roles = [:backend]
       assert_equal [:backend], user.roles
+    end
+  end
+
+  context "access token" do
+    should "generate access_id, access_secret for new users" do
+      user = FactoryGirl.build(:user, first_name: "New", last_name: "user", email: "new-user@example.com")
+      assert_nil user.access_id, "should not yet have access_id"
+      assert_nil user.access_secret, "should not yet have access_secret"
+      assert_equal true, user.save, "should save"
+      assert_not_nil user.access_id, "should have access_id"
+      assert_not_nil user.access_secret, "should have access_secret"
+      assert_not_nil user.access_token, "should have access_token"
+    end
+
+    should "regenerate access_id, access_secret when forced" do
+      user = FactoryGirl.create(:user)
+      assert_not_nil user.access_id, "should have access_id"
+      assert_not_nil user.access_secret, "should have access_secret"
+      assert_not_nil user.access_token, "should have access_token"
+      stored_token = user.access_token
+      user.update_attribute(:first_name, "Pepe")
+      assert_equal stored_token, user.reload.access_token
+      user.force_generate_access_token = true
+      assert_equal true, user.save, "should save"
+      assert_not_equal stored_token, user.reload.access_token
+    end
+
+    should "securely compare with access_secret" do
+      user = FactoryGirl.create(:user)
+      hashed_access_secret = user.access_token.split(":").last
+      assert_not_nil hashed_access_secret, "should have hashed access_secret"
+      assert_equal true, user.secure_compare_access_secret(hashed_access_secret)
     end
   end
 end
