@@ -60,6 +60,7 @@ group :test do
   #gem 'turn'
   gem 'test_after_commit'
   gem 'webmock'
+  gem 'timecop'
 end
 
 group :production do

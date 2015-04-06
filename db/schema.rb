@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150330154749) do
+ActiveRecord::Schema.define(version: 20150414152316) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -50,6 +50,68 @@ ActiveRecord::Schema.define(version: 20150330154749) do
   add_index "admin_users", ["email"], name: "index_admin_users_on_email", unique: true, using: :btree
   add_index "admin_users", ["reset_password_token"], name: "index_admin_users_on_reset_password_token", unique: true, using: :btree
   add_index "admin_users", ["roles_mask"], name: "index_admin_users_on_roles_mask", using: :btree
+
+  create_table "api_client_accesses", force: true do |t|
+    t.string   "uid",                                  null: false
+    t.integer  "client_id"
+    t.string   "access_secret"
+    t.integer  "user_id"
+    t.string   "device_uid"
+    t.string   "device_user_uid"
+    t.string   "aasm_state",      default: "inactive", null: false
+    t.integer  "access_status"
+    t.datetime "activated_at"
+    t.datetime "deactivated_at"
+    t.datetime "deleted_at"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "api_client_accesses", ["aasm_state"], name: "index_api_client_accesses_on_aasm_state", using: :btree
+  add_index "api_client_accesses", ["access_status"], name: "index_api_client_accesses_on_access_status", using: :btree
+  add_index "api_client_accesses", ["client_id"], name: "index_api_client_accesses_on_client_id", using: :btree
+  add_index "api_client_accesses", ["deleted_at"], name: "index_api_client_accesses_on_deleted_at", using: :btree
+  add_index "api_client_accesses", ["uid"], name: "index_api_client_accesses_on_uid", unique: true, using: :btree
+  add_index "api_client_accesses", ["user_id"], name: "index_api_client_accesses_on_user_id", using: :btree
+
+  create_table "api_clients", force: true do |t|
+    t.string   "name"
+    t.string   "key",         null: false
+    t.integer  "platform_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "api_clients", ["key"], name: "index_api_clients_on_key", unique: true, using: :btree
+  add_index "api_clients", ["platform_id"], name: "index_api_clients_on_platform_id", using: :btree
+
+  create_table "api_devices", force: true do |t|
+    t.string   "device_name"
+    t.string   "uid",              null: false
+    t.integer  "client_id"
+    t.integer  "client_access_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "api_devices", ["client_access_id"], name: "index_api_devices_on_client_access_id", using: :btree
+  add_index "api_devices", ["client_id"], name: "index_api_devices_on_client_id", using: :btree
+  add_index "api_devices", ["uid"], name: "index_api_devices_on_uid", unique: true, using: :btree
+
+  create_table "api_platforms", force: true do |t|
+    t.string   "uid",                                 null: false
+    t.string   "name"
+    t.string   "version"
+    t.string   "aasm_state",     default: "inactive", null: false
+    t.boolean  "cap",            default: false,      null: false
+    t.datetime "activated_at"
+    t.datetime "deactivated_at"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "api_platforms", ["aasm_state"], name: "index_api_platforms_on_aasm_state", using: :btree
+  add_index "api_platforms", ["uid"], name: "index_api_platforms_on_uid", unique: true, using: :btree
 
   create_table "attachings", force: true do |t|
     t.integer  "message_id"
@@ -277,11 +339,8 @@ ActiveRecord::Schema.define(version: 20150330154749) do
     t.string   "css_hex_color"
     t.string   "initials"
     t.integer  "roles_mask"
-    t.string   "access_id"
-    t.string   "access_secret"
   end
 
-  add_index "users", ["access_id"], name: "index_users_on_access_id", using: :btree
   add_index "users", ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true, using: :btree
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
   add_index "users", ["lat"], name: "index_users_on_lat", using: :btree

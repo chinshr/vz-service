@@ -1,4 +1,7 @@
 class Api::TagsController < Api::ApplicationController
+  include Api::Authorization
+
+  before_action :authorize_client_or_signed_in_user!
 
   # [GET] /api/tags(.:format)
   def index

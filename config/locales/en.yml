@@ -32,8 +32,13 @@ en:
   api:
     error_code:
       authorization_error:
-        platform: "Authorization error"
         generic: "Authorization error"
+        access_token: "Authorization error: access_token"
+        platform: "Authorization error: platform"
+        user: "Authorization error: user"
+        max_number_of_device_authorizations_allowed: "Maximum number of device authorizations reached"
+        max_number_of_device_authorizations_allowed_per_period: "Maximum number of device authorizations reached within the past %{days} days"
+      argument_missing_name: "Argument missing '%{argument_name}'"
   activerecord:
     errors:
       messages:

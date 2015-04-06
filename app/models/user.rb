@@ -1,9 +1,6 @@
 class User < ActiveRecord::Base
   include Model::User::Roles
 
-  ACCESS_ID_LENGTH      = 16
-  ACCESS_SECRET_LENGTH  = 16
-
   attr_accessor :force_registration_validation
   attr_accessor :skip_registration_validation
   attr_accessor :force_generate_access_token
@@ -29,6 +26,7 @@ class User < ActiveRecord::Base
   has_many :documents, dependent: :nullify
   has_many :ingests, through: :documents
   has_many :uploads, through: :ingests
+  has_many :client_accesses, dependent: :destroy, class_name: "Api::ClientAccess"
 
   acts_as_tagger
 
@@ -41,7 +39,6 @@ class User < ActiveRecord::Base
 
   before_save :geocode, if: :has_ip_address?, unless: :geocoded?
   before_save :reverse_geocode, if: :geocoded?
-  before_save :generate_access_id, :generate_access_secret, if: :generate_access_token?
 
   def password_required?
     # previous = !persisted? || !password.nil? || !password_confirmation.nil?
@@ -93,15 +90,8 @@ class User < ActiveRecord::Base
     end
   end
 
-  def access_token
-    if access_id && access_secret
-      digest = "#{access_id}:#{access_secret}"
-      "#{access_id}:#{Digest::MD5.hexdigest(digest)}"
-    end
-  end
-
-  def secure_compare_access_secret(hashed_access_secret)
-    Devise.secure_compare(Digest::MD5.hexdigest(self.access_id + ':' + self.access_secret), hashed_access_secret)
+  def active?
+    confirmed?
   end
 
   protected
@@ -117,23 +107,5 @@ class User < ActiveRecord::Base
   def should_perform_registration_validation?
     return false if !!skip_registration_validation
     !Rails.env.test? || @force_registration_validation
-  end
-
-  def generate_access_id
-    self.access_id = loop do
-      random_access_id =  SecureRandom.urlsafe_base64(User::ACCESS_ID_LENGTH, false)
-      break random_access_id unless self.class.exists?(access_id: random_access_id)
-    end
-  end
-
-  def generate_access_secret
-    self.access_secret = loop do
-      random_access_secret =  SecureRandom.urlsafe_base64(User::ACCESS_SECRET_LENGTH, false)
-      break random_access_secret unless self.class.exists?(access_secret: random_access_secret)
-    end
-  end
-
-  def generate_access_token?
-    !access_id || !access_secret || !!force_generate_access_token
   end
 end

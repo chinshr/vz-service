@@ -1,5 +1,7 @@
 class Api::Ingests::ChunksController < Api::ApplicationController
   include Pundit
+  include Api::Authorization
+
   before_action :authenticate_user!
   before_action :load_ingest
   before_action :load_chunk, only: [:show, :update, :destroy]

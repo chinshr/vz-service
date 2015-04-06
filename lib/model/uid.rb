@@ -1,12 +1,13 @@
 module Model::Uid
-  UID_LENGTH = 40
-  
+
   def self.included(base)
     base.send :extend, ClassMethods
     base.send :include, InstanceMethods
-    
+
     base.class_eval do
-      before_validation :generate_uid
+      cattr_accessor :uid_length
+      @@uid_length = 40
+      before_validation :generate_uid_unless_present, on: :create
     end
   end
 
@@ -15,6 +16,10 @@ module Model::Uid
     def random_string(len = 10, set = nil)
       chars = parse_characters_set(set) || [('a'..'z'), ('A'..'Z'), ('0'..'9')].map {|i| i.to_a}.flatten
       String.new.tap {|s| 1.upto(len) {|i| s << chars[rand(chars.size - 1)]}} unless chars.empty?
+    end
+
+    def generate_uid
+      random_string(uid_length)
     end
 
     private
@@ -34,9 +39,13 @@ module Model::Uid
 
   module InstanceMethods
     def generate_uid
-      begin; self.uid = self.class.random_string(self.class::UID_LENGTH); end while self.class.where(:uid => uid).present?
+      begin; self.uid = self.class.random_string(self.class.uid_length); end while self.class.where(:uid => uid).present?
+    end
+
+    def generate_uid_unless_present
+      generate_uid unless uid.present?
     end
   end
-  
+
   extend ClassMethods
 end

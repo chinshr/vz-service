@@ -44,6 +44,11 @@ Voyzes::Application.routes.draw do
   end
 
   namespace :api do
+    post 'authorize/client' => 'authorization#client_authorize'
+    post 'authorize/user' => 'authorization#user_authorize'
+    get 'authorize/status' => 'authorization#status'
+    delete 'authorize/user' => 'authorization#user_deauthorize'
+
     resources :tags, :only => :index do
       collection do
         get "count"

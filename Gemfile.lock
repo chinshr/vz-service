@@ -346,6 +346,7 @@ GEM
     thor (0.19.1)
     thread_safe (0.3.5)
     tilt (1.4.1)
+    timecop (0.7.3)
     timers (4.0.1)
       hitimes
     tins (1.3.3)
@@ -435,6 +436,7 @@ DEPENDENCIES
   simplecov
   sinatra
   test_after_commit
+  timecop
   uglifier
   unicorn
   uuid

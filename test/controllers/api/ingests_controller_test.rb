@@ -25,25 +25,7 @@ class Api::IngestsControllerTest < ActionController::TestCase
     sign_out :user
   end
 
-  context "token authentication" do
-    should "should authenticate 'backend' user with token parameter" do
-      get :index, token: @user2.access_token, format: :json
-      assert_response :success
-    end
-
-    should "should NOT authenticate normal user with token parameter" do
-      get :index, token: @user1.access_token, format: :json
-      assert_response :unauthorized
-    end
-
-    should "should authenticate using Authorization: $TOKEN" do
-      # @request.headers['Authorization'] = @user2.access_token
-      get :index, {format: :json}, {'foo' => 'bar', 'Authorization' => @user2.access_token}
-      assert_response :success
-    end
-  end
-
-  context "GET /api/ingests" do
+  context "GET /api/ingests(.:format)" do
     should "be unauthorized without user" do
       get :index, format: :json
       assert_response :unauthorized
@@ -63,9 +45,54 @@ class Api::IngestsControllerTest < ActionController::TestCase
       assert_equal 4, response_body["ingests"].size, "should have one ingest"
       assert_attributes response_body["ingests"].first
     end
+
+    context "token authentication" do
+      context "with access_token parameter" do
+        should "authenticate 'backend' user role" do
+          @client_access = FactoryGirl.create(:client_access, user: @user2, access_status: Api::ClientAccess::ACCESS_STATUS_ACCOUNT)
+          get :index, access_token: @client_access.uid, format: :json
+          assert_response :success
+        end
+
+        should "NOT authenticate user without 'backend' role" do
+          @client_access = FactoryGirl.create(:client_access, user: @user1, access_status: Api::ClientAccess::ACCESS_STATUS_ACCOUNT)
+          get :index, access_token: @client_access.uid, format: :json
+          assert_response :unauthorized
+        end
+
+        should "NOT authenticate client access without user" do
+          @client_access = FactoryGirl.create(:client_access, access_status: Api::ClientAccess::ACCESS_STATUS_CLIENT)
+          get :index, access_token: @client_access.uid, format: :json
+          assert_response :unauthorized
+        end
+      end
+
+      context "with 'Authorization' header" do
+        should "authenticate 'backend' user role" do
+          @client_access = FactoryGirl.create(:client_access, user: @user2, access_status: Api::ClientAccess::ACCESS_STATUS_ACCOUNT)
+          @request.headers['HTTP_AUTHORIZATION'] = @client_access.uid
+          get :index, format: :json
+          assert_response :success
+        end
+
+        should "NOT authenticate user without 'backend' role" do
+          @client_access = FactoryGirl.create(:client_access, user: @user1, access_status: Api::ClientAccess::ACCESS_STATUS_ACCOUNT)
+          @request.headers['HTTP_AUTHORIZATION'] = @client_access.uid
+          get :index, format: :json
+          assert_response :unauthorized
+        end
+
+        should "NOT authenticate client access without user" do
+          @client_access = FactoryGirl.create(:client_access, access_status: Api::ClientAccess::ACCESS_STATUS_CLIENT)
+          @request.headers['HTTP_AUTHORIZATION'] = @client_access.uid
+          get :index, format: :json
+          assert_response :unauthorized
+        end
+      end
+    end
   end
 
-  context "GET /api/ingests/count" do
+  context "GET /api/ingests/count(.:format)" do
     should "be unauthorized whithout any user" do
       get :count, format: :json
       assert_response :unauthorized
@@ -106,7 +133,7 @@ class Api::IngestsControllerTest < ActionController::TestCase
     end
   end
 
-  context "PUT /api/ingests/:id" do
+  context "PUT /api/ingests/:id(.:format)" do
     should "update ingest with backend user" do
       sign_in :user, @user2
       put :update, {:id => @ingest2.id, :ingest => {
@@ -129,7 +156,7 @@ class Api::IngestsControllerTest < ActionController::TestCase
     end
   end
 
-  context "DELETE /api/ingests/:id" do
+  context "DELETE /api/ingests/:id(.:format)" do
     should "be unauthorized without user" do
       delete :destroy, {id: @ingest1, format: :json}
       assert_response :unauthorized

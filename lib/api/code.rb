@@ -32,7 +32,7 @@ module Api::Code
   @@error_codes = {
     '1'   => {:http => 200, :message => 'api.error_code.success'},
     '-1'  => {:http => 400, :message => 'api.error_code.unknown'},
-    '-2'  => {:http => 422, :message => 'api.error_code.argument_missing', :class => "ArgumentError"},
+    '-2'  => {:http => 422, :message => 'api.error_code.argument_missing', :class => ["ArgumentError", "Api::Exception::ArgumentMissing"]},
     '-3'  => {:http => 400, :message => 'api.error_code.validation_error'},
     '-4'  => {:http => 404, :message => 'api.error_code.record_not_found', :class => "ActiveRecord::RecordNotFound"},
     '-5'  => {:http => 401, :message => 'api.error_code.authorization_error.generic', :class => ["Pundit::NotAuthorizedError", "Api::Exception::AuthorizationError"]},
@@ -56,40 +56,42 @@ module Api::Code
     '-23' => {:http => 403, :message => 'api.error_code.client_error'},
   }
 
-  def self.get_message(code)
-    @@error_codes[code.to_s][:message] || "Unkown error code"
-  end
-
-  def self.get_http_status(code)
-    @@error_codes[code.to_s][:http] || 200
-  end
-
-  def self.code_for(exception)
-    result = select_error_codes_for(exception)
-    unless result.empty?
-      result.first[0].to_i
+  class << self
+    def get_message(code)
+      @@error_codes[code.to_s][:message] || "Unkown error code"
     end
-  end
 
-  def self.http_status_for(exception)
-    result = select_error_codes_for(exception)
-    unless result.empty?
-      result.first[1][:http]
+    def get_http_status(code)
+      @@error_codes[code.to_s][:http] || 200
     end
-  end
 
-  def self.message_for(exception)
-    result = select_error_codes_for(exception)
-    unless result.empty?
-      I18n.t(result.first[1][:message])
-    else
-      exception.message
+    def code_for(exception)
+      result = select_error_codes_for(exception)
+      result = result.keys.first.to_i unless result.blank?
+      result = Api::Code::UNKNOWN if result.blank?
+      result
     end
-  end
 
-  def self.select_error_codes_for(exception)
-    @@error_codes.select {|key, value|
-      value[:class] && Array.wrap(value[:class]).any? {|name| name == exception.class.name}
-    }
+    def http_status_for(exception)
+      result = select_error_codes_for(exception)
+      unless result.empty?
+        result.first[1][:http]
+      end
+    end
+
+    def message_for(exception)
+      result = select_error_codes_for(exception)
+      unless result.empty?
+        I18n.t(result.first[1][:message])
+      else
+        exception.message
+      end
+    end
+
+    def select_error_codes_for(exception)
+      @@error_codes.select {|key, value|
+        value[:class] && Array.wrap(value[:class]).any? {|name| name == exception.class.name}
+      }
+    end
   end
 end
