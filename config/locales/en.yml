@@ -28,6 +28,12 @@ en:
         updated: "Successfully updated."
         not_updated: "Changes were not saved."
         update_needs_confirmation: "Confirmation password required."
+
+  api:
+    error_code:
+      authorization_error:
+        platform: "Authorization error"
+        generic: "Authorization error"
   activerecord:
     errors:
       messages:
@@ -37,6 +43,10 @@ en:
           attributes:
             file_type:
               audio_expected: "is not an audio file"
+        user:
+          attributes:
+            email:
+              register_email: "has not registered"
         registration:
           attributes:
             email:

@@ -25,6 +25,24 @@ class Api::IngestsControllerTest < ActionController::TestCase
     sign_out :user
   end
 
+  context "token authentication" do
+    should "should authenticate 'backend' user with token parameter" do
+      get :index, token: @user2.access_token, format: :json
+      assert_response :success
+    end
+
+    should "should NOT authenticate normal user with token parameter" do
+      get :index, token: @user1.access_token, format: :json
+      assert_response :unauthorized
+    end
+
+    should "should authenticate using Authorization: $TOKEN" do
+      # @request.headers['Authorization'] = @user2.access_token
+      get :index, {format: :json}, {'foo' => 'bar', 'Authorization' => @user2.access_token}
+      assert_response :success
+    end
+  end
+
   context "GET /api/ingests" do
     should "be unauthorized without user" do
       get :index, format: :json

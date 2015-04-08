@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150328191008) do
+ActiveRecord::Schema.define(version: 20150330154749) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -277,8 +277,11 @@ ActiveRecord::Schema.define(version: 20150328191008) do
     t.string   "css_hex_color"
     t.string   "initials"
     t.integer  "roles_mask"
+    t.string   "access_id"
+    t.string   "access_secret"
   end
 
+  add_index "users", ["access_id"], name: "index_users_on_access_id", using: :btree
   add_index "users", ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true, using: :btree
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
   add_index "users", ["lat"], name: "index_users_on_lat", using: :btree

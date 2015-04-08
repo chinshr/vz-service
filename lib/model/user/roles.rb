@@ -1,5 +1,5 @@
 module Model::User::Roles
-  ROLES = %w[user backend admin].collect(&:to_sym).freeze
+  ROLES = %w[user backend admin developer].collect(&:to_sym).freeze
 
   def self.included(base)
     base.send :extend, ClassMethods

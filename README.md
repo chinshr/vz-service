@@ -197,6 +197,7 @@ Development Resources
 * Devise API authentication
   - https://gist.github.com/josevalim/fb706b1e933ef01e4fb6
   - Example apps for devise including one for API auth
+  - http://stackoverflow.com/questions/6021372/best-way-to-create-unique-token-in-rails
 * API code documentation
   - Hints on Stripe's API doc: http://www.quora.com/Stripe-company/What-software-powers-the-Stripe-API-documentation
   - Beautiful API documentation w/ Slate: https://github.com/tripit/slate
