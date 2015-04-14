@@ -1,5 +1,6 @@
 class Api::DocumentsController < Api::ApplicationController
   include Pundit
+
   before_action :load_document, :only => [:show, :edit, :update, :destroy]
 
   # [GET] /api/documents(.:format)

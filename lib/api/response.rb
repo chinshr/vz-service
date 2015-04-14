@@ -1,6 +1,6 @@
 class Api::Response
-  attr_accessor :ok, :code, :options, :data, :http_status, :deprecated
-  attr_reader   :messages
+  attr_accessor :code, :options, :data, :http_status, :deprecated
+  attr_reader   :errors
 
   # To satisfy rails serialization
   def self.model_name
@@ -9,72 +9,52 @@ class Api::Response
 
   def initialize(data = nil)
     cleanup
-    error(data) if data
+    add_data(data)
+    add_error(data)
   end
 
   def cleanup
-    self.ok      = true
-    self.code    = 0
-    @messages    = []
+    self.code    = Api::Code::SUCCESS
+    @errors      = {}
     self.data    = {}
-    self.options = {:root => nil, :skip_types => true, :indent => 0, :dasherize => false}
+    self.options = {root: nil, skip_types: true, indent: 0, dasherize: false}
+  end
+
+  def to_json(options = {})
+    prepare_data
+    hash = {code: code}
+    if data.present? && self.options[:root]
+      hash.merge!({self.options[:root] => data})
+    elsif data.present?
+      hash.merge!(data)
+    end
+    hash.to_json
   end
 
   def add_data(value)
-    self.data = self.data.merge(value)
-  end
-
-  def error(exception)
-    if exception.is_a?(Exception)
-      self.ok          = false
-      self.code        = Api::Code.code_for(exception)
-      self.http_status = Api::Code.http_status_for(exception)
-      self.messages    = exception.message || Api::Code.message_for(exception)
-=begin
-    elsif exception.is_a?(Api::Exception)
-      self.code        = exception.code
-      self.http_status = exception.http_status
-      self.messages    = exception.message
-=end
+    if value.is_a?(Hash)
+      self.data = self.data.merge(value)
     end
   end
 
-  def to_xml(options = {})
-    options.reverse_merge!(self.options)
-    self.data.to_xml(options)
-  end
-
-  # Note: This isn't the best implementation but there are currently no ruby JSON builders that append raw
-  # JSON string objects like XML builder. They tend to favor parsing the JSON and coverting it to a ruby hash
-  # to be combined and modified and later rendering JSON again.
-  def to_json(options = {})
-    prepare_data
-    result = self.data.map do |key, value|
-      %{"#{key}":#{value.to_json(options)}}
-    end.join(",")
-    "{\"ok\":#{self.ok},\"#{self.options[:root]}\":{#{result}}}"
-  end
-
-  def messages=(value)
-    if value.is_a?(String)
-      @messages << value
-    elsif value.is_a?(Array)
-      @messages = (@messages + value).flatten.uniq
+  def add_error(error)
+    if error.is_a?(Exception)
+      self.code          = Api::Code.code_for(error)
+      self.http_status   = Api::Code.http_status_for(error)
+      base = Array.wrap(self.errors[:base])
+      base += Array.wrap(error.message || Api::Code.message_for(error))
+      self.data[:base]   = base.reject(&:blank?)
     end
   end
 
-  private
+  protected
 
   def prepare_data
-    data[:code]    = self.code
-    options[:root] = code.to_i < 0 ? "error" : "unknown"
-    # TODO self.messages = [Api::Code.get_message(self.code)] if @messages.blank? || deprecated
-    data.each_value { |value| self.messages = value.messages if value.respond_to?(:messages) }
-    data[:messages] = self.messages
+    options[:root] = "errors" if self.code.to_i < 0
   end
 end
 
 # To satisfy rails respond_with
-def api_response_url *params
+def api_response_url(*params)
   ''
 end

@@ -1,5 +1,7 @@
 class Api::IngestsController < Api::ApplicationController
   include Pundit
+  include Api::Authorization
+
   before_action :authenticate_user!
   before_action :load_ingest, :only => [:show, :update, :destroy]
   after_action :verify_authorized

@@ -52,10 +52,16 @@ FactoryGirl.define do
 
   factory :user do
     sequence(:email) {|n| "test-#{n}@example.com"}
+    password "password"
+    password_confirmation "password"
     sequence(:first_name) {|n| "first-name-#{n}"}
     sequence(:last_name) {|n| "last-name-#{n}"}
     confirmed_at Time.now.utc - 1.day
     current_sign_in_ip "95.63.14.59"
+  end
+
+  factory :unconfirmed_user, :class => "User", :parent => :user do
+    confirmed_at nil
   end
 
   factory :backend_user, :class => "User", :parent => :user do
@@ -104,6 +110,43 @@ FactoryGirl.define do
     type "social_registration"
     uid "1234567890"
     referrer_uid "0123456789"
+  end
+
+  factory :client, class: "Api::Client" do
+    sequence(:name) { |n| "iPhone-#{n}" }
+    key { SecureRandom.hex(32) }
+    association :platform
+  end
+
+  factory :platform, class: "Api::Platform" do
+    sequence(:name)   { |n| "platform-#{n}" }
+    version           "1.0"
+    uid               { Api::Platform.generate_uid.slice(0..7) }
+    aasm_state        "active"
+  end
+
+  factory :platform_with_clients, :parent => :platform do
+    after(:create) do |platform|
+      FactoryGirl.create(:client, :platform => platform)
+    end
+  end
+
+  factory :client_access, class: "Api::ClientAccess" do
+    access_secret "MyString"
+    access_status { Api::ClientAccess::ACCESS_STATUS_CLIENT }
+    aasm_state "active"
+  end
+
+  factory :device, class: "Api::Device" do
+    uid 'ABVDEFGH'
+    device_name 'Device Name'
+  end
+
+  factory :device_with_clients, :parent => :device do
+    uid    '1234567890'
+    after(:create) do |device|
+      device.client = FactoryGirl.create(:client)
+    end
   end
 
 end

@@ -122,9 +122,7 @@ class Api::Account::UploadsControllerTest < ActionController::TestCase
           assert response_body.has_key?("uploads"), "should have root"
           assert_equal 2, response_body["uploads"].size
         end
-
       end
-
     end
   end
 
@@ -157,8 +155,9 @@ class Api::Account::UploadsControllerTest < ActionController::TestCase
       other_upload = FactoryGirl.create(:upload_audio)
       get :show, :id => other_upload.id, format: :json
       assert_response :missing
-      assert response_body.has_key?("error")
-      assert_equal Api::Code::RECORD_NOT_FOUND, response_body["error"]["code"]
+      assert_equal true, response_body.has_key?("code")
+      assert_equal Api::Code::RECORD_NOT_FOUND, response_body["code"]
+      assert_equal true, response_body.has_key?("errors")
     end
 
     should "get 401 unauthorized error when when signed out" do

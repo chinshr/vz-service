@@ -1,4 +1,7 @@
 class Api::Account::UploadsController < Api::Account::ApplicationController
+  include Api::Authorization
+
+  before_action :authenticate_user!
   before_action :cors_allow_origin, :only => :sign_s3
 
   # [POST] /api/account/uploads(.:format)

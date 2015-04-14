@@ -4,8 +4,8 @@ class Api::ApplicationController < ApplicationController
   include Api::ApplicationHelper
   helper Api::ApplicationHelper
 
-  before_action :authenticate_user_from_token!
-  before_action :authenticate_user!
+  #before_action :authenticate_user_from_token!
+  #before_action :authenticate_user!
 
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
@@ -16,7 +16,6 @@ class Api::ApplicationController < ApplicationController
   before_filter :version_header
 
   rescue_from ActiveRecord::RecordNotFound do |exception|
-    # process_exception(Api::Exception::RecordNotFound.new)
     process_exception(exception)
   end
 
