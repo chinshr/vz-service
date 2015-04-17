@@ -1,4 +1,3 @@
-=begin
 require 'test_helper'
 
 class Api::AuthorizationControllerTest < ActionController::TestCase
@@ -17,7 +16,7 @@ class Api::AuthorizationControllerTest < ActionController::TestCase
       context "when client key is not passed" do
         should "raise RECORD_NOT_FOUND error" do
           post :client_authorize, {:format => :json}
-          assert_response_attributes({"code"=>Api::Code::RECORD_NOT_FOUND})
+          assert_response_attributes({"code"=>Api::Code::ARGUMENT_MISSING})
         end
       end
 
@@ -44,4 +43,3 @@ class Api::AuthorizationControllerTest < ActionController::TestCase
     end
   end
 end
-=end

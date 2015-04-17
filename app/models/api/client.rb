@@ -23,7 +23,7 @@ class Api::Client < ActiveRecord::Base
           self.concat(cla)
         end
       end
-      return cla
+      cla
     end
   end
 
