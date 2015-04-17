@@ -3,6 +3,7 @@ class Api::ClientAccess < ActiveRecord::Base
   include Model::Uid
   include AASM
 
+  self.uid_length       = 40
   ACCESS_SECRET_LENGTH  = 32
   ACCESS_STATUS_FAILED  = -1
   ACCESS_STATUS_CLIENT  = 0

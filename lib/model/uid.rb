@@ -6,7 +6,7 @@ module Model::Uid
 
     base.class_eval do
       cattr_accessor :uid_length
-      @@uid_length = 40
+      base.uid_length = 40
       before_validation :generate_uid_unless_present, on: :create
     end
   end
