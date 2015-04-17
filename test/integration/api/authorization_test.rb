@@ -49,6 +49,7 @@ class Api::AuthorizationTest < ActionDispatch::IntegrationTest
               assert_response :success
               last_access = Api::ClientAccess.last
               assert_not_nil last_access
+              assert_equal true, last_access.active?, "client_access should be active"
               assert_response_attributes({"access_token" => last_access.uid, "access_secret" => last_access.access_secret})
             end
           end

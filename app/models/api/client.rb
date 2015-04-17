@@ -23,6 +23,7 @@ class Api::Client < ActiveRecord::Base
           self.concat(cla)
         end
       end
+      cla.activate!
       cla
     end
   end
