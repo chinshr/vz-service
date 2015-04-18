@@ -27,9 +27,16 @@ module Api
       end
 
       # ?access_token=<access-token>
-      # or header 'Authorization'
+      # or HTTP token authentication header 
+      #   'Authorization: Token token="$TOKEN"' or
+      #   'Authorization: $TOKEN'
+      # https://github.com/rails/rails/blob/e57921f83eeef6f39cdc6bba56bda1cafd244337/actionpack/lib/action_controller/metal/http_authentication.rb
       def access_token
-        params[:access_token] || request.headers['HTTP_AUTHORIZATION']
+        if params[:access_token]
+          params[:access_token]
+        elsif token = authenticate_with_http_token {|t, o| t}
+          token
+        end
       end
 
       def authorize_client!

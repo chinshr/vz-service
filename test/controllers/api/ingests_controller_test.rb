@@ -70,7 +70,8 @@ class Api::IngestsControllerTest < ActionController::TestCase
       context "with 'Authorization' header" do
         should "authenticate 'backend' user role" do
           @client_access = FactoryGirl.create(:client_access, user: @user2, access_status: Api::ClientAccess::ACCESS_STATUS_ACCOUNT)
-          @request.headers['HTTP_AUTHORIZATION'] = @client_access.uid
+          # @request.headers['HTTP_AUTHORIZATION'] = @client_access.uid
+          @request.headers['HTTP_AUTHORIZATION'] = ActionController::HttpAuthentication::Token.encode_credentials(@client_access.uid)
           get :index, format: :json
           assert_response :success
         end

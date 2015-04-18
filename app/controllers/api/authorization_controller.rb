@@ -41,7 +41,7 @@ class Api::AuthorizationController < Api::ApplicationController
   # [DELETE] /api/authorize/user(.:format)?access_token=<access_token>
   def user_deauthorize
     current_access.update_attributes(user_id: nil, access_status: Api::ClientAccess::ACCESS_STATUS_CLIENT)
-    respond_with(Api::Response.new)
+    respond_with(Api::Response.new(:access_status => current_access.access_status, :updated_at => current_access.updated_at))
   end
 
 end
