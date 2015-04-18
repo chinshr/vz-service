@@ -5,16 +5,23 @@
 #
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
-AdminUser.find_or_create_by(email: 'manager@voyz.es') do |u|
-  u.password              = 'paloalto605:voyzes'
-  u.password_confirmation = 'paloalto605:voyzes'
+@admin_user = AdminUser.find_or_initialize_by(email: 'manager@voyz.es')
+if @admin_user.new_record?
+  @admin_user.password              = 'paloalto605:voyzes'
+  @admin_user.password_confirmation = 'paloalto605:voyzes'
+  @admin_user.save!
 end
 
-User.find_or_create_by(email: "cpw@voyz.es") do |u|
-  u.skip_registration_validation = true
-  u.password              = 'paloalto605:voyzescpw'
-  u.password_confirmation = 'paloalto605:voyzescpw'
-  u.roles                 = [:backend]
+@cpw_user = User.find_or_initialize_by(email: "cpw@voyz.es")
+if @cpw_user.new_record?
+  @cpw_user.skip_registration_validation = true
+  @cpw_user.first_name            = 'Content P.'
+  @cpw_user.last_name             = 'Workflow'
+  @cpw_user.password              = 'paloalto605:voyzescpw'
+  @cpw_user.password_confirmation = 'paloalto605:voyzescpw'
+  @cpw_user.roles                 = [:backend]
+  @cpw_user.confirmed_at          = Time.current
+  @cpw_user.save!
 end
 
 #--- API platforms
@@ -23,7 +30,7 @@ end
 if @web_platform.new_record?
   @web_platform.name    = "Web"
   @web_platform.version = "all"
-  @web_platform.save
+  @web_platform.save!
   @web_platform.activate!
 end
 
@@ -41,7 +48,7 @@ end
 @cpw_client = Api::Client.find_or_initialize_by(key: "dOgP7wlYPtra19IeFzOMmI0nxfYekuCkI2sXrLNzSgcc")
 if @cpw_client.new_record?
   @cpw_client.name = "CPW"
-  @cpw_client.save
+  @cpw_client.save!
 end
 
 # iPhone client
@@ -49,5 +56,5 @@ end
 if @iphone_client.new_record?
   @iphone_client.name     = "iPhone"
   @iphone_client.platform = @iphone_platform
-  @iphone_client.save
+  @iphone_client.save!
 end
