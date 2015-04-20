@@ -43,6 +43,24 @@ class Ingest < ActiveRecord::Base
   validates :upload, presence: true, on: :create
   validates :ingestable, presence: true
 
+  # public scopes
+  filtered_scopes :sort_order, :reverse_sort, :any_of_status, :none_of_status
+  scope :sort_order, -> (param) {
+    case param.first[0]  # E.g. get first key of {"id"=>"asc"}
+    when "id"
+      order(self.arel_table[:id].send(param.first[1].to_sym).to_sql)
+    when "created_at"
+      order(self.arel_table[:created_at].send(param.first[1].to_sym).to_sql)
+    else
+      raise ArgumentError, "Ignored unrecognized value 'sort_order[]=#{param}'."
+    end
+  }
+  scope :reverse_sort, -> (param) {all.reverse_order if Model::Helper.booleanize(param)}
+  scope :any_of_status, -> (params) {where("ingests.aasm_state IN (?)", [params].flatten.map(&:to_s).
+    map {|s| s.match(/^([\-]{,1}[0-9]+)$/) ? s : nil}.reject(&:blank?).map {|s| Ingest::STATES.key(s.to_i)}.uniq)}
+  scope :none_of_status, -> (params) {where("ingests.aasm_state NOT IN (?)", [params].flatten.map(&:to_s).
+    map {|s| s.match(/^([\-]{,1}[0-9]+)$/) ? s : nil}.reject(&:blank?).map {|s| Ingest::STATES.key(s.to_i)}.uniq)}
+
   aasm column: 'aasm_state' do
     state :created, initial: true
     state :starting, :enter => :enter_starting, :after_enter => :after_enter_starting
