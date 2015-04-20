@@ -13,6 +13,32 @@ class IngestTest < ActiveSupport::TestCase
     should validate_presence_of :ingestable
   end
 
+  context "scopes" do
+    setup do
+      @ingest = FactoryGirl.create(:ingest_audio)
+    end
+
+    should "have filtered scopes" do
+      assert_equal [:any_of_status, :none_of_status, :sort_order, :reverse_sort, :offset, :limit].to_set,
+        Ingest.scopes.to_set
+    end
+
+    should "have any_of_status" do
+      @ingest.update_attribute(:aasm_state, "started")
+      assert_equal [@ingest], Ingest.any_of_status([Ingest::STATE_STARTED])
+    end
+
+    should "have none_of_status" do
+      @ingest.update_attribute(:aasm_state, "started")  # :started = 2
+      assert_equal [@ingest], Ingest.none_of_status([0, 1, 3, 4, 5, 6, 7, 8, 9, 10])
+    end
+
+    should "have sort_order" do
+      @ingest.update_attribute(:aasm_state, "started")  # :started = 2
+      assert_equal [@ingest], Ingest.sort_order("created_at" => "asc").reverse_sort("true").limit(1)
+    end
+  end # context "scopes"
+
   context "state machine" do
     should "have state and status" do
       ingest = FactoryGirl.create(:ingest_audio)
@@ -134,7 +160,7 @@ class IngestTest < ActiveSupport::TestCase
       assert_equal :starting, ingest.state
     end
   end
-  
+
   should "log message" do
     ingest = FactoryGirl.create(:ingest_audio)
     ingest.log! :copy, "File not found."
@@ -144,24 +170,7 @@ class IngestTest < ActiveSupport::TestCase
     ingest.log! 'transcode', "Unsufficient disk space."
     assert_equal ["Service unavailable.", "Unsufficient disk space."], ingest.messages["transcode"]
   end
-  
-=begin
-  should "delegate to @upload#s3_key" do
-    ingest = FactoryGirl.create(:ingest_audio)
-    assert_not_nil ingest.s3_key
-  end
 
-  should "utilize @ingest#s3_url or delegate to @upload#s3_url" do
-    ingest = FactoryGirl.create(:ingest_audio)
-    assert_not_nil ingest.s3_url
-    assert_equal ingest.upload.s3_url, ingest.s3_url
-    ingest.update_attribute(:s3_url, "http://s3.amazonaws.com/dropbox/changed.m4a")
-    ingest = Ingest.find(ingest.id)
-    assert_equal "http://s3.amazonaws.com/dropbox/changed.m4a", ingest.s3_url
-    assert_not_equal ingest.upload.s3_url, ingest.s3_url
-  end
-=end
-  
   should "set progress" do
     ingest = FactoryGirl.create(:ingest_audio)
     ingest.set_progress!(5) and ingest.reload
@@ -231,7 +240,7 @@ class IngestTest < ActiveSupport::TestCase
     should "update from chunks" do
       @ingest.normalize_chunk_scores!
       @ingest.update_content_from @ingest.chunks.best
-      assert_equal [{"insert"=>"I hate to say", "attributes"=>{"offset"=>0.0}}, {"insert"=>"that macaronies are", "attributes"=>{"offset"=>10.0}}, {"insert"=>"the best food in the world", "attributes"=>{"offset"=>20.0}}], 
+      assert_equal [{"insert"=>"I hate to say", "attributes"=>{"offset"=>0.0}}, {"insert"=>"that macaronies are", "attributes"=>{"offset"=>10.0}}, {"insert"=>"the best food in the world", "attributes"=>{"offset"=>20.0}}],
         @ingest.ingestable.rich_text
     end
   end
