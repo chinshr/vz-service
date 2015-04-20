@@ -18,8 +18,11 @@ class Ingest::Chunk < ActiveRecord::Base
   validates :offset, presence: true
 
   # public scopes
-  filtered_scopes :any_of_type
+  filtered_scopes :any_of_type, :any_of_processing_status
   scope :any_of_type, -> (params) {where(:type => type_for(params))}
+  scope :any_of_processing_status, -> (params) {where("ingest_chunks.processing_status IN (?)", [params].flatten.map(&:to_s).
+    map {|s| s.match(/^([\-]{,1}[0-9]+)$/) ? s : nil}.reject(&:blank?).map {|s| Ingest::Chunk::STATES.key(s.to_i)}.uniq)}
+
   # private scopes
   scope :transcribed, -> {where(:processing_status => STATES[:transcribed])}
   scope :best, -> {
