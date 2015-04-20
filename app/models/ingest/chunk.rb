@@ -18,10 +18,28 @@ class Ingest::Chunk < ActiveRecord::Base
   validates :offset, presence: true
 
   # public scopes
-  filtered_scopes :any_of_type, :any_of_processing_status
+  filtered_scopes :sort_order, :reverse_sort, :any_of_type,
+    :any_of_processing_status, :none_of_processing_status
+  scope :sort_order, -> (param) {
+    case param.first[0]  # E.g. get first key of {"id"=>"asc"}
+    when "id"
+      order(self.arel_table[:id].send(param.first[1].to_sym).to_sql)
+    when "created_at"
+      order(self.arel_table[:created_at].send(param.first[1].to_sym).to_sql)
+    when "position"
+      order(self.arel_table[:position].send(param.first[1].to_sym).to_sql)
+    when "score"
+      order(self.arel_table[:score].send(param.first[1].to_sym).to_sql)
+    else
+      raise ArgumentError, "Ignored unrecognized value 'sort_order[]=#{param}'."
+    end
+  }
+  scope :reverse_sort, -> (param) {all.reverse_order if Model::Helper.booleanize(param)}
   scope :any_of_type, -> (params) {where(:type => type_for(params))}
   scope :any_of_processing_status, -> (params) {where("ingest_chunks.processing_status IN (?)", [params].flatten.map(&:to_s).
-    map {|s| s.match(/^([\-]{,1}[0-9]+)$/) ? s : nil}.reject(&:blank?).map {|s| Ingest::Chunk::STATES.key(s.to_i)}.uniq)}
+    map {|s| s.match(/^([\-]{,1}[0-9]+)$/) ? s : nil}.reject(&:blank?).uniq)}
+  scope :none_of_processing_status, -> (params) {where("ingest_chunks.processing_status NOT IN (?)", [params].flatten.map(&:to_s).
+    map {|s| s.match(/^([\-]{,1}[0-9]+)$/) ? s : nil}.reject(&:blank?).uniq)}
 
   # private scopes
   scope :transcribed, -> {where(:processing_status => STATES[:transcribed])}

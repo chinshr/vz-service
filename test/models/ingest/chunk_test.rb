@@ -10,6 +10,32 @@ class Ingest::ChunkTest < ActiveSupport::TestCase
     should validate_presence_of :offset
   end
 
+  context "scopes" do
+    setup do
+      @chunk = FactoryGirl.create(:ingest_chunk)
+    end
+
+    should "have filtered scopes" do
+      assert_equal [:any_of_type, :any_of_processing_status, :none_of_processing_status, :sort_order, :reverse_sort, :offset, :limit].to_set,
+        Ingest::Chunk.scopes.to_set
+    end
+
+    should "have any_of_processing_status" do
+      @chunk.update_attribute(:processing_status, Speech::AudioSplitter::AudioChunk::STATUS_ENCODED)
+      assert_equal true, Ingest::Chunk.any_of_processing_status([Speech::AudioSplitter::AudioChunk::STATUS_ENCODED]).include?(@chunk)
+    end
+
+    should "have none_of_processing_status" do
+      @chunk.update_attribute(:processing_status, Speech::AudioSplitter::AudioChunk::STATUS_ENCODED)
+      assert_equal false, Ingest::Chunk.none_of_processing_status([Speech::AudioSplitter::AudioChunk::STATUS_ENCODED]).include?(@chunk)
+    end
+
+    should "have sort_order" do
+      @chunk.update_attribute(:processing_status, Speech::AudioSplitter::AudioChunk::STATUS_ENCODED)
+      assert_equal [@chunk], Ingest::Chunk.sort_order("position" => "asc").reverse_sort("true").limit(1)
+    end
+  end # context "scopes"
+
   should "have response" do
     segment = FactoryGirl.create(:ingest_chunk)
     assert_equal 0, segment.response['status']
