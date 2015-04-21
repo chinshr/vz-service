@@ -18,7 +18,8 @@ class Api::TagsControllerTest < ActionController::TestCase
     context "with 'Authorization' header" do
       setup do
         @client_access = FactoryGirl.create(:client_access)
-        @request.headers['HTTP_AUTHORIZATION'] = @client_access.uid
+        # @request.headers['HTTP_AUTHORIZATION'] = @client_access.uid
+        @request.headers['HTTP_AUTHORIZATION'] = ActionController::HttpAuthentication::Token.encode_credentials(@client_access.uid)
       end
 
       should "get all tags" do
@@ -85,7 +86,8 @@ class Api::TagsControllerTest < ActionController::TestCase
   context "GET /api/tags/count" do
     setup do
       @client_access = FactoryGirl.create(:client_access)
-      @request.headers['HTTP_AUTHORIZATION'] = @client_access.uid
+      # @request.headers['HTTP_AUTHORIZATION'] = @client_access.uid
+      @request.headers['HTTP_AUTHORIZATION'] = ActionController::HttpAuthentication::Token.encode_credentials(@client_access.uid)
     end
 
     should "count" do
