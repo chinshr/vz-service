@@ -2,17 +2,16 @@ class Ingest < ActiveRecord::Base
   include AASM
   include Model::Filter
 
-  STAGE_LOAD        = 0
-  STAGE_COPY        = 10
-  STAGE_DOWNLOAD    = 20
-  STAGE_TRANSCODE   = 30
-  STAGE_TRANSCRIBE  = 40
-  STAGE_UPLOAD      = 50
-  STAGE_CLEANUP     = 60
+  STAGE_START       = 0
+  STAGE_HARVEST     = 100
+  STAGE_TRANSCODE   = 200
+  STAGE_TRANSCRIBE  = 300
+  STAGE_INDEX       = 400
+  STAGE_ARCHIVE     = 500
   STAGES = {
-    load: STAGE_LOAD, copy: STAGE_COPY, download: STAGE_DOWNLOAD,
+    start: STAGE_START, harvest: STAGE_HARVEST,
     transcode: STAGE_TRANSCODE, transcribe: STAGE_TRANSCRIBE,
-    upload: STAGE_UPLOAD, cleanup: STAGE_CLEANUP
+    index: STAGE_INDEX, archive: STAGE_ARCHIVE
   }
 
   STATE_CREATED     = 0
@@ -34,6 +33,7 @@ class Ingest < ActiveRecord::Base
   }
 
   serialize :messages, Hash
+  delegate :s3_key, to: :upload, allow_nil: true
 
   belongs_to :upload, dependent: :destroy
   belongs_to :ingestable, polymorphic: true, dependent: :destroy
@@ -114,6 +114,10 @@ class Ingest < ActiveRecord::Base
   class << self
     def policy_class
       IngestPolicy
+    end
+
+    def queue_name_from(stage_name)
+      "#{stage_name.to_s.upcase}_#{Rails.env.upcase}_QUEUE"
     end
   end
 
