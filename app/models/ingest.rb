@@ -33,15 +33,19 @@ class Ingest < ActiveRecord::Base
   }
 
   serialize :messages, Hash
+
   delegate :s3_key, to: :upload, allow_nil: true
 
   belongs_to :upload, dependent: :destroy
-  belongs_to :ingestable, polymorphic: true, dependent: :destroy
-  belongs_to :track, dependent: :destroy
+  belongs_to :document
   has_many :chunks, dependent: :destroy
+  accepts_nested_attributes_for :chunks
+  has_one :track, through: :document
+  accepts_nested_attributes_for :track
+  has_many :tracks, through: :chunks, source: :track
 
   validates :upload, presence: true, on: :create
-  validates :ingestable, presence: true
+  validates :document, presence: true
 
   # public scopes
   filtered_scopes :sort_order, :reverse_sort, :any_of_status, :none_of_status
@@ -195,12 +199,14 @@ class Ingest < ActiveRecord::Base
     self[:progress].round if self[:progress]
   end
 
-  def ingestable_url
-    "http://voyz.es/#{ingestable.slug}"
+  # TODO: obsolete, refactor
+  def document_url
+    "http://voyz.es/#{document.slug}"
   end
 
-  def edit_ingestable_url
-    "http://voyz.es/#{ingestable.slug}/edit"
+  # TODO: obsolete, refactor
+  def edit_document_url
+    "http://voyz.es/#{document.slug}/edit"
   end
 
   def signal_terminate!
@@ -256,8 +262,8 @@ class Ingest < ActiveRecord::Base
   end
 
   def update_content_from(grouped_chunks)
-    ingestable.with_lock do
-      ingestable.update_attributes(html: grouped_chunks.text, rich_text: grouped_chunks.rich_text)
+    document.with_lock do
+      document.update_attributes(html: grouped_chunks.text, rich_text: grouped_chunks.rich_text)
     end
   end
 

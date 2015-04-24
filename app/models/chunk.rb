@@ -1,7 +1,4 @@
-class Ingest::Chunk < ActiveRecord::Base
-  include Model::Filter
-  self.table_name = "ingest_chunks"
-
+class Chunk < Document
   STATES = {
     :unprocessed         => Speech::AudioSplitter::AudioChunk::STATUS_UNPROCESSED,
     :built               => Speech::AudioSplitter::AudioChunk::STATUS_BUILT,
@@ -12,12 +9,9 @@ class Ingest::Chunk < ActiveRecord::Base
     :transcription_error => Speech::AudioSplitter::AudioChunk::STATUS_TRANSCRIPTION_ERROR
   }
 
-  belongs_to :ingest
-
   validates :ingest, presence: true
   validates :offset, presence: true
 
-  # public scopes
   filtered_scopes :sort_order, :reverse_sort, :any_of_type,
     :any_of_processing_status, :none_of_processing_status
   scope :sort_order, -> (param) {
@@ -36,26 +30,28 @@ class Ingest::Chunk < ActiveRecord::Base
   }
   scope :reverse_sort, -> (param) {all.reverse_order if Model::Helper.booleanize(param)}
   scope :any_of_type, -> (params) {where(:type => type_for(params))}
-  scope :any_of_processing_status, -> (params) {where("ingest_chunks.processing_status IN (?)", [params].flatten.map(&:to_s).
+  scope :any_of_processing_status, -> (params) {where("documents.processing_status IN (?)", [params].flatten.map(&:to_s).
     map {|s| s.match(/^([\-]{,1}[0-9]+)$/) ? s : nil}.reject(&:blank?).uniq)}
-  scope :none_of_processing_status, -> (params) {where("ingest_chunks.processing_status NOT IN (?)", [params].flatten.map(&:to_s).
+  scope :none_of_processing_status, -> (params) {where("documents.processing_status NOT IN (?)", [params].flatten.map(&:to_s).
     map {|s| s.match(/^([\-]{,1}[0-9]+)$/) ? s : nil}.reject(&:blank?).uniq)}
 
   # private scopes
   scope :transcribed, -> {where(:processing_status => STATES[:transcribed])}
   scope :best, -> {
-    joins("JOIN (SELECT position, MAX(score) AS max_score FROM ingest_chunks p GROUP BY p.position) y ON y.position = ingest_chunks.position AND y.max_score = ingest_chunks.score").
+    joins("JOIN (SELECT position, MAX(score) AS max_score FROM documents p GROUP BY p.position) y ON y.position = documents.position AND y.max_score = documents.score").
     order(:position)
   }
 
   class << self
+    def slug_length; 40; end
+
     def policy_class
-      Ingest::ChunkPolicy
+      ChunkPolicy
     end
 
     def type_for(params)
       [params].flatten.map do |p|
-        "Ingest::Chunk::#{p.to_s.classify}"
+        "Chunk::#{p.to_s.classify}"
       end
     end
 
@@ -79,5 +75,15 @@ class Ingest::Chunk < ActiveRecord::Base
         json
       end
     end
+  end  ## class
+
+  def title
+    ingest.try(:document).try(:title)
+  end
+
+  protected
+
+  def canonical_document?
+    false
   end
 end

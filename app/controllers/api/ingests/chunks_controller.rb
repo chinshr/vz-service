@@ -9,21 +9,21 @@ class Api::Ingests::ChunksController < Api::ApplicationController
 
   # [POST] /api/ingests/:ingest_id/chunks(.:format)
   def create
-    authorize :"ingest/chunk"
+    authorize :chunk
     @chunk = @ingest.chunks.create(create_params)
     respond_with @chunk
   end
 
   # [GET] /api/ingests/:ingest_id/chunks(.:format)
   def index
-    authorize :"ingest/chunk"
+    authorize :chunk
     @chunks = @ingest.chunks.filter(params)
     respond_with @chunks
   end
 
   # [GET] /api/ingests/:ingest_id/count(.:format)
   def count
-    authorize :"ingest/chunk"
+    authorize :chunk
     render :json => {:count => @ingest.chunks.filter(params).count}
   end
 
@@ -33,10 +33,10 @@ class Api::Ingests::ChunksController < Api::ApplicationController
     respond_with @chunk
   end
 
-  # [PUT] /api/ingests/:id(.:format)
+  # [PUT] /api/ingests/:ingest_id/chunks/:id(.:format)
   def update
     authorize @chunk
-    @chunk = Ingest::Chunk.update(params[:id], update_params)
+    @chunk = Chunk.update(params[:id], update_params)
     respond_with @chunk
   end
 

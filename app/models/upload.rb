@@ -60,9 +60,9 @@ class Upload < ActiveRecord::Base
   scope :finished, lambda {any_of_status(Ingest::STATES[:finished])}
   scope :most_recent, lambda {|n = 5| order("uploads.created_at DESC").limit(n)}
 
-  after_initialize :build_ingest_and_ingestable
+  after_initialize :build_ingest_and_document
   before_validation :set_title, on: :create
-  after_save :save_ingest_and_ingestable
+  after_save :save_ingest_and_document
   after_commit :remove_ingest, on: :destroy
 
   class << self
@@ -140,7 +140,7 @@ class Upload < ActiveRecord::Base
   end
 
   def has_locale_recently_changed?
-    return !!ingest.ingestable.changes[:locale] if ingest.ingestable
+    return !!ingest.document.changes[:locale] if ingest.document
     false
   end
 
@@ -150,14 +150,14 @@ class Upload < ActiveRecord::Base
     self.title = humanized_file_name if title.blank?
   end
 
-  def build_ingest_and_ingestable
+  def build_ingest_and_document
     # raise NameError, "Abstract class #{self.class.name} cannot be instantiated, use a subclass instead, e.g. #{Upload::Audio.name}." unless !!self.class.permit_abstract_instance
   end
 
-  def save_ingest_and_ingestable
+  def save_ingest_and_document
     if ingest
       locale_changed = has_locale_recently_changed?
-      ingest.ingestable.save if ingest.ingestable && ingest.ingestable.changed?
+      ingest.document.save if ingest.document && ingest.document.changed?
       ingest.save if ingest.changed?
 
       if !new_record? && has_s3_url?

@@ -46,6 +46,6 @@ class Api::IngestsController < Api::ApplicationController
   end
 
   def update_params
-    params.require(:ingest).permit(:messages, :stage, :iteration, :busy, :terminate)
+    params.require(:ingest).permit(:messages, :stage, :iteration, :busy, :terminate, :s3_key)
   end
 end

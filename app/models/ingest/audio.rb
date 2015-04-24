@@ -1,23 +1,23 @@
 class Ingest::Audio < ::Ingest
-  delegate :title, to: :ingestable
-  delegate :title=, to: :ingestable
-  
-  delegate :description, to: :ingestable
-  delegate :description=, to: :ingestable
+  delegate :title, to: :document
+  delegate :title=, to: :document
 
-  delegate :tag_list, to: :ingestable
-  delegate :tag_list=, to: :ingestable
+  delegate :description, to: :document
+  delegate :description=, to: :document
 
-  delegate :locale, to: :ingestable
-  delegate :locale=, to: :ingestable
+  delegate :tag_list, to: :document
+  delegate :tag_list=, to: :document
 
-  delegate :privacy, to: :ingestable
-  delegate :privacy=, to: :ingestable
+  delegate :locale, to: :document
+  delegate :locale=, to: :document
 
-  delegate :user, to: :ingestable
-  delegate :user=, to: :ingestable
-  
-  delegate :slug, to: :ingestable
+  delegate :privacy, to: :document
+  delegate :privacy=, to: :document
+
+  delegate :user, to: :document
+  delegate :user=, to: :document
+
+  delegate :slug, to: :document
 
   after_commit :perform_async
 
@@ -27,12 +27,12 @@ class Ingest::Audio < ::Ingest
     Ingest::AudioWorker.perform_async(self.id) if perform_async_scheduled?
     clear_perform_async!
   end
-  
+
   def after_enter_starting
     super
     schedule_perform_async!
   end
-  
+
   def after_enter_resetting
     super
     schedule_perform_async!
@@ -42,12 +42,12 @@ class Ingest::Audio < ::Ingest
     super
     schedule_perform_async!
   end
-  
+
   def after_enter_restarting
     super
     ::Ingest::AudioWorker.perform_async(self.id)
   end
-  
+
   def enter_finished
     super
 
@@ -56,7 +56,7 @@ class Ingest::Audio < ::Ingest
   end
 
   protected
-  
+
   def perform_async_scheduled?
     !!@schedule_perform_async
   end

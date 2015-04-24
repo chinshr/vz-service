@@ -7,7 +7,7 @@ class Api::DocumentsControllerTest < ActionController::TestCase
 
     @document1          = FactoryGirl.create(:document)
     @track1             = FactoryGirl.create(:track)
-    @ingest1            = FactoryGirl.create(:ingest_audio, :ingestable => @document1, :track_id => @track1.id)
+    @ingest1            = FactoryGirl.create(:ingest_audio, :document => @document1, :track => @track1)
 
     @document1.privacy  = [:"public"]
     @document1.user     = @user1
@@ -16,7 +16,7 @@ class Api::DocumentsControllerTest < ActionController::TestCase
 
     @document2          = FactoryGirl.create(:document)
     @track2             = FactoryGirl.create(:track)
-    @ingest2            = FactoryGirl.create(:ingest_audio, :ingestable => @document2, :track_id => @track2.id)
+    @ingest2            = FactoryGirl.create(:ingest_audio, :document => @document2, :track => @track2)
     @document2.privacy  = [:"private"]
     @document2.user     = @user2
     @document2.tag_list = ["brown", "cats", "jump", "higher"]

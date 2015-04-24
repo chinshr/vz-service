@@ -3,9 +3,9 @@ class EmailProcessor
     def process(email)
       process_audio(email)
     end
-  
+
     protected
-  
+
     def process_audio(email)
       user, message, exception = nil, nil, nil
       if email.attachments.count > 0
@@ -26,7 +26,7 @@ class EmailProcessor
           if Upload::Audio.accepted_audio_file_type?(content_type)
             upload = with message.attachments.build(:type => "audio") do |upload|
               upload.user        = user
-              upload.title       = if email.subject.blank? 
+              upload.title       = if email.subject.blank?
                 Upload.humanized_file_name(attached_file.original_filename)
               else
                 email.subject
@@ -38,7 +38,7 @@ class EmailProcessor
               upload.locale      = address_locale(email.to) || message.locale || "en-US"
               upload.privacy     = [:private]
             end
-            
+
             Rails.logger.info "* mime_type: #{mime_type(attached_file.tempfile.path)}"
 
             key = Upload.generate_object_name
@@ -46,7 +46,7 @@ class EmailProcessor
             upload.s3_url = "#{APP_CONFIG['S3_URL']}#{APP_CONFIG['S3_INBOUND_BUCKET']}/#{key}"
 
             message.save
-            
+
             Rails.logger.error "* Message invalid: #{message.inspect}" unless message.valid?
             Rails.logger.error "** Message attachment invalid: #{upload.inspect}" unless upload.valid?
           else
@@ -58,7 +58,7 @@ class EmailProcessor
       end
     rescue Exception => exception
       log_exception(exception)
-      Rails.logger.error "Oops, we've noticed an exception when processing this message."
+      Rails.logger.error "Oops, we've noticed an exception while processing this message."
     ensure
       if message && message.valid? && message.attachments.count > 0
         EmailProcessorMailer.valid_message(message).deliver
@@ -76,9 +76,9 @@ class EmailProcessor
         Rails.logger.error "Oops, we've noticed we could not process any audio attachments." if message && message.attachments.count == 0
       end
     end
-  
+
     private
-  
+
     def upload_file_to_s3_bucket(file_path, key = nil)
       s3 = AWS::S3.new
       key = key || File.basename(file_path)
@@ -99,7 +99,7 @@ class EmailProcessor
       errors = ""
       models.compact.each do |record|
         unless record.valid?
-          errors += " * #{record.class.name}: #{record.errors.full_messages.join(', ')}\n" 
+          errors += " * #{record.class.name}: #{record.errors.full_messages.join(', ')}\n"
           if record.is_a?(Message)
             record.attachments.each_with_index do |attachment, index|
               errors += " ** @attachment#{index + 1}: #{attachment.errors.full_messages.join(', ')}\n" unless attachment.valid?
@@ -109,12 +109,12 @@ class EmailProcessor
       end
       Rails.logger.error errors unless errors.blank?
     end
-    
+
     def address_join(field)
       result = field.map {|e| e[:email]}
       result.empty? ? nil : result.join(",")
     end
-    
+
     def mime_type(file_path)
       mt = if Rails.env.production?
         # Heroku
@@ -127,7 +127,7 @@ class EmailProcessor
     rescue
       nil
     end
-    
+
     def address_locale(field)
       field.each do | a|
         if (tri = a[:email].split("+")).size > 1
@@ -140,6 +140,6 @@ class EmailProcessor
       end
       nil
     end
-    
+
   end
 end

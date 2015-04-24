@@ -1,4 +1,4 @@
-class Ingest::ChunkPolicy < IngestPolicy
+class ChunkPolicy < IngestPolicy
   def create?
     backend_role?
   end

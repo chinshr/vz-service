@@ -35,12 +35,9 @@ Voyzes::Application.routes.draw do
       resource :settings, only: [:show, :edit, :update]
     end
 
+    # web_document_path -> /x3ksk
+    # edit_web_document_path -> /x3ksk
     resources :documents, only: [:show, :edit], path: ""
-=begin
-    get "/:id" => 'documents#show'
-    get "/:id/edit" => 'documents#edit'
-    get "/:id/stream" => 'documents#stream'
-=end
   end
 
   namespace :api do
@@ -59,7 +56,6 @@ Voyzes::Application.routes.draw do
       collection do
         get "count"
       end
-      resources :tracks, :only => [:index, :show]
     end
     resources :ingests, :only => [:index, :show, :update, :destroy] do
       resources :chunks, :only => [:create, :index, :show, :update, :destroy], controller: "ingests/chunks" do

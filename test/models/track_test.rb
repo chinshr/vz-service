@@ -5,14 +5,22 @@ class TrackTest < ActiveSupport::TestCase
     should validate_presence_of :s3_url
   end
 
-  should "have a document" do
-    ingest = FactoryGirl.create(:ingest_audio)
-    track  = ingest.create_track(:s3_url => "http://s3.amazonaws.com/private/zp66vfwg21-1")
-    assert_equal true, track.valid?
-    assert_equal true, ingest.save
-    track.reload
-    assert_equal ingest, track.ingest
-    assert_equal ingest.ingestable, track.document
+  context "associations" do
+    setup do
+      @track  = FactoryGirl.create(:track, :s3_url => "http://s3.amazonaws.com/private/zp66vfwg21-1")
+      @ingest = FactoryGirl.create(:ingest_audio, track: @track)
+      assert_equal true, @track.valid?
+      assert_equal true, @ingest.save
+      @track.reload
+    end
+
+    should "have_many :ingests through :document" do
+      assert_equal @ingest, @track.ingests.first
+    end
+
+    should "have_one document" do
+      assert_equal @ingest.document, @track.document
+    end
   end
 
   should "get s3_key" do

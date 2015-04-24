@@ -5,18 +5,17 @@ require File.expand_path('../config/application', __FILE__)
 
 Voyzes::Application.load_tasks
 
-# Add a new rake test task... E.g., rake test:lib, below everything else in that file...
-# Alternatively, add a task in lib/tasks/ directory and plop in the same code
 namespace :test do
-  desc "Test workers source"
-  Rake::TestTask.new(:workers) do |t|
+  task :run => ['test:units', 'test:functionals', 'test:generators', 'test:integration', 'test:lib', 'test:workers']
+  Rake::TestTask.new(lib: "test:prepare") do |t|
+    t.libs << "test"
+    t.pattern = 'test/lib/**/*_test.rb'
+  end
+
+  Rake::TestTask.new(workers: "test:prepare") do |t|
     t.libs << "test"
     t.pattern = 'test/workers/**/*_test.rb'
-    t.pattern = 'test/lib/**/*_test.rb'
-    t.verbose = true
   end
 end
- 
-workers_task = Rake::Task["test:workers"]
-test_task = Rake::Task[:test]
-test_task.enhance { workers_task.invoke }
+
+task default: :test

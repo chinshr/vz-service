@@ -1,5 +1,5 @@
 require "rubygems"
-require "aws-sdk"
+require "aws-sdk-v1"
 require "speech"
 
 class Ingest::AudioWorker
@@ -77,7 +77,7 @@ class Ingest::AudioWorker
   def initialize_pipeline!
     stage! :initialize_pipeline do
       @ingest.track.destroy if @ingest.track
-      @ingest.create_track(:s3_url => "initializing")
+      @ingest.document.create_track(:s3_url => "initializing")
       @ingest.save if @ingest.changed?
     end
   end

@@ -1,7 +1,7 @@
-Your audio file has been transcribed and can be viewed at:
+Your audio file is ready and can be viewed at:
 
-<%= @ingest.ingestable_url %>
+<%= web_document_url(@ingest.document.slug) %>
 
 Or edited at:
 
-<%= @ingest.edit_ingestable_url %>
+<%= edit_web_document_url(@ingest.document.slug) %>
