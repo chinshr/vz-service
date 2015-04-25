@@ -4,17 +4,19 @@ require "matrix"
 class Document < ActiveRecord::Base
   include Model::Filter
 
-  SLUG_LENGTH      = 6
   PRIVACY_SETTINGS = {'public' => 0, 'private' => 1, 'unlisted' => 2}
 
   belongs_to :user
-  has_many :ingests, as: :ingestable
-  has_many :tracks, :through => :ingests
+  belongs_to :ingest
+  belongs_to :track, dependent: :destroy  # <- main track
+  has_many :ingests, foreign_key: :document_id
+  has_many :chunks, through: :ingests
+  has_many :tracks, through: :chunks, source: :track  # <- document tracks
 
   acts_as_ordered_taggable_on :tags, :auto
 
   validates :slug, presence: true, uniqueness: {case_sensitive: false}
-  validates :title, presence: true, length: {maximum: 255}
+  validates :title, presence: true, length: {maximum: 255}, if: :canonical_document?
 
   # public scopes
   filtered_scopes :sort_order, :reverse_sort
@@ -40,6 +42,11 @@ class Document < ActiveRecord::Base
   before_save :set_tag_owner
 
   class << self
+    # E.g. random_string(5)
+    def random_string(len)
+      chars = [('a'..'z'), ('A'..'Z'), ('0'..'9')].map {|i| i.to_a}.flatten
+      String.new.tap {|s| 1.upto(len) {|i| s << chars[rand(chars.size - 1)]}} unless chars.empty?
+    end
 
     def privacy_mask(number)
       numbers = PRIVACY_SETTINGS.map {|k,v| number.is_a?(Fixnum) ? v : k}
@@ -47,6 +54,7 @@ class Document < ActiveRecord::Base
       index ? 2**index : 0
     end
 
+    def slug_length; 7; end
   end
 
   def privacy=(values)
@@ -73,19 +81,18 @@ class Document < ActiveRecord::Base
     !!ingests.order(id: :desc).first.try(:finished?)
   end
 
-  def track
-    tracks.order(id: :desc).first
-  end
-
   protected
 
   def generate_slug
-    chars = [('a'..'z'), ('A'..'Z'), ('0'..'9')].map {|i| i.to_a}.flatten
-    self.slug = String.new.tap {|s| 1.upto(SLUG_LENGTH) {|i| s << chars[rand(chars.size - 1)]}} unless chars.empty?
+    begin; self.slug = self.class.random_string(self.class.slug_length); end while self.class.where(:slug => slug).present?
   end
 
   def set_tag_owner
     # Set the owner of some tags based on the current tag_list
     set_owner_tag_list_on(user, :tags, self.tag_list) if changes[:tag_list]
+  end
+
+  def canonical_document?
+    true
   end
 end

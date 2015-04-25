@@ -7,7 +7,7 @@ class Api::IngestsControllerTest < ActionController::TestCase
 
     @document1          = FactoryGirl.create(:document)
     @track1             = FactoryGirl.create(:track)
-    @ingest1            = FactoryGirl.create(:ingest_audio, :ingestable => @document1, :track_id => @track1.id)
+    @ingest1            = FactoryGirl.create(:ingest_audio, :document => @document1, :track => @track1)
 
     @document1.privacy  = [:"public"]
     @document1.user     = @user1
@@ -16,7 +16,7 @@ class Api::IngestsControllerTest < ActionController::TestCase
 
     @document2          = FactoryGirl.create(:document)
     @track2             = FactoryGirl.create(:track)
-    @ingest2            = FactoryGirl.create(:ingest_audio, :ingestable => @document2, :track_id => @track2.id)
+    @ingest2            = FactoryGirl.create(:ingest_audio, :document => @document2, :track => @track2)
     @document2.privacy  = [:"private"]
     @document2.user     = @user2
     @document2.tag_list = ["brown", "cats", "jump", "higher"]
@@ -131,6 +131,8 @@ class Api::IngestsControllerTest < ActionController::TestCase
       get :show, :id => @ingest2.id, format: :json
       assert_response :success
       assert_attributes response_body["ingest"]
+      assert_not_nil response_body["ingest"]["track"]
+      assert_equal @track2.id, response_body["ingest"]["track"]["id"]
     end
   end
 
@@ -138,7 +140,7 @@ class Api::IngestsControllerTest < ActionController::TestCase
     should "update ingest with backend user" do
       sign_in :user, @user2
       put :update, {:id => @ingest2.id, :ingest => {
-        stage: "transcribe",
+        stage: "transcribe"
       }, format: :json}
       assert_response :success
       assert_response_body_attributes_with "ingest"
@@ -183,10 +185,10 @@ class Api::IngestsControllerTest < ActionController::TestCase
 
   def assert_attributes(params, expected_attributes = {})
     assert_equal false, params.blank?, "response should not be empty"
-    (expected_attributes.keys + %w(id upload_id ingestable_id ingestable_type type status
+    (expected_attributes.keys + %w(id upload_id document_id type status
       updated_at created_at started_at stopped_at restarted_at reset_at removed_at finished_at
-      progress messages stage iteration busy track_id terminate)).each do |attribute|
-      assert params.has_key?(attribute), "should containt key '#{attribute}' in response '#{params}'"
+      progress messages stage iteration busy terminate track s3_key)).each do |attribute|
+      assert params.has_key?(attribute), "should contain key '#{attribute}' in response '#{params}'"
     end
 
     expected_attributes.each do |key, value|

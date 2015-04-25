@@ -21,6 +21,11 @@ class DocumentTest < ActiveSupport::TestCase
       document.valid?
       assert_equal [], document.errors[:slug]
     end
+
+    should "slug length" do
+      document = FactoryGirl.create(:document)
+      assert_equal 7, document.slug.length
+    end
   end
 
   context "privacy mask" do
@@ -45,6 +50,10 @@ class DocumentTest < ActiveSupport::TestCase
   end
 
   context "scopes" do
+    setup do
+      Document.destroy_all
+    end
+
     should "recent" do
       @document1 = FactoryGirl.create(:document, :privacy => [:private])
       @document2 = FactoryGirl.create(:document, :privacy => [:public])
@@ -72,7 +81,7 @@ class DocumentTest < ActiveSupport::TestCase
   context "document with ingests" do
     setup do
       @document = FactoryGirl.create(:document)
-      @ingest   = FactoryGirl.create(:ingest_audio, :ingestable => @document)
+      @ingest   = FactoryGirl.create(:ingest_audio, :document => @document)
     end
 
     should "have finshed transcribing" do
@@ -86,7 +95,7 @@ class DocumentTest < ActiveSupport::TestCase
     end
 
     should "not have finshed transcribing with multiple ingests" do
-      @started = FactoryGirl.create(:ingest_audio, :ingestable => @document, :aasm_state => "started")
+      @started = FactoryGirl.create(:ingest_audio, :document => @document, :aasm_state => "started")
       @ingest.update_attribute(:aasm_state, "finished")
       assert_equal false, @document.transcribed?
     end
@@ -111,9 +120,9 @@ class DocumentTest < ActiveSupport::TestCase
   should "have a track" do
     @document = FactoryGirl.create(:document)
     @track1    = FactoryGirl.create(:track)
-    @ingest1   = FactoryGirl.create(:ingest_audio, :ingestable => @document, :track_id => @track1.id)
+    @ingest1   = FactoryGirl.create(:ingest_audio, :document => @document, :track => @track1)
     @track2    = FactoryGirl.create(:track)
-    @ingest2   = FactoryGirl.create(:ingest_audio, :ingestable => @document, :track_id => @track2.id)
+    @ingest2   = FactoryGirl.create(:ingest_audio, :document => @document, :track => @track2)
     assert_equal @track2, @document.track
   end
 

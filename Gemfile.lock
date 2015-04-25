@@ -104,15 +104,9 @@ GEM
       heroku-api
       sidekiq (>= 2.7, < 3.1)
     awesome_print (1.6.1)
-    aws-s3 (0.6.3)
-      builder
-      mime-types
-      xml-simple
-    aws-sdk (1.6.9)
-      httparty (~> 0.7)
+    aws-sdk-v1 (1.64.0)
       json (~> 1.4)
       nokogiri (>= 1.4.4)
-      uuidtools (~> 2.1)
     backbone-on-rails (1.1.2.0)
       actionmailer
       actionpack
@@ -193,9 +187,6 @@ GEM
     hike (1.2.3)
     hitimes (1.2.2)
     htmlentities (4.3.3)
-    httparty (0.13.3)
-      json (~> 1.8)
-      multi_xml (>= 0.5.2)
     i18n (0.7.0)
     immutable_struct (1.1.1)
     inherited_resources (1.5.1)
@@ -226,7 +217,6 @@ GEM
       metaclass (~> 0.0.1)
     modernizr-rails (2.7.1)
     multi_json (1.11.0)
-    multi_xml (0.5.5)
     netrc (0.10.2)
     newrelic_rpm (3.9.9.275)
     nokogiri (1.6.5)
@@ -361,14 +351,12 @@ GEM
       raindrops (~> 0.7)
     uuid (2.3.7)
       macaddr (~> 1.0)
-    uuidtools (2.1.5)
     warden (1.2.3)
       rack (>= 1.0)
     webmock (1.20.4)
       addressable (>= 2.3.6)
       crack (>= 0.3.2)
     whatlanguage (1.0.5)
-    xml-simple (1.1.4)
     yui-compressor (0.12.0)
 
 PLATFORMS
@@ -381,8 +369,7 @@ DEPENDENCIES
   amatch
   att-codekit!
   autoscaler
-  aws-s3
-  aws-sdk (~> 1.6.0)
+  aws-sdk-v1
   backbone-on-rails
   backbone-support
   client_side_validations!

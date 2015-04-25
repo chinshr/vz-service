@@ -3,14 +3,23 @@ require 'test_helper'
 class IngestTest < ActiveSupport::TestCase
   context "associations" do
     should belong_to(:upload).dependent(:destroy)
-    should belong_to(:ingestable).dependent(:destroy)
-    should belong_to(:track).dependent(:destroy)
+    should belong_to(:document)
+    should have_many(:chunks).dependent(:destroy)
+    should have_one(:track).through(:document)
+    should have_many(:tracks).through(:chunks)
   end
 
   context "validations" do
     should validate_presence_of(:upload).on(:create)
     should_not validate_presence_of(:upload).on(:update)
-    should validate_presence_of :ingestable
+    should validate_presence_of :document
+  end
+
+  context "delegate" do
+    should "#s3_key to upload" do
+      @ingest = FactoryGirl.create(:ingest_audio)
+      assert_equal @ingest.upload.s3_key, @ingest.s3_key
+    end
   end
 
   context "scopes" do
@@ -80,7 +89,7 @@ class IngestTest < ActiveSupport::TestCase
       assert_not_nil ingest.started_at
       ingest.log! :started, "working"
       ingest.update_attributes(stage: "transcoding")
-      FactoryGirl.create(:ingest_chunk, :ingest => ingest)
+      FactoryGirl.create(:chunk, :ingest => ingest)
       assert_equal 0, ingest.iteration
       assert_equal false, ingest.messages.empty?
 
@@ -195,9 +204,9 @@ class IngestTest < ActiveSupport::TestCase
 
   should "calculate average score and duration" do
     ingest = FactoryGirl.create(:ingest_audio)
-    chunk1 = FactoryGirl.create(:ingest_chunk, :offset => 0, :ingest => ingest, :score => 0)
-    chunk2 = FactoryGirl.create(:ingest_chunk, :offset => 1, :ingest => ingest, :score => 0.5)
-    chunk3 = FactoryGirl.create(:ingest_chunk, :offset => 2, :ingest => ingest, :score => 1)
+    chunk1 = FactoryGirl.create(:chunk, :offset => 0, :ingest => ingest, :score => 0)
+    chunk2 = FactoryGirl.create(:chunk, :offset => 1, :ingest => ingest, :score => 0.5)
+    chunk3 = FactoryGirl.create(:chunk, :offset => 2, :ingest => ingest, :score => 1)
     assert_equal 3, ingest.chunks.count
     assert_equal 0.5, ingest.score.to_f
     assert_equal 10.53, ingest.duration.to_f
@@ -205,9 +214,9 @@ class IngestTest < ActiveSupport::TestCase
 
   should "order chunks by offset" do
     ingest = FactoryGirl.create(:ingest_audio)
-    chunk3 = FactoryGirl.create(:ingest_chunk, :offset => 2, :ingest => ingest, :score => 1)
-    chunk1 = FactoryGirl.create(:ingest_chunk, :offset => 0, :ingest => ingest, :score => 0)
-    chunk2 = FactoryGirl.create(:ingest_chunk, :offset => 1, :ingest => ingest, :score => 0.5)
+    chunk3 = FactoryGirl.create(:chunk, :offset => 2, :ingest => ingest, :score => 1)
+    chunk1 = FactoryGirl.create(:chunk, :offset => 0, :ingest => ingest, :score => 0)
+    chunk2 = FactoryGirl.create(:chunk, :offset => 1, :ingest => ingest, :score => 0.5)
     assert_equal 3, ingest.chunks.count
     chunks = ingest.chunks.order(:offset)
     assert_equal chunk1, chunks[0]
@@ -218,17 +227,17 @@ class IngestTest < ActiveSupport::TestCase
   context "chunks" do
     setup do
       @ingest = FactoryGirl.create(:ingest_audio)
-      Ingest::Chunk::GoogleSpeech.create(:position => 1, :offset => 0,  :text => "I hate to say", :score => 0.80, :ingest => @ingest)
-      Ingest::Chunk::GoogleSpeech.create(:position => 2, :offset => 10, :text => "that macaronies are", :score => 0.65, :ingest => @ingest)
-      Ingest::Chunk::GoogleSpeech.create(:position => 3, :offset => 20, :text => "the best food in the world", :score => 0.85, :ingest => @ingest)
+      Chunk::GoogleSpeech.create(:position => 1, :offset => 0,  :text => "I hate to say", :score => 0.80, :ingest => @ingest)
+      Chunk::GoogleSpeech.create(:position => 2, :offset => 10, :text => "that macaronies are", :score => 0.65, :ingest => @ingest)
+      Chunk::GoogleSpeech.create(:position => 3, :offset => 20, :text => "the best food in the world", :score => 0.85, :ingest => @ingest)
 
-      Ingest::Chunk::AttSpeech.create(:position => 1, :offset => 0,  :text => "I have to pray", :score => 0.70, :ingest => @ingest)
-      Ingest::Chunk::AttSpeech.create(:position => 2, :offset => 10, :text => "cat maths are", :score => 0.70, :ingest => @ingest)
-      Ingest::Chunk::AttSpeech.create(:position => 3, :offset => 20, :text => "the best mushrooms in the whirlwind.", :score => 0.95, :ingest => @ingest)
+      Chunk::AttSpeech.create(:position => 1, :offset => 0,  :text => "I have to pray", :score => 0.70, :ingest => @ingest)
+      Chunk::AttSpeech.create(:position => 2, :offset => 10, :text => "cat maths are", :score => 0.70, :ingest => @ingest)
+      Chunk::AttSpeech.create(:position => 3, :offset => 20, :text => "the best mushrooms in the whirlwind.", :score => 0.95, :ingest => @ingest)
 
-      Ingest::Chunk::NuanceDragon.create(:position => 1, :offset => 0,  :text => "I have say", :score => 0, :ingest => @ingest)
-      Ingest::Chunk::NuanceDragon.create(:position => 2, :offset => 10,  :text => "that some macaronies are", :score => 0, :ingest => @ingest)
-      Ingest::Chunk::NuanceDragon.create(:position => 3, :offset => 20,  :text => "the cesty food in the world", :score => 0, :ingest => @ingest)
+      Chunk::NuanceDragon.create(:position => 1, :offset => 0,  :text => "I have say", :score => 0, :ingest => @ingest)
+      Chunk::NuanceDragon.create(:position => 2, :offset => 10,  :text => "that some macaronies are", :score => 0, :ingest => @ingest)
+      Chunk::NuanceDragon.create(:position => 3, :offset => 20,  :text => "the cesty food in the world", :score => 0, :ingest => @ingest)
     end
 
     should "normalize chunk scores" do
@@ -241,7 +250,7 @@ class IngestTest < ActiveSupport::TestCase
       @ingest.normalize_chunk_scores!
       @ingest.update_content_from @ingest.chunks.best
       assert_equal [{"insert"=>"I hate to say", "attributes"=>{"offset"=>0.0}}, {"insert"=>"that macaronies are", "attributes"=>{"offset"=>10.0}}, {"insert"=>"the best food in the world", "attributes"=>{"offset"=>20.0}}],
-        @ingest.ingestable.rich_text
+        @ingest.document.rich_text
     end
   end
 end

@@ -7,7 +7,7 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
 
     @document1          = FactoryGirl.create(:document)
     @track1             = FactoryGirl.create(:track)
-    @ingest1            = FactoryGirl.create(:ingest_audio, :ingestable => @document1, :track_id => @track1.id)
+    @ingest1            = FactoryGirl.create(:ingest_audio, :document => @document1, :track => @track1)
 
     @document1.privacy  = [:"public"]
     @document1.user     = @user1
@@ -16,7 +16,7 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
 
     @document2          = FactoryGirl.create(:document)
     @track2             = FactoryGirl.create(:track)
-    @ingest2            = FactoryGirl.create(:ingest_audio, :ingestable => @document2, :track_id => @track2.id)
+    @ingest2            = FactoryGirl.create(:ingest_audio, :document => @document2, :track => @track2)
     @document2.privacy  = [:"private"]
     @document2.user     = @user2
     @document2.tag_list = ["brown", "cats", "jump", "higher"]
@@ -54,8 +54,8 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
 
     should "create chunk with signed in backend user" do
       sign_in :user, @user2
-      assert_difference 'Ingest::Chunk.count', 1 do
-        attributes = @attributes.merge(type: "Ingest::Chunk::GoogleSpeech")
+      assert_difference 'Chunk.count', 1 do
+        attributes = @attributes.merge(type: "Chunk::GoogleSpeech")
         post :create, ingest_id: @ingest1.id, chunk: attributes, format: :json
         assert_response :success
         assert_attributes response_body["chunk"], attributes
@@ -76,7 +76,7 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
     end
 
     should "all ingest chunks when signed in as backend user" do
-      @chunk1 = FactoryGirl.create(:ingest_chunk_google_speech, ingest: @ingest1)
+      @chunk1 = FactoryGirl.create(:chunk_google_speech, ingest: @ingest1)
       sign_in :user, @user2
       get :index, ingest_id: @ingest1.id, format: :json
       assert_response :success
@@ -86,8 +86,8 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
     end
 
     should "filter ingest chunks of type att_speech" do
-      @chunk1 = FactoryGirl.create(:ingest_chunk_google_speech, ingest: @ingest1)
-      @chunk2 = FactoryGirl.create(:ingest_chunk_att_speech, ingest: @ingest1)
+      @chunk1 = FactoryGirl.create(:chunk_google_speech, ingest: @ingest1)
+      @chunk2 = FactoryGirl.create(:chunk_att_speech, ingest: @ingest1)
       sign_in :user, @user2
       get :index, ingest_id: @ingest1.id, any_of_type: "att_speech", format: :json
       assert_response :success
@@ -110,7 +110,7 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
     end
 
     should "count ingest chunks when backend user is signed in" do
-      @chunk1 = FactoryGirl.create(:ingest_chunk_google_speech, ingest: @ingest1)
+      @chunk1 = FactoryGirl.create(:chunk_google_speech, ingest: @ingest1)
       sign_in :user, @user2
       get :count, ingest_id: @ingest1.id, format: :json
       assert_response :success
@@ -121,7 +121,7 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
 
   context "GET /api/ingests/:ingest_id/chunks/:id" do
     setup do
-      @chunk1 = FactoryGirl.create(:ingest_chunk_google_speech, ingest: @ingest1)
+      @chunk1 = FactoryGirl.create(:chunk_google_speech, ingest: @ingest1)
     end
 
     should "be unauthorized whithout any user" do
@@ -145,7 +145,7 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
 
   context "PUT /api/ingests/:ingest_id/chunks/:id" do
     setup do
-      @chunk1 = FactoryGirl.create(:ingest_chunk_google_speech, ingest: @ingest1)
+      @chunk1 = FactoryGirl.create(:chunk_google_speech, ingest: @ingest1)
     end
 
     should "update ingest with backend user" do
@@ -174,11 +174,11 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
 
   context "DELETE /api/ingests/:ingest_id/chunks/:id" do
     setup do
-      @chunk1 = FactoryGirl.create(:ingest_chunk_google_speech, ingest: @ingest1)
+      @chunk1 = FactoryGirl.create(:chunk_google_speech, ingest: @ingest1)
     end
 
     should "be unauthorized without user" do
-      assert_no_difference 'Ingest::Chunk.count' do
+      assert_no_difference 'Chunk.count' do
         delete :destroy, {ingest_id: @ingest1.id, id: @chunk1.id, format: :json}
         assert_response :unauthorized
       end
@@ -186,7 +186,7 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
 
     should "be unauthorized without backend user" do
       sign_in :user, @user1
-      assert_no_difference 'Ingest::Chunk.count' do
+      assert_no_difference 'Chunk.count' do
         delete :destroy, {ingest_id: @ingest1.id, id: @chunk1.id, format: :json}
         assert_response :unauthorized
       end
@@ -194,7 +194,7 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
 
     should "destroy with backend user" do
       sign_in :user, @user2
-      assert_difference 'Ingest::Chunk.count', -1 do
+      assert_difference 'Chunk.count', -1 do
         delete :destroy, {ingest_id: @ingest1.id, id: @chunk1.id, format: :json}
         assert_response :success
         assert_attributes response_body["chunk"]

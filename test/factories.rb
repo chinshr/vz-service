@@ -6,22 +6,24 @@ FactoryGirl.define do
     file_size 62676
     sequence(:s3_url) {|n| "http://s3.amazonaws.com/dropbox/sample-#{n}.m4a"}
     before(:create) do |upload|
-      upload.build_ingest(type: "Ingest::Audio", upload: upload, ingestable: FactoryGirl.create(:document))
+      upload.build_ingest(type: "Ingest::Audio", upload: upload, document: FactoryGirl.create(:document))
     end
   end
 
   factory :document do
     association :user
+    association :track
     sequence(:title) {|n| "title-#{n}"}
     sequence(:description) {|n| "description-#{n}"}
   end
 
   factory :ingest_audio, :class => "Ingest::Audio" do
     association :upload, factory: :upload_audio
-    association :ingestable, factory: :document
+    association :document
+    association :track, factory: :track
   end
 
-  factory :ingest_chunk, :class => "Ingest::Chunk" do
+  factory :chunk do
     association :ingest, factory: :ingest_audio
     offset 0.0
     duration 3.51
@@ -35,10 +37,10 @@ FactoryGirl.define do
     end
   end
 
-  factory :ingest_chunk_google_speech, parent: :ingest_chunk, class: "Ingest::Chunk::GoogleSpeech" do
+  factory :chunk_google_speech, parent: :chunk, class: "Chunk::GoogleSpeech" do
   end
 
-  factory :ingest_chunk_att_speech, parent: :ingest_chunk, class: "Ingest::Chunk::AttSpeech" do
+  factory :chunk_att_speech, parent: :chunk, class: "Chunk::AttSpeech" do
   end
 
   factory :message do

@@ -3,10 +3,10 @@ require 'test_helper'
 class TempModel < ActiveRecord::Base
   self.table_name = 'documents' # use documents just for test
   include Model::Filter
-  
+
   filtered_scopes :active, :sort_order, :reverse_sort
   scope :active, lambda { |param| where(:locale => "en-US")}
-  scope :sort_order, lambda {|param| 
+  scope :sort_order, lambda {|param|
     case param.first[0]  # E.g. get first key of {"id"=>"asc"}
     when "id"
       order(self.arel_table[:id].send(param.first[1].to_sym).to_sql)
@@ -19,9 +19,9 @@ class TempModel < ActiveRecord::Base
   scope :reverse_sort, lambda {|param| all.reverse_order if Model::Helper.booleanize(param)}
 
   after_initialize :build_required_attributes
-  
-  protected 
-  
+
+  protected
+
   def build_required_attributes
     self.slug = SecureRandom.uuid
   end
@@ -53,6 +53,10 @@ class FilterTest < ActiveSupport::TestCase
   end
 
   context "filter" do
+    setup do
+      TempModel.destroy_all
+    end
+
     should "incorect scope should raise exception on wrong parameter" do
       assert_raise ArgumentError do
         TempModel.filter(1)
@@ -91,19 +95,11 @@ class FilterTest < ActiveSupport::TestCase
     end
 
     should "negative offset should be 0" do
-      m1 = TempModel.create(:title=>"B") #1
-      m2 = TempModel.create(:title=>"A") #2
-      m3 = TempModel.create(:title=>"A") #3
-
-      assert_equal TempModel.filter({:offset=>-1}).to_set, [m1, m2, m3].to_set
+      assert_equal true, TempModel.filter({:offset=>-1}).to_sql.include?("OFFSET 0")
     end
 
     should "not integer offset should be 0" do
-      m1 = TempModel.create(:title=>"B") #1
-      m2 = TempModel.create(:title=>"A") #2
-      m3 = TempModel.create(:title=>"A") #3
-
-      assert_equal TempModel.filter({:offset=>'a'}).to_set, [m1, m2, m3].to_set
+      assert_equal true, TempModel.filter({:offset=>"a"}).to_sql.include?("OFFSET 0")
     end
   end
 end

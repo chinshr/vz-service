@@ -79,7 +79,7 @@ class UploadTest < ActiveSupport::TestCase
     should delegate :tag_list=, to: :ingest, allow_nil: true
 
     should "delegate :user" do
-      assert_equal @upload.ingest.ingestable.user, @upload.user
+      assert_equal @upload.ingest.document.user, @upload.user
     end
 
     should "delegate :user=" do
@@ -92,7 +92,7 @@ class UploadTest < ActiveSupport::TestCase
 
     should "delegate :privacy" do
       assert_equal ["public"], @upload.privacy
-      assert_equal @upload.ingest.ingestable.privacy, @upload.privacy
+      assert_equal @upload.ingest.document.privacy, @upload.privacy
     end
 
     should "delegate :status" do
@@ -104,43 +104,43 @@ class UploadTest < ActiveSupport::TestCase
     end
 
     should "delegate :slug" do
-      assert_equal @upload.ingest.ingestable.slug, @upload.slug
+      assert_equal @upload.ingest.document.slug, @upload.slug
     end
 
     should "delegate :title" do
-      assert_equal @upload.ingest.ingestable.title, @upload.title
+      assert_equal @upload.ingest.document.title, @upload.title
     end
 
     should "delegate :title=" do
       @upload.title = "A new title"
-      assert_equal "A new title", @upload.ingest.ingestable.title
+      assert_equal "A new title", @upload.ingest.document.title
     end
 
     should "delegate :description" do
-      assert_equal @upload.ingest.ingestable.description, @upload.description
+      assert_equal @upload.ingest.document.description, @upload.description
     end
 
     should "delegate :description=" do
       @upload.description = "A new description"
-      assert_equal "A new description", @upload.ingest.ingestable.description
+      assert_equal "A new description", @upload.ingest.document.description
     end
 
     should "delegate :tag_list" do
-      assert_equal @upload.ingest.ingestable.tag_list, @upload.tag_list
+      assert_equal @upload.ingest.document.tag_list, @upload.tag_list
     end
 
     should "delegate :tag_list=" do
       @upload.tag_list = ["a", "new", "tag", "list"]
-      assert_equal ["a", "new", "tag", "list"], @upload.ingest.ingestable.tag_list
+      assert_equal ["a", "new", "tag", "list"], @upload.ingest.document.tag_list
     end
 
     should "delegate :locale" do
-      assert_equal @upload.ingest.ingestable.locale, @upload.locale
+      assert_equal @upload.ingest.document.locale, @upload.locale
     end
 
     should "delegate :locale=" do
       @upload.locale = "it-IT"
-      assert_equal "it-IT", @upload.ingest.ingestable.locale
+      assert_equal "it-IT", @upload.ingest.document.locale
     end
   end # context "delegate"
 

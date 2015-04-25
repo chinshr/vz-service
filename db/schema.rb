@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150414152316) do
+ActiveRecord::Schema.define(version: 20150425164010) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -124,56 +124,49 @@ ActiveRecord::Schema.define(version: 20150414152316) do
 
   create_table "documents", force: true do |t|
     t.string   "title"
-    t.string   "slug",                                     null: false
+    t.string   "slug",                                                                   null: false
     t.text     "description"
-    t.integer  "privacy_mask",           default: 0,       null: false
-    t.string   "locale",       limit: 5, default: "en-US", null: false
+    t.integer  "privacy_mask",                                         default: 0,       null: false
+    t.string   "locale",            limit: 5,                          default: "en-US", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.text     "html"
     t.integer  "user_id"
     t.json     "rich_text"
     t.text     "text"
-  end
-
-  add_index "documents", ["created_at"], name: "index_documents_on_created_at", using: :btree
-  add_index "documents", ["locale"], name: "index_documents_on_locale", using: :btree
-  add_index "documents", ["privacy_mask"], name: "index_documents_on_privacy_mask", using: :btree
-  add_index "documents", ["slug"], name: "index_documents_on_slug", unique: true, using: :btree
-  add_index "documents", ["title"], name: "index_documents_on_title", using: :btree
-  add_index "documents", ["updated_at"], name: "index_documents_on_updated_at", using: :btree
-  add_index "documents", ["user_id"], name: "index_documents_on_user_id", using: :btree
-
-  create_table "ingest_chunks", force: true do |t|
     t.integer  "ingest_id"
-    t.decimal  "offset",            precision: 11, scale: 5,             null: false
-    t.decimal  "duration",          precision: 11, scale: 5
-    t.decimal  "start_time",        precision: 11, scale: 5
-    t.decimal  "end_time",          precision: 11, scale: 5
-    t.string   "text"
+    t.decimal  "offset",                      precision: 11, scale: 5
+    t.decimal  "duration",                    precision: 11, scale: 5
+    t.decimal  "start_time",                  precision: 11, scale: 5
+    t.decimal  "end_time",                    precision: 11, scale: 5
     t.float    "score"
     t.integer  "position"
     t.string   "type"
-    t.integer  "processing_status",                          default: 0, null: false
+    t.integer  "processing_status",                                    default: 0,       null: false
     t.json     "response"
     t.json     "processing_errors"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.integer  "track_id"
   end
 
-  add_index "ingest_chunks", ["ingest_id"], name: "index_ingest_chunks_on_ingest_id", using: :btree
-  add_index "ingest_chunks", ["offset"], name: "index_ingest_chunks_on_offset", using: :btree
-  add_index "ingest_chunks", ["position"], name: "index_ingest_chunks_on_position", using: :btree
-  add_index "ingest_chunks", ["processing_status"], name: "index_ingest_chunks_on_processing_status", using: :btree
-  add_index "ingest_chunks", ["score"], name: "index_ingest_chunks_on_score", using: :btree
-  add_index "ingest_chunks", ["type"], name: "index_ingest_chunks_on_type", using: :btree
+  add_index "documents", ["created_at"], name: "index_documents_on_created_at", using: :btree
+  add_index "documents", ["ingest_id"], name: "index_documents_on_ingest_id", using: :btree
+  add_index "documents", ["locale"], name: "index_documents_on_locale", using: :btree
+  add_index "documents", ["offset"], name: "index_documents_on_offset", using: :btree
+  add_index "documents", ["position"], name: "index_documents_on_position", using: :btree
+  add_index "documents", ["privacy_mask"], name: "index_documents_on_privacy_mask", using: :btree
+  add_index "documents", ["processing_status"], name: "index_documents_on_processing_status", using: :btree
+  add_index "documents", ["score"], name: "index_documents_on_score", using: :btree
+  add_index "documents", ["slug"], name: "index_documents_on_slug", unique: true, using: :btree
+  add_index "documents", ["title"], name: "index_documents_on_title", using: :btree
+  add_index "documents", ["track_id"], name: "index_documents_on_track_id", using: :btree
+  add_index "documents", ["type"], name: "index_documents_on_type", using: :btree
+  add_index "documents", ["updated_at"], name: "index_documents_on_updated_at", using: :btree
+  add_index "documents", ["user_id"], name: "index_documents_on_user_id", using: :btree
 
   create_table "ingests", force: true do |t|
     t.integer  "upload_id"
-    t.integer  "ingestable_id"
-    t.string   "ingestable_type"
     t.string   "type"
-    t.string   "aasm_state",      default: "created", null: false
+    t.string   "aasm_state",   default: "created", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.datetime "started_at"
@@ -181,27 +174,26 @@ ActiveRecord::Schema.define(version: 20150414152316) do
     t.datetime "reset_at"
     t.datetime "removed_at"
     t.datetime "finished_at"
-    t.float    "progress",        default: 0.0,       null: false
+    t.float    "progress",     default: 0.0,       null: false
     t.text     "messages"
     t.string   "stage"
-    t.integer  "iteration",       default: 0,         null: false
-    t.boolean  "busy",            default: false,     null: false
+    t.integer  "iteration",    default: 0,         null: false
+    t.boolean  "busy",         default: false,     null: false
     t.datetime "restarted_at"
-    t.integer  "track_id"
-    t.boolean  "terminate",       default: false,     null: false
+    t.boolean  "terminate",    default: false,     null: false
+    t.integer  "document_id"
   end
 
   add_index "ingests", ["aasm_state"], name: "index_ingests_on_aasm_state", using: :btree
   add_index "ingests", ["created_at"], name: "index_ingests_on_created_at", using: :btree
+  add_index "ingests", ["document_id"], name: "index_ingests_on_document_id", using: :btree
   add_index "ingests", ["finished_at"], name: "index_ingests_on_finished_at", using: :btree
-  add_index "ingests", ["ingestable_id", "ingestable_type"], name: "index_ingests_on_ingestable_id_and_ingestable_type", using: :btree
   add_index "ingests", ["iteration"], name: "index_ingests_on_iteration", using: :btree
   add_index "ingests", ["removed_at"], name: "index_ingests_on_removed_at", using: :btree
   add_index "ingests", ["reset_at"], name: "index_ingests_on_reset_at", using: :btree
   add_index "ingests", ["stage"], name: "index_ingests_on_stage", using: :btree
   add_index "ingests", ["started_at"], name: "index_ingests_on_started_at", using: :btree
   add_index "ingests", ["stopped_at"], name: "index_ingests_on_stopped_at", using: :btree
-  add_index "ingests", ["track_id"], name: "index_ingests_on_track_id", using: :btree
   add_index "ingests", ["type"], name: "index_ingests_on_type", using: :btree
   add_index "ingests", ["updated_at"], name: "index_ingests_on_updated_at", using: :btree
   add_index "ingests", ["upload_id"], name: "index_ingests_on_upload_id", using: :btree

@@ -69,8 +69,7 @@ end
 
 gem 'modernizr-rails'
 
-gem 'aws-sdk', '~> 1.6.0'
-gem 'aws-s3'
+gem 'aws-sdk-v1'
 # gem 'sass'
 gem 'backbone-on-rails'
 gem 'backbone-support'
