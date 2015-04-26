@@ -1,5 +1,6 @@
 class Upload < ActiveRecord::Base
   include Model::Filter
+  include Model::Uid
 
   delegate :privacy, to: :ingest, allow_nil: true
   delegate :privacy=, to: :ingest, allow_nil: true

@@ -240,7 +240,7 @@ class Api::Account::UploadsControllerTest < ActionController::TestCase
   protected
 
   def assert_attributes(response, expected_attributes = {})
-    %w(file_name file_type file_size s3_url locale slug title description tag_list privacy status type progress events updated_at created_at).each do |key|
+    %w(file_name file_type file_size s3_url locale slug title description tag_list privacy status type progress events updated_at created_at uid).each do |key|
       assert response.has_key?(key), "should containt key '#{key}' in response '#{response}'"
     end
   end
