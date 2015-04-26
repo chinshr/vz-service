@@ -43,8 +43,8 @@ class Document < ActiveRecord::Base
   before_save :set_tag_owner
 
   class << self
-    # E.g. random_string(5)
-    def random_string(len)
+    # E.g. random_slug_string(5) => "12345"
+    def random_slug_string(len)
       chars = [('a'..'z'), ('A'..'Z'), ('0'..'9')].map {|i| i.to_a}.flatten
       String.new.tap {|s| 1.upto(len) {|i| s << chars[rand(chars.size - 1)]}} unless chars.empty?
     end
@@ -85,7 +85,7 @@ class Document < ActiveRecord::Base
   protected
 
   def generate_slug
-    begin; self.slug = self.class.random_string(self.class.slug_length); end while self.class.where(:slug => slug).present?
+    begin; self.slug = self.class.random_slug_string(self.class.slug_length); end while self.class.where(:slug => slug).present?
   end
 
   def set_tag_owner

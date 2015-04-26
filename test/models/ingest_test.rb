@@ -256,7 +256,6 @@ class IngestTest < ActiveSupport::TestCase
 
   should "have uid" do
     @ingest = FactoryGirl.create(:ingest_audio)
-    binding.pry
     assert_not_nil @ingest.uid
   end
 end

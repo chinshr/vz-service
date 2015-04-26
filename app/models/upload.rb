@@ -87,7 +87,7 @@ class Upload < ActiveRecord::Base
     alias_method_chain :new, :cast
 
     def generate_object_name
-      Model::Uid.random_string(10, "a-z, 0-9")
+      Model::Uid.random_uid_string(10, "a-z, 0-9")
     end
 
     def humanized_file_name(file_name)

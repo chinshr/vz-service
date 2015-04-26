@@ -12,14 +12,14 @@ module Model::Uid
   end
 
   module ClassMethods
-    # E.g. random_string(5, "a-z, 0-9")
-    def random_string(len = 10, set = nil)
+    # E.g. random_uid_string(5, "a-z, 0-9")
+    def random_uid_string(len = 10, set = nil)
       chars = parse_characters_set(set) || [('a'..'z'), ('A'..'Z'), ('0'..'9')].map {|i| i.to_a}.flatten
       String.new.tap {|s| 1.upto(len) {|i| s << chars[rand(chars.size - 1)]}} unless chars.empty?
     end
 
     def generate_uid
-      random_string(uid_length)
+      random_uid_string(uid_length)
     end
 
     private
