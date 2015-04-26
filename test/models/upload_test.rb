@@ -179,5 +179,6 @@ class UploadTest < ActiveSupport::TestCase
   should "have uid" do
     upload = FactoryGirl.create(:upload_audio)
     assert_not_nil upload.uid
+    assert_equal 36, upload.uid.length
   end
 end

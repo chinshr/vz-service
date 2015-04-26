@@ -100,6 +100,10 @@ class Upload < ActiveRecord::Base
       result
     end
 
+    def generate_uid
+      SecureRandom.uuid
+    end
+
     private
 
     # E.g. "audio" => Upload::Audio

@@ -3,6 +3,7 @@ require "matrix"
 
 class Document < ActiveRecord::Base
   include Model::Filter
+  include Model::Uid
 
   PRIVACY_SETTINGS = {'public' => 0, 'private' => 1, 'unlisted' => 2}
 
@@ -56,6 +57,10 @@ class Document < ActiveRecord::Base
     end
 
     def slug_length; 7; end
+
+    def generate_uid
+      SecureRandom.uuid
+    end
   end
 
   def privacy=(values)

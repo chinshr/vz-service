@@ -126,6 +126,11 @@ class ChunkTest < ActiveSupport::TestCase
         assert_equal Chunk::NuanceDragon, @ingest.chunks.first.class
       end
     end
+  end
 
+  should "have uid" do
+    chunk = FactoryGirl.create(:chunk)
+    assert_not_nil chunk.uid
+    assert_equal 36, chunk.uid.length
   end
 end

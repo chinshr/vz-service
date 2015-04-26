@@ -154,4 +154,10 @@ class DocumentTest < ActiveSupport::TestCase
     document = FactoryGirl.create(:document, text: "Hello World!")
     assert_equal "Hello World!", document.text
   end
+
+  should "have uid" do
+    document = FactoryGirl.create(:document)
+    assert_not_nil document.uid
+    assert_equal 36, document.uid.length
+  end
 end
