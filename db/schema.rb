@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150425164010) do
+ActiveRecord::Schema.define(version: 20150425232744) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -182,6 +182,7 @@ ActiveRecord::Schema.define(version: 20150425164010) do
     t.datetime "restarted_at"
     t.boolean  "terminate",    default: false,     null: false
     t.integer  "document_id"
+    t.string   "uid"
   end
 
   add_index "ingests", ["aasm_state"], name: "index_ingests_on_aasm_state", using: :btree
@@ -195,6 +196,7 @@ ActiveRecord::Schema.define(version: 20150425164010) do
   add_index "ingests", ["started_at"], name: "index_ingests_on_started_at", using: :btree
   add_index "ingests", ["stopped_at"], name: "index_ingests_on_stopped_at", using: :btree
   add_index "ingests", ["type"], name: "index_ingests_on_type", using: :btree
+  add_index "ingests", ["uid"], name: "index_ingests_on_uid", using: :btree
   add_index "ingests", ["updated_at"], name: "index_ingests_on_updated_at", using: :btree
   add_index "ingests", ["upload_id"], name: "index_ingests_on_upload_id", using: :btree
 

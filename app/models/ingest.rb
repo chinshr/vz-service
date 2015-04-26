@@ -1,6 +1,7 @@
 class Ingest < ActiveRecord::Base
   include AASM
   include Model::Filter
+  include Model::Uid
 
   STAGE_START       = 0
   STAGE_HARVEST     = 100
@@ -38,10 +39,9 @@ class Ingest < ActiveRecord::Base
 
   belongs_to :upload, dependent: :destroy
   belongs_to :document
+  accepts_nested_attributes_for :document
   has_many :chunks, dependent: :destroy
-  accepts_nested_attributes_for :chunks
   has_one :track, through: :document
-  accepts_nested_attributes_for :track
   has_many :tracks, through: :chunks, source: :track
 
   validates :upload, presence: true, on: :create
@@ -122,6 +122,10 @@ class Ingest < ActiveRecord::Base
 
     def queue_name_from(stage_name)
       "#{stage_name.to_s.upcase}_#{Rails.env.upcase}_QUEUE"
+    end
+
+    def generate_uid
+      SecureRandom.uuid
     end
   end
 
