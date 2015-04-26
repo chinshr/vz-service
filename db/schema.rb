@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150426002415) do
+ActiveRecord::Schema.define(version: 20150426004100) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -281,7 +281,10 @@ ActiveRecord::Schema.define(version: 20150426002415) do
     t.string   "s3_mp3_url"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "uid"
   end
+
+  add_index "tracks", ["uid"], name: "index_tracks_on_uid", using: :btree
 
   create_table "uploads", force: true do |t|
     t.string   "file_name"

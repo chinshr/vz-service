@@ -1,5 +1,6 @@
 class Track < ActiveRecord::Base
   include Model::Filter
+  include Model::Uid
 
   validates :s3_url, presence: true
 
@@ -17,6 +18,12 @@ class Track < ActiveRecord::Base
     end
   }
   scope :reverse_sort, lambda {|param| all.reverse_order if Model::Helper.booleanize(param)}
+
+  class << self
+    def generate_uid
+      SecureRandom.uuid
+    end
+  end
 
   def s3_key
     s3_url ? s3_url.split("/").last : nil

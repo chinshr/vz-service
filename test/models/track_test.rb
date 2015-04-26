@@ -36,4 +36,11 @@ class TrackTest < ActiveSupport::TestCase
     assert_equal true, track.mp3_stream_url.include?("s3.amazonaws.com")
     assert_equal true, track.mp3_stream_url.include?(track.s3_mp3_key)
   end
+
+  should "have uid" do
+    track = FactoryGirl.create(:track)
+    assert_not_nil track.uid
+    assert_equal 36, track.uid.length
+  end
+
 end

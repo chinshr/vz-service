@@ -1,1 +1,1 @@
-attributes :id, :mp3_stream_url, :created_at
+attributes :id, :mp3_stream_url, :created_at, :uid

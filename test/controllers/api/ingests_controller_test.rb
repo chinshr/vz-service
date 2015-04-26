@@ -133,6 +133,7 @@ class Api::IngestsControllerTest < ActionController::TestCase
       assert_attributes response_body["ingest"]
       assert_not_nil response_body["ingest"]["track"]
       assert_equal @track2.id, response_body["ingest"]["track"]["id"]
+      assert_equal @track2.uid, response_body["ingest"]["track"]["uid"]
     end
   end
 
