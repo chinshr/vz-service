@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150426004100) do
+ActiveRecord::Schema.define(version: 20150427233523) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -145,7 +145,6 @@ ActiveRecord::Schema.define(version: 20150426004100) do
     t.integer  "processing_status",                                    default: 0,       null: false
     t.json     "response"
     t.json     "processing_errors"
-    t.integer  "track_id"
     t.string   "uid"
   end
 
@@ -159,7 +158,6 @@ ActiveRecord::Schema.define(version: 20150426004100) do
   add_index "documents", ["score"], name: "index_documents_on_score", using: :btree
   add_index "documents", ["slug"], name: "index_documents_on_slug", unique: true, using: :btree
   add_index "documents", ["title"], name: "index_documents_on_title", using: :btree
-  add_index "documents", ["track_id"], name: "index_documents_on_track_id", using: :btree
   add_index "documents", ["type"], name: "index_documents_on_type", using: :btree
   add_index "documents", ["uid"], name: "index_documents_on_uid", using: :btree
   add_index "documents", ["updated_at"], name: "index_documents_on_updated_at", using: :btree
@@ -282,8 +280,12 @@ ActiveRecord::Schema.define(version: 20150426004100) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "uid"
+    t.integer  "document_id"
+    t.boolean  "is_master",   default: false, null: false
   end
 
+  add_index "tracks", ["document_id"], name: "index_tracks_on_document_id", using: :btree
+  add_index "tracks", ["is_master"], name: "index_tracks_on_is_master", using: :btree
   add_index "tracks", ["uid"], name: "index_tracks_on_uid", using: :btree
 
   create_table "uploads", force: true do |t|
