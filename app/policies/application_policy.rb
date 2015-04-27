@@ -34,6 +34,10 @@ class ApplicationPolicy
     false
   end
 
+  def backend_role?
+    user && (user.backend_role? || user.admin_role?)
+  end
+
   def scope
     Pundit.policy_scope!(user, record.class)
   end

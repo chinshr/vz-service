@@ -24,10 +24,11 @@ class IngestPolicy < ApplicationPolicy
     backend_role?
   end
 
-  protected
-
-  def backend_role?
-    user.roles.include?(:backend)
+  def permitted_attributes
+    if update?
+      [:messages, :stage, :iteration, :busy, :terminate,
+        :document_attributes => [:id, :track_attributes => [:s3_url]]]
+    end
   end
 
 end

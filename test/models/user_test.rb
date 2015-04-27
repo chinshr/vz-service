@@ -105,5 +105,19 @@ class UserTest < ActiveSupport::TestCase
       user.roles = [:backend]
       assert_equal [:backend], user.roles
     end
+
+    should "#user_role?" do
+      assert_equal true, FactoryGirl.create(:user).user_role?
+      assert_equal true, FactoryGirl.create(:backend_user).user_role?
+      assert_equal true, FactoryGirl.create(:admin_user).user_role?
+      assert_equal true, FactoryGirl.create(:developer_user).user_role?
+    end
+
+    should "#backend_role?" do
+      assert_equal true, FactoryGirl.create(:backend_user).backend_role?
+      assert_equal true, FactoryGirl.create(:admin_user).backend_role?
+      assert_equal false, FactoryGirl.create(:user).backend_role?
+    end
+
   end
 end

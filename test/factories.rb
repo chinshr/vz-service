@@ -74,6 +74,10 @@ FactoryGirl.define do
     roles_mask 3
   end
 
+  factory :developer_user, :class => "User", :parent => :user do
+    roles_mask 4
+  end
+
   factory :track do
     sequence(:s3_url) {|n| "http://s3.amazonaws.com/private/zp66vfwg21-#{n}"}
     sequence(:s3_mp3_url) {|n| "http://s3.amazonaws.com/private/zp66vfwg21-#{n}-128kbps-mp3"}

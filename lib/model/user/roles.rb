@@ -32,10 +32,28 @@ module Model::User::Roles
       roles.first # FIXME: should be highest
     end
 
+    def user_role?
+      roles.include?(:user) || roles.include?(:admin) ||
+      roles.include?(:backend) || roles.include?(:developer)
+    end
+
+    def admin_role?
+      roles.include?(:admin)
+    end
+
+    def backend_role?
+      roles.include?(:backend) || roles.include?(:admin)
+    end
+
+    def developer_role?
+      roles.include?(:developer) || roles.include?(:admin)
+    end
+
+=begin
     # Similar to ActiveSupport::StringInquirer but for only roles
-    # Provides methods such as account.admin? and account.backend? which returns a boolean
+    # Provides methods such as user.admin_role? and user.backend_role? which returns a boolean
     def method_missing(method_name, *arguments)
-      inquiry = method_name[/(\w+)\?/, 1].try(:to_sym)
+      inquiry = method_name[/(\w+)_role\?/, 1].try(:to_sym)
 
       if inquiry && ROLES.include?(inquiry)
         self.roles.include?(inquiry)
@@ -43,6 +61,7 @@ module Model::User::Roles
         super
       end
     end
+=end
 
     private
 
