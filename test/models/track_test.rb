@@ -15,6 +15,25 @@ class TrackTest < ActiveSupport::TestCase
     end
   end
 
+  context "scopes" do
+    setup do
+      @track1 = FactoryGirl.create(:master_track)
+      @track2 = FactoryGirl.create(:track)
+    end
+
+    should "have filtered scopes" do
+      assert_equal [:sort_order, :reverse_sort, :is_master, :offset, :limit].to_set,
+        Track.scopes.to_set
+    end
+
+    should "#is_master" do
+      assert_equal [@track1], Track.is_master(1)
+      assert_equal [@track1], Track.is_master("true")
+      assert_equal [@track1], Track.filter("is_master" => "1")
+      assert_equal [@track2], Track.filter("is_master" => "false")
+    end
+  end
+
   should "get s3_key" do
     track = FactoryGirl.create(:track, :s3_url => "http://s3.amazonaws.com/private/zp66vfwg",
       :s3_mp3_url => "http://s3.amazonaws.com/private/zp66vfwg.128.mp3")

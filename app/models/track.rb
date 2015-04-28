@@ -8,8 +8,8 @@ class Track < ActiveRecord::Base
   has_many :ingests, through: :document, source: :ingests
 
   # public scopes
-  filtered_scopes :sort_order, :reverse_sort
-  scope :sort_order, lambda {|param|
+  filtered_scopes :sort_order, :reverse_sort, :is_master
+  scope :sort_order, -> (param) {
     case param.first[0]  # E.g. get first key of {"id"=>"asc"}
     when "id"
       order(self.arel_table[:id].send(param.first[1].to_sym).to_sql)
@@ -17,7 +17,8 @@ class Track < ActiveRecord::Base
       raise ArgumentError, "Ignored unrecognized value 'sort_order[]=#{param}'."
     end
   }
-  scope :reverse_sort, lambda {|param| all.reverse_order if Model::Helper.booleanize(param)}
+  scope :reverse_sort, -> (param) { all.reverse_order if Model::Helper.booleanize(param) }
+  scope :is_master, -> (param) { where(is_master: Model::Helper.booleanize(param))}
 
   class << self
     def generate_uid
