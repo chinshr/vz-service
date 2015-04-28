@@ -17,7 +17,7 @@ FactoryGirl.define do
   end
 
   factory :document_with_track, parent: :document do
-    association :track
+    association :track, factory: :master_track
   end
 
   factory :ingest_audio, :class => "Ingest::Audio" do
@@ -88,6 +88,10 @@ FactoryGirl.define do
   factory :track do
     sequence(:s3_url) {|n| "http://s3.amazonaws.com/private/zp66vfwg21-#{n}"}
     sequence(:s3_mp3_url) {|n| "http://s3.amazonaws.com/private/zp66vfwg21-#{n}-128kbps-mp3"}
+  end
+
+  factory :master_track, parent: :track do
+    is_master true
   end
 
   factory :registration do

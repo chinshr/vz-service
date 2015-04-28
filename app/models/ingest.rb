@@ -37,12 +37,14 @@ class Ingest < ActiveRecord::Base
 
   delegate :s3_key, to: :upload, allow_nil: true
   delegate :track, to: :document, allow_nil: true
+  delegate :track=, to: :document, allow_nil: true
 
   belongs_to :upload, dependent: :destroy
   belongs_to :document
   accepts_nested_attributes_for :document
   has_many :chunks, dependent: :destroy
   has_many :tracks, through: :chunks, source: :track
+  # has_one :track, through: :document
 
   validates :upload, presence: true, on: :create
   validates :document, presence: true

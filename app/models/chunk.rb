@@ -11,7 +11,7 @@ class Chunk < Document
 
   belongs_to :ingest
   has_one :track, -> { where(is_master: false) }, foreign_key: :document_id,
-  dependent: :destroy  # <- chunk track
+    dependent: :destroy  # <- chunk track
 
   validates :ingest, presence: true
   validates :offset, presence: true

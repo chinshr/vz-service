@@ -38,7 +38,7 @@ class Api::Device < ActiveRecord::Base
 
     client_access.activate! if authorized?
 
-    if client && client.platform && client.platform.cap && client_access.user && client_access.user.user? && max_number_of_device_auths_per_account > 0 && max_number_of_devices_per_period > 0
+    if client && client.platform && client.platform.cap && client_access.user && client_access.user.user_role? && max_number_of_device_auths_per_account > 0 && max_number_of_devices_per_period > 0
       number_of_authorized_devices_for_account = client_access.user.client_accesses.joins(:clients => :platform).where("api_client_accesses.aasm_state = ? AND api_platforms.cap = ?", 'active', true).count
       if device_authorization_time_period > 0
         number_of_authorized_devices_within_time_period = client_access.user.client_accesses.joins(:clients => :platform).where("api_client_accesses.aasm_state = ? AND api_client_accesses.created_at > ? AND api_platforms.cap = ?", 'active', device_authorization_time_period.days.ago, true).count
@@ -50,7 +50,7 @@ class Api::Device < ActiveRecord::Base
       elsif number_of_authorized_devices_within_time_period >= max_number_of_devices_per_period
         raise Api::Exception::DeviceLimitPeriod.new(I18n.t('api.error_code.authorization_error.max_number_of_device_authorizations_allowed_per_period', days: device_authorization_time_period))
       end
-    elsif client && client.platform && client.platform.cap && client_access.user && client_access.user.user? && max_number_of_device_auths_per_account > 0
+    elsif client && client.platform && client.platform.cap && client_access.user && client_access.user.user_role? && max_number_of_device_auths_per_account > 0
       number_of_authorized_devices_for_account = client_access.user.client_accesses.joins(:clients => :platform).where("api_client_accesses.aasm_state = ? AND api_platforms.cap = ?", 'active', true).count
       if number_of_authorized_devices_for_account >= max_number_of_device_auths_per_account
         raise Api::Exception::DeviceLimit.new(I18n.t('api.error_code.authorization_error.max_number_of_device_authorizations_allowed'))

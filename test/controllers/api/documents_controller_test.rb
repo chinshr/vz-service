@@ -5,18 +5,18 @@ class Api::DocumentsControllerTest < ActionController::TestCase
     @user1              = FactoryGirl.create(:user)
     @user2              = FactoryGirl.create(:user)
 
-    @document1          = FactoryGirl.create(:document)
-    @track1             = FactoryGirl.create(:track)
-    @ingest1            = FactoryGirl.create(:ingest_audio, :document => @document1, :track => @track1)
+    @track1             = FactoryGirl.create(:track, is_master: true)
+    @document1          = FactoryGirl.create(:document, track: @track1)
+    @ingest1            = FactoryGirl.create(:ingest_audio, :document => @document1)
 
     @document1.privacy  = [:"public"]
     @document1.user     = @user1
     @document1.tag_list = ["brown", "fox", "jumps", "over", "fence"]
     @document1.save
 
-    @document2          = FactoryGirl.create(:document)
-    @track2             = FactoryGirl.create(:track)
-    @ingest2            = FactoryGirl.create(:ingest_audio, :document => @document2, :track => @track2)
+    @track2             = FactoryGirl.create(:track, is_master: true)
+    @document2          = FactoryGirl.create(:document, track: @track2)
+    @ingest2            = FactoryGirl.create(:ingest_audio, :document => @document2)
     @document2.privacy  = [:"private"]
     @document2.user     = @user2
     @document2.tag_list = ["brown", "cats", "jump", "higher"]
