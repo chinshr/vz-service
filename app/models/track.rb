@@ -23,6 +23,10 @@ class Track < ActiveRecord::Base
     def generate_uid
       SecureRandom.uuid
     end
+
+    def policy_class
+      TrackPolicy
+    end
   end
 
   def s3_key

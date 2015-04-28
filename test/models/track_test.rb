@@ -6,20 +6,12 @@ class TrackTest < ActiveSupport::TestCase
   end
 
   context "associations" do
-    setup do
-      @track  = FactoryGirl.create(:track, :s3_url => "http://s3.amazonaws.com/private/zp66vfwg21-1")
-      @ingest = FactoryGirl.create(:ingest_audio, track: @track)
-      assert_equal true, @track.valid?
-      assert_equal true, @ingest.save
-      @track.reload
-    end
+    should belong_to :document
+    should have_many(:ingests).through(:document).source(:ingests)
 
     should "have_many :ingests through :document" do
-      assert_equal @ingest, @track.ingests.first
-    end
-
-    should "have_one document" do
-      assert_equal @ingest.document, @track.document
+      @ingest = FactoryGirl.create(:ingest_audio)
+      assert_equal @ingest, @ingest.track.ingests.first
     end
   end
 

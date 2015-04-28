@@ -56,7 +56,7 @@ Voyzes::Application.routes.draw do
       collection do
         get "count"
       end
-      resources :tracks, :only => [:index, :show]
+      resources :tracks, :only => [:create, :index, :show, :update, :destroy]
     end
 
     resources :ingests, :only => [:index, :show, :update, :destroy] do

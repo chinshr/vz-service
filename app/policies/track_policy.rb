@@ -11,15 +11,15 @@ class TrackPolicy < ApplicationPolicy
     admin_or_backend_role?
   end
 
-  def edit?
-    admin_or_backend_role?
-  end
-
   def update?
     admin_or_backend_role?
   end
 
   def destroy?
     admin_or_backend_role?
+  end
+
+  def permitted_attributes
+    [:s3_url]
   end
 end
