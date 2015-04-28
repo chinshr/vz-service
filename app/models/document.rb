@@ -13,7 +13,6 @@ class Document < ActiveRecord::Base
   has_one :track, -> { where(is_master: true) }, dependent: :destroy  # <- master track
   accepts_nested_attributes_for :track
   has_many :tracks, through: :chunks, source: :track
-
   acts_as_ordered_taggable_on :tags, :auto
 
   validates :slug, presence: true, uniqueness: {case_sensitive: false}
@@ -86,8 +85,10 @@ class Document < ActiveRecord::Base
     !!ingests.order(id: :desc).first.try(:finished?)
   end
 
-  def tracks_including_master
-    join(:tracks).join(:track).where()
+  # TODO: write a cool association
+  def tracks_including_master_track
+    document_ids = chunks.pluck(:id) + [self.id]
+    Track.where(document_id: document_ids)
   end
 
   protected

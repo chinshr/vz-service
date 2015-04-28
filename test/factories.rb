@@ -25,6 +25,11 @@ FactoryGirl.define do
     association :document, factory: :document_with_track
   end
 
+  factory :ingest_audio_without_track, :class => "Ingest::Audio" do
+    association :upload, factory: :upload_audio
+    association :document, factory: :document
+  end
+
   factory :chunk do
     association :ingest, factory: :ingest_audio
     offset 0.0
