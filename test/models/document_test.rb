@@ -117,13 +117,15 @@ class DocumentTest < ActiveSupport::TestCase
     end
   end
 
-  should "have a track" do
-    @document = FactoryGirl.create(:document)
-    @track1    = FactoryGirl.create(:track)
-    @ingest1   = FactoryGirl.create(:ingest_audio, :document => @document, :track => @track1)
-    @track2    = FactoryGirl.create(:track)
-    @ingest2   = FactoryGirl.create(:ingest_audio, :document => @document, :track => @track2)
-    assert_equal @track2, @document.track
+  should "have a master track" do
+    @document  = FactoryGirl.create(:document)
+    assert_difference "Track.count", 1 do
+      track = @document.create_track(s3_url: "http://foo/bar")
+      assert_equal "http://foo/bar", @document.track.s3_url
+      assert_equal true, @document.track.is_master?
+      track = @document.create_track(s3_url: "http://one/two")
+      assert_equal "http://one/two", @document.track.s3_url
+    end
   end
 
   should "set/get content as rich_text array structure" do

@@ -35,7 +35,23 @@ class ApplicationPolicy
   end
 
   def backend_role?
-    user && (user.backend_role? || user.admin_role?)
+    !!(user && (user.backend_role? || user.admin_role?))
+  end
+
+  def admin_role?
+    !!(user && user.admin_role?)
+  end
+
+  def developer_role?
+    !!(user && user.developer_role?)
+  end
+
+  def admin_or_backend_role?
+    admin_role? || backend_role?
+  end
+
+  def owner_of?(record)
+    !!(user && user.owner_of?(record))
   end
 
   def scope

@@ -1,5 +1,5 @@
 class ChunkPolicy < IngestPolicy
   def create?
-    backend_role?
+    admin_or_backend_role?
   end
 end

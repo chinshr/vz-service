@@ -5,6 +5,17 @@ class ChunkTest < ActiveSupport::TestCase
     should belong_to :ingest
   end
 
+  context "delegate" do
+    setup do
+      @chunk = FactoryGirl.create(:chunk)
+    end
+
+    should "delegate to document track" do
+      assert_not_nil @chunk.ingest.document.track
+      assert_equal @chunk.ingest.document.track, @chunk.track
+    end
+  end
+
   context "validations" do
     should validate_presence_of :ingest
     should validate_presence_of :offset

@@ -15,8 +15,8 @@ defaults: &defaults
 
 development:
   <<: *defaults
-  S3_INBOUND_BUCKET: <%= ENV.fetch('S3_INBOUND_BUCKET', "/voyzes-dev-uploads") %>  # vz-dev-dropbox
-  S3_OUTBOUND_BUCKET: <%= ENV.fetch('S3_OUTBOUND_BUCKET', "/voyzes-dev-private") %>  # vz-dev-vault
+  S3_INBOUND_BUCKET: <%= ENV.fetch('S3_INBOUND_BUCKET', "/vz-dev-dropbox") %>  # /voyzes-dev-uploads
+  S3_OUTBOUND_BUCKET: <%= ENV.fetch('S3_OUTBOUND_BUCKET', "/vz-dev-vault") %>  # /voyzes-dev-private
 
   GOOGLE_SPEECH_API_KEY: <%= ENV.fetch('GOOGLE_SPEECH_API_KEY', "AIzaSyAqcAyKz-aQq-LWSrAYkajCbqRQflTLCKY") %> 
   ATT_SPEECH_API_KEY: <%= ENV.fetch('ATT_SPEECH_API_KEY', "tgcqoeaecj4ff052a9ee8g0mzt9xti7p") %> 

@@ -94,6 +94,11 @@ class User < ActiveRecord::Base
     confirmed?
   end
 
+  # E.g. @user.owner_of(@document) -> false
+  def owner_of?(record)
+    !!(record.respond_to?(:user) && record.user && self == record.user)
+  end
+
   protected
 
   def has_ip_address?

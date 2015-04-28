@@ -5,7 +5,6 @@ class IngestTest < ActiveSupport::TestCase
     should belong_to(:upload).dependent(:destroy)
     should belong_to(:document)
     should have_many(:chunks).dependent(:destroy)
-    should have_one(:track).through(:document)
     should have_many(:tracks).through(:chunks)
   end
 
@@ -16,9 +15,16 @@ class IngestTest < ActiveSupport::TestCase
   end
 
   context "delegate" do
-    should "#s3_key to upload" do
+    setup do
       @ingest = FactoryGirl.create(:ingest_audio)
+    end
+
+    should "#s3_key to upload" do
       assert_equal @ingest.upload.s3_key, @ingest.s3_key
+    end
+
+    should "#track to document" do
+      assert_equal @ingest.document.track, @ingest.track
     end
   end
 

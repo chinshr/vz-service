@@ -12,15 +12,17 @@ FactoryGirl.define do
 
   factory :document do
     association :user
-    association :track
     sequence(:title) {|n| "title-#{n}"}
     sequence(:description) {|n| "description-#{n}"}
   end
 
+  factory :document_with_track, parent: :document do
+    association :track
+  end
+
   factory :ingest_audio, :class => "Ingest::Audio" do
     association :upload, factory: :upload_audio
-    association :document
-    association :track, factory: :track
+    association :document, factory: :document_with_track
   end
 
   factory :chunk do

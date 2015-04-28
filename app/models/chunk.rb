@@ -9,6 +9,8 @@ class Chunk < Document
     :transcription_error => Speech::AudioSplitter::AudioChunk::STATUS_TRANSCRIPTION_ERROR
   }
 
+  belongs_to :ingest
+  delegate :track, to: :ingest
   validates :ingest, presence: true
   validates :offset, presence: true
 

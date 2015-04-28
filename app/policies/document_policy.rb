@@ -1,19 +1,23 @@
 class DocumentPolicy < ApplicationPolicy
 
+  def create?
+    admin_or_backend_role?
+  end
+
   def show?
-    record.privacy_private? ? !!(user && record.user && user == record.user) : true
+    admin_or_backend_role? || (record.privacy_private? ? owner_of?(record) : true)
   end
 
   def edit?
-    !!(user && record.user && user == record.user)
+    admin_or_backend_role? || owner_of?(record)
   end
 
   def update?
-    !!(user && record.user && user == record.user)
+    admin_or_backend_role? || owner_of?(record)
   end
 
   def destroy?
-    !!(user && record.user && user == record.user)
+    admin_or_backend_role? || owner_of?(record)
   end
 
 end

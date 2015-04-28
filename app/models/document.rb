@@ -8,11 +8,10 @@ class Document < ActiveRecord::Base
   PRIVACY_SETTINGS = {'public' => 0, 'private' => 1, 'unlisted' => 2}
 
   belongs_to :user
-  belongs_to :ingest
-  belongs_to :track, dependent: :destroy  # <- main track
-  accepts_nested_attributes_for :track
   has_many :ingests, foreign_key: :document_id
   has_many :chunks, through: :ingests
+  has_one :track, -> { where(is_master: true) }, dependent: :destroy  # <- master track
+  accepts_nested_attributes_for :track
   has_many :tracks, through: :chunks, source: :track
 
   acts_as_ordered_taggable_on :tags, :auto
@@ -85,6 +84,10 @@ class Document < ActiveRecord::Base
 
   def transcribed?
     !!ingests.order(id: :desc).first.try(:finished?)
+  end
+
+  def tracks_including_master
+    join(:tracks).join(:track).where()
   end
 
   protected

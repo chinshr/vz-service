@@ -56,7 +56,9 @@ Voyzes::Application.routes.draw do
       collection do
         get "count"
       end
+      resources :tracks, :only => [:index, :show]
     end
+
     resources :ingests, :only => [:index, :show, :update, :destroy] do
       resources :chunks, :only => [:create, :index, :show, :update, :destroy], controller: "ingests/chunks" do
         collection do

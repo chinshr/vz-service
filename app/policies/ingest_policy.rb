@@ -1,27 +1,27 @@
 class IngestPolicy < ApplicationPolicy
 
   def index?
-    backend_role?
+    admin_or_backend_role?
   end
 
   def show?
-    backend_role?
+    admin_or_backend_role?
   end
 
   def edit?
-    backend_role?
+    admin_or_backend_role?
   end
 
   def update?
-    backend_role?
+    admin_or_backend_role?
   end
 
   def destroy?
-    backend_role?
+    admin_or_backend_role?
   end
 
   def count?
-    backend_role?
+    admin_or_backend_role?
   end
 
   def permitted_attributes
