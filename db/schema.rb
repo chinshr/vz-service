@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150427233523) do
+ActiveRecord::Schema.define(version: 20150428175941) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -134,7 +134,6 @@ ActiveRecord::Schema.define(version: 20150427233523) do
     t.integer  "user_id"
     t.json     "rich_text"
     t.text     "text"
-    t.integer  "ingest_id"
     t.decimal  "offset",                      precision: 11, scale: 5
     t.decimal  "duration",                    precision: 11, scale: 5
     t.decimal  "start_time",                  precision: 11, scale: 5
@@ -146,9 +145,12 @@ ActiveRecord::Schema.define(version: 20150427233523) do
     t.json     "response"
     t.json     "processing_errors"
     t.string   "uid"
+    t.integer  "document_id"
+    t.integer  "ingest_id"
   end
 
   add_index "documents", ["created_at"], name: "index_documents_on_created_at", using: :btree
+  add_index "documents", ["document_id"], name: "index_documents_on_document_id", using: :btree
   add_index "documents", ["ingest_id"], name: "index_documents_on_ingest_id", using: :btree
   add_index "documents", ["locale"], name: "index_documents_on_locale", using: :btree
   add_index "documents", ["offset"], name: "index_documents_on_offset", using: :btree

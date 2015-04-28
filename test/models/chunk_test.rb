@@ -2,7 +2,8 @@ require 'test_helper'
 
 class ChunkTest < ActiveSupport::TestCase
   context "associations" do
-    should belong_to :ingest
+    should belong_to :document
+    should have_one(:track).dependent(:destroy)
   end
 
   context "delegate" do
@@ -11,13 +12,12 @@ class ChunkTest < ActiveSupport::TestCase
     end
 
     should "delegate to document track" do
-      assert_not_nil @chunk.ingest.document.track
-#      assert_equal @chunk.ingest.document.track, @chunk.track
+     # assert_equal @chunk.document.track, @chunk.track
     end
   end
 
   context "validations" do
-    should validate_presence_of :ingest
+    should validate_presence_of :document
     should validate_presence_of :offset
   end
 
@@ -49,17 +49,18 @@ class ChunkTest < ActiveSupport::TestCase
     context "#best" do
       setup do
         @ingest = FactoryGirl.create(:ingest_audio)
-        @c1 = Chunk::GoogleSpeech.create(:position => 1, :offset => 0,  :text => "I hate to say", :score => 0.80, :ingest => @ingest)
-        @c2 = Chunk::GoogleSpeech.create(:position => 2, :offset => 10, :text => "cat maths are", :score => 0.65, :ingest => @ingest)
-        @c3 = Chunk::GoogleSpeech.create(:position => 3, :offset => 20, :text => "the cesty food in the world", :score => 0.85, :ingest => @ingest)
+        @document = @ingest.document
+        @c1 = Chunk::GoogleSpeech.create(:position => 1, :offset => 0,  :text => "I hate to say", :score => 0.80, :document => @ingest.document)
+        @c2 = Chunk::GoogleSpeech.create(:position => 2, :offset => 10, :text => "cat maths are", :score => 0.65, :document => @ingest.document)
+        @c3 = Chunk::GoogleSpeech.create(:position => 3, :offset => 20, :text => "the cesty food in the world", :score => 0.85, :document => @ingest.document)
 
-        @c4 = Chunk::AttSpeech.create(:position => 1, :offset => 0,  :text => "I have to pray", :score => 0.72, :ingest => @ingest)
-        @c5 = Chunk::AttSpeech.create(:position => 2, :offset => 10, :text => "that macaronies are", :score => 0.78, :ingest => @ingest)
-        @c6 = Chunk::AttSpeech.create(:position => 3, :offset => 20, :text => "the best mushrooms in the whirlwind.", :score => 0.70, :ingest => @ingest)
+        @c4 = Chunk::AttSpeech.create(:position => 1, :offset => 0,  :text => "I have to pray", :score => 0.72, :document => @ingest.document)
+        @c5 = Chunk::AttSpeech.create(:position => 2, :offset => 10, :text => "that macaronies are", :score => 0.78, :document => @ingest.document)
+        @c6 = Chunk::AttSpeech.create(:position => 3, :offset => 20, :text => "the best mushrooms in the whirlwind.", :score => 0.70, :document => @ingest.document)
 
-        @c7 = Chunk::NuanceDragon.create(:position => 1, :offset => 0,  :text => "I have say", :score => 0.34, :ingest => @ingest)
-        @c8 = Chunk::NuanceDragon.create(:position => 2, :offset => 0,  :text => "that some macaronies are", :score => 0.63, :ingest => @ingest)
-        @c9 = Chunk::NuanceDragon.create(:position => 3, :offset => 0,  :text => "the best food in the world", :score => 0.87, :ingest => @ingest)
+        @c7 = Chunk::NuanceDragon.create(:position => 1, :offset => 0,  :text => "I have say", :score => 0.34, :document => @ingest.document)
+        @c8 = Chunk::NuanceDragon.create(:position => 2, :offset => 0,  :text => "that some macaronies are", :score => 0.63, :document => @ingest.document)
+        @c9 = Chunk::NuanceDragon.create(:position => 3, :offset => 0,  :text => "the best food in the world", :score => 0.87, :document => @ingest.document)
       end
 
       should "scope best scores" do
@@ -91,7 +92,7 @@ class ChunkTest < ActiveSupport::TestCase
 
   should "delegate to document's title" do
     chunk = FactoryGirl.create(:chunk)
-    assert_equal chunk.ingest.document.title, chunk.title
+    assert_equal chunk.document.title, chunk.title
   end
 
   should "get class from engine name" do
@@ -119,21 +120,21 @@ class ChunkTest < ActiveSupport::TestCase
 
     should "create GoogleSpeech segment" do
       assert_difference "Chunk::GoogleSpeech.count", 1 do
-        @ingest.chunks.create(@attributes.merge({:type => "Chunk::GoogleSpeech"}))
+        @ingest.document.chunks.create(@attributes.merge({:type => "Chunk::GoogleSpeech"}))
         assert_equal Chunk::GoogleSpeech, @ingest.chunks.first.class
       end
     end
 
     should "create AttSpeech segment" do
       assert_difference "Chunk::AttSpeech.count", 1 do
-        @ingest.chunks.create(@attributes.merge({:type => "Chunk::AttSpeech"}))
+        @ingest.document.chunks.create(@attributes.merge({:type => "Chunk::AttSpeech"}))
         assert_equal Chunk::AttSpeech, @ingest.chunks.first.class
       end
     end
 
     should "create NuanceDragon segment" do
       assert_difference "Chunk::NuanceDragon.count", 1 do
-        @ingest.chunks.create(@attributes.merge({:type => "Chunk::NuanceDragon"}))
+        @ingest.document.chunks.create(@attributes.merge({:type => "Chunk::NuanceDragon"}))
         assert_equal Chunk::NuanceDragon, @ingest.chunks.first.class
       end
     end

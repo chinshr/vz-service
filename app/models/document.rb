@@ -9,8 +9,9 @@ class Document < ActiveRecord::Base
 
   belongs_to :user
   has_many :ingests, foreign_key: :document_id
-  has_many :chunks, through: :ingests
-  has_one :track, -> { where(is_master: true) }, dependent: :destroy  # <- master track
+  has_many :chunks, foreign_key: :document_id, dependent: :destroy
+  has_one :track, -> { where(is_master: true) }, foreign_key: :document_id,
+    dependent: :destroy  # <- master track
   accepts_nested_attributes_for :track
   has_many :tracks, through: :chunks, source: :track
   acts_as_ordered_taggable_on :tags, :auto

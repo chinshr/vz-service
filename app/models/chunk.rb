@@ -9,11 +9,13 @@ class Chunk < Document
     :transcription_error => Speech::AudioSplitter::AudioChunk::STATUS_TRANSCRIPTION_ERROR
   }
 
-  belongs_to :ingest
+  delegate :title, to: :document
+
+  belongs_to :document
   has_one :track, -> { where(is_master: false) }, foreign_key: :document_id,
     dependent: :destroy  # <- chunk track
 
-  validates :ingest, presence: true
+  validates :document, presence: true
   validates :offset, presence: true
 
   filtered_scopes :sort_order, :reverse_sort, :any_of_type,
@@ -45,6 +47,8 @@ class Chunk < Document
     joins("JOIN (SELECT position, MAX(score) AS max_score FROM documents p GROUP BY p.position) y ON y.position = documents.position AND y.max_score = documents.score").
     order(:position)
   }
+  scope :ingest_chunks, -> { where("documents.document_id IS NOT NULL AND documents.ingest_id IS NOT NULL") }
+  scope :document_chunks, -> { where("documents.document_id IS NOT NULL AND documents.ingest_id IS NULL") }
 
   class << self
     def slug_length; 40; end
@@ -80,10 +84,6 @@ class Chunk < Document
       end
     end
   end  ## class
-
-  def title
-    ingest.try(:document).try(:title)
-  end
 
   protected
 
