@@ -27,6 +27,10 @@ class Api::ApplicationController < ApplicationController
     process_exception(exception)
   end
 
+  rescue_from ActionController::ParameterMissing do |exception|
+    process_exception(exception)
+  end
+
   protected
 
   def api_response(error = nil)

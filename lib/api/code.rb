@@ -32,7 +32,7 @@ module Api::Code
   @@error_codes = {
     '1'   => {:http => 200, :message => 'api.error_code.success'},
     '-1'  => {:http => 400, :message => 'api.error_code.unknown'},
-    '-2'  => {:http => 422, :message => 'api.error_code.argument_missing', :class => ["ArgumentError", "Api::Exception::ArgumentMissing"]},
+    '-2'  => {:http => 422, :message => 'api.error_code.argument_missing', :class => ["ArgumentError", "Api::Exception::ArgumentMissing", "ActionController::ParameterMissing"]},
     '-3'  => {:http => 400, :message => 'api.error_code.validation_error'},
     '-4'  => {:http => 404, :message => 'api.error_code.record_not_found', :class => "ActiveRecord::RecordNotFound"},
     '-5'  => {:http => 401, :message => 'api.error_code.authorization_error.generic', :class => ["Pundit::NotAuthorizedError", "Api::Exception::AuthorizationError"]},
