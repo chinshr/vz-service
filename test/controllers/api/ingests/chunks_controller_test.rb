@@ -76,7 +76,7 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
     end
 
     should "all ingest chunks when signed in as backend user" do
-      @chunk1 = FactoryGirl.create(:chunk_google_speech, ingest: @ingest1)
+      @chunk1 = FactoryGirl.create(:chunk_google_speech, document: @ingest1.document, ingest_id: @ingest1.id)
       sign_in :user, @user2
       get :index, ingest_id: @ingest1.id, format: :json
       assert_response :success
@@ -86,8 +86,8 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
     end
 
     should "filter ingest chunks of type att_speech" do
-      @chunk1 = FactoryGirl.create(:chunk_google_speech, ingest: @ingest1)
-      @chunk2 = FactoryGirl.create(:chunk_att_speech, ingest: @ingest1)
+      @chunk1 = FactoryGirl.create(:chunk_google_speech, document: @ingest1.document, ingest_id: @ingest1.id)
+      @chunk2 = FactoryGirl.create(:chunk_att_speech, document: @ingest1.document, ingest_id: @ingest1.id)
       sign_in :user, @user2
       get :index, ingest_id: @ingest1.id, any_of_type: "att_speech", format: :json
       assert_response :success
@@ -110,7 +110,7 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
     end
 
     should "count ingest chunks when backend user is signed in" do
-      @chunk1 = FactoryGirl.create(:chunk_google_speech, ingest: @ingest1)
+      @chunk1 = FactoryGirl.create(:chunk_google_speech, document: @ingest1.document, ingest_id: @ingest1.id)
       sign_in :user, @user2
       get :count, ingest_id: @ingest1.id, format: :json
       assert_response :success
@@ -121,7 +121,7 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
 
   context "GET /api/ingests/:ingest_id/chunks/:id" do
     setup do
-      @chunk1 = FactoryGirl.create(:chunk_google_speech, ingest: @ingest1)
+      @chunk1 = FactoryGirl.create(:chunk_google_speech, document: @ingest1.document, ingest_id: @ingest1.id)
     end
 
     should "be unauthorized whithout any user" do
@@ -140,12 +140,14 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
       get :show, ingest_id: @ingest1.id, id: @chunk1.id, format: :json
       assert_response :success
       assert_attributes response_body["chunk"]
+      assert_equal @ingest1.id, response_body["chunk"]["ingest_id"]
+      assert_equal @ingest1.document.id, response_body["chunk"]["document_id"]
     end
   end
 
   context "PUT /api/ingests/:ingest_id/chunks/:id" do
     setup do
-      @chunk1 = FactoryGirl.create(:chunk_google_speech, ingest: @ingest1)
+      @chunk1 = FactoryGirl.create(:chunk_google_speech, document: @ingest1.document, ingest_id: @ingest1.id)
     end
 
     should "update ingest with backend user" do
@@ -174,7 +176,7 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
 
   context "DELETE /api/ingests/:ingest_id/chunks/:id" do
     setup do
-      @chunk1 = FactoryGirl.create(:chunk_google_speech, ingest: @ingest1)
+      @chunk1 = FactoryGirl.create(:chunk_google_speech, document: @ingest1.document, ingest_id: @ingest1.id)
     end
 
     should "be unauthorized without user" do
@@ -206,7 +208,7 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
 
   def assert_attributes(params, expected_attributes = {})
     assert_equal false, params.blank?, "response should not be empty"
-    (expected_attributes.stringify_keys.keys + %w(id ingest_id type position offset duration start_time
+    (expected_attributes.stringify_keys.keys + %w(id document_id ingest_id type position offset duration start_time
       end_time text score response processing_errors processing_status uid)).uniq.each do |attribute|
       assert params.has_key?(attribute), "should contain key '#{attribute}' in response '#{params}'"
     end

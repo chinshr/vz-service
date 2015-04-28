@@ -15,6 +15,12 @@ class Message < ActiveRecord::Base
   has_many :attachings, dependent: :destroy
   has_many :attachments, through: :attachings, source: :upload
 
+  class << self
+    def generate_uid
+      SecureRandom.uuid
+    end
+  end
+
   def text
     @text = self[:text] || begin
       Nokogiri::HTML(html).text

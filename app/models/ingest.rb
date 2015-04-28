@@ -42,9 +42,12 @@ class Ingest < ActiveRecord::Base
   belongs_to :upload, dependent: :destroy
   belongs_to :document
   accepts_nested_attributes_for :document
-  has_many :chunks, dependent: :destroy
+
+  has_many :ingest_chunks, -> (record) { where(document_id: record.document.id) },
+    foreign_key: :ingest_id, class_name: "Chunk", dependent: :nullify
+  has_many :chunks, through: :document
   has_many :tracks, through: :chunks, source: :track
-  # has_one :track, through: :document
+
 
   validates :upload, presence: true, on: :create
   validates :document, presence: true

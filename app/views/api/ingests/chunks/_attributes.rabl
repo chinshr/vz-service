@@ -1,1 +1,1 @@
-attributes :id, :ingest_id, :type, :position, :offset, :duration, :start_time, :end_time, :text, :score, :response, :processing_errors, :processing_status, :uid
+attributes :id, :document_id, :ingest_id, :type, :position, :offset, :duration, :start_time, :end_time, :text, :score, :response, :processing_errors, :processing_status, :uid

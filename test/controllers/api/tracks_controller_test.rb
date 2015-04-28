@@ -9,11 +9,11 @@ class Api::TracksControllerTest < ActionController::TestCase
     @document = @ingest.document
 
     @t0 = @ingest.document.create_track(s3_url: "http://t0")
-    @c1 = Chunk::GoogleSpeech.create(:position => 1, :offset => 0,  :text => "I hate to say", :score => 0.80, :ingest => @ingest)
+    @c1 = Chunk::GoogleSpeech.create(:position => 1, :offset => 0,  :text => "I hate to say", :score => 0.80, :document => @ingest.document, :ingest_id => @ingest.id)
     @t1 = @c1.create_track(s3_url: "http://t1")
-    @c2 = Chunk::GoogleSpeech.create(:position => 2, :offset => 10, :text => "cat maths are", :score => 0.65, :ingest => @ingest)
+    @c2 = Chunk::GoogleSpeech.create(:position => 2, :offset => 10, :text => "cat maths are", :score => 0.65, :document => @ingest.document, :ingest_id => @ingest.id)
     @t2 = @c2.create_track(s3_url: "http://t2")
-    @c3 = Chunk::GoogleSpeech.create(:position => 3, :offset => 20, :text => "the cesty food in the world", :score => 0.85, :ingest => @ingest)
+    @c3 = Chunk::GoogleSpeech.create(:position => 3, :offset => 20, :text => "the cesty food in the world", :score => 0.85, :document => @ingest.document, :ingest_id => @ingest.id)
     @t3 = @c3.create_track(s3_url: "http://t3")
 
     sign_out :user

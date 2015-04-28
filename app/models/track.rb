@@ -4,7 +4,7 @@ class Track < ActiveRecord::Base
 
   validates :s3_url, presence: true
 
-  belongs_to :document
+  belongs_to :document  # <- document or chunk!
   has_many :ingests, through: :document, source: :ingests
 
   # public scopes

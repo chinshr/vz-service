@@ -20,6 +20,13 @@ FactoryGirl.define do
     association :track, factory: :master_track
   end
 
+  factory :document_with_ingest, parent: :document do
+    association :track, factory: :master_track
+    before(:create) do |document|
+      FactoryGirl.create(:ingest_audio, document: document)
+    end
+  end
+
   factory :ingest_audio, :class => "Ingest::Audio" do
     association :upload, factory: :upload_audio
     association :document, factory: :document_with_track
@@ -31,7 +38,7 @@ FactoryGirl.define do
   end
 
   factory :chunk do
-    association :ingest, factory: :ingest_audio
+    association :document, factory: :document_with_track
     offset 0.0
     duration 3.51
     start_time 0
@@ -45,9 +52,24 @@ FactoryGirl.define do
   end
 
   factory :chunk_google_speech, parent: :chunk, class: "Chunk::GoogleSpeech" do
+    association :document, factory: :document_with_ingest
+    before(:create) do |chunk|
+      chunk.ingest_id = chunk.document.ingests.first.id
+    end
   end
 
   factory :chunk_att_speech, parent: :chunk, class: "Chunk::AttSpeech" do
+    association :document, factory: :document_with_ingest
+    before(:create) do |chunk|
+      chunk.ingest_id = chunk.document.ingests.first.id
+    end
+  end
+
+  factory :chunk_nuance_dragon, parent: :chunk, class: "Chunk::NuanceDragon" do
+    association :document, factory: :document_with_ingest
+    before(:create) do |chunk|
+      chunk.ingest_id = chunk.document.ingests.first.id
+    end
   end
 
   factory :message do
