@@ -22,10 +22,11 @@ class Api::TracksControllerTest < ActionController::TestCase
   context "POST /api/documents/:document_id/tracks.json" do
     should "#create document master track" do
       sign_in :user, @user2
-      post :create, document_id: @document.id, track: {s3_url: "http://t4"}, format: :json
+      post :create, document_id: @document.id, track: {s3_url: "http://t4", s3_mp3_url: "http://aws.amazon.com/origin/t4.mp3"}, format: :json
       assert_response :success
       assert_attributes response_body["track"]
       assert_equal "http://t4", response_body["track"]["s3_url"]
+      assert_equal "http://aws.amazon.com/origin/t4.mp3", response_body["track"]["s3_mp3_url"]
     end
 
     should "#create chunk track" do

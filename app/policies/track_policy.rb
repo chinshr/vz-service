@@ -20,6 +20,6 @@ class TrackPolicy < ApplicationPolicy
   end
 
   def permitted_attributes
-    [:s3_url]
+    [:s3_url, :s3_mp3_url]
   end
 end
