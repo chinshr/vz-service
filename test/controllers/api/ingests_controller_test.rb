@@ -140,11 +140,12 @@ class Api::IngestsControllerTest < ActionController::TestCase
     should "update ingest with backend user" do
       sign_in :user, @user2
       put :update, {:id => @ingest2.id, :ingest => {
-        stage: "transcribe"
+        stage: "transcribe", progress: 5
       }, format: :json}
       assert_response :success
       assert_response_body_attributes_with "ingest"
       assert_equal "transcribe", @ingest2.reload.stage
+      assert_equal 5, @ingest2.reload.progress
     end
 
     should "update ingest create document track" do
