@@ -148,6 +148,29 @@ class Api::IngestsControllerTest < ActionController::TestCase
       assert_equal 5, @ingest2.reload.progress
     end
 
+    should "change ingest state to 'started' via #status=" do
+      sign_in :user, @user2
+      @ingest2.start!
+      assert_equal :starting, @ingest2.state
+      put :update, {:id => @ingest2.id, :ingest => {
+        stage: "start", progress: 1, status: Ingest::STATE_STARTED
+      }, format: :json}
+      assert_response :success
+      assert_response_body_attributes_with "ingest"
+      assert_equal Ingest::STATE_STARTED, response_body["ingest"]["status"]
+      assert_equal :started, @ingest2.reload.state
+    end
+
+    should "NOT change ingest state due to invalid transition via #status=" do
+      sign_in :user, @user2
+      assert_equal :created, @ingest2.state
+      put :update, {:id => @ingest2.id, :ingest => {
+        stage: "start", progress: 1, status: Ingest::STATE_RESET
+      }, format: :json}
+      assert_response :unprocessable_entity
+      assert_equal :created, @ingest2.reload.state
+    end
+
     should "update ingest create document track" do
       @ingest3 = FactoryGirl.create(:ingest_audio)
       @ingest3.document.track.destroy

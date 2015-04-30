@@ -29,6 +29,11 @@ en:
         not_updated: "Changes were not saved."
         update_needs_confirmation: "Confirmation password required."
 
+  lib:
+    model:
+      status_support:
+        status: "cannot transition from state '%{current_state}'"
+
   api:
     error_code:
       authorization_error:

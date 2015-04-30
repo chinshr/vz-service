@@ -26,7 +26,7 @@ class IngestPolicy < ApplicationPolicy
 
   def permitted_attributes
     if update?
-      [:messages, :stage, :iteration, :busy, :terminate, :progress,
+      [:messages, :stage, :iteration, :busy, :terminate, :progress, :status,
         :document_attributes => [:id, :track_attributes => [:s3_url]]]
     else
       []

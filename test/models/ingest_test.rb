@@ -83,10 +83,20 @@ class IngestTest < ActiveSupport::TestCase
       end
     end
 
+    should "transition on status=2" do
+      ingest = FactoryGirl.create(:ingest_audio, :terminate => true, :busy => true)
+      assert_equal :created, ingest.state
+      ingest.status = Ingest::STATE_STARTING
+      assert_equal true, ingest.save
+      assert_equal :starting, ingest.reload.state
+      ingest.status = Ingest::STATE_STARTED
+      assert_equal true, ingest.save
+      assert_equal :started, ingest.reload.state
+    end
+
     should "events should transition states" do
       ingest = FactoryGirl.create(:ingest_audio, :terminate => true, :busy => true)
       assert_equal :created, ingest.state
-
       ingest.start!
       assert_equal :starting, ingest.state
       assert_equal false, ingest.terminate?

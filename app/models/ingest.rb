@@ -1,5 +1,6 @@
 class Ingest < ActiveRecord::Base
   include AASM
+  include Model::AASM::StatusSupport
   include Model::Filter
   include Model::Uid
 
@@ -132,16 +133,6 @@ class Ingest < ActiveRecord::Base
     def generate_uid
       SecureRandom.uuid
     end
-  end
-
-  # e.g. an integer representation of state, like 9 (=finished)
-  def status
-    self.class::STATES.symbolize_keys[aasm.current_state]
-  end
-
-  # Alias for AASM current state E.g. :finished
-  def state
-    aasm.current_state
   end
 
   # permissible events
