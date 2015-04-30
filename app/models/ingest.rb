@@ -3,10 +3,10 @@ class Ingest < ActiveRecord::Base
   include Model::Filter
   include Model::Uid
 
-  STAGE_START       = 0
-  STAGE_HARVEST     = 100
-  STAGE_TRANSCODE   = 200
-  STAGE_TRANSCRIBE  = 300
+  STAGE_START       = 100
+  STAGE_HARVEST     = 200
+  STAGE_TRANSCODE   = 300
+  STAGE_TRANSCRIBE  = 400
   STAGE_FINISH      = 500
   STAGE_ARCHIVE     = 600
   STAGES = {
@@ -14,7 +14,6 @@ class Ingest < ActiveRecord::Base
     transcode: STAGE_TRANSCODE, transcribe: STAGE_TRANSCRIBE,
     finish: STAGE_FINISH, archive: STAGE_ARCHIVE
   }
-  WORKFLOW = [:start, :harvest, :transcode, :transcribe, :finish]
 
   STATE_CREATED     = 0
   STATE_STARTING    = 1
