@@ -10,9 +10,9 @@ class Document < ActiveRecord::Base
   belongs_to :user
   has_many :ingests, foreign_key: :document_id
   has_many :chunks, foreign_key: :document_id, dependent: :destroy
-  has_one :track, -> { where(is_master: true) }, foreign_key: :document_id,
-    dependent: :destroy  # <- master track
-  accepts_nested_attributes_for :track
+  has_one :tracking, foreign_key: :document_id, dependent: :destroy
+  has_one :track, -> { where(is_master: true) }, through: :tracking
+  accepts_nested_attributes_for :track, allow_destroy: true
   has_many :tracks, through: :chunks, source: :track
   acts_as_ordered_taggable_on :tags, :auto
 
@@ -62,6 +62,19 @@ class Document < ActiveRecord::Base
     end
   end
 
+  def create_track(attributes = {})
+    track_attributes = attributes.symbolize_keys.merge(is_master: (self.class.name == "Document"))
+    transaction do
+      track.destroy && reload if tracking
+      build_tracking(document: self).create_track(track_attributes)
+    end
+  end
+
+  def build_track(attributes = {})
+    track_attributes = attributes.symbolize_keys.merge(is_master: (self.class.name == "Document"))
+    build_tracking(document: self).build_track(track_attributes)
+  end
+
   def privacy=(values)
     self.privacy_mask = ([values].flatten.map(&:to_s) & PRIVACY_SETTINGS.keys).sum {|d| self.class.privacy_mask(d)}
   end
@@ -89,7 +102,7 @@ class Document < ActiveRecord::Base
   # TODO: write a cool association
   def tracks_including_master_track
     document_ids = chunks.pluck(:id) + [self.id]
-    Track.where(document_id: document_ids)
+    Track.joins(:tracking).where("trackings.document_id IN (?)", document_ids)
   end
 
   protected

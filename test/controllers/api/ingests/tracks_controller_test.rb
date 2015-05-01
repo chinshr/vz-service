@@ -1,0 +1,89 @@
+require 'test_helper'
+
+class Api::Ingests::TracksControllerTest < ActionController::TestCase
+  setup do
+    @user1    = FactoryGirl.create(:user)
+    @user2    = FactoryGirl.create(:backend_user)
+
+    @ingest   = FactoryGirl.create(:ingest_audio)
+    @document = @ingest.document
+
+    @t0 = @ingest.document.create_track(s3_url: "http://s3.amazonaws.com/vz-test-origin/13dba008-7ba2-4804-a534-43d03c65260b/t0")
+    @c1 = Chunk::GoogleSpeech.create(:position => 1, :offset => 0,  :text => "I hate to say", :score => 0.80, :document => @ingest.document, :ingest_id => @ingest.id)
+    @t1 = @c1.create_track(s3_url: "http://s3.amazonaws.com/vz-test-origin/13dba008-7ba2-4804-a534-43d03c65260b/t1")
+    @c2 = Chunk::GoogleSpeech.create(:position => 2, :offset => 10, :text => "cat maths are", :score => 0.65, :document => @ingest.document, :ingest_id => @ingest.id)
+    @t2 = @c2.create_track(s3_url: "http://s3.amazonaws.com/vz-test-origin/13dba008-7ba2-4804-a534-43d03c65260b/t2")
+    @c3 = Chunk::GoogleSpeech.create(:position => 3, :offset => 20, :text => "the cesty food in the world", :score => 0.85, :document => @ingest.document, :ingest_id => @ingest.id)
+    @t3 = @c3.create_track(s3_url: "http://s3.amazonaws.com/vz-test-origin/13dba008-7ba2-4804-a534-43d03c65260b/t3")
+
+    sign_out :user
+  end
+
+  context "POST /api/ingests/:document_id/tracks.json" do
+    setup do
+      @s3_url     = "http://s3.amazonaws.com/vz-test-origin/13dba008-7ba2-4804-a534-43d03c65260b/t4"
+      @s3_mp3_url = "http://s3.amazonaws.com/vz-test-origin/13dba008-7ba2-4804-a534-43d03c65260b/t4.128.mp3"
+    end
+
+    should "#create document master track via ingest" do
+      sign_in :user, @user2
+      post :create, ingest_id: @ingest.id, track: {s3_url: @s3_url, s3_mp3_url: @s3_mp3_url, ingest_iteration: @ingest.iteration}, format: :json
+      assert_response :success
+      assert_attributes response_body["track"]
+      assert_equal @s3_url, response_body["track"]["s3_url"]
+      assert_equal @s3_mp3_url, response_body["track"]["s3_mp3_url"]
+      assert_equal @ingest.id, response_body["track"]["ingest_id"]
+      assert_equal @document.id, response_body["track"]["document_id"]
+      assert_equal @ingest.iteration, response_body["track"]["ingest_iteration"]
+    end
+
+    should "be unauthorized without user" do
+      post :create, ingest_id: @ingest.id, format: :json
+      assert_response :unauthorized
+    end
+
+    should "be unauthorized without backend user" do
+      sign_in :user, @user1
+      post :create, ingest_id: @ingest.id, format: :json
+      assert_response :unauthorized
+    end
+  end
+
+  context "PUT /api/ingests/:ingest_id/tracks/:id.json" do
+    should "#update ingest/document master track" do
+      sign_in :user, @user2
+      put :update, ingest_id: @ingest.id, id: @t0.id, track: {
+        s3_url: "http://update_t0", s3_mp3_url: "http://update_t0.128.mp3"}, format: :json
+      assert_response :success
+      assert_attributes response_body["track"]
+      assert_equal "http://update_t0", response_body["track"]["s3_url"]
+      assert_equal "http://update_t0.128.mp3", response_body["track"]["s3_mp3_url"]
+    end
+
+    should "be unauthorized without user" do
+      put :update, ingest_id: @ingest.id, id: @t0.id, format: :json
+      assert_response :unauthorized
+    end
+
+    should "be unauthorized without backend user" do
+      sign_in :user, @user1
+      put :update, ingest_id: @ingest.id, id: @t0.id, format: :json
+      assert_response :unauthorized
+    end
+  end
+
+  protected
+
+  def assert_attributes(response, expected_attributes = {})
+    %w(id mp3_stream_url created_at).each do |key|
+      assert response.has_key?(key), "should containt key '#{key}' in '#{response}'"
+    end
+  end
+
+  def assert_backend_user_attributes(response, expected_attributes = {})
+    %w(id mp3_stream_url created_at s3_key s3_uri s3_url).each do |key|
+      assert response.has_key?(key), "should containt key '#{key}' in '#{response}'"
+    end
+  end
+
+end

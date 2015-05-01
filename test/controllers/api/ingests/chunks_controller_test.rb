@@ -22,6 +22,10 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
     @document2.tag_list = ["brown", "cats", "jump", "higher"]
     @document2.save
 
+    @s3_url     = "http://s3.amazonaws.com/vz-test-origin/13dba008-7ba2-4804-a534-43d03c65260b/t4"
+    @s3_mp3_url = "http://s3.amazonaws.com/vz-test-origin/13dba008-7ba2-4804-a534-43d03c65260b/t4.128.mp3"
+
+
     sign_out :user
   end
 
@@ -37,7 +41,8 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
         :score             => 0.59,
         :response          => {"status" => 3, "hypothesis" => "I like pickles"},
         :processing_errors => [{"stage" => "transcribe", "errors" => ["foo", "bar"]}],
-        :processing_status => 3
+        :processing_status => 3,
+        :ingest_iteration  => 1
       }
     end
 
@@ -54,11 +59,29 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
 
     should "create chunk with signed in backend user" do
       sign_in :user, @user2
-      assert_difference 'Chunk.count', 1 do
+      assert_difference 'Chunk::GoogleSpeech.count', 1 do
         attributes = @attributes.merge(type: "Chunk::GoogleSpeech")
         post :create, ingest_id: @ingest1.id, chunk: attributes, format: :json
         assert_response :success
         assert_attributes response_body["chunk"], attributes
+        assert_equal 1, Chunk::GoogleSpeech.last.ingest_iteration
+      end
+    end
+
+    should "create chunk with track_attributes" do
+      sign_in :user, @user2
+      assert_difference 'Chunk::GoogleSpeech.count', 1 do
+        assert_difference 'Track.count', 1 do
+          attributes = @attributes.merge(type: "Chunk::GoogleSpeech")
+          track_attributes = {s3_url: @s3_url, s3_mp3_url: @s3_mp3_url}
+          post :create, ingest_id: @ingest1.id, chunk: attributes.merge(track_attributes: track_attributes), format: :json
+          assert_response :success
+          assert_attributes response_body["chunk"], attributes
+          assert_equal 1, Chunk::GoogleSpeech.last.ingest_iteration
+          assert_not_nil response_body["chunk"]["track"]
+          assert_equal @s3_url, response_body["chunk"]["track"]["s3_url"]
+          assert_equal @s3_mp3_url, response_body["chunk"]["track"]["s3_mp3_url"]
+        end
       end
     end
   end
@@ -162,6 +185,52 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
       assert_equal({"status" => 1, "hypothesis" => "You got it!"}, @chunk1.reload.response)
     end
 
+    should "update ingest with track_attributes to create new track" do
+      sign_in :user, @user2
+      attributes = {:score => 0.95,
+        :response => {"status" => 1, "hypothesis" => "You got it!"},
+      }
+      track_attributes = {s3_url: @s3_url, s3_mp3_url: @s3_mp3_url}
+      assert_no_difference 'Chunk::GoogleSpeech.count' do
+        assert_difference 'Track.count', 1 do
+          put :update, {ingest_id: @ingest1.id, id: @chunk1.id,
+            :chunk => attributes.merge(track_attributes: track_attributes), format: :json}
+          assert_response :success
+          assert_response_body_attributes_with "chunk"
+          assert_equal 0.95, @chunk1.reload.score
+          assert_equal({"status" => 1, "hypothesis" => "You got it!"}, @chunk1.reload.response)
+          assert_not_nil response_body["chunk"]["track"]
+          assert_equal @s3_url, response_body["chunk"]["track"]["s3_url"]
+          assert_equal @s3_mp3_url, response_body["chunk"]["track"]["s3_mp3_url"]
+        end
+      end
+    end
+
+    should "update ingest with track_attributes to update existing track" do
+      sign_in :user, @user2
+      attributes = {:score => 0.95,
+        :response => {"status" => 1, "hypothesis" => "You got it!"},
+      }
+      track_attributes = {s3_url: @s3_url, s3_mp3_url: @s3_mp3_url}
+
+      @track1 = Track.create(document: @chunk1, s3_url: "http://track-12")
+      @chunk1.reload
+
+      assert_no_difference 'Chunk::GoogleSpeech.count' do
+        assert_no_difference 'Track.count' do
+          put :update, {ingest_id: @ingest1.id, id: @chunk1.id,
+            :chunk => attributes.merge(track_attributes: track_attributes), format: :json}
+          assert_response :success
+          assert_response_body_attributes_with "chunk"
+          assert_equal 0.95, @chunk1.reload.score
+          assert_equal({"status" => 1, "hypothesis" => "You got it!"}, @chunk1.reload.response)
+          assert_not_nil response_body["chunk"]["track"]
+          assert_equal @s3_url, response_body["chunk"]["track"]["s3_url"]
+          assert_equal @s3_mp3_url, response_body["chunk"]["track"]["s3_mp3_url"]
+        end
+      end
+    end
+
     should "NOT update without user" do
       put :update, {ingest_id: @ingest1.id, id: @chunk1.id, :chunk => {}, format: :json}
       assert_response :unauthorized
@@ -209,7 +278,7 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
   def assert_attributes(params, expected_attributes = {})
     assert_equal false, params.blank?, "response should not be empty"
     (expected_attributes.stringify_keys.keys + %w(id document_id ingest_id type position offset duration start_time
-      end_time text score response processing_errors processing_status uid)).uniq.each do |attribute|
+      end_time text score response processing_errors processing_status uid ingest_iteration)).uniq.each do |attribute|
       assert params.has_key?(attribute), "should contain key '#{attribute}' in response '#{params}'"
     end
 

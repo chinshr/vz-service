@@ -56,18 +56,17 @@ Voyzes::Application.routes.draw do
       collection do
         get "count"
       end
-      resources :tracks, :only => [:create, :index, :show, :update, :destroy]
+      resources :tracks, :only => [:index, :show], controller: "documents/tracks"
     end
 
     resources :ingests, :only => [:index, :show, :update, :destroy] do
+      collection do; get "count"; end
       resources :chunks, :only => [:create, :index, :show, :update, :destroy], controller: "ingests/chunks" do
         collection do
           get "count"
         end
       end
-      collection do
-        get "count"
-      end
+      resources :tracks, :only => [:create, :update], controller: "ingests/tracks"
     end
     namespace :account do
       resources :uploads do

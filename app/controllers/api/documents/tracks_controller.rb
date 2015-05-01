@@ -1,4 +1,4 @@
-class Api::TracksController < Api::ApplicationController
+class Api::Documents::TracksController < Api::ApplicationController
   include Pundit
   include Api::Authorization
 
@@ -9,34 +9,34 @@ class Api::TracksController < Api::ApplicationController
 
   # [POST] /api/documents/:document_id/tracks(.:format)
   def create
-    authorize :track
+    authorize :"document/track"
     @track = @document.create_track(create_params)
     respond_with "api", @document, @track
   end
 
   # [PUT] /api/documents/:document_id/tracks/:id(.:format)
   def update
-    authorize @track
+    authorize :"document/track"
     @track = Track.update(params[:id], update_params)
     respond_with @track
   end
 
   # [GET] /api/documents/:document_id/tracks(.:format)
   def index
-    authorize :track
+    authorize :"document/track"
     @tracks = @document.tracks_including_master_track.filter(params)
     respond_with @tracks
   end
 
   # [GET] /api/documents/:document_id/tracks/:id(.:format)
   def show
-    authorize @track
+    authorize :"document/track"
     respond_with @track
   end
 
   # [DELETE] /api/documents/:document_id/tracks/:id(.:format)
   def destroy
-    authorize @track
+    authorize :"document/track"
     @document.tracks_including_master_track.destroy(@track)
     respond_with @track
   end
@@ -52,7 +52,10 @@ class Api::TracksController < Api::ApplicationController
   end
 
   def create_params
-    params.require(:track).permit(policy(:track).permitted_attributes)
+    params.require(:track).permit(policy(:"document/track").permitted_attributes)
   end
-  alias_method :update_params, :create_params
+
+  def update_params
+    params.require(:track).permit(policy(:"document/track").permitted_attributes)
+  end
 end

@@ -3,7 +3,8 @@ require 'test_helper'
 class ChunkTest < ActiveSupport::TestCase
   context "associations" do
     should belong_to :document
-    should have_one(:track).dependent(:destroy)
+    should have_one(:tracking).dependent(:destroy)
+    should have_one(:track).through(:tracking)
   end
 
   context "delegate" do

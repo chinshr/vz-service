@@ -42,7 +42,7 @@ class Ingest < ActiveRecord::Base
 
   belongs_to :upload, dependent: :destroy
   belongs_to :document
-  accepts_nested_attributes_for :document
+  # accepts_nested_attributes_for :document
 
   has_many :ingest_chunks, -> (record) { where(document_id: record.document.id) },
     foreign_key: :ingest_id, class_name: "Chunk", dependent: :nullify

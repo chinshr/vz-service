@@ -1,8 +1,8 @@
-README
-======
+# VOYZ.ES Service
 
-Installation
-------------
+The service runs the Website and API.
+
+# Installation
 
 * Install bundles `bundle install`
 
@@ -12,22 +12,33 @@ Installation
 
 * opus `brew install opus & brew install opusenc`
 
+## Business Resources
 
-Development Resources
----------------------
+* Competitive products:
+  - Gridspace -- http://gridspace.com
+  - Transcribe Wreally -- http://transcribe.wreally.com
+  - ASU Oral History Project -- http://gaialab.asu.edu/OHP
+  - Hearing aid -- http://www.transcense.com
+  - Not a competitor but a great conversion tool -- cloudconvert.org
+* HIPAA compliance (box notes is): http://en.wikipedia.org/wiki/Health_Insurance_Portability_and_Accountability_Act
+* Dictaphone ebay buying guide -- http://www.ebay.com/gds/Dictaphone-Buying-Guide-/10000000177630514/g.html
+* Transition browser compatibility -- http://www.sitepoint.com/css3-animation-javascript-event-handlers/
+* Open source transcrition helping tool -- otranscribe.com
+
+## Developer Resources
 
 * Bootstrap templates -- http://bootply.com/templates
-* Google+ boostrap theme repo 
+* Google+ boostrap theme repo
   - https://github.com/iatek/bootstrap-google-plus
 * File uploader Backbone + S3
   - http://micahroberson.com/upload-files-directly-to-s3-w-backbone-on-heroku/
 * File uploader in iFrame
 * Backbone.js uploader tutorial
   - http://blog.crowdint.com/2013/02/19/how-to-manage-file-uploads-with-backbone-js-paperclip-jquery-file-upload-and.html
-* Upload images: 
+* Upload images:
   - https://s.ytimg.com/yts/img/upload/large-upload-hover-icon-vflcwlQhZ.png
   - https://s.ytimg.com/yts/img/upload/large-upload-resting-icon-vflM6eC13.png
-* jQuery Tag entries: 
+* jQuery Tag entries:
   - http://stackoverflow.com/questions/519107/jquery-autocomplete-tagging-plug-in-like-stackoverflows-input-tags
 * Backbone JS form serialization:
   - https://github.com/marioizquierdo/jquery.serializeJSON
@@ -39,7 +50,7 @@ Development Resources
   - Installation flow: http://stackoverflow.com/questions/16513066/devise-with-rails-4
   - Email only signup: https://github.com/plataformatec/devise/wiki/How-To:-Email-only-sign-up
 * HTML5 Editors
-  - List of editors: http://www.jquery4u.com/plugins/html5-wysiwyg/  
+  - List of editors: http://www.jquery4u.com/plugins/html5-wysiwyg/
   - Another wysiwyg editor http://mindmup.github.io/bootstrap-wysiwyg/
   - Raptor Editor: https://www.raptor-editor.com
   - Save REST with Raptor: https://www.raptor-editor.com/documentation/tutorials/save-rest
@@ -71,7 +82,7 @@ Development Resources
   - Skinnable browser+audio -- http://mediaelementjs.com/
   - Build your own tutorial: http://www.alexkatz.me/html5-audio/building-a-custom-html5-audio-player-with-javascript/
   - Drawing wave forms from audio stream -- http://stackoverflow.com/questions/19536909/soundcloud-modify-the-waveform-color/19554141#19554141
-* Accept Incoming Emails into a Heroku App Using SendGrid 
+* Accept Incoming Emails into a Heroku App Using SendGrid
   - ruby processor -- http://nanceskitchen.com/2010/02/21/accept-incoming-emails-into-a-heroku-app-using-sendgrid/
   - test sendgrid parse api by sending email to: my@app21958309.bymail.in (<any-address>@<sendgrid-user-name>.bymail.in)
   - griddler gem tutorial to receive emails -- http://sendgrid.com/blog/receiving-email-in-your-rails-app-with-griddler/
@@ -83,12 +94,12 @@ Development Resources
 * Capturing Audio & Video HTML5 -- http://www.html5rocks.com/en/tutorials/getusermedia/intro/
 * Client side validation, simple form, rails 4 -- http://www.ddarrensmith.com/blog/2012/05/17/ruby-on-rails-client-side-validation-with-validation-helpers-and-twitter-bootstrap/
 * Backbone Devise app -- https://github.com/jhuckabee/backbone_devise
-* Google Speech API, 
+* Google Speech API,
   - Languages -- http://stackoverflow.com/questions/14257598/what-are-language-codes-for-voice-recognition-languages-in-chromes-implementati
-  - API keys -- http://www.chromium.org/developers/how-tos/api-keys 
+  - API keys -- http://www.chromium.org/developers/how-tos/api-keys
   - Speech API Gem v2 - https://github.com/gillesdemey/google-speech-v2/
   - Chrome speech recognition -- http://stackoverflow.com/questions/4361826/does-chrome-have-built-in-speech-recognition-for-x-webkit-speech-input-element
-* Noise reduction 
+* Noise reduction
   - with ffmpeg and sox: http://www.zoharbabin.com/how-to-do-noise-reduction-using-ffmpeg-and-sox/
   - ffmpeg: http://ffmpeg.zeranoe.com/forum/viewtopic.php?f=15&t=1687
   - Sox buildpack: https://github.com/lepinsk/heroku-buildpack-sox
@@ -113,7 +124,7 @@ Development Resources
   - Sample apps: https://github.com/attdevsupport/ATT_APIPlatform_SampleApps
   - Ruby Gist: https://gist.github.com/t2-support-gists/5189859
   - Speech Docs -- https://developer.att.com/apis/speech/docs
-* List of Voice Recognition Software 
+* List of Voice Recognition Software
   - Accurate list of speech services -- http://stackoverflow.com/questions/3113864/server-side-voice-recognition
   - Avios list of  for speech recognition tools -- http://www.avios.org/app_dev.htm
   - Wikipedia list of speech recognition tools -- http://en.wikipedia.org/wiki/List_of_speech_recognition_software
@@ -138,9 +149,9 @@ Development Resources
   - https://github.com/subosito/gingerice
 * Parallax effects with bootstrap
   - https://wrapbootstrap.com/tag/parallax
-* Awesome icons -- http://fortawesome.github.io/Font-Awesome/icons/  
+* Awesome icons -- http://fortawesome.github.io/Font-Awesome/icons/
 * Flipping DIVs in HTML5 tutorial: http://simonlockyer.info/flip-div-css3-tutorial/
-* Gmail inbox grid 
+* Gmail inbox grid
   - http://www.bootply.com/XXmcPas41w
 * SQL to select groups: http://stackoverflow.com/questions/3800551/select-first-row-in-each-group-by-group
 * Kaldi speech engine, open source -- http://kaldi.sourceforge.net
@@ -150,7 +161,7 @@ Development Resources
   - SK Learn -- http://scikit-learn.org/stable/
   - Support Vector Machine (SVM)
   - Jaccard Coefficient
-  - Machine learning gem AI4R, SciRuby, 
+  - Machine learning gem AI4R, SciRuby,
   - Machine learning for everyone: BigML.com, kaggle.com
 * Create ICO file from PNG -- http://stackoverflow.com/questions/4584895/favicon-to-png-in-php
 * Bootstrap Youtube modal -- http://lab.abhinayrathore.com/bootstrap-youtube/
@@ -205,7 +216,7 @@ Development Resources
   - Responders for API versioning
   - ActionController::Responder -- http://weblog.rubyonrails.org/2009/8/31/three-reasons-love-responder/
   - Customer responders -- http://archives.ryandaigle.com/articles/2009/8/10/what-s-new-in-edge-rails-default-restful-rendering
-  - respond_with(@product, :responder => MyResponder) 
+  - respond_with(@product, :responder => MyResponder)
   - default Rails responder class source -- https://github.com/rails/rails/blob/master/actionpack/lib/action_controller/metal/responder.rb
   - Responders gem -- https://github.com/plataformatec/responders
   - Customize responder in Devise w/ FailureApp -- https://github.com/plataformatec/devise/wiki/How-To:-Redirect-to-a-specific-page-when-the-user-can-not-be-authenticated
@@ -222,42 +233,27 @@ Development Resources
   - Install Sphinx and Pocketsphinx -- https://mattze96.safe-ws.de/blog/?p=640
   - GST Speech API -- https://github.com/alumae/GST-Speech-API
 * Customer interaction and customer messaging, that codeship uses -- www.intercom.io
+* Open source iOS apps -- https://github.com/dkhamsing/open-source-ios-apps
 
-Business Resources
-------------------
-
-* Competitive products:
-  - Gridspace -- http://gridspace.com
-  - Transcribe Wreally -- http://transcribe.wreally.com
-  - ASU Oral History Project -- http://gaialab.asu.edu/OHP
-  - Hearing aid -- http://www.transcense.com
-  - Not a competitor but a great conversion tool -- cloudconvert.org
-* HIPAA compliance (box notes is): http://en.wikipedia.org/wiki/Health_Insurance_Portability_and_Accountability_Act
-* Dictaphone ebay buying guide -- http://www.ebay.com/gds/Dictaphone-Buying-Guide-/10000000177630514/g.html
-* Transition browser compatibility -- http://www.sitepoint.com/css3-animation-javascript-event-handlers/
-
-SendGrid Setup
---------------
+### SendGrid Setup
 
 app21958309.bymail.in -> http://voyzes.herokuapp.com/endpoints/receive_email.xml
 my@voyz.es -> http://voyzes.herokuapp.com/endpoints/receive_email.xml
 
 app21958309.bymail.in -> http://voyzes.herokuapp.com/email_processor.xml
 my.voyz.es -> http://voyzes.herokuapp.com/email_processor.xml
-  
-Reference Services
-------------------
+
+### Reference Services
 
 * Popuparchive -- https://www.popuparchive.org
 * Transcription service -- https://transcribe.wreally.com
-* Oyez.org 
+* Oyez.org
   - http://www.oyez.org/
-  - http://www.oyez.org/cases/2000-2009/2009/2009_132ORIG 
+  - http://www.oyez.org/cases/2000-2009/2009/2009_132ORIG
 * Nuance has a voice to text service -- http://www.nuance.com/for-business/mobile-solutions/voice-to-text-services/index.htm
   - contact: Bill Sheppard, bill.sheppard@nuance.com, 408.242.8177
-  
-Home Page
----------
+
+### Home Page
 
 Images:
 
@@ -265,7 +261,7 @@ Images:
 
 * Upload Audio -- http://www.flickr.com/photos/stevegibbs/7709749172
 
-* Transcribe -- 
+* Transcribe --
 
 * Share -- http://www.flickr.com/photos/royprasad/4714980030
 
@@ -273,7 +269,6 @@ Images:
   - http://www.flickr.com/photos/36218298
   - http://www.flickr.com/photos/82038674
 
-++++++++++
 Sería muy parecido, con este texto al inicio:
 
 Por un mayor acceso a la información, por más transparencia
@@ -281,6 +276,7 @@ Comparte los audios de tus grabaciones periodísticas
 
 Los iconos tendrían estos textos
 
+```
 Figura 1
 Sube tu audio
 
@@ -293,12 +289,10 @@ Edítalo
 Figura 4
 Compártelo
 
-Y abajo, al final, estarían los tres últimos audios publicados. 
+Y abajo, al final, estarían los tres últimos audios publicados.
+```
 
-++++++++++++++++
-
-Voice Profiles
---------------
+### Voice Profiles
 
 Meeting room
 Conference
@@ -308,8 +302,7 @@ Car
 Telephone
 Television
 
-Speech Transcription
---------------------
+### Speech Transcription
 
     require "speech"
     audio = Speech::AudioToText.new("samples/i-like-pickles.wav")
@@ -336,18 +329,17 @@ Speech Transcription
 
     # ATT Speech Engine, mode: custom
     audio = Speech::AudioToText.new("samples/i-like-pickles.wav", :engine => :att_speech_engine, :api_key => "tgcqoeaecj4ff052a9ee8g0mzt9xti7p", :secret_key => "j7caqnrtvtiiqhtl1nhlmyp5li0dclxg", :mode => "custom", :verbose => true)
-    
+
     # Nuance Dragon Engine
     audio = Speech::AudioToText.new("samples/i-like-pickles.wav", :engine => :nuance_dragon_engine, :verbose => true, :base_url => "https://dictation.nuancemobility.net:443", :app_id => "NMDPTRIAL_chinshr20140326185635", :app_key => "edb1acb2e50d02417b643e6dce510ea9dd565c4ad4725dcb8d807c96fe6304eb14b09ef9bea03a390578a6d3cab57ca70bd8f1df4b4eabd8cf276ecd8a72b99f&id=C4461956B60B"); audio.to_json
 
     audio = Speech::AudioToText.new("samples/me-gusta-pepinillos.m4a", :engine => :nuance_dragon_engine, :verbose => true, :base_url => "https://dictation.nuancemobility.net:443", :app_id => "NMDPTRIAL_chinshr20140326185635", :app_key => "edb1acb2e50d02417b643e6dce510ea9dd565c4ad4725dcb8d807c96fe6304eb14b09ef9bea03a390578a6d3cab57ca70bd8f1df4b4eabd8cf276ecd8a72b99f&id=C4461956B60B"); audio.to_json(:locale => "es-MX")
 
-Best transcription
-------------------
+### Best transcription
 
 require "fuzzy_match"
 z[0] = "where should we there yet the voice of Nemo 2700 this recording right to know that I'm f****** over here we can do that this has been a way or the other"
-z[1] = "Voice app. Boarding. I'm talking to it." 
+z[1] = "Voice app. Boarding. I'm talking to it."
 z[2] = "Is requesting the voicesIs requesting the voices right This recording serviceAnd this recording service I'm talking to CaseyI'm talking to season"
 a = z.each_index.inject([]) do |column, column_index|
   column << z.each_index.inject([]) do |row, row_index|
@@ -359,8 +351,7 @@ total_words = z.inject(0) {|r, e| r += e.split.size}
 v=m * Vector[z[0].split.size / total_words.to_f, z[1].split.size / total_words.to_f, z[2].split.size / total_words.to_f]
 => Vector[1.4473684210526316, 1.3647912885662432, 1.4963702359346642]
 
-Nuance NDEV Developer Program, Dragon Mobile, ASR and TTS
----------------------------------------------------------
+### Nuance NDEV Developer Program, Dragon Mobile, ASR and TTS
 
 http://dragonmobile.nuancemobiledeveloper.com
 
@@ -381,8 +372,7 @@ Production Keys:
   AppID: NMDPPRODUCTION_Voyzes_Voyzes_20140327191536
   AppKey: 0x10 0x0f 0xd1 0xa6 0xf8 0xf7 0x24 0x51 0xad 0xdd 0x30 0x65 0xbb 0x40 0xc5 0x21 0xfb 0x36 0xca 0x2e 0x92 0xd4 0x93 0xcb 0xbd 0x0b 0xad 0x71 0x00 0xc8 0xdd 0x10 0xd8 0xae 0xb7 0xd0 0xa6 0xdb 0x21 0x53 0xb9 0x52 0xb8 0x74 0x92 0x7d 0x95 0x8d 0xb4 0x5f 0xbb 0x46 0x33 0x4e 0x11 0xf0 0x5a 0xbe 0x61 0x5a 0x86 0x3e 0x6b 0x5e
 
-S3 Bucket Config
-----------------
+### S3 Bucket Config
 
     <?xml version="1.0" encoding="UTF-8"?>
     <CORSConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
@@ -399,28 +389,23 @@ S3 Bucket Config
     </CORSConfiguration>
 
 
-Data
+### Requirements + Notes
 
 - Locale, e.g. "AR-es", "US-en"
-- Country of Origin 
-- Categories: "Policts", "Technology", "Sports", "Art", "Literatura"
-- Tags 
+- Country of Origin
+- Categories: "Politics", "Technology", "Sports", "Art", "Literatura"
+- Tags
 - Name of document and description
 - Dates: Upload date, Exact date, Aproximate date
 - Privacy settings: public, private, semi-private (unlisted)
 
-Homepage
 
-- Sort by popular
-- Ranking (5 stars)
-- 
-
-Humanize in CC:
+### Humanize Gist
 
     @file_name.split(".")[0].replace(/[_-]/g, ' ').replace /(\w+)/g, match ->
       match.charAt(0).toUpperCase() + match.slice(1)
 
-## SoX Audio noise reduction pipeline
+### SoX Audio noise reduction pipeline
 
 Convert to wav file format:
 
@@ -477,7 +462,7 @@ Simpler, voice cleanup from http://sox.sourceforge.net/Docs/Scripts:
         reverse \
         norm -0.5
 
-## Standard SOX normalizer
+### Standard SOX normalizer
 
     sox john-and-juergen.wav john-and-juergen.cleaned.wav \
       remix - \
@@ -492,7 +477,7 @@ Simpler, voice cleanup from http://sox.sourceforge.net/Docs/Scripts:
       reverse \
       norm -0.5
 
-## Aurora QIO pipeline
+### Aurora QIO pipeline
 
 Setup env
 
@@ -563,67 +548,28 @@ Let's normalize afterwards:
 Listening to TCP port 80
 
     sudo tcpflow -p -c -i en0 port 80 | grep -oE '(GET|POST|HEAD) .* HTTP/1.[01]|Host: .*'
-    
-    
-Genesis Recording Script
-========================
-
-Genesis 1-1 English in the US
------------------------------
-
-In the beginning God created the heavens and the earth. 
-Now the earth was formless and empty, darkness was over the surface of the deep, and the Spirit of God was hovering over the waters.
-And God said, “Let there be light,” and there was light. 
-God saw that the light was good, 
-and he separated the light from the darkness.
-God called the light “day,” and the darkness he called “night.” 
-And there was evening, and there was morning—the first day.
-
-Genesis 1-1 German in Germany
------------------------------
-
-Im Anfang schuf Gott Himmel und Erde.
-Und die Erde war wüst und leer, und es war ﬁnster auf der Tiefe;
-und der Geist Gottes schwebte auf dem Wasser.
-Und Gott sprach: Es werde Licht! Und es ward Licht.
-Und Gott sah, dass das Licht gut war.
-Da schied Gott das Licht von der Finsternis
-und nannte das Licht Tag und die Finsternis Nacht.
-Da ward aus Abend und Morgen der erste Tag.
-
-Genesis 1-1 Spanish in Argentina
---------------------------------
-
-En el principio creó Dios los cielos y la tierra. 
-Y la tierra estaba desordenada y vacía, y las tinieblas estaban sobre la faz del abismo,
-Y el Espíritu de Dios se movía sobre la faz de las aguas. 
-Y dijo Dios: Sea la luz! Y fue la luz. 
-Y vio Dios que la luz era buena; 
-Y separó Dios la luz de las tinieblas. 
-Y llamó Dios a la luz Día, y a las tinieblas llamó Noche. 
-Y fue la tarde y la mañana un día.
-
-## Install Pocketsphinx
 
 
-Install
+### Install Pocketsphinx
+
+#### Install
 
     brew install gstreamer010
     brew install gst-plugins-base010
     brew install libxml2
 
-Setup
+#### Setup
 
     export GST_PLUGIN_PATH=/usr/local/lib/gstreamer-0.10
 
-Create folders:
+Create folders
 
     mkdir voice_recognition; cd voice_recognition
 
-Download Sphinxbase: 
-  
+#### Download Sphinxbase:
+
     cd sphinxbase
-    
+
     git clone git://github.com/cmusphinx/sphinxbase.git
 
 or
@@ -641,7 +587,7 @@ Create makefiles
 
     ./autogen.sh
 
-Compile 
+Compile
 
     make
 
@@ -690,4 +636,39 @@ and add this:
 Run pocketsphinx
 
     ./run-pocketsphinx.sh
+
+## Genesis Recording Script
+
+### Genesis 1-1 English in the US
+
+In the beginning God created the heavens and the earth.
+Now the earth was formless and empty, darkness was over the surface of the deep, and the Spirit of God was hovering over the waters.
+And God said, “Let there be light,” and there was light.
+God saw that the light was good,
+and he separated the light from the darkness.
+God called the light “day,” and the darkness he called “night.”
+And there was evening, and there was morning—the first day.
+
+### Genesis 1-1 German in Bavarian :-)
+
+Im Anfang schuf Gott Himmel und Erde.
+Und die Erde war wüst und leer, und es war ﬁnster auf der Tiefe;
+und der Geist Gottes schwebte auf dem Wasser.
+Und Gott sprach: Es werde Licht! Und es ward Licht.
+Und Gott sah, dass das Licht gut war.
+Da schied Gott das Licht von der Finsternis
+und nannte das Licht Tag und die Finsternis Nacht.
+Da ward aus Abend und Morgen der erste Tag.
+
+### Genesis 1-1 Spanish in Argentina
+
+En el principio creó dios los cielos y la tierra.
+Y la tierra estaba desordenada y vacía, y las tinieblas estaban sobre la faz del abismo,
+Y el espíritu de dios se movía sobre la faz de las aguas.
+Y dijo dios: Sea la luz! Y fue la luz.
+Y vio dios que la luz era buena;
+Y separó dios la luz de las tinieblas.
+Y llamó dios a la luz día, y a las tinieblas llamó noche.
+Y fue la tarde y la mañana un día.
+
 

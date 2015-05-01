@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150428175941) do
+ActiveRecord::Schema.define(version: 20150501220308) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -147,11 +147,13 @@ ActiveRecord::Schema.define(version: 20150428175941) do
     t.string   "uid"
     t.integer  "document_id"
     t.integer  "ingest_id"
+    t.integer  "ingest_iteration"
   end
 
   add_index "documents", ["created_at"], name: "index_documents_on_created_at", using: :btree
   add_index "documents", ["document_id"], name: "index_documents_on_document_id", using: :btree
   add_index "documents", ["ingest_id"], name: "index_documents_on_ingest_id", using: :btree
+  add_index "documents", ["ingest_iteration"], name: "index_documents_on_ingest_iteration", using: :btree
   add_index "documents", ["locale"], name: "index_documents_on_locale", using: :btree
   add_index "documents", ["offset"], name: "index_documents_on_offset", using: :btree
   add_index "documents", ["position"], name: "index_documents_on_position", using: :btree
@@ -276,17 +278,27 @@ ActiveRecord::Schema.define(version: 20150428175941) do
 
   add_index "tags", ["name"], name: "index_tags_on_name", unique: true, using: :btree
 
+  create_table "trackings", force: true do |t|
+    t.integer "document_id"
+    t.integer "track_id"
+    t.integer "ingest_id"
+  end
+
+  add_index "trackings", ["document_id", "track_id"], name: "index_trackings_on_document_id_and_track_id", unique: true, using: :btree
+  add_index "trackings", ["ingest_id"], name: "index_trackings_on_ingest_id", using: :btree
+  add_index "trackings", ["track_id"], name: "index_trackings_on_track_id", using: :btree
+
   create_table "tracks", force: true do |t|
     t.string   "s3_url"
     t.string   "s3_mp3_url"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "uid"
-    t.integer  "document_id"
-    t.boolean  "is_master",   default: false, null: false
+    t.boolean  "is_master",        default: false, null: false
+    t.integer  "ingest_iteration"
   end
 
-  add_index "tracks", ["document_id"], name: "index_tracks_on_document_id", using: :btree
+  add_index "tracks", ["ingest_iteration"], name: "index_tracks_on_ingest_iteration", using: :btree
   add_index "tracks", ["is_master"], name: "index_tracks_on_is_master", using: :btree
   add_index "tracks", ["uid"], name: "index_tracks_on_uid", using: :btree
 
