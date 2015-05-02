@@ -116,6 +116,21 @@ FactoryGirl.define do
     is_master true
   end
 
+  factory :track_with_chunk_and_ingest, parent: :track do
+    association :document, factory: :chunk_google_speech
+    before(:create) do |track|
+      track.ingest = track.document.ingest
+    end
+  end
+
+  factory :track_with_document_and_ingest, parent: :master_track do
+    before(:create) do |track|
+      ingest = FactoryGirl.create(:ingest_audio_without_track)
+      track.document = ingest.document
+      track.ingest = ingest
+    end
+  end
+
   factory :registration do
     # sequence(:email) {|n| "user#{n}@example.com" }
     email "test@example.com"
@@ -186,6 +201,11 @@ FactoryGirl.define do
     after(:create) do |device|
       device.client = FactoryGirl.create(:client)
     end
+  end
+
+  factory :tracking do
+    association :document
+    association :track
   end
 
 end

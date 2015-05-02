@@ -172,6 +172,7 @@ class Api::IngestsControllerTest < ActionController::TestCase
     end
 
     should "update ingest create document track" do
+      skip
       @ingest3 = FactoryGirl.create(:ingest_audio)
       @ingest3.document.track.destroy
 

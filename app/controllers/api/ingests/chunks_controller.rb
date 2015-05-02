@@ -9,40 +9,42 @@ class Api::Ingests::ChunksController < Api::ApplicationController
 
   # [POST] /api/ingests/:ingest_id/chunks(.:format)
   def create
-    authorize :chunk
+    authorize :"ingest/chunk"
     @chunk = @ingest.ingest_chunks.create(create_params)
+    @chunk.reload unless @chunk.new_record?
     respond_with @chunk
   end
 
   # [GET] /api/ingests/:ingest_id/chunks(.:format)
   def index
-    authorize :chunk
+    authorize :"ingest/chunk"
     @chunks = @ingest.ingest_chunks.filter(params)
     respond_with @chunks
   end
 
   # [GET] /api/ingests/:ingest_id/count(.:format)
   def count
-    authorize :chunk
+    authorize :"ingest/chunk"
     render :json => {:count => @ingest.ingest_chunks.filter(params).count}
   end
 
   # [GET] /api/ingests/:ingest_id/chunks/:id(.:format)
   def show
-    authorize @chunk
+    authorize :"ingest/chunk"
     respond_with @chunk
   end
 
   # [PUT] /api/ingests/:ingest_id/chunks/:id(.:format)
   def update
-    authorize @chunk
+    authorize :"ingest/chunk"
     @chunk = Chunk.update(params[:id], update_params)
+    @chunk.reload
     respond_with @chunk
   end
 
   # [DELETE] /api/ingests/:ingest_id/chunks/:id(.:format)
   def destroy
-    authorize @chunk
+    authorize :"ingest/chunk"
     @ingest.ingest_chunks.destroy(@chunk)
     respond_with @chunk
   end
@@ -58,16 +60,18 @@ class Api::Ingests::ChunksController < Api::ApplicationController
   end
 
   def create_params
-    params.require(:chunk).permit(*whitelisted_keys).tap do |whitelisted|
-      whitelisted[:response] = params[:chunk][:response] if params[:chunk][:response]
+    params.require(:chunk).permit(*policy(:"ingest/chunk").permitted_attributes).tap do |whitelisted|
+      whitelisted[:response]          = params[:chunk][:response] if params[:chunk][:response]
       whitelisted[:processing_errors] = params[:chunk][:processing_errors] if params[:chunk][:processing_errors]
     end
   end
-  alias_method :update_params, :create_params
 
-  def whitelisted_keys
-    [:type, :position, :offset, :duration, :start_time, :end_time,:text, :score, 
-      :response, :processing_errors, :processing_status]
+  def update_params
+    up = create_params
+    if up[:track_attributes] && @chunk && @chunk.track
+      up[:track_attributes].merge!(id: @chunk.track.id)
+    end
+    up
   end
 
 end

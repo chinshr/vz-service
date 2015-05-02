@@ -2,10 +2,11 @@ class Track < ActiveRecord::Base
   include Model::Filter
   include Model::Uid
 
-  validates :s3_url, presence: true
+  has_one :tracking, dependent: :destroy
+  has_one :document, through: :tracking, source: :document  # <- document or chunk!
+  has_one :ingest, through: :tracking, source: :ingest
 
-  belongs_to :document  # <- document or chunk!
-  has_many :ingests, through: :document, source: :ingests
+  validates :s3_url, presence: true
 
   # public scopes
   filtered_scopes :sort_order, :reverse_sort, :is_master
@@ -30,8 +31,25 @@ class Track < ActiveRecord::Base
     end
   end
 
+  delegate :ingest_id, to: :tracking, allow_nil: true
+  # def ingest_id
+  #   ingest.try(:id)
+  # end
+
+  delegate :document_id, to: :tracking, allow_nil: true
+  # def document_id
+  #   document.try(:id)
+  # end
+
   def s3_key
     s3_url ? s3_url.split("/").last : nil
+  end
+
+  def s3_uri
+    path = URI.parse(s3_url).path.split("/").reject(&:blank?) if s3_url
+    File.join(path.slice(1..-1)) if path && path.length > 0
+  rescue URI::InvalidURIError => ex
+    nil
   end
 
   def s3_mp3_key

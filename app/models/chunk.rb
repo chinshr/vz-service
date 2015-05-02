@@ -12,8 +12,9 @@ class Chunk < Document
   delegate :title, to: :document
 
   belongs_to :document
-  has_one :track, -> { where(is_master: false) }, foreign_key: :document_id,
-    dependent: :destroy  # <- chunk track
+  belongs_to :ingest
+  has_one :track, -> { where(is_master: false) },
+    through: :tracking  # <- chunk track
 
   validates :document, presence: true
   validates :offset, presence: true

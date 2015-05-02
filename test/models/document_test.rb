@@ -6,6 +6,7 @@ class DocumentTest < ActiveSupport::TestCase
     should have_many :ingests
     should have_many(:chunks).dependent(:destroy)
     should have_many(:tracks).through(:chunks)
+    should have_one(:tracking).dependent(:destroy)
     should have_one :track
 
     should "have tracks_including_master_track" do
@@ -20,13 +21,13 @@ class DocumentTest < ActiveSupport::TestCase
       assert_equal 3, @document.chunks.count
       assert_equal 3, @document.tracks.count
       assert_equal 4, @document.tracks_including_master_track.count
-      assert_equal @document.id, @t0.document_id
+      assert_equal @document.id, @t0.document.id
       assert_equal true, @t0.is_master?
-      assert_equal @c1.id, @c1.track.document_id
+      assert_equal @c1.id, @c1.track.document.id
       assert_equal false, @c1.track.is_master?
-      assert_equal @c2.id, @c2.track.document_id
+      assert_equal @c2.id, @c2.track.document.id
       assert_equal false, @c2.track.is_master?
-      assert_equal @c3.id, @c3.track.document_id
+      assert_equal @c3.id, @c3.track.document.id
       assert_equal false, @c3.track.is_master?
     end
   end
