@@ -294,10 +294,9 @@ ActiveRecord::Schema.define(version: 20150504212923) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "uid"
-    t.boolean  "is_master",        default: false, null: false
+    t.boolean  "is_master",            default: false, null: false
     t.integer  "ingest_iteration"
-    t.json     "waveform"
-    t.string   "s3_waveform_url"
+    t.string   "s3_waveform_json_url"
   end
 
   add_index "tracks", ["ingest_iteration"], name: "index_tracks_on_ingest_iteration", using: :btree
