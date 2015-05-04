@@ -18,7 +18,7 @@ class Api::Ingests::TracksControllerTest < ActionController::TestCase
 
     @s3_url     = "http://s3.amazonaws.com/vz-test-origin/13dba008-7ba2-4804-a534-43d03c65260b/t4"
     @s3_mp3_url = "http://s3.amazonaws.com/vz-test-origin/13dba008-7ba2-4804-a534-43d03c65260b/t4.128.mp3"
-    @s3_waveform_url = "http://s3.amazonaws.com/vz-test-origin/13dba008-7ba2-4804-a534-43d03c65260b/t0-waveform.json"
+    @s3_waveform_json_url = "http://s3.amazonaws.com/vz-test-origin/13dba008-7ba2-4804-a534-43d03c65260b/t0-waveform.json"
 
     sign_out :user
   end
@@ -26,7 +26,7 @@ class Api::Ingests::TracksControllerTest < ActionController::TestCase
   context "POST /api/ingests/:document_id/tracks.json" do
     should "#create document master track via ingest" do
       sign_in :user, @user2
-      post :create, ingest_id: @ingest.id, track: {s3_url: @s3_url, s3_mp3_url: @s3_mp3_url, s3_waveform_url: @s3_waveform_url, ingest_iteration: @ingest.iteration}, format: :json
+      post :create, ingest_id: @ingest.id, track: {s3_url: @s3_url, s3_mp3_url: @s3_mp3_url, s3_waveform_json_url: @s3_waveform_json_url, ingest_iteration: @ingest.iteration}, format: :json
       assert_response :success
       assert_attributes response_body["track"]
       assert_equal @s3_url, response_body["track"]["s3_url"]
@@ -34,7 +34,7 @@ class Api::Ingests::TracksControllerTest < ActionController::TestCase
       assert_equal @ingest.id, response_body["track"]["ingest_id"]
       assert_equal @document.id, response_body["track"]["document_id"]
       assert_equal @ingest.iteration, response_body["track"]["ingest_iteration"]
-      assert_equal @s3_waveform_url, response_body["track"]["s3_waveform_url"]
+      assert_equal @s3_waveform_json_url, response_body["track"]["s3_waveform_json_url"]
       assert_equal true, response_body["track"]["is_master"]
     end
 
