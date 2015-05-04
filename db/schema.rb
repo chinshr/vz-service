@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150501220308) do
+ActiveRecord::Schema.define(version: 20150504212923) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -296,6 +296,8 @@ ActiveRecord::Schema.define(version: 20150501220308) do
     t.string   "uid"
     t.boolean  "is_master",        default: false, null: false
     t.integer  "ingest_iteration"
+    t.json     "waveform"
+    t.string   "s3_waveform_url"
   end
 
   add_index "tracks", ["ingest_iteration"], name: "index_tracks_on_ingest_iteration", using: :btree
