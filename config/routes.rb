@@ -66,7 +66,7 @@ Voyzes::Application.routes.draw do
           get "count"
         end
       end
-      resources :tracks, :only => [:create, :update], controller: "ingests/tracks"
+      resources :tracks, :only => [:create, :update, :index, :show, :destroy], controller: "ingests/tracks"
     end
     namespace :account do
       resources :uploads do

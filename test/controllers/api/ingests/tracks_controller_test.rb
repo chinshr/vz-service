@@ -72,18 +72,75 @@ class Api::Ingests::TracksControllerTest < ActionController::TestCase
     end
   end
 
+  context "GET /api/ingests/:ingest_id/tracks.json" do
+    should "get index" do
+      sign_in :user, @user2
+      get :index, :ingest_id => @ingest.id, :is_master => "1", format: :json
+      assert_response :success
+      assert_equal 1, response_body["tracks"].size
+      track = Track.find(response_body["tracks"].first["id"])
+      assert_attributes response_body["tracks"].first, track
+    end
+
+    should "be unauthorized without user" do
+      get :index, :ingest_id => @ingest.id, format: :json
+      assert_response :unauthorized
+    end
+
+    should "be unauthorized without backend user" do
+      sign_in :user, @user1
+      get :index, :ingest_id => @ingest.id, format: :json
+      assert_response :unauthorized
+    end
+  end
+
+  context "GET /api/ingests/:ingest_id/tracks/:id.json" do
+    should "get show" do
+      sign_in :user, @user2
+      get :show, :ingest_id => @ingest.id, :id => @t0.id, format: :json
+      assert_response :success
+      assert_attributes response_body["track"]
+    end
+
+    should "be unauthorized without user" do
+      get :show, :ingest_id => @ingest.id, :id => @t0.id, format: :json
+      assert_response :unauthorized
+    end
+
+    should "be unauthorized without backend user" do
+      sign_in :user, @user1
+      get :show, :ingest_id => @ingest.id, :id => @t0.id, format: :json
+      assert_response :unauthorized
+    end
+  end
+
+  context "DELETE /api/ingests/:ingest_id/tracks/:id.json" do
+    should "#delete" do
+      sign_in :user, @user2
+      assert_difference "Track.count", -1 do
+        delete :destroy, :ingest_id => @ingest.id, :id => @t0.id, format: :json
+        assert_response :success
+        assert_response_body_attributes_with "track"
+      end
+    end
+
+    should "be unauthorized without user" do
+      delete :destroy, :ingest_id => @ingest.id, :id => @t0.id, format: :json
+      assert_response :unauthorized
+    end
+
+    should "be unauthorized without backend user" do
+      sign_in :user, @user1
+      delete :destroy, :ingest_id => @ingest.id, :id => @t0.id, format: :json
+      assert_response :unauthorized
+    end
+  end
+
   protected
 
   def assert_attributes(response, expected_attributes = {})
-    %w(id mp3_stream_url created_at).each do |key|
+    %w(id mp3_stream_url created_at s3_url s3_uri s3_key).each do |key|
       assert response.has_key?(key), "should containt key '#{key}' in '#{response}'"
     end
   end
-
-  def assert_backend_user_attributes(response, expected_attributes = {})
-    %w(id mp3_stream_url created_at s3_key s3_uri s3_url).each do |key|
-      assert response.has_key?(key), "should containt key '#{key}' in '#{response}'"
-    end
-  end
-
 end

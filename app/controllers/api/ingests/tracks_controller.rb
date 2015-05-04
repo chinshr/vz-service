@@ -10,7 +10,7 @@ class Api::Ingests::TracksController < Api::ApplicationController
   # [POST] /api/ingests/:ingest_id/tracks(.:format)
   def create
     authorize :"ingest/track"
-    @document.track.try(:destroy)
+    @document.track.destroy if @document.track
     @track = Track.create(create_params.merge(document: @document, ingest: @ingest))
     respond_with "api", @document, @track
   end
@@ -19,6 +19,28 @@ class Api::Ingests::TracksController < Api::ApplicationController
   def update
     authorize :"ingest/track"
     @track = Track.update(params[:id], update_params)
+    respond_with @track
+  end
+
+  # [GET] /api/ingests/:ingest_id/tracks(.:format)
+  def index
+    authorize :"ingest/track"
+    @tracks = @ingest.tracks_including_master_track.filter(params)
+    respond_with @tracks
+  end
+
+  # [GET] /api/ingests/:ingest_id/tracks/:id(.:format)
+  def show
+    authorize :"ingest/track"
+    @track = @ingest.tracks_including_master_track.find(params[:id])
+    respond_with @track
+  end
+
+  # [DELETE] /api/ingests/:ingest_id/tracks/:id(.:format)
+  def destroy
+    authorize :"ingest/track"
+    @track = @ingest.tracks_including_master_track.find(params[:id])
+    @track.destroy
     respond_with @track
   end
 

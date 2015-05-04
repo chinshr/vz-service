@@ -99,7 +99,7 @@ class Document < ActiveRecord::Base
     !!ingests.order(id: :desc).first.try(:finished?)
   end
 
-  # TODO: write a cool association
+  # TODO: write a fancy scope/association
   def tracks_including_master_track
     document_ids = chunks.pluck(:id) + [self.id]
     Track.joins(:tracking).where("trackings.document_id IN (?)", document_ids)

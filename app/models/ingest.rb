@@ -54,7 +54,8 @@ class Ingest < ActiveRecord::Base
   validates :document, presence: true
 
   # public scopes
-  filtered_scopes :sort_order, :reverse_sort, :any_of_status, :none_of_status
+  filtered_scopes :sort_order, :reverse_sort, :any_of_status, :none_of_status,
+    :document_id
   scope :sort_order, -> (param) {
     case param.first[0]  # E.g. get first key of {"id"=>"asc"}
     when "id"
@@ -70,6 +71,7 @@ class Ingest < ActiveRecord::Base
     map {|s| s.match(/^([\-]{,1}[0-9]+)$/) ? s : nil}.reject(&:blank?).map {|s| Ingest::STATES.key(s.to_i)}.uniq)}
   scope :none_of_status, -> (params) {where("ingests.aasm_state NOT IN (?)", [params].flatten.map(&:to_s).
     map {|s| s.match(/^([\-]{,1}[0-9]+)$/) ? s : nil}.reject(&:blank?).map {|s| Ingest::STATES.key(s.to_i)}.uniq)}
+  scope :document_id, -> (params) {where(document_id: params)}
 
   aasm column: 'aasm_state' do
     state :created, initial: true
@@ -265,6 +267,12 @@ class Ingest < ActiveRecord::Base
     document.with_lock do
       document.update_attributes(html: grouped_chunks.text, rich_text: grouped_chunks.rich_text)
     end
+  end
+
+  # TODO: write a fancy scope/association
+  def tracks_including_master_track
+    document_ids = chunks.pluck(:id) + [document.id]
+    Track.joins(:tracking).where("trackings.document_id IN (?)", document_ids)
   end
 
   protected

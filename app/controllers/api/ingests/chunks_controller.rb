@@ -73,5 +73,4 @@ class Api::Ingests::ChunksController < Api::ApplicationController
     end
     up
   end
-
 end

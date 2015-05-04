@@ -35,23 +35,28 @@ class IngestTest < ActiveSupport::TestCase
     end
 
     should "have filtered scopes" do
-      assert_equal [:any_of_status, :none_of_status, :sort_order, :reverse_sort, :offset, :limit].to_set,
+      assert_equal [:any_of_status, :none_of_status, :sort_order, :reverse_sort,
+        :offset, :limit, :document_id].to_set,
         Ingest.scopes.to_set
     end
 
-    should "have any_of_status" do
+    should "#any_of_status" do
       @ingest.update_attribute(:aasm_state, "started")
       assert_equal [@ingest], Ingest.any_of_status([Ingest::STATE_STARTED])
     end
 
-    should "have none_of_status" do
+    should "#none_of_status" do
       @ingest.update_attribute(:aasm_state, "started")  # :started = 2
       assert_equal [@ingest], Ingest.none_of_status([0, 1, 3, 4, 5, 6, 7, 8, 9, 10])
     end
 
-    should "have sort_order" do
+    should "#sort_order" do
       @ingest.update_attribute(:aasm_state, "started")  # :started = 2
       assert_equal [@ingest], Ingest.sort_order("created_at" => "asc").reverse_sort("true").limit(1)
+    end
+
+    should "#document_id" do
+      assert_equal [@ingest], Ingest.document_id(@ingest.document.id)
     end
   end # context "scopes"
 

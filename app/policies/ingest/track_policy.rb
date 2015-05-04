@@ -7,6 +7,18 @@ class Ingest::TrackPolicy < TrackPolicy
     backend_role?
   end
 
+  def index?
+    backend_role?
+  end
+
+  def show?
+    backend_role?
+  end
+
+  def destroy?
+    backend_role?
+  end
+
   def permitted_attributes
     super + [:s3_url, :s3_mp3_url, :ingest_iteration]
   end
