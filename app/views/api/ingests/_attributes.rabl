@@ -1,4 +1,4 @@
-child(:track) { extends "api/tracks/attributes" }
+child(:track) { extends "api/ingests/tracks/attributes" }
 child(:upload) { extends "api/uploads/attributes" }
 child(:document) { extends "api/documents/attributes" }
 attributes :id, :upload_id, :document_id, :type, :status,

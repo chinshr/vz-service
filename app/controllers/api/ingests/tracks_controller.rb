@@ -11,7 +11,7 @@ class Api::Ingests::TracksController < Api::ApplicationController
   def create
     authorize :"ingest/track"
     @document.track.destroy if @document.track
-    @track = Track.create(create_params.merge(document: @document, ingest: @ingest))
+    @track = Track.create(create_params)
     respond_with "api", @document, @track
   end
 
@@ -52,7 +52,7 @@ class Api::Ingests::TracksController < Api::ApplicationController
   end
 
   def create_params
-    params.require(:track).permit(policy(:"ingest/track").permitted_attributes)
+    params.require(:track).permit(policy(:"ingest/track").permitted_attributes).merge(document: @document, ingest: @ingest, is_master: true)
   end
 
   def update_params

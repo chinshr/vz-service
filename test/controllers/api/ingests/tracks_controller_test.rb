@@ -35,6 +35,7 @@ class Api::Ingests::TracksControllerTest < ActionController::TestCase
       assert_equal @ingest.id, response_body["track"]["ingest_id"]
       assert_equal @document.id, response_body["track"]["document_id"]
       assert_equal @ingest.iteration, response_body["track"]["ingest_iteration"]
+      assert_equal true, response_body["track"]["is_master"]
     end
 
     should "be unauthorized without user" do
@@ -139,7 +140,7 @@ class Api::Ingests::TracksControllerTest < ActionController::TestCase
   protected
 
   def assert_attributes(response, expected_attributes = {})
-    %w(id mp3_stream_url created_at s3_url s3_uri s3_key).each do |key|
+    %w(id mp3_stream_url created_at is_master ingest_id document_id ingest_iteration uid s3_url s3_uri s3_key s3_mp3_url updated_at).each do |key|
       assert response.has_key?(key), "should containt key '#{key}' in '#{response}'"
     end
   end
