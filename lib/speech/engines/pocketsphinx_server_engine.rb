@@ -3,27 +3,27 @@ module Speech
   module Engines
     class PocketsphinxServerEngine < Base
       attr_accessor :service, :key
-      
+
       def initialize(file, options = {})
         super file, options
         self.key = options[:key]
       end
-      
+
       protected
-      
+
       def reset!(options = {})
         super options
         url = "http://127.0.0.1:9393/recognize?&nbest=#{max_results}"
-        url += "&key=#{key}" if key 
+        url += "&key=#{key}" if key
 
         self.service = Curl::Easy.new(url)
       end
-      
+
       def build(chunk)
         # chunk.build.to_raw
         chunk.build.to_flac
       end
-      
+
       def convert_chunk(chunk, options = {})
         puts "sending chunk of size #{chunk.duration}, locale: #{locale}..." if self.verbose
         retrying    = true
@@ -37,7 +37,7 @@ module Speech
           # service.headers['Content-Type'] = "audio/x-raw-int; rate=#{chunk.flac_rate}"
           service.headers['Content-Type'] = "audio/x-flac; rate=#{chunk.flac_rate}"
           service.headers['User-Agent']   = USER_AGENT
-          
+
           # request
           service.post_body = "#{chunk.to_flac_bytes}"
           service.on_progress {|dl_total, dl_now, ul_total, ul_now| printf("%.2f/%.2f\r", ul_now, ul_total); true} if self.verbose
@@ -65,14 +65,14 @@ module Speech
         chunk.captured_json = result.to_json
         return result
       end
-      
+
       private
-      
+
       # V1 response
       #
       # {
       #   "status":0,
-      #   "id":"ce178ea89f8b17d8e8298c9c7814700a-1", 
+      #   "id":"ce178ea89f8b17d8e8298c9c7814700a-1",
       #   "hypotheses":[
       #     {"utterance"=>"I like pickles", "confidence"=>0.59408695},
       #     {"utterance"=>"I like turtles"},

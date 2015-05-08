@@ -72,6 +72,13 @@ FactoryGirl.define do
     end
   end
 
+  factory :chunk_pocketsphinx, parent: :chunk, class: "Chunk::Pocketsphinx" do
+    association :document, factory: :document_with_ingest
+    before(:create) do |chunk|
+      chunk.ingest_id = chunk.document.ingests.first.id
+    end
+  end
+
   factory :message do
     from "sender@example.com"
     to "receiver@example.com"

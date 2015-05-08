@@ -3,14 +3,14 @@ module Speech
   module Engines
     class GoogleSpeechEngine < Base
       attr_accessor :service, :key
-      
+
       def initialize(file, options = {})
         super file, options
         self.key = options[:key]
       end
-      
+
       protected
-      
+
       def reset!(options = {})
         super options
         url = case version
@@ -20,15 +20,15 @@ module Speech
         else
           "https://www.google.com/speech-api/v2/recognize?output=json&lang=#{locale}"
         end
-        url += "&key=#{key}" if key 
+        url += "&key=#{key}" if key
 
         self.service = Curl::Easy.new(url)
       end
-      
+
       def build(chunk)
         chunk.build.to_flac
       end
-      
+
       def convert_chunk(chunk, options = {})
         puts "sending chunk of size #{chunk.duration}, locale: #{locale}..." if self.verbose
         retrying    = true
@@ -41,7 +41,7 @@ module Speech
           # headers
           service.headers['Content-Type'] = "audio/x-flac; rate=#{chunk.flac_rate}"
           service.headers['User-Agent']   = USER_AGENT
-          
+
           # request
           service.post_body = "Content=#{chunk.to_flac_bytes}"
           service.on_progress {|dl_total, dl_now, ul_total, ul_now| printf("%.2f/%.2f\r", ul_now, ul_total); true} if self.verbose
@@ -75,14 +75,14 @@ module Speech
         chunk.captured_json = result.to_json
         return result
       end
-      
+
       private
-      
+
       # V1 response
       #
       # {
       #   "status":0,
-      #   "id":"ce178ea89f8b17d8e8298c9c7814700a-1", 
+      #   "id":"ce178ea89f8b17d8e8298c9c7814700a-1",
       #   "hypotheses":[
       #     {"utterance"=>"I like pickles", "confidence"=>0.59408695},
       #     {"utterance"=>"I like turtles"},
@@ -132,7 +132,7 @@ module Speech
         data = raw_data.split(/\n/) if raw_data.present?
         data = data.map {|string| JSON.parse(string)}
         data = data.find {|json| json["result"] && !json["result"].blank?}
-        
+
         result['id']              = chunk.id
         result['external_id']     = data['result_index']
         result['external_status'] = data['status']
@@ -142,7 +142,7 @@ module Speech
           result['hypotheses']    = data['result'].map {|r| r['alternative'].map {|a| {'utterance' => a['transcript'], 'confidence' => a['confidence']}}}.flatten
 
           result['hypotheses'].sort! {|x, y| y['confidence'] || 0 <=> x['confidence'] || 0}
-          
+
           chunk.status            = result['status'] = AudioSplitter::AudioChunk::STATUS_TRANSCRIBED
           chunk.best_text         = result['hypotheses'].first['utterance']
           chunk.best_score        = result['hypotheses'].first['confidence']
@@ -152,13 +152,13 @@ module Speech
         end
         result
       end
-      
+
       def supported_locales
         ["af", "eu", "bg", "ca", "ar-EG", "ar-JO", "ar-KW", "ar-LB", "ar-QA", "ar-AE", "ar-MA", "ar-IQ", "ar-DZ", "ar-BH", "ar-LY",
-         "ar-OM", "ar-SA", "ar-TN", "ar-YE", "cs", "nl-NL", "en-AU", "en-CA", "en-IN", "en-NZ", "en-ZA", "en-GB", "en-US", "fi", 
-         "fr-FR", "gl", "de-DE", "he", "hu", "is", "it-IT", "id", "ja", "ko", "la", "zh-CN", "zh-TW", "zh-HK", "zh-yue", "ms-MY", 
-         "no-NO", "pl", "pt-PT", "pt-BR", "ro-RO", "ru", "sr-SP", "sk", "es-AR", "es-BO", "es-CL", "es-CO", "es-CR", "es-DO", 
-         "es-EC", "es-SV", "es-GT", "es-HN", "es-MX", "es-NI", "es-PA", "es-PY", "es-PE", "es-PR", "es-ES", "es-US", "es-UY", 
+         "ar-OM", "ar-SA", "ar-TN", "ar-YE", "cs", "nl-NL", "en-AU", "en-CA", "en-IN", "en-NZ", "en-ZA", "en-GB", "en-US", "fi",
+         "fr-FR", "gl", "de-DE", "he", "hu", "is", "it-IT", "id", "ja", "ko", "la", "zh-CN", "zh-TW", "zh-HK", "zh-yue", "ms-MY",
+         "no-NO", "pl", "pt-PT", "pt-BR", "ro-RO", "ru", "sr-SP", "sk", "es-AR", "es-BO", "es-CL", "es-CO", "es-CR", "es-DO",
+         "es-EC", "es-SV", "es-GT", "es-HN", "es-MX", "es-NI", "es-PA", "es-PY", "es-PE", "es-PR", "es-ES", "es-US", "es-UY",
          "es-VE", "sv-SE", "tr", "zu"]
       end
     end

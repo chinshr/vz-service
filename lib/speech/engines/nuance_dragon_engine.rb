@@ -3,28 +3,28 @@ module Speech
   module Engines
     class NuanceDragonEngine < Base
       attr_accessor :service, :base_url, :app_id, :app_key, :device_id
-      
+
       def initialize(file, options = {})
         super file, options
-        
+
         self.base_url  = options.key?(:base_url) ? options[:base_url] : "https://dictation.nuancemobility.net:443"
         self.app_id    = options[:app_id] if options.key?(:app_id)
         self.app_key   = options[:app_key].gsub(/ 0x/, "") if options.key?(:app_key)
         self.device_id = options.key?(:device_id) ? options[:device_id] : "8CGoCMXyIcJosb2"
       end
-      
+
       protected
-      
+
       def reset!(options = {})
         super options
         url          = "#{base_url}/NMDPAsrCmdServlet/dictation?appId=#{app_id}&appKey=#{app_key}&id=#{device_id}"
         self.service = Curl::Easy.new(url)
       end
-      
+
       def build(chunk)
         chunk.build.to_wav
       end
-      
+
       def convert_chunk(chunk, options = {})
         puts "sending chunk of size #{chunk.duration}, locale: #{locale}..." if self.verbose
         retrying    = true
@@ -33,7 +33,7 @@ module Speech
 
         while retrying && retry_count < max_retries # 3 retries
           service.verbose = self.verbose
-          
+
           # headers
           service.headers['Content-Type']                = "audio/x-wav;codec=pcm;bit=16;rate=#{chunk.flac_rate}"
           service.headers['Accept-Topic']                = "Dictation" # Dictation or WebSearch
@@ -46,7 +46,7 @@ module Speech
           service.headers['Accept-Language']             = canonical_locale(locale)
           service.headers['Accept']                      = "text/plain" # "application/xml"
           service.headers['User-Agent']                  = USER_AGENT
-          
+
           # request
           service.post_body = "#{chunk.to_wav_bytes}"
           service.on_progress {|dl_total, dl_now, ul_total, ul_now| printf("%.2f/%.2f\r", ul_now, ul_total); true } if self.verbose
@@ -86,16 +86,16 @@ module Speech
         chunk.captured_json = result.to_json
         return result
       end
-      
+
       private
-      
+
       # E.g. "en-US" -> "en_US"
       def canonical_locale(locale)
         locale.gsub("-", "_") if locale
       end
-      
+
       def supported_locales
-        ["en-AU", "en-GB", "en-US", "ar-EG", "ar-SA", "ar-AE", "zh-HK", "ca-ES", "hr-HR", "cs-CZ", "da-DK", "nl-NL", "fi-FI", 
+        ["en-AU", "en-GB", "en-US", "ar-EG", "ar-SA", "ar-AE", "zh-HK", "ca-ES", "hr-HR", "cs-CZ", "da-DK", "nl-NL", "fi-FI",
          "fr-CA", "fr-FR", "de-DE", "el-GR", "he-IL", "hu-HU", "id-ID", "it-IT", "ja-JP", "ko-KR", "ms-MY", "cn-MA", "zh-TW",
          "no-NO", "pl-PL", "pt-BR", "pt-PT", "ro-RO", "ru-RU", "sk-SK", "es-ES", "es-MX", "es-US", "sv-SE", "th-TH", "tr-TR",
          "uk-UA", "vi-VN"]

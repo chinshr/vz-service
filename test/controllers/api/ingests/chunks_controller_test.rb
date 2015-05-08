@@ -68,6 +68,19 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
       end
     end
 
+    should "create chunk with ingest_iteration from associated ingest" do
+      sign_in :user, @user2
+      attributes = @attributes
+      attributes.delete(:ingest_iteration)
+      assert_difference 'Chunk::GoogleSpeech.count', 1 do
+        attributes = @attributes.merge(type: "Chunk::GoogleSpeech")
+        post :create, ingest_id: @ingest1.id, chunk: attributes, format: :json
+        assert_response :success
+        assert_attributes response_body["chunk"], attributes
+        assert_equal @ingest1.iteration, Chunk::GoogleSpeech.last.ingest_iteration
+      end
+    end
+
     should "create chunk with track_attributes" do
       sign_in :user, @user2
       assert_difference 'Chunk::GoogleSpeech.count', 1 do

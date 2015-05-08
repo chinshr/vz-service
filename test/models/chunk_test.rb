@@ -28,7 +28,7 @@ class ChunkTest < ActiveSupport::TestCase
     end
 
     should "have filtered scopes" do
-      assert_equal [:any_of_type, :any_of_processing_status, :none_of_processing_status, :sort_order, :reverse_sort, :offset, :limit].to_set,
+      assert_equal [:any_of_type, :any_of_processing_status, :none_of_processing_status, :sort_order, :reverse_sort, :offset, :limit, :any_of_ingest_iteration, :any_of_position].to_set,
         Chunk.scopes.to_set
     end
 
@@ -45,6 +45,22 @@ class ChunkTest < ActiveSupport::TestCase
     should "have sort_order" do
       @chunk.update_attribute(:processing_status, Speech::AudioSplitter::AudioChunk::STATUS_ENCODED)
       assert_equal [@chunk], Chunk.sort_order("position" => "asc").reverse_sort("true").limit(1)
+    end
+
+    should "have any_of_type" do
+      ps = FactoryGirl.create(:chunk_pocketsphinx)
+      assert_equal [ps], Chunk.any_of_type("pocketsphinx").limit(1)
+      assert_equal [ps], Chunk.any_of_type("Chunk::Pocketsphinx").limit(1)
+    end
+
+    should "have any_of_position" do
+      ps = FactoryGirl.create(:chunk_pocketsphinx, position: 10)
+      assert_equal [ps], Chunk.any_of_position(10).limit(1)
+    end
+
+    should "have any_of_ingest_iteration" do
+      ps = FactoryGirl.create(:chunk_pocketsphinx, ingest_iteration: 2)
+      assert_equal [ps], Chunk.any_of_ingest_iteration(2).limit(1)
     end
 
     context "#best" do

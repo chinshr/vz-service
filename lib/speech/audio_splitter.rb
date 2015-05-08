@@ -12,8 +12,8 @@ module Speech
       STATUS_BUILD_ERROR         = -1
       STATUS_ENCODING_ERROR      = -2
       STATUS_TRANSCRIPTION_ERROR = -3
-      
-      attr_accessor :id, :splitter, :chunk, :flac_chunk, :wav_chunk, :raw_chunk, :offset, :duration, :flac_rate, :copied, 
+
+      attr_accessor :id, :splitter, :chunk, :flac_chunk, :wav_chunk, :raw_chunk, :offset, :duration, :flac_rate, :copied,
         :captured_json, :best_text, :best_score, :status, :errors
 
       def initialize(splitter, offset, duration, id = nil)
@@ -33,7 +33,7 @@ module Speech
       def engine
         splitter.engine
       end
-      
+
       def self.copy(splitter, id = nil)
         chunk        = AudioChunk.new(splitter, 0, splitter.duration.to_f, id)
         chunk.status = STATUS_BUILT
@@ -158,7 +158,7 @@ module Speech
     end # AudioChunk
 
     def initialize(file, options = {})
-      self.original_file = file      
+      self.original_file = file
       self.duration      = AudioInspector.new(file).duration
       self.size          = options.key?(:chunk_size) ? options[:chunk_size].to_i : 5
       self.chunks        = []

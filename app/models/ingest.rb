@@ -7,12 +7,12 @@ class Ingest < ActiveRecord::Base
   STAGE_START       = 100
   STAGE_HARVEST     = 200
   STAGE_TRANSCODE   = 300
-  STAGE_TRANSCRIBE  = 400
+  STAGE_SPLIT       = 400
   STAGE_FINISH      = 500
   STAGE_ARCHIVE     = 600
   STAGES = {
     start: STAGE_START, harvest: STAGE_HARVEST,
-    transcode: STAGE_TRANSCODE, transcribe: STAGE_TRANSCRIBE,
+    transcode: STAGE_TRANSCODE, split: STAGE_SPLIT,
     finish: STAGE_FINISH, archive: STAGE_ARCHIVE
   }
 

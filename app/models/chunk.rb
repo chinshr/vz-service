@@ -20,7 +20,8 @@ class Chunk < Document
   validates :offset, presence: true
 
   filtered_scopes :sort_order, :reverse_sort, :any_of_type,
-    :any_of_processing_status, :none_of_processing_status
+    :any_of_processing_status, :none_of_processing_status,
+    :any_of_position, :any_of_ingest_iteration
   scope :sort_order, -> (param) {
     case param.first[0]  # E.g. get first key of {"id"=>"asc"}
     when "id"
@@ -36,11 +37,13 @@ class Chunk < Document
     end
   }
   scope :reverse_sort, -> (param) {all.reverse_order if Model::Helper.booleanize(param)}
-  scope :any_of_type, -> (params) {where(:type => type_for(params))}
+  scope :any_of_type, -> (params) {where("documents.type IN (?) OR documents.type IN (?)", type_for(params), params)}
   scope :any_of_processing_status, -> (params) {where("documents.processing_status IN (?)", [params].flatten.map(&:to_s).
     map {|s| s.match(/^([\-]{,1}[0-9]+)$/) ? s : nil}.reject(&:blank?).uniq)}
   scope :none_of_processing_status, -> (params) {where("documents.processing_status NOT IN (?)", [params].flatten.map(&:to_s).
     map {|s| s.match(/^([\-]{,1}[0-9]+)$/) ? s : nil}.reject(&:blank?).uniq)}
+  scope :any_of_position, -> (params) {where(:position => params)}
+  scope :any_of_ingest_iteration, -> (params) {where(:ingest_iteration => params)}
 
   # private scopes
   scope :transcribed, -> {where(:processing_status => STATES[:transcribed])}
