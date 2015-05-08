@@ -66,5 +66,14 @@ class ApplicationPolicy
       scope
     end
   end
+
+  protected
+
+  # use: policy(:"ingest/track").permitted_attributes
+  def policy(policy_name_or_record)
+    policy = Pundit::PolicyFinder.new(policy_name_or_record).policy
+    policy.new(user, record) if policy
+  end
+
 end
 

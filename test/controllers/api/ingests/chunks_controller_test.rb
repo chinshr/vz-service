@@ -24,7 +24,7 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
 
     @s3_url     = "http://s3.amazonaws.com/vz-test-origin/13dba008-7ba2-4804-a534-43d03c65260b/t4"
     @s3_mp3_url = "http://s3.amazonaws.com/vz-test-origin/13dba008-7ba2-4804-a534-43d03c65260b/t4.128.mp3"
-
+    @s3_waveform_json_url = "http://s3.amazonaws.com/vz-test-origin/13dba008-7ba2-4804-a534-43d03c65260b/t4.128.waveform.json"
 
     sign_out :user
   end
@@ -86,7 +86,7 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
       assert_difference 'Chunk::GoogleSpeech.count', 1 do
         assert_difference 'Track.count', 1 do
           attributes = @attributes.merge(type: "Chunk::GoogleSpeech")
-          track_attributes = {s3_url: @s3_url, s3_mp3_url: @s3_mp3_url}
+          track_attributes = {s3_url: @s3_url, s3_mp3_url: @s3_mp3_url, s3_waveform_json_url: @s3_waveform_json_url}
           post :create, ingest_id: @ingest1.id, chunk: attributes.merge(track_attributes: track_attributes), format: :json
           assert_response :success
           assert_attributes response_body["chunk"], attributes
@@ -94,6 +94,7 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
           assert_not_nil response_body["chunk"]["track"]
           assert_equal @s3_url, response_body["chunk"]["track"]["s3_url"]
           assert_equal @s3_mp3_url, response_body["chunk"]["track"]["s3_mp3_url"]
+          assert_equal @s3_waveform_json_url, response_body["chunk"]["track"]["s3_waveform_json_url"]
         end
       end
     end

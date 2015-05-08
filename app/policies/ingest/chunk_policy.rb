@@ -1,4 +1,5 @@
 class Ingest::ChunkPolicy < ChunkPolicy
+
   def create?
     backend_role?
   end
@@ -8,6 +9,7 @@ class Ingest::ChunkPolicy < ChunkPolicy
   end
 
   def permitted_attributes
-    super + [:ingest_iteration, track_attributes: [:s3_url, :s3_mp3_url]]
+    track_attributes = policy(:"ingest/track").permitted_attributes
+    super + [:ingest_iteration, track_attributes: track_attributes]
   end
 end
