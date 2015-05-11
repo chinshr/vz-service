@@ -47,6 +47,7 @@ group :development, :test do
   gem 'pry-rails'
   gem 'pry-nav'
   gem 'foreman', '~> 0.73.0'
+  gem 'thin'
 end
 
 group :test do
@@ -124,3 +125,4 @@ gem 'font-awesome-rails'
 gem 'dalli'
 gem 'rack-cache'
 gem 'kgio'
+gem 'turkee', git: 'https://github.com/chinshr/turkee.git', branch: 'master'

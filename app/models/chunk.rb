@@ -54,6 +54,8 @@ class Chunk < Document
   scope :ingest_chunks, -> { where("documents.document_id IS NOT NULL AND documents.ingest_id IS NOT NULL") }
   scope :document_chunks, -> { where("documents.document_id IS NOT NULL AND documents.ingest_id IS NULL") }
 
+  before_save :set_start_and_end_at, :set_locale, on: :create
+
   class << self
     def slug_length; 40; end
 
@@ -69,7 +71,7 @@ class Chunk < Document
 
     # Document::Chunk.type_from_engine_class_for(audio.engine.class) => "Document::Chunk::GoogleSpeech"
     def type_from_engine_class_for(klass)
-      chunk_class = self.subclasses.find {|cc| cc.engine_class_name == klass.to_s}
+      chunk_class = self.subclasses.find {|cc| cc.respond_to?(:engine_class_name) && cc.engine_class_name == klass.to_s}
       chunk_class.name if chunk_class
     end
 
@@ -81,9 +83,9 @@ class Chunk < Document
     def rich_text
       self.all.map do |chunk|
         json = {"insert" => chunk.text, "attributes" => {"offset" => chunk.offset.to_f}}
-        json["attributes"]["duration"]   = chunk.duration.to_f if chunk.duration
-        json["attributes"]["start_time"] = chunk.start_time.to_f if chunk.start_time
-        json["attributes"]["end_time"]   = chunk.end_time.to_f if chunk.end_time
+        json["attributes"]["duration"] = chunk.duration.to_f if chunk.duration
+        json["attributes"]["start_at"] = chunk.start_at.to_s if chunk.start_at
+        json["attributes"]["end_at"]   = chunk.end_at.to_s if chunk.end_at
         json
       end
     end
@@ -91,7 +93,14 @@ class Chunk < Document
 
   protected
 
-  def canonical_document?
-    false
+  def set_start_and_end_at
+    if ingest && ingest.upload && offset && duration
+      self.start_at = ingest.upload.recorded_at + offset
+      self.end_at   = self.start_at + duration
+    end
+  end
+
+  def set_locale
+    self.locale = document.locale if document
   end
 end

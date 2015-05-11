@@ -1,0 +1,92 @@
+require 'test_helper'
+
+CreateHit = Struct.new("CreateHit", :id, :url)
+
+class Chunk::MechanicalTurkTest < ActiveSupport::TestCase
+  context "class" do
+    setup do
+      @chunk = FactoryGirl.create(:chunk_with_ingest, uid: "ccb7093c-6d7a-4b31-aa1e-ccb84804a2e6")
+    end
+
+    should "#hit_form_url" do
+      assert_equal "https://localhost:3000/mechanical_turk/documents/ccb7093c-6d7a-4b31-aa1e-ccb84804a2e6/chunks/new",
+        Chunk::MechanicalTurk.send(:hit_form_url, @chunk)
+    end
+
+    should "#turk_host" do
+      assert_equal "https://localhost:3000",
+        Chunk::MechanicalTurk.send(:turk_host)
+    end
+
+    should "#hit_title" do
+      assert_equal "Transcribe up to 25 Seconds of English audio to text - Earn up to $0.12 per HIT!",
+        Chunk::MechanicalTurk.send(:hit_title, @chunk)
+    end
+
+    should "#hit_description" do
+      assert_equal "Press PLAY and type the words that you hear then press ENTER or Submit.",
+        Chunk::MechanicalTurk.send(:hit_description, @chunk)
+    end
+
+    should "#create_hit" do
+      RTurk::Hit.stubs(:create).returns(CreateHit.new(1, "http"))
+      assert_difference "Turkee::TurkeeTask.count", 1 do
+        Chunk::MechanicalTurk.create_hit(@chunk)
+      end
+    end
+
+    should "#hit_complete" do
+      turkee_task = FactoryGirl.create(:turkee_task)
+      chunk = FactoryGirl.create(:chunk_mechanical_turk, turkee_task_id: turkee_task.id)
+      Chunk::MechanicalTurk.hit_complete(turkee_task)
+      assert_equal Chunk::MechanicalTurk::STATES[:transcribed],
+        chunk.reload.processing_status
+    end
+
+    should "#hit_expired" do
+      turkee_task = FactoryGirl.create(:turkee_task)
+      chunk = FactoryGirl.create(:chunk_mechanical_turk, turkee_task_id: turkee_task.id)
+      Chunk::MechanicalTurk.hit_expired(turkee_task)
+      assert_equal Chunk::MechanicalTurk::STATES[:transcription_error],
+        chunk.reload.processing_status
+    end
+
+    should "#process_hits" do
+      turkee_task1 = FactoryGirl.create(:turkee_task)
+      turkee_task2 = FactoryGirl.create(:turkee_task)
+      chunk0 = FactoryGirl.create(:chunk_pocketsphinx)
+      RTurk::Hit.stubs(:create).returns(CreateHit.new(1, "http"))
+      Chunk::MechanicalTurk.create_hit(chunk0)
+
+      Turkee::TurkeeTask.stubs(:unprocessed_hits).returns([])
+      Turkee::TurkeeTask.stubs(:map_imported_values).returns([Chunk::MechanicalTurk,
+        {"chunk_mechanical_turk" => {"text" => "I like pickles",
+          "document_id" => chunk0.id, "position" => chunk0.position, "offset" => chunk0.offset,
+          "turkee_task_id" => chunk0.turkee_task_id}}])
+
+      assignment = Struct.new("Assignment", :id, :status, :worker_id) do
+        def reject!(msg); @reject = msg; end
+        def approve!(msg); @approve = msg; end
+      end.new("2", "Submitted", "8")
+      RTurk::Hit.any_instance.stubs(:assignments).returns([assignment])
+
+      assert_difference "Chunk::MechanicalTurk.count", 1 do
+        assert_no_difference "Track.count" do
+          Chunk::MechanicalTurk.process_hits
+          mtc = Chunk::MechanicalTurk.last
+          assert_equal chunk0.document, mtc.document
+          assert_equal chunk0.position, mtc.position
+          assert_equal chunk0.offset, mtc.offset
+          assert_equal chunk0.duration, mtc.duration
+          assert_equal chunk0.start_at, mtc.start_at
+          assert_equal chunk0.end_at, mtc.end_at
+          assert_equal chunk0.turkee_task_id, mtc.turkee_task_id
+          assert_equal chunk0.locale, mtc.locale
+          assert_equal chunk0.ingest_id, mtc.ingest_id
+          assert_equal chunk0.ingest_iteration, mtc.ingest_iteration
+          assert_equal chunk0.track, mtc.track
+        end
+      end
+    end
+  end
+end

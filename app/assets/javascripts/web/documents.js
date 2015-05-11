@@ -1,10 +1,5 @@
 //= require lib/WAAPISim/waapisim
-//= require lib/wavesurfer/wavesurfer
-//= require lib/wavesurfer/webaudio
-//= require lib/wavesurfer/webaudio.buffer
-//= require lib/wavesurfer/webaudio.media
-//= require lib/wavesurfer/drawer
-//= require lib/wavesurfer/drawer.canvas
+//= require lib/wavesurfer/wavesurfer.min
 //= require lib/quill
 
 /* simply-toast */

@@ -24,6 +24,9 @@ The service runs the Website and API.
 * Dictaphone ebay buying guide -- http://www.ebay.com/gds/Dictaphone-Buying-Guide-/10000000177630514/g.html
 * Transition browser compatibility -- http://www.sitepoint.com/css3-animation-javascript-event-handlers/
 * Open source transcrition helping tool -- otranscribe.com
+* Mobile Justice app -- https://www.mobilejusticeca.org
+  - Article: http://www.theatlantic.com/technology/archive/2015/05/film-the-police/392483/
+* Record your life with a camera: http://memini.com
 
 ## Developer Resources
 
@@ -234,6 +237,8 @@ The service runs the Website and API.
   - GST Speech API -- https://github.com/alumae/GST-Speech-API
 * Customer interaction and customer messaging, that codeship uses -- www.intercom.io
 * Open source iOS apps -- https://github.com/dkhamsing/open-source-ios-apps
+* Using Mechanical Turk with Ruby
+  - Turkee: http://rubysnippets.com/2012/11/19/using-mechanical-turk-in-your-rails-app/
 
 ### SendGrid Setup
 

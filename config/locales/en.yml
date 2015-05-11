@@ -45,6 +45,10 @@ en:
         max_number_of_device_authorizations_allowed_per_period: "Maximum number of device authorizations reached within the past %{days} days"
       argument_missing_name: "Argument missing '%{argument_name}'"
   activerecord:
+    models:
+      mechanical_turk:
+        create_hit_title: "Transcribe up to 25 Seconds of %{language} audio to text - Earn up to $0.12 per HIT!"
+        create_hit_description: "Press PLAY and type the words that you hear then press ENTER or Submit."
     errors:
       messages:
         registration: "has not yet been accepted to the beta program"

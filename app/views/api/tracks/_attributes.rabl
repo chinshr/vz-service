@@ -1,1 +1,1 @@
-attributes :id, :mp3_stream_url, :is_master, :created_at
+attributes :mp3_stream_url, :waveform_json_stream_url, :is_master, :duration, :start_at, :end_at, :created_at

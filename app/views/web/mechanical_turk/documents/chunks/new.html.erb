@@ -1,0 +1,44 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 full-width without-padding">
+
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul id="media-player-toolbar-container" class="nav navbar-nav toolbar-nav audio-player-nav">
+          <!-- player -->
+          <li><button title="<%= key_cmd(:play, 'Space', [:shift_key, :meta_key]) %>" type="button" class="btn btn-lg btn-tlb fa fa-play fa-fw player player-play-pause" data-action="toggle-play-pause" data-toggle="tooltip" data-placement="bottom"></button></li>
+          <li class="waveform-item">
+            <div id="waveform" class="waveform-container">
+              <div class="progress progress-striped active" id="player-progress-bar">
+                  <div class="progress-bar progress-bar-info"></div>
+              </div>
+              <!-- here goes the waveform -->
+            </div>
+            <div id="wave-timeline"></div>
+          </li>
+          <li><button title="<%= key_cmd(:stop) %>" type="button" class="btn btn-lg btn-tlb fa fa-stop fa-fw player player-reset" data-action="reset" data-toggle="tooltip" data-placement="bottom"></button></li>
+        </ul>
+      </div>
+
+      <%= turkee_form_for(@chunk, params) do |f| %>
+
+        <div class="form-group form-group-text">
+          <%= f.label :text, class: "sr-only" %>
+          <%= f.text_area :text, class: "form-control text input-xl", disabled: @disabled, placeholder: "Press PLAY and type the words that you hear, then press ENTER", autofocus: "autofocus", autocapitalize: "off", autocomplete: "off", autocorrect: "on", spellcheck: true, validate: true, :"data-error-style" => "inline" %>
+          <%= f.hidden_field :document_id %>
+          <%= f.hidden_field :position %>
+          <%= f.hidden_field :offset %>
+          <%= f.hidden_field :turkee_task_id %>
+        </div><!-- form-group-description -->
+
+        <%#= f.submit 'Submit or press ENTER when finished', class: "btn btn-lg btn-primary btn-block btn-success", disabled: @disabled %>
+        <button class="btn btn-lg btn-primary btn-block btn-success" type="submit" disabled="<%= @disabled ? 'true' : 'false' %>" data-loading-text="Submitting...">Submit or press ENTER when finished</button>
+
+      <% end %>
+    </div><!-- .col-lg-12 .full-width -->
+  </div><!-- .row -->
+</div><!-- .container-fluid -->
+<%= javascript_tag do %>
+  <% @track = @document.track -%>
+  var chunk = <%= raw render(:file => 'api/tracks/show.rabl') %>;
+  console.log(chunk);
+<% end %>

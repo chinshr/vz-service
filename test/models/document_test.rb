@@ -80,7 +80,19 @@ class DocumentTest < ActiveSupport::TestCase
       Document.destroy_all
     end
 
-    should "recent" do
+    should "have filtered scopes" do
+      assert_equal [:sort_order, :reverse_sort, :is_root, :offset, :limit].to_set,
+        Document.scopes.to_set
+    end
+
+    should "#is_root" do
+      @document1 = FactoryGirl.create(:document)
+      @chunk1 = FactoryGirl.create(:chunk)
+      assert_equal @document1, Document.is_root(true).sort_order("id" => "desc").last
+      assert_equal @chunk1, Document.is_root(false).sort_order("id" => "desc").first
+    end
+
+    should "#recent" do
       @document1 = FactoryGirl.create(:document, :privacy => [:private])
       @document2 = FactoryGirl.create(:document, :privacy => [:public])
       assert_equal [@document2, @document1], Document.recent.to_a
@@ -88,14 +100,14 @@ class DocumentTest < ActiveSupport::TestCase
       assert_equal [@document2], Document.recent(1).to_a
     end
 
-    should "with_privacy" do
+    should "#with_privacy" do
       @document1 = FactoryGirl.create(:document, :privacy => [:private])
       @document2 = FactoryGirl.create(:document, :privacy => [:public])
       assert_equal [@document1], Document.with_privacy(:private).to_a
       assert_equal [@document2], Document.with_privacy(:public).to_a
     end
 
-    should "with_user_privacy" do
+    should "#with_user_privacy" do
       @user = FactoryGirl.create(:user)
       @document1 = FactoryGirl.create(:document, :privacy => [:private], :user => @user)
       @document2 = FactoryGirl.create(:document, :privacy => [:public])
@@ -187,5 +199,11 @@ class DocumentTest < ActiveSupport::TestCase
     document = FactoryGirl.create(:document)
     assert_not_nil document.uid
     assert_equal 36, document.uid.length
+  end
+
+  should "be root?" do
+    document = FactoryGirl.create(:document)
+    assert_equal true, document.is_root?
+    assert_equal true, document.is_root
   end
 end

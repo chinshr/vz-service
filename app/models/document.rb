@@ -17,10 +17,10 @@ class Document < ActiveRecord::Base
   acts_as_ordered_taggable_on :tags, :auto
 
   validates :slug, presence: true, uniqueness: {case_sensitive: false}
-  validates :title, presence: true, length: {maximum: 255}, if: :canonical_document?
+  validates :title, presence: true, length: {maximum: 255}, if: :is_root?
 
   # public scopes
-  filtered_scopes :sort_order, :reverse_sort
+  filtered_scopes :sort_order, :reverse_sort, :is_root
   scope :sort_order, lambda {|param|
     case param.first[0]  # E.g. get first key of {"id"=>"asc"}
     when "id"
@@ -34,6 +34,8 @@ class Document < ActiveRecord::Base
     end
   }
   scope :reverse_sort, lambda {|param| all.reverse_order if Model::Helper.booleanize(param)}
+  scope :is_root, -> (param) { Model::Helper.booleanize(param) ? where("documents.type IS NULL") : where("documents.type IS NOT NULL") }
+
   # private scopes
   scope :recent, lambda {|n = 5| order("documents.created_at DESC").limit(n)}
   scope :with_privacy, lambda {|privacy| where("privacy_mask & #{privacy_mask(privacy)} > 0") }
@@ -71,8 +73,11 @@ class Document < ActiveRecord::Base
   end
 
   def build_track(attributes = {})
-    track_attributes = attributes.symbolize_keys.merge(is_master: (self.class.name == "Document"))
-    build_tracking(document: self).build_track(track_attributes)
+    attributes = attributes.symbolize_keys
+    tracking_attributes = attributes.select {|k, v| k == :ingest}
+    tracking_attributes.merge!({document: self})
+    track_attributes = attributes.merge({is_master: (self.class.name == "Document")})
+    build_tracking(tracking_attributes).build_track(track_attributes)
   end
 
   def privacy=(values)
@@ -105,6 +110,11 @@ class Document < ActiveRecord::Base
     Track.joins(:tracking).where("trackings.document_id IN (?)", document_ids)
   end
 
+  def is_root?
+    self.type == nil
+  end
+  alias_method :is_root, :is_root?
+
   protected
 
   def generate_slug
@@ -114,9 +124,5 @@ class Document < ActiveRecord::Base
   def set_tag_owner
     # Set the owner of some tags based on the current tag_list
     set_owner_tag_list_on(user, :tags, self.tag_list) if changes[:tag_list]
-  end
-
-  def canonical_document?
-    true
   end
 end

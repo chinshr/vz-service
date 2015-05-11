@@ -36,7 +36,6 @@ class Ingest < ActiveRecord::Base
 
   serialize :messages, Hash
 
-  delegate :s3_key, to: :upload, allow_nil: true
   delegate :track, to: :document, allow_nil: true
   delegate :track=, to: :document, allow_nil: true
 

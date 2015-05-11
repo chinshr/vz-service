@@ -63,7 +63,11 @@ class Api::Ingests::ChunksController < Api::ApplicationController
     params.require(:chunk).permit(*policy(:"ingest/chunk").permitted_attributes).tap do |whitelisted|
       whitelisted[:response]          = params[:chunk][:response] if params[:chunk][:response]
       whitelisted[:processing_errors] = params[:chunk][:processing_errors] if params[:chunk][:processing_errors]
+      whitelisted[:ingest]            = @ingest
       whitelisted[:ingest_iteration]  = params[:chunk][:ingest_iteration] || @ingest.iteration
+      if whitelisted[:track_attributes]
+        whitelisted[:track_attributes].merge!(ingest: @ingest)
+      end
     end
   end
 

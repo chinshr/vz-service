@@ -35,6 +35,12 @@ Voyzes::Application.routes.draw do
       resource :settings, only: [:show, :edit, :update]
     end
 
+    namespace :mechanical_turk do
+      resources :documents, only: [] do
+        resources :chunks, only: [:new], controller: "documents/chunks"
+      end
+    end
+
     # web_document_path -> /x3ksk
     # edit_web_document_path -> /x3ksk
     resources :documents, only: [:show, :edit], path: ""
