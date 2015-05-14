@@ -1,6 +1,5 @@
 class Chunk::MechanicalTurkChunk < ::Chunk
   belongs_to :turkee_task, class_name: "Turkee::TurkeeTask", foreign_key: :turkee_task_id
-
   before_save :copy_sibling_attributes, :assign_root_document, on: :create
 
   class << self
@@ -77,7 +76,8 @@ class Chunk::MechanicalTurkChunk < ::Chunk
 
     def process_data(chunks)
     end
-  end
+
+  end # end class
 
   def approve?
     # Make sure we can defer approval until we have collected all assignments.

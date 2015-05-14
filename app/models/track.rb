@@ -2,18 +2,20 @@ class Track < ActiveRecord::Base
   include Model::Filter
   include Model::Uid
 
-  has_one :tracking, dependent: :destroy
-  has_one :document, through: :tracking, source: :document  # <- document or chunk!
-  has_one :ingest, through: :tracking, source: :ingest
+  delegate :ingest_id, to: :segment, allow_nil: true
+  delegate :document_id, to: :segment, allow_nil: true
+  delegate :chunk_id, to: :segment, allow_nil: true
+  delegate :offset, to: :trackable, allow_nil: true
+  delegate :duration, to: :trackable, allow_nil: true
+  delegate :start_at, to: :trackable, allow_nil: true
+  delegate :end_at, to: :trackable, allow_nil: true
+
+  has_one :segment, foreign_key: :track_id, dependent: :nullify
+  has_one :ingest, through: :segment, source: :ingest
+  has_one :document, through: :segment, source: :document
+  has_one :chunk, through: :segment, source: :chunk
 
   validates :s3_url, presence: true
-
-  delegate :ingest_id, to: :tracking, allow_nil: true
-  delegate :document_id, to: :tracking, allow_nil: true
-  delegate :offset, to: :document, allow_nil: true
-  delegate :duration, to: :document, allow_nil: true
-  delegate :start_at, to: :document, allow_nil: true
-  delegate :end_at, to: :document, allow_nil: true
 
   # public scopes
   filtered_scopes :sort_order, :reverse_sort, :is_master
@@ -44,6 +46,26 @@ class Track < ActiveRecord::Base
     rescue URI::InvalidURIError => ex
       nil
     end
+  end
+
+  def trackable
+    if segment.is_a?(Segment::DocumentSegment) || is_master?
+      segment.document
+    elsif segment.is_a?(Segment::ChunkSegment) || !is_master?
+      segment.chunk
+    end
+  end
+
+  def trackable=(value)
+    if segment.is_a?(Segment::DocumentSegment) || is_master?
+      segment.document = value
+    elsif segment.is_a?(Segment::ChunkSegment) || !is_master?
+      segment.chunk = value
+    end
+  end
+
+  def trackable_id
+    trackable.try(:id)
   end
 
   def s3_key

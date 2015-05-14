@@ -2,24 +2,30 @@ require 'test_helper'
 
 class TrackTest < ActiveSupport::TestCase
   context "associations" do
-    should have_one(:tracking).dependent(:destroy)
-    should have_one(:document).through(:tracking).source(:document)
-    should have_one(:ingest).through(:tracking).source(:ingest)
+    should have_one(:segment).dependent(:nullify)
+    should have_one(:ingest).through(:segment).source(:ingest)
+    should have_one(:document).through(:segment).source(:document)
+    should have_one(:chunk).through(:segment).source(:chunk)
 
     should "chunk track have ingest integrity" do
-      track = FactoryGirl.create(:track_with_chunk_and_ingest)
-      assert_equal track.document.ingest, track.ingest
-      assert_equal track.id, track.tracking.track_id
-      assert_equal track.document.id, track.tracking.document_id
-      assert_equal track.document.ingest.id, track.tracking.ingest_id
+      track = FactoryGirl.create(:track_with_chunk_and_ingest).reload
+      assert_equal false, track.is_master?
+      assert_equal track.chunk, track.trackable
+      assert_equal track.chunk.ingest, track.ingest
+      assert_equal track.trackable.ingest, track.ingest
+      assert_equal track.id, track.segment.track_id
+      assert_equal track.chunk.id, track.segment.chunk_id
+      assert_equal track.chunk.id, track.trackable_id
+      assert_equal track.chunk.ingest.id, track.segment.ingest_id
+      assert_equal "Segment::ChunkSegment", track.segment.class.name
     end
 
     should "document track have ingest integrity" do
       track = FactoryGirl.create(:track_with_document_and_ingest)
       assert_equal track.document.ingests.first, track.ingest
-      assert_equal track.id, track.tracking.track_id
-      assert_equal track.document.id, track.tracking.document_id
-      assert_equal track.document.ingests.first.id, track.tracking.ingest_id
+      assert_equal track.id, track.segment.track_id
+      assert_equal track.document.id, track.segment.document_id
+      assert_equal track.document.ingests.first.id, track.segment.ingest_id
     end
   end
 
@@ -28,33 +34,80 @@ class TrackTest < ActiveSupport::TestCase
   end
 
   context "delegate" do
-    setup do
-      @track = FactoryGirl.create(:track_with_chunk_and_ingest)
+    context "document as trackable" do
+      setup do
+        @track = FactoryGirl.create(:track_with_document_and_ingest)
+        @track.document.update_attributes(duration: 1234, 
+          start_at: Time.zone.now - 2.days, end_at: Time.zone.now - 1.days)
+      end
+
+      should "#duration" do
+        assert_equal @track.document.duration, @track.duration
+        assert_not_nil @track.duration
+      end
+
+      should "#start_at" do
+        assert_equal @track.document.start_at, @track.start_at
+        assert_not_nil @track.start_at
+      end
+
+      should "#end_at" do
+        assert_equal @track.document.end_at, @track.end_at
+        assert_not_nil @track.end_at
+      end
+
+      should "#ingest_id to segment" do
+        assert_equal @track.segment.ingest_id, @track.ingest_id
+        assert_not_nil @track.ingest_id
+      end
+
+      should "#document_id to segment" do
+        assert_equal @track.segment.document_id, @track.document_id
+        assert_not_nil @track.document_id
+      end
+
+      should "#chunk_id to segment and empty" do
+        assert_equal @track.segment.chunk_id, @track.chunk_id
+        assert_nil @track.chunk_id
+      end
     end
 
-    should "ingest_id to trackings.ingest_id" do
-      assert_equal @track.tracking.ingest_id, @track.ingest_id
-    end
+    context "chunk as trackable" do
+      setup do
+        @track = FactoryGirl.create(:track_with_chunk_and_ingest)
+      end
 
-    should "document_id to trackings.document_id" do
-      assert_equal @track.tracking.document_id, @track.document_id
-    end
+      should "#offset" do
+        assert_equal true, @track.trackable.is_a?(Chunk)
+        assert_equal @track.trackable.offset, @track.offset
+      end
 
-    should "offset to document.offset" do
-      assert_equal true, @track.document.is_a?(Chunk)
-      assert_equal @track.document.offset, @track.offset
-    end
+      should "#duration" do
+        assert_equal @track.chunk.duration, @track.duration
+      end
 
-    should "duration to document.duration" do
-      assert_equal @track.document.duration, @track.duration
-    end
+      should "#start_at" do
+        assert_equal @track.chunk.start_at, @track.start_at
+      end
 
-    should "start_at to document.start_at" do
-      assert_equal @track.document.start_at, @track.start_at
-    end
+      should "#end_at" do
+        assert_equal @track.chunk.end_at, @track.end_at
+      end
 
-    should "end_at to document.end_at" do
-      assert_equal @track.document.end_at, @track.end_at
+      should "#ingest_id to segment" do
+        assert_equal @track.segment.ingest_id, @track.ingest_id
+        assert_not_nil @track.ingest_id
+      end
+
+      should "#document_id to segment" do
+        assert_equal @track.segment.document_id, @track.document_id
+        assert_not_nil @track.document_id
+      end
+
+      should "#chunk_id to segment and not empty" do
+        assert_equal @track.segment.chunk_id, @track.chunk_id
+        assert_not_nil @track.chunk_id
+      end
     end
   end
 
@@ -118,7 +171,5 @@ class TrackTest < ActiveSupport::TestCase
       assert_equal true, @track.waveform_json_stream_url.include?("s3.amazonaws.com")
       assert_equal true, @track.waveform_json_stream_url.include?(@track.s3_waveform_json_key)
     end
-
   end
-
 end

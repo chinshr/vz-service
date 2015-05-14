@@ -10,12 +10,13 @@ class Api::Ingests::ChunksController < Api::ApplicationController
   # [POST] /api/ingests/:ingest_id/chunks(.:format)
   def create
     authorize :"ingest/chunk"
-    @chunk = @ingest.ingest_chunks.create(create_params)
+    @chunk = @ingest.chunks.create(create_params)
     @chunk.reload unless @chunk.new_record?
     respond_with @chunk
   end
 
   # [GET] /api/ingests/:ingest_id/chunks(.:format)
+  # [GET] /api/ingests/chunks(.:format)
   def index
     authorize :"ingest/chunk"
     @chunks = Chunk.filter(params)
@@ -25,7 +26,7 @@ class Api::Ingests::ChunksController < Api::ApplicationController
   # [GET] /api/ingests/:ingest_id/count(.:format)
   def count
     authorize :"ingest/chunk"
-    render :json => {:count => @ingest.ingest_chunks.filter(params).count}
+    render :json => {:count => @ingest.chunks.filter(params).count}
   end
 
   # [GET] /api/ingests/:ingest_id/chunks/:id(.:format)
@@ -45,7 +46,7 @@ class Api::Ingests::ChunksController < Api::ApplicationController
   # [DELETE] /api/ingests/:ingest_id/chunks/:id(.:format)
   def destroy
     authorize :"ingest/chunk"
-    @ingest.ingest_chunks.destroy(@chunk)
+    @ingest.chunks.destroy(@chunk)
     respond_with @chunk
   end
 
@@ -56,7 +57,7 @@ class Api::Ingests::ChunksController < Api::ApplicationController
   end
 
   def load_chunk
-    @chunk = @ingest.ingest_chunks.find(params[:id])
+    @chunk = @ingest.chunks.find(params[:id])
   end
 
   def create_params

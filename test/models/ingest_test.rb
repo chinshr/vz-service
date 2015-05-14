@@ -10,9 +10,9 @@ class IngestTest < ActiveSupport::TestCase
   context "associations" do
     should belong_to(:upload).dependent(:destroy)
     should belong_to(:document)
-    should have_many(:chunks).through(:document)
+    should have_many(:segments).dependent(:nullify)
+    should have_many(:chunks).through(:segments)
     should have_many(:tracks).through(:chunks)
-    should have_many(:ingest_chunks).dependent(:nullify)
   end
 
   context "validations" do
@@ -236,10 +236,9 @@ class IngestTest < ActiveSupport::TestCase
 
   should "calculate average score and duration" do
     ingest = FactoryGirl.create(:ingest_audio)
-    document = ingest.document
-    chunk1 = FactoryGirl.create(:chunk, :offset => 0, :document => document, :score => 0)
-    chunk2 = FactoryGirl.create(:chunk, :offset => 1, :document => document, :score => 0.5)
-    chunk3 = FactoryGirl.create(:chunk, :offset => 2, :document => document, :score => 1)
+    ch1 = ingest.chunks.create(FactoryGirl.attributes_for(:chunk, :offset => 0, :score => 0, :position => 1))
+    ch2 = ingest.chunks.create(FactoryGirl.attributes_for(:chunk, :offset => 1, :score => 0.5, :position => 2))
+    ch3 = ingest.chunks.create(FactoryGirl.attributes_for(:chunk, :offset => 2, :score => 1, :position => 3))
     assert_equal 3, ingest.chunks.count
     assert_equal 0.5, ingest.score.to_f
     assert_equal 10.53, ingest.duration.to_f
@@ -247,32 +246,54 @@ class IngestTest < ActiveSupport::TestCase
 
   should "order chunks by offset" do
     ingest = FactoryGirl.create(:ingest_audio)
-    document = ingest.document
-    chunk3 = FactoryGirl.create(:chunk, :offset => 2, :document => document, :score => 1)
-    chunk1 = FactoryGirl.create(:chunk, :offset => 0, :document => document, :score => 0)
-    chunk2 = FactoryGirl.create(:chunk, :offset => 1, :document => document, :score => 0.5)
+    ch3 = ingest.chunks.create(FactoryGirl.attributes_for(:chunk, :offset => 2, :score => 1, :position => 3))
+    ch1 = ingest.chunks.create(FactoryGirl.attributes_for(:chunk, :offset => 0, :score => 0, :position => 1))
+    ch2 = ingest.chunks.create(FactoryGirl.attributes_for(:chunk, :offset => 1, :score => 0.5, :position => 2))
     assert_equal 3, ingest.chunks.count
     chunks = ingest.chunks.order(:offset)
-    assert_equal chunk1, chunks[0]
-    assert_equal chunk2, chunks[1]
-    assert_equal chunk3, chunks[2]
+    assert_equal ch1, chunks[0]
+    assert_equal ch2, chunks[1]
+    assert_equal ch3, chunks[2]
   end
 
-  context "chunks" do
+  context "chunks and tracks" do
     setup do
+      Segment.destroy_all
       @ingest = FactoryGirl.create(:ingest_audio)
+
+      @t0  = Track.create(FactoryGirl.attributes_for(:track, s3_url: "http://t0"))
+      @t1  = Track.create(FactoryGirl.attributes_for(:track, s3_url: "http://t1"))
+      @t2  = Track.create(FactoryGirl.attributes_for(:track, s3_url: "http://t2"))
+      @t3  = Track.create(FactoryGirl.attributes_for(:track, s3_url: "http://t3"))
+
       @document = @ingest.document
-      Chunk::GoogleSpeechChunk.create(:position => 1, :offset => 0, :duration => 0.72, :text => "I hate to say", :score => 0.80, :document => @document, :ingest => @ingest)
-      Chunk::GoogleSpeechChunk.create(:position => 2, :offset => 10, :duration => 0.89, :text => "that macaronies are", :score => 0.65, :document => @document, :ingest => @ingest)
-      Chunk::GoogleSpeechChunk.create(:position => 3, :offset => 20, :duration => 1.21, :text => "the best food in the world", :score => 0.85, :document => @document, :ingest => @ingest)
+      @document.update_attribute(:track, @t0)
+      @document.document_segment.update_attribute(:ingest, @ingest)
 
-      Chunk::AttSpeechChunk.create(:position => 1, :offset => 0, :duration => 0.72, :text => "I have to pray", :score => 0.70, :document => @document, :ingest => @ingest)
-      Chunk::AttSpeechChunk.create(:position => 2, :offset => 10, :duration => 0.89, :text => "cat maths are", :score => 0.70, :document => @document, :ingest => @ingest)
-      Chunk::AttSpeechChunk.create(:position => 3, :offset => 20, :duration => 1.21, :text => "the best mushrooms in the whirlwind.", :score => 0.95, :document => @document, :ingest => @ingest)
+      @gc1 = Chunk::GoogleSpeechChunk.create(:position => 1, :offset => 0, :duration => 0.72, :text => "I hate to say", :score => 0.80, :document => @document, :ingest => @ingest, :track => @t1)
+      @gc2 = Chunk::GoogleSpeechChunk.create(:position => 2, :offset => 10, :duration => 0.89, :text => "that macaronies are", :score => 0.65, :document => @document, :ingest => @ingest, :track => @t2)
+      @gc3 = Chunk::GoogleSpeechChunk.create(:position => 3, :offset => 20, :duration => 1.21, :text => "the best food in the world", :score => 0.85, :document => @document, :ingest => @ingest, :track => @t3)
 
-      Chunk::NuanceDragonChunk.create(:position => 1, :offset => 0, :duration => 0.72, :text => "I have say", :score => 0, :document => @document, :ingest => @ingest)
-      Chunk::NuanceDragonChunk.create(:position => 2, :offset => 10, :duration => 0.89, :text => "that some macaronies are", :score => 0, :document => @document, :ingest => @ingest)
-      Chunk::NuanceDragonChunk.create(:position => 3, :offset => 20, :duration => 1.21, :text => "the cesty food in the world", :score => 0, :document => @document, :ingest => @ingest)
+      @ac1 = Chunk::AttSpeechChunk.create(:position => 1, :offset => 0, :duration => 0.72, :text => "I have to pray", :score => 0.70, :document => @document, :ingest => @ingest, :track => @t1)
+      @ac2 = Chunk::AttSpeechChunk.create(:position => 2, :offset => 10, :duration => 0.89, :text => "cat maths are", :score => 0.70, :document => @document, :ingest => @ingest, :track => @t2)
+      @ac3 = Chunk::AttSpeechChunk.create(:position => 3, :offset => 20, :duration => 1.21, :text => "the best mushrooms in the whirlwind.", :score => 0.95, :document => @document, :ingest => @ingest, :track => @t3)
+
+      @nc1 = Chunk::NuanceDragonChunk.create(:position => 1, :offset => 0, :duration => 0.72, :text => "I have say", :score => 0, :document => @document, :ingest => @ingest, :track => @t1)
+      @nc2 = Chunk::NuanceDragonChunk.create(:position => 2, :offset => 10, :duration => 0.89, :text => "that some macaronies are", :score => 0, :document => @document, :ingest => @ingest, :track => @t2)
+      @nc3 = Chunk::NuanceDragonChunk.create(:position => 3, :offset => 20, :duration => 1.21, :text => "the cesty food in the world", :score => 0, :document => @document, :ingest => @ingest, :track => @t3)
+    end
+
+    should "chunk and track integrity" do
+      assert_equal 1, Segment::DocumentSegment.count
+      assert_equal 9, Segment::ChunkSegment.count
+      assert_equal 9, @ingest.chunks.count
+      assert_equal 3, @ingest.tracks.count
+      assert_equal 4, @ingest.tracks_including_master_track.count
+      assert_equal @t0, @ingest.track
+      assert_equal [@t1, @t2, @t3].to_set, @ingest.tracks.to_set
+      assert_equal [@t0, @t1, @t2, @t3].to_set, @ingest.tracks_including_master_track.to_set
+      assert_equal [@gc1, @gc2, @gc3].to_set, @ingest.chunks.any_of_types(:google_speech).to_set
+      assert_equal @t2, @ac2.track
     end
 
     should "normalize chunk scores" do
@@ -296,5 +317,13 @@ class IngestTest < ActiveSupport::TestCase
     @ingest = FactoryGirl.create(:ingest_audio)
     assert_not_nil @ingest.uid
     assert_equal 36, @ingest.uid.length
+  end
+
+  should "create chunks through ingest" do
+    @ingest = FactoryGirl.create(:ingest_audio)
+    @chunk1 = @ingest.chunks.create(FactoryGirl.attributes_for(:chunk_pocketsphinx).merge(position: 1))
+    assert_equal @ingest, @chunk1.reload.ingest
+    assert_equal @ingest.document, @chunk1.reload.document
+    assert_equal 1, @chunk1.reload.position
   end
 end

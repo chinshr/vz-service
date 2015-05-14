@@ -171,25 +171,6 @@ class Api::IngestsControllerTest < ActionController::TestCase
       assert_equal :created, @ingest2.reload.state
     end
 
-    should "update ingest create document track" do
-      skip
-      @ingest3 = FactoryGirl.create(:ingest_audio)
-      @ingest3.document.track.destroy
-
-      sign_in :user, @user2
-      assert_no_difference "Document.count" do
-        assert_difference "Track.count", 1 do
-          put :update, {:id => @ingest3.id, :ingest => {
-            document_attributes: {id: @ingest3.document.id, track_attributes: {s3_url: "http://s3.amazonaws.com/foobar"}}
-          }, format: :json}
-          assert_response :success
-          assert_response_body_attributes_with "ingest"
-          assert_not_nil response_body["ingest"]["document"]["track"]
-          assert_equal "http://s3.amazonaws.com/foobar", response_body["ingest"]["document"]["track"]["s3_url"]
-        end
-      end
-    end
-
     should "NOT update without user" do
       put :update, {:id => @ingest1.id, :ingest => {:stage => "transcribe"}, format: :json}
       assert_response :unauthorized

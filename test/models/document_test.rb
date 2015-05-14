@@ -4,31 +4,44 @@ class DocumentTest < ActiveSupport::TestCase
   context "associations" do
     should belong_to :user
     should have_many :ingests
-    should have_many(:chunks).dependent(:destroy)
+    should have_many(:segments).dependent(:destroy)
+    should have_many(:chunk_segments).dependent(:destroy)
+    should have_many(:chunks).through(:chunk_segments)
     should have_many(:tracks).through(:chunks)
-    should have_one(:tracking).dependent(:destroy)
-    should have_one :track
+    should have_many(:tracks_including_master_track).through(:segments)
+    should have_one :document_segment
+    should have_one(:track).through(:document_segment)
 
     should "have tracks_including_master_track" do
-      @document = FactoryGirl.create(:document)
-      @t0 = @document.create_track(s3_url: "http://t0")
-      @c1 = Chunk::GoogleSpeechChunk.create(:position => 1, :offset => 0,  :text => "I hate to say", :score => 0.80, :document => @document)
-      @t1 = @c1.create_track(s3_url: "http://t1")
-      @c2 = Chunk::GoogleSpeechChunk.create(:position => 2, :offset => 10, :text => "cat maths are", :score => 0.65, :document => @document)
-      @t2 = @c2.create_track(s3_url: "http://t2")
-      @c3 = Chunk::GoogleSpeechChunk.create(:position => 3, :offset => 20, :text => "the cesty food in the world", :score => 0.85, :document => @document)
-      @t3 = @c3.create_track(s3_url: "http://t3")
-      assert_equal 3, @document.chunks.count
-      assert_equal 3, @document.tracks.count
-      assert_equal 4, @document.tracks_including_master_track.count
-      assert_equal @document.id, @t0.document.id
-      assert_equal true, @t0.is_master?
-      assert_equal @c1.id, @c1.track.document.id
-      assert_equal false, @c1.track.is_master?
-      assert_equal @c2.id, @c2.track.document.id
-      assert_equal false, @c2.track.is_master?
-      assert_equal @c3.id, @c3.track.document.id
-      assert_equal false, @c3.track.is_master?
+      assert_difference "Segment::DocumentSegment.count", 1 do
+        assert_difference "Segment::ChunkSegment.count", 3 do
+          @document = FactoryGirl.create(:document)
+          @t0 = @document.create_track(s3_url: "http://t0")
+          @c1 = Chunk::GoogleSpeechChunk.create(:position => 1, :offset => 0,  :text => "I hate to say", :score => 0.80, :document => @document)
+          @t1 = @c1.create_track(s3_url: "http://t1")
+          @c2 = Chunk::GoogleSpeechChunk.create(:position => 2, :offset => 10, :text => "cat maths are", :score => 0.65, :document => @document)
+          @t2 = @c2.create_track(s3_url: "http://t2")
+          @c3 = Chunk::GoogleSpeechChunk.create(:position => 3, :offset => 20, :text => "the cesty food in the world", :score => 0.85, :document => @document)
+          @t3 = @c3.create_track(s3_url: "http://t3")
+
+          assert_equal 3, @document.chunks.count
+          assert_equal 3, @document.tracks.count
+          assert_equal 4, @document.tracks_including_master_track.count
+          assert_equal [@t0.id, @t1.id, @t2.id, @t3.id].to_set,
+            @document.tracks_including_master_track.map(&:id).to_set
+          assert_equal @document.id, @t0.document.id
+          assert_equal true, @t0.is_master?
+          assert_equal @document.id, @c1.track.document.id
+          assert_equal @c1.id, @c1.track.chunk.id
+          assert_equal false, @c1.track.is_master?
+          assert_equal @document.id, @c2.track.document.id
+          assert_equal @c2.id, @c2.track.trackable.id
+          assert_equal false, @c2.track.is_master?
+          assert_equal @document.id, @c3.track.document.id
+          assert_equal @c3.id, @c3.track.trackable.id
+          assert_equal false, @c3.track.is_master?
+        end
+      end
     end
   end
 
@@ -169,14 +182,14 @@ class DocumentTest < ActiveSupport::TestCase
     end
   end
 
-  should "have a master track" do
+  should "#create_track and have one and only one master track" do
     @document  = FactoryGirl.create(:document)
     assert_difference "Track.count", 1 do
       track = @document.create_track(s3_url: "http://foo/bar")
-      assert_equal "http://foo/bar", @document.track.s3_url
+      assert_equal "http://foo/bar", @document.reload.track.s3_url
       assert_equal true, @document.track.is_master?
       track = @document.create_track(s3_url: "http://one/two")
-      assert_equal "http://one/two", @document.track.s3_url
+      assert_equal "http://one/two", @document.reload.track.s3_url
     end
   end
 

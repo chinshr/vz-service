@@ -1,22 +1,42 @@
 require 'test_helper'
 
 class ChunkTest < ActiveSupport::TestCase
-  should "build subclass with type" do
-    assert_equal "Chunk::GoogleSpeechChunk", Chunk.new(type: "Chunk::GoogleSpeechChunk").class.name
-    assert_equal "Chunk::GoogleSpeechChunk", Chunk.new(type: "google_speech_chunk").class.name
-    assert_equal "Chunk::GoogleSpeechChunk", Chunk.new(type: "google_speech").class.name
+  context "build" do
+    should "subclass with type" do
+      assert_equal "Chunk::GoogleSpeechChunk", Chunk.new(type: "Chunk::GoogleSpeechChunk").class.name
+      assert_equal "Chunk::GoogleSpeechChunk", Chunk.new(type: "google_speech_chunk").class.name
+      assert_equal "Chunk::GoogleSpeechChunk", Chunk.new(type: "google_speech").class.name
 
-    assert_equal "Chunk::AttSpeechChunk", Chunk.new(type: :att_speech).class.name
-    assert_equal "Chunk::NuanceDragonChunk", Chunk.new(type: :nuance_dragon).class.name
+      assert_equal "Chunk::AttSpeechChunk", Chunk.new(type: :att_speech).class.name
+      assert_equal "Chunk::NuanceDragonChunk", Chunk.new(type: :nuance_dragon).class.name
 
-    assert_equal "Chunk::PocketsphinxChunk", Chunk.new(type: :pocketsphinx).class.name
-    assert_equal "Chunk::MechanicalTurkChunk", Chunk.new(type: :mechanical_turk).class.name
+      assert_equal "Chunk::PocketsphinxChunk", Chunk.new(type: :pocketsphinx).class.name
+      assert_equal "Chunk::MechanicalTurkChunk", Chunk.new(type: :mechanical_turk).class.name
+    end
+
+    should "chunk with chunk_segment" do
+      assert_difference "Segment::ChunkSegment.count" do
+        document = FactoryGirl.create(:document)
+        ch = Chunk::PocketsphinxChunk.new({
+          text: "I like pickles",
+          document_id: document.id,
+          position: 2,
+          offset: 4.34,
+          duration: 5.23
+        })
+        assert_equal true, ch.save
+        assert_equal false, ch.chunk_segment.new_record?
+        assert_equal document, ch.document
+        assert_equal ch.chunk_segment.position, ch.position
+        assert_equal 4.34, ch.offset
+      end
+    end
   end
 
   context "associations" do
-    should belong_to :document
-    should have_one(:tracking).dependent(:destroy)
-    should have_one(:track).through(:tracking)
+    should have_one(:chunk_segment).dependent(:nullify)
+    should have_one(:document).through(:chunk_segment)
+    should have_one(:track).through(:chunk_segment)
   end
 
   context "delegate" do
@@ -264,21 +284,25 @@ class ChunkTest < ActiveSupport::TestCase
 
     should "create GoogleSpeech segment" do
       assert_difference "Chunk::GoogleSpeechChunk.count", 1 do
-        @ingest.document.chunks.create(@attributes.merge({:type => "Chunk::GoogleSpeechChunk"}))
+        @ingest.document.chunks.create(@attributes.merge({type: "Chunk::GoogleSpeechChunk", ingest: @ingest}))
         assert_equal Chunk::GoogleSpeechChunk, @ingest.chunks.first.class
       end
     end
 
     should "create AttSpeech segment" do
       assert_difference "Chunk::AttSpeechChunk.count", 1 do
-        @ingest.document.chunks.create(@attributes.merge({:type => "Chunk::AttSpeechChunk"}))
-        assert_equal Chunk::AttSpeechChunk, @ingest.chunks.first.class
+        assert_difference "Segment::ChunkSegment.count", 1 do
+          ch = @ingest.chunks.create(@attributes.merge({type: "Chunk::AttSpeechChunk"}))
+          assert_equal Chunk::AttSpeechChunk, @ingest.chunks.reload.first.class
+          assert_equal @ingest, ch.ingest
+          assert_equal @ingest.document, ch.document
+        end
       end
     end
 
     should "create NuanceDragon segment" do
       assert_difference "Chunk::NuanceDragonChunk.count", 1 do
-        @ingest.document.chunks.create(@attributes.merge({:type => "Chunk::NuanceDragonChunk"}))
+        @ingest.document.chunks.create(@attributes.merge({type: "Chunk::NuanceDragonChunk", ingest: @ingest}))
         assert_equal Chunk::NuanceDragonChunk, @ingest.chunks.first.class
       end
     end

@@ -255,7 +255,7 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
       }
       track_attributes = {s3_url: @s3_url, s3_mp3_url: @s3_mp3_url}
 
-      @track1 = Track.create(document: @chunk1, s3_url: "http://track-12")
+      @track1 = @chunk1.create_track(FactoryGirl.attributes_for(:track, s3_url: "http://track-12"))
       @chunk1.reload
 
       assert_no_difference 'Chunk::GoogleSpeechChunk.count' do
@@ -308,10 +308,11 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
 
     should "destroy with backend user" do
       sign_in :user, @user2
-      assert_difference 'Chunk.count', -1 do
+      assert_no_difference 'Chunk.count' do
         delete :destroy, {ingest_id: @ingest1.id, id: @chunk1.id, format: :json}
         assert_response :success
         assert_attributes response_body["chunk"]
+          assert_equal 0, @ingest1.chunks.count
       end
     end
   end
