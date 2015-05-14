@@ -40,7 +40,7 @@ class ChunkTest < ActiveSupport::TestCase
     end
 
     should "have filtered scopes" do
-      assert_equal [:any_of_types, :any_of_processing_status, :none_of_processing_status,
+      assert_equal [:any_of_types, :none_of_types, :any_of_processing_status, :none_of_processing_status,
         :sort_order, :reverse_sort, :offset, :limit, :any_of_ingest_iterations,
         :any_of_positions, :is_root, :score_lt, :score_gt, :score_lteq, :score_gteq,
         :duration_lt, :duration_gt, :duration_lteq, :duration_gteq, :ingest_id, :none_of_ingest_ids,
@@ -79,13 +79,25 @@ class ChunkTest < ActiveSupport::TestCase
       assert_equal [ps], Chunk.any_of_types("Chunk::PocketsphinxChunk").limit(1)
     end
 
+    should "#none_of_types" do
+      Chunk.destroy_all
+      ch1 = FactoryGirl.create(:chunk_pocketsphinx)
+      ch2 = FactoryGirl.create(:chunk_mechanical_turk)
+      assert_equal [ch1], Chunk.none_of_types("mechanical_turk").limit(1)
+      assert_equal [ch2], Chunk.none_of_types([:"pocketsphinx"]).limit(1)
+      assert_equal [ch2], Chunk.none_of_types("Chunk::PocketsphinxChunk").limit(1)
+      assert_equal [], Chunk.none_of_types([:pocketsphinx, :mechanical_turk])
+    end
+
     should "#any_of_positions" do
+      Chunk.destroy_all
       ps = FactoryGirl.create(:chunk_pocketsphinx, position: 10)
       assert_equal [ps], Chunk.any_of_positions(10).limit(1)
       assert_equal [ps], Chunk.any_of_positions([10]).limit(1)
     end
 
     should "#any_of_ingest_iterations" do
+      Chunk.destroy_all
       ps = FactoryGirl.create(:chunk_pocketsphinx, ingest_iteration: 2)
       assert_equal [ps], Chunk.any_of_ingest_iterations(2).limit(1)
       assert_equal [ps], Chunk.any_of_ingest_iterations([2]).limit(1)

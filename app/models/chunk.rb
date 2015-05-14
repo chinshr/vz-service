@@ -19,11 +19,11 @@ class Chunk < Document
   validates :document, presence: true
   validates :offset, presence: true
 
-  filtered_scopes :sort_order, :reverse_sort, :any_of_types,
+  filtered_scopes :sort_order, :reverse_sort, :any_of_types, :none_of_types,
     :any_of_processing_status, :none_of_processing_status,
     :any_of_positions, :any_of_ingest_iterations, :score_lt, :score_gt,
     :score_lteq, :score_gteq, :duration_lt, :duration_gt, :duration_lteq,
-    :duration_gteq,:ingest_id, :none_of_ingest_ids
+    :duration_gteq, :ingest_id, :none_of_ingest_ids
   scope :sort_order, -> (param) {
     case param.first[0]  # E.g. get first key of {"id"=>"asc"}
     when "id"
@@ -42,6 +42,7 @@ class Chunk < Document
   }
   scope :reverse_sort, -> (param) {all.reverse_order if Model::Helper.booleanize(param)}
   scope :any_of_types, -> (params) {where("documents.type IN (?)", class_names_for(params))}
+  scope :none_of_types, -> (params) {where("documents.type NOT IN (?)", class_names_for(params))}
   scope :any_of_processing_status, -> (params) {where("documents.processing_status IN (?)", [params].flatten.map(&:to_s).
     map {|s| s.match(/^([\-]{,1}[0-9]+)$/) ? s : nil}.reject(&:blank?).uniq)}
   scope :none_of_processing_status, -> (params) {where("documents.processing_status NOT IN (?)", [params].flatten.map(&:to_s).
@@ -98,9 +99,7 @@ class Chunk < Document
     end
 
     def class_names_for(params)
-      Array.wrap(params).map do |p|
-        class_name_for(p)
-      end.reject(&:blank?)
+      Array.wrap(params).map {|p| class_name_for(p)}.reject(&:blank?)
     end
 
     # Document::Chunk.class_name_from_engine_class_for(audio.engine.class) => "Document::Chunk::GoogleSpeechChunk"
@@ -136,6 +135,7 @@ class Chunk < Document
     #
     #    "pocketsphinx_chunk" -> "Chunk::PocketsphinxChunk"
     #    "pocketsphinx" -> "Chunk::PocketsphinxChunk"
+    #    "Chunk::PocketsphinxChunk" -> "Chunk::PocketsphinxChunk"
     #
     def class_name_for(name)
       class_name = if name.to_s.index("::")
