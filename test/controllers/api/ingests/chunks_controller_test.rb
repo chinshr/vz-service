@@ -321,7 +321,7 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
   def assert_attributes(params, expected_attributes = {})
     assert_equal false, params.blank?, "response should not be empty"
     (expected_attributes.stringify_keys.keys + %w(id document_id ingest_id type position offset duration start_at
-      end_at text score response processing_errors processing_status uid ingest_iteration)).uniq.each do |attribute|
+      end_at text score response processing_errors processing_status uid ingest_iteration locale)).uniq.each do |attribute|
       assert params.has_key?(attribute), "should contain key '#{attribute}' in response '#{params}'"
     end
 
