@@ -43,7 +43,8 @@ class ChunkTest < ActiveSupport::TestCase
       assert_equal [:any_of_types, :any_of_processing_status, :none_of_processing_status,
         :sort_order, :reverse_sort, :offset, :limit, :any_of_ingest_iterations,
         :any_of_positions, :is_root, :score_lt, :score_gt, :score_lteq, :score_gteq,
-        :ingest_id, :none_of_ingest_ids, :any_of_locales].to_set, Chunk.scopes.to_set
+        :duration_lt, :duration_gt, :duration_lteq, :duration_gteq, :ingest_id, :none_of_ingest_ids,
+        :any_of_locales].to_set, Chunk.scopes.to_set
     end
 
     should "have any_of_processing_status" do
@@ -90,32 +91,64 @@ class ChunkTest < ActiveSupport::TestCase
       assert_equal [ps], Chunk.any_of_ingest_iterations([2]).limit(1)
     end
 
-    should "have score greater than" do
-      Chunk.destroy_all
-      ps = FactoryGirl.create(:chunk_pocketsphinx, score: 0.95)
-      assert_equal [ps], Chunk.score_gt(0.94).order(created_at: :desc).limit(1)
-      assert_equal [], Chunk.score_gt(0.95).order(created_at: :desc).limit(1)
+    context "score comparison" do
+      should "#score_lt" do
+        Chunk.destroy_all
+        ps = FactoryGirl.create(:chunk_pocketsphinx, score: 0.15)
+        assert_equal [ps], Chunk.score_lt(0.16).order(created_at: :desc).limit(1)
+        assert_equal [], Chunk.score_lt(0.15).order(created_at: :desc).limit(1)
+      end
+
+      should "#score_lteq" do
+        Chunk.destroy_all
+        ps = FactoryGirl.create(:chunk_pocketsphinx, score: 0.15)
+        assert_equal [ps], Chunk.score_lteq(0.16).order(created_at: :desc).limit(1)
+        assert_equal [ps], Chunk.score_lteq(0.15).order(created_at: :desc).limit(1)
+      end
+
+      should "#score_gt" do
+        Chunk.destroy_all
+        ps = FactoryGirl.create(:chunk_pocketsphinx, score: 0.95)
+        assert_equal [ps], Chunk.score_gt(0.94).order(created_at: :desc).limit(1)
+        assert_equal [], Chunk.score_gt(0.95).order(created_at: :desc).limit(1)
+      end
+
+      should "#score_gteq" do
+        Chunk.destroy_all
+        ps = FactoryGirl.create(:chunk_pocketsphinx, score: 0.95)
+        assert_equal [ps], Chunk.score_gteq(0.94).order(created_at: :desc).limit(1)
+        assert_equal [ps], Chunk.score_gteq(0.95).order(created_at: :desc).limit(1)
+      end
     end
 
-    should "have score greater than or equal" do
-      Chunk.destroy_all
-      ps = FactoryGirl.create(:chunk_pocketsphinx, score: 0.95)
-      assert_equal [ps], Chunk.score_gteq(0.94).order(created_at: :desc).limit(1)
-      assert_equal [ps], Chunk.score_gteq(0.95).order(created_at: :desc).limit(1)
-    end
+    context "duration comparison" do
+      should "#duration_lt" do
+        Chunk.destroy_all
+        ps = FactoryGirl.create(:chunk_pocketsphinx, duration: 0.15)
+        assert_equal [ps], Chunk.duration_lt(0.16).order(created_at: :desc).limit(1)
+        assert_equal [], Chunk.duration_lt(0.15).order(created_at: :desc).limit(1)
+      end
 
-    should "have score less than" do
-      Chunk.destroy_all
-      ps = FactoryGirl.create(:chunk_pocketsphinx, score: 0.15)
-      assert_equal [ps], Chunk.score_lt(0.16).order(created_at: :desc).limit(1)
-      assert_equal [], Chunk.score_lt(0.15).order(created_at: :desc).limit(1)
-    end
+      should "#duration_lteq" do
+        Chunk.destroy_all
+        ps = FactoryGirl.create(:chunk_pocketsphinx, duration: 0.15)
+        assert_equal [ps], Chunk.duration_lteq(0.16).order(created_at: :desc).limit(1)
+        assert_equal [ps], Chunk.duration_lteq(0.15).order(created_at: :desc).limit(1)
+      end
 
-    should "have score less than or equal" do
-      Chunk.destroy_all
-      ps = FactoryGirl.create(:chunk_pocketsphinx, score: 0.15)
-      assert_equal [ps], Chunk.score_lteq(0.16).order(created_at: :desc).limit(1)
-      assert_equal [ps], Chunk.score_lteq(0.15).order(created_at: :desc).limit(1)
+      should "#duration_gt" do
+        Chunk.destroy_all
+        ps = FactoryGirl.create(:chunk_pocketsphinx, duration: 0.95)
+        assert_equal [ps], Chunk.duration_gt(0.94).order(created_at: :desc).limit(1)
+        assert_equal [], Chunk.duration_gt(0.95).order(created_at: :desc).limit(1)
+      end
+
+      should "#duration_gteq" do
+        Chunk.destroy_all
+        ps = FactoryGirl.create(:chunk_pocketsphinx, duration: 0.95)
+        assert_equal [ps], Chunk.duration_gteq(0.94).order(created_at: :desc).limit(1)
+        assert_equal [ps], Chunk.duration_gteq(0.95).order(created_at: :desc).limit(1)
+      end
     end
 
     should "#ingest_id" do
