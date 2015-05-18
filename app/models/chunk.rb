@@ -22,7 +22,7 @@ class Chunk < Document
   filtered_scopes :sort_order, :reverse_sort, :any_of_type,
     :any_of_processing_status, :none_of_processing_status,
     :any_of_position, :any_of_ingest_iteration, :score_lt, :score_gt,
-    :score_lteq, :score_gteq
+    :score_lteq, :score_gteq, :ingest_id
   scope :sort_order, -> (param) {
     case param.first[0]  # E.g. get first key of {"id"=>"asc"}
     when "id"
@@ -49,6 +49,7 @@ class Chunk < Document
   scope :score_gt, -> (param) {where(self.arel_table[:score].gt(param))}
   scope :score_lteq, -> (param) {where(self.arel_table[:score].lteq(param))}
   scope :score_gteq, -> (param) {where(self.arel_table[:score].gteq(param))}
+  scope :ingest_id, -> (param) {where(ingest_id: param)}
 
   # private scopes
   scope :transcribed, -> {where(:processing_status => STATES[:transcribed])}
