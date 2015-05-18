@@ -15,12 +15,12 @@ class Ingest::RemoveWorker
     )
 
     # For server debugging purposes
-    @ingest = Ingest::Audio.find(ingest_id) if ingest_id
+    @ingest = Ingest::AudioIngest.find(ingest_id) if ingest_id
   end
 
   def perform(ingest_id, options = {})
     options.symbolize_keys!
-    @ingest = Ingest::Audio.find(ingest_id)
+    @ingest = Ingest::AudioIngest.find(ingest_id)
     # puts "-------------> #{@ingest.inspect}"
 
     when_liberated do

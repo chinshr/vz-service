@@ -72,9 +72,9 @@ class Upload < ActiveRecord::Base
     #
     # E.g.
     #
-    #   Upload.new(:type => :audio, ...) -> Upload::Audio
-    #   Upload.create(:type => "Upload::Audio", ...) -> Upload::Audio
-    #   Upload.create(:type => Upload::Audio, ...) -> Upload::Audio
+    #   Upload.new(:type => :audio, ...) -> Upload::AudioUpload
+    #   Upload.new(:type => "audio_upload", ...) -> Upload::AudioUpload
+    #   Upload.create(:type => "Upload::AudioUpload", ...) -> Upload::AudioUpload
     #
     def new_with_cast(*a, &b)
       if (h = a.first).is_a? Hash and (type = h[:type] || h['type']) and
@@ -106,7 +106,7 @@ class Upload < ActiveRecord::Base
 
     private
 
-    # E.g. "audio" => Upload::Audio
+    # E.g. "audio" => Upload::AudioUpload
     def class_for(type)
       class_name = class_name_for(type)
       class_name.constantize if class_name
@@ -114,10 +114,15 @@ class Upload < ActiveRecord::Base
 
     # E.g.
     #
-    #    "audio" => "Upload::Audio"
+    #    "audio_upload" -> "Upload::AudioUpload"
+    #    "audio"        -> "Upload::AudioUpload" or
     #
     def class_name_for(name)
-      class_name = name.to_s.index("::") ? "#{name}" : "Upload::#{(name.to_s.classify)}"
+      class_name = if name.to_s.index("::")
+        "#{name}"
+      else
+        name.to_s.index("_upload") ? "Upload::#{(name.to_s.classify)}" : "Upload::#{(name.to_s.classify)}Upload"
+      end
       class_name.constantize.name
     rescue NameError
       nil
@@ -126,7 +131,7 @@ class Upload < ActiveRecord::Base
     def promote_upload_class_for(name, attributes = {})
       attributes.symbolize_keys! if attributes.respond_to?(:symbolize_keys!)
       klass = class_for(name)
-      raise NameError, "unkown Upload subclass '#{name}'" unless klass
+      raise NameError, "unknown Upload subclass '#{name}'" unless klass
       attributes[:type] = klass.name
       klass
     end

@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class Upload::AudioTest < ActiveSupport::TestCase
+class Upload::AudioUploadTest < ActiveSupport::TestCase
   context "validations" do
     should validate_presence_of :type
 
@@ -69,14 +69,14 @@ class Upload::AudioTest < ActiveSupport::TestCase
 
   should "build Upload::Audio" do
     audio_upload = Upload.new type: "audio"
-    assert audio_upload.is_a?(Upload::Audio), "should instantiate with :type parameter"
+    assert audio_upload.is_a?(Upload::AudioUpload), "should instantiate with :type parameter"
   end
 
   should "create audio ingest and document for audio upload" do
     upload = Upload.create(type: "audio", file_name: "audio.m4a", file_type: "audio/x-m4a",
       file_size: 12345, s3_url: "http://s3.amazonaws.com/dropbox/audio.m4a")
     assert upload.ingest
-    assert_equal ::Ingest::Audio, upload.ingest.class
+    assert_equal ::Ingest::AudioIngest, upload.ingest.class
     assert_not_nil upload.ingest.document
     assert_equal ::Document, upload.ingest.document.class
     assert_equal upload.ingest.title, upload.humanized_file_name

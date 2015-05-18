@@ -57,7 +57,7 @@ module Workers::Ingest::AudioWorkerHelper
           @mutex.synchronize do
             end_time = start_time + BigDecimal.new(chunk.duration.to_s)
             @ingest.chunks.create({
-              :type              => Document::Chunk.type_from_engine_class_for(audio.engine.class), # "Document::Chunk::GoogleSpeech",
+              :type              => Document::Chunk.class_name_from_engine_class_for(audio.engine.class), # "Document::Chunk::GoogleSpeech",
               :position          => chunk.id,
               :offset            => chunk.offset,
               :duration          => chunk.duration,

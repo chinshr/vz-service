@@ -12,11 +12,11 @@ class DocumentTest < ActiveSupport::TestCase
     should "have tracks_including_master_track" do
       @document = FactoryGirl.create(:document)
       @t0 = @document.create_track(s3_url: "http://t0")
-      @c1 = Chunk::GoogleSpeech.create(:position => 1, :offset => 0,  :text => "I hate to say", :score => 0.80, :document => @document)
+      @c1 = Chunk::GoogleSpeechChunk.create(:position => 1, :offset => 0,  :text => "I hate to say", :score => 0.80, :document => @document)
       @t1 = @c1.create_track(s3_url: "http://t1")
-      @c2 = Chunk::GoogleSpeech.create(:position => 2, :offset => 10, :text => "cat maths are", :score => 0.65, :document => @document)
+      @c2 = Chunk::GoogleSpeechChunk.create(:position => 2, :offset => 10, :text => "cat maths are", :score => 0.65, :document => @document)
       @t2 = @c2.create_track(s3_url: "http://t2")
-      @c3 = Chunk::GoogleSpeech.create(:position => 3, :offset => 20, :text => "the cesty food in the world", :score => 0.85, :document => @document)
+      @c3 = Chunk::GoogleSpeechChunk.create(:position => 3, :offset => 20, :text => "the cesty food in the world", :score => 0.85, :document => @document)
       @t3 = @c3.create_track(s3_url: "http://t3")
       assert_equal 3, @document.chunks.count
       assert_equal 3, @document.tracks.count

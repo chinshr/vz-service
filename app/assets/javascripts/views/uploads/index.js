@@ -9,12 +9,12 @@ App.Views.UploadsIndex = Backbone.View.extend({
     'mouseleave #drop-box': 'hover',
     'change #file-locale': 'updateMail',
   },
-  
+
   // Listen for newly added models and render a view for each
   initialize: function() {
     this.listenTo(this.collection, 'add', this.addUploadView);
     this.listenTo(this.collection, 'reset', this.addAll);
-    
+
     this.progressViews = {};
   },
 
@@ -25,7 +25,7 @@ App.Views.UploadsIndex = Backbone.View.extend({
         _this.updateMail();
       }
     })(this));
-    
+
     this.addAll();
     return this;
   },
@@ -38,13 +38,13 @@ App.Views.UploadsIndex = Backbone.View.extend({
       $(e.currentTarget).removeClass('hover');
     }
   },
-  
+
   trigger: function() {
     $('#files').trigger('click');
   },
 
   // Instantiate and render new views for models added to the collection
-  // This is the view that will be listening to the 'upload:progress' event, 
+  // This is the view that will be listening to the 'upload:progress' event,
   // and can also allow the user to cancel the upload
   addUploadView: function(model, response) {
     var view;
@@ -63,7 +63,7 @@ App.Views.UploadsIndex = Backbone.View.extend({
   addAll: function() {
     this.collection.each(this.addUploadView, this);
   },
-  
+
   addFiles: function(e) {
     if ($(e.target).val() === '') {
       return;
@@ -101,7 +101,7 @@ App.Views.UploadsIndex = Backbone.View.extend({
       file_list: options.file_list,
       file_dom_selector: options.file_dom_selector,
       s3_sign_put_url: 'api/account/uploads/sign_s3.json',
-      
+
       onProgress: (function(_this) {
         return function(xhr, file, percent, message) {
           var upload;
@@ -130,7 +130,7 @@ App.Views.UploadsIndex = Backbone.View.extend({
           }
         };
       })(this),
-      
+
       onAbort: (function(_this) {
         return function(file, message) {
           var upload;
@@ -140,7 +140,7 @@ App.Views.UploadsIndex = Backbone.View.extend({
           return _this.$('input#files').replaceWith("<input id='files' type='file' name='files[]' multiple />");
         };
       })(this),
-      
+
       onFinishS3Put: (function(_this) {
         return function(public_url, file) {
           var upload;
@@ -148,7 +148,7 @@ App.Views.UploadsIndex = Backbone.View.extend({
           return upload.save({s3_url: public_url});
         };
       })(this),
-      
+
       onError: (function(_this) {
         return function(file, status) {
           var upload;
@@ -160,11 +160,11 @@ App.Views.UploadsIndex = Backbone.View.extend({
       })(this)
     });
   },
-  
+
   updateMail: function() {
     return this.$('.btn-email-upload').attr('href', this._mailto);
   },
-  
+
   _mailto: function() {
     var locale = $("#file-locale option:selected").text() + " (" + $("#file-locale").val() + ")";
     var href = "mailto:my@voyz.es"+

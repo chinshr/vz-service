@@ -37,7 +37,7 @@ class Chunk < Document
     end
   }
   scope :reverse_sort, -> (param) {all.reverse_order if Model::Helper.booleanize(param)}
-  scope :any_of_type, -> (params) {where("documents.type IN (?) OR documents.type IN (?)", type_for(params), params)}
+  scope :any_of_type, -> (params) {where("documents.type IN (?)", class_names_for(params))}
   scope :any_of_processing_status, -> (params) {where("documents.processing_status IN (?)", [params].flatten.map(&:to_s).
     map {|s| s.match(/^([\-]{,1}[0-9]+)$/) ? s : nil}.reject(&:blank?).uniq)}
   scope :none_of_processing_status, -> (params) {where("documents.processing_status NOT IN (?)", [params].flatten.map(&:to_s).
@@ -59,18 +59,38 @@ class Chunk < Document
   class << self
     def slug_length; 40; end
 
+    # Type casts to the class specified in :type parameter
+    #
+    # E.g.
+    #
+    #   Chunk.new(:type => :google_speech, ...) -> Chunk::GoogleSpeechChunk
+    #   Chunk.new(:type => :google_speech_chunk, ...) -> Chunk::GoogleSpeechChunk
+    #   Chunk.create(:type => "Chunk::GoogleSpeechChunk", ...) -> Chunk::GoogleSpeechChunk
+    #
+    def new_with_cast(*a, &b)
+      if (h = a.first).is_a? Hash and (type = h[:type] || h['type']) and
+        (k = type.class == Class ? type : promote_upload_class_for(type, h)) != self
+        raise NameError, "unknown type for Chunk" if !k || !(k < self)
+        instance = k.new(*a, &b)
+        return instance
+      end
+      new_without_cast(*a, &b)
+    end
+    alias_method_chain :new, :cast
+
+    # TODO: obsolete
     def policy_class
       ChunkPolicy
     end
 
-    def type_for(params)
-      [params].flatten.map do |p|
-        "Chunk::#{p.to_s.classify}"
-      end
+    def class_names_for(params)
+      Array.wrap(params).map do |p|
+        class_name_for(p)
+      end.reject(&:blank?)
     end
 
-    # Document::Chunk.type_from_engine_class_for(audio.engine.class) => "Document::Chunk::GoogleSpeech"
-    def type_from_engine_class_for(klass)
+    # Document::Chunk.class_name_from_engine_class_for(audio.engine.class) => "Document::Chunk::GoogleSpeechChunk"
+    def class_name_from_engine_class_for(klass)
       chunk_class = self.subclasses.find {|cc| cc.respond_to?(:engine_class_name) && cc.engine_class_name == klass.to_s}
       chunk_class.name if chunk_class
     end
@@ -88,6 +108,38 @@ class Chunk < Document
         json["attributes"]["end_at"]   = chunk.end_at.to_s if chunk.end_at
         json
       end
+    end
+
+    private
+
+    # E.g. "audio" => Upload::AudioUpload
+    def class_for(type)
+      class_name = class_name_for(type)
+      class_name.constantize if class_name
+    end
+
+    # E.g.
+    #
+    #    "pocketsphinx_chunk" -> "Chunk::PocketsphinxChunk"
+    #    "pocketsphinx" -> "Chunk::PocketsphinxChunk"
+    #
+    def class_name_for(name)
+      class_name = if name.to_s.index("::")
+        "#{name}"
+      else
+        name.to_s.index("_chunk") ? "Chunk::#{(name.to_s.classify)}" : "Chunk::#{(name.to_s.classify)}Chunk"
+      end
+      class_name.constantize.name
+    rescue NameError
+      nil
+    end
+
+    def promote_upload_class_for(name, attributes = {})
+      attributes.symbolize_keys! if attributes.respond_to?(:symbolize_keys!)
+      klass = class_for(name)
+      raise NameError, "unknown Chunk subclass '#{name}'" unless klass
+      attributes[:type] = klass.name
+      klass
     end
   end  ## class
 

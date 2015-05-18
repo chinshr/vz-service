@@ -23,7 +23,7 @@ class EmailProcessor
 
         email.attachments.each do |attached_file|
           content_type = mime_type(attached_file.tempfile.path) || attached_file.content_type
-          if Upload::Audio.accepted_audio_file_type?(content_type)
+          if Upload::AudioUpload.accepted_audio_file_type?(content_type)
             upload = with message.attachments.build(:type => "audio") do |upload|
               upload.user        = user
               upload.title       = if email.subject.blank?

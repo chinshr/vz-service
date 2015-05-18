@@ -41,13 +41,11 @@ class Ingest < ActiveRecord::Base
 
   belongs_to :upload, dependent: :destroy
   belongs_to :document
-  # accepts_nested_attributes_for :document
 
   has_many :ingest_chunks, -> (record) { where(document_id: record.document.id) },
     foreign_key: :ingest_id, class_name: "Chunk", dependent: :nullify
   has_many :chunks, through: :document
   has_many :tracks, through: :chunks, source: :track
-
 
   validates :upload, presence: true, on: :create
   validates :document, presence: true
@@ -123,6 +121,26 @@ class Ingest < ActiveRecord::Base
   end
 
   class << self
+    # Type casts to the class specified in :type parameter
+    #
+    # E.g.
+    #
+    #   Ingest.new(:type => :audio, ...) -> Ingest::AudioIngest
+    #   Ingest.new(:type => "audio_ingest", ...) -> Ingest::AudioIngest
+    #   Ingest.create(:type => "Ingest::AudioIngest", ...) -> Ingest::AudioIngest
+    #
+    def new_with_cast(*a, &b)
+      if (h = a.first).is_a? Hash and (type = h[:type] || h['type']) and
+        (k = type.class == Class ? type : promote_upload_class_for(type, h)) != self
+        raise NameError, "unknown type for Ingest" if !k || !(k < self)
+        instance = k.new(*a, &b)
+        return instance
+      end
+      new_without_cast(*a, &b)
+    end
+    alias_method_chain :new, :cast
+
+    # TODO: obsolete
     def policy_class
       IngestPolicy
     end
@@ -134,6 +152,39 @@ class Ingest < ActiveRecord::Base
     def generate_uid
       SecureRandom.uuid
     end
+
+    private
+
+    # E.g. "audio" => Ingest::AudioIngest
+    def class_for(type)
+      class_name = class_name_for(type)
+      class_name.constantize if class_name
+    end
+
+    # E.g.
+    #
+    #    "audio_ingest" -> "Ingest::AudioIngest" or
+    #    "audio"        -> "Ingest::AudioIngest"
+    #
+    def class_name_for(name)
+      class_name = if name.to_s.index("::")
+        "#{name}"
+      else
+        name.to_s.index("ingest") ? "Ingest::#{(name.to_s.classify)}" : "Ingest::#{(name.to_s.classify)}Ingest"
+      end
+      class_name.constantize.name
+    rescue NameError
+      nil
+    end
+
+    def promote_upload_class_for(name, attributes = {})
+      attributes.symbolize_keys! if attributes.respond_to?(:symbolize_keys!)
+      klass = class_for(name)
+      raise NameError, "unknown Ingest subclass '#{name}'" unless klass
+      attributes[:type] = klass.name
+      klass
+    end
+
   end
 
   # permissible events

@@ -1,7 +1,7 @@
 class RenameDocumentSegmentsToChunks < ActiveRecord::Migration
   def up
     rename_table "document_segments", "document_chunks"
-    
+
     execute "UPDATE document_chunks SET type = 'Document::Chunk::AttSpeech' WHERE document_chunks.type = 'Document::Segment::AttSpeech'"
     execute "UPDATE document_chunks SET type = 'Document::Chunk::GoogleSpeech' WHERE document_chunks.type = 'Document::Segment::GoogleSpeech'"
     execute "UPDATE document_chunks SET type = 'Document::Chunk::NuanceDragon' WHERE document_chunks.type = 'Document::Segment::NuanceDragon'"

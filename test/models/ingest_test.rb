@@ -1,6 +1,12 @@
 require 'test_helper'
 
 class IngestTest < ActiveSupport::TestCase
+  should "build subclass with type" do
+    assert_equal "Ingest::AudioIngest", Ingest.new(type: "audio").class.name
+    assert_equal "Ingest::AudioIngest", Ingest.new(type: "audio_ingest").class.name
+    assert_equal "Ingest::AudioIngest", Ingest.new(type: "Ingest::AudioIngest").class.name
+  end
+
   context "associations" do
     should belong_to(:upload).dependent(:destroy)
     should belong_to(:document)
@@ -248,17 +254,17 @@ class IngestTest < ActiveSupport::TestCase
     setup do
       @ingest = FactoryGirl.create(:ingest_audio)
       @document = @ingest.document
-      Chunk::GoogleSpeech.create(:position => 1, :offset => 0, :duration => 0.72, :text => "I hate to say", :score => 0.80, :document => @document, :ingest => @ingest)
-      Chunk::GoogleSpeech.create(:position => 2, :offset => 10, :duration => 0.89, :text => "that macaronies are", :score => 0.65, :document => @document, :ingest => @ingest)
-      Chunk::GoogleSpeech.create(:position => 3, :offset => 20, :duration => 1.21, :text => "the best food in the world", :score => 0.85, :document => @document, :ingest => @ingest)
+      Chunk::GoogleSpeechChunk.create(:position => 1, :offset => 0, :duration => 0.72, :text => "I hate to say", :score => 0.80, :document => @document, :ingest => @ingest)
+      Chunk::GoogleSpeechChunk.create(:position => 2, :offset => 10, :duration => 0.89, :text => "that macaronies are", :score => 0.65, :document => @document, :ingest => @ingest)
+      Chunk::GoogleSpeechChunk.create(:position => 3, :offset => 20, :duration => 1.21, :text => "the best food in the world", :score => 0.85, :document => @document, :ingest => @ingest)
 
-      Chunk::AttSpeech.create(:position => 1, :offset => 0, :duration => 0.72, :text => "I have to pray", :score => 0.70, :document => @document, :ingest => @ingest)
-      Chunk::AttSpeech.create(:position => 2, :offset => 10, :duration => 0.89, :text => "cat maths are", :score => 0.70, :document => @document, :ingest => @ingest)
-      Chunk::AttSpeech.create(:position => 3, :offset => 20, :duration => 1.21, :text => "the best mushrooms in the whirlwind.", :score => 0.95, :document => @document, :ingest => @ingest)
+      Chunk::AttSpeechChunk.create(:position => 1, :offset => 0, :duration => 0.72, :text => "I have to pray", :score => 0.70, :document => @document, :ingest => @ingest)
+      Chunk::AttSpeechChunk.create(:position => 2, :offset => 10, :duration => 0.89, :text => "cat maths are", :score => 0.70, :document => @document, :ingest => @ingest)
+      Chunk::AttSpeechChunk.create(:position => 3, :offset => 20, :duration => 1.21, :text => "the best mushrooms in the whirlwind.", :score => 0.95, :document => @document, :ingest => @ingest)
 
-      Chunk::NuanceDragon.create(:position => 1, :offset => 0, :duration => 0.72, :text => "I have say", :score => 0, :document => @document, :ingest => @ingest)
-      Chunk::NuanceDragon.create(:position => 2, :offset => 10, :duration => 0.89, :text => "that some macaronies are", :score => 0, :document => @document, :ingest => @ingest)
-      Chunk::NuanceDragon.create(:position => 3, :offset => 20, :duration => 1.21, :text => "the cesty food in the world", :score => 0, :document => @document, :ingest => @ingest)
+      Chunk::NuanceDragonChunk.create(:position => 1, :offset => 0, :duration => 0.72, :text => "I have say", :score => 0, :document => @document, :ingest => @ingest)
+      Chunk::NuanceDragonChunk.create(:position => 2, :offset => 10, :duration => 0.89, :text => "that some macaronies are", :score => 0, :document => @document, :ingest => @ingest)
+      Chunk::NuanceDragonChunk.create(:position => 3, :offset => 20, :duration => 1.21, :text => "the cesty food in the world", :score => 0, :document => @document, :ingest => @ingest)
     end
 
     should "normalize chunk scores" do

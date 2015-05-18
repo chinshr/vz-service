@@ -1,4 +1,4 @@
-class Ingest::Audio < ::Ingest
+class Ingest::AudioIngest < ::Ingest
   delegate :title, to: :document
   delegate :title=, to: :document
 
