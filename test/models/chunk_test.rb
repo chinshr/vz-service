@@ -43,7 +43,7 @@ class ChunkTest < ActiveSupport::TestCase
       assert_equal [:any_of_type, :any_of_processing_status, :none_of_processing_status,
         :sort_order, :reverse_sort, :offset, :limit, :any_of_ingest_iteration,
         :any_of_position, :is_root, :score_lt, :score_gt, :score_lteq, :score_gteq,
-        :ingest_id].to_set, Chunk.scopes.to_set
+        :ingest_id, :none_of_ingest_ids].to_set, Chunk.scopes.to_set
     end
 
     should "have any_of_processing_status" do
@@ -108,8 +108,17 @@ class ChunkTest < ActiveSupport::TestCase
 
     should "#ingest_id" do
       Chunk.destroy_all
-      ps = FactoryGirl.create(:chunk_pocketsphinx, score: 0.15)
+      ps = FactoryGirl.create(:chunk_pocketsphinx)
       assert_equal [ps], Chunk.ingest_id(ps.ingest_id).order(created_at: :desc).limit(1)
+      assert_equal [], Chunk.ingest_id(-1)
+    end
+
+    should "#none_of_ingest_ids" do
+      Chunk.destroy_all
+      ps1 = FactoryGirl.create(:chunk_pocketsphinx)
+      ps2 = FactoryGirl.create(:chunk_pocketsphinx, ingest: FactoryGirl.create(:ingest_audio))
+      assert_equal [ps1], Chunk.none_of_ingest_ids(ps2.ingest_id).order(created_at: :desc).limit(1)
+      assert_equal [], Chunk.none_of_ingest_ids([ps1.ingest_id, ps2.ingest_id])
     end
 
     context "#best" do
