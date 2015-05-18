@@ -181,4 +181,13 @@ class UploadTest < ActiveSupport::TestCase
     assert_not_nil upload.uid
     assert_equal 36, upload.uid.length
   end
+
+  should "have recorded_at timestamp" do
+    recorded_time = Time.zone.now - 1.year
+    upload = FactoryGirl.create(:upload_audio, recorded_at: recorded_time)
+    assert_equal recorded_time, upload.recorded_at
+
+    upload = FactoryGirl.create(:upload_audio, recorded_at: nil)
+    assert_equal upload.created_at, upload.recorded_at
+  end
 end

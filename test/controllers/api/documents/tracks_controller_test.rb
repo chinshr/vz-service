@@ -161,7 +161,7 @@ class Api::Documents::TracksControllerTest < ActionController::TestCase
   protected
 
   def assert_attributes(response, expected_attributes = {})
-    %w(id mp3_stream_url created_at).each do |key|
+    %w(id mp3_stream_url waveform_json_stream_url is_master created_at duration start_at end_at).each do |key|
       assert response.has_key?(key), "should containt key '#{key}' in '#{response}'"
     end
   end

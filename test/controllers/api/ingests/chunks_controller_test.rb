@@ -35,8 +35,6 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
         :position          => 1,
         :offset            => 0,
         :duration          => 5,
-        :start_time        => 0.to_f,
-        :end_time          => 5.to_f,
         :text              => "I like pickles",
         :score             => 0.59,
         :response          => {"status" => 3, "hypothesis" => "I like pickles"},
@@ -95,9 +93,11 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
           assert_equal @s3_url, response_body["chunk"]["track"]["s3_url"]
           assert_equal @s3_mp3_url, response_body["chunk"]["track"]["s3_mp3_url"]
           assert_equal @s3_waveform_json_url, response_body["chunk"]["track"]["s3_waveform_json_url"]
+          assert_equal @ingest1, @ingest1.chunks.last.track.ingest
         end
       end
     end
+
   end
 
   context "GET /api/ingests/:ingest_id/chunks" do
@@ -241,6 +241,7 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
           assert_not_nil response_body["chunk"]["track"]
           assert_equal @s3_url, response_body["chunk"]["track"]["s3_url"]
           assert_equal @s3_mp3_url, response_body["chunk"]["track"]["s3_mp3_url"]
+          assert_equal @ingest1, @chunk1.reload.track.ingest
         end
       end
     end
@@ -291,8 +292,8 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
 
   def assert_attributes(params, expected_attributes = {})
     assert_equal false, params.blank?, "response should not be empty"
-    (expected_attributes.stringify_keys.keys + %w(id document_id ingest_id type position offset duration start_time
-      end_time text score response processing_errors processing_status uid ingest_iteration)).uniq.each do |attribute|
+    (expected_attributes.stringify_keys.keys + %w(id document_id ingest_id type position offset duration start_at
+      end_at text score response processing_errors processing_status uid ingest_iteration)).uniq.each do |attribute|
       assert params.has_key?(attribute), "should contain key '#{attribute}' in response '#{params}'"
     end
 

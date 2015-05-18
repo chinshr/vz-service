@@ -28,7 +28,7 @@ class ChunkTest < ActiveSupport::TestCase
     end
 
     should "have filtered scopes" do
-      assert_equal [:any_of_type, :any_of_processing_status, :none_of_processing_status, :sort_order, :reverse_sort, :offset, :limit, :any_of_ingest_iteration, :any_of_position].to_set,
+      assert_equal [:any_of_type, :any_of_processing_status, :none_of_processing_status, :sort_order, :reverse_sort, :offset, :limit, :any_of_ingest_iteration, :any_of_position, :is_root].to_set,
         Chunk.scopes.to_set
     end
 
@@ -43,7 +43,8 @@ class ChunkTest < ActiveSupport::TestCase
     end
 
     should "have sort_order" do
-      @chunk.update_attribute(:processing_status, Speech::AudioSplitter::AudioChunk::STATUS_ENCODED)
+      @chunk.update_attributes(processing_status: Speech::AudioSplitter::AudioChunk::STATUS_ENCODED,
+        position: 999)
       assert_equal [@chunk], Chunk.sort_order("position" => "asc").reverse_sort("true").limit(1)
     end
 
@@ -67,17 +68,17 @@ class ChunkTest < ActiveSupport::TestCase
       setup do
         @ingest = FactoryGirl.create(:ingest_audio)
         @document = @ingest.document
-        @c1 = Chunk::GoogleSpeech.create(:position => 1, :offset => 0,  :text => "I hate to say", :score => 0.80, :document => @ingest.document)
-        @c2 = Chunk::GoogleSpeech.create(:position => 2, :offset => 10, :text => "cat maths are", :score => 0.65, :document => @ingest.document)
-        @c3 = Chunk::GoogleSpeech.create(:position => 3, :offset => 20, :text => "the cesty food in the world", :score => 0.85, :document => @ingest.document)
+        @c1 = Chunk::GoogleSpeech.create(:position => 1, :offset => 0,  :duration => 0.72, :text => "I hate to say", :score => 0.80, :document => @ingest.document, :ingest => @ingest)
+        @c2 = Chunk::GoogleSpeech.create(:position => 2, :offset => 10, :duration => 0.89, :text => "cat maths are", :score => 0.65, :document => @ingest.document, :ingest => @ingest)
+        @c3 = Chunk::GoogleSpeech.create(:position => 3, :offset => 20, :duration => 1.21, :text => "the cesty food in the world", :score => 0.85, :document => @ingest.document, :ingest => @ingest)
 
-        @c4 = Chunk::AttSpeech.create(:position => 1, :offset => 0,  :text => "I have to pray", :score => 0.72, :document => @ingest.document)
-        @c5 = Chunk::AttSpeech.create(:position => 2, :offset => 10, :text => "that macaronies are", :score => 0.78, :document => @ingest.document)
-        @c6 = Chunk::AttSpeech.create(:position => 3, :offset => 20, :text => "the best mushrooms in the whirlwind.", :score => 0.70, :document => @ingest.document)
+        @c4 = Chunk::AttSpeech.create(:position => 1, :offset => 0,  :duration => 0.72, :text => "I have to pray", :score => 0.72, :document => @ingest.document, :ingest => @ingest)
+        @c5 = Chunk::AttSpeech.create(:position => 2, :offset => 10, :duration => 0.89, :text => "that macaronies are", :score => 0.78, :document => @ingest.document, :ingest => @ingest)
+        @c6 = Chunk::AttSpeech.create(:position => 3, :offset => 20, :duration => 1.21, :text => "the best mushrooms in the whirlwind.", :score => 0.70, :document => @ingest.document, :ingest => @ingest)
 
-        @c7 = Chunk::NuanceDragon.create(:position => 1, :offset => 0,  :text => "I have say", :score => 0.34, :document => @ingest.document)
-        @c8 = Chunk::NuanceDragon.create(:position => 2, :offset => 0,  :text => "that some macaronies are", :score => 0.63, :document => @ingest.document)
-        @c9 = Chunk::NuanceDragon.create(:position => 3, :offset => 0,  :text => "the best food in the world", :score => 0.87, :document => @ingest.document)
+        @c7 = Chunk::NuanceDragon.create(:position => 1, :offset => 0, :duration => 0.72, :text => "I have say", :score => 0.34, :document => @ingest.document, :ingest => @ingest)
+        @c8 = Chunk::NuanceDragon.create(:position => 2, :offset => 0, :duration => 0.89, :text => "that some macaronies are", :score => 0.63, :document => @ingest.document, :ingest => @ingest)
+        @c9 = Chunk::NuanceDragon.create(:position => 3, :offset => 0, :duration => 1.21, :text => "the best food in the world", :score => 0.87, :document => @ingest.document, :ingest => @ingest)
       end
 
       should "scope best scores" do
@@ -90,7 +91,9 @@ class ChunkTest < ActiveSupport::TestCase
       end
 
       should "transform chunks to rich_text JSON" do
-        assert_equal [{"insert"=>"I hate to say", "attributes"=>{"offset"=>0}}, {"insert"=>"that macaronies are", "attributes"=>{"offset"=>10}}, {"insert"=>"the best food in the world", "attributes"=>{"offset"=>0}}], @ingest.chunks.best.rich_text
+        assert_equal 3, @ingest.chunks.best.rich_text.size
+        assert_equal "I hate to say", @ingest.chunks.best.rich_text[0]['insert']
+        assert_equal 0.0, @ingest.chunks.best.rich_text[0]['attributes']['offset']
       end
     end
   end # context "scopes"
@@ -125,8 +128,6 @@ class ChunkTest < ActiveSupport::TestCase
         :position          => 1,
         :offset            => 0,
         :duration          => 5,
-        :start_time        => 0.to_f,
-        :end_time          => 5.to_f,
         :text              => "I like pickles",
         :score             => 0.59,
         :response          => {status: 3},
@@ -161,5 +162,23 @@ class ChunkTest < ActiveSupport::TestCase
     chunk = FactoryGirl.create(:chunk)
     assert_not_nil chunk.uid
     assert_equal 36, chunk.uid.length
+  end
+
+  should "set start_at and end_at" do
+    chunk = FactoryGirl.create(:chunk_with_ingest)
+    assert_equal chunk.ingest.upload.recorded_at + chunk.offset, chunk.start_at
+    assert_equal chunk.ingest.upload.recorded_at + chunk.offset + chunk.duration, chunk.end_at
+  end
+
+  should "not be root?" do
+    chunk = FactoryGirl.create(:chunk)
+    assert_equal false, chunk.is_root?
+    assert_equal false, chunk.is_root
+  end
+
+  should "set locale based on root document" do
+    document = FactoryGirl.create(:document, locale: "de-DE")
+    chunk = Chunk::Pocketsphinx.create(FactoryGirl.attributes_for(:chunk).merge(document: document))
+    assert_equal "de-DE", chunk.locale
   end
 end

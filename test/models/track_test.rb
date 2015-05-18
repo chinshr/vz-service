@@ -5,13 +5,6 @@ class TrackTest < ActiveSupport::TestCase
     should have_one(:tracking).dependent(:destroy)
     should have_one(:document).through(:tracking).source(:document)
     should have_one(:ingest).through(:tracking).source(:ingest)
-    # should have_many(:ingests).through(:document).source(:ingests)
-
-    should "have_many :ingests through :document" do
-      skip "not used"
-      @ingest = FactoryGirl.create(:ingest_audio)
-      assert_equal @ingest, @ingest.track.ingests.first
-    end
 
     should "chunk track have ingest integrity" do
       track = FactoryGirl.create(:track_with_chunk_and_ingest)
@@ -34,6 +27,37 @@ class TrackTest < ActiveSupport::TestCase
     should validate_presence_of :s3_url
   end
 
+  context "delegate" do
+    setup do
+      @track = FactoryGirl.create(:track_with_chunk_and_ingest)
+    end
+
+    should "ingest_id to trackings.ingest_id" do
+      assert_equal @track.tracking.ingest_id, @track.ingest_id
+    end
+
+    should "document_id to trackings.document_id" do
+      assert_equal @track.tracking.document_id, @track.document_id
+    end
+
+    should "offset to document.offset" do
+      assert_equal true, @track.document.is_a?(Chunk)
+      assert_equal @track.document.offset, @track.offset
+    end
+
+    should "duration to document.duration" do
+      assert_equal @track.document.duration, @track.duration
+    end
+
+    should "start_at to document.start_at" do
+      assert_equal @track.document.start_at, @track.start_at
+    end
+
+    should "end_at to document.end_at" do
+      assert_equal @track.document.end_at, @track.end_at
+    end
+  end
+
   context "scopes" do
     setup do
       @track1 = FactoryGirl.create(:master_track)
@@ -53,37 +77,48 @@ class TrackTest < ActiveSupport::TestCase
     end
   end
 
-  should "have s3_key" do
-    track = FactoryGirl.create(:track, :s3_url => "http://s3.amazonaws.com/private/zp66vfwg",
-      :s3_mp3_url => "http://s3.amazonaws.com/private/zp66vfwg.128.mp3")
-    assert_equal "zp66vfwg", track.s3_key
-  end
-
-  should "have s3_uri" do
-    track = FactoryGirl.create(:track, :s3_url => "http://s3.amazonaws.com/vz-dev-origin/13dba008-7ba2-4804-a534-43d03c65260b/gzgtnh1iui",
-      :s3_mp3_url => "http://s3.amazonaws.com/vz-dev-origin/13dba008-7ba2-4804-a534-43d03c65260b/gzgtnh1iui.128.mp3")
-    assert_equal "13dba008-7ba2-4804-a534-43d03c65260b/gzgtnh1iui", track.s3_uri
-    track.s3_url = nil
-    assert_nil track.s3_uri
-  end
-
-  should "have s3_mp3_key" do
-    track = FactoryGirl.create(:track, :s3_url => "http://s3.amazonaws.com/private/zp66vfwg",
-      :s3_mp3_url => "http://s3.amazonaws.com/private/zp66vfwg.128.mp3")
-    assert_equal "zp66vfwg.128.mp3", track.s3_mp3_key
-  end
-
-  should "get mp3_stream_url" do
-    track = FactoryGirl.create(:track, :s3_url => "http://s3.amazonaws.com/private/zp66vfwg",
-      :s3_mp3_url => "http://s3.amazonaws.com/private/zp66vfwg.128.mp3")
-    assert_equal true, track.mp3_stream_url.include?("s3.amazonaws.com")
-    assert_equal true, track.mp3_stream_url.include?(track.s3_mp3_key)
-  end
-
   should "have uid" do
     track = FactoryGirl.create(:track)
     assert_not_nil track.uid
     assert_equal 36, track.uid.length
+  end
+
+  context "helpers" do
+    setup do
+      @track = FactoryGirl.create(:track,
+        s3_url: "http://s3.amazonaws.com/vz-dev-origin/13dba008-7ba2-4804-a534-43d03c65260b/gzgtnh1iui",
+        s3_mp3_url: "http://s3.amazonaws.com/vz-dev-origin/13dba008-7ba2-4804-a534-43d03c65260b/gzgtnh1iui.128.mp3",
+        s3_waveform_json_url: "http://s3.amazonaws.com/vz-dev-origin/13dba008-7ba2-4804-a534-43d03c65260b/gzgtnh1iui.ac2.waveform.json")
+    end
+
+    should "#s3_key" do
+      assert_equal "13dba008-7ba2-4804-a534-43d03c65260b/gzgtnh1iui", @track.s3_key
+      @track.s3_url = "http://s3.amazonaws.com/vz-dev-origin/gzgtnh1iui"
+      assert_equal "gzgtnh1iui", @track.s3_key
+    end
+
+    should "#s3_mp3_key" do
+      assert_equal "13dba008-7ba2-4804-a534-43d03c65260b/gzgtnh1iui.128.mp3", @track.s3_mp3_key
+    end
+
+    should "#mp3_stream_url" do
+      assert_equal true, @track.mp3_stream_url.include?("s3.amazonaws.com")
+      assert_equal true, @track.mp3_stream_url.include?(@track.s3_mp3_key)
+    end
+
+    should "#s3_origin_bucket_name" do
+      assert_equal "vz-dev-origin", @track.send(:s3_origin_bucket_name)
+    end
+
+    should "#s3_waveform_json_key" do
+      assert_equal "13dba008-7ba2-4804-a534-43d03c65260b/gzgtnh1iui.ac2.waveform.json", @track.s3_waveform_json_key
+    end
+
+    should "#waveform_json_stream_url" do
+      assert_equal true, @track.waveform_json_stream_url.include?("s3.amazonaws.com")
+      assert_equal true, @track.waveform_json_stream_url.include?(@track.s3_waveform_json_key)
+    end
+
   end
 
 end

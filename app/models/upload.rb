@@ -149,6 +149,10 @@ class Upload < ActiveRecord::Base
     false
   end
 
+  def recorded_at
+    self[:recorded_at] || self.created_at
+  end
+
   protected
 
   def set_title

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150504212923) do
+ActiveRecord::Schema.define(version: 20150513181747) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -136,8 +136,6 @@ ActiveRecord::Schema.define(version: 20150504212923) do
     t.text     "text"
     t.decimal  "offset",                      precision: 11, scale: 5
     t.decimal  "duration",                    precision: 11, scale: 5
-    t.decimal  "start_time",                  precision: 11, scale: 5
-    t.decimal  "end_time",                    precision: 11, scale: 5
     t.float    "score"
     t.integer  "position"
     t.string   "type"
@@ -148,10 +146,14 @@ ActiveRecord::Schema.define(version: 20150504212923) do
     t.integer  "document_id"
     t.integer  "ingest_id"
     t.integer  "ingest_iteration"
+    t.integer  "turkee_task_id"
+    t.datetime "start_at"
+    t.datetime "end_at"
   end
 
   add_index "documents", ["created_at"], name: "index_documents_on_created_at", using: :btree
   add_index "documents", ["document_id"], name: "index_documents_on_document_id", using: :btree
+  add_index "documents", ["end_at"], name: "index_documents_on_end_at", using: :btree
   add_index "documents", ["ingest_id"], name: "index_documents_on_ingest_id", using: :btree
   add_index "documents", ["ingest_iteration"], name: "index_documents_on_ingest_iteration", using: :btree
   add_index "documents", ["locale"], name: "index_documents_on_locale", using: :btree
@@ -161,7 +163,9 @@ ActiveRecord::Schema.define(version: 20150504212923) do
   add_index "documents", ["processing_status"], name: "index_documents_on_processing_status", using: :btree
   add_index "documents", ["score"], name: "index_documents_on_score", using: :btree
   add_index "documents", ["slug"], name: "index_documents_on_slug", unique: true, using: :btree
+  add_index "documents", ["start_at"], name: "index_documents_on_start_at", using: :btree
   add_index "documents", ["title"], name: "index_documents_on_title", using: :btree
+  add_index "documents", ["turkee_task_id"], name: "index_documents_on_turkee_task_id", using: :btree
   add_index "documents", ["type"], name: "index_documents_on_type", using: :btree
   add_index "documents", ["uid"], name: "index_documents_on_uid", using: :btree
   add_index "documents", ["updated_at"], name: "index_documents_on_updated_at", using: :btree
@@ -303,6 +307,47 @@ ActiveRecord::Schema.define(version: 20150504212923) do
   add_index "tracks", ["is_master"], name: "index_tracks_on_is_master", using: :btree
   add_index "tracks", ["uid"], name: "index_tracks_on_uid", using: :btree
 
+  create_table "turkee_imported_assignments", force: true do |t|
+    t.string   "assignment_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "turkee_task_id"
+    t.string   "worker_id"
+    t.integer  "result_id"
+  end
+
+  add_index "turkee_imported_assignments", ["assignment_id"], name: "index_turkee_imported_assignments_on_assignment_id", unique: true, using: :btree
+  add_index "turkee_imported_assignments", ["turkee_task_id"], name: "index_turkee_imported_assignments_on_turkee_task_id", using: :btree
+
+  create_table "turkee_studies", force: true do |t|
+    t.integer  "turkee_task_id"
+    t.text     "feedback"
+    t.string   "gold_response"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "turkee_studies", ["turkee_task_id"], name: "index_turkee_studies_on_turkee_task_id", using: :btree
+
+  create_table "turkee_tasks", force: true do |t|
+    t.string   "hit_url"
+    t.boolean  "sandbox"
+    t.string   "task_type"
+    t.text     "hit_title"
+    t.text     "hit_description"
+    t.string   "hit_id"
+    t.decimal  "hit_reward",            precision: 10, scale: 2
+    t.integer  "hit_num_assignments"
+    t.integer  "hit_lifetime"
+    t.string   "form_url"
+    t.integer  "completed_assignments",                          default: 0
+    t.boolean  "complete"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "hit_duration"
+    t.integer  "expired"
+  end
+
   create_table "uploads", force: true do |t|
     t.string   "file_name"
     t.string   "file_type"
@@ -312,6 +357,7 @@ ActiveRecord::Schema.define(version: 20150504212923) do
     t.datetime "updated_at"
     t.string   "type"
     t.string   "uid"
+    t.datetime "recorded_at"
   end
 
   add_index "uploads", ["created_at"], name: "index_uploads_on_created_at", using: :btree

@@ -20,10 +20,6 @@ class IngestTest < ActiveSupport::TestCase
       @ingest = FactoryGirl.create(:ingest_audio)
     end
 
-    should "#s3_key to upload" do
-      assert_equal @ingest.upload.s3_key, @ingest.s3_key
-    end
-
     should "#track to document" do
       assert_equal @ingest.document.track, @ingest.track
     end
@@ -252,17 +248,17 @@ class IngestTest < ActiveSupport::TestCase
     setup do
       @ingest = FactoryGirl.create(:ingest_audio)
       @document = @ingest.document
-      Chunk::GoogleSpeech.create(:position => 1, :offset => 0,  :text => "I hate to say", :score => 0.80, :document => @document)
-      Chunk::GoogleSpeech.create(:position => 2, :offset => 10, :text => "that macaronies are", :score => 0.65, :document => @document)
-      Chunk::GoogleSpeech.create(:position => 3, :offset => 20, :text => "the best food in the world", :score => 0.85, :document => @document)
+      Chunk::GoogleSpeech.create(:position => 1, :offset => 0, :duration => 0.72, :text => "I hate to say", :score => 0.80, :document => @document, :ingest => @ingest)
+      Chunk::GoogleSpeech.create(:position => 2, :offset => 10, :duration => 0.89, :text => "that macaronies are", :score => 0.65, :document => @document, :ingest => @ingest)
+      Chunk::GoogleSpeech.create(:position => 3, :offset => 20, :duration => 1.21, :text => "the best food in the world", :score => 0.85, :document => @document, :ingest => @ingest)
 
-      Chunk::AttSpeech.create(:position => 1, :offset => 0,  :text => "I have to pray", :score => 0.70, :document => @document)
-      Chunk::AttSpeech.create(:position => 2, :offset => 10, :text => "cat maths are", :score => 0.70, :document => @document)
-      Chunk::AttSpeech.create(:position => 3, :offset => 20, :text => "the best mushrooms in the whirlwind.", :score => 0.95, :document => @document)
+      Chunk::AttSpeech.create(:position => 1, :offset => 0, :duration => 0.72, :text => "I have to pray", :score => 0.70, :document => @document, :ingest => @ingest)
+      Chunk::AttSpeech.create(:position => 2, :offset => 10, :duration => 0.89, :text => "cat maths are", :score => 0.70, :document => @document, :ingest => @ingest)
+      Chunk::AttSpeech.create(:position => 3, :offset => 20, :duration => 1.21, :text => "the best mushrooms in the whirlwind.", :score => 0.95, :document => @document, :ingest => @ingest)
 
-      Chunk::NuanceDragon.create(:position => 1, :offset => 0,  :text => "I have say", :score => 0, :document => @document)
-      Chunk::NuanceDragon.create(:position => 2, :offset => 10,  :text => "that some macaronies are", :score => 0, :document => @document)
-      Chunk::NuanceDragon.create(:position => 3, :offset => 20,  :text => "the cesty food in the world", :score => 0, :document => @document)
+      Chunk::NuanceDragon.create(:position => 1, :offset => 0, :duration => 0.72, :text => "I have say", :score => 0, :document => @document, :ingest => @ingest)
+      Chunk::NuanceDragon.create(:position => 2, :offset => 10, :duration => 0.89, :text => "that some macaronies are", :score => 0, :document => @document, :ingest => @ingest)
+      Chunk::NuanceDragon.create(:position => 3, :offset => 20, :duration => 1.21, :text => "the cesty food in the world", :score => 0, :document => @document, :ingest => @ingest)
     end
 
     should "normalize chunk scores" do
@@ -274,8 +270,11 @@ class IngestTest < ActiveSupport::TestCase
     should "update from chunks" do
       @ingest.normalize_chunk_scores!
       @ingest.update_content_from @ingest.chunks.best
-      assert_equal [{"insert"=>"I hate to say", "attributes"=>{"offset"=>0.0}}, {"insert"=>"that macaronies are", "attributes"=>{"offset"=>10.0}}, {"insert"=>"the best food in the world", "attributes"=>{"offset"=>20.0}}],
-        @ingest.document.rich_text
+      rich_text = @ingest.document.rich_text
+      assert_equal 3, rich_text.size
+      assert_equal "I hate to say", rich_text[0]['insert']
+      assert_equal "that macaronies are", rich_text[1]['insert']
+      assert_equal "the best food in the world", rich_text[2]['insert']
     end
   end
 

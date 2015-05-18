@@ -8,6 +8,13 @@ class Track < ActiveRecord::Base
 
   validates :s3_url, presence: true
 
+  delegate :ingest_id, to: :tracking, allow_nil: true
+  delegate :document_id, to: :tracking, allow_nil: true
+  delegate :offset, to: :document, allow_nil: true
+  delegate :duration, to: :document, allow_nil: true
+  delegate :start_at, to: :document, allow_nil: true
+  delegate :end_at, to: :document, allow_nil: true
+
   # public scopes
   filtered_scopes :sort_order, :reverse_sort, :is_master
   scope :sort_order, -> (param) {
@@ -26,46 +33,29 @@ class Track < ActiveRecord::Base
       SecureRandom.uuid
     end
 
+    # TODO: refactor obsolete
     def policy_class
       TrackPolicy
     end
+
+    def s3_url_to_key(s3_url)
+      path = URI.parse(s3_url).path.split("/").reject(&:blank?) if s3_url
+      File.join(path.slice(1..-1)) if path && path.length > 0
+    rescue URI::InvalidURIError => ex
+      nil
+    end
   end
-
-  delegate :ingest_id, to: :tracking, allow_nil: true
-  # def ingest_id
-  #   ingest.try(:id)
-  # end
-
-  delegate :document_id, to: :tracking, allow_nil: true
-  # def document_id
-  #   document.try(:id)
-  # end
 
   def s3_key
-    s3_url ? s3_url.split("/").last : nil
+    self.class.s3_url_to_key(s3_url)
   end
 
-  def s3_uri
-    path = URI.parse(s3_url).path.split("/").reject(&:blank?) if s3_url
-    File.join(path.slice(1..-1)) if path && path.length > 0
-  rescue URI::InvalidURIError => ex
-    nil
-  end
-
-  def s3_mp3_key
-    s3_mp3_url ? s3_mp3_url.split("/").last : nil
-  end
-
-  # http://docs.aws.amazon.com/AWSRubySDK/latest/AWS/S3/S3Object.html#url_for-instance_method
-  # vz-dropbox-dev.voyzes.com -> http://s3.amazonaws.com/vz-dropbox-dev/6s8l775jqc.128.mp3?AWSAccessKey…OUXPZ7ZQ&Expires=1418179793&Signature=ihPMw6fUy%2FW%2BG4V%2FSQWcws3izBk%3D
-  # vz-vault-dev.voyzes.com  -> http://s3.amazonaws.com/vz-vault-dev/6s8l775jqc.128.mp3
-  def mp3_stream_url
-    s3 = AWS::S3.new
-    object = s3.buckets[APP_CONFIG['S3_OUTBOUND_BUCKET']].objects[s3_mp3_key]
-    object.url_for(:get, {:expires => 20.minutes.from_now, :secure => false, :response_content_type => "audio/mpeg"}).to_s
-  end
-
-  # AWS S3 Bucket Policy for public access:
+  # Turns private `s3_mp3_url` into a public streaming URL
+  # E.g. http://vz-dev-origin.s3.amazonaws.com/d28f7815-1916-4a82-87f3-1ec1c4c667f1/6oytipuc99.ac2.ab128k.mp3?AWSAccessKeyId=AKIAJB7Z3FGKOUXPZ7ZQ&Expires=1431633540&Signature=fPjk686wUZDp7dQvfq%2FJSuyUD04%3D&response-content-type=audio%2Fmpeg
+  # Help: http://docs.aws.amazon.com/AWSRubySDK/latest/AWS/S3/S3Object.html#url_for-instance_method
+  #
+  # Configure AWS S3 Bucket Policy for public access:
+  #
   # {
   # "Version": "2012-10-17",
   # "Statement": [
@@ -78,5 +68,35 @@ class Track < ActiveRecord::Base
   #   }
   # ]
   # }
+  #
+  def mp3_stream_url
+    s3 = AWS::S3.new
+    object = s3.buckets[s3_origin_bucket_name].objects[s3_mp3_key]
+    object.url_for(:get, {expires: 20.minutes.from_now, secure: false,
+      response_content_type: "audio/mpeg"}).to_s
+  end
 
+  # E.g. "d155ef63-0e83-4661-b672-955fd7578a73/guj58l1j7l.ac2.ab128k.mp3"
+  def s3_mp3_key
+    self.class.s3_url_to_key(s3_mp3_url)
+  end
+
+  def s3_waveform_json_key
+    self.class.s3_url_to_key(s3_waveform_json_url)
+  end
+
+  def waveform_json_stream_url
+    s3 = AWS::S3.new
+    object = s3.buckets[s3_origin_bucket_name].objects[s3_waveform_json_key]
+    object.url_for(:get, {expires: 20.minutes.from_now, secure: false,
+      response_content_type: "application/json"}).to_s
+  end
+
+  protected
+
+  def s3_origin_bucket_name
+    bucket = APP_CONFIG['S3_OUTBOUND_BUCKET']
+    bucket = bucket.gsub(/\/?(.*)/, '\1')
+    bucket
+  end
 end

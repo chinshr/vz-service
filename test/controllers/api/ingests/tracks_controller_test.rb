@@ -140,8 +140,8 @@ class Api::Ingests::TracksControllerTest < ActionController::TestCase
   protected
 
   def assert_attributes(response, expected_attributes = {})
-    %w(id mp3_stream_url created_at is_master ingest_id document_id ingest_iteration uid s3_url s3_uri s3_key s3_mp3_url updated_at).each do |key|
-      assert response.has_key?(key), "should containt key '#{key}' in '#{response}'"
+    %w(id mp3_stream_url created_at is_master ingest_id document_id ingest_iteration uid s3_url s3_key s3_mp3_url s3_mp3_key waveform_json_stream_url s3_waveform_json_key updated_at).each do |key|
+      assert response.has_key?(key), "should contain key '#{key}' in '#{response}'"
     end
   end
 end
