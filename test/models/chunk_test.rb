@@ -40,7 +40,9 @@ class ChunkTest < ActiveSupport::TestCase
     end
 
     should "have filtered scopes" do
-      assert_equal [:any_of_type, :any_of_processing_status, :none_of_processing_status, :sort_order, :reverse_sort, :offset, :limit, :any_of_ingest_iteration, :any_of_position, :is_root].to_set,
+      assert_equal [:any_of_type, :any_of_processing_status, :none_of_processing_status, 
+          :sort_order, :reverse_sort, :offset, :limit, :any_of_ingest_iteration, 
+          :any_of_position, :is_root, :score_lt, :score_gt].to_set,
         Chunk.scopes.to_set
     end
 
@@ -74,6 +76,20 @@ class ChunkTest < ActiveSupport::TestCase
     should "have any_of_ingest_iteration" do
       ps = FactoryGirl.create(:chunk_pocketsphinx, ingest_iteration: 2)
       assert_equal [ps], Chunk.any_of_ingest_iteration(2).limit(1)
+    end
+
+    should "have score greater than" do
+      Chunk.destroy_all
+      ps = FactoryGirl.create(:chunk_pocketsphinx, score: 0.95)
+      assert_equal [ps], Chunk.score_gt(0.94).order(created_at: :desc).limit(1)
+      assert_equal [], Chunk.score_gt(0.95).order(created_at: :desc).limit(1)
+    end
+
+    should "have score less than" do
+      Chunk.destroy_all
+      ps = FactoryGirl.create(:chunk_pocketsphinx, score: 0.15)
+      assert_equal [ps], Chunk.score_lt(0.16).order(created_at: :desc).limit(1)
+      assert_equal [], Chunk.score_lt(0.15).order(created_at: :desc).limit(1)
     end
 
     context "#best" do
