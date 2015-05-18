@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class Ingest::AudioTest < ActiveSupport::TestCase
+class Ingest::AudioIngestTest < ActiveSupport::TestCase
   setup do
     Ingest::AudioWorker.jobs.clear
     ActionMailer::Base.deliveries.clear

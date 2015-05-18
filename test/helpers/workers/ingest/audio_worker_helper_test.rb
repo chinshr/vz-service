@@ -23,7 +23,7 @@ class AudioWorkerTest
   end
 
   def initialize(ingest_id = nil)
-    @ingest = Ingest::Audio.find(ingest_id) if ingest_id
+    @ingest = Ingest::AudioIngest.find(ingest_id) if ingest_id
     document # need to reference the document, otherwise, for some reason it cannot be referenced. AR bug?
 
     Transcribe.class_eval do
@@ -41,45 +41,45 @@ class AudioWorkerTest
         ActiveRecord::Base.connection_pool.with_connection do
           if audio.engine.is_a? Speech::Engines::GoogleSpeechEngine
             @mutex.synchronize do
-              ::Chunk::GoogleSpeech.create(:position => 1, :offset => 0,  :text => "I hate to say", :score => 0.80, :document => ingest.document, :ingest_id => ingest.id)
+              ::Chunk::GoogleSpeechChunk.create(:position => 1, :offset => 0,  :text => "I hate to say", :score => 0.80, :document => ingest.document, :ingest_id => ingest.id)
               @queue.push(AudioWorkerTest::Chunk.new(1, audio.engine, 3))
             end
 
             @mutex.synchronize do
-              ::Chunk::GoogleSpeech.create(:position => 2, :offset => 10, :text => "that macaronies are", :score => 0.65, :document => ingest.document, :ingest_id => ingest.id)
+              ::Chunk::GoogleSpeechChunk.create(:position => 2, :offset => 10, :text => "that macaronies are", :score => 0.65, :document => ingest.document, :ingest_id => ingest.id)
               @queue.push(AudioWorkerTest::Chunk.new(2, audio.engine, 3))
             end
 
             @mutex.synchronize do
-              ::Chunk::GoogleSpeech.create(:position => 3, :offset => 20, :text => "the best food in the world", :score => 0.85, :document => ingest.document, :ingest_id => ingest.id)
+              ::Chunk::GoogleSpeechChunk.create(:position => 3, :offset => 20, :text => "the best food in the world", :score => 0.85, :document => ingest.document, :ingest_id => ingest.id)
               @queue.push(AudioWorkerTest::Chunk.new(3, audio.engine, 3))
             end
           elsif audio.engine.is_a? Speech::Engines::AttSpeechEngine
             @mutex.synchronize do
-              ::Chunk::AttSpeech.create(:position => 1, :offset => 0,  :text => "I have to pray", :score => 0.70, :document => ingest.document, :ingest_id => ingest.id)
+              ::Chunk::AttSpeechChunk.create(:position => 1, :offset => 0,  :text => "I have to pray", :score => 0.70, :document => ingest.document, :ingest_id => ingest.id)
               @queue.push(AudioWorkerTest::Chunk.new(1, audio.engine, 3))
             end
 
             @mutex.synchronize do
-              ::Chunk::AttSpeech.create(:position => 2, :offset => 10, :text => "cat maths are", :score => 0.70, :document => ingest.document, :ingest_id => ingest.id)
+              ::Chunk::AttSpeechChunk.create(:position => 2, :offset => 10, :text => "cat maths are", :score => 0.70, :document => ingest.document, :ingest_id => ingest.id)
               @queue.push(AudioWorkerTest::Chunk.new(2, audio.engine, 3))
             end
 
             @mutex.synchronize do
-              ::Chunk::AttSpeech.create(:position => 3, :offset => 20, :text => "the best mushrooms in the whirlwind.", :score => 0.70, :document => ingest.document, :ingest_id => ingest.id)
+              ::Chunk::AttSpeechChunk.create(:position => 3, :offset => 20, :text => "the best mushrooms in the whirlwind.", :score => 0.70, :document => ingest.document, :ingest_id => ingest.id)
               @queue.push(AudioWorkerTest::Chunk.new(3, audio.engine, 3))
             end
           elsif audio.engine.is_a? Speech::Engines::NuanceDragonEngine
             @mutex.synchronize do
-              ::Chunk::NuanceDragon.create(:position => 1, :offset => 0,  :text => "I have say", :score => 0, :document => ingest.document, :ingest_id => ingest.id)
+              ::Chunk::NuanceDragonChunk.create(:position => 1, :offset => 0,  :text => "I have say", :score => 0, :document => ingest.document, :ingest_id => ingest.id)
               @queue.push(AudioWorkerTest::Chunk.new(1, audio.engine, 3))
             end
             @mutex.synchronize do
-              ::Chunk::NuanceDragon.create(:position => 2, :offset => 0,  :text => "that some macaronies are", :score => 0, :document => ingest.document, :ingest_id => ingest.id)
+              ::Chunk::NuanceDragonChunk.create(:position => 2, :offset => 0,  :text => "that some macaronies are", :score => 0, :document => ingest.document, :ingest_id => ingest.id)
               @queue.push(AudioWorkerTest::Chunk.new(2, audio.engine, 3))
             end
             @mutex.synchronize do
-              ::Chunk::NuanceDragon.create(:position => 3, :offset => 0,  :text => "the cesty food in the world", :score => 0, :document => ingest.document, :ingest_id => ingest.id)
+              ::Chunk::NuanceDragonChunk.create(:position => 3, :offset => 0,  :text => "the cesty food in the world", :score => 0, :document => ingest.document, :ingest_id => ingest.id)
               @queue.push(AudioWorkerTest::Chunk.new(3, audio.engine, 3))
             end
           end

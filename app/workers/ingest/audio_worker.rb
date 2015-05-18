@@ -26,8 +26,8 @@ class Ingest::AudioWorker
     )
 
     # For server debugging purposes
-    @ingest               = Ingest::Audio.find(ingest_id) if ingest_id
-    @mp3_bitrate          = 128    # in kbits
+    @ingest               = Ingest::AudioIngest.find(ingest_id) if ingest_id
+    @mp3_bitrate          = 128    # in Kbits
     @chunk_size           = 10     # in seconds
     @vad_silence_segments = 20     # in ms
     @vad_noise_reduce     = false  # noise reduce, true or false (note: true only works with 25ms silence segments)
@@ -35,7 +35,7 @@ class Ingest::AudioWorker
 
   def perform(ingest_id, options = {})
     options.symbolize_keys!
-    @ingest = Ingest::Audio.find(ingest_id)
+    @ingest = Ingest::AudioIngest.find(ingest_id)
 
     # check what we have to do?
     case @ingest.state

@@ -9,8 +9,8 @@ class Api::Account::UploadsControllerTest < ActionController::TestCase
   context "POST /api/account/uploads" do
     should "create audio upload when signed in" do
       assert_difference 'Document.count', 1 do
-        assert_difference 'Ingest::Audio.count', 1 do
-          assert_difference 'Upload::Audio.count', 1 do
+        assert_difference 'Ingest::AudioIngest.count', 1 do
+          assert_difference 'Upload::AudioUpload.count', 1 do
             post :create, :upload => {:file_name => "i-like-pickles.wav", :s3_url => "http://s3.amazonaws.com/qscribe-uploads/8enYwMjB0B",
               :file_type => "audio/wav", :file_size => 225284, :type => "audio", :locale => "en-UK", :privacy => "private"},
               format: :json
@@ -19,7 +19,7 @@ class Api::Account::UploadsControllerTest < ActionController::TestCase
 
             upload = Upload.last
             assert_equal @user.id, upload.user.id
-            assert_equal "Upload::Audio", upload.type
+            assert_equal "Upload::AudioUpload", upload.type
             assert_equal "audio/wav", upload.file_type
             assert_equal "i-like-pickles.wav", upload.file_name
             assert_equal 225284, upload.file_size

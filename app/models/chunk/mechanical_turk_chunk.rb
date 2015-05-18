@@ -1,4 +1,4 @@
-class Chunk::MechanicalTurk < Chunk
+class Chunk::MechanicalTurkChunk < ::Chunk
   belongs_to :turkee_task, class_name: "Turkee::TurkeeTask", foreign_key: :turkee_task_id
 
   before_save :copy_sibling_attributes, :assign_root_document, on: :create
@@ -42,15 +42,15 @@ class Chunk::MechanicalTurk < Chunk
     # callback
     # * approve tasks that have somewhat an acceptable score, fuzzy match >.3?
     def hit_complete(turkee_task)
-      if chunk = Chunk::MechanicalTurk.find_by(turkee_task_id: turkee_task.id)
-        chunk.update_attributes(processing_status: Chunk::STATES[:transcribed])
+      if chunk = Chunk::MechanicalTurkChunk.find_by(turkee_task_id: turkee_task.id)
+        chunk.update_attributes(processing_status: ::Chunk::STATES[:transcribed])
       end
     end
 
     # callback
     # * set status to transcription error for all chunks belonging to this task
     def hit_expired(turkee_task)
-      if chunk = Chunk::MechanicalTurk.find_by(turkee_task_id: turkee_task.id)
+      if chunk = Chunk::MechanicalTurkChunk.find_by(turkee_task_id: turkee_task.id)
         chunk.update_attributes(processing_status: Chunk::STATES[:transcription_error])
       end
     end

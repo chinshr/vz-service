@@ -1,13 +1,13 @@
 FactoryGirl.define do
 
-  factory :upload_audio, :class => "Upload::Audio" do
+  factory :upload_audio, :class => "Upload::AudioUpload" do
     sequence(:file_name) {|n| "sample-#{n}.m4a"}
     file_type "audio/x-m4a"
     file_size 62676
     recorded_at Time.parse("26/2/1972 15:32 UTC")
     sequence(:s3_url) {|n| "http://s3.amazonaws.com/dropbox/sample-#{n}.m4a"}
     before(:create) do |upload|
-      upload.build_ingest(type: "Ingest::Audio", upload: upload, document: FactoryGirl.create(:document))
+      upload.build_ingest(type: "Ingest::AudioIngest", upload: upload, document: FactoryGirl.create(:document))
     end
   end
 
@@ -28,12 +28,12 @@ FactoryGirl.define do
     end
   end
 
-  factory :ingest_audio, :class => "Ingest::Audio" do
+  factory :ingest_audio, :class => "Ingest::AudioIngest" do
     association :upload, factory: :upload_audio
     association :document, factory: :document_with_track
   end
 
-  factory :ingest_audio_without_track, :class => "Ingest::Audio" do
+  factory :ingest_audio_without_track, :class => "Ingest::AudioIngest" do
     association :upload, factory: :upload_audio
     association :document, factory: :document
   end
@@ -58,28 +58,28 @@ FactoryGirl.define do
     end
   end
 
-  factory :chunk_google_speech, parent: :chunk, class: "Chunk::GoogleSpeech" do
+  factory :chunk_google_speech, parent: :chunk, class: "Chunk::GoogleSpeechChunk" do
     association :document, factory: :document_with_ingest
     before(:create) do |chunk|
       chunk.ingest_id = chunk.document.ingests.first.id
     end
   end
 
-  factory :chunk_att_speech, parent: :chunk, class: "Chunk::AttSpeech" do
+  factory :chunk_att_speech, parent: :chunk, class: "Chunk::AttSpeechChunk" do
     association :document, factory: :document_with_ingest
     before(:create) do |chunk|
       chunk.ingest_id = chunk.document.ingests.first.id
     end
   end
 
-  factory :chunk_nuance_dragon, parent: :chunk, class: "Chunk::NuanceDragon" do
+  factory :chunk_nuance_dragon, parent: :chunk, class: "Chunk::NuanceDragonChunk" do
     association :document, factory: :document_with_ingest
     before(:create) do |chunk|
       chunk.ingest_id = chunk.document.ingests.first.id
     end
   end
 
-  factory :chunk_pocketsphinx, parent: :chunk, class: "Chunk::Pocketsphinx" do
+  factory :chunk_pocketsphinx, parent: :chunk, class: "Chunk::PocketsphinxChunk" do
     association :document, factory: :document_with_ingest
     before(:create) do |chunk|
       chunk.ingest_id = chunk.document.ingests.first.id
@@ -87,7 +87,7 @@ FactoryGirl.define do
     end
   end
 
-  factory :chunk_mechanical_turk, parent: :chunk, class: "Chunk::MechanicalTurk" do
+  factory :chunk_mechanical_turk, parent: :chunk, class: "Chunk::MechanicalTurkChunk" do
     association :document, factory: :document_with_ingest
     before(:create) do |chunk|
       chunk.ingest_id = chunk.document.ingests.first.id

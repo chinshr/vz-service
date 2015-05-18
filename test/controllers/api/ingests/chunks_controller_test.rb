@@ -57,12 +57,12 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
 
     should "create chunk with signed in backend user" do
       sign_in :user, @user2
-      assert_difference 'Chunk::GoogleSpeech.count', 1 do
-        attributes = @attributes.merge(type: "Chunk::GoogleSpeech")
+      assert_difference 'Chunk::GoogleSpeechChunk.count', 1 do
+        attributes = @attributes.merge(type: "Chunk::GoogleSpeechChunk")
         post :create, ingest_id: @ingest1.id, chunk: attributes, format: :json
         assert_response :success
         assert_attributes response_body["chunk"], attributes
-        assert_equal 1, Chunk::GoogleSpeech.last.ingest_iteration
+        assert_equal 1, Chunk::GoogleSpeechChunk.last.ingest_iteration
       end
     end
 
@@ -70,25 +70,25 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
       sign_in :user, @user2
       attributes = @attributes
       attributes.delete(:ingest_iteration)
-      assert_difference 'Chunk::GoogleSpeech.count', 1 do
-        attributes = @attributes.merge(type: "Chunk::GoogleSpeech")
+      assert_difference 'Chunk::GoogleSpeechChunk.count', 1 do
+        attributes = @attributes.merge(type: "Chunk::GoogleSpeechChunk")
         post :create, ingest_id: @ingest1.id, chunk: attributes, format: :json
         assert_response :success
         assert_attributes response_body["chunk"], attributes
-        assert_equal @ingest1.iteration, Chunk::GoogleSpeech.last.ingest_iteration
+        assert_equal @ingest1.iteration, Chunk::GoogleSpeechChunk.last.ingest_iteration
       end
     end
 
     should "create chunk with track_attributes" do
       sign_in :user, @user2
-      assert_difference 'Chunk::GoogleSpeech.count', 1 do
+      assert_difference 'Chunk::GoogleSpeechChunk.count', 1 do
         assert_difference 'Track.count', 1 do
-          attributes = @attributes.merge(type: "Chunk::GoogleSpeech")
+          attributes = @attributes.merge(type: "Chunk::GoogleSpeechChunk")
           track_attributes = {s3_url: @s3_url, s3_mp3_url: @s3_mp3_url, s3_waveform_json_url: @s3_waveform_json_url}
           post :create, ingest_id: @ingest1.id, chunk: attributes.merge(track_attributes: track_attributes), format: :json
           assert_response :success
           assert_attributes response_body["chunk"], attributes
-          assert_equal 1, Chunk::GoogleSpeech.last.ingest_iteration
+          assert_equal 1, Chunk::GoogleSpeechChunk.last.ingest_iteration
           assert_not_nil response_body["chunk"]["track"]
           assert_equal @s3_url, response_body["chunk"]["track"]["s3_url"]
           assert_equal @s3_mp3_url, response_body["chunk"]["track"]["s3_mp3_url"]
@@ -205,7 +205,7 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
         :response => {"status" => 1, "hypothesis" => "You got it!"},
       }
       track_attributes = {s3_url: @s3_url, s3_mp3_url: @s3_mp3_url}
-      assert_no_difference 'Chunk::GoogleSpeech.count' do
+      assert_no_difference 'Chunk::GoogleSpeechChunk.count' do
         assert_difference 'Track.count', 1 do
           put :update, {ingest_id: @ingest1.id, id: @chunk1.id,
             :chunk => attributes.merge(track_attributes: track_attributes), format: :json}
@@ -230,7 +230,7 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
       @track1 = Track.create(document: @chunk1, s3_url: "http://track-12")
       @chunk1.reload
 
-      assert_no_difference 'Chunk::GoogleSpeech.count' do
+      assert_no_difference 'Chunk::GoogleSpeechChunk.count' do
         assert_no_difference 'Track.count' do
           put :update, {ingest_id: @ingest1.id, id: @chunk1.id,
             :chunk => attributes.merge(track_attributes: track_attributes), format: :json}
