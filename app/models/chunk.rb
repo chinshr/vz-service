@@ -19,7 +19,7 @@ class Chunk < Document
   validates :document, presence: true
   validates :offset, presence: true
 
-  filtered_scopes :sort_order, :reverse_sort, :any_of_type,
+  filtered_scopes :sort_order, :reverse_sort, :any_of_types,
     :any_of_processing_status, :none_of_processing_status,
     :any_of_position, :any_of_ingest_iteration, :score_lt, :score_gt,
     :score_lteq, :score_gteq, :ingest_id, :none_of_ingest_ids
@@ -40,7 +40,7 @@ class Chunk < Document
     end
   }
   scope :reverse_sort, -> (param) {all.reverse_order if Model::Helper.booleanize(param)}
-  scope :any_of_type, -> (params) {where("documents.type IN (?)", class_names_for(params))}
+  scope :any_of_types, -> (params) {where("documents.type IN (?)", class_names_for(params))}
   scope :any_of_processing_status, -> (params) {where("documents.processing_status IN (?)", [params].flatten.map(&:to_s).
     map {|s| s.match(/^([\-]{,1}[0-9]+)$/) ? s : nil}.reject(&:blank?).uniq)}
   scope :none_of_processing_status, -> (params) {where("documents.processing_status NOT IN (?)", [params].flatten.map(&:to_s).

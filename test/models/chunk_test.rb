@@ -40,7 +40,7 @@ class ChunkTest < ActiveSupport::TestCase
     end
 
     should "have filtered scopes" do
-      assert_equal [:any_of_type, :any_of_processing_status, :none_of_processing_status,
+      assert_equal [:any_of_types, :any_of_processing_status, :none_of_processing_status,
         :sort_order, :reverse_sort, :offset, :limit, :any_of_ingest_iteration,
         :any_of_position, :is_root, :score_lt, :score_gt, :score_lteq, :score_gteq,
         :ingest_id, :none_of_ingest_ids].to_set, Chunk.scopes.to_set
@@ -70,10 +70,11 @@ class ChunkTest < ActiveSupport::TestCase
       end
     end
 
-    should "have any_of_type" do
+    should "#any_of_types" do
       ps = FactoryGirl.create(:chunk_pocketsphinx)
-      assert_equal [ps], Chunk.any_of_type("pocketsphinx").limit(1)
-      assert_equal [ps], Chunk.any_of_type("Chunk::PocketsphinxChunk").limit(1)
+      assert_equal [ps], Chunk.any_of_types("pocketsphinx").limit(1)
+      assert_equal [ps], Chunk.any_of_types("pocketsphinx_chunk").limit(1)
+      assert_equal [ps], Chunk.any_of_types("Chunk::PocketsphinxChunk").limit(1)
     end
 
     should "have any_of_position" do

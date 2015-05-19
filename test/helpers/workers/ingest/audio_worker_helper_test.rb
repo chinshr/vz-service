@@ -113,9 +113,9 @@ class Workers::Ingest::AudioWorkerHelperTest < ActionView::TestCase
 
     @ingest.reload
     assert_equal 9, @ingest.chunks.count
-    assert_equal 3, @ingest.chunks.any_of_type(:google_speech).count
-    assert_equal 3, @ingest.chunks.any_of_type(:att_speech).count
-    assert_equal 3, @ingest.chunks.any_of_type(:nuance_dragon).count
+    assert_equal 3, @ingest.chunks.any_of_types(:google_speech).count
+    assert_equal 3, @ingest.chunks.any_of_types(:att_speech).count
+    assert_equal 3, @ingest.chunks.any_of_types(:nuance_dragon).count
     assert_equal 100, @ingest.progress
   end
 

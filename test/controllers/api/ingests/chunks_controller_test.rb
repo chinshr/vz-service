@@ -127,7 +127,7 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
       @chunk1 = FactoryGirl.create(:chunk_google_speech, document: @ingest1.document, ingest_id: @ingest1.id)
       @chunk2 = FactoryGirl.create(:chunk_att_speech, document: @ingest1.document, ingest_id: @ingest1.id)
       sign_in :user, @user2
-      get :index, ingest_id: @ingest1.id, any_of_type: "att_speech", format: :json
+      get :index, ingest_id: @ingest1.id, any_of_types: "att_speech", format: :json
       assert_response :success
       assert response_body.has_key?("chunks"), "should have root"
       assert_equal 1, response_body["chunks"].size, "should have one chunk"
@@ -152,7 +152,7 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
       @chunk1 = FactoryGirl.create(:chunk_pocketsphinx)
       @chunk2 = FactoryGirl.create(:chunk_pocketsphinx, document: @ingest1.document, ingest_id: @ingest1.id)
       sign_in :user, @user2
-      get :index, none_of_ingest_ids: [@ingest1.id], any_of_type: ["pocketsphinx"],
+      get :index, none_of_ingest_ids: [@ingest1.id], any_of_types: ["pocketsphinx"],
         format: :json
       assert_response :success
       assert response_body.has_key?("chunks"), "should have root"
