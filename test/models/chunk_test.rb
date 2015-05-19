@@ -56,10 +56,18 @@ class ChunkTest < ActiveSupport::TestCase
       assert_equal false, Chunk.none_of_processing_status([Speech::AudioSplitter::AudioChunk::STATUS_ENCODED]).include?(@chunk)
     end
 
-    should "have sort_order" do
-      @chunk.update_attributes(processing_status: Speech::AudioSplitter::AudioChunk::STATUS_ENCODED,
-        position: 999)
-      assert_equal [@chunk], Chunk.sort_order("position" => "asc").reverse_sort("true").limit(1)
+    context "#sort_order" do
+      should "position => asc" do
+        @chunk.update_attributes(processing_status: Speech::AudioSplitter::AudioChunk::STATUS_ENCODED,
+          position: 999)
+        assert_equal [@chunk], Chunk.sort_order("position" => "asc").reverse_sort("true").limit(1)
+      end
+
+      should "random => asc" do
+        Chunk.destroy_all
+        chunk = FactoryGirl.create(:chunk_pocketsphinx)
+        assert_equal [chunk], Chunk.sort_order("random" => "asc").limit(1)
+      end
     end
 
     should "have any_of_type" do

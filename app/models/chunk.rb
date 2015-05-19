@@ -33,6 +33,8 @@ class Chunk < Document
       order(self.arel_table[:position].send(param.first[1].to_sym).to_sql)
     when "score"
       order(self.arel_table[:score].send(param.first[1].to_sym).to_sql)
+    when "random"
+      order("random()")
     else
       raise ArgumentError, "Ignored unrecognized value 'sort_order[]=#{param}'."
     end
