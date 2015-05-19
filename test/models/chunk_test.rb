@@ -73,6 +73,7 @@ class ChunkTest < ActiveSupport::TestCase
     should "#any_of_types" do
       ps = FactoryGirl.create(:chunk_pocketsphinx)
       assert_equal [ps], Chunk.any_of_types("pocketsphinx").limit(1)
+      assert_equal [ps], Chunk.any_of_types([:"pocketsphinx"]).limit(1)
       assert_equal [ps], Chunk.any_of_types("pocketsphinx_chunk").limit(1)
       assert_equal [ps], Chunk.any_of_types("Chunk::PocketsphinxChunk").limit(1)
     end
@@ -80,6 +81,7 @@ class ChunkTest < ActiveSupport::TestCase
     should "#any_of_positions" do
       ps = FactoryGirl.create(:chunk_pocketsphinx, position: 10)
       assert_equal [ps], Chunk.any_of_positions(10).limit(1)
+      assert_equal [ps], Chunk.any_of_positions([10]).limit(1)
     end
 
     should "#any_of_ingest_iterations" do
