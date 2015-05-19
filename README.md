@@ -12,6 +12,12 @@ The service runs the Website and API.
 
 * opus `brew install opus & brew install opusenc`
 
+* Migrate database `rake db:migrate` (after`rake db:create`)
+
+* Create seeds `rake db:seed`
+
+* Create SQS queues `rake sqs:queues:create`
+
 ## Business Resources
 
 * Competitive products:

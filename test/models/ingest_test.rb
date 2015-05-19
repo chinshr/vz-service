@@ -21,6 +21,14 @@ class IngestTest < ActiveSupport::TestCase
     should validate_presence_of :document
   end
 
+  context "class" do
+    should "#queue_name_for" do
+      Ingest::STAGES.each do |name, value|
+        assert_equal "#{name.to_s.upcase}_TEST_QUEUE", Ingest::queue_name_for(name)
+      end
+    end
+  end
+
   context "delegate" do
     setup do
       @ingest = FactoryGirl.create(:ingest_audio)

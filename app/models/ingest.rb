@@ -8,11 +8,12 @@ class Ingest < ActiveRecord::Base
   STAGE_HARVEST     = 200
   STAGE_TRANSCODE   = 300
   STAGE_SPLIT       = 400
+  STAGE_CROWD       = 450
   STAGE_FINISH      = 500
   STAGE_ARCHIVE     = 600
   STAGES = {
     start: STAGE_START, harvest: STAGE_HARVEST,
-    transcode: STAGE_TRANSCODE, split: STAGE_SPLIT,
+    transcode: STAGE_TRANSCODE, split: STAGE_SPLIT, crowd: STAGE_CROWD,
     finish: STAGE_FINISH, archive: STAGE_ARCHIVE
   }
 
@@ -145,7 +146,7 @@ class Ingest < ActiveRecord::Base
       IngestPolicy
     end
 
-    def queue_name_from(stage_name)
+    def queue_name_for(stage_name)
       "#{stage_name.to_s.upcase}_#{Rails.env.upcase}_QUEUE"
     end
 
