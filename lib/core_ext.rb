@@ -1,3 +1,5 @@
+require "core_ext/i18n/locale"
+
 # ==with
 #
 # We have been struggling with the absence of @with@ blocks
