@@ -57,12 +57,13 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
 
     should "create chunk with signed in backend user" do
       sign_in :user, @user2
-      assert_difference 'Chunk::GoogleSpeechChunk.count', 1 do
-        attributes = @attributes.merge(type: "Chunk::GoogleSpeechChunk")
+      assert_difference 'Chunk::PocketsphinxChunk.count', 1 do
+        attributes = @attributes.merge(type: "pocketsphinx")
         post :create, ingest_id: @ingest1.id, chunk: attributes, format: :json
         assert_response :success
+        attributes[:type] = "Chunk::PocketsphinxChunk"
         assert_attributes response_body["chunk"], attributes
-        assert_equal 1, Chunk::GoogleSpeechChunk.last.ingest_iteration
+        assert_equal 1, Chunk::PocketsphinxChunk.last.ingest_iteration
       end
     end
 
