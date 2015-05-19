@@ -21,7 +21,7 @@ class Chunk < Document
 
   filtered_scopes :sort_order, :reverse_sort, :any_of_types,
     :any_of_processing_status, :none_of_processing_status,
-    :any_of_position, :any_of_ingest_iteration, :score_lt, :score_gt,
+    :any_of_positions, :any_of_ingest_iteration, :score_lt, :score_gt,
     :score_lteq, :score_gteq, :ingest_id, :none_of_ingest_ids
   scope :sort_order, -> (param) {
     case param.first[0]  # E.g. get first key of {"id"=>"asc"}
@@ -45,7 +45,7 @@ class Chunk < Document
     map {|s| s.match(/^([\-]{,1}[0-9]+)$/) ? s : nil}.reject(&:blank?).uniq)}
   scope :none_of_processing_status, -> (params) {where("documents.processing_status NOT IN (?)", [params].flatten.map(&:to_s).
     map {|s| s.match(/^([\-]{,1}[0-9]+)$/) ? s : nil}.reject(&:blank?).uniq)}
-  scope :any_of_position, -> (params) {where(:position => params)}
+  scope :any_of_positions, -> (params) {where(:position => params)}
   scope :any_of_ingest_iteration, -> (params) {where(:ingest_iteration => params)}
   scope :score_lt, -> (param) {where(self.arel_table[:score].lt(param))}
   scope :score_gt, -> (param) {where(self.arel_table[:score].gt(param))}
