@@ -81,7 +81,8 @@ class DocumentTest < ActiveSupport::TestCase
     end
 
     should "have filtered scopes" do
-      assert_equal [:sort_order, :reverse_sort, :is_root, :offset, :limit].to_set,
+      assert_equal [:sort_order, :reverse_sort, :is_root, :offset, :limit,
+        :any_of_locales].to_set,
         Document.scopes.to_set
     end
 
@@ -114,6 +115,19 @@ class DocumentTest < ActiveSupport::TestCase
       assert_equal [@document1, @document2], Document.with_user_privacy(@user).to_a
       assert_equal [@document2], Document.with_user_privacy(nil).to_a
     end
+
+    should "#any_of_locales" do
+      Document.destroy_all
+      d1 = FactoryGirl.create(:document, locale: "en-GB")
+      d2 = FactoryGirl.create(:document, locale: "en-US")
+      d3 = FactoryGirl.create(:document, locale: "en-AU")
+      d4 = FactoryGirl.create(:document, locale: "de-DE")
+      assert_equal [d2], Document.any_of_locales("en-US")
+      assert_equal [d2], Document.any_of_locales("en-us")
+      assert_equal [d1, d2, d3], Document.any_of_locales("en")
+      assert_equal [d4], Document.any_of_locales("de")
+    end
+
   end
 
   context "document with ingests" do

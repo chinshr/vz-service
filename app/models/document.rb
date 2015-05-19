@@ -20,7 +20,7 @@ class Document < ActiveRecord::Base
   validates :title, presence: true, length: {maximum: 255}, if: :is_root?
 
   # public scopes
-  filtered_scopes :sort_order, :reverse_sort, :is_root
+  filtered_scopes :sort_order, :reverse_sort, :is_root, :any_of_locales
   scope :sort_order, lambda {|param|
     case param.first[0]  # E.g. get first key of {"id"=>"asc"}
     when "id"
@@ -35,6 +35,9 @@ class Document < ActiveRecord::Base
   }
   scope :reverse_sort, lambda {|param| all.reverse_order if Model::Helper.booleanize(param)}
   scope :is_root, -> (param) { Model::Helper.booleanize(param) ? where("documents.type IS NULL") : where("documents.type IS NOT NULL") }
+  scope :any_of_locales, -> (params) {
+    where("documents.locale ~* ?", "^(#{Array.wrap(params).join("|")})")
+  }
 
   # private scopes
   scope :recent, lambda {|n = 5| order("documents.created_at DESC").limit(n)}
