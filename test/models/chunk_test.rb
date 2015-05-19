@@ -43,7 +43,7 @@ class ChunkTest < ActiveSupport::TestCase
       assert_equal [:any_of_types, :any_of_processing_status, :none_of_processing_status,
         :sort_order, :reverse_sort, :offset, :limit, :any_of_ingest_iterations,
         :any_of_positions, :is_root, :score_lt, :score_gt, :score_lteq, :score_gteq,
-        :ingest_id, :none_of_ingest_ids].to_set, Chunk.scopes.to_set
+        :ingest_id, :none_of_ingest_ids, :any_of_locales].to_set, Chunk.scopes.to_set
     end
 
     should "have any_of_processing_status" do
@@ -131,6 +131,18 @@ class ChunkTest < ActiveSupport::TestCase
       ps2 = FactoryGirl.create(:chunk_pocketsphinx, ingest: FactoryGirl.create(:ingest_audio))
       assert_equal [ps1], Chunk.none_of_ingest_ids(ps2.ingest_id).order(created_at: :desc).limit(1)
       assert_equal [], Chunk.none_of_ingest_ids([ps1.ingest_id, ps2.ingest_id])
+    end
+
+    should "#any_of_locales" do
+      Chunk.destroy_all
+      ps1 = FactoryGirl.create(:chunk_pocketsphinx, locale: "en-GB")
+      ps2 = FactoryGirl.create(:chunk_pocketsphinx, locale: "en-US")
+      ps3 = FactoryGirl.create(:chunk_pocketsphinx, locale: "en-AU")
+      ps4 = FactoryGirl.create(:chunk_pocketsphinx, locale: "de-DE")
+      assert_equal [ps2], Chunk.any_of_locales("en-US")
+      assert_equal [ps2], Chunk.any_of_locales("en-us")
+      assert_equal [ps1, ps2, ps3], Chunk.any_of_locales("en")
+      assert_equal [ps4], Chunk.any_of_locales("de")
     end
 
     context "#best" do
@@ -233,21 +245,42 @@ class ChunkTest < ActiveSupport::TestCase
     assert_equal 36, chunk.uid.length
   end
 
-  should "set start_at and end_at" do
-    chunk = FactoryGirl.create(:chunk_with_ingest)
-    assert_equal chunk.ingest.upload.recorded_at + chunk.offset, chunk.start_at
-    assert_equal chunk.ingest.upload.recorded_at + chunk.offset + chunk.duration, chunk.end_at
+  context "#set_start_and_end_at" do
+    should "default using offset and duration" do
+      chunk = FactoryGirl.create(:chunk_with_ingest)
+      assert_equal chunk.ingest.upload.recorded_at + chunk.offset, chunk.start_at
+      assert_equal chunk.ingest.upload.recorded_at + chunk.offset + chunk.duration, chunk.end_at
+    end
+
+    should "set manually" do
+      start_at = Time.zone.now - 1.day
+      end_at   = start_at + 5.minutes
+      chunk = FactoryGirl.create(:chunk_with_ingest, start_at: start_at, end_at: end_at)
+      assert_equal start_at, chunk.start_at
+      assert_equal end_at, chunk.end_at
+    end
+  end
+
+  context "#set_default_locale" do
+    setup do
+      @document   = FactoryGirl.create(:document, locale: "de-DE")
+      @attributes = FactoryGirl.attributes_for(:chunk).merge(document: @document)
+    end
+
+    should "locale based on root document" do
+      chunk = Chunk::PocketsphinxChunk.create(@attributes)
+      assert_equal "de-DE", chunk.locale
+    end
+
+    should "set manually" do
+      chunk = Chunk::PocketsphinxChunk.create(@attributes.merge(locale: "es-ES"))
+      assert_equal "es-ES", chunk.locale
+    end
   end
 
   should "not be root?" do
     chunk = FactoryGirl.create(:chunk)
     assert_equal false, chunk.is_root?
     assert_equal false, chunk.is_root
-  end
-
-  should "set locale based on root document" do
-    document = FactoryGirl.create(:document, locale: "de-DE")
-    chunk = Chunk::PocketsphinxChunk.create(FactoryGirl.attributes_for(:chunk).merge(document: document))
-    assert_equal "de-DE", chunk.locale
   end
 end

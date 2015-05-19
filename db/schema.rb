@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150518194709) do
+ActiveRecord::Schema.define(version: 20150519195208) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -156,7 +156,7 @@ ActiveRecord::Schema.define(version: 20150518194709) do
   add_index "documents", ["end_at"], name: "index_documents_on_end_at", using: :btree
   add_index "documents", ["ingest_id"], name: "index_documents_on_ingest_id", using: :btree
   add_index "documents", ["ingest_iteration"], name: "index_documents_on_ingest_iteration", using: :btree
-  add_index "documents", ["locale"], name: "index_documents_on_locale", using: :btree
+  add_index "documents", ["locale"], name: "documents_locale_with_text_pattern_ops", using: :btree
   add_index "documents", ["offset"], name: "index_documents_on_offset", using: :btree
   add_index "documents", ["position"], name: "index_documents_on_position", using: :btree
   add_index "documents", ["privacy_mask"], name: "index_documents_on_privacy_mask", using: :btree

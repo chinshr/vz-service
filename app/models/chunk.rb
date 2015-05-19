@@ -22,7 +22,8 @@ class Chunk < Document
   filtered_scopes :sort_order, :reverse_sort, :any_of_types,
     :any_of_processing_status, :none_of_processing_status,
     :any_of_positions, :any_of_ingest_iterations, :score_lt, :score_gt,
-    :score_lteq, :score_gteq, :ingest_id, :none_of_ingest_ids
+    :score_lteq, :score_gteq, :ingest_id, :none_of_ingest_ids,
+    :any_of_locales
   scope :sort_order, -> (param) {
     case param.first[0]  # E.g. get first key of {"id"=>"asc"}
     when "id"
@@ -53,6 +54,9 @@ class Chunk < Document
   scope :score_gteq, -> (param) {where(self.arel_table[:score].gteq(param))}
   scope :ingest_id, -> (param) {where(ingest_id: param)}
   scope :none_of_ingest_ids, -> (params) {where("documents.ingest_id NOT IN (?)", Array.wrap(params))}
+  scope :any_of_locales, -> (params) {
+    where("documents.locale ~* ?", "^(#{Array.wrap(params).join("|")})")
+  }
 
   # private scopes
   scope :transcribed, -> {where(:processing_status => STATES[:transcribed])}
@@ -63,7 +67,7 @@ class Chunk < Document
   scope :ingest_chunks, -> { where("documents.document_id IS NOT NULL AND documents.ingest_id IS NOT NULL") }
   scope :document_chunks, -> { where("documents.document_id IS NOT NULL AND documents.ingest_id IS NULL") }
 
-  before_save :set_start_and_end_at, :set_locale, on: :create
+  before_save :set_start_and_end_at, :set_default_locale, on: :create
 
   class << self
     def slug_length; 40; end
@@ -156,12 +160,12 @@ class Chunk < Document
 
   def set_start_and_end_at
     if ingest && ingest.upload && offset && duration
-      self.start_at = ingest.upload.recorded_at + offset
-      self.end_at   = self.start_at + duration
+      self.start_at = ingest.upload.recorded_at + offset unless changes[:start_at]
+      self.end_at   = self.start_at + duration unless changes[:end_at]
     end
   end
 
-  def set_locale
-    self.locale = document.locale if document
+  def set_default_locale
+    self.locale = document.locale if document && !changes[:locale]
   end
 end
