@@ -18,7 +18,7 @@ class Api::Ingests::ChunksController < Api::ApplicationController
   # [GET] /api/ingests/:ingest_id/chunks(.:format)
   def index
     authorize :"ingest/chunk"
-    @chunks = @ingest.ingest_chunks.filter(params)
+    @chunks = Chunk.filter(params)
     respond_with @chunks
   end
 
@@ -52,7 +52,7 @@ class Api::Ingests::ChunksController < Api::ApplicationController
   protected
 
   def load_ingest
-    @ingest = Ingest.find(params[:ingest_id])
+    @ingest = Ingest.find(params[:ingest_id]) if params[:ingest_id]
   end
 
   def load_chunk

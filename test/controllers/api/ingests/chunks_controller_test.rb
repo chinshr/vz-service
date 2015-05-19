@@ -134,6 +134,33 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
     end
   end
 
+  context "GET /api/ingests/chunks" do
+    should "be unauthorized without user" do
+      get :index, format: :json
+      assert_response :unauthorized
+    end
+
+    should "be unauthorized for none backend users" do
+      sign_in :user, @user1
+      get :index, format: :json
+      assert_response :unauthorized
+    end
+
+    should "filter ingest chunks of type att_speech" do
+      Chunk.destroy_all
+      @chunk1 = FactoryGirl.create(:chunk_pocketsphinx)
+      @chunk2 = FactoryGirl.create(:chunk_pocketsphinx, document: @ingest1.document, ingest_id: @ingest1.id)
+      sign_in :user, @user2
+      get :index, none_of_ingest_ids: [@ingest1.id], any_of_type: ["pocketsphinx"],
+        format: :json
+      assert_response :success
+      assert response_body.has_key?("chunks"), "should have root"
+      assert_equal 1, response_body["chunks"].size, "should have one chunk"
+      assert_attributes response_body["chunks"].first
+      assert_equal @chunk1.id, response_body["chunks"].first["id"]
+    end
+  end
+
   context "GET /api/ingests/:ingest_id/chunks/count" do
     should "be unauthorized whithout any user" do
       get :count, ingest_id: @ingest1.id, format: :json
