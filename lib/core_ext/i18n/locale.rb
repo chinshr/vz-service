@@ -43,7 +43,11 @@ module CoreExt
         #   :"it-IT"   I18n.locale_language -> :it
         #
         def locale_language(locale = nil)
-          (locale || I18n.locale).to_s.match(/^(\w{2})/) ? $1.to_sym : nil
+          (locale || ::I18n.locale).to_s.match(/^(\w{2})/) ? $1.to_sym : nil
+        end
+
+        def humanized_locale_language(locale = nil)
+          ::I18n.t("languages.#{locale_language(locale || ::I18n.locale)}")
         end
 
         # Returns the country specific portion of locale as code symbol
