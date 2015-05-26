@@ -11,12 +11,13 @@ class Chunk::MechanicalTurkChunk < ::Chunk
       raise "Can only create HIT based on a chunk" unless chunk.is_a?(Chunk)
       qualifications = {}
       params   = {}
-      options  = options.reverse_merge({form_url: hit_form_url(chunk),
-        frame_height: 250,
-        keywords: "transcribe, transcription, media, audio, English, type, typist, caption, subtitle"})
+      options  = options.reverse_merge({
+        form_url: hit_form_url(chunk), frame_height: 250,
+        keywords: "transcribe, transcription, media, audio, #{I18n.humanized_locale_language(chunk.locale)}, type, typist, caption, subtitle"
+      })
       reward   = 0.01        # in dollars
       lifetime = 15.minutes  # in seconds
-      duration = 2.minutes   # in seconds
+      duration = 5.minutes   # in seconds
       num_assignments = 1
 
       task = Turkee::TurkeeTask.create_hit(
