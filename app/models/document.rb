@@ -9,11 +9,20 @@ class Document < ActiveRecord::Base
 
   belongs_to :user
   has_many :ingests, foreign_key: :document_id
-  has_many :chunks, foreign_key: :document_id, dependent: :destroy
-  has_one :tracking, foreign_key: :document_id, dependent: :destroy
-  has_one :track, -> { where(is_master: true) }, through: :tracking
-  accepts_nested_attributes_for :track, allow_destroy: true
+
+  has_many :segments, foreign_key: :document_id, dependent: :destroy
+  has_many :chunk_segments, foreign_key: :document_id, dependent: :destroy, class_name: "Segment::ChunkSegment"
+  has_many :chunks, through: :chunk_segments, source: :chunk do
+    def create(chunk_attributes)
+      Chunk.create({document: proxy_association.owner}.reverse_merge(chunk_attributes))
+    end
+  end
   has_many :tracks, through: :chunks, source: :track
+  has_many :tracks_including_master_track, through: :segments, source: :track, class_name: "Track"
+
+  has_one :document_segment, foreign_key: :document_id, dependent: :destroy, class_name: "Segment::DocumentSegment"
+  has_one :track, -> { where(is_master: true) }, through: :document_segment
+  accepts_nested_attributes_for :track, allow_destroy: true
   acts_as_ordered_taggable_on :tags, :auto
 
   validates :slug, presence: true, uniqueness: {case_sensitive: false}
@@ -67,20 +76,47 @@ class Document < ActiveRecord::Base
     end
   end
 
+  def document_segment
+    super || build_document_segment(document: self)
+  end
+
   def create_track(attributes = {})
     track_attributes = attributes.symbolize_keys.merge(is_master: (self.class.name == "Document"))
     transaction do
-      track.destroy && reload if tracking
-      build_tracking(document: self).create_track(track_attributes)
+      if is_root?
+        # Root document needs to build a segment for its own
+        track.destroy && reload if track
+        if document_segment.new_record?
+          tr = document_segment.create_track(track_attributes)
+          document_segment.save
+          tr
+        else
+          tr = Track.create(track_attributes)
+          document_segment.update_attributes(track: tr)
+          tr
+        end
+      else
+        # Chunks always have a chunk segment and need to update the track
+        tr = Track.create(track_attributes)
+        chunk_segment.update_attributes(track: tr)
+        tr
+      end
     end
   end
 
   def build_track(attributes = {})
     attributes = attributes.symbolize_keys
-    tracking_attributes = attributes.select {|k, v| k == :ingest}
-    tracking_attributes.merge!({document: self})
+    segment_attributes = attributes.select {|k, v| k == :ingest}
+    segment_attributes.merge!({document: self})
     track_attributes = attributes.merge({is_master: (self.class.name == "Document")})
-    build_tracking(tracking_attributes).build_track(track_attributes)
+    if is_root?
+      # Root document needs to build a segment for its own
+      build_document_segment(segment_attributes).build_track(track_attributes)
+    else
+      # Chunks need to update their chunk segment
+      chunk_segment.attributes = segment_attributes
+      chunk_segment.build_track(track_attributes)
+    end
   end
 
   def privacy=(values)
@@ -105,12 +141,6 @@ class Document < ActiveRecord::Base
 
   def transcribed?
     !!ingests.order(id: :desc).first.try(:finished?)
-  end
-
-  # TODO: write a fancy scope/association
-  def tracks_including_master_track
-    document_ids = chunks.pluck(:id) + [self.id]
-    Track.joins(:tracking).where("trackings.document_id IN (?)", document_ids)
   end
 
   def is_root?

@@ -38,16 +38,19 @@ class Ingest < ActiveRecord::Base
 
   serialize :messages, Hash
 
-  delegate :track, to: :document, allow_nil: true
-  delegate :track=, to: :document, allow_nil: true
+  delegate :track, to: :document, allow_nil: true  # document's master track
+  delegate :track=, to: :document, allow_nil: true # dito
 
   belongs_to :upload, dependent: :destroy
   belongs_to :document
-
-  has_many :ingest_chunks, -> (record) { where(document_id: record.document.id) },
-    foreign_key: :ingest_id, class_name: "Chunk", dependent: :nullify
-  has_many :chunks, through: :document
-  has_many :tracks, through: :chunks, source: :track
+  has_many :segments, foreign_key: :ingest_id, dependent: :nullify
+  has_many :chunks, through: :segments, source: :chunk, dependent: :destroy do
+    def create(chunk_attributes)
+      Chunk.create({ingest: proxy_association.owner, document: proxy_association.owner.document}.reverse_merge(chunk_attributes))
+    end
+  end
+  has_many :tracks, -> { uniq }, through: :chunks, source: :track
+  has_many :tracks_including_master_track, -> {uniq}, through: :segments, source: :track, class_name: "Track"
 
   validates :upload, presence: true, on: :create
   validates :document, presence: true
@@ -319,12 +322,6 @@ class Ingest < ActiveRecord::Base
     document.with_lock do
       document.update_attributes(html: grouped_chunks.text, rich_text: grouped_chunks.rich_text)
     end
-  end
-
-  # TODO: write a fancy scope/association
-  def tracks_including_master_track
-    document_ids = chunks.pluck(:id) + [document.id]
-    Track.joins(:tracking).where("trackings.document_id IN (?)", document_ids)
   end
 
   protected

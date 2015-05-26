@@ -10,11 +10,19 @@ class Chunk < Document
   }
 
   delegate :title, to: :document
+  delegate :document_id, to: :chunk_segment, allow_nil: true
+  delegate :document_id=, to: :chunk_segment, allow_nil: true
+  delegate :ingest_id, to: :chunk_segment, allow_nil: true
+  delegate :ingest_id=, to: :chunk_segment, allow_nil: true
+  delegate :track_id, to: :chunk_segment, allow_nil: true
+  delegate :track_id=, to: :chunk_segment, allow_nil: true
+  delegate :position, to: :chunk_segment, allow_nil: true
+  delegate :position=, to: :chunk_segment, allow_nil: true
 
-  belongs_to :document
-  belongs_to :ingest
-  has_one :track, -> { where(is_master: false) },
-    through: :tracking  # <- chunk track
+  has_one :chunk_segment, foreign_key: :chunk_id, dependent: :nullify, class_name: "Segment::ChunkSegment"
+  has_one :document, through: :chunk_segment, source: :document
+  has_one :ingest, through: :chunk_segment, source: :ingest
+  has_one :track, -> { where(is_master: false) }, through: :chunk_segment
 
   validates :document, presence: true
   validates :offset, presence: true
@@ -31,7 +39,7 @@ class Chunk < Document
     when "created_at"
       order(self.arel_table[:created_at].send(param.first[1].to_sym).to_sql)
     when "position"
-      order(self.arel_table[:position].send(param.first[1].to_sym).to_sql)
+      joins(:chunk_segment).order("segments.position #{param.first[1]}")
     when "score"
       order(self.arel_table[:score].send(param.first[1].to_sym).to_sql)
     when "random"
@@ -47,7 +55,7 @@ class Chunk < Document
     map {|s| s.match(/^([\-]{,1}[0-9]+)$/) ? s : nil}.reject(&:blank?).uniq)}
   scope :none_of_processing_status, -> (params) {where("documents.processing_status NOT IN (?)", [params].flatten.map(&:to_s).
     map {|s| s.match(/^([\-]{,1}[0-9]+)$/) ? s : nil}.reject(&:blank?).uniq)}
-  scope :any_of_positions, -> (params) {where(:position => params)}
+  scope :any_of_positions, -> (params) {joins(:chunk_segment).where("segments.position IN (?)", Array.wrap(params))}
   scope :any_of_ingest_iterations, -> (params) {where(:ingest_iteration => params)}
   scope :score_lt, -> (param) {where(self.arel_table[:score].lt(param))}
   scope :score_gt, -> (param) {where(self.arel_table[:score].gt(param))}
@@ -57,19 +65,21 @@ class Chunk < Document
   scope :duration_gt, -> (param) {where(self.arel_table[:duration].gt(param))}
   scope :duration_lteq, -> (param) {where(self.arel_table[:duration].lteq(param))}
   scope :duration_gteq, -> (param) {where(self.arel_table[:duration].gteq(param))}
-  scope :ingest_id, -> (param) {where(ingest_id: param)}
-  scope :none_of_ingest_ids, -> (params) {where("documents.ingest_id NOT IN (?)", Array.wrap(params))}
+  scope :ingest_id, -> (param) {joins(:chunk_segment).where("segments.ingest_id = ?", param)}
+  scope :none_of_ingest_ids, -> (params) {joins(:chunk_segment).where("segments.ingest_id NOT IN (?)", Array.wrap(params))}
 
   # private scopes
   scope :transcribed, -> {where(:processing_status => STATES[:transcribed])}
   scope :best, -> {
-    joins("JOIN (SELECT position, MAX(score) AS max_score FROM documents p GROUP BY p.position) y ON y.position = documents.position AND y.max_score = documents.score").
-    order(:position)
+    joins("INNER JOIN segments ys ON ys.chunk_id = documents.id AND ys.type IN ('Segment::ChunkSegment')").
+    joins("JOIN (SELECT ps.position AS position, MAX(score) AS max_score FROM documents p INNER JOIN segments ps ON ps.chunk_id = p.id AND ps.type IN ('Segment::ChunkSegment') GROUP BY ps.position) y ON y.position = ys.position AND y.max_score = documents.score").
+    order("ys.position")
   }
-  scope :ingest_chunks, -> { where("documents.document_id IS NOT NULL AND documents.ingest_id IS NOT NULL") }
-  scope :document_chunks, -> { where("documents.document_id IS NOT NULL AND documents.ingest_id IS NULL") }
+  #scope :ingest_chunks, -> { where("documents.document_id IS NOT NULL AND documents.ingest_id IS NOT NULL") }
+  #scope :document_chunks, -> { where("documents.document_id IS NOT NULL AND documents.ingest_id IS NULL") }
 
   before_save :set_start_and_end_at, :set_default_locale, on: :create
+  after_save :save_chunk_segment
 
   class << self
     def slug_length; 40; end
@@ -157,6 +167,10 @@ class Chunk < Document
     end
   end  ## class
 
+  def chunk_segment
+    super || build_chunk_segment(chunk: self)
+  end
+
   protected
 
   def set_start_and_end_at
@@ -168,5 +182,9 @@ class Chunk < Document
 
   def set_default_locale
     self.locale = document.locale if document && !changes[:locale]
+  end
+
+  def save_chunk_segment
+    chunk_segment.save if chunk_segment && chunk_segment.changed? && chunk_segment.valid?
   end
 end

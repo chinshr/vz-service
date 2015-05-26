@@ -61,7 +61,7 @@ FactoryGirl.define do
   factory :chunk_google_speech, parent: :chunk, class: "Chunk::GoogleSpeechChunk" do
     association :document, factory: :document_with_ingest
     before(:create) do |chunk|
-      chunk.ingest_id = chunk.document.ingests.first.id
+      chunk.ingest = chunk.document.ingests.first
     end
   end
 
@@ -83,7 +83,7 @@ FactoryGirl.define do
     association :document, factory: :document_with_ingest
     before(:create) do |chunk|
       chunk.ingest_id = chunk.document.ingests.first.id
-      chunk.build_track(FactoryGirl.attributes_for(:track).merge(ingest: chunk.document.ingests.first))
+      chunk.track_id  = FactoryGirl.create(:track).id
     end
   end
 
@@ -91,7 +91,7 @@ FactoryGirl.define do
     association :document, factory: :document_with_ingest
     before(:create) do |chunk|
       chunk.ingest_id = chunk.document.ingests.first.id
-      chunk.build_track(FactoryGirl.attributes_for(:track).merge(ingest: chunk.document.ingests.first))
+      chunk.track_id  = FactoryGirl.create(:track).id
     end
   end
 
@@ -141,18 +141,22 @@ FactoryGirl.define do
   end
 
   factory :track_with_chunk_and_ingest, parent: :track do
-    association :document, factory: :chunk_google_speech
     before(:create) do |track|
-      track.ingest = track.document.ingest
+      chunk = FactoryGirl.create(:chunk_google_speech)
+      chunk.track = track
     end
   end
 
   factory :track_with_document_and_ingest, parent: :master_track do
     before(:create) do |track|
-      ingest = FactoryGirl.create(:ingest_audio_without_track)
-      track.document = ingest.document
-      track.ingest = ingest
+      document = FactoryGirl.create(:document_with_ingest)
+      track.document = document
+      track.segment.type = "Segment::DocumentSegment"
+      track.ingest   = document.ingests.first
     end
+    # after(:create) do |track|
+    #   track.segment = Segment.find(track.segment.id)
+    # end
   end
 
   factory :registration do
@@ -227,9 +231,19 @@ FactoryGirl.define do
     end
   end
 
-  factory :tracking do
+  factory :segment do
     association :document
     association :track
+    association :chunk
+    before(:create) do |segment|
+      segment.position = segment.chunk.position
+    end
+  end
+
+  factory :document_segment, parent: :segment, class: "Segment::DocumentSegment" do
+  end
+
+  factory :chunk_segment, parent: :segment, class: "Segment::ChunkSegment" do
   end
 
   factory :turkee_task, :class => Turkee::TurkeeTask do |s|

@@ -3,7 +3,37 @@ require 'test_helper'
 CreateHit = Struct.new("CreateHit", :id, :url)
 
 class Chunk::MechanicalTurkChunkTest < ActiveSupport::TestCase
-  context "class" do
+  context "build" do
+    should "chunk with chunk_segment" do
+      chunk0 = FactoryGirl.create(:chunk_pocketsphinx) # merged_chunk
+      assert_difference "Segment::ChunkSegment.count" do
+        mc = Chunk::MechanicalTurkChunk.new({"text" => "I like pickles",
+          "document_id" => chunk0.id,
+          "position" => chunk0.position,
+          "offset" => chunk0.offset,
+          "turkee_task_id" => chunk0.turkee_task_id
+        })
+        assert_equal true, mc.save
+        assert_equal chunk0.document, mc.document
+      end
+    end
+
+    should "chunk with sub chunks" do
+      ch0 = FactoryGirl.create(:chunk_pocketsphinx)
+      ch1 = FactoryGirl.create(:chunk_pocketsphinx)
+      d1  = ch1.document
+      ch2 = FactoryGirl.create(:chunk_pocketsphinx)
+      d2  = ch2.document
+      assert_difference "Segment::ChunkSegment.count", 2 do
+        ch0.chunk_ids = [ch1.id, ch2.id]
+        assert_equal [ch1, ch2].to_set, ch0.chunks.to_set
+        assert_equal d1, ch1.document
+        assert_equal d2, ch2.document
+      end
+    end
+  end
+
+  context "class methods" do
     setup do
       @chunk = FactoryGirl.create(:chunk_with_ingest, uid: "ccb7093c-6d7a-4b31-aa1e-ccb84804a2e6")
     end

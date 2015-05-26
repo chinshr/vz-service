@@ -8,12 +8,12 @@ class Api::Ingests::TracksControllerTest < ActionController::TestCase
     @ingest   = FactoryGirl.create(:ingest_audio)
     @document = @ingest.document
 
-    @t0 = @ingest.document.create_track(s3_url: "http://s3.amazonaws.com/vz-test-origin/13dba008-7ba2-4804-a534-43d03c65260b/t0")
-    @c1 = Chunk::GoogleSpeechChunk.create(:position => 1, :offset => 0,  :text => "I hate to say", :score => 0.80, :document => @ingest.document, :ingest_id => @ingest.id)
+    @t0 = @ingest.document.create_track(s3_url: "http://s3.amazonaws.com/vz-test-origin/13dba008-7ba2-4804-a534-43d03c65260b/t0", :ingest => @ingest)
+    @c1 = Chunk::GoogleSpeechChunk.create(:position => 1, :offset => 0,  :text => "I hate to say", :score => 0.80, :document => @ingest.document, :ingest => @ingest)
     @t1 = @c1.create_track(s3_url: "http://s3.amazonaws.com/vz-test-origin/13dba008-7ba2-4804-a534-43d03c65260b/t1")
-    @c2 = Chunk::GoogleSpeechChunk.create(:position => 2, :offset => 10, :text => "cat maths are", :score => 0.65, :document => @ingest.document, :ingest_id => @ingest.id)
+    @c2 = Chunk::GoogleSpeechChunk.create(:position => 2, :offset => 10, :text => "cat maths are", :score => 0.65, :document => @ingest.document, :ingest => @ingest)
     @t2 = @c2.create_track(s3_url: "http://s3.amazonaws.com/vz-test-origin/13dba008-7ba2-4804-a534-43d03c65260b/t2")
-    @c3 = Chunk::GoogleSpeechChunk.create(:position => 3, :offset => 20, :text => "the cesty food in the world", :score => 0.85, :document => @ingest.document, :ingest_id => @ingest.id)
+    @c3 = Chunk::GoogleSpeechChunk.create(:position => 3, :offset => 20, :text => "the cesty food in the world", :score => 0.85, :document => @ingest.document, :ingest => @ingest)
     @t3 = @c3.create_track(s3_url: "http://s3.amazonaws.com/vz-test-origin/13dba008-7ba2-4804-a534-43d03c65260b/t3")
 
     @s3_url     = "http://s3.amazonaws.com/vz-test-origin/13dba008-7ba2-4804-a534-43d03c65260b/t4"
@@ -23,10 +23,12 @@ class Api::Ingests::TracksControllerTest < ActionController::TestCase
     sign_out :user
   end
 
-  context "POST /api/ingests/:document_id/tracks.json" do
+  context "POST /api/ingests/:ingest_id/tracks.json" do
     should "#create document master track via ingest" do
       sign_in :user, @user2
-      post :create, ingest_id: @ingest.id, track: {s3_url: @s3_url, s3_mp3_url: @s3_mp3_url, s3_waveform_json_url: @s3_waveform_json_url, ingest_iteration: @ingest.iteration}, format: :json
+      post :create, ingest_id: @ingest.id, track: {s3_url: @s3_url,
+        s3_mp3_url: @s3_mp3_url, s3_waveform_json_url: @s3_waveform_json_url,
+        ingest_iteration: @ingest.iteration}, format: :json
       assert_response :success
       assert_attributes response_body["track"]
       assert_equal @s3_url, response_body["track"]["s3_url"]
