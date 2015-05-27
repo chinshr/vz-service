@@ -1,6 +1,17 @@
 require 'test_helper'
 
 class TrackTest < ActiveSupport::TestCase
+  context "build" do
+    should "#create master track" do
+      @ingest = FactoryGirl.create(:ingest_audio)
+      track = Track.create({
+        is_master: true, ingest: @ingest,
+        s3_url: "http://aws.amazon.com/foo/master",
+        ingest_iteration: 0
+      })
+    end
+  end
+
   context "associations" do
     should have_one(:segment).dependent(:nullify)
     should have_one(:ingest).through(:segment).source(:ingest)

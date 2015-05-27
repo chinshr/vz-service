@@ -26,9 +26,11 @@ class Api::Ingests::TracksControllerTest < ActionController::TestCase
   context "POST /api/ingests/:ingest_id/tracks.json" do
     should "#create document master track via ingest" do
       sign_in :user, @user2
-      post :create, ingest_id: @ingest.id, track: {s3_url: @s3_url,
-        s3_mp3_url: @s3_mp3_url, s3_waveform_json_url: @s3_waveform_json_url,
-        ingest_iteration: @ingest.iteration}, format: :json
+      post :create, ingest_id: @ingest.id, track: {
+        s3_url: @s3_url, s3_mp3_url: @s3_mp3_url,
+        s3_waveform_json_url: @s3_waveform_json_url,
+        ingest_iteration: @ingest.iteration
+      }, format: :json
       assert_response :success
       assert_attributes response_body["track"]
       assert_equal @s3_url, response_body["track"]["s3_url"]
