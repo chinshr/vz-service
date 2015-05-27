@@ -5,7 +5,7 @@ class Api::DocumentsControllerTest < ActionController::TestCase
     @user1              = FactoryGirl.create(:user)
     @user2              = FactoryGirl.create(:user)
 
-    @track1             = FactoryGirl.create(:track, is_master: true)
+    @track1             = FactoryGirl.create(:master_track)
     @document1          = FactoryGirl.create(:document, track: @track1)
     @ingest1            = FactoryGirl.create(:ingest_audio, :document => @document1)
 
@@ -14,7 +14,7 @@ class Api::DocumentsControllerTest < ActionController::TestCase
     @document1.tag_list = ["brown", "fox", "jumps", "over", "fence"]
     @document1.save
 
-    @track2             = FactoryGirl.create(:track, is_master: true)
+    @track2             = FactoryGirl.create(:master_track)
     @document2          = FactoryGirl.create(:document, track: @track2)
     @ingest2            = FactoryGirl.create(:ingest_audio, :document => @document2)
     @document2.privacy  = [:"private"]

@@ -24,12 +24,19 @@ class Api::Ingests::TracksControllerTest < ActionController::TestCase
   end
 
   context "POST /api/ingests/:ingest_id/tracks.json" do
-    should "#create document master track via ingest" do
+    should "#create document master track" do
       sign_in :user, @user2
+
+      assert_not_nil old_segment_count = Segment.count
+      assert_not_nil old_track_count   = Track.count
+      assert_not_nil old_segment_id    = @ingest.document.document_segment.id
+      assert_not_nil old_track_id      = @ingest.document.track.id
+
       post :create, ingest_id: @ingest.id, track: {
         s3_url: @s3_url, s3_mp3_url: @s3_mp3_url,
         s3_waveform_json_url: @s3_waveform_json_url,
-        ingest_iteration: @ingest.iteration
+        ingest_iteration: @ingest.iteration,
+        type: "document_track"
       }, format: :json
       assert_response :success
       assert_attributes response_body["track"]
@@ -40,6 +47,15 @@ class Api::Ingests::TracksControllerTest < ActionController::TestCase
       assert_equal @ingest.iteration, response_body["track"]["ingest_iteration"]
       assert_equal @s3_waveform_json_url, response_body["track"]["s3_waveform_json_url"]
       assert_equal true, response_body["track"]["is_master"]
+
+      @ingest.reload
+      assert_not_equal old_segment_id, @ingest.document.document_segment.id
+      assert_not_equal old_track_id, @ingest.document.track.id
+      assert_nil Segment.find_by_id(old_segment_id)
+      assert_nil Track.find_by_id(old_track_id)
+      assert_equal @ingest.document.track.id, @ingest.track.id
+      assert_equal old_track_count, Track.count, "should have same track count"
+      assert_equal old_segment_count, Segment.count, "should have same segment count"
     end
 
     should "be unauthorized without user" do
@@ -144,7 +160,7 @@ class Api::Ingests::TracksControllerTest < ActionController::TestCase
   protected
 
   def assert_attributes(response, expected_attributes = {})
-    %w(id mp3_stream_url created_at is_master ingest_id document_id ingest_iteration uid s3_url s3_key s3_mp3_url s3_mp3_key waveform_json_stream_url s3_waveform_json_key updated_at).each do |key|
+    %w(id mp3_stream_url created_at is_master ingest_iteration uid s3_url s3_key s3_mp3_url s3_mp3_key waveform_json_stream_url s3_waveform_json_key updated_at).each do |key|
       assert response.has_key?(key), "should contain key '#{key}' in '#{response}'"
     end
   end

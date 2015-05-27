@@ -22,7 +22,7 @@ class Chunk < Document
   has_one :chunk_segment, foreign_key: :chunk_id, dependent: :nullify, class_name: "Segment::ChunkSegment"
   has_one :document, through: :chunk_segment, source: :document
   has_one :ingest, through: :chunk_segment, source: :ingest
-  has_one :track, -> { where(is_master: false) }, through: :chunk_segment
+  has_one :track, through: :chunk_segment, class_name: "Track::ChunkTrack"
 
   validates :document, presence: true
   validates :offset, presence: true
@@ -79,7 +79,7 @@ class Chunk < Document
   #scope :document_chunks, -> { where("documents.document_id IS NOT NULL AND documents.ingest_id IS NULL") }
 
   before_save :set_start_and_end_at, :set_default_locale, on: :create
-  after_save :save_chunk_segment
+  after_validation :save_chunk_segment_and_track
 
   class << self
     def slug_length; 40; end
@@ -184,7 +184,15 @@ class Chunk < Document
     self.locale = document.locale if document && !changes[:locale]
   end
 
-  def save_chunk_segment
-    chunk_segment.save if chunk_segment && chunk_segment.changed? && chunk_segment.valid?
+  def save_chunk_segment_and_track
+    needs_update = false
+    if chunk_segment.track && (chunk_segment.track.new_record? || chunk_segment.track.changed?) && chunk_segment.track.valid?
+      needs_update = true
+      chunk_segment.track.save
+    end
+
+    if (needs_update || chunk_segment.new_record? || chunk_segment.changed?) && chunk_segment.valid?
+      chunk_segment.save
+    end
   end
 end

@@ -259,14 +259,14 @@ class IngestTest < ActiveSupport::TestCase
   context "chunks and tracks" do
     setup do
       Segment.destroy_all
-      @ingest = FactoryGirl.create(:ingest_audio)
-
-      @t0  = Track.create(FactoryGirl.attributes_for(:track, s3_url: "http://t0"))
-      @t1  = Track.create(FactoryGirl.attributes_for(:track, s3_url: "http://t1"))
-      @t2  = Track.create(FactoryGirl.attributes_for(:track, s3_url: "http://t2"))
-      @t3  = Track.create(FactoryGirl.attributes_for(:track, s3_url: "http://t3"))
-
+      @ingest   = FactoryGirl.create(:ingest_audio)
       @document = @ingest.document
+
+      @t0  = Track.create(FactoryGirl.attributes_for(:track, type: :document, s3_url: "http://t0"))
+      @t1  = Track.create(FactoryGirl.attributes_for(:track, type: "chunk", s3_url: "http://t1"))
+      @t2  = Track.create(FactoryGirl.attributes_for(:track, type: "chunk_track", s3_url: "http://t2"))
+      @t3  = Track.create(FactoryGirl.attributes_for(:track, type: :chunk_track, s3_url: "http://t3"))
+
       @document.update_attribute(:track, @t0)
       @document.document_segment.update_attribute(:ingest, @ingest)
 
@@ -294,6 +294,11 @@ class IngestTest < ActiveSupport::TestCase
       assert_equal [@t0, @t1, @t2, @t3].to_set, @ingest.tracks_including_master_track.to_set
       assert_equal [@gc1, @gc2, @gc3].to_set, @ingest.chunks.any_of_types(:google_speech).to_set
       assert_equal @t2, @ac2.track
+      assert_equal @document, @t0.document
+      assert_equal @ingest, @t0.reload.ingest
+      assert_equal [@gc1, @ac1, @nc1].to_set, @t1.chunks.to_set
+      assert_equal [@gc2, @ac2, @nc2].to_set, @t2.chunks.to_set
+      assert_equal [@gc3, @ac3, @nc3].to_set, @t3.chunks.to_set
     end
 
     should "normalize chunk scores" do

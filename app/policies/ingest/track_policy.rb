@@ -20,6 +20,6 @@ class Ingest::TrackPolicy < TrackPolicy
   end
 
   def permitted_attributes
-    super + [:s3_url, :s3_mp3_url, :ingest_iteration, :s3_waveform_json_url]
+    super + [:s3_url, :s3_mp3_url, :ingest_iteration, :s3_waveform_json_url, :type]
   end
 end

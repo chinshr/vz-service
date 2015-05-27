@@ -21,7 +21,7 @@ class Document < ActiveRecord::Base
   has_many :tracks_including_master_track, through: :segments, source: :track, class_name: "Track"
 
   has_one :document_segment, foreign_key: :document_id, dependent: :destroy, class_name: "Segment::DocumentSegment"
-  has_one :track, -> { where(is_master: true) }, through: :document_segment
+  has_one :track, through: :document_segment, class_name: "Track::DocumentTrack"
   accepts_nested_attributes_for :track, allow_destroy: true
   acts_as_ordered_taggable_on :tags, :auto
 
@@ -81,16 +81,16 @@ class Document < ActiveRecord::Base
   end
 
   def create_track(attributes = {})
-    track_attributes = attributes.symbolize_keys.merge(is_master: (self.class.name == "Document"))
+    track_attributes = attributes.symbolize_keys.merge(type: track_type_class_name)
     transaction do
       if is_root?
         # Root document needs to build a segment for its own
-        track.destroy && reload if track
         if document_segment.new_record?
           tr = document_segment.create_track(track_attributes)
           document_segment.save
           tr
         else
+          Track.destroy(document_segment.track) if document_segment && document_segment.track
           tr = Track.create(track_attributes)
           document_segment.update_attributes(track: tr)
           tr
@@ -107,13 +107,15 @@ class Document < ActiveRecord::Base
   def build_track(attributes = {})
     attributes = attributes.symbolize_keys
     segment_attributes = attributes.select {|k, v| k == :ingest}
-    segment_attributes.merge!({document: self})
-    track_attributes = attributes.merge({is_master: (self.class.name == "Document")})
+    track_attributes = attributes.merge({type: track_type_class_name})
+
     if is_root?
       # Root document needs to build a segment for its own
+      segment_attributes.merge!({document: self})
       build_document_segment(segment_attributes).build_track(track_attributes)
     else
       # Chunks need to update their chunk segment
+      segment_attributes.merge!({chunk: self})
       chunk_segment.attributes = segment_attributes
       chunk_segment.build_track(track_attributes)
     end
@@ -157,5 +159,9 @@ class Document < ActiveRecord::Base
   def set_tag_owner
     # Set the owner of some tags based on the current tag_list
     set_owner_tag_list_on(user, :tags, self.tag_list) if changes[:tag_list]
+  end
+
+  def track_type_class_name
+    self.class.name == "Document" ? Track::DocumentTrack.name : Track::ChunkTrack.name
   end
 end
