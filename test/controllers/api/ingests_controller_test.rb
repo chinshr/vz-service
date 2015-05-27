@@ -131,7 +131,7 @@ class Api::IngestsControllerTest < ActionController::TestCase
       get :show, :id => @ingest2.id, format: :json
       assert_response :success
       assert_attributes response_body["ingest"]
-      assert_not_nil response_body["ingest"]["audio_upload"], "expect upload"
+      assert_not_nil response_body["ingest"]["upload"], "expect upload"
       assert_not_nil response_body["ingest"]["document"], "expect document"
     end
   end

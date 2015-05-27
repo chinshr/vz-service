@@ -68,7 +68,7 @@ class Chunk::MechanicalTurkChunk < ::Chunk
     end
 
     def hit_title(document)
-      I18n.t("activerecord.models.mechanical_turk.create_hit_title", :language => 'English')
+      I18n.t("activerecord.models.mechanical_turk.create_hit_title", :language => I18n.humanized_locale_language(document.locale))
     end
 
     def hit_description(document)

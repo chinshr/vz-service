@@ -245,6 +245,9 @@ The service runs the Website and API.
 * Open source iOS apps -- https://github.com/dkhamsing/open-source-ios-apps
 * Using Mechanical Turk with Ruby
   - Turkee: http://rubysnippets.com/2012/11/19/using-mechanical-turk-in-your-rails-app/
+* Avatar uploading, cropping, S3:
+  - Carrierwave direct to S3 -- https://github.com/dwilkie/carrierwave_direct
+  - Rails Demo app with Carrierwave, S3, jCrop -- https://github.com/n0ne/Rails-Carrierwave-jQuery-File-Upload
 
 ### SendGrid Setup
 
