@@ -34,7 +34,6 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
       @attributes = {
         :position          => 1,
         :offset            => 0,
-        :duration          => 5,
         :text              => "I like pickles",
         :score             => 0.59,
         :response          => {"status" => 3, "hypothesis" => "I like pickles"},
@@ -85,7 +84,7 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
       assert_difference 'Chunk::GoogleSpeechChunk.count', 1 do
         assert_difference 'Track.count', 1 do
           attributes = @attributes.merge(type: "Chunk::GoogleSpeechChunk")
-          track_attributes = {s3_url: @s3_url, s3_mp3_url: @s3_mp3_url, s3_waveform_json_url: @s3_waveform_json_url}
+          track_attributes = {duration: 5, s3_url: @s3_url, s3_mp3_url: @s3_mp3_url, s3_waveform_json_url: @s3_waveform_json_url}
           post :create, ingest_id: @ingest1.id, chunk: attributes.merge(track_attributes: track_attributes), format: :json
           assert_response :success
           assert_attributes response_body["chunk"], attributes

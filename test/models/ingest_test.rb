@@ -236,12 +236,11 @@ class IngestTest < ActiveSupport::TestCase
 
   should "calculate average score and duration" do
     ingest = FactoryGirl.create(:ingest_audio)
-    ch1 = ingest.chunks.create(FactoryGirl.attributes_for(:chunk, :offset => 0, :score => 0, :position => 1))
-    ch2 = ingest.chunks.create(FactoryGirl.attributes_for(:chunk, :offset => 1, :score => 0.5, :position => 2))
-    ch3 = ingest.chunks.create(FactoryGirl.attributes_for(:chunk, :offset => 2, :score => 1, :position => 3))
+    ch1 = ingest.chunks.create(FactoryGirl.attributes_for(:chunk_pocketsphinx, :offset => 0, :score => 0, :position => 1))
+    ch2 = ingest.chunks.create(FactoryGirl.attributes_for(:chunk_pocketsphinx, :offset => 1, :score => 0.5, :position => 2))
+    ch3 = ingest.chunks.create(FactoryGirl.attributes_for(:chunk_pocketsphinx, :offset => 2, :score => 1, :position => 3))
     assert_equal 3, ingest.chunks.count
     assert_equal 0.5, ingest.score.to_f
-    assert_equal 10.53, ingest.duration.to_f
   end
 
   should "order chunks by offset" do
