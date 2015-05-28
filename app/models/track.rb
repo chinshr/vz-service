@@ -102,28 +102,6 @@ class Track < ActiveRecord::Base
   end
   alias_method :is_master, :is_master?
 
-=begin
-  def trackable
-    if segment.is_a?(Segment::DocumentSegment) || is_master?
-      segment.document
-    elsif segment.is_a?(Segment::ChunkSegment) || !is_master?
-      segment.chunk
-    end
-  end
-
-  def trackable=(value)
-    if segment.is_a?(Segment::DocumentSegment) || is_master?
-      segment.document = value
-    elsif segment.is_a?(Segment::ChunkSegment) || !is_master?
-      segment.chunk = value
-    end
-  end
-
-  def trackable_id
-    trackable.try(:id)
-  end
-=end
-
   def s3_key
     self.class.s3_url_to_key(s3_url)
   end

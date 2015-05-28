@@ -78,6 +78,17 @@ class TrackTest < ActiveSupport::TestCase
         s3_waveform_json_url: "http://s3.amazonaws.com/vz-dev-origin/13dba008-7ba2-4804-a534-43d03c65260b/gzgtnh1iui.ac2.waveform.json")
     end
 
+    context "Class#s3_url_to_key" do
+      should "return key with valid URL" do
+        key = Track.s3_url_to_key("http://s3.amazonaws.com/vz-dev-origin/320cadee-e9b7-4c50-9595-80a11ac12780/km5dliv3rq")
+        assert_equal "320cadee-e9b7-4c50-9595-80a11ac12780/km5dliv3rq", key
+      end
+
+      should "return nil with nil URL" do
+        assert_equal nil, Track.s3_url_to_key(nil)
+      end
+    end
+
     should "#s3_key" do
       assert_equal "13dba008-7ba2-4804-a534-43d03c65260b/gzgtnh1iui", @track.s3_key
       @track.s3_url = "http://s3.amazonaws.com/vz-dev-origin/gzgtnh1iui"
