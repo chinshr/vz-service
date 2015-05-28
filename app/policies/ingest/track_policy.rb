@@ -20,7 +20,9 @@ class Ingest::TrackPolicy < TrackPolicy
   end
 
   def permitted_attributes
-    super + [:s3_url, :s3_mp3_url, :ingest_iteration,
-      :s3_waveform_json_url, :type, :duration, :start_at, :end_at]
+    keys = super + [:s3_url, :s3_mp3_url, :ingest_iteration,
+      :s3_waveform_json_url, :duration, :start_at, :end_at]
+    keys += [:type] if create?
+    keys
   end
 end
