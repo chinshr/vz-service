@@ -91,7 +91,7 @@ class DocumentTest < ActiveSupport::TestCase
 
     should "have filtered scopes" do
       assert_equal [:sort_order, :reverse_sort, :is_root, :offset, :limit,
-        :any_of_locales].to_set,
+        :any_of_locales, :duration_lt, :duration_gt, :duration_lteq, :duration_gteq].to_set,
         Document.scopes.to_set
     end
 

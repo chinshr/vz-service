@@ -41,7 +41,6 @@ FactoryGirl.define do
   factory :chunk do
     association :document, factory: :document_with_track
     offset 0.0
-    duration 3.51
     text "I like pickles"
     processing_status 0
     score 0.59
@@ -134,6 +133,11 @@ FactoryGirl.define do
     sequence(:s3_url) {|n| "http://s3.amazonaws.com/private/zp66vfwg21-#{n}"}
     sequence(:s3_mp3_url) {|n| "http://s3.amazonaws.com/private/zp66vfwg21-#{n}-128kbps-mp3"}
     sequence(:s3_waveform_json_url) {|n| "http://s3.amazonaws.com/private/zp66vfwg21-#{n}-waveform.json"}
+    duration 3.51
+    before(:create) do |track|
+      track.start_at = Time.zone.now - 1.day
+      track.end_at   = track.start_at + track.duration
+    end
   end
 
   factory :master_track, parent: :track, class: "Track::DocumentTrack" do

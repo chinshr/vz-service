@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150527182532) do
+ActiveRecord::Schema.define(version: 20150528180112) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -134,8 +134,7 @@ ActiveRecord::Schema.define(version: 20150527182532) do
     t.integer  "user_id"
     t.json     "rich_text"
     t.text     "text"
-    t.decimal  "offset",                      precision: 11, scale: 5
-    t.decimal  "duration",                    precision: 11, scale: 5
+    t.decimal  "offset",                      precision: 15, scale: 3
     t.float    "score"
     t.string   "type"
     t.integer  "processing_status",                                    default: 0,       null: false
@@ -144,12 +143,9 @@ ActiveRecord::Schema.define(version: 20150527182532) do
     t.string   "uid"
     t.integer  "ingest_iteration"
     t.integer  "turkee_task_id"
-    t.datetime "start_at"
-    t.datetime "end_at"
   end
 
   add_index "documents", ["created_at"], name: "index_documents_on_created_at", using: :btree
-  add_index "documents", ["end_at"], name: "index_documents_on_end_at", using: :btree
   add_index "documents", ["ingest_iteration"], name: "index_documents_on_ingest_iteration", using: :btree
   add_index "documents", ["locale"], name: "documents_locale_with_text_pattern_ops", using: :btree
   add_index "documents", ["offset"], name: "index_documents_on_offset", using: :btree
@@ -157,7 +153,6 @@ ActiveRecord::Schema.define(version: 20150527182532) do
   add_index "documents", ["processing_status"], name: "index_documents_on_processing_status", using: :btree
   add_index "documents", ["score"], name: "index_documents_on_score", using: :btree
   add_index "documents", ["slug"], name: "index_documents_on_slug", unique: true, using: :btree
-  add_index "documents", ["start_at"], name: "index_documents_on_start_at", using: :btree
   add_index "documents", ["title"], name: "index_documents_on_title", using: :btree
   add_index "documents", ["turkee_task_id"], name: "index_documents_on_turkee_task_id", using: :btree
   add_index "documents", ["type"], name: "index_documents_on_type", using: :btree
@@ -304,9 +299,15 @@ ActiveRecord::Schema.define(version: 20150527182532) do
     t.integer  "ingest_iteration"
     t.string   "s3_waveform_json_url"
     t.string   "type"
+    t.decimal  "duration",             precision: 15, scale: 3
+    t.datetime "start_at"
+    t.datetime "end_at"
   end
 
+  add_index "tracks", ["duration"], name: "index_tracks_on_duration", using: :btree
+  add_index "tracks", ["end_at"], name: "index_tracks_on_end_at", using: :btree
   add_index "tracks", ["ingest_iteration"], name: "index_tracks_on_ingest_iteration", using: :btree
+  add_index "tracks", ["start_at"], name: "index_tracks_on_start_at", using: :btree
   add_index "tracks", ["type"], name: "index_tracks_on_type", using: :btree
   add_index "tracks", ["uid"], name: "index_tracks_on_uid", using: :btree
 

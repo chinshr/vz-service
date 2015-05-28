@@ -7,9 +7,13 @@ class Document < ActiveRecord::Base
 
   PRIVACY_SETTINGS = {'public' => 0, 'private' => 1, 'unlisted' => 2}
 
+  delegate :duration, to: :track, allow_nil: true
+  delegate :duration=, to: :track, allow_nil: true
+  delegate :start_at, to: :track, allow_nil: true
+  delegate :end_at, to: :track, allow_nil: true
+
   belongs_to :user
   has_many :ingests, foreign_key: :document_id
-
   has_many :segments, foreign_key: :document_id, dependent: :destroy
   has_many :chunk_segments, foreign_key: :document_id, dependent: :destroy, class_name: "Segment::ChunkSegment"
   has_many :chunks, through: :chunk_segments, source: :chunk do
@@ -19,7 +23,6 @@ class Document < ActiveRecord::Base
   end
   has_many :tracks, through: :chunks, source: :track
   has_many :tracks_including_master_track, through: :segments, source: :track, class_name: "Track"
-
   has_one :document_segment, foreign_key: :document_id, dependent: :destroy, class_name: "Segment::DocumentSegment"
   has_one :track, through: :document_segment, class_name: "Track::DocumentTrack"
   accepts_nested_attributes_for :track, allow_destroy: true
@@ -29,7 +32,8 @@ class Document < ActiveRecord::Base
   validates :title, presence: true, length: {maximum: 255}, if: :is_root?
 
   # public scopes
-  filtered_scopes :sort_order, :reverse_sort, :is_root, :any_of_locales
+  filtered_scopes :sort_order, :reverse_sort, :is_root, :any_of_locales,
+    :duration_lt, :duration_gt, :duration_lteq, :duration_gteq
   scope :sort_order, lambda {|param|
     case param.first[0]  # E.g. get first key of {"id"=>"asc"}
     when "id"
@@ -47,6 +51,10 @@ class Document < ActiveRecord::Base
   scope :any_of_locales, -> (params) {
     where("documents.locale ~* ?", "^(#{Array.wrap(params).join("|")})")
   }
+  scope :duration_lt, -> (param) {joins(:track).where(Track.arel_table[:duration].lt(param))}
+  scope :duration_gt, -> (param) {joins(:track).where(Track.arel_table[:duration].gt(param))}
+  scope :duration_lteq, -> (param) {joins(:track).where(Track.arel_table[:duration].lteq(param))}
+  scope :duration_gteq, -> (param) {joins(:track).where(Track.arel_table[:duration].gteq(param))}
 
   # private scopes
   scope :recent, lambda {|n = 5| order("documents.created_at DESC").limit(n)}

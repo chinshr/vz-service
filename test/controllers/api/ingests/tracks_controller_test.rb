@@ -32,10 +32,17 @@ class Api::Ingests::TracksControllerTest < ActionController::TestCase
       assert_not_nil old_segment_id    = @ingest.document.document_segment.id
       assert_not_nil old_track_id      = @ingest.document.track.id
 
+      duration = 5.12
+      start_at = Time.parse("1972-02-26 11:11:11 +0100")
+      end_at   = Time.parse("1972-02-26 11:11:11 +0100") + duration
+
       post :create, ingest_id: @ingest.id, track: {
         s3_url: @s3_url, s3_mp3_url: @s3_mp3_url,
         s3_waveform_json_url: @s3_waveform_json_url,
         ingest_iteration: @ingest.iteration,
+        duration: duration,
+        start_at: start_at,
+        end_at: end_at,
         type: "document_track"
       }, format: :json
       assert_response :success
@@ -47,11 +54,14 @@ class Api::Ingests::TracksControllerTest < ActionController::TestCase
       assert_equal @ingest.iteration, response_body["track"]["ingest_iteration"]
       assert_equal @s3_waveform_json_url, response_body["track"]["s3_waveform_json_url"]
       assert_equal true, response_body["track"]["is_master"]
+      assert_equal duration, response_body["track"]["duration"]
+      assert_equal start_at, response_body["track"]["start_at"]
+      assert_not_nil response_body["track"]["end_at"]
 
       @ingest.reload
       assert_not_equal old_segment_id, @ingest.document.document_segment.id
       assert_not_equal old_track_id, @ingest.document.track.id
-      assert_nil Segment.find_by_id(old_segment_id)
+      #assert_nil Segment.find_by_id(old_segment_id)
       assert_nil Track.find_by_id(old_track_id)
       assert_equal @ingest.document.track.id, @ingest.track.id
       assert_equal old_track_count, Track.count, "should have same track count"

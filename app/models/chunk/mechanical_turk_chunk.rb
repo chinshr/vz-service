@@ -100,8 +100,6 @@ class Chunk::MechanicalTurkChunk < ::Chunk
       self.position         = sibling.position
       self.offset           = sibling.offset
       self.duration         = sibling.duration
-      self.start_at         = sibling.start_at
-      self.end_at           = sibling.end_at
       self.turkee_task_id   = sibling.turkee_task_id
       self.locale           = sibling.locale
       self.ingest_id        = sibling.ingest_id

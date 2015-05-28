@@ -314,10 +314,6 @@ class Ingest < ActiveRecord::Base
     chunks.average(:score)
   end
 
-  def duration
-    chunks.sum(:duration)
-  end
-
   def update_content_from(grouped_chunks)
     document.with_lock do
       document.update_attributes(html: grouped_chunks.text, rich_text: grouped_chunks.rich_text)
