@@ -132,6 +132,9 @@ class Api::IngestsControllerTest < ActionController::TestCase
       assert_response :success
       assert_attributes response_body["ingest"]
       assert_not_nil response_body["ingest"]["upload"], "expect upload"
+      assert_not_nil response_body["ingest"]["upload"]["recorded_at"], "expect recorded_at"
+      assert_not_nil response_body["ingest"]["upload"]["uid"], "expect uid"
+      assert_not_nil response_body["ingest"]["upload"]["s3_key"], "expect s3_key"
       assert_not_nil response_body["ingest"]["document"], "expect document"
     end
   end
