@@ -31,14 +31,10 @@ class DocumentTest < ActiveSupport::TestCase
             @document.tracks_including_master_track.map(&:id).to_set
           assert_equal @document.id, @t0.document.id
           assert_equal true, @t0.is_master?
-          assert_equal @document.id, @c1.track.document.id
-          assert_equal @c1.id, @c1.track.chunk.id
+          assert_equal true, @c1.track.chunk_ids.include?(@c1.id)
           assert_equal false, @c1.track.is_master?
-          assert_equal @document.id, @c2.track.document.id
-          assert_equal @c2.id, @c2.track.trackable.id
           assert_equal false, @c2.track.is_master?
-          assert_equal @document.id, @c3.track.document.id
-          assert_equal @c3.id, @c3.track.trackable.id
+          assert_equal true, @c3.track.chunks.include?(@c3)
           assert_equal false, @c3.track.is_master?
         end
       end
@@ -183,13 +179,15 @@ class DocumentTest < ActiveSupport::TestCase
   end
 
   should "#create_track and have one and only one master track" do
-    @document  = FactoryGirl.create(:document)
+    @document = FactoryGirl.create(:document)
     assert_difference "Track.count", 1 do
-      track = @document.create_track(s3_url: "http://foo/bar")
-      assert_equal "http://foo/bar", @document.reload.track.s3_url
-      assert_equal true, @document.track.is_master?
-      track = @document.create_track(s3_url: "http://one/two")
-      assert_equal "http://one/two", @document.reload.track.s3_url
+      assert_difference "Segment.count", 1 do
+        track = @document.create_track(s3_url: "http://foo/bar")
+        assert_equal "http://foo/bar", @document.reload.track.s3_url
+        assert_equal true, @document.track.is_master?
+        track = @document.create_track(s3_url: "http://one/two")
+        assert_equal "http://one/two", @document.reload.track.s3_url
+      end
     end
   end
 

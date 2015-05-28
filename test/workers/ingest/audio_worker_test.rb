@@ -44,7 +44,7 @@ class Ingest::AudioWorkerTest < ActiveSupport::TestCase
   should "don't process when stopped " do
     @ingest.start!
     assert_equal :starting, @ingest.state
-    @ingest.document.create_track(:s3_url => "http://s3.amazonaws.com/234klj32", :s3_mp3_url => "http://s3.amazonaws.com/234klj32.128.mp3")
+    #@ingest.document.create_track(:s3_url => "http://s3.amazonaws.com/234klj32", :s3_mp3_url => "http://s3.amazonaws.com/234klj32.128.mp3")
     @ingest.save if @ingest.changed?
     @ingest.update_attribute(:stage, "transcribe")
     @ingest.fail!  # oops! somthing bad happened...

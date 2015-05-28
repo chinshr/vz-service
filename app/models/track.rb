@@ -2,18 +2,14 @@ class Track < ActiveRecord::Base
   include Model::Filter
   include Model::Uid
 
-  delegate :ingest_id, to: :segment, allow_nil: true
-  delegate :document_id, to: :segment, allow_nil: true
-  delegate :chunk_id, to: :segment, allow_nil: true
+=begin
   delegate :offset, to: :trackable, allow_nil: true
   delegate :duration, to: :trackable, allow_nil: true
   delegate :start_at, to: :trackable, allow_nil: true
   delegate :end_at, to: :trackable, allow_nil: true
+=end
 
-  has_one :segment, foreign_key: :track_id, dependent: :nullify
-  has_one :ingest, through: :segment, source: :ingest
-  has_one :document, through: :segment, source: :document
-  has_one :chunk, through: :segment, source: :chunk
+  has_many :segments, foreign_key: :track_id, dependent: :nullify
 
   validates :s3_url, presence: true
 
@@ -28,9 +24,28 @@ class Track < ActiveRecord::Base
     end
   }
   scope :reverse_sort, -> (param) { all.reverse_order if Model::Helper.booleanize(param) }
-  scope :is_master, -> (param) { where(is_master: Model::Helper.booleanize(param))}
+  scope :is_master, -> (param) { where(type: (Model::Helper.booleanize(param) ? "Track::DocumentTrack" : "Track::ChunkTrack"))}
 
   class << self
+    # Type casts to the class specified in :type parameter
+    #
+    # E.g.
+    #
+    #   Track.new(:type => :document, ...) -> Track::DocumentTrack
+    #   Track.new(:type => :chunk_track, ...) -> Track::ChunkTrack
+    #   Track.create(:type => "Track::DocumentTrack", ...) -> Track::DocumentTrack
+    #
+    def new_with_cast(*a, &b)
+      if (h = a.first).is_a? Hash and (type = h[:type] || h['type']) and
+        (k = type.class == Class ? type : promote_track_class_for(type, h)) != self
+        raise NameError, "unknown type for Track" if !k || !(k < self)
+        instance = k.new(*a, &b)
+        return instance
+      end
+      new_without_cast(*a, &b)
+    end
+    alias_method_chain :new, :cast
+
     def generate_uid
       SecureRandom.uuid
     end
@@ -46,8 +61,48 @@ class Track < ActiveRecord::Base
     rescue URI::InvalidURIError => ex
       nil
     end
-  end
 
+    private
+
+    # E.g. "chunk" => Track::ChunkTrack
+    def class_for(type)
+      class_name = class_name_for(type)
+      class_name.constantize if class_name
+    end
+
+    # E.g.
+    #
+    #    "document_track" -> "Track::DocumentTrack"
+    #    "document" -> "Track::DocumentTrack"
+    #    "Track::DocumentTrack" -> "Track::DocumentTrack"
+    #
+    def class_name_for(name)
+      class_name = if name.to_s.index("::")
+        "#{name}"
+      else
+        name.to_s.index("_track") ? "Track::#{(name.to_s.classify)}" : "Track::#{(name.to_s.classify)}Track"
+      end
+      class_name.constantize.name
+    rescue NameError
+      nil
+    end
+
+    def promote_track_class_for(name, attributes = {})
+      attributes.symbolize_keys! if attributes.respond_to?(:symbolize_keys!)
+      klass = class_for(name)
+      raise NameError, "unknown Track subclass '#{name}'" unless klass
+      attributes[:type] = klass.name
+      klass
+    end
+
+  end  # class methods
+
+  def is_master?
+    self.is_a?(Track::DocumentTrack) ? true : false
+  end
+  alias_method :is_master, :is_master?
+
+=begin
   def trackable
     if segment.is_a?(Segment::DocumentSegment) || is_master?
       segment.document
@@ -67,6 +122,7 @@ class Track < ActiveRecord::Base
   def trackable_id
     trackable.try(:id)
   end
+=end
 
   def s3_key
     self.class.s3_url_to_key(s3_url)

@@ -130,14 +130,13 @@ FactoryGirl.define do
     roles_mask 4
   end
 
-  factory :track do
+  factory :track, class: "Track::ChunkTrack" do
     sequence(:s3_url) {|n| "http://s3.amazonaws.com/private/zp66vfwg21-#{n}"}
     sequence(:s3_mp3_url) {|n| "http://s3.amazonaws.com/private/zp66vfwg21-#{n}-128kbps-mp3"}
     sequence(:s3_waveform_json_url) {|n| "http://s3.amazonaws.com/private/zp66vfwg21-#{n}-waveform.json"}
   end
 
-  factory :master_track, parent: :track do
-    is_master true
+  factory :master_track, parent: :track, class: "Track::DocumentTrack" do
   end
 
   factory :track_with_chunk_and_ingest, parent: :track do
@@ -151,12 +150,9 @@ FactoryGirl.define do
     before(:create) do |track|
       document = FactoryGirl.create(:document_with_ingest)
       track.document = document
-      track.segment.type = "Segment::DocumentSegment"
+      #track.segment.type = "Segment::DocumentSegment"
       track.ingest   = document.ingests.first
     end
-    # after(:create) do |track|
-    #   track.segment = Segment.find(track.segment.id)
-    # end
   end
 
   factory :registration do

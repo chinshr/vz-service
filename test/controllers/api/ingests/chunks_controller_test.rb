@@ -94,7 +94,6 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
           assert_equal @s3_url, response_body["chunk"]["track"]["s3_url"]
           assert_equal @s3_mp3_url, response_body["chunk"]["track"]["s3_mp3_url"]
           assert_equal @s3_waveform_json_url, response_body["chunk"]["track"]["s3_waveform_json_url"]
-          assert_equal @ingest1, @ingest1.chunks.last.track.ingest
         end
       end
     end
@@ -255,7 +254,7 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
       }
       track_attributes = {s3_url: @s3_url, s3_mp3_url: @s3_mp3_url}
 
-      @track1 = @chunk1.create_track(FactoryGirl.attributes_for(:track, s3_url: "http://track-12"))
+      @track1 = @chunk1.create_track(FactoryGirl.attributes_for(:track, type: "chunk_track", s3_url: "http://track-12"))
       @chunk1.reload
 
       assert_no_difference 'Chunk::GoogleSpeechChunk.count' do
@@ -269,7 +268,6 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
           assert_not_nil response_body["chunk"]["track"]
           assert_equal @s3_url, response_body["chunk"]["track"]["s3_url"]
           assert_equal @s3_mp3_url, response_body["chunk"]["track"]["s3_mp3_url"]
-          assert_equal @ingest1, @chunk1.reload.track.ingest
         end
       end
     end

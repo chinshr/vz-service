@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150525192636) do
+ActiveRecord::Schema.define(version: 20150527182532) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -301,13 +301,13 @@ ActiveRecord::Schema.define(version: 20150525192636) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "uid"
-    t.boolean  "is_master",            default: false, null: false
     t.integer  "ingest_iteration"
     t.string   "s3_waveform_json_url"
+    t.string   "type"
   end
 
   add_index "tracks", ["ingest_iteration"], name: "index_tracks_on_ingest_iteration", using: :btree
-  add_index "tracks", ["is_master"], name: "index_tracks_on_is_master", using: :btree
+  add_index "tracks", ["type"], name: "index_tracks_on_type", using: :btree
   add_index "tracks", ["uid"], name: "index_tracks_on_uid", using: :btree
 
   create_table "turkee_imported_assignments", force: true do |t|
