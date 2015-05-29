@@ -27,6 +27,10 @@ class IngestTest < ActiveSupport::TestCase
         assert_equal "#{name.to_s.upcase}_TEST_QUEUE", Ingest::queue_name_for(name)
       end
     end
+
+    should "#workflow should return list of stages" do
+      assert_equal [:start, :harvest, :transcode, :split, :crowdout, :finish], Ingest.workflow
+    end
   end
 
   context "delegate" do
@@ -69,6 +73,24 @@ class IngestTest < ActiveSupport::TestCase
       assert_equal [@ingest], Ingest.document_id(@ingest.document.id)
     end
   end # context "scopes"
+
+  context "stages" do
+    should "have #current_stage name" do
+      assert_equal :harvest, Ingest.new(stage: "harvest").current_stage
+      assert_equal nil, Ingest.new(stage: "foobar").current_stage
+    end
+
+    should "have #next_stage" do
+      assert_equal :harvest, Ingest.new(stage: "start").next_stage
+      assert_equal :transcode, Ingest.new(stage: "harvest").next_stage
+      assert_equal :split, Ingest.new(stage: "transcode").next_stage
+      assert_equal :crowdout, Ingest.new(stage: "split").next_stage
+      assert_equal :finish, Ingest.new(stage: "crowdout").next_stage
+      assert_equal nil, Ingest.new(stage: "finish").next_stage
+      assert_equal nil, Ingest.new(stage: "foobar").next_stage
+      assert_equal nil, Ingest.new(stage: nil).next_stage
+    end
+  end
 
   context "state machine" do
     should "have state and status" do

@@ -126,6 +126,9 @@ class Ingest < ActiveRecord::Base
   end
 
   class << self
+    @@workflow  = [:start, :harvest, :transcode, :split, :crowdout, :finish]
+    def workflow; @@workflow; end
+
     # Type casts to the class specified in :type parameter
     #
     # E.g.
@@ -318,6 +321,14 @@ class Ingest < ActiveRecord::Base
     document.with_lock do
       document.update_attributes(html: grouped_chunks.text, rich_text: grouped_chunks.rich_text)
     end
+  end
+
+  def current_stage
+    stage.to_sym if stage && Ingest::STAGES[stage.to_sym].to_i > 0
+  end
+
+  def next_stage
+    self.class.workflow[self.class.workflow.index(current_stage) + 1] if current_stage
   end
 
   protected
