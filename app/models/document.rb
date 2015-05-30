@@ -15,7 +15,7 @@ class Document < ActiveRecord::Base
   belongs_to :user
   has_many :ingests, foreign_key: :document_id
   has_many :segments, foreign_key: :document_id, dependent: :destroy
-  has_many :chunk_segments, foreign_key: :document_id, dependent: :destroy, class_name: "Segment::ChunkSegment"
+  has_many :chunk_segments, foreign_key: :document_id, :after_add => :after_add_chunk_segment, dependent: :destroy, class_name: "Segment::ChunkSegment"
   has_many :chunks, through: :chunk_segments, source: :chunk do
     def create(chunk_attributes)
       Chunk.create({document: proxy_association.owner}.reverse_merge(chunk_attributes))
@@ -171,5 +171,11 @@ class Document < ActiveRecord::Base
 
   def track_type_class_name
     self.class.name == "Document" ? Track::DocumentTrack.name : Track::ChunkTrack.name
+  end
+
+  # Called from association on @record.chunks << @chunk or @record.chunk_ids = [1]
+  # Copy document, ingest, track
+  def after_add_chunk_segment(segment)
+    segment.document ||= self.document if new_record?
   end
 end

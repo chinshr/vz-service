@@ -46,7 +46,7 @@ class Ingest < ActiveRecord::Base
   has_many :segments, foreign_key: :ingest_id, dependent: :nullify
   has_many :chunks, through: :segments, source: :chunk, dependent: :destroy do
     def create(chunk_attributes)
-      Chunk.create({ingest: proxy_association.owner, document: proxy_association.owner.document}.reverse_merge(chunk_attributes))
+      Chunk.create({ingest: proxy_association.owner, document: proxy_association.owner.document}.merge(chunk_attributes))
     end
   end
   has_many :tracks, -> { uniq }, through: :chunks, source: :track

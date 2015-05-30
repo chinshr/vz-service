@@ -2,13 +2,6 @@ class Track < ActiveRecord::Base
   include Model::Filter
   include Model::Uid
 
-=begin
-  delegate :offset, to: :trackable, allow_nil: true
-  delegate :duration, to: :trackable, allow_nil: true
-  delegate :start_at, to: :trackable, allow_nil: true
-  delegate :end_at, to: :trackable, allow_nil: true
-=end
-
   has_many :segments, foreign_key: :track_id, dependent: :nullify
 
   validates :s3_url, presence: true

@@ -183,4 +183,13 @@ class Chunk < Document
       chunk_segment.save
     end
   end
+
+  # Override superclass
+  def after_add_chunk_segment(segment)
+    super
+    if new_record?
+      segment.ingest   ||= self.ingest
+      segment.track    ||= self.track
+    end
+  end
 end
