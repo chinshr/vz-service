@@ -4,7 +4,11 @@ CreateHit = Struct.new("CreateHit", :id, :url)
 
 class Chunk::MechanicalTurkChunkTest < ActiveSupport::TestCase
   context "build" do
-    should "chunk with chunk_segment" do
+    setup do
+      Segment.destroy_all
+    end
+=begin
+    should "chunk with chunk_segment same as in turkee gem" do
       chunk0 = FactoryGirl.create(:chunk_pocketsphinx) # merged_chunk
       assert_difference "Segment::ChunkSegment.count" do
         mc = Chunk::MechanicalTurkChunk.new({"text" => "I like pickles",
@@ -31,8 +35,44 @@ class Chunk::MechanicalTurkChunkTest < ActiveSupport::TestCase
         assert_equal d2, ch2.document
       end
     end
+=end
+    should "create mechanical_turk chunk from captcha chunk" do
+      @ingest   = FactoryGirl.create(:ingest_audio)
+      @document = @ingest.document
+
+      @sc_t1    = Track.create(FactoryGirl.attributes_for(:track, type: "chunk_track", s3_url: "http://sc_t1", duration: 2))
+      @cc_t1    = Track.create(FactoryGirl.attributes_for(:track, type: "chunk_track", s3_url: "http://cc_t1", duration: 6))
+
+      sc1 = Chunk::PocketsphinxChunk.create({
+        position: 1, text: "now the earth was formed this and empty",
+        offset: 0.28, score: 0.45,
+        document: @document, ingest: @ingest, track: @sc_t1
+      })
+
+      rc1 = FactoryGirl.create(:chunk_google_speech, score: 0.99,
+        text: "I like pickles")
+
+      cc1 = @ingest.chunks.create({
+        type: "captcha_chunk", position: 1, offset: 0.28, score: 0.45,
+        text: "now the earth was formed this and empty|I like pickles",
+        document: sc1, ingest: @ingest, track: @cc_t1,
+        chunk_ids: [sc1.id, rc1.id],
+        turkee_task_id: 666
+      })
+
+      mt1 = Chunk::MechanicalTurkChunk.create({
+        text: "now the earth was formless and empty i like pickles",
+        document_id: cc1.id,
+        position: cc1.position,
+        offset: cc1.offset,
+        turkee_task_id: cc1.turkee_task_id
+      })
+
+      assert_equal cc1, mt1.document
+    end
   end
 
+=begin
   context "class methods" do
     setup do
       @chunk = FactoryGirl.create(:chunk_with_ingest, uid: "ccb7093c-6d7a-4b31-aa1e-ccb84804a2e6")
@@ -119,4 +159,5 @@ class Chunk::MechanicalTurkChunkTest < ActiveSupport::TestCase
       end
     end
   end
+=end
 end

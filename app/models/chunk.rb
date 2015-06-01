@@ -1,4 +1,6 @@
 class Chunk < ::Document
+  include MultiDocumentChunk
+
   STATES = {
     :unprocessed         => Speech::AudioSplitter::AudioChunk::STATUS_UNPROCESSED,
     :built               => Speech::AudioSplitter::AudioChunk::STATUS_BUILT,
@@ -19,8 +21,6 @@ class Chunk < ::Document
   delegate :position, to: :chunk_segment, allow_nil: true
   delegate :position=, to: :chunk_segment, allow_nil: true
 
-  # document_segments
-  # documents through: document_chunks
   has_one :chunk_segment, foreign_key: :chunk_id, dependent: :nullify, class_name: "Segment::ChunkSegment"
   has_one :document, through: :chunk_segment, source: :document
   has_one :ingest, through: :chunk_segment, source: :ingest
@@ -72,8 +72,6 @@ class Chunk < ::Document
     joins("JOIN (SELECT ps.position AS position, MAX(score) AS max_score FROM documents p INNER JOIN segments ps ON ps.chunk_id = p.id AND ps.type IN ('Segment::ChunkSegment') GROUP BY ps.position) y ON y.position = ys.position AND y.max_score = documents.score").
     order("ys.position")
   }
-  #scope :ingest_chunks, -> { where("documents.document_id IS NOT NULL AND documents.ingest_id IS NOT NULL") }
-  #scope :document_chunks, -> { where("documents.document_id IS NOT NULL AND documents.ingest_id IS NULL") }
 
   before_save :set_default_locale, on: :create
   after_validation :save_chunk_segment_and_track
@@ -162,10 +160,14 @@ class Chunk < ::Document
       attributes[:type] = klass.name
       klass
     end
-  end  ## class
+  end  # class
 
   def chunk_segment
     super || build_chunk_segment(chunk: self)
+  end
+
+  def document
+    super || (document_id ? Document.find_by_id(document_id) : nil)
   end
 
   protected

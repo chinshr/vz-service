@@ -1,6 +1,7 @@
 class Chunk::MechanicalTurkChunk < ::Chunk
   belongs_to :turkee_task, class_name: "Turkee::TurkeeTask", foreign_key: :turkee_task_id
-  before_save :copy_sibling_attributes, :assign_root_document, on: :create
+
+  # before_save :copy_sibling_attributes, :assign_root_document, on: :create
 
   class << self
 
@@ -109,6 +110,7 @@ class Chunk::MechanicalTurkChunk < ::Chunk
   end
 
   def assign_root_document
+    return true
     if document.is_a?(Chunk) && root = document.document
       self.document = root
     end
