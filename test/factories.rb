@@ -31,6 +31,9 @@ FactoryGirl.define do
   factory :ingest_audio, :class => "Ingest::AudioIngest" do
     association :upload, factory: :upload_audio
     association :document, factory: :document_with_track
+    after(:create) do |ingest|
+      ingest.document.document_segment.update_column(:ingest_id, ingest.id)
+    end
   end
 
   factory :ingest_audio_without_track, :class => "Ingest::AudioIngest" do
@@ -46,7 +49,7 @@ FactoryGirl.define do
     score 0.59
     before(:create) do |chunk|
       chunk.response = {"status" => 0, "id" => "ce178ea89f8b17d8e8298c9c7814700a-1", "hypotheses" => [["I like pickles", 0.59408695], ["I like turtles", 0.34534354], ["I like tickles", nil], ["I like to Kohl's", nil]]}
-      chunk.position ||= chunk.document.chunks.count + 1
+      #chunk.position ||= chunk.document.chunks.count + 1
     end
   end
 
@@ -61,6 +64,7 @@ FactoryGirl.define do
     association :document, factory: :document_with_ingest
     before(:create) do |chunk|
       chunk.ingest = chunk.document.ingests.first
+      chunk.track_id  = FactoryGirl.create(:track).id
     end
   end
 

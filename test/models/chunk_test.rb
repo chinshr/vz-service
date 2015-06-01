@@ -31,24 +31,26 @@ class ChunkTest < ActiveSupport::TestCase
       end
     end
 
-    should "captcha chunk with source and reference chunk" do
+    should "captcha_chunk with source and reference chunks" do
+      Segment.destroy_all
       @ingest   = FactoryGirl.create(:ingest_audio)
       @document = @ingest.document
+
       @sc_t1    = Track.create(FactoryGirl.attributes_for(:track, type: "chunk_track", s3_url: "http://sc_t1", duration: 2))
       @cc_t1    = Track.create(FactoryGirl.attributes_for(:track, type: "chunk_track", s3_url: "http://cc_t1", duration: 6))
 
-      sc1 = Chunk::PocketsphinxChunk.create({position: 1,
-        text: "now the earth was formed this and empty",
+      sc1 = Chunk::PocketsphinxChunk.create({
+        position: 1, text: "now the earth was formed this and empty",
         offset: 0.28, score: 0.45,
         document: @document, ingest: @ingest, track: @sc_t1
       })
 
-      rc1 = FactoryGirl.create(:chunk_pocketsphinx, score: 0.99,
+      rc1 = FactoryGirl.create(:chunk_google_speech, score: 0.99,
         text: "I like pickles")
 
       cc1 = @ingest.chunks.create({type: "captcha_chunk",
         text: "now the earth was formed this and empty|I like pickles",
-        offset: 0.28, score: 0.45,
+        position: 1, offset: 0.28, score: 0.45,
         document: sc1, ingest: @ingest, track: @cc_t1,
         chunk_ids: [sc1.id, rc1.id]
       })
@@ -57,6 +59,10 @@ class ChunkTest < ActiveSupport::TestCase
       assert_equal [sc1, rc1].to_set, cc1.chunks.to_set
       assert_equal sc1.track, cc1.chunks[0].track
       assert_equal rc1.track, cc1.chunks[1].track
+
+      assert_equal nil, cc1.chunk_segments[0].position
+      assert_equal nil, cc1.chunks[1].position
+
       assert_equal @cc_t1, cc1.track
       assert_equal sc1, cc1.document
       assert_equal @document, sc1.document

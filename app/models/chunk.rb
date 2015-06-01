@@ -1,4 +1,4 @@
-class Chunk < Document
+class Chunk < ::Document
   STATES = {
     :unprocessed         => Speech::AudioSplitter::AudioChunk::STATUS_UNPROCESSED,
     :built               => Speech::AudioSplitter::AudioChunk::STATUS_BUILT,
@@ -19,6 +19,8 @@ class Chunk < Document
   delegate :position, to: :chunk_segment, allow_nil: true
   delegate :position=, to: :chunk_segment, allow_nil: true
 
+  # document_segments
+  # documents through: document_chunks
   has_one :chunk_segment, foreign_key: :chunk_id, dependent: :nullify, class_name: "Segment::ChunkSegment"
   has_one :document, through: :chunk_segment, source: :document
   has_one :ingest, through: :chunk_segment, source: :ingest
@@ -184,12 +186,12 @@ class Chunk < Document
     end
   end
 
-  # Override superclass
+  # Override from superclass
   def after_add_chunk_segment(segment)
     super
     if new_record?
-      segment.ingest   ||= self.ingest
-      segment.track    ||= self.track
+      segment.ingest ||= self.ingest
+      segment.track  ||= self.track
     end
   end
 end
