@@ -1,7 +1,12 @@
-class Chunk::MechanicalTurkChunk < ::Chunk
-  belongs_to :turkee_task, class_name: "Turkee::TurkeeTask", foreign_key: :turkee_task_id
+require 'amatch'
 
-  # before_save :copy_sibling_attributes, :assign_root_document, on: :create
+class Chunk::MechanicalTurkChunk < ::Chunk
+  include Amatch
+
+  SOURCE_CHUNK_SCORE_THRESHOLD    = 0.8
+  REFERENCE_CHUNK_SCORE_THRESHOLD = 0.95
+
+  belongs_to :turkee_task, class_name: "Turkee::TurkeeTask", foreign_key: :turkee_task_id
 
   class << self
 
@@ -79,38 +84,74 @@ class Chunk::MechanicalTurkChunk < ::Chunk
     def process_data(chunks)
     end
 
-  end # end class
+  end # class
 
   def approve?
-    # Make sure we can defer approval until we have collected all assignments.
-    # E.g.
-    # return [true, "all good"] -> accept with reason 'all good'
-    # return [false, "garbage input"] -> reject with reason 'garbage input'
-    # return [nil, "deferred"] -> defer, neither accept nor reject
-    !text.blank?
+    result = false
+    if is_captcha_based?
+      confidence = captcha_confidence
+      if confidence > SOURCE_CHUNK_SCORE_THRESHOLD
+        result = true
+        promote_to_sibling_of source_chunk, {confidence: confidence}
+      end
+    else
+      result = !text.blank?
+    end
+    result
   end
 
   def assignment
     Turkee::TurkeeImportedAssignment.where(result_id: self.id)
   end
 
-  private
+  protected
 
-  def copy_sibling_attributes
-    if document.is_a?(Chunk) && sibling = document
-      self.position         = sibling.position
-      self.offset           = sibling.offset
-      self.duration         = sibling.duration
-      self.turkee_task_id   = sibling.turkee_task_id
-      self.locale           = sibling.locale
-      self.ingest_id        = sibling.ingest_id
-      self.ingest_iteration = sibling.ingest_iteration
-      self.track            = sibling.track
+  def captcha_confidence
+    confidence = 0.0
+    reference_chunks.each do |reference_chunk|
+      m = LongestSubsequence.new(text.downcase)
+      match_count = m.match(reference_chunk.text.downcase)
+      confidence  += match_count / reference_chunk.text.downcase.length.to_f
+    end
+    confidence / reference_chunks.count.to_f
+  end
+
+  # Good quality reference shunks
+  def reference_chunks
+    @reference_chunks ||= begin
+      document.chunks.none_of_types(self.class.name).score_gteq(REFERENCE_CHUNK_SCORE_THRESHOLD)
     end
   end
 
+  # Chunk that is under under test
+  def source_chunk
+    @source_chunk ||= begin
+      document.chunks.none_of_types(self.class.name).where("documents.id NOT IN (?)", reference_chunks.map(&:id)).first
+    end
+  end
+
+  private
+
+  def is_captcha_based?
+    document && document.is_a?(Chunk::CaptchaChunk)
+  end
+
+  # Promotes the current chunk to one equal to the give one, e.g. source chunk
+  def promote_to_sibling_of(sibling, chunk_attributes = {})
+    previous_parent       = document
+    self.document         = sibling.document
+    self.track            = sibling.track
+    self.position         = sibling.position
+    self.offset           = sibling.offset
+    self.locale           = sibling.locale
+    self.ingest_id        = sibling.ingest_id
+    self.ingest_iteration = sibling.ingest_iteration
+    self.turkee_task_id   = previous_parent.turkee_task_id
+    binding.pry
+    save
+  end
+
   def assign_root_document
-    return true
     if document.is_a?(Chunk) && root = document.document
       self.document = root
     end

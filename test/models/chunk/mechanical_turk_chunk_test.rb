@@ -22,41 +22,69 @@ class Chunk::MechanicalTurkChunkTest < ActiveSupport::TestCase
         assert_equal true, chunk0.chunks.include?(mt)
       end
     end
+  end
 
-    should "create mechanical_turk chunk from captcha chunk" do
+  context "approve Captcha based chunks" do
+    setup do
+      [Document, Segment, Track].each {|klass| klass.destroy_all}
       @ingest   = FactoryGirl.create(:ingest_audio)
       @document = @ingest.document
 
       @sc_t1    = Track.create(FactoryGirl.attributes_for(:track, type: "chunk_track", s3_url: "http://sc_t1", duration: 2))
       @cc_t1    = Track.create(FactoryGirl.attributes_for(:track, type: "chunk_track", s3_url: "http://cc_t1", duration: 6))
 
-      sc1 = Chunk::PocketsphinxChunk.create({
+      @sc1 = Chunk::PocketsphinxChunk.create({
         position: 1, text: "now the earth was formed this and empty",
-        offset: 0.28, score: 0.45,
+        offset: 0.28, score: 0.45, ingest_iteration: 5,
         document: @document, ingest: @ingest, track: @sc_t1
       })
 
-      rc1 = FactoryGirl.create(:chunk_google_speech, score: 0.99,
+      @rc1 = FactoryGirl.create(:chunk_google_speech, score: 0.99,
         text: "I like pickles")
 
-      cc1 = @ingest.chunks.create({
+      @cc1 = @ingest.chunks.create({
         type: "captcha_chunk", position: 1, offset: 0.28, score: 0.45,
         text: "now the earth was formed this and empty|I like pickles",
-        document: sc1, ingest: @ingest, track: @cc_t1,
-        chunk_ids: [sc1.id, rc1.id],
+        document: @sc1, ingest: @ingest, track: @cc_t1,
+        chunk_ids: [@sc1.id, @rc1.id],
         turkee_task_id: 666
       })
 
-      mt1 = Chunk::MechanicalTurkChunk.create({
+      @mt1 = Chunk::MechanicalTurkChunk.create({
         text: "now the earth was formless and empty i like pickles",
-        document_id: cc1.id,
-        position: cc1.position,
-        offset: cc1.offset,
-        turkee_task_id: cc1.turkee_task_id
+        document_id: @cc1.id,
+        position: @cc1.position,
+        offset: @cc1.offset,
+        turkee_task_id: @cc1.turkee_task_id
       })
+    end
 
-      assert_equal cc1, mt1.document
-      assert_equal true, sc1.documents.include?(cc1)
+    should "check chunk integrity" do
+      assert_equal @cc1, @mt1.document
+      assert_equal true, @sc1.documents.include?(@cc1)
+    end
+
+    context "helpers" do
+      should "#is_captcha_based?" do
+        assert_equal true, @mt1.send(:is_captcha_based?)
+      end
+
+      should "#reference_chunks" do
+        assert_equal [@rc1], @mt1.send(:reference_chunks)
+      end
+
+      should "#source_chunk" do
+        assert_equal @sc1, @mt1.send(:source_chunk)
+      end
+
+      should "#captcha_confidence" do
+        assert_equal 1.0, @mt1.send(:captcha_confidence)
+      end
+    end
+
+    should "approve" do
+      assert_equal true, @mt1.approve?
+      assert_equal true, @document.chunks.include?(@mt1)
     end
   end
 
