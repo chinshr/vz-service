@@ -7,35 +7,22 @@ class Chunk::MechanicalTurkChunkTest < ActiveSupport::TestCase
     setup do
       Segment.destroy_all
     end
-=begin
+
     should "chunk with chunk_segment same as in turkee gem" do
       chunk0 = FactoryGirl.create(:chunk_pocketsphinx) # merged_chunk
       assert_difference "Segment::ChunkSegment.count" do
-        mc = Chunk::MechanicalTurkChunk.new({"text" => "I like pickles",
+        mt = Chunk::MechanicalTurkChunk.new({"text" => "I like pickles",
           "document_id" => chunk0.id,
           "position" => chunk0.position,
           "offset" => chunk0.offset,
           "turkee_task_id" => chunk0.turkee_task_id
         })
-        assert_equal true, mc.save
-        assert_equal chunk0.document, mc.document
+        assert_equal true, mt.save
+        assert_equal chunk0, mt.document
+        assert_equal true, chunk0.chunks.include?(mt)
       end
     end
 
-    should "chunk with sub chunks" do
-      ch0 = FactoryGirl.create(:chunk_pocketsphinx)
-      ch1 = FactoryGirl.create(:chunk_pocketsphinx)
-      d1  = ch1.document
-      ch2 = FactoryGirl.create(:chunk_pocketsphinx)
-      d2  = ch2.document
-      assert_difference "Segment::ChunkSegment.count", 2 do
-        ch0.chunk_ids = [ch1.id, ch2.id]
-        assert_equal [ch1, ch2].to_set, ch0.chunks.to_set
-        assert_equal d1, ch1.document
-        assert_equal d2, ch2.document
-      end
-    end
-=end
     should "create mechanical_turk chunk from captcha chunk" do
       @ingest   = FactoryGirl.create(:ingest_audio)
       @document = @ingest.document
@@ -69,11 +56,11 @@ class Chunk::MechanicalTurkChunkTest < ActiveSupport::TestCase
       })
 
       assert_equal cc1, mt1.document
+      assert_equal true, sc1.documents.include?(cc1)
     end
   end
 
-=begin
-  context "class methods" do
+  context "class" do
     setup do
       @chunk = FactoryGirl.create(:chunk_with_ingest, uid: "ccb7093c-6d7a-4b31-aa1e-ccb84804a2e6")
     end
@@ -141,23 +128,13 @@ class Chunk::MechanicalTurkChunkTest < ActiveSupport::TestCase
       RTurk::Hit.any_instance.stubs(:assignments).returns([assignment])
 
       assert_difference "Chunk::MechanicalTurkChunk.count", 1 do
-        assert_no_difference "Track.count" do
-          Chunk::MechanicalTurkChunk.process_hits
-          mtc = Chunk::MechanicalTurkChunk.last
-          assert_equal chunk0.document, mtc.document
-          assert_equal chunk0.position, mtc.position
-          assert_equal chunk0.offset, mtc.offset
-          assert_equal chunk0.duration, mtc.duration
-          assert_equal chunk0.start_at, mtc.start_at
-          assert_equal chunk0.end_at, mtc.end_at
-          assert_equal chunk0.turkee_task_id, mtc.turkee_task_id
-          assert_equal chunk0.locale, mtc.locale
-          assert_equal chunk0.ingest_id, mtc.ingest_id
-          assert_equal chunk0.ingest_iteration, mtc.ingest_iteration
-          assert_equal chunk0.track, mtc.track
-        end
+        Chunk::MechanicalTurkChunk.process_hits
+        mtc = Chunk::MechanicalTurkChunk.last
+        assert_equal chunk0, mtc.document
+        assert_equal chunk0.position, mtc.position
+        assert_equal chunk0.offset, mtc.offset
       end
     end
   end
-=end
 end
+
