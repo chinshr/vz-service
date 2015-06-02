@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150528180112) do
+ActiveRecord::Schema.define(version: 20150602204403) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -260,12 +260,14 @@ ActiveRecord::Schema.define(version: 20150528180112) do
     t.string   "type"
     t.datetime "updated_at"
     t.datetime "created_at"
+    t.boolean  "is_master",   default: false, null: false
   end
 
   add_index "segments", ["chunk_id"], name: "index_segments_on_chunk_id", using: :btree
   add_index "segments", ["created_at"], name: "index_segments_on_created_at", using: :btree
   add_index "segments", ["document_id"], name: "index_segments_on_document_id", using: :btree
   add_index "segments", ["ingest_id"], name: "index_segments_on_ingest_id", using: :btree
+  add_index "segments", ["is_master"], name: "index_segments_on_is_master", using: :btree
   add_index "segments", ["position"], name: "index_segments_on_position", using: :btree
   add_index "segments", ["track_id"], name: "index_segments_on_track_id", using: :btree
   add_index "segments", ["type"], name: "index_segments_on_type", using: :btree

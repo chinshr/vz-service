@@ -25,6 +25,7 @@ class ChunkTest < ActiveSupport::TestCase
         })
         assert_equal true, ch.save
         assert_equal false, ch.master_segment.new_record?
+        assert_equal true, ch.master_segment.is_master?
         assert_equal document, ch.document
         assert_equal ch.master_segment.position, ch.position
         assert_equal 4.34, ch.offset
@@ -67,6 +68,10 @@ class ChunkTest < ActiveSupport::TestCase
       assert_equal @cc_t1, cc1.track
       assert_equal sc1, cc1.document
       assert_equal @document, sc1.document
+
+      assert_equal true, cc1.parent_segments[0].is_master?
+      assert_equal false, cc1.child_segments[0].is_master?
+      assert_equal false, cc1.child_segments[1].is_master?
     end
   end
 

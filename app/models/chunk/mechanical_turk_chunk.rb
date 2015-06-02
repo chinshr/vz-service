@@ -147,7 +147,6 @@ class Chunk::MechanicalTurkChunk < ::Chunk
     self.ingest_id        = sibling.ingest_id
     self.ingest_iteration = sibling.ingest_iteration
     self.turkee_task_id   = previous_parent.turkee_task_id
-    binding.pry
     save
   end
 

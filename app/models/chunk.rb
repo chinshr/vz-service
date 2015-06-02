@@ -19,7 +19,7 @@ class Chunk < ::Document
   delegate :position, to: :master_chunk_segment, allow_nil: true
   delegate :position=, to: :master_chunk_segment, allow_nil: true
 
-  has_one :master_chunk_segment, foreign_key: :chunk_id, dependent: :nullify, class_name: "Segment::ChunkSegment"
+  has_one :master_chunk_segment, -> { where(is_master: true) }, foreign_key: :chunk_id, dependent: :nullify, class_name: "Segment::ChunkSegment"
   has_one :document, through: :master_chunk_segment, source: :document
   has_one :ingest, through: :master_chunk_segment, source: :ingest
   has_one :track, through: :master_chunk_segment, class_name: "Track::ChunkTrack"
