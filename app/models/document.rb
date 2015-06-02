@@ -24,7 +24,7 @@ class Document < ActiveRecord::Base
   end
   has_many :tracks, through: :chunks, source: :track
   has_many :tracks_including_master_track, through: :segments, source: :track, class_name: "Track"
-  has_one :master_document_segment, foreign_key: :document_id, dependent: :destroy, class_name: "Segment::DocumentSegment"
+  has_one :master_document_segment, -> { where(is_master: true) }, foreign_key: :document_id, dependent: :destroy, class_name: "Segment::DocumentSegment"
   has_one :track, through: :master_document_segment, class_name: "Track::DocumentTrack"
   accepts_nested_attributes_for :track, allow_destroy: true
   acts_as_ordered_taggable_on :tags, :auto

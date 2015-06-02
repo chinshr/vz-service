@@ -28,10 +28,12 @@ class DocumentTest < ActiveSupport::TestCase
           assert_equal 3, @document.chunks.count
           assert_equal 3, @document.tracks.count
           assert_equal 4, @document.tracks_including_master_track.count
+          assert_equal true, @document.master_segment.is_master?
           assert_equal [@t0.id, @t1.id, @t2.id, @t3.id].to_set,
             @document.tracks_including_master_track.map(&:id).to_set
           assert_equal @document.id, @t0.document.id
           assert_equal true, @t0.is_master?
+          assert_equal true, @c1.master_segment.is_master?
           assert_equal true, @c1.track.chunk_ids.include?(@c1.id)
           assert_equal false, @c1.track.is_master?
           assert_equal false, @c2.track.is_master?
