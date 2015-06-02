@@ -1,6 +1,4 @@
 class Chunk < ::Document
-  include MultiDocumentChunk
-
   STATES = {
     :unprocessed         => Speech::AudioSplitter::AudioChunk::STATUS_UNPROCESSED,
     :built               => Speech::AudioSplitter::AudioChunk::STATUS_BUILT,
@@ -12,19 +10,23 @@ class Chunk < ::Document
   }
 
   delegate :title, to: :document
-  delegate :document_id, to: :chunk_segment, allow_nil: true
-  delegate :document_id=, to: :chunk_segment, allow_nil: true
-  delegate :ingest_id, to: :chunk_segment, allow_nil: true
-  delegate :ingest_id=, to: :chunk_segment, allow_nil: true
-  delegate :track_id, to: :chunk_segment, allow_nil: true
-  delegate :track_id=, to: :chunk_segment, allow_nil: true
-  delegate :position, to: :chunk_segment, allow_nil: true
-  delegate :position=, to: :chunk_segment, allow_nil: true
+  delegate :document_id, to: :master_chunk_segment, allow_nil: true
+  delegate :document_id=, to: :master_chunk_segment, allow_nil: true
+  delegate :ingest_id, to: :master_chunk_segment, allow_nil: true
+  delegate :ingest_id=, to: :master_chunk_segment, allow_nil: true
+  delegate :track_id, to: :master_chunk_segment, allow_nil: true
+  delegate :track_id=, to: :master_chunk_segment, allow_nil: true
+  delegate :position, to: :master_chunk_segment, allow_nil: true
+  delegate :position=, to: :master_chunk_segment, allow_nil: true
 
-  has_one :chunk_segment, foreign_key: :chunk_id, dependent: :nullify, class_name: "Segment::ChunkSegment"
-  has_one :document, through: :chunk_segment, source: :document
-  has_one :ingest, through: :chunk_segment, source: :ingest
-  has_one :track, through: :chunk_segment, class_name: "Track::ChunkTrack"
+  has_one :master_chunk_segment, foreign_key: :chunk_id, dependent: :nullify, class_name: "Segment::ChunkSegment"
+  has_one :document, through: :master_chunk_segment, source: :document
+  has_one :ingest, through: :master_chunk_segment, source: :ingest
+  has_one :track, through: :master_chunk_segment, class_name: "Track::ChunkTrack"
+
+  has_many :parent_segments, foreign_key: :chunk_id, dependent: :nullify,
+    class_name: "Segment::ChunkSegment"
+  has_many :documents, through: :parent_segments, source: :document
 
   validates :document, presence: true
   validates :offset, presence: true
@@ -40,7 +42,7 @@ class Chunk < ::Document
     when "created_at"
       order(self.arel_table[:created_at].send(param.first[1].to_sym).to_sql)
     when "position"
-      joins(:chunk_segment).order("segments.position #{param.first[1]}")
+      joins(:master_chunk_segment).order("segments.position #{param.first[1]}")
     when "score"
       order(self.arel_table[:score].send(param.first[1].to_sym).to_sql)
     when "random"
@@ -56,14 +58,14 @@ class Chunk < ::Document
     map {|s| s.match(/^([\-]{,1}[0-9]+)$/) ? s : nil}.reject(&:blank?).uniq)}
   scope :none_of_processing_status, -> (params) {where("documents.processing_status NOT IN (?)", [params].flatten.map(&:to_s).
     map {|s| s.match(/^([\-]{,1}[0-9]+)$/) ? s : nil}.reject(&:blank?).uniq)}
-  scope :any_of_positions, -> (params) {joins(:chunk_segment).where("segments.position IN (?)", Array.wrap(params))}
+  scope :any_of_positions, -> (params) {joins(:master_chunk_segment).where("segments.position IN (?)", Array.wrap(params))}
   scope :any_of_ingest_iterations, -> (params) {where(:ingest_iteration => params)}
   scope :score_lt, -> (param) {where(self.arel_table[:score].lt(param))}
   scope :score_gt, -> (param) {where(self.arel_table[:score].gt(param))}
   scope :score_lteq, -> (param) {where(self.arel_table[:score].lteq(param))}
   scope :score_gteq, -> (param) {where(self.arel_table[:score].gteq(param))}
-  scope :ingest_id, -> (param) {joins(:chunk_segment).where("segments.ingest_id = ?", param)}
-  scope :none_of_ingest_ids, -> (params) {joins(:chunk_segment).where("segments.ingest_id NOT IN (?)", Array.wrap(params))}
+  scope :ingest_id, -> (param) {joins(:master_chunk_segment).where("segments.ingest_id = ?", param)}
+  scope :none_of_ingest_ids, -> (params) {joins(:master_chunk_segment).where("segments.ingest_id NOT IN (?)", Array.wrap(params))}
 
   # private scopes
   scope :transcribed, -> {where(:processing_status => STATES[:transcribed])}
@@ -74,7 +76,7 @@ class Chunk < ::Document
   }
 
   before_save :set_default_locale, on: :create
-  after_validation :save_chunk_segment_and_track
+  after_validation :save_master_chunk_segment_and_track
 
   class << self
     def slug_length; 40; end
@@ -162,12 +164,16 @@ class Chunk < ::Document
     end
   end  # class
 
-  def chunk_segment
-    super || build_chunk_segment(chunk: self)
+  def master_chunk_segment
+    super || build_master_chunk_segment(chunk: self)
   end
 
   def document
-    super || (document_id ? Document.find_by_id(document_id) : nil)
+    super || (document_id ? ::Document.find_by_id(document_id) : nil)
+  end
+
+  def master_segment
+    master_chunk_segment
   end
 
   protected
@@ -176,20 +182,20 @@ class Chunk < ::Document
     self.locale = document.locale if document && !changes[:locale]
   end
 
-  def save_chunk_segment_and_track
+  def save_master_chunk_segment_and_track
     needs_update = false
-    if chunk_segment.track && (chunk_segment.track.new_record? || chunk_segment.track.changed?) && chunk_segment.track.valid?
+    if master_chunk_segment.track && (master_chunk_segment.track.new_record? || master_chunk_segment.track.changed?) && master_chunk_segment.track.valid?
       needs_update = true
-      chunk_segment.track.save
+      master_chunk_segment.track.save
     end
 
-    if (needs_update || chunk_segment.new_record? || chunk_segment.changed?) && chunk_segment.valid?
-      chunk_segment.save
+    if (needs_update || master_chunk_segment.new_record? || master_chunk_segment.changed?) && master_chunk_segment.valid?
+      master_chunk_segment.save
     end
   end
 
   # Override from superclass
-  def after_add_chunk_segment(segment)
+  def after_add_child_segment(segment)
     super
     if new_record?
       segment.ingest ||= self.ingest

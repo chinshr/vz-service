@@ -14,7 +14,7 @@ class ChunkTest < ActiveSupport::TestCase
       assert_equal "Chunk::MechanicalTurkChunk", Chunk.new(type: :mechanical_turk).class.name
     end
 
-    should "chunk with chunk_segment" do
+    should "chunk with master_segment" do
       assert_difference "Segment::ChunkSegment.count" do
         document = FactoryGirl.create(:document)
         ch = Chunk::PocketsphinxChunk.new({
@@ -24,9 +24,9 @@ class ChunkTest < ActiveSupport::TestCase
           offset: 4.34
         })
         assert_equal true, ch.save
-        assert_equal false, ch.chunk_segment.new_record?
+        assert_equal false, ch.master_segment.new_record?
         assert_equal document, ch.document
-        assert_equal ch.chunk_segment.position, ch.position
+        assert_equal ch.master_segment.position, ch.position
         assert_equal 4.34, ch.offset
       end
     end
@@ -57,11 +57,12 @@ class ChunkTest < ActiveSupport::TestCase
 
       assert_equal 2, cc1.chunks.count
       assert_equal [sc1, rc1].to_set, cc1.chunks.to_set
-      assert_equal sc1.track, cc1.chunks[0].track
-      assert_equal rc1.track, cc1.chunks[1].track
 
-      assert_equal nil, cc1.chunk_segments[0].position
-      assert_equal nil, cc1.chunks[1].position
+      # assert_equal sc1.track, cc1.chunks[0].track
+      # assert_equal rc1.track, cc1.chunks[1].track
+
+      assert_equal nil, cc1.child_segments[0].position
+      assert_equal nil, cc1.child_segments[1].position
 
       assert_equal @cc_t1, cc1.track
       assert_equal sc1, cc1.document
@@ -70,9 +71,10 @@ class ChunkTest < ActiveSupport::TestCase
   end
 
   context "associations" do
-    should have_one(:chunk_segment).dependent(:nullify)
-    should have_one(:document).through(:chunk_segment)
-    should have_one(:track).through(:chunk_segment)
+    should have_one(:master_chunk_segment).dependent(:nullify)
+    should have_one(:document).through(:master_chunk_segment)
+    should have_one(:ingest).through(:master_chunk_segment)
+    should have_one(:track).through(:master_chunk_segment)
   end
 
   context "delegate" do

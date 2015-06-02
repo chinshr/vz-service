@@ -15,17 +15,17 @@ class Document < ActiveRecord::Base
   belongs_to :user
   has_many :ingests, foreign_key: :document_id
   has_many :segments, foreign_key: :document_id, dependent: :destroy
-  has_many :chunk_segments, foreign_key: :document_id, :after_add => :after_add_chunk_segment,
+  has_many :child_segments, foreign_key: :document_id, :after_add => :after_add_child_segment,
     dependent: :destroy, class_name: "Segment::ChunkSegment"
-  has_many :chunks, through: :chunk_segments, source: :chunk do
+  has_many :chunks, through: :child_segments, source: :chunk do
     def create(chunk_attributes)
       Chunk.create({document: proxy_association.owner}.reverse_merge(chunk_attributes))
     end
   end
   has_many :tracks, through: :chunks, source: :track
   has_many :tracks_including_master_track, through: :segments, source: :track, class_name: "Track"
-  has_one :document_segment, foreign_key: :document_id, dependent: :destroy, class_name: "Segment::DocumentSegment"
-  has_one :track, through: :document_segment, class_name: "Track::DocumentTrack"
+  has_one :master_document_segment, foreign_key: :document_id, dependent: :destroy, class_name: "Segment::DocumentSegment"
+  has_one :track, through: :master_document_segment, class_name: "Track::DocumentTrack"
   accepts_nested_attributes_for :track, allow_destroy: true
   acts_as_ordered_taggable_on :tags, :auto
 
@@ -85,8 +85,8 @@ class Document < ActiveRecord::Base
     end
   end
 
-  def document_segment
-    super || build_document_segment(document: self)
+  def master_document_segment
+    super || build_master_document_segment(document: self)
   end
 
   def create_track(attributes = {})
@@ -94,20 +94,20 @@ class Document < ActiveRecord::Base
     transaction do
       if is_root?
         # Root document needs to build a segment for its own
-        if document_segment.new_record?
-          tr = document_segment.create_track(track_attributes)
-          document_segment.save
-          tr
+        if master_document_segment.new_record?
+          tr = master_document_segment.build_track(track_attributes)
+          master_document_segment.save
+          tr.reload
         else
-          Track.destroy(document_segment.track) if document_segment && document_segment.track
+          Track.destroy(master_document_segment.track) if master_document_segment && master_document_segment.track
           tr = Track.create(track_attributes)
-          document_segment.update_attributes(track: tr)
+          master_document_segment.update_attributes(track: tr)
           tr
         end
       else
-        # Chunks always have a chunk segment and need to update the track
+        # Chunks always have a master segment and need to update the track
         tr = Track.create(track_attributes)
-        chunk_segment.update_attributes(track: tr)
+        master_chunk_segment.update_attributes(track: tr)
         tr
       end
     end
@@ -121,12 +121,12 @@ class Document < ActiveRecord::Base
     if is_root?
       # Root document needs to build a segment for its own
       segment_attributes.merge!({document: self})
-      build_document_segment(segment_attributes).build_track(track_attributes)
+      build_master_segment(segment_attributes).build_track(track_attributes)
     else
-      # Chunks need to update their chunk segment
+      # Chunks need to update their master segment
       segment_attributes.merge!({chunk: self})
-      chunk_segment.attributes = segment_attributes
-      chunk_segment.build_track(track_attributes)
+      master_segment.attributes = segment_attributes
+      master_segment.build_track(track_attributes)
     end
   end
 
@@ -159,6 +159,10 @@ class Document < ActiveRecord::Base
   end
   alias_method :is_root, :is_root?
 
+  def master_segment
+    master_document_segment
+  end
+
   protected
 
   def generate_slug
@@ -176,7 +180,7 @@ class Document < ActiveRecord::Base
 
   # Called from association on @record.chunks << @chunk or @record.chunk_ids = [1]
   # Copy document, ingest, track
-  def after_add_chunk_segment(segment)
+  def after_add_child_segment(segment)
     segment.document ||= self.document if new_record?
   end
 end

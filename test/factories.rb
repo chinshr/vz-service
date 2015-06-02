@@ -32,7 +32,8 @@ FactoryGirl.define do
     association :upload, factory: :upload_audio
     association :document, factory: :document_with_track
     after(:create) do |ingest|
-      ingest.document.document_segment.update_column(:ingest_id, ingest.id)
+      ingest.document.master_segment.ingest_id = ingest.id
+      ingest.document.master_segment.save
     end
   end
 
@@ -64,7 +65,7 @@ FactoryGirl.define do
     association :document, factory: :document_with_ingest
     before(:create) do |chunk|
       chunk.ingest = chunk.document.ingests.first
-      chunk.track_id  = FactoryGirl.create(:track).id
+      # chunk.track_id  = FactoryGirl.create(:track).id
     end
   end
 
