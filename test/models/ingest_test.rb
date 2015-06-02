@@ -289,7 +289,7 @@ class IngestTest < ActiveSupport::TestCase
       @t3  = Track.create(FactoryGirl.attributes_for(:track, type: :chunk_track, s3_url: "http://t3"))
 
       @document.update_attribute(:track, @t0)
-      @document.document_segment.update_attribute(:ingest, @ingest)
+      @document.master_segment.update_attribute(:ingest, @ingest)
 
       @gc1 = Chunk::GoogleSpeechChunk.create(:position => 1, :offset => 0, :duration => 0.72, :text => "I hate to say", :score => 0.80, :document => @document, :ingest => @ingest, :track => @t1)
       @gc2 = Chunk::GoogleSpeechChunk.create(:position => 2, :offset => 10, :duration => 0.89, :text => "that macaronies are", :score => 0.65, :document => @document, :ingest => @ingest, :track => @t2)

@@ -10,7 +10,7 @@ class Chunk::CaptchaChunk < ::Chunk
   end
 
   # Override superclass
-  def after_add_chunk_segment(segment)
+  def after_add_child_segment(segment)
     super
     if new_record?
       segment.signal_assign_chunk_track!

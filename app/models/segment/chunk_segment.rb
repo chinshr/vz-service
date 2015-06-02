@@ -2,7 +2,7 @@ class Segment::ChunkSegment < ::Segment
   validates :document, presence: true
   validates :chunk, presence: true
 
-  before_save :assign_chunk_track, on: :create
+  # before_save :assign_chunk_track, on: :create
 
   def signal_assign_chunk_track!
     @assign_chunk_track = true

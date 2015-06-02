@@ -14,6 +14,10 @@ class Track::DocumentTrack < ::Track
     super || build_document_segment(track: self)
   end
 
+  def document
+    super || (document_id ? ::Document.find_by_id(document_id) : nil)
+  end
+
   protected
 
   def set_document

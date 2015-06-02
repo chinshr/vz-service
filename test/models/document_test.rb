@@ -5,18 +5,19 @@ class DocumentTest < ActiveSupport::TestCase
     should belong_to :user
     should have_many :ingests
     should have_many(:segments).dependent(:destroy)
-    should have_many(:chunk_segments).dependent(:destroy)
-    should have_many(:chunks).through(:chunk_segments)
+    should have_many(:child_segments).dependent(:destroy)
+    should have_many(:chunks).through(:child_segments)
     should have_many(:tracks).through(:chunks)
     should have_many(:tracks_including_master_track).through(:segments)
-    should have_one :document_segment
-    should have_one(:track).through(:document_segment)
+    should have_one :master_document_segment
+    should have_one(:track).through(:master_document_segment)
 
     should "have tracks_including_master_track" do
       assert_difference "Segment::DocumentSegment.count", 1 do
         assert_difference "Segment::ChunkSegment.count", 3 do
           @document = FactoryGirl.create(:document)
           @t0 = @document.create_track(s3_url: "http://t0")
+
           @c1 = Chunk::GoogleSpeechChunk.create(:position => 1, :offset => 0,  :text => "I hate to say", :score => 0.80, :document => @document)
           @t1 = @c1.create_track(s3_url: "http://t1")
           @c2 = Chunk::GoogleSpeechChunk.create(:position => 2, :offset => 10, :text => "cat maths are", :score => 0.65, :document => @document)
