@@ -196,4 +196,11 @@ class UploadTest < ActiveSupport::TestCase
     upload = FactoryGirl.create(:upload_audio, recorded_at: nil)
     assert_equal upload.created_at, upload.recorded_at
   end
+
+  should "destroy" do
+    upload = FactoryGirl.create(:upload_audio)
+    assert_difference "Upload.count", -1 do
+      upload.destroy
+    end
+  end
 end

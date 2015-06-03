@@ -64,7 +64,6 @@ class Upload < ActiveRecord::Base
   after_initialize :build_ingest_and_document
   before_validation :set_title, on: :create
   after_save :save_ingest_and_document
-  after_commit :remove_ingest, on: :destroy
 
   class << self
 
@@ -156,6 +155,12 @@ class Upload < ActiveRecord::Base
 
   def recorded_at
     self[:recorded_at] || self.created_at
+  end
+
+  # Override to delete assets in background job
+  def destroy
+    ::Upload::DeleteJob.perform_later(self.id)
+    remove_ingest
   end
 
   protected

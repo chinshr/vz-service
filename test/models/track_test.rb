@@ -110,4 +110,11 @@ class TrackTest < ActiveSupport::TestCase
       assert_equal true, @track.waveform_json_stream_url.include?(@track.s3_waveform_json_key)
     end
   end
+
+  should "destroy with job" do
+    track = FactoryGirl.create(:track)
+    assert_difference "Track.count", -1 do
+      track.destroy
+    end
+  end
 end

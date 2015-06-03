@@ -85,6 +85,8 @@ GEM
       activesupport (= 4.1.9)
       builder (~> 3.1)
       erubis (~> 2.7.0)
+    activejob_backport (0.0.3)
+      activesupport (>= 4.0.0)
     activemodel (4.1.9)
       activesupport (= 4.1.9)
       builder (~> 3.1)
@@ -391,6 +393,7 @@ PLATFORMS
 DEPENDENCIES
   aasm (= 3.3.2)
   activeadmin!
+  activejob_backport
   acts-as-taggable-on
   amatch
   att-codekit!
