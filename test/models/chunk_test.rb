@@ -100,7 +100,7 @@ class ChunkTest < ActiveSupport::TestCase
   end
 
   context "associations" do
-    should have_one(:master_chunk_segment).dependent(:nullify)
+    should have_one(:master_chunk_segment).dependent(:destroy)
     should have_one(:document).through(:master_chunk_segment)
     should have_one(:ingest).through(:master_chunk_segment)
     should have_one(:track).through(:master_chunk_segment)
