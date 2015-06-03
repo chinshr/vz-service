@@ -97,6 +97,31 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
       end
     end
 
+    should "create captcha chunk with source and reference chunks" do
+      sign_in :user, @user2
+      assert_difference 'Chunk::CaptchaChunk.count', 1 do
+        sc_t1 = Track.create(FactoryGirl.attributes_for(:track, type: "chunk_track", s3_url: "http://sc_t1", duration: 2))
+        sc1   = Chunk::PocketsphinxChunk.create({
+          position: 1, text: "now the earth was formed this and empty",
+          offset: 0.28, score: 0.45,
+          document: @document1, ingest: @ingest1, track: sc_t1
+        })
+        rc1   = FactoryGirl.create(:chunk_google_speech, score: 0.99,
+          text: "I like pickles")
+
+        attributes = @attributes.merge(type: "Chunk::CaptchaChunk", chunk_ids: [sc1.id, rc1.id])
+        track_attributes = {duration: 5, s3_url: @s3_url, s3_mp3_url: @s3_mp3_url, s3_waveform_json_url: @s3_waveform_json_url}
+        post :create, ingest_id: @ingest1.id, chunk: attributes.merge(track_attributes: track_attributes), format: :json
+        assert_response :success
+        assert_attributes response_body["chunk"], attributes
+        assert_equal [sc1.id, rc1.id], response_body["chunk"]["chunk_ids"]
+        assert_not_nil response_body["chunk"]["track"]
+        assert_equal @s3_url, response_body["chunk"]["track"]["s3_url"]
+        assert_equal @s3_mp3_url, response_body["chunk"]["track"]["s3_mp3_url"]
+        assert_equal @s3_waveform_json_url, response_body["chunk"]["track"]["s3_waveform_json_url"]
+      end
+    end
+
   end
 
   context "GET /api/ingests/:ingest_id/chunks" do
