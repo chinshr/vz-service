@@ -32,6 +32,30 @@ class ChunkTest < ActiveSupport::TestCase
       end
     end
 
+    should "create chunk with document via document_id" do
+      Segment.destroy_all
+      @ingest   = FactoryGirl.create(:ingest_audio)
+      @document = @ingest.document
+
+      @t1 = Track.create(FactoryGirl.attributes_for(:track, type: "chunk_track", s3_url: "http://t1", duration: 2))
+      @t2 = Track.create(FactoryGirl.attributes_for(:track, type: "chunk_track", s3_url: "http://t2", duration: 3))
+
+      sc = Chunk::PocketsphinxChunk.create({
+        position: 1, text: "now the earth was formed this and empty",
+        offset: 0.28, score: 0.45,
+        document_id: @document.id, ingest: @ingest, track: @t1
+      })
+
+      cc = Chunk::CaptchaChunk.create({
+        position: 1, text: "now the earth was formed this and empty",
+        offset: 0.28, score: 0.45,
+        document_id: sc.id, ingest: @ingest, track: @t2, chunk_ids: [sc.id]
+      })
+
+      assert_equal sc, cc.document
+      assert_equal true, cc.chunks.include?(sc)
+    end
+
     should "captcha_chunk with source and reference chunks" do
       Segment.destroy_all
       @ingest   = FactoryGirl.create(:ingest_audio)

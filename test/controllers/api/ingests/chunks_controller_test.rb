@@ -109,12 +109,14 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
         rc1   = FactoryGirl.create(:chunk_google_speech, score: 0.99,
           text: "I like pickles")
 
-        attributes = @attributes.merge(type: "Chunk::CaptchaChunk", chunk_ids: [sc1.id, rc1.id])
+        attributes = @attributes.merge(type: "Chunk::CaptchaChunk",
+          document_id: sc1.id, chunk_ids: [sc1.id, rc1.id])
         track_attributes = {duration: 5, s3_url: @s3_url, s3_mp3_url: @s3_mp3_url, s3_waveform_json_url: @s3_waveform_json_url}
         post :create, ingest_id: @ingest1.id, chunk: attributes.merge(track_attributes: track_attributes), format: :json
         assert_response :success
         attributes[:chunk_ids] = response_body["chunk"]["chunk_ids"] # fixes order problem
         assert_attributes response_body["chunk"], attributes
+        assert_equal sc1.id, response_body["chunk"]["document_id"]
         assert_equal [sc1.id, rc1.id].to_set, response_body["chunk"]["chunk_ids"].to_set
         assert_not_nil response_body["chunk"]["track"]
         assert_equal @s3_url, response_body["chunk"]["track"]["s3_url"]
