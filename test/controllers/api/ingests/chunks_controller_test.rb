@@ -113,6 +113,7 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
         track_attributes = {duration: 5, s3_url: @s3_url, s3_mp3_url: @s3_mp3_url, s3_waveform_json_url: @s3_waveform_json_url}
         post :create, ingest_id: @ingest1.id, chunk: attributes.merge(track_attributes: track_attributes), format: :json
         assert_response :success
+        attributes[:chunk_ids] = response_body["chunk"]["chunk_ids"] # fixes order problem
         assert_attributes response_body["chunk"], attributes
         assert_equal [sc1.id, rc1.id].to_set, response_body["chunk"]["chunk_ids"].to_set
         assert_not_nil response_body["chunk"]["track"]
