@@ -75,12 +75,17 @@ class IngestTest < ActiveSupport::TestCase
   end # context "scopes"
 
   context "stages" do
-    should "have #current_stage name" do
+    should "#workflow_stages" do
+      assert_equal [:"start", :"harvest", :"transcode", :"split", :"crowdout", :"finish"],
+        Ingest.new.workflow_stages
+    end
+
+    should "#current_stage" do
       assert_equal :harvest, Ingest.new(stage: "harvest").current_stage
       assert_equal nil, Ingest.new(stage: "foobar").current_stage
     end
 
-    should "have #next_stage" do
+    should "#next_stage" do
       assert_equal :harvest, Ingest.new(stage: "start").next_stage
       assert_equal :transcode, Ingest.new(stage: "harvest").next_stage
       assert_equal :split, Ingest.new(stage: "transcode").next_stage
@@ -89,6 +94,16 @@ class IngestTest < ActiveSupport::TestCase
       assert_equal nil, Ingest.new(stage: "finish").next_stage
       assert_equal nil, Ingest.new(stage: "foobar").next_stage
       assert_equal nil, Ingest.new(stage: nil).next_stage
+    end
+
+    should "#previous_stage" do
+      assert_equal nil, Ingest.new(stage: "start").previous_stage
+      assert_equal :start, Ingest.new(stage: "harvest").previous_stage
+      assert_equal :harvest, Ingest.new(stage: "transcode").previous_stage
+      assert_equal :transcode, Ingest.new(stage: "split").previous_stage
+      assert_equal :split, Ingest.new(stage: "crowdout").previous_stage
+      assert_equal nil, Ingest.new(stage: "foobar").previous_stage
+      assert_equal nil, Ingest.new(stage: nil).previous_stage
     end
   end
 

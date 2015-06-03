@@ -328,7 +328,15 @@ class Ingest < ActiveRecord::Base
   end
 
   def next_stage
-    self.class.workflow[self.class.workflow.index(current_stage) + 1] if current_stage
+    workflow_stages[workflow_stages.index(current_stage) + 1] if current_stage
+  end
+
+  def previous_stage
+    workflow_stages[workflow_stages.index(current_stage) - 1] if current_stage && workflow_stages.index(current_stage) - 1 >= 0
+  end
+
+  def workflow_stages
+    self.class.workflow
   end
 
   protected
