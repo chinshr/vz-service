@@ -61,6 +61,47 @@ class Chunk::MechanicalTurkChunk < ::Chunk
       end
     end
 
+    def extracted_truth(full_text, reference_texts)
+      full_text = full_text.dup
+      Array.wrap(reference_texts).each do |reference_text|
+        left, right = match_position(full_text, reference_text)
+        full_text.gsub!(Regexp.new(full_text.slice(left..right), Regexp::IGNORECASE), '')
+      end
+      full_text.squish
+    end
+
+    def match_position(full_text, reference_text)
+      full_text, reference_text = full_text.dup.downcase, reference_text.dup.downcase
+      li, ri = 0, full_text.length - 1
+      ps     = 1.0
+      (0..full_text.length).each do |index|
+        cs  = full_text[li..ri].levenshtein_similar(reference_text)
+        fls = full_text[(li + 1)..ri].levenshtein_similar(reference_text)
+        frs = full_text[li..(ri -1)].levenshtein_similar(reference_text)
+
+        if fls > cs
+          li += 1
+        elsif frs > cs
+          ri -= 1
+        else (fls < cs || frs < cs) && cs > ps
+          return li, ri
+        end
+        ps = cs
+      end
+      return li, ri
+    end
+
+    def match_confidence(full_text, reference_texts)
+      confidence = 0.0
+      reference_texts = Array.wrap(reference_texts)
+      reference_texts.each do |reference_text|
+        m = Amatch::LongestSubsequence.new(full_text.downcase)
+        match_count = m.match(reference_text.downcase)
+        confidence  += match_count / reference_text.downcase.length.to_f
+      end
+      confidence / reference_texts.count.to_f
+    end
+
     protected
 
     def hit_form_url(document)
@@ -91,6 +132,7 @@ class Chunk::MechanicalTurkChunk < ::Chunk
     if is_captcha_based?
       confidence = captcha_confidence
       if confidence > SOURCE_CHUNK_SCORE_THRESHOLD
+        update_columns(text: extracted_truth, score: confidence)
         result = true
         promote_to_sibling_of source_chunk, {confidence: confidence}
       end
@@ -98,6 +140,10 @@ class Chunk::MechanicalTurkChunk < ::Chunk
       result = !text.blank?
     end
     result
+  end
+
+  def extracted_truth
+    self.class.extracted_truth(text, reference_chunks.map(&:text))
   end
 
   def assignment

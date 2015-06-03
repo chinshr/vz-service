@@ -85,6 +85,36 @@ class Chunk::MechanicalTurkChunkTest < ActiveSupport::TestCase
     should "approve" do
       assert_equal true, @mt1.approve?
       assert_equal true, @document.chunks.include?(@mt1)
+      assert_equal "now the earth was formless and empty", @mt1.text
+      assert_equal 1.0, @mt1.score
+    end
+  end
+
+  context "matcher helpers" do
+    setup do
+      @k = Chunk::MechanicalTurkChunk
+    end
+
+    should "#match_position" do
+      l, r = @k.match_position("now the earth was formless and empty i like pickles", "i like pimples")
+      assert_equal [37, 50], [l, r]
+    end
+
+    should "#match_confidence" do
+      assert_equal 1.0, @k.match_confidence("now the earth i like pickles was formless and empty", "i like pickles")
+      assert_equal 1.0, @k.match_confidence("i like pickles now the earth was formless and empty", "i like pickles")
+      assert_equal true, @k.match_confidence("now the earth was formless and empty i like pickles", "i like pimples") > 0.84
+    end
+
+    should "#extracted_truth" do
+      # exact matches
+      assert_equal "now the earth was formless and empty", @k.extracted_truth("i like pickles now the earth was formless and empty", "i like pickles")
+      assert_equal "now the earth was formless and empty", @k.extracted_truth("now the earth was formless and empty i like pickles", "i like pickles")
+      assert_equal "now the earth was formless and empty", @k.extracted_truth("now the earth i like pickles was formless and empty", "i like pickles")
+
+      # fuzzy matches
+      assert_equal "now the earth was formless and empty", @k.extracted_truth("i love pimples now the earth was formless and empty", "i like pickles")
+      assert_equal "now the earth was formless and empty", @k.extracted_truth("i like pickles now the earth was formless and empty", "i love pimples")
     end
   end
 
