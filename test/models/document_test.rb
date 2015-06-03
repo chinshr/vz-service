@@ -42,6 +42,17 @@ class DocumentTest < ActiveSupport::TestCase
         end
       end
     end
+
+    should "accepts_nested_attributes_for :track" do
+      assert_difference "Document.count", 1 do
+        assert_difference "Segment::DocumentSegment.count", 1 do
+          assert_difference "Track::DocumentTrack.count", 1 do
+            document = Document.create(text: "test", title: "test",
+              track_attributes: FactoryGirl.attributes_for(:track))
+          end
+        end
+      end
+    end
   end
 
   context "validations" do

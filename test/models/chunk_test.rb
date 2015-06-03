@@ -80,6 +80,18 @@ class ChunkTest < ActiveSupport::TestCase
     should have_one(:document).through(:master_chunk_segment)
     should have_one(:ingest).through(:master_chunk_segment)
     should have_one(:track).through(:master_chunk_segment)
+
+    should "accepts_nested_attributes_for :track" do
+      document = FactoryGirl.create(:document_with_ingest)
+      assert_difference "Chunk.count", 1 do
+        assert_difference "Segment::ChunkSegment.count", 1 do
+          assert_difference "Track::ChunkTrack.count", 1 do
+            chunk = document.chunks.create(text: "test", offset: 0, position: 1,
+              track_attributes: FactoryGirl.attributes_for(:track))
+          end
+        end
+      end
+    end
   end
 
   context "delegate" do

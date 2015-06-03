@@ -19,7 +19,7 @@ class Document < ActiveRecord::Base
     dependent: :destroy, class_name: "Segment::ChunkSegment"
   has_many :chunks, through: :child_segments, source: :chunk do
     def create(chunk_attributes)
-      Chunk.create({document: proxy_association.owner}.reverse_merge(chunk_attributes))
+      Chunk.create({document: proxy_association.owner, ingest: proxy_association.owner.try(:ingest)}.reject {|k,v| v.blank?}.reverse_merge(chunk_attributes))
     end
   end
   has_many :tracks, through: :chunks, source: :track
@@ -121,7 +121,7 @@ class Document < ActiveRecord::Base
     if is_root?
       # Root document needs to build a segment for its own
       segment_attributes.merge!({document: self})
-      build_master_segment(segment_attributes).build_track(track_attributes)
+      build_master_document_segment(segment_attributes).build_track(track_attributes)
     else
       # Chunks need to update their master segment
       segment_attributes.merge!({chunk: self})
