@@ -95,8 +95,8 @@ class Chunk::MechanicalTurkChunkTest < ActiveSupport::TestCase
       @k = Chunk::MechanicalTurkChunk
     end
 
-    should "#match_position" do
-      l, r = @k.match_position("now the earth was formless and empty i like pickles", "i like pimples")
+    should "#match_boundary" do
+      l, r = @k.match_boundary("now the earth was formless and empty i like pickles", "i like pimples")
       assert_equal [37, 50], [l, r]
     end
 
@@ -106,15 +106,15 @@ class Chunk::MechanicalTurkChunkTest < ActiveSupport::TestCase
       assert_equal true, @k.match_confidence("now the earth was formless and empty i like pickles", "i like pimples") > 0.84
     end
 
-    should "#extracted_truth" do
+    should "#extract_truth" do
       # exact matches
-      assert_equal "now the earth was formless and empty", @k.extracted_truth("i like pickles now the earth was formless and empty", "i like pickles")
-      assert_equal "now the earth was formless and empty", @k.extracted_truth("now the earth was formless and empty i like pickles", "i like pickles")
-      assert_equal "now the earth was formless and empty", @k.extracted_truth("now the earth i like pickles was formless and empty", "i like pickles")
+      assert_equal "now the earth was formless and empty", @k.extract_truth("i like pickles now the earth was formless and empty", "i like pickles")
+      assert_equal "now the earth was formless and empty", @k.extract_truth("now the earth was formless and empty i like pickles", "i like pickles")
+      assert_equal "now the earth was formless and empty", @k.extract_truth("now the earth i like pickles was formless and empty", "i like pickles")
 
       # fuzzy matches
-      assert_equal "now the earth was formless and empty", @k.extracted_truth("i love pimples now the earth was formless and empty", "i like pickles")
-      assert_equal "now the earth was formless and empty", @k.extracted_truth("i like pickles now the earth was formless and empty", "i love pimples")
+      assert_equal "now the earth was formless and empty", @k.extract_truth("i love pimples now the earth was formless and empty", "i like pickles")
+      assert_equal "now the earth was formless and empty", @k.extract_truth("i like pickles now the earth was formless and empty", "i love pimples")
     end
   end
 

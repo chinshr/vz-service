@@ -1,8 +1,6 @@
 require 'amatch'
 
 class Chunk::MechanicalTurkChunk < ::Chunk
-  include Amatch
-
   SOURCE_CHUNK_SCORE_THRESHOLD    = 0.8
   REFERENCE_CHUNK_SCORE_THRESHOLD = 0.95
 
@@ -61,16 +59,16 @@ class Chunk::MechanicalTurkChunk < ::Chunk
       end
     end
 
-    def extracted_truth(full_text, reference_texts)
+    def extract_truth(full_text, reference_texts)
       full_text = full_text.dup
       Array.wrap(reference_texts).each do |reference_text|
-        left, right = match_position(full_text, reference_text)
+        left, right = match_boundary(full_text, reference_text)
         full_text.gsub!(Regexp.new(full_text.slice(left..right), Regexp::IGNORECASE), '')
       end
       full_text.squish
     end
 
-    def match_position(full_text, reference_text)
+    def match_boundary(full_text, reference_text)
       full_text, reference_text = full_text.dup.downcase, reference_text.dup.downcase
       li, ri = 0, full_text.length - 1
       ps     = 1.0
@@ -88,7 +86,7 @@ class Chunk::MechanicalTurkChunk < ::Chunk
         end
         ps = cs
       end
-      return li, ri
+      return 0, 0
     end
 
     def match_confidence(full_text, reference_texts)
@@ -97,7 +95,7 @@ class Chunk::MechanicalTurkChunk < ::Chunk
       reference_texts.each do |reference_text|
         m = Amatch::LongestSubsequence.new(full_text.downcase)
         match_count = m.match(reference_text.downcase)
-        confidence  += match_count / reference_text.downcase.length.to_f
+        confidence  += [1.0, (match_count / reference_text.length.to_f)].min
       end
       confidence / reference_texts.count.to_f
     end
@@ -132,9 +130,10 @@ class Chunk::MechanicalTurkChunk < ::Chunk
     if is_captcha_based?
       confidence = captcha_confidence
       if confidence > SOURCE_CHUNK_SCORE_THRESHOLD
-        update_columns(text: extracted_truth, score: confidence)
+        extracted_text = extract_truth
+        update_columns({text: extracted_text, score: confidence})
         result = true
-        promote_to_sibling_of source_chunk, {confidence: confidence}
+        promote_to_sibling_of source_chunk, {text: extracted_text, score: confidence}
       end
     else
       result = !text.blank?
@@ -142,8 +141,8 @@ class Chunk::MechanicalTurkChunk < ::Chunk
     result
   end
 
-  def extracted_truth
-    self.class.extracted_truth(text, reference_chunks.map(&:text))
+  def extract_truth
+    self.class.extract_truth(text, reference_chunks.map(&:text))
   end
 
   def assignment
@@ -155,7 +154,7 @@ class Chunk::MechanicalTurkChunk < ::Chunk
   def captcha_confidence
     confidence = 0.0
     reference_chunks.each do |reference_chunk|
-      m = LongestSubsequence.new(text.downcase)
+      m = Amatch::LongestSubsequence.new(text.downcase)
       match_count = m.match(reference_chunk.text.downcase)
       confidence  += match_count / reference_chunk.text.downcase.length.to_f
     end
