@@ -399,7 +399,7 @@ class Ingest < ActiveRecord::Base
   end
 
   def after_enter_removing
-    ::Ingest::RemoveWorker.perform_async(self.id)
+    # ::Ingest::RemoveWorker.perform_async(self.id)
   end
 
   def has_valid_upload?
