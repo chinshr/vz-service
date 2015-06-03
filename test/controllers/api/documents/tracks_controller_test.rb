@@ -90,7 +90,7 @@ class Api::Documents::TracksControllerTest < ActionController::TestCase
   context "GET /api/documents/:document_id/tracks.json" do
     should "get index" do
       sign_in :user, @user2
-      get :index, :document_id => @document.id, :is_master => "1", format: :json
+      get :index, :document_id => @document.id, :any_of_types => ["document_track"], format: :json
       assert_response :success
       assert_equal 1, response_body["tracks"].size
       assert_attributes response_body["tracks"].first, Track.find(response_body["tracks"].first["id"])
@@ -161,7 +161,7 @@ class Api::Documents::TracksControllerTest < ActionController::TestCase
   protected
 
   def assert_attributes(response, expected_attributes = {})
-    %w(id mp3_stream_url waveform_json_stream_url is_master created_at).each do |key|
+    %w(id mp3_stream_url waveform_json_stream_url created_at).each do |key|
       assert response.has_key?(key), "should containt key '#{key}' in '#{response}'"
     end
   end

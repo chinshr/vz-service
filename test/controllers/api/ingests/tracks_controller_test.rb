@@ -53,7 +53,6 @@ class Api::Ingests::TracksControllerTest < ActionController::TestCase
       assert_equal @document.id, response_body["track"]["document_id"]
       assert_equal @ingest.iteration, response_body["track"]["ingest_iteration"]
       assert_equal @s3_waveform_json_url, response_body["track"]["s3_waveform_json_url"]
-      assert_equal true, response_body["track"]["is_master"]
       assert_equal duration, response_body["track"]["duration"]
       assert_equal start_at, response_body["track"]["start_at"]
       assert_not_nil response_body["track"]["end_at"]
@@ -106,7 +105,7 @@ class Api::Ingests::TracksControllerTest < ActionController::TestCase
   context "GET /api/ingests/:ingest_id/tracks.json" do
     should "get index" do
       sign_in :user, @user2
-      get :index, :ingest_id => @ingest.id, :is_master => "1", format: :json
+      get :index, :ingest_id => @ingest.id, :any_of_types => ["document_track"], format: :json
       assert_response :success
       assert_equal 1, response_body["tracks"].size
       track = Track.find(response_body["tracks"].first["id"])
@@ -170,7 +169,7 @@ class Api::Ingests::TracksControllerTest < ActionController::TestCase
   protected
 
   def assert_attributes(response, expected_attributes = {})
-    %w(id mp3_stream_url created_at is_master ingest_iteration uid s3_url s3_key s3_mp3_url s3_mp3_key waveform_json_stream_url s3_waveform_json_key updated_at).each do |key|
+    %w(id mp3_stream_url created_at ingest_iteration uid s3_url s3_key s3_mp3_url s3_mp3_key waveform_json_stream_url s3_waveform_json_key updated_at).each do |key|
       assert response.has_key?(key), "should contain key '#{key}' in '#{response}'"
     end
   end

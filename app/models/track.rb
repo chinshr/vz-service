@@ -7,7 +7,7 @@ class Track < ActiveRecord::Base
   validates :s3_url, presence: true
 
   # public scopes
-  filtered_scopes :sort_order, :reverse_sort, :is_master
+  filtered_scopes :sort_order, :reverse_sort, :any_of_types, :none_of_types
   scope :sort_order, -> (param) {
     case param.first[0]  # E.g. get first key of {"id"=>"asc"}
     when "id"
@@ -17,7 +17,8 @@ class Track < ActiveRecord::Base
     end
   }
   scope :reverse_sort, -> (param) { all.reverse_order if Model::Helper.booleanize(param) }
-  scope :is_master, -> (param) { where(type: (Model::Helper.booleanize(param) ? "Track::DocumentTrack" : "Track::ChunkTrack"))}
+  scope :any_of_types, -> (params) {where("tracks.type IN (?)", class_names_for(params))}
+  scope :none_of_types, -> (params) {where("tracks.type NOT IN (?)", class_names_for(params))}
 
   class << self
     # Type casts to the class specified in :type parameter
@@ -80,6 +81,10 @@ class Track < ActiveRecord::Base
       nil
     end
 
+    def class_names_for(params)
+      Array.wrap(params).map {|p| class_name_for(p)}.reject(&:blank?)
+    end
+
     def promote_track_class_for(name, attributes = {})
       attributes.symbolize_keys! if attributes.respond_to?(:symbolize_keys!)
       klass = class_for(name)
@@ -89,11 +94,6 @@ class Track < ActiveRecord::Base
     end
 
   end  # class methods
-
-  def is_master?
-    self.is_a?(Track::DocumentTrack) ? true : false
-  end
-  alias_method :is_master, :is_master?
 
   def s3_key
     self.class.s3_url_to_key(s3_url)

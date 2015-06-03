@@ -12,7 +12,7 @@ class TrackTest < ActiveSupport::TestCase
         })
         assert_equal false, track.new_record?
         assert_equal true, track.is_a?(Track::DocumentTrack)
-        assert_equal true, track.is_master?
+        #assert_equal true, track.is_master?
         assert_equal 0, track.ingest_iteration
         assert_equal @ingest, track.ingest
         assert_equal @ingest.document, track.document
@@ -29,7 +29,7 @@ class TrackTest < ActiveSupport::TestCase
         })
         assert_equal false, track.new_record?
         assert_equal true, track.is_a?(Track::ChunkTrack)
-        assert_equal false, track.is_master?
+        #assert_equal false, track.is_master?
         assert_equal 0, track.ingest_iteration
         assert_equal true, track.chunks.include?(@chunk)
         assert_equal @chunk.id, track.chunk_ids.first
@@ -52,15 +52,8 @@ class TrackTest < ActiveSupport::TestCase
     end
 
     should "have filtered scopes" do
-      assert_equal [:sort_order, :reverse_sort, :is_master, :offset, :limit].to_set,
+      assert_equal [:sort_order, :reverse_sort, :offset, :limit, :any_of_types, :none_of_types].to_set,
         Track.scopes.to_set
-    end
-
-    should "#is_master" do
-      assert_equal [@track1], Track.is_master(1)
-      assert_equal [@track1], Track.is_master("true")
-      assert_equal [@track1], Track.filter("is_master" => "1")
-      assert_equal [@track2], Track.filter("is_master" => "false")
     end
   end
 
