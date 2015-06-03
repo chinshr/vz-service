@@ -1,5 +1,6 @@
 require "core_ext"
 require "model"
+require "job"
 require "mailer"
 require "api"
 require "speech"

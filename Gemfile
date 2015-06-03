@@ -126,3 +126,4 @@ gem 'dalli'
 gem 'rack-cache'
 gem 'kgio'
 gem 'turkee', git: 'https://github.com/chinshr/turkee.git', branch: 'master'
+gem 'activejob_backport'  # remove for Rails ~> 4.2

@@ -141,6 +141,10 @@ class Track < ActiveRecord::Base
       response_content_type: "application/json"}).to_s
   end
 
+  def destroy
+    ::Track::DeleteJob.perform_later(self.id)
+  end
+
   protected
 
   def s3_origin_bucket_name
@@ -148,4 +152,5 @@ class Track < ActiveRecord::Base
     bucket = bucket.gsub(/\/?(.*)/, '\1')
     bucket
   end
+
 end
