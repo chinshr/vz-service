@@ -2,9 +2,12 @@ class Worker::Base
   class << self
 
     def perform_async(params = {})
-      sqs   = AWS::SQS.new
-      queue = sqs.queues.named(queue_name)
-      queue.send_message(params.to_json)
+      # TODO: find better way to stub SQS call
+      unless Rails.env.test?
+        sqs   = AWS::SQS.new
+        queue = sqs.queues.named(queue_name)
+        queue.send_message(params.to_json)
+      end
     end
 
     def perform_workflow(params = {})
