@@ -2,7 +2,6 @@ require 'test_helper'
 
 class Ingest::AudioIngestTest < ActiveSupport::TestCase
   setup do
-    Ingest::AudioWorker.jobs.clear
     ActionMailer::Base.deliveries.clear
   end
 
@@ -46,38 +45,83 @@ class Ingest::AudioIngestTest < ActiveSupport::TestCase
     assert_equal true, ingest.messages.empty?
   end
 
-  should "create worker process with state machine" do
-    ingest = FactoryGirl.create(:ingest_audio)
-    Ingest::AudioWorker.jobs.clear
+  context "worker state machine process" do
+    should "start" do
+      ingest = FactoryGirl.create(:ingest_audio)
+      assert_equal :created, ingest.state
 
-    ingest.start!  # inside model!
-    assert_equal :starting, ingest.state
-    assert_equal 1, Ingest::AudioWorker.jobs.size
+      Ingest::StartWorker.expects(:perform_workflow).with(ingest.id).once
+      Ingest::StopWorker.expects(:perform_workflow).with(ingest.id).never
+      Ingest::ResetWorker.expects(:perform_workflow).with(ingest.id).never
 
-    ingest.process!  # inside worker!
-    assert_equal :started, ingest.state
-    Ingest::AudioWorker.jobs.clear
+      ingest.start!  # inside model!
+      assert_equal :starting, ingest.state
+    end
 
-    ingest.stop!  # inside model!
-    assert_equal :stopping, ingest.state
-    assert_equal 1, Ingest::AudioWorker.jobs.size
+    should "process (from starting)" do
+      ingest = FactoryGirl.create(:ingest_audio, aasm_state: "starting")
+      assert_equal :starting, ingest.state
 
-    ingest.process!  # inside worker!
-    assert_equal :stopped, ingest.state
-    Ingest::AudioWorker.jobs.clear
+      Ingest::StartWorker.expects(:perform_workflow).with(ingest.id).never
+      Ingest::StopWorker.expects(:perform_workflow).with(ingest.id).never
+      Ingest::ResetWorker.expects(:perform_workflow).with(ingest.id).never
 
-    ingest.reset!  # inside model!
-    assert_equal :resetting, ingest.state
-    assert_equal 1, Ingest::AudioWorker.jobs.size
-    assert_equal 0, ingest.iteration
+      ingest.process!  # inside worker!
+      assert_equal :started, ingest.state
+    end
 
-    ingest.process!  # inside worker!
-    assert_equal :reset, ingest.state
-    Ingest::AudioWorker.jobs.clear
-    assert_equal 1, ingest.iteration
+    should "stop (from started)" do
+      ingest = FactoryGirl.create(:ingest_audio, aasm_state: "started")
+      assert_equal :started, ingest.state
+
+      Ingest::StartWorker.expects(:perform_workflow).with(ingest.id).never
+      Ingest::StopWorker.expects(:perform_workflow).with(ingest.id).once
+      Ingest::ResetWorker.expects(:perform_workflow).with(ingest.id).never
+
+      ingest.stop!  # inside model!
+      assert_equal :stopping, ingest.state
+    end
+
+    should "process (from stopping)" do
+      ingest = FactoryGirl.create(:ingest_audio, aasm_state: "stopping")
+      assert_equal :stopping, ingest.state
+
+      Ingest::StartWorker.expects(:perform_workflow).with(ingest.id).never
+      Ingest::StopWorker.expects(:perform_workflow).with(ingest.id).never
+      Ingest::ResetWorker.expects(:perform_workflow).with(ingest.id).never
+
+      ingest.process!  # inside worker!
+      assert_equal :stopped, ingest.state
+    end
+
+    should "reset (from stopped)" do
+      ingest = FactoryGirl.create(:ingest_audio, aasm_state: "stopped")
+      assert_equal :stopped, ingest.state
+
+      Ingest::StartWorker.expects(:perform_workflow).with(ingest.id).never
+      Ingest::StopWorker.expects(:perform_workflow).with(ingest.id).never
+      Ingest::ResetWorker.expects(:perform_workflow).with(ingest.id).once
+
+      ingest.reset!  # inside model!
+      assert_equal :resetting, ingest.state
+      assert_equal 0, ingest.iteration
+    end
+
+    should "process (from resetting)" do
+      ingest = FactoryGirl.create(:ingest_audio, aasm_state: "resetting")
+      assert_equal :resetting, ingest.state
+
+      Ingest::StartWorker.expects(:perform_workflow).with(ingest.id).never
+      Ingest::StopWorker.expects(:perform_workflow).with(ingest.id).never
+      Ingest::ResetWorker.expects(:perform_workflow).with(ingest.id).never
+
+      ingest.process!  # inside worker!
+      assert_equal :reset, ingest.state
+      assert_equal 1, ingest.iteration
+    end
   end
 
-  should "finish process with user" do
+  should "finish process with user and email" do
     ingest = FactoryGirl.create(:ingest_audio, :user => FactoryGirl.create(:user))
 
     ingest.start!  # inside model!

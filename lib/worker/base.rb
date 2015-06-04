@@ -12,7 +12,7 @@ class Worker::Base
     end
 
     def queue_name
-      nm  = name.underscore.gsub(/_worker/, "").upcase
+      nm  = name.split("::").last.underscore.gsub(/_worker/, "").upcase
       env = Rails.env.upcase
       "#{nm}_#{env}_QUEUE"
     end

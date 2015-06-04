@@ -24,48 +24,67 @@ class Ingest::AudioIngest < ::Ingest
   protected
 
   def perform_async
-    Ingest::AudioWorker.perform_async(self.id) if perform_async_scheduled?
-    clear_perform_async!
+    Ingest::StartWorker.perform_workflow(self.id) if perform_async_start_scheduled?
+    Ingest::StopWorker.perform_workflow(self.id) if perform_async_stop_scheduled?
+    Ingest::ResetWorker.perform_workflow(self.id) if perform_async_reset_scheduled?
+    clear_all_perform_async!
   end
 
   def after_enter_starting
     super
-    schedule_perform_async!
+    schedule_perform_async_start!
   end
 
   def after_enter_resetting
     super
-    schedule_perform_async!
+    schedule_perform_async_reset!
   end
 
   def after_enter_stopping
     super
-    schedule_perform_async!
+    schedule_perform_async_stop!
   end
 
   def after_enter_restarting
     super
-    ::Ingest::AudioWorker.perform_async(self.id)
+    Ingest::StartWorker.perform_workflow(self.id)
   end
 
   def enter_finished
     super
-
     # send email
-    ::Ingest::AudioMailer.finished_processing(self).deliver if user
+    Ingest::AudioMailer.finished_processing(self).deliver if user
   end
 
   protected
 
-  def perform_async_scheduled?
-    !!@schedule_perform_async
+  def perform_async_start_scheduled?
+    !!@schedule_perform_async_start
   end
 
-  def schedule_perform_async!
-    @schedule_perform_async = true
+  def schedule_perform_async_start!
+    @schedule_perform_async_start = true
   end
 
-  def clear_perform_async!
-    @schedule_perform_async = nil
+  def perform_async_stop_scheduled?
+    !!@schedule_perform_async_stop
+  end
+
+  def schedule_perform_async_stop!
+    @schedule_perform_async_stop = true
+  end
+
+  def perform_async_reset_scheduled?
+    !!@schedule_perform_async_reset
+  end
+
+  def schedule_perform_async_reset!
+    @schedule_perform_async_reset = true
+  end
+
+  def clear_all_perform_async!
+    @schedule_perform_async_start = nil
+    @schedule_perform_async_stop  = nil
+    @schedule_perform_async_reset = nil
   end
 end
