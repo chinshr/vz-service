@@ -58,10 +58,11 @@ group :test do
   gem 'factory_girl_rails'
   gem 'minitest'
   gem 'simplecov', :require => false
-  #gem 'turn'
+  # gem 'turn'
   gem 'test_after_commit'
   gem 'webmock'
   gem 'timecop'
+  # gem 'fake_sqs'
 end
 
 group :production do
