@@ -23,13 +23,13 @@ class IngestTest < ActiveSupport::TestCase
 
   context "class" do
     should "#queue_name_for" do
-      Ingest::STAGES.each do |name, value|
+      Ingest::stages.each do |name, value|
         assert_equal "#{name.to_s.upcase}_TEST_QUEUE", Ingest::queue_name_for(name)
       end
     end
 
     should "#workflow should return list of stages" do
-      assert_equal [:start, :harvest, :transcode, :split, :crowdout, :finish], Ingest.workflow
+      assert_equal [:start, :harvest, :transcode, :split, :crowdout, :archive, :finish], Ingest.workflow_stage_names
     end
   end
 
@@ -76,7 +76,7 @@ class IngestTest < ActiveSupport::TestCase
 
   context "stages" do
     should "#workflow_stages" do
-      assert_equal [:"start", :"harvest", :"transcode", :"split", :"crowdout", :"finish"],
+      assert_equal [:"start", :"harvest", :"transcode", :"split", :"crowdout", :"archive", :"finish"],
         Ingest.new.workflow_stages
     end
 
@@ -90,7 +90,7 @@ class IngestTest < ActiveSupport::TestCase
       assert_equal :transcode, Ingest.new(stage: "harvest").next_stage
       assert_equal :split, Ingest.new(stage: "transcode").next_stage
       assert_equal :crowdout, Ingest.new(stage: "split").next_stage
-      assert_equal :finish, Ingest.new(stage: "crowdout").next_stage
+      assert_equal :archive, Ingest.new(stage: "crowdout").next_stage
       assert_equal nil, Ingest.new(stage: "finish").next_stage
       assert_equal nil, Ingest.new(stage: "foobar").next_stage
       assert_equal nil, Ingest.new(stage: nil).next_stage
@@ -102,6 +102,8 @@ class IngestTest < ActiveSupport::TestCase
       assert_equal :harvest, Ingest.new(stage: "transcode").previous_stage
       assert_equal :transcode, Ingest.new(stage: "split").previous_stage
       assert_equal :split, Ingest.new(stage: "crowdout").previous_stage
+      assert_equal :crowdout, Ingest.new(stage: "archive").previous_stage
+      assert_equal :archive, Ingest.new(stage: "finish").previous_stage
       assert_equal nil, Ingest.new(stage: "foobar").previous_stage
       assert_equal nil, Ingest.new(stage: nil).previous_stage
     end

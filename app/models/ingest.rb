@@ -4,20 +4,6 @@ class Ingest < ActiveRecord::Base
   include Model::Filter
   include Model::Uid
 
-  STAGE_START       = 100
-  STAGE_HARVEST     = 200
-  STAGE_TRANSCODE   = 300
-  STAGE_SPLIT       = 400
-  STAGE_CROWDOUT    = 450
-  STAGE_FINISH      = 500
-  STAGE_ARCHIVE     = 600
-  STAGES = {
-    start: STAGE_START, harvest: STAGE_HARVEST,
-    transcode: STAGE_TRANSCODE, split: STAGE_SPLIT,
-    crowdout: STAGE_CROWDOUT, finish: STAGE_FINISH,
-    archive: STAGE_ARCHIVE
-  }
-
   STATE_CREATED     = 0
   STATE_STARTING    = 1
   STATE_STARTED     = 2
@@ -126,8 +112,23 @@ class Ingest < ActiveRecord::Base
   end
 
   class << self
-    @@workflow  = [:start, :harvest, :transcode, :split, :crowdout, :finish]
-    def workflow; @@workflow; end
+    def stages
+      st = Worker::Ingest::Base.subclasses.map {|k| [k.stage_name, k.workflow_stage_id || -1]}
+      st.sort_by! {|t| t.last}
+      st.inject(ActiveSupport::OrderedHash.new) {|h, t| h.merge({t.first => t.last}) }
+    end
+
+    def stage_names
+      stages.map {|t| t.first}
+    end
+
+    def workflow_stages
+      stages.select {|k, v| v.to_i > 0}
+    end
+
+    def workflow_stage_names
+      workflow_stages.map {|t| t.first}
+    end
 
     # Type casts to the class specified in :type parameter
     #
@@ -324,7 +325,7 @@ class Ingest < ActiveRecord::Base
   end
 
   def current_stage
-    stage.to_sym if stage && Ingest::STAGES[stage.to_sym].to_i > 0
+    stage.to_sym if stage && self.class.stages[stage.to_sym].to_i > 0
   end
 
   def next_stage
@@ -336,7 +337,10 @@ class Ingest < ActiveRecord::Base
   end
 
   def workflow_stages
-    self.class.workflow
+    # Note: TBD, we can remove a stage based on the user's subscription.
+    @workflow_stages ||= begin
+      self.class.workflow_stage_names
+    end
   end
 
   protected
