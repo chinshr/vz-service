@@ -4,16 +4,13 @@ class Api::ApplicationController < ApplicationController
   include Api::ApplicationHelper
   helper Api::ApplicationHelper
 
-  #before_action :authenticate_user_from_token!
-  #before_action :authenticate_user!
-
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :null_session
 
   respond_to :json, :xml
 
-  before_filter :version_header
+  before_filter :set_response_version_header
 
   rescue_from ActiveRecord::RecordNotFound do |exception|
     process_exception(exception)
@@ -52,46 +49,30 @@ class Api::ApplicationController < ApplicationController
     end
   end
 
-  def version_header
+  def set_response_version_header
     headers['version'] = Api::Version.to_s
   end
 
-  # authentication_secret = SecureRandom.urlsafe_base64(nil, false)
-  #
-  # 1. Create `access_id` (hashed email) in User table
-  #
-  # 2. `access_secret` random hash in User table
-  #
-  # 3. API user is authenticating with
-  #
-  #     &token=<access-id> + ':' + <hexdigest(access_secret)>
-  #
-  # Note: In the user's account section we will provide that token
-  # prepared to be consumed.
-  #
-  # 4. Server looks up User by `access_id`
-  #
-  # 5. Reject user if not of role 'backend' or 'developer'.
-  #
-  # 5. Compares user's hexdigest(access_secret) with User access_secret, the
-  #    (2nd) portion of the token.
-  #
-  #    &token = <access_id>:<hexdigest_access_secret>
-  #
-  def authenticate_user_from_token!
-    binding.pry if headers['Authorization']
-    if access_token = params[:token].presence || headers['Authorization'].presence
-      access_id, access_secret = access_token.try(:split, ':')
-      user = access_id && access_secret && User.find_by(access_id: access_id)
-      # Notice how we use Devise.secure_compare to compare the token
-      # in the database with the token given in the params, mitigating
-      # timing attacks.
-      if user && user.roles.any? {|r| [:backend, :developer].include?(r)} && user.secure_compare_access_secret(access_secret)
-        sign_in user, store: false
-      else
-        raise Api::Exception::AuthorizationError.new(I18n.t('api.error_code.authorization_error.platform'))
-      end
-    end
-  end
 
+  # Passing version header or parameter returning date object.
+  #
+  #     curl \
+  #     -H 'Authorization: $TOKEN' \
+  #     -H 'Accept: application/vnd.vz.api.20150601+json' \
+  #     https://www.voyz.es/api/ingests.json?v=20150101
+  #
+  # or
+  #
+  #     curl \
+  #     -H 'Authorization: $TOKEN' \
+  #     https://www.voyz.es/api/ingests.json?v=20150101
+  #
+  def request_version
+    default_version = Date.today.strftime("%Y%m%d")
+    pattern = /application\/vnd\.vz\.api\.([\d\.]+)\+.*/
+    date_string = params[:v] || request.env['HTTP_ACCEPT'][pattern, 1] || default_version
+    Date.parse(date_string)
+  rescue ArgumentError
+    Date.parse(default_version)
+  end
 end

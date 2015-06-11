@@ -27,7 +27,7 @@ module Api
       end
 
       # ?access_token=<access-token>
-      # or HTTP token authentication header 
+      # or HTTP token authentication header
       #   'Authorization: Token token="$TOKEN"' or
       #   'Authorization: $TOKEN'
       # https://github.com/rails/rails/blob/e57921f83eeef6f39cdc6bba56bda1cafd244337/actionpack/lib/action_controller/metal/http_authentication.rb

@@ -324,21 +324,25 @@ class Ingest < ActiveRecord::Base
     end
   end
 
-  def current_stage
+  def current_stage_name
     stage.to_sym if stage && self.class.stages[stage.to_sym].to_i > 0
   end
 
-  def next_stage
-    workflow_stages[workflow_stages.index(current_stage) + 1] if current_stage
+  def next_stage_name
+    if current_stage_name
+      workflow_stage_names[workflow_stage_names.index(current_stage_name) + 1]
+    end
   end
 
-  def previous_stage
-    workflow_stages[workflow_stages.index(current_stage) - 1] if current_stage && workflow_stages.index(current_stage) - 1 >= 0
+  def previous_stage_name
+    if current_stage_name && workflow_stage_names.index(current_stage_name) - 1 >= 0
+      workflow_stage_names[workflow_stage_names.index(current_stage_name) - 1]
+    end
   end
 
-  def workflow_stages
+  def workflow_stage_names
     # Note: TBD, we can remove a stage based on the user's subscription.
-    @workflow_stages ||= begin
+    @workflow_stage_names ||= begin
       self.class.workflow_stage_names
     end
   end
