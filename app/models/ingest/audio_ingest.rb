@@ -25,8 +25,9 @@ class Ingest::AudioIngest < ::Ingest
 
   def perform_async
     Ingest::StartWorker.perform_workflow(self.id) if perform_async_start_scheduled?
-    Ingest::StopWorker.perform_workflow(self.id) if perform_async_stop_scheduled?
-    Ingest::ResetWorker.perform_workflow(self.id) if perform_async_reset_scheduled?
+    Ingest::StopWorker.perform_async(self.id) if perform_async_stop_scheduled?
+    Ingest::ResetWorker.perform_async(self.id) if perform_async_reset_scheduled?
+    Ingest::RemoveWorker.perform_async(self.id) if perform_async_remove_scheduled?
     clear_all_perform_async!
   end
 
@@ -56,6 +57,11 @@ class Ingest::AudioIngest < ::Ingest
     Ingest::AudioMailer.finished_processing(self).deliver if user
   end
 
+  def after_enter_removing
+    super
+    schedule_perform_async_remove!
+  end
+
   protected
 
   def perform_async_start_scheduled?
@@ -82,9 +88,18 @@ class Ingest::AudioIngest < ::Ingest
     @schedule_perform_async_reset = true
   end
 
+  def perform_async_remove_scheduled?
+    !!@schedule_perform_async_remove
+  end
+
+  def schedule_perform_async_remove!
+    @schedule_perform_async_remove = true
+  end
+
   def clear_all_perform_async!
-    @schedule_perform_async_start = nil
-    @schedule_perform_async_stop  = nil
-    @schedule_perform_async_reset = nil
+    @schedule_perform_async_start  = nil
+    @schedule_perform_async_stop   = nil
+    @schedule_perform_async_reset  = nil
+    @schedule_perform_async_remove = nil
   end
 end

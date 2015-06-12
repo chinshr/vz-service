@@ -51,8 +51,9 @@ class Ingest::AudioIngestTest < ActiveSupport::TestCase
       assert_equal :created, ingest.state
 
       Ingest::StartWorker.expects(:perform_workflow).with(ingest.id).once
-      Ingest::StopWorker.expects(:perform_workflow).with(ingest.id).never
-      Ingest::ResetWorker.expects(:perform_workflow).with(ingest.id).never
+      Ingest::StopWorker.expects(:perform_async).with(ingest.id).never
+      Ingest::ResetWorker.expects(:perform_async).with(ingest.id).never
+      Ingest::RemoveWorker.expects(:perform_async).with(ingest.id).never
 
       ingest.start!  # inside model!
       assert_equal :starting, ingest.state
@@ -63,8 +64,9 @@ class Ingest::AudioIngestTest < ActiveSupport::TestCase
       assert_equal :starting, ingest.state
 
       Ingest::StartWorker.expects(:perform_workflow).with(ingest.id).never
-      Ingest::StopWorker.expects(:perform_workflow).with(ingest.id).never
-      Ingest::ResetWorker.expects(:perform_workflow).with(ingest.id).never
+      Ingest::StopWorker.expects(:perform_async).with(ingest.id).never
+      Ingest::ResetWorker.expects(:perform_async).with(ingest.id).never
+      Ingest::RemoveWorker.expects(:perform_async).with(ingest.id).never
 
       ingest.process!  # inside worker!
       assert_equal :started, ingest.state
@@ -75,8 +77,9 @@ class Ingest::AudioIngestTest < ActiveSupport::TestCase
       assert_equal :started, ingest.state
 
       Ingest::StartWorker.expects(:perform_workflow).with(ingest.id).never
-      Ingest::StopWorker.expects(:perform_workflow).with(ingest.id).once
-      Ingest::ResetWorker.expects(:perform_workflow).with(ingest.id).never
+      Ingest::StopWorker.expects(:perform_async).with(ingest.id).once
+      Ingest::ResetWorker.expects(:perform_async).with(ingest.id).never
+      Ingest::RemoveWorker.expects(:perform_async).with(ingest.id).never
 
       ingest.stop!  # inside model!
       assert_equal :stopping, ingest.state
@@ -87,8 +90,9 @@ class Ingest::AudioIngestTest < ActiveSupport::TestCase
       assert_equal :stopping, ingest.state
 
       Ingest::StartWorker.expects(:perform_workflow).with(ingest.id).never
-      Ingest::StopWorker.expects(:perform_workflow).with(ingest.id).never
-      Ingest::ResetWorker.expects(:perform_workflow).with(ingest.id).never
+      Ingest::StopWorker.expects(:perform_async).with(ingest.id).never
+      Ingest::ResetWorker.expects(:perform_async).with(ingest.id).never
+      Ingest::RemoveWorker.expects(:perform_async).with(ingest.id).never
 
       ingest.process!  # inside worker!
       assert_equal :stopped, ingest.state
@@ -99,8 +103,9 @@ class Ingest::AudioIngestTest < ActiveSupport::TestCase
       assert_equal :stopped, ingest.state
 
       Ingest::StartWorker.expects(:perform_workflow).with(ingest.id).never
-      Ingest::StopWorker.expects(:perform_workflow).with(ingest.id).never
-      Ingest::ResetWorker.expects(:perform_workflow).with(ingest.id).once
+      Ingest::StopWorker.expects(:perform_async).with(ingest.id).never
+      Ingest::ResetWorker.expects(:perform_async).with(ingest.id).once
+      Ingest::RemoveWorker.expects(:perform_async).with(ingest.id).never
 
       ingest.reset!  # inside model!
       assert_equal :resetting, ingest.state
@@ -112,12 +117,39 @@ class Ingest::AudioIngestTest < ActiveSupport::TestCase
       assert_equal :resetting, ingest.state
 
       Ingest::StartWorker.expects(:perform_workflow).with(ingest.id).never
-      Ingest::StopWorker.expects(:perform_workflow).with(ingest.id).never
-      Ingest::ResetWorker.expects(:perform_workflow).with(ingest.id).never
+      Ingest::StopWorker.expects(:perform_async).with(ingest.id).never
+      Ingest::ResetWorker.expects(:perform_async).with(ingest.id).never
+      Ingest::RemoveWorker.expects(:perform_async).with(ingest.id).never
 
       ingest.process!  # inside worker!
       assert_equal :reset, ingest.state
       assert_equal 1, ingest.iteration
+    end
+
+    should "remove (from stopped)" do
+      ingest = FactoryGirl.create(:ingest_audio, aasm_state: "stopped")
+      assert_equal :stopped, ingest.state
+
+      Ingest::StartWorker.expects(:perform_workflow).with(ingest.id).never
+      Ingest::StopWorker.expects(:perform_async).with(ingest.id).never
+      Ingest::ResetWorker.expects(:perform_async).with(ingest.id).never
+      Ingest::RemoveWorker.expects(:perform_async).with(ingest.id).once
+
+      ingest.remove!  # inside model!
+      assert_equal :removing, ingest.state
+    end
+
+    should "process (from removing)" do
+      ingest = FactoryGirl.create(:ingest_audio, aasm_state: "removing")
+      assert_equal :removing, ingest.state
+
+      Ingest::StartWorker.expects(:perform_workflow).with(ingest.id).never
+      Ingest::StopWorker.expects(:perform_async).with(ingest.id).never
+      Ingest::ResetWorker.expects(:perform_async).with(ingest.id).never
+      Ingest::RemoveWorker.expects(:perform_async).with(ingest.id).never
+
+      ingest.process!  # inside worker!
+      assert_equal :removed, ingest.state
     end
   end
 
