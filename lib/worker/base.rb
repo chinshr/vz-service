@@ -11,7 +11,9 @@ class Worker::Base
     end
 
     def perform_workflow(params = {})
-      perform_async(params.reverse_merge(workflow: true))
+      params = params.reverse_merge(workflow: true)
+      puts "-> perform_workflow(#{params.inspect})"
+      Worker::Base.perform_async(params)
     end
 
     def queue_name
