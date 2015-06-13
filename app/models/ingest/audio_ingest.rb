@@ -25,9 +25,9 @@ class Ingest::AudioIngest < ::Ingest
 
   def perform_async
     Ingest::StartWorker.perform_workflow(self.id) if perform_async_start_scheduled?
-    Ingest::StopWorker.perform_async(self.id) if perform_async_stop_scheduled?
-    Ingest::ResetWorker.perform_async(self.id) if perform_async_reset_scheduled?
-    Ingest::RemoveWorker.perform_async(self.id) if perform_async_remove_scheduled?
+    Ingest::StopWorker.perform_async(self.id, {force: true}) if perform_async_stop_scheduled?
+    Ingest::ResetWorker.perform_async(self.id, {force: true}) if perform_async_reset_scheduled?
+    Ingest::RemoveWorker.perform_async(self.id, {force: true}) if perform_async_remove_scheduled?
     clear_all_perform_async!
   end
 

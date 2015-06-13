@@ -77,7 +77,7 @@ class Ingest::AudioIngestTest < ActiveSupport::TestCase
       assert_equal :started, ingest.state
 
       Ingest::StartWorker.expects(:perform_workflow).with(ingest.id).never
-      Ingest::StopWorker.expects(:perform_async).with(ingest.id).once
+      Ingest::StopWorker.expects(:perform_async).with(ingest.id, {:force => true}).once
       Ingest::ResetWorker.expects(:perform_async).with(ingest.id).never
       Ingest::RemoveWorker.expects(:perform_async).with(ingest.id).never
 
@@ -104,7 +104,7 @@ class Ingest::AudioIngestTest < ActiveSupport::TestCase
 
       Ingest::StartWorker.expects(:perform_workflow).with(ingest.id).never
       Ingest::StopWorker.expects(:perform_async).with(ingest.id).never
-      Ingest::ResetWorker.expects(:perform_async).with(ingest.id).once
+      Ingest::ResetWorker.expects(:perform_async).with(ingest.id, {:force => true}).once
       Ingest::RemoveWorker.expects(:perform_async).with(ingest.id).never
 
       ingest.reset!  # inside model!
@@ -133,7 +133,7 @@ class Ingest::AudioIngestTest < ActiveSupport::TestCase
       Ingest::StartWorker.expects(:perform_workflow).with(ingest.id).never
       Ingest::StopWorker.expects(:perform_async).with(ingest.id).never
       Ingest::ResetWorker.expects(:perform_async).with(ingest.id).never
-      Ingest::RemoveWorker.expects(:perform_async).with(ingest.id).once
+      Ingest::RemoveWorker.expects(:perform_async).with(ingest.id, {:force => true}).once
 
       ingest.remove!  # inside model!
       assert_equal :removing, ingest.state

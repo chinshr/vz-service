@@ -29,6 +29,10 @@ Geocoder::Lookup::Test.set_default_stub(
 #WebMock.disable_net_connect!(:net_http_connect_on_start => true)
 Warden.test_mode!
 
+class SQSTestQueue
+  def send_message(message); message; end
+end
+
 class ActiveSupport::TestCase
   require "mocha/setup"
 
@@ -59,9 +63,13 @@ class ActiveSupport::TestCase
   end
 
   setup do
+    # stub geoip
     stub_request(:get, "freegeoip.net/json/95.63.14.59").
       with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Ruby'}).
       to_return(:status => 200, :body => "{}", :headers => {})
+
+    # stub sqs
+    Worker::Base.stubs(:queue).returns(SQSTestQueue.new)
   end
 end
 

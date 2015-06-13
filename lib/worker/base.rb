@@ -1,18 +1,16 @@
 class Worker::Base
+  attr_accessor :params
+  cattr_accessor :queues
+  self.queues = {}
+
   class << self
 
     def perform_async(params = {})
-      # TODO: find better way to stub SQS call
-      unless Rails.env.test?
-        sqs   = AWS::SQS.new
-        queue = sqs.queues.named(queue_name)
-        queue.send_message(params.to_json)
-      end
+      new.perform(params)
     end
 
     def perform_workflow(params = {})
-      params = params.reverse_merge(workflow: true)
-      Worker::Base.perform_async(params)
+      new.perform(params.reverse_merge(workflow: true))
     end
 
     def queue_name
@@ -21,5 +19,25 @@ class Worker::Base
       "#{nm}_#{env}_QUEUE"
     end
 
+    def queue(name = queue_name)
+      @@sqs ||= AWS::SQS.new
+      queues[name.to_sym] ||= @@sqs.queues.named(name)
+    end
+  end  # class methods
+
+  def perform(params = {})
+    self.params = params
+    # TODO: find a better way to stub SQS call
+    queue.send_message(params.to_json)# unless Rails.env.test?
+  end
+
+  protected
+
+  def queue_name
+    self.class.queue_name
+  end
+
+  def queue(name = queue_name)
+    self.class.queue(name)
   end
 end

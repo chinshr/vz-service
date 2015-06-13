@@ -6,7 +6,7 @@ require File.expand_path('../config/application', __FILE__)
 Voyzes::Application.load_tasks
 
 namespace :test do
-  task :run => ['test:units', 'test:functionals', 'test:generators', 'test:integration', 'test:lib', 'test:jobs']
+  task :run => ['test:units', 'test:functionals', 'test:generators', 'test:integration', 'test:lib', 'test:jobs', 'test:workers']
 
   Rake::TestTask.new(lib: "test:prepare") do |t|
     t.libs << "test"
@@ -16,6 +16,11 @@ namespace :test do
   Rake::TestTask.new(jobs: "test:prepare") do |t|
     t.libs << "test"
     t.pattern = 'test/jobs/**/*_test.rb'
+  end
+
+  Rake::TestTask.new(workers: "test:prepare") do |t|
+    t.libs << "test"
+    t.pattern = 'test/workers/**/*_test.rb'
   end
 end
 
