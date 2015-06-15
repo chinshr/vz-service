@@ -1,4 +1,5 @@
 class Api::Account::UploadsController < Api::Account::ApplicationController
+  include Pundit
   include Api::Authorization
 
   before_action :authenticate_user!
@@ -6,6 +7,7 @@ class Api::Account::UploadsController < Api::Account::ApplicationController
 
   # [POST] /api/account/uploads(.:format)
   def create
+    authorize :"account/upload"
     @upload = Upload.new(create_params.permit(:type)) do |u|
       # u.session_id = current_session.id if current_session
     end
@@ -34,6 +36,7 @@ class Api::Account::UploadsController < Api::Account::ApplicationController
 
   # [PUT] /api/account/uploads/:id(.:format)
   def update
+    authorize :"account/upload"
     @upload = current_user.uploads.update(params[:id], update_params)
     respond_with @upload
   end
@@ -65,11 +68,11 @@ class Api::Account::UploadsController < Api::Account::ApplicationController
   protected
 
   def create_params
-    params.require(:upload).permit(:type, :file_name, :file_type, :file_size, :s3_url, :locale, :privacy)
+    params.require(:upload).permit(policy(:"account/upload").permitted_attributes(action_name))
   end
 
   def update_params
-    params.require(:upload).permit(:title, :description, {:tag_list => []}, :locale, :privacy, :event)
+    params.require(:upload).permit(policy(:"account/upload").permitted_attributes(action_name))
   end
 
   def cors_allow_origin
