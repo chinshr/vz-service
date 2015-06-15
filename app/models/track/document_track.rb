@@ -2,7 +2,7 @@ class Track::DocumentTrack < ::Track
   delegate :ingest_id, to: :document_segment, allow_nil: true
   delegate :document_id, to: :document_segment, allow_nil: true
 
-  has_one :document_segment, foreign_key: :track_id, dependent: :nullify, class_name: "Segment::DocumentSegment"
+  has_one :document_segment, -> { where(is_master: true) }, foreign_key: :track_id, dependent: :nullify, class_name: "Segment::DocumentSegment"
   has_one :ingest, through: :document_segment, source: :ingest
   has_one :document, through: :document_segment, source: :document
 
