@@ -324,7 +324,7 @@ class ChunkTest < ActiveSupport::TestCase
       should "transform chunks to rich_text JSON" do
         assert_equal 3, @ingest.document.chunks.best.rich_text.size
         assert_equal "I hate to say", @ingest.document.chunks.best.rich_text[0]['insert']
-        assert_equal 0.0, @ingest.document.chunks.best.rich_text[0]['attributes']['offset']
+        assert_equal 0.0, @ingest.document.chunks.best.rich_text[0]['attributes']['start']
       end
     end
   end # context "scopes"
