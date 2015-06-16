@@ -312,18 +312,19 @@ class ChunkTest < ActiveSupport::TestCase
       end
 
       should "scope best scores" do
-        assert_equal 3, @ingest.chunks.best.count
-        assert_equal [@c1, @c5, @c9], @ingest.chunks.best
+        assert_equal 9, @ingest.document.chunks.count
+        assert_equal 3, @ingest.document.chunks.best.count
+        assert_equal [@c1, @c5, @c9], @ingest.document.chunks.best
       end
 
       should "transform chunks to best text string" do
-        assert_equal "I hate to say that macaronies are the best food in the world", @ingest.chunks.best.text
+        assert_equal "I hate to say that macaronies are the best food in the world", @ingest.document.chunks.best.text
       end
 
       should "transform chunks to rich_text JSON" do
-        assert_equal 3, @ingest.chunks.best.rich_text.size
-        assert_equal "I hate to say", @ingest.chunks.best.rich_text[0]['insert']
-        assert_equal 0.0, @ingest.chunks.best.rich_text[0]['attributes']['offset']
+        assert_equal 3, @ingest.document.chunks.best.rich_text.size
+        assert_equal "I hate to say", @ingest.document.chunks.best.rich_text[0]['insert']
+        assert_equal 0.0, @ingest.document.chunks.best.rich_text[0]['attributes']['offset']
       end
     end
   end # context "scopes"
