@@ -120,12 +120,16 @@ class Chunk < ::Document
       self.all.map(&:text).join(" ").to_s
     end
 
+    # See https://github.com/ottypes/rich-text
     def rich_text
       self.all.map do |chunk|
-        json = {"insert" => chunk.text, "attributes" => {"offset" => chunk.offset.to_f}}
-        json["attributes"]["duration"] = chunk.duration.to_f if chunk.duration
-        json["attributes"]["start_at"] = chunk.start_at.to_s if chunk.start_at
-        json["attributes"]["end_at"]   = chunk.end_at.to_s if chunk.end_at
+        json = {"insert" => chunk.text, "attributes" => {}}
+        json["attributes"]["start"]    = chunk.offset.to_f if chunk.offset
+        json["attributes"]["end"]      = (chunk.offset + chunk.duration).to_f if chunk.duration
+        json["attributes"]["uid"]      = chunk.uid
+        # json["attributes"]["duration"] = chunk.duration.to_f if chunk.duration
+        # json["attributes"]["start_at"] = chunk.start_at.to_s if chunk.start_at
+        # json["attributes"]["end_at"]   = chunk.end_at.to_s if chunk.end_at
         json
       end
     end
