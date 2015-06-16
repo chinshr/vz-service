@@ -46,6 +46,9 @@ class Api::IngestsController < Api::ApplicationController
   end
 
   def update_params
-    params.require(:ingest).permit(policy(@ingest).permitted_attributes)
+    params.require(:ingest).permit(*policy(@ingest).permitted_attributes).tap do |whitelisted|
+      whitelisted[:messages] = params[:ingest][:messages] if params[:ingest][:messages]
+    end
+
   end
 end
