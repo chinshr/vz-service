@@ -110,7 +110,7 @@ module Web::ApplicationHelper
       end
     end
     modifiers = modifiers.reject(&:blank?).inject('') {|s, m| s += m.to_s}
-    key = key.blank? ? "" : (modifiers.blank? ? "(#{key.to_s})" : "(#{modifiers}-#{key})")
+    key = key.blank? ? "" : (modifiers.blank? ? "(#{key.to_s})" : "(#{modifiers}+#{key})")
     "#{string.to_s.humanize} #{key}".html_safe
   end
 

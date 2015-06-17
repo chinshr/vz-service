@@ -163,6 +163,12 @@ class Document < ActiveRecord::Base
     master_document_segment
   end
 
+  # Overrides attribute
+  def rich_text
+    # result = chunks.best.rich_text
+    chunks.rich_text
+  end
+
   protected
 
   def generate_slug

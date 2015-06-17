@@ -12,7 +12,7 @@ body.documents {
   }
 
   header {
-    height: 50px;
+    height: 70px;
 
     nav {
       .tooltip {
@@ -37,8 +37,8 @@ body.documents {
           padding: 0;
 
           .caret {
-            color: #aaa;
-            margin-top: 23px;
+            color: #777;
+            margin-top: 32px;
           }
         }
 
@@ -64,25 +64,25 @@ body.documents {
       } /* .dropdown */
 
       #logo {
-        margin: 13px 0;
+        margin: 15px 0;
         text-indent: -9999px;
-        background: image-url('voyzes-logo-small.png') no-repeat 0 0 !important;
-        width: 75px;
+        background: image-url('main-logo-v.png') no-repeat 0 0 !important;
+        width: 40px;
         @media only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 2/1), only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min-device-pixel-ratio: 2) {
-          background: image-url('voyzes-logo-small@2x.png') no-repeat 0 0 !important;
-          background-size: 66px 24px !important;
+          background: image-url('main-logo-v@2x.png') no-repeat 0 0 !important;
+          background-size: 40px 40px !important;
         }
       }
 
       .toolbar-nav {
-        padding-left: 30px;
+        padding-left: 20px;
 
         li {
           padding: 0;
 
           button {
             outline: none !important;
-            height: 50px;
+            height: 70px;
             margin: auto 5px;
             width: 20px;
           }
@@ -93,15 +93,12 @@ body.documents {
           }
         }
 
-        li.waveform-item {
-          padding: 5px 5px;
-        }
-
         .btn-tlb {
           padding-left: 0;
           padding-right: 0;
           background-color: transparent;
-          color: #ddd;
+          color: #bbb;
+          font-size: 20px;
 
           &:active,
           &:hover {
@@ -125,29 +122,44 @@ body.documents {
             margin-right: 2px;
           }
         }
-        #player-progress-bar {
-          position: absolute;
-          left: 0;
-          top: 50%;
-          margin-top: 0px;
-          height: 3px;
-          left: 0%;
-          width: 90%;
-          z-index: 10;
-        }
 
-        .waveform-container {
-          position: relative;
-          min-width: 300px;
-          height: 40px;
+        li.waveform-item {
+          padding: 5px 5px;
 
-          wave > wave {
+          #player-progress-bar {
+            position: absolute;
             left: 0;
+            top: 50%;
+            margin-top: 0px;
+            height: 2px;
+            left: 0%;
+            width: 90%;
+            z-index: 10;
           }
 
-          canvas {
-            left: 0;
+          .waveform-timeline-container {
+            position: relative;
+            height: 10px;
+            canvas {
+              left: 0;
+            }
+
           }
+
+          .waveform-container {
+            position: relative;
+            min-width: 300px;
+            height: 40px;
+
+            wave > wave {
+              left: 0;
+            }
+
+            canvas {
+              left: 0;
+            }
+          }
+
         }
       } /* .audio-player-nav */
 
