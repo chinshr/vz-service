@@ -1,5 +1,8 @@
 //= require lib/WAAPISim/waapisim
 //= require lib/wavesurfer/wavesurfer.min
+//= require lib/wavesurfer/plugin/wavesurfer.minimap.min
+//= require lib/wavesurfer/plugin/wavesurfer.regions.min
+//= require lib/wavesurfer/plugin/wavesurfer.timeline.min
 //= require lib/quill
 
 /* simply-toast */

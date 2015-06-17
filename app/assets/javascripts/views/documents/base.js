@@ -70,10 +70,11 @@ App.Views.DocumentsBase = Backbone.View.extend({
   },
 
   keyboardEvents: [
-    {key: 32, ctrlKey: false, altKey: false, metaKey: true, shiftKey: true, name: 'toggle-play-pause'},  // Shift+Cmd+Space
-    {key: 37, ctrlKey: false, altKey: false, metaKey: true, shiftKey: true, name: 'step-backward'},      // Shift+Cmd+Left-Cursor
-    {key: 39, ctrlKey: false, altKey: false, metaKey: true, shiftKey: true, name: 'step-forward'},       // Shift+Cmd+Right-Cursor
-    {key: 83, ctrlKey: false, altKey: false, metaKey: true, shiftKey: true, name: 'save'},               // Shift+Cmd+S
+    {name: 'toggle-play-pause', key: 27, ctrlKey: false, altKey: false, metaKey: false, shiftKey: false},  // Esc
+    {name: 'reset', key: 27, ctrlKey: false, altKey: false, metaKey: false, shiftKey: true},  // Shift + Esc
+    {name: 'step-backward', key: 112, ctrlKey: false, altKey: false, metaKey: false, shiftKey: false},      // F1
+    {name: 'step-forward', key: 113, ctrlKey: false, altKey: false, metaKey: false, shiftKey: false},       // F2
+    {name: 'save', key: 83, ctrlKey: false, altKey: false, metaKey: true, shiftKey: true},               // Shift+Cmd+S
   ],
 
   initialize: function() {
@@ -103,23 +104,28 @@ App.Views.DocumentsBase = Backbone.View.extend({
 
   initPlayer: function() {
     var options = {
-      container     : $('#waveform').get(0),  // document.querySelector('#waveform'),
-      height        : 40,
+      container     : '#waveform',  // document.querySelector('#waveform'),
+      height        : 30,
       waveColor     : '#ddd', // 'violet',
       progressColor : '#fff', // '#3f6169', // '#fff',
       loaderColor   : '#555',
       cursorColor   : '#5492ce',
       markerWidth   : 1,
       audioRate     : 1,
+      scrollParent  : true,
       normalize     : true,
-      // backend       : 'MediaElement'
+      minimap       : true,
+      backend       : 'AudioElement'
     };
+
+    /* Initialize wavesurfer */
+    this.wavesurfer.init(options);
 
     /* Progress Bar */
     var progressDiv = document.querySelector('#player-progress-bar');
     var progressBar = progressDiv.querySelector('.progress-bar');
 
-    var showProgress = function (percent) {
+    var showProgress = function(percent) {
       progressDiv.style.display = 'block';
       progressBar.style.width = percent + '%';
     };
@@ -129,22 +135,87 @@ App.Views.DocumentsBase = Backbone.View.extend({
     };
 
     this.wavesurfer.on('loading', showProgress);
-    this.wavesurfer.on('ready', hideProgress);
     this.wavesurfer.on('destroy', hideProgress);
+    this.wavesurfer.on('ready', hideProgress);
     this.wavesurfer.on('error', hideProgress);
 
-    // Play at once when ready
-    // Won't work on iOS until you touch the page
-    this.wavesurfer.on('ready', _.bind(function onReady() {
-      this.wavesurfer.play();
+    /* Load waveform and mp3 streams */
+    this.wavesurfer.util.ajax({
+      responseType: 'json',
+      url: this.adjustProtocol(this.model.attributes.track.waveform_json_stream_url)
+    }).on('success', _.bind(function (data) {
+      // console.log(data.left);
+      this.wavesurfer.load(
+        this.adjustProtocol(this.model.attributes.track.mp3_stream_url),
+        data.left
+      );
     }, this));
 
-    // Do something when the clip is over
+    /* On finish */
     this.wavesurfer.on('finish', function () {
       $(event.target).addClass('fa-play').removeClass('fa-pause');
     });
 
-    // Flash mark when it's played over
+    /* On error */
+    this.wavesurfer.on('error', function (err) {
+      console.error(err);
+    });
+
+    /* Regions */
+    this.wavesurfer.enableDragSelection({
+      color: this.randomColor(0.1)
+    });
+
+    this.wavesurfer.on('ready', _.bind(function onReady() {
+      this.loadRegions();
+      this.saveRegions();
+    }, this));
+
+    this.wavesurfer.on('region-click', function (region, e) {
+      e.stopPropagation();
+      // Play on click, loop on shift click
+      e.shiftKey ? region.playLoop() : region.play();
+    });
+
+    this.wavesurfer.on('region-click', this.editAnnotation);
+    this.wavesurfer.on('region-updated', this.saveRegions);
+    this.wavesurfer.on('region-removed', this.saveRegions);
+    this.wavesurfer.on('region-in', this.highlightRegionChunk);
+
+    this.wavesurfer.on('region-play', _.bind(function (region) {
+      region.once('out', _.bind(function () {
+        this.wavesurfer.play(region.start);
+        this.wavesurfer.pause();
+      }, this));
+    }, this));
+
+    /* Minimap plugin */
+    this.wavesurfer.initMinimap({
+      height: 20,
+      waveColor: '#ddd',
+      progressColor: '#999',
+      // cursorColor: '#999'
+      cursorColor: '#5492ce',
+    });
+
+    /* Timeline plugin */
+    this.wavesurfer.on('ready', _.bind(function () {
+      var timeline = Object.create(WaveSurfer.Timeline);
+      timeline.init({
+        wavesurfer: this.wavesurfer,
+        container: "#waveform-timeline",
+        height: 20,
+        notchPercentHeight: 50,
+        primaryColor: '#fff',
+        secondaryColor: '#c0c0c0',
+        primaryFontColor: '#ccc',
+        secondaryFontColor: '#aaa',
+        fontFamily: 'Arial',
+        fontSize: 8
+      });
+    }, this));
+
+    /* Old mark region */
     this.wavesurfer.on('mark', function (marker) {
       if (marker.timer) { return; }
 
@@ -159,12 +230,7 @@ App.Views.DocumentsBase = Backbone.View.extend({
       }, 100);
     });
 
-    this.wavesurfer.on('error', function (err) {
-      console.error(err);
-    });
-
-    this.wavesurfer.init(options);
-
+    /* Not sure? */
     this.wavesurfer.backend.on('audioprocess', _.bind(function onFinish(time) {
       if (time >= this.wavesurfer.getDuration() - 0.01) {
         $('.player-play-pause').addClass('fa-play').removeClass('fa-pause');
@@ -173,11 +239,6 @@ App.Views.DocumentsBase = Backbone.View.extend({
       }
     }, this));
 
-    console.log('stream URL -> ' + this.model.attributes.track.mp3_stream_url);
-    this.wavesurfer.load(this.model.attributes.track.mp3_stream_url);
-    // this.wavesurfer.load("http://localhost:3000/6s8l775jqc.128.mp3");
-    // this.wavesurfer.load("http://localhost:3000/samples/i-like-pickles.wav");
-    // this.wavesurfer.load("https://s3-eu-west-1.amazonaws.com/soundmites/f5/4779e0c3a111e3b368f97e5bff4d34/coincidence.mp3");
   },
 
   initEditor: function() {
@@ -323,7 +384,7 @@ App.Views.DocumentsBase = Backbone.View.extend({
   playerKeyboardHandler: function(event) {
     var match = _.where(this.keyboardEvents, {key: event.keyCode, ctrlKey: event.ctrlKey,
       metaKey: event.metaKey, shiftKey: event.shiftKey, altKey: event.altKey});
-    //console.log(event.keyCode);
+    console.log(event.keyCode);
     if (match.length > 0) {
       var handler = this.handlers[match[0].name];
       event.preventDefault();
@@ -366,5 +427,63 @@ App.Views.DocumentsBase = Backbone.View.extend({
         };
       })(this)
     });
+  },
+
+  adjustProtocol: function(url) {
+    if (window.location.protocol === "https:") {
+      return url.replace(/^http:/, 'https:');
+    } else {
+      return url;
+    }
+  },
+
+  loadRegions: function() {
+    var regions, ops;
+
+    // extract ops
+    if (Object.prototype.toString.call(this.model.attributes.rich_text) === '[object Array]') {
+      ops = this.model.attributes.rich_text;
+    } else {
+      ops = this.model.attributes.rich_text['ops'] || [];
+    }
+
+    // build regions
+    regions = ops.map(_.bind(function (op) {
+      var region = {};
+      if (op.attributes) {
+        region.id    = op.attributes.uid;
+        region.start = op.attributes.start;
+        region.end   = op.attributes.end;
+        region.color = this.randomColor(0.3);
+      }
+      return region;
+    }, this));
+
+
+    regions.forEach(_.bind(function (region) {
+      console.log(region);
+      this.wavesurfer.addRegion(region);
+    }, this));
+  },
+
+  saveRegions: function() {
+    console.log("saveRegions()");
+  },
+
+  editAnnotation: function(region) {
+    console.log("editAnnotation()");
+  },
+
+  highlightRegionChunk: function(region) {
+    console.log("highlightRegionChunk()");
+  },
+
+  randomColor: function(alpha) {
+    return 'rgba(' + [
+      ~~(Math.random() * 255),
+      ~~(Math.random() * 255),
+      ~~(Math.random() * 255),
+      alpha || 1
+    ] + ')';
   }
 });

@@ -77,6 +77,8 @@ var Player = (function() {
   var adjustProtocol = function(url) {
     if (window.location.protocol === "https:") {
       return url.replace(/^http:/, 'https:');
+    } else {
+      return url;
     }
   }
 
@@ -179,6 +181,7 @@ var Player = (function() {
 
 $(function() {
   $('.btn-tlb').tooltip();
-
-  Player.init(chunk);
+  if (typeof(chunk) !== 'undefined') {
+    Player.init(chunk);
+  }
 });
