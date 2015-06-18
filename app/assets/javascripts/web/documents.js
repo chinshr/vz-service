@@ -3,7 +3,9 @@
 //= require lib/wavesurfer/plugin/wavesurfer.minimap.min
 //= require lib/wavesurfer/plugin/wavesurfer.regions.min
 //= require lib/wavesurfer/plugin/wavesurfer.timeline.min
-//= require lib/quill
+//= require lib/quill/quill
+//= require lib/quill/modules/segmentation
+//= require lib/quill/modules/toolbar
 
 /* simply-toast */
 $.extend(true, $.notify.defaultOptions, {
@@ -19,16 +21,18 @@ $.extend(true, $.notify.defaultOptions, {
 
 /* Tooltips */
 $(document).ready(function() {
-  $('.btn-tlb').tooltip({});
+  $('.btn-tlb[data-toggle="tooltip"]').tooltip({});
 });
 
-// popover
+/* Popovers */
 $(document).ready(function() {
 
-  $('.btn-popover').popover({ 
+  /* share button popover */
+  $('.btn-popover').popover({
     container: 'body',
     html : true,
     placement: 'bottom',
+    template: '<div class="popover share-popover" id="share-popover"><div class="arrow"></div><div class="popover-content"></div></div>',
     title: function() {
       return $('#' + $(this).data('target') + " .popover-title").html();
     },
@@ -38,10 +42,13 @@ $(document).ready(function() {
   }).on('shown.bs.popover', function(e) {
     VZ.social.bind();
   });
-
 });
 
-// dropdown
+/* Dropdowns */
 $(document).ready(function() {
   $('.dropdown-toggle').dropdown();
+});
+
+/* Sliders */
+$(document).ready(function() {
 });

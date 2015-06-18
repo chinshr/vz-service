@@ -44,26 +44,30 @@ App.Views.DocumentsBase = Backbone.View.extend({
       this.wavesurfer.toggleMute();
     },
 
-    'toggle-playback-rate': function (event) {
-      if (this.wavesurfer.backend.playbackRate > 1.0) {
-        $(event.target).addClass('fa-angle-double-down').removeClass('fa-angle-down');
-        this.wavesurfer.backend.setPlaybackRate(1);
-      } else if (this.wavesurfer.backend.playbackRate == 1) {
-        if ($(event.target).hasClass('fa-angle-double-up')) {
-          $(event.target).addClass('fa-angle-down').removeClass('fa-angle-double-up').removeClass('fa-angle-douple-down');
-          this.wavesurfer.backend.setPlaybackRate(1.25);
-        } else if ($(event.target).hasClass('fa-angle-double-down')){
-          $(event.target).addClass('fa-angle-up').removeClass('fa-angle-double-down').removeClass('fa-angle-douple-up');
-          this.wavesurfer.backend.setPlaybackRate(0.75);
+    'playback-rate-down': function (event) {
+      var value;
+      if (value = $("#playback-speed-slider").slider("getValue")) {
+        value -= 0.5;
+        if (value >= 0.5) {
+          this.wavesurfer.backend.setPlaybackRate(value);
+          $("#playback-speed-slider").slider("setValue", value);
+          $("#playback-speed-btn p").html(this.floatToFraction(value));
         }
-      } else if (this.wavesurfer.backend.playbackRate < 1.0) {
-        $(event.target).addClass('fa-angle-double-up').removeClass('fa-angle-up');
-        this.wavesurfer.backend.setPlaybackRate(1);
-      } else {
-        $(event.target).addClass('fa-angle-double-up').removeClass('fa-angle-up').removeClass('fa-angle-douple-down').removeClass('fa-angle-douple-up');
-        this.wavesurfer.backend.setPlaybackRate(1);
       }
     },
+
+    'playback-rate-up': function (event) {
+      var value;
+      if (value = $("#playback-speed-slider").slider("getValue")) {
+        value += 0.5;
+        if (value <= 3) {
+          this.wavesurfer.backend.setPlaybackRate(value);
+          $("#playback-speed-slider").slider("setValue", value);
+          $("#playback-speed-btn p").html(this.floatToFraction(value));
+        }
+      }
+    },
+
     'save': function () {
       this.save();
     },
@@ -74,6 +78,8 @@ App.Views.DocumentsBase = Backbone.View.extend({
     {name: 'reset', key: 27, ctrlKey: false, altKey: false, metaKey: false, shiftKey: true},  // Shift + Esc
     {name: 'step-backward', key: 112, ctrlKey: false, altKey: false, metaKey: false, shiftKey: false},      // F1
     {name: 'step-forward', key: 113, ctrlKey: false, altKey: false, metaKey: false, shiftKey: false},       // F2
+    {name: 'playback-rate-down', key: 114, ctrlKey: false, altKey: false, metaKey: false, shiftKey: false},       // F3
+    {name: 'playback-rate-up', key: 115, ctrlKey: false, altKey: false, metaKey: false, shiftKey: false},       // F4
     {name: 'save', key: 83, ctrlKey: false, altKey: false, metaKey: true, shiftKey: true},               // Shift+Cmd+S
   ],
 
@@ -118,6 +124,9 @@ App.Views.DocumentsBase = Backbone.View.extend({
       backend       : 'AudioElement'
     };
 
+    /* Init playback speed slider */
+    this.initPlaybackSpeedSlider();
+
     /* Initialize wavesurfer */
     this.wavesurfer.init(options);
 
@@ -151,10 +160,16 @@ App.Views.DocumentsBase = Backbone.View.extend({
       );
     }, this));
 
+    /* Update time */
+    this.wavesurfer.on('seek', _.bind(function (e) {
+      this.updatePlayTime();
+    }, this));
+
     /* On finish */
-    this.wavesurfer.on('finish', function () {
+    this.wavesurfer.on('finish', _.bind(function () {
       $(event.target).addClass('fa-play').removeClass('fa-pause');
-    });
+      this.updatePlayTime();
+    }, this));
 
     /* On error */
     this.wavesurfer.on('error', function (err) {
@@ -169,6 +184,7 @@ App.Views.DocumentsBase = Backbone.View.extend({
     this.wavesurfer.on('ready', _.bind(function onReady() {
       this.loadRegions();
       this.saveRegions();
+      this.clearSegmentHighlights();
     }, this));
 
     this.wavesurfer.on('region-click', function (region, e) {
@@ -180,7 +196,8 @@ App.Views.DocumentsBase = Backbone.View.extend({
     this.wavesurfer.on('region-click', this.editAnnotation);
     this.wavesurfer.on('region-updated', this.saveRegions);
     this.wavesurfer.on('region-removed', this.saveRegions);
-    this.wavesurfer.on('region-in', this.highlightRegionChunk);
+    this.wavesurfer.on('region-in', _.bind(this.highlightSegment, this));
+    this.wavesurfer.on('region-out', _.bind(this.lowlightSegment, this));
 
     this.wavesurfer.on('region-play', _.bind(function (region) {
       region.once('out', _.bind(function () {
@@ -208,11 +225,26 @@ App.Views.DocumentsBase = Backbone.View.extend({
         notchPercentHeight: 50,
         primaryColor: '#fff',
         secondaryColor: '#c0c0c0',
-        primaryFontColor: '#ccc',
-        secondaryFontColor: '#aaa',
-        fontFamily: 'Arial',
+        primaryFontColor: '#fff',
+        secondaryFontColor: '#ccc',
+        fontFamily: "'Lato', sans-serif",
         fontSize: 8
       });
+    }, this));
+
+    /* Play time */
+    this.wavesurfer.on('play', _.bind(function (e) {
+      this.playTimer();
+    }, this));
+
+    this.wavesurfer.on('pause', _.bind(function (e) {
+      this.stopPlayTimer();
+      this.updatePlayTime();
+    }, this));
+
+    this.wavesurfer.on('finish', _.bind(function (e) {
+      this.stopPlayTimer();
+      this.updatePlayTime();
     }, this));
 
     /* Old mark region */
@@ -238,7 +270,6 @@ App.Views.DocumentsBase = Backbone.View.extend({
         this.wavesurfer.stop();
       }
     }, this));
-
   },
 
   initEditor: function() {
@@ -266,8 +297,9 @@ App.Views.DocumentsBase = Backbone.View.extend({
 
     this.contentEditor = new Quill('#content-editor', {
       'modules': {
+        'segmentation': { enabled: true },
         'toolbar': {
-          container: '#content-editor-toolbar-container'
+          container: '.content-editor-toolbar-container'
         },
       },
       'styles': false  // '/assets/web/quill-content-editor.css'
@@ -286,7 +318,8 @@ App.Views.DocumentsBase = Backbone.View.extend({
         if (source == 'api') {
           console.log("An API call triggered this change.");
         } else if (source == 'user') {
-          _this.model.set({html: $.trim(this.getHTML()), rich_text: this.getContents(), text: this.getText()})
+          console.log(this.getContents());
+          // _this.model.set({html: $.trim(this.getHTML()), rich_text: this.getContents(), text: this.getText()})
         }
       };
     })(this));
@@ -332,14 +365,18 @@ App.Views.DocumentsBase = Backbone.View.extend({
       return function(range) {
         if (range) {
           if (range.start == range.end) {
-            // console.log('User cursor is on', range.start);
+            console.log('User cursor is on', range.start);
             _this.moveUserInitials(this);
+            // TODO remove all popups
+            _this.hideContentEditorFormatPopover();
           } else {
-            // var text = editor.getText(range.start, range.end);
-            // console.log('User has highlighted', text);
+            var text = _this.contentEditor.getText(range.start, range.end);
+            // TODO show format popup
+            console.log('User has highlighted', text);
+            _this.showContentEditorFormatPopover(this);
           }
         } else {
-          // console.log('Cursor not in the editor');
+          // TODO remove, this block is never reached
         }
       }
     })(this));
@@ -364,6 +401,109 @@ App.Views.DocumentsBase = Backbone.View.extend({
     }
   },
 
+  initPlaybackSpeedSlider: function() {
+    $("input.playback-speed-slider").slider({
+      id: "playback-speed-slider-wrapper",
+      min: 0.5,
+      max: 3,
+      step: 0.5,
+      precision: 1,
+      orientation: 'horizontal',
+      value: 1,
+      tooltip: 'hide',  // 'show' || 'hide' || 'always'
+      handle: 'round',  // 'square' || 'triangle' || 'custom'
+      // ticks: [0.5, 3],
+    }).on('change', _.bind(function(e) {
+      e.preventDefault();
+      var value = e.value.newValue;
+      console.log(value);
+      this.wavesurfer.backend.setPlaybackRate(value);
+      $("#playback-speed-btn p").html(this.floatToFraction(value));
+    }, this));
+  },
+
+  initContentEditorFormatPopover: function() {
+    $('#content-editor').popover({
+      container: 'body',
+      html : true,
+      trigger: 'manual',
+      placement: 'top',
+      template: '<div class="popover content-editor-format-popover" id="content-editor-format-popover"><div class="arrow"></div><div class="popover-content toolbar-nav"></div></div>',
+      content: function() {
+        var ob = $('nav ul.content-editor-toolbar-container');
+        // var nb = ob.clone().wrap('<div>').parent();
+        var nb = ob.clone();
+        nb.attr('id', 'foo');
+        return nb.wrap('<div>').parent().html();
+      }
+    }).on('show.bs.popover', function(e) {
+      // console.log("show popover");
+    }).on('shown.bs.popover', _.bind(function(e) {
+      // console.log("shown popover");
+      /* override = unset `!important` */
+      $('#content-editor-format-popover').each(function () {
+        var style = this.style.cssText;
+        style = style.replace(new RegExp('\\!important', 'g'), '');
+        this.style.cssText = style;
+      });
+      /* re-bind toolbar */
+      this.contentEditor.modules.toolbar.bind("#foo");
+    }, this));
+
+    // TODO: event `inserted.bs.popover` does not work in this
+    // version of Bootstrap, following is a workaround to set
+    // position before the popover is inserted into DOM.
+    $('body').on('DOMNodeInserted', (function(_this) {
+      return function (e) {
+        if ($(e.target).attr("id") === 'content-editor-format-popover') {
+          pos = _this.callback(e.target);
+          $('#content-editor-format-popover').each(function () {
+            this.style.setProperty('left', pos[0] + 'px', 'important');
+            this.style.setProperty('top', pos[1] + 'px', 'important');
+          });
+        }
+      }
+    })(this));
+  },
+
+  showContentEditorFormatPopover: function(editor) {
+    var sel = editor.root.ownerDocument.getSelection();
+    if (sel && sel.rangeCount > 0) {
+      var selrg = sel.getRangeAt(0);
+      if (selrg) {
+        var rects = selrg.getClientRects();
+        if (rects.length > 0) {
+          this.callback = (function(rect) {
+            return function(popover) {
+              var left = window.scrollX + rect.left + ((rect.right - rect.left) / 2) - ($(popover).width() / 2);
+              var top  = window.scrollY + rect.top - $(popover).height() - 5;
+              return [left, top];
+            }
+          })(rects[0]);
+
+          var popover = $('#content-editor-format-popover');
+          if (popover && popover.is(':visible')) {
+            var pos = this.callback(popover);
+            popover.stop().animate({
+              left: pos[0],
+              top: pos[1]
+            }, 0);
+          } else {
+            // triggers event to position using callback
+            $("#content-editor").popover("show");
+          }
+        }
+      }
+    }
+  },
+
+  hideContentEditorFormatPopover: function() {
+    var popover = $('#content-editor-format-popover');
+    if (popover && popover.is(':visible')) {
+      $("#content-editor").popover("hide");
+    }
+  },
+
   moveUserInitials: function(editor, margin) {
     margin = margin || -86;
     var sel = editor.root.ownerDocument.getSelection();
@@ -384,7 +524,7 @@ App.Views.DocumentsBase = Backbone.View.extend({
   playerKeyboardHandler: function(event) {
     var match = _.where(this.keyboardEvents, {key: event.keyCode, ctrlKey: event.ctrlKey,
       metaKey: event.metaKey, shiftKey: event.shiftKey, altKey: event.altKey});
-    console.log(event.keyCode);
+    // console.log(event.keyCode);
     if (match.length > 0) {
       var handler = this.handlers[match[0].name];
       event.preventDefault();
@@ -396,6 +536,42 @@ App.Views.DocumentsBase = Backbone.View.extend({
     var action = event.target.dataset && event.target.dataset.action;
     if (action && action in this.handlers) {
       _.bind(this.handlers[action], this)(event);
+    }
+  },
+
+  playTimer: function() {
+    this.stopPlayTimer();
+    this.playTimerInterval = setInterval((function(_this) {
+      return function() {
+        _this.updatePlayTime();
+      };
+    })(this), 100);
+  },
+
+  updatePlayTime: function() {
+    var elt = this.wavesurfer.getCurrentTime();
+    var ttp = this.wavesurfer.getDuration() - elt;
+    $('#elt').html(this.formatTime(elt));
+    $('#ttp').html("-" + this.formatTime(ttp));
+  },
+
+  stopPlayTimer: function() {
+    return window.clearInterval(this.playTimerInterval);
+  },
+
+  formatTime: function(number) {
+    var h, m, s, f;
+    number = Math.round(number * 10) / 10;
+    number = (number).toString().split('.');
+    s = parseInt(number[0]);
+    f = parseInt(number[1] || '0');
+    h = Math.floor(s / 3600);
+    m = Math.floor((s % 3600) / 60);
+    s = Math.floor((s % 3600) % 60);
+    if (h > 0) {
+      return sprintf("%.2d:%.2d:%.2d.%.1d", h, m, s, f);
+    } else {
+      return sprintf("%.2d:%.2d.%.1d", m, s, f);
     }
   },
 
@@ -451,7 +627,7 @@ App.Views.DocumentsBase = Backbone.View.extend({
     regions = ops.map(_.bind(function (op) {
       var region = {};
       if (op.attributes) {
-        region.id    = op.attributes.uid;
+        region.id    = op.attributes.segment;
         region.start = op.attributes.start;
         region.end   = op.attributes.end;
         region.color = this.randomColor(0.3);
@@ -474,8 +650,24 @@ App.Views.DocumentsBase = Backbone.View.extend({
     console.log("editAnnotation()");
   },
 
-  highlightRegionChunk: function(region) {
-    console.log("highlightRegionChunk()");
+  clearSegmentHighlights: function() {
+    console.log("clearSegmentHighlights()");
+    $('span').filter(function() { return $(this).attr('class').match(/segment-/) }).removeClass('segment-highlight');
+  },
+
+  highlightSegment: function(region) {
+    console.log("highlightSegment()");
+    this.clearSegmentHighlights();
+    if (region && region.id) {
+      $(".segment-" + region.id).addClass("segment-highlight");
+    }
+  },
+
+  lowlightSegment: function(region) {
+    console.log("lowlightSegment()");
+    if (region && region.id) {
+      $(".segment-" + region.id).removeClass("segment-highlight");
+    }
   },
 
   randomColor: function(alpha) {
@@ -485,5 +677,15 @@ App.Views.DocumentsBase = Backbone.View.extend({
       ~~(Math.random() * 255),
       alpha || 1
     ] + ')';
+  },
+
+  floatToFraction: function(number) {
+    var half = "";
+    var full = parseInt(number) < 1 ? "" : parseInt(number);
+    if (Math.abs(parseInt(number) - number) > 0) {
+      half = "½";
+    }
+    return "" + full + half + "×";
   }
+
 });

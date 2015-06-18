@@ -14,7 +14,7 @@
             <a id="logo" class="navbar-brand">VOYZ.ES</a>
             <span class="caret"></span>
           </button>
-          <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
+          <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
             <li role="presentation"><a role="menuitem" href="/dashboard"><i class="fa fa-level-up"></i>Dashboard</a></li>
             <% if (show? || edit?) && (policy(@document).edit? || policy(@document).show?) %>
             <li class="divider"></li>
@@ -33,6 +33,7 @@
         <ul id="media-player-toolbar-container" class="nav navbar-nav toolbar-nav audio-player-nav">
           <!-- player -->
           <li><button title="<%= key_cmd(:play, 'Esc') %>" type="button" class="btn btn-lg btn-tlb fa fa-play fa-fw player player-play-pause" data-action="toggle-play-pause" data-toggle="tooltip" data-placement="bottom"></button></li>
+          <li><button type="button" class="btn btn-lg btn-tlb btn-elt"><p id="elt">00:00.0</p></button></li>
           <li class="waveform-item">
             <div id="waveform-timeline" class="waveform-timeline-container"></div>
             <div id="waveform" class="waveform-container">
@@ -42,14 +43,26 @@
               <!-- here goes the waveform -->
             </div>
           </li>
-          <li><button title="<%= key_cmd(:toggle_playback_speed) %>" type="button" class="btn btn-lg btn-tlb fa fa-fw fa-angle-double-up player player-toggle-playback-rate" data-action="toggle-playback-rate" data-toggle="tooltip" data-placement="bottom"></button></li>
-          <li><button title="<%= key_cmd(:step_backward, "F1") %>" type="button" class="btn btn-md btn-tlb fa fa-step-backward fa-fw player player-step-backward" data-action="step-backward" data-toggle="tooltip" data-placement="bottom"></button></li>
-          <li><button title="<%= key_cmd(:step_forward, "F2") %>" type="button" class="btn btn-md btn-tlb fa fa-step-forward fa-fw player player-step-forward" data-action="step-forward" data-toggle="tooltip" data-placement="bottom"></button></li>
-          <li><button title="<%= key_cmd(:stop, 'Esc', [:shift_key]) %>" type="button" class="btn btn-md btn-tlb fa fa-stop fa-fw player player-reset" data-action="reset" data-toggle="tooltip" data-placement="bottom"></button></li>
+          <li><button type="button" class="btn btn-lg btn-tlb btn-ttp"><p id="ttp">-00:00.0</p></button></li>
+          <li><button title="<%= key_cmd(:step_backward, "F1") %>" type="button" class="btn btn-md btn-tlb fa fa-backward fa-fw player player-step-backward" data-action="step-backward" data-toggle="tooltip" data-placement="bottom"></button></li>
+          <li><button title="<%= key_cmd(:step_forward, "F2") %>" type="button" class="btn btn-md btn-tlb fa fa-forward fa-fw player player-step-forward" data-action="step-forward" data-toggle="tooltip" data-placement="bottom"></button></li>
+          <li>
+            <button type="button" id="playback-speed-btn" class="btn btn-lg btn-tlb btn-speed player dropdown-toggle" data-toggle="dropdown"><p>1×</p></button>
+            <ul id="playback-speed-menu" class="dropdown-menu">
+              <li>
+                <ul class="toolbar-nav sub-toolbar-nav">
+                  <li><button title="<%= key_cmd(:slower, "F3") %>" type="button" class="btn btn-md btn-tlb fa fa-angle-down fa-fw player player-step-backward" data-action="playback-rate-down" data-toggle="tooltip" data-placement="left"></button></li>
+                  <li class="slider-container"><input id="playback-speed-slider" class="playback-speed-slider"/></li>
+                  <li><button title="<%= key_cmd(:faster, "F4") %>" type="button" class="btn btn-md btn-tlb fa fa-angle-up fa-fw player player-step-backward" data-action="playback-rate-up" data-toggle="tooltip" data-placement="right"></button></li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li><button title="<%= key_cmd(:reset, 'Esc', [:shift_key]) %>" type="button" class="btn btn-md btn-tlb fa fa-stop fa-fw player player-reset" data-action="reset" data-toggle="tooltip" data-placement="bottom"></button></li>
         </ul>
 
         <% if edit? %>
-        <ul id="content-editor-toolbar-container" class="nav navbar-nav toolbar-nav">
+        <ul class="nav navbar-nav toolbar-nav content-editor-toolbar-container">
           <!-- font-style -->
           <li><button title="<%= key_cmd(:bold, 'B', :meta_key) %>" type="button" class="btn btn-md btn-tlb ql-bold fa fa-bold fa-fw" data-toggle="tooltip" data-placement="bottom"></button></li>
           <li><button title="<%= key_cmd(:italic, 'I', :meta_key) %>" type="button" class="btn btn-md btn-tlb ql-italic fa fa-italic fa-fw" data-toggle="tooltip" data-placement="bottom"></button></li>

@@ -180,7 +180,7 @@ var Player = (function() {
 })();
 
 $(function() {
-  $('.btn-tlb').tooltip();
+//  $('.btn-tlb').tooltip();
   if (typeof(chunk) !== 'undefined') {
     Player.init(chunk);
   }

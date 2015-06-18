@@ -8,6 +8,7 @@ App.Views.DocumentsEdit = App.Views.DocumentsBase.extend({
       this.initEditor();
       this.initPlayer();
       this.initUserInitials();
+      this.initContentEditorFormatPopover();
       $('#document-loading').hide();
       $('#document-edit').show();
     } else if (this.model.errors) {
