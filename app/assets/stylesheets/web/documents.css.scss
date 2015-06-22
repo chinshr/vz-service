@@ -11,6 +11,113 @@ body.documents {
      }
   }
 
+  /* Used in toolbar and popover */
+  .toolbar-nav {
+    padding-left: 20px;
+
+    li {
+      padding: 0;
+
+      button {
+        outline: none !important;
+        height: 70px;
+        margin: auto 5px;
+        width: 20px;
+      }
+
+      &.separator {
+        padding-left: 3px;
+        padding-right: 3px;
+      }
+    }
+
+    .btn-tlb {
+      padding-left: 0;
+      padding-right: 0;
+      background-color: transparent;
+      color: #bbb;
+      font-size: 20px;
+
+      &:active,
+      &:hover {
+        color: #fff;
+      }
+
+      &.ql-active {
+        color: $color-blue;
+        xcolor: $color-orange;
+      }
+    }
+
+    .btn-speed {
+      font-family: $font-family;
+      font-weight: 800px;
+      font-size: 21px;
+      letter-spacing: -2px;
+      width: 35px !important;
+
+      p {
+        margin: 1px 0 5px 0;
+        display: -webkit-flex; /* Safari */
+        -webkit-justify-content: space-around; /* Safari 6.1+ */
+        display: flex;
+        justify-content: space-around;
+        text-align: justify;
+        text-justify: inter-word;
+      }
+    }
+
+    .btn-elt, .btn-ttp {
+      font-family: $font-family;
+      font-weight: 800px;
+      font-size: 11px;
+      letter-spacing: -1px;
+      width: 36px !important;
+
+      p {
+        margin: 5px 0;
+        display: -webkit-flex; /* Safari */
+        -webkit-justify-content: space-around; /* Safari 6.1+ */
+        display: flex;
+        justify-content: space-around;
+        text-align: justify;
+        text-justify: inter-word;
+        font-weight: bold;
+      }
+    }
+
+  } /* .toolbar-nav */
+
+  ul.sub-toolbar-nav {
+    padding-left: 3px;
+
+    li {
+      display: inline;
+
+      #playback-speed-slider-wrapper {
+        margin-top: 4px;
+        width: 100px;
+
+        .slider-track {
+          height: 5px;
+        }
+
+        .slider-handle {
+          height: 15px;
+          width: 15px;
+        }
+      }
+
+      input.playback-speed-slider {
+        margin: 0 2px;
+      }
+
+      button {
+        height: 50px;
+      }
+    }
+  } /* .sub-toolbar-nav */
+
   header {
     height: 70px;
 
@@ -21,10 +128,27 @@ body.documents {
         .tooltip-inner {
           background-color: #292d33;
           padding: 6px 10px;
+          /* wrap spaces */
+          // white-space:pre-wrap;
+          /* don't break spaces */
+          white-space:pre;
+          max-width:none;
+        }
+
+        &.top .tooltip-arrow {
+          border-top-color: #292d33;
+        }
+
+        &.right .tooltip-arrow {
+          border-right-color: rgba(41, 45, 51, 0.9);
         }
 
         &.bottom .tooltip-arrow {
           border-bottom-color: #292d33;
+        }
+
+        &.left .tooltip-arrow {
+          border-left-color: #292d33;
         }
       }
 
@@ -73,45 +197,6 @@ body.documents {
           background-size: 40px 40px !important;
         }
       }
-
-      .toolbar-nav {
-        padding-left: 20px;
-
-        li {
-          padding: 0;
-
-          button {
-            outline: none !important;
-            height: 70px;
-            margin: auto 5px;
-            width: 20px;
-          }
-
-          &.separator {
-            padding-left: 3px;
-            padding-right: 3px;
-          }
-        }
-
-        .btn-tlb {
-          padding-left: 0;
-          padding-right: 0;
-          background-color: transparent;
-          color: #bbb;
-          font-size: 20px;
-
-          &:active,
-          &:hover {
-            color: #fff;
-          }
-
-          &.ql-active {
-            color: $color-blue;
-            xcolor: $color-orange;
-          }
-        }
-
-      } /* .toolbar-nav */
 
       .audio-player-nav {
         padding-left: 15px;
@@ -192,12 +277,41 @@ body.documents {
         }
       }
     } /* nav */
-
-
   } /* header */
 
   .popover {
     background-color: #292d33;
+
+    .arrow {
+      xdisplay: none;
+
+      &:after {
+        border-bottom-color: #292d33;
+        border-top-color: #292d33;
+      }
+    }
+
+  }
+
+  .popover.content-editor-format-popover {
+    max-width: 100%;
+
+    .popover-content {
+      padding: 0 15px;
+
+      ul.content-editor-toolbar-container {
+        padding: 0;
+
+        li {
+          button {
+            height: 50px;
+          }
+        }
+      }
+    }
+  }
+
+  .popover.share-popover {
     padding: 6px 10px;
     border: 0;
     max-width: 100%;
@@ -412,12 +526,17 @@ body.documents {
             overflow: hidden !important;
           }
 
+          /* Inside editor styles */
           #content-editor .ql-editor {
             font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
             font-weight: normal;
             font-size: 16px;
             line-height: 1.5em;
             -webkit-font-smoothing: antialiased;
+
+            .segment-highlight {
+              background-color: #ccc;
+            }
           }
 
           .xspacer-container {

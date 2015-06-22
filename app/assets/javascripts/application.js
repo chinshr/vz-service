@@ -14,6 +14,7 @@
 //= require jquery_ujs
 //= require jquery-ui/core
 //= require jquery-ui/widget
+//= require lib/sprintf
 //= require lib/chosen.jquery
 //= require lib/select2
 //= require lib/bootstrap
@@ -28,6 +29,7 @@
 //= require lib/simply-toast
 //= require lib/s3upload
 //= require lib/bootstrap-colorpicker
+//= require lib/bootstrap-slider.min
 //= require web/documents
 //= require app
 //= require_tree ../templates
