@@ -24,13 +24,14 @@ $(document).ready(function() {
   $('.btn-tlb[data-toggle="tooltip"]').tooltip({});
 });
 
-/* Popovers */
+/* Share popovers */
 $(document).ready(function() {
 
   /* share button popover */
-  $('.btn-popover').popover({
+  $('#share-button').popover({
     container: 'body',
     html : true,
+    trigger: 'manual',
     placement: 'bottom',
     template: '<div class="popover share-popover" id="share-popover"><div class="arrow"></div><div class="popover-content"></div></div>',
     title: function() {
@@ -41,6 +42,15 @@ $(document).ready(function() {
     }
   }).on('shown.bs.popover', function(e) {
     VZ.social.bind();
+  }).click(function(e) {
+    $('#share-button').not(this).popover('hide');
+    $(this).popover('toggle');
+  });
+
+  $(document).click(function(e) {
+    if (!$(e.target).is('#share-button, .popover-content, .popover-content input')) {
+      $('#share-button').popover('hide');
+    }
   });
 });
 

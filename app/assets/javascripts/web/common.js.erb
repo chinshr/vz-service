@@ -157,7 +157,7 @@ VZ._social = (function() {
     // http://stackoverflow.com/questions/25619418/how-do-i-implement-basic-share-social-buttons-with-font-awesome-fonts
 
     // facebook
-    $('.social-networks .facebook a').attr("href",'http://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(url))
+    $('.social-networks .facebook a, .social-networks .facebook button').attr("href",'http://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(url))
     .on('click', function(e) {
       var href = $(this).attr("href"),
         fburl = decodeURIComponent( href.substring(href.indexOf("u=")+2) );
@@ -172,7 +172,7 @@ VZ._social = (function() {
 
     // twitter
     setupTwitter();
-    $('.social-networks .twitter a').on('click', function(e) {
+    $('.social-networks .twitter a, .social-networks .twitter button').on('click', function(e) {
       e.preventDefault();
       var href = this.getAttribute('data-href');
       var product_title = encodeURIComponent(href.substring( $(this).attr('data-product-title')));
@@ -187,7 +187,7 @@ VZ._social = (function() {
 
     // linkedin
     setupLinkedIn();
-    $('.social-networks .linkedin a').on('click', function(e) {
+    $('.social-networks .linkedin a, .social-networks .linkedin button').on('click', function(e) {
       e.preventDefault();
       var href = this.getAttribute('data-href');
       var li_url = decodeURIComponent(href.substring(href.lastIndexOf("url=") + 4));
