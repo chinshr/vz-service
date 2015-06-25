@@ -122,8 +122,8 @@ class Workers::Ingest::AudioWorkerHelperTest < ActionView::TestCase
   should "normalize ingest chunks" do
     threads = @worker.transcribe!
     @ingest.normalize_chunk_scores!
-    assert_equal 3, @ingest.chunks.best.count
-    assert_equal "I hate to say that macaronies are the best food in the world", @ingest.chunks.best.text
+    assert_equal 3, @ingest.document.best_chunks.count
+    assert_equal "I hate to say that macaronies are the best food in the world", @ingest.document.best_chunks.text
   end
 
 end

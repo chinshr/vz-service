@@ -69,11 +69,15 @@ class Chunk < ::Document
 
   # private scopes
   scope :transcribed, -> {where(:processing_status => STATES[:transcribed])}
+
+=begin
   scope :best, -> {
     joins("INNER JOIN segments ys ON ys.chunk_id = documents.id AND ys.type IN ('Segment::ChunkSegment')").
-    joins("JOIN (SELECT ps.position AS position, MAX(score) AS max_score FROM documents p INNER JOIN segments ps ON ps.chunk_id = p.id AND ps.type IN ('Segment::ChunkSegment') GROUP BY ps.position) y ON y.position = ys.position AND y.max_score = documents.score").
+    joins("JOIN (SELECT ps.position AS position, MAX(score) AS max_score FROM documents p INNER JOIN segments ps ON ps.chunk_id = p.id AND ps.document_id = 163 AND ps.type IN ('Segment::ChunkSegment') GROUP BY ps.position) y ON y.position = ys.position AND y.max_score = documents.score").
     order("ys.position")
   }
+=end
+
 
   before_save :set_default_locale, on: :create
   after_validation :save_master_chunk_segment_and_track
