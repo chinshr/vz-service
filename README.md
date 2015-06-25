@@ -6,7 +6,11 @@ The service runs the Website and API.
 
 * Install bundles `bundle install`
 
-* ffmpeg `brew install ffmpeg`
+## ffmpeg
+
+Mac OS X: `brew install ffmpeg`
+
+[Ubuntu](http://linuxg.net/how-to-install-ffmpeg-2-0-on-ubuntu-13-04-12-10-12-04-linux-mint-15-14-13-and-elementary-os-0-2-luna-via-ppa/)
 
 * sox `brew install sox`
 
