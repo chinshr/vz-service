@@ -83,6 +83,13 @@ class Document < ActiveRecord::Base
     def generate_uid
       SecureRandom.uuid
     end
+  end  # class
+
+  def best_chunks
+    chunks.
+      joins("INNER JOIN segments ys ON ys.chunk_id = documents.id AND ys.type IN ('Segment::ChunkSegment')").
+      joins("JOIN (SELECT ps.position AS position, MAX(score) AS max_score FROM documents p INNER JOIN segments ps ON ps.chunk_id = p.id AND ps.document_id = #{self.id} AND ps.type IN ('Segment::ChunkSegment') GROUP BY ps.position) y ON y.position = ys.position AND y.max_score = documents.score").
+      order("ys.position")
   end
 
   def master_document_segment
@@ -165,8 +172,7 @@ class Document < ActiveRecord::Base
 
   # Overrides attribute
   def rich_text
-    # result = chunks.best.rich_text
-    chunks.rich_text
+    self[:rich_text] || best_chunks.rich_text
   end
 
   protected

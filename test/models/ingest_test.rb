@@ -347,8 +347,8 @@ class IngestTest < ActiveSupport::TestCase
 
     should "update from chunks" do
       @ingest.normalize_chunk_scores!
-      @ingest.update_content_from @ingest.chunks.best
-      rich_text = @ingest.document.rich_text
+      @ingest.update_content_from @ingest.document.best_chunks
+      rich_text = @ingest.document.best_chunks.rich_text
       assert_equal 3, rich_text.size
       assert_equal "I hate to say", rich_text[0]['insert']
       assert_equal "that macaronies are", rich_text[1]['insert']
