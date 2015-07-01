@@ -1,7 +1,7 @@
 App.Views.UploadsEdit = App.Views.UploadsBase.extend({
   template: JST['uploads/edit'],
   className: 'tile edit-tile col-lg-4 col-md-4 col-sm-4',
-  
+
   events: _.extend({
     'click .action-close' : 'flipTile',
     'keyup input': 'onFieldChange',
@@ -17,17 +17,17 @@ App.Views.UploadsEdit = App.Views.UploadsBase.extend({
       }
     }),
   }, App.Views.UploadsBase.prototype.events),
-  
+
   initialize: function() {
     App.Views.UploadsBase.prototype.initialize.call(this); // super
     Backbone.Validation.bind(this);
     this.listenTo(this.model, 'change:privacy', this.renderUpdate);
   },
-  
+
   render: function(attributes) {
     // super
     App.Views.UploadsBase.prototype.render.call(this, attributes);
-    
+
     _.defer((function(_this) {
       return function() {
         // tags
@@ -67,7 +67,7 @@ App.Views.UploadsEdit = App.Views.UploadsBase.extend({
             callback(data);
           },
           createSearchChoice: function (term, data) {
-            if ($(data).filter( function() { 
+            if ($(data).filter( function() {
               return this.text.localeCompare(term) === 0;
             }).length === 0) {
               return {id:term, text:term};
@@ -76,10 +76,10 @@ App.Views.UploadsEdit = App.Views.UploadsBase.extend({
         });
       }
     })(this));
-    
+
     return this;
   },
-  
+
   flipTile: function() {
     var edit     = this;
     var editHTML = edit.$el;
@@ -109,7 +109,7 @@ App.Views.UploadsEdit = App.Views.UploadsBase.extend({
       edit.remove();
     }
   },
-  
+
   renderUpdate: function(hasProgress) {
     App.Views.UploadsBase.prototype.renderUpdate.call(this, hasProgress); // super
 
@@ -119,13 +119,13 @@ App.Views.UploadsEdit = App.Views.UploadsBase.extend({
     this.$("select[name='upload[locale]']").val(this.model.attributes.locale);
     this.$("form, form input, form textarea, form button").removeAttr('disabled');
     this.$(".form-fields").show();
-    
+
     // privacy
     this.$("input[type='radio'][value='" + this.model.attributes.privacy + "']").
       prop('checked', true).
       closest('.btn-group .btn').trigger('click');
   },
-  
+
   onFieldChange: function(e) {
     var data, field, key;
     field = $(e.currentTarget);
@@ -147,10 +147,10 @@ App.Views.UploadsEdit = App.Views.UploadsBase.extend({
       return this.model.isValid();
     }
   },
-  
+
   onFormSubmit: function(e) {
     console.log("=> submit");
-    
+
     var data, form;
     e.originalEvent.preventDefault();
     form = $(e.target);

@@ -31,4 +31,14 @@ class Web::DocumentsController < Web::ApplicationController
   def must_authenticate_with_edit?
     true
   end
+
+  def dom_controller_action_class
+    "#{action_name.dasherize} waveform-#{waveform_visible? ? 'visible' : 'hidden'}"
+  end
+  helper_method :dom_controller_action_class
+
+  def waveform_visible?
+    params[:wf] && !Model::Helper.booleanize(params[:wf]) ? false : true
+  end
+  helper_method :waveform_visible?
 end

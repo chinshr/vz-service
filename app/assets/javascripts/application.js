@@ -21,6 +21,7 @@
 //= require lib/rails.validations
 //= require lib/rails.validations.bootstrap
 //= require lib/detect_timezone
+//= require lib/jquery.query
 //= require lib/jquery.sameheight
 //= require underscore
 //= require backbone

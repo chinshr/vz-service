@@ -66,7 +66,7 @@ Toolbar = (function() {
         if (Toolbar.formats.TOOLTIP[name] != null) {
           return;
         }
-        console.log(name);
+        // console.log(name);
         return _this.initFormat(name, _.bind(_this._applyFormat, _this, name));
       };
     })(this));

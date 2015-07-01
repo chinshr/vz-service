@@ -3,33 +3,13 @@ App.Views.DocumentsBase = Backbone.View.extend({
 
   handlers: {
     'toggle-play-pause': function (event) {
-      if ($(event.target).hasClass('fa-play')) {
-        $(event.target).addClass('fa-pause').removeClass('fa-play');
+      var target = $('.player-play-pause');
+      if ($(target).hasClass('fa-play')) {
+        $(target).addClass('fa-pause').removeClass('fa-play');
       } else {
-        $(event.target).addClass('fa-play').removeClass('fa-pause');
+        $(target).addClass('fa-play').removeClass('fa-pause');
       }
       this.wavesurfer.playPause();
-    },
-
-    'reset': function () {
-      $('.player-play-pause').addClass('fa-play').removeClass('fa-pause');
-      this.wavesurfer.stop();
-    },
-
-    'green-mark': function () {
-      this.wavesurfer.mark({
-        id: 'up',
-        color: 'rgba(0, 255, 0, 0.5)',
-        position: this.wavesurfer.getCurrentTime()
-      });
-    },
-
-    'red-mark': function () {
-      this.wavesurfer.mark({
-        id: 'down',
-        color: 'rgba(255, 0, 0, 0.5)',
-        position: this.wavesurfer.getCurrentTime()
-      });
     },
 
     'step-backward': function () {
@@ -38,10 +18,6 @@ App.Views.DocumentsBase = Backbone.View.extend({
 
     'step-forward': function () {
       this.wavesurfer.skipForward();
-    },
-
-    'toggle-mute': function () {
-      this.wavesurfer.toggleMute();
     },
 
     'playback-rate-down': function (event) {
@@ -68,6 +44,53 @@ App.Views.DocumentsBase = Backbone.View.extend({
       }
     },
 
+    'reset': function () {
+      $('.player-play-pause').addClass('fa-play').removeClass('fa-pause');
+      this.wavesurfer.stop();
+    },
+
+    'toggle-mute': function (event) {
+      var target = $('.player-mute-toggle');
+      if ($(target).hasClass('fa-volume-off')) {
+        $(target).addClass('fa-volume-up').removeClass('fa-volume-off');
+      } else {
+        $(target).addClass('fa-volume-off').removeClass('fa-volume-up');
+      }
+      this.wavesurfer.toggleMute();
+    },
+
+    'toggle-resize': function (event) {
+      var target = $('.player-resize-toggle');
+      if ($(target).hasClass('fa-compress')) {
+        // compress
+        $(target).addClass('fa-expand').removeClass('fa-compress');
+        $('body').addClass('waveform-hidden').removeClass('waveform-visible');
+        // Backbone.history.navigate('?wf=0', {trigger: false});
+      } else {
+        // expand
+        $(target).addClass('fa-compress').removeClass('fa-expand');
+        $('body').addClass('waveform-visible').removeClass('waveform-hidden');
+        // Backbone.history.navigate('?wf=1', {trigger: false});
+      }
+      this.redrawWaveform();
+    },
+
+    'green-mark': function () {
+      this.wavesurfer.mark({
+        id: 'up',
+        color: 'rgba(0, 255, 0, 0.5)',
+        position: this.wavesurfer.getCurrentTime()
+      });
+    },
+
+    'red-mark': function () {
+      this.wavesurfer.mark({
+        id: 'down',
+        color: 'rgba(255, 0, 0, 0.5)',
+        position: this.wavesurfer.getCurrentTime()
+      });
+    },
+
     'save': function () {
       this.save();
     },
@@ -86,6 +109,8 @@ App.Views.DocumentsBase = Backbone.View.extend({
   initialize: function() {
     $(document).on('click', _.bind(this.playerToolbarHandler, this));
     $(document).on('keydown', _.bind(this.playerKeyboardHandler, this));
+    $(window).on('resize', _.bind(this.redrawWaveform, this))
+
     this.model.fetch({
       success: (function(_this) {
         return function(model, response, options) {
@@ -111,7 +136,7 @@ App.Views.DocumentsBase = Backbone.View.extend({
   initPlayer: function() {
     var options = {
       container     : '#waveform',  // document.querySelector('#waveform'),
-      height        : 30,
+      height        : 40,
       waveColor     : '#ddd', // 'violet',
       progressColor : '#fff', // '#3f6169', // '#fff',
       loaderColor   : '#555',
@@ -185,6 +210,7 @@ App.Views.DocumentsBase = Backbone.View.extend({
       this.loadRegions();
       this.saveRegions();
       this.clearSegmentHighlights();
+      this.updatePlayTime();
     }, this));
 
     this.wavesurfer.on('region-click', function (region, e) {
@@ -208,7 +234,7 @@ App.Views.DocumentsBase = Backbone.View.extend({
 
     /* Minimap plugin */
     this.wavesurfer.initMinimap({
-      height: 20,
+      height: 15,
       waveColor: '#ddd',
       progressColor: '#999',
       // cursorColor: '#999'
@@ -686,6 +712,12 @@ App.Views.DocumentsBase = Backbone.View.extend({
       half = "½";
     }
     return "" + full + half + "×";
-  }
+  },
 
+  redrawWaveform: function() {
+    if (this.wavesurfer) {
+      this.wavesurfer.empty();
+      this.wavesurfer.drawBuffer();
+    }
+  }
 });

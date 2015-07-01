@@ -1,5 +1,5 @@
 <header>
-  <div class="container-fluid">
+  <div class="container-fluid topbar-primary">
     <nav class="navbar navbar-default" id="navigation" role="navigation">
       <!-- Brand and toggle get grouped for better mobile display -->
       <div class="navbar-header">
@@ -34,15 +34,6 @@
           <!-- player -->
           <li><button title="<%= key_cmd(:play, 'Esc') %>" type="button" class="btn btn-lg btn-tlb fa fa-play fa-fw player player-play-pause" data-action="toggle-play-pause" data-toggle="tooltip" data-placement="bottom"></button></li>
           <li><button type="button" class="btn btn-lg btn-tlb btn-elt"><p id="elt">00:00.0</p></button></li>
-          <li class="waveform-item">
-            <div id="waveform-timeline" class="waveform-timeline-container"></div>
-            <div id="waveform" class="waveform-container">
-              <div class="progress progress-striped active" id="player-progress-bar">
-                <div class="progress-bar progress-bar-info"></div>
-              </div>
-              <!-- here goes the waveform -->
-            </div>
-          </li>
           <li><button type="button" class="btn btn-lg btn-tlb btn-ttp"><p id="ttp">-00:00.0</p></button></li>
           <li><button title="<%= key_cmd(:step_backward, "F1") %>" type="button" class="btn btn-md btn-tlb fa fa-backward fa-fw player player-step-backward" data-action="step-backward" data-toggle="tooltip" data-placement="bottom"></button></li>
           <li><button title="<%= key_cmd(:step_forward, "F2") %>" type="button" class="btn btn-md btn-tlb fa fa-forward fa-fw player player-step-forward" data-action="step-forward" data-toggle="tooltip" data-placement="bottom"></button></li>
@@ -59,6 +50,9 @@
             </ul>
           </li>
           <li><button title="<%= key_cmd(:reset, 'Esc', [:shift_key]) %>" type="button" class="btn btn-md btn-tlb fa fa-stop fa-fw player player-reset" data-action="reset" data-toggle="tooltip" data-placement="bottom"></button></li>
+          <li class="separator">&nbsp;</li>
+          <li><button title="<%= key_cmd(:mute) %>" type="button" class="btn btn-md btn-tlb fa fa-volume-off fa-fw player player-mute-toggle" data-action="toggle-mute" data-toggle="tooltip" data-placement="bottom"></button></li>
+          <li><button title="<%= key_cmd(:resize) %>" type="button" class="btn btn-md btn-tlb fa <%= waveform_visible? ? 'fa-compress' : 'fa-expand' %> fa-fw player player-resize-toggle" data-action="toggle-resize" data-toggle="tooltip" data-placement="bottom"></button></li>
         </ul>
 
         <% if edit? %>
@@ -85,33 +79,66 @@
         </ul>
         <% end %>
 
-        <div id="navbar-right" class="navbar-flush-right">
-<!--           <button id="share-button" title="Share" type="button" class="btn btn-popover btn-default btn-with-border" data-toggle="popover" data-placement="bottom"></button>
- -->
-          <button id="share-button" class="btn btn-popover btn-default btn-share fa fa-share" type="button" data-container="body" data-toggle="popover tooltip" data-placement="bottom" data-target="share-popover"></button>
-          <div id="share-popover" class="popover fade bottom in" role="tooltip">
-            <!-- <h3 class="popover-title">Share!</h3> -->
-            <div class="popover-content">
-              <div class="social-container">
-                <ul class="social-networks">
-                  <li class="facebook"><a class="fa fa-facebook" href="#" data-href=""></a></li>
-                  <li class="twitter"><a class="fa fa-twitter" href="#" data-href="" ></a></li>
-                  <li class="linkedin"><a class="fa fa-linkedin" href="#" data-href=""></a></li>
-                  <li class="email"><a class="fa fa-envelope" href="#" data-href=""></a></li>
-                </ul><!-- .social-networks -->
-              </div><!-- .social-container -->
-              <div class="share-link-container">
-                <% if @document.privacy_private? %>
-                <p><i class="fa fa-lock"></i>This document is private and may only be viewed by the owner.</p>
-                <% else %>
-                <p><i class="fa fa-info"></i>Copy and paste the link below to share this document.</p>
-                <% end %>
-                <input type="url" class="width-full" readonly="readonly" value="<%= web_document_url(@document.slug) %>">
-              </div>
-            </div><!-- popover-content -->
-          </div><!-- #share-popover .popover -->
-        </div><!-- navbar-flush-right -->
+        <% if show? %>
+        <ul class="nav navbar-nav toolbar-nav content-viewer-toolbar-container">
+          <!-- highlight -->
+          <li><button title="<%= key_cmd(:highlight, 'H', :ctrl_key) %>" type="button" class="btn btn-md btn-tlb ql-bold fa fa-bookmark fa-fw" data-toggle="tooltip" data-placement="bottom"></button></li>
+
+          <li class="separator">&nbsp;</li>
+
+          <!-- share -->
+
+          <li><button type="button" class="btn btn-md btn-tlb fa fa-facebook fa-fw" data-toggle="tooltip" data-placement="bottom"></button></li>
+
+          <li><button type="button" class="btn btn-md btn-tlb fa fa-twitter fa-fw" data-toggle="tooltip" data-placement="bottom"></button></li>
+
+          <li><button type="button" class="btn btn-md btn-tlb fa fa-linkedin fa-fw" data-toggle="tooltip" data-placement="bottom"></button></li>
+
+        </ul>
+        <% end %>
+
+        <ul class="nav navbar-nav toolbar-nav pull-right">
+          <li>
+            <button id="share-button" class="btn btn-md btn-tlb btn-popover btn-share fa fa-share" type="button" data-container="body" data-toggle="popover tooltip" data-placement="bottom" data-target="share-popover"></button>
+
+            <div id="share-popover" class="popover fade bottom in" role="tooltip">
+              <!-- <h3 class="popover-title">Share!</h3> -->
+              <div class="popover-content">
+                <div class="social-container">
+                  <ul class="nav navbar-nav toolbar-nav social-networks">
+                    <li class="facebook"><button class="btn btn-md btn-tlb fa fa-facebook fa-fw" href="#" data-href=""></button></li>
+                    <li class="twitter"><button class="btn btn-md btn-tlb fa fa-twitter fa-fw" href="#" data-href="" ></button></li>
+                    <li class="linkedin"><button class="btn btn-md btn-tlb fa fa-linkedin fa-fw" href="#" data-href=""></button></li>
+                    <!--<li class="email"><button class="btn btn-md btn-tlb fa fa-envelope fa-fw" href="#" data-href=""></button></li>-->
+                  </ul><!-- .social-networks -->
+                </div><!-- .social-container -->
+                <div class="share-link-container">
+                  <% if @document.privacy_private? %>
+                  <p><i class="fa fa-lock"></i>This document is private and may only be viewed by the owner.</p>
+                  <% else %>
+                  <p><i class="fa fa-info"></i>Copy and paste the link below to share this document.</p>
+                  <% end %>
+                  <input type="url" class="width-full" readonly="readonly" value="<%= web_document_url(@document.slug) %>">
+                </div>
+              </div><!-- popover-content -->
+            </div><!-- #share-popover .popover -->
+
+          </li>
+        </ul>
+
       </div><!-- .collapse .navbar-collapse -->
     </nav>
   </div><!-- .container-fluid -->
+
+  <div class="container-fluid topbar-secondary">
+    <div id="wavebar" class="wavebar">
+      <div id="waveform-timeline" class="waveform-timeline-container"></div>
+      <div id="waveform" class="waveform-container">
+        <div class="progress progress-striped active" id="player-progress-bar">
+          <div class="progress-bar progress-bar-info"></div>
+        </div>
+        <!-- here goes the waveform -->
+      </div>
+    </div>
+  </div><!-- .container-fluid .topbar-secondary -->
 </header><!-- header -->
