@@ -1,6 +1,11 @@
 /* ====================== FONTS ========================= */
 
+/* PT Serif */
+@import url('//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic');
+
+/* Lato-Light */
 // @import url('//fonts.googleapis.com/css?family=Lato:200,700,300');
+
 /* latin-ext */
 @font-face {
   font-family: 'Lato';
@@ -34,7 +39,7 @@
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
 }
 
-@import url('//netdna.bootstrapcdn.com/font-awesome/4.0.1/css/font-awesome.css');
+// @import url('//netdna.bootstrapcdn.com/font-awesome/4.0.1/css/font-awesome.css');
 
 /* ====================== VARIABLES ========================= */
 
@@ -106,7 +111,7 @@ $btn-default-radius: 2px;
     opacity:0;
     -moz-transform:translateY(-20px);
   }
-  
+
   100% {
     opacity:1;
     -moz-transform:translateY(0);
@@ -118,7 +123,7 @@ $btn-default-radius: 2px;
     opacity:0;
     -o-transform: translateY(-20px);
   }
-  
+
   100% {
     opacity:1;
     -o-transform:translateY(0);
@@ -130,7 +135,7 @@ $btn-default-radius: 2px;
     opacity:0;
     transform: translateY(-20px);
   }
-  
+
   100% {
     opacity:1;
     transform: translateY(0);
@@ -155,7 +160,7 @@ $btn-default-radius: 2px;
     opacity:0;
     -moz-transform:translateY(20px);
   }
-  
+
   100% {
     opacity:1;
     -moz-transform:translateY(0);
@@ -167,7 +172,7 @@ $btn-default-radius: 2px;
     opacity:0;
     -o-transform: translateY(20px);
   }
-  
+
   100% {
     opacity:1;
     -o-transform:translateY(0);
@@ -179,7 +184,7 @@ $btn-default-radius: 2px;
     opacity:0;
     transform: translateY(20px);
   }
-  
+
   100% {
     opacity:1;
     transform: translateY(0);

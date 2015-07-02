@@ -513,6 +513,7 @@ body.documents {
 
   #document {
     height: 100%;
+    margin-top: 160px;
     // position: absolute;
     // top: 0;
 
@@ -574,25 +575,28 @@ body.documents {
 
     .document-overlay {
       .document-container {
+        height: auto;
+        /* TODO: "box.com" style
+        padding: 25px 45px;
         border: 1px solid #dbdbdb;
         border-radius: 2px;
-        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-        height: auto;
-        padding: 25px 45px;
+        */
+        padding: 0;
 
         .title-container {
           border-bottom: 1px solid #ededed;
+          font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 
           h1 {
             font: inherit;
             font-weight: bold;
-            font-size: 28px;
+            font-size: 66px;
             color: #444;
             cursor: text;
             text-overflow: ellipsis;
             overflow: hidden;
             margin: 0;
-            line-height: 40px;
+            line-height: 66px;
             padding-bottom: 10px;
           }
 
@@ -605,7 +609,7 @@ body.documents {
           #title-editor .ql-editor {
             font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
             font-weight: bold;
-            font-size: 28px;
+            font-size: 66px;
             color: #444;
             -webkit-font-smoothing: antialiased;
             overflow: hidden;
@@ -616,9 +620,11 @@ body.documents {
         .content-container {
           padding-top: 20px;
           font-weight: normal;
-          font-size: 16px;
+          font-size: 22px;
+          line-height: 1.6em;
           color: #000;
-          line-height: 1.5em;
+          // font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+          font-family: 'PT Serif', Georgia, Times, 'Times New Roman', serif;
 
           .content-holder {
             overflow: hidden;
@@ -634,10 +640,11 @@ body.documents {
 
           /* Inside editor styles */
           #content-editor .ql-editor {
-            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            // font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-family: 'PT Serif', Georgia, Times, 'Times New Roman', serif;
             font-weight: normal;
-            font-size: 16px;
-            line-height: 1.5em;
+            font-size: 22px;
+            line-height: 1.6em;
             -webkit-font-smoothing: antialiased;
 
             .segment-highlight {
