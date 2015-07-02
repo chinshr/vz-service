@@ -310,7 +310,7 @@ App.Views.DocumentsBase = Backbone.View.extend({
         if (source == 'api') {
           console.log("An API call triggered this change.");
         } else if (source == 'user') {
-          _this.model.set({title: $.trim(this.getText())})
+          _this.model.set({title: $.trim(this.getText())});
           //_this.saving();
         }
       };

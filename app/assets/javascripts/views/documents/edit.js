@@ -65,6 +65,15 @@ App.Views.DocumentsEdit = App.Views.DocumentsBase.extend({
           return {id:term, text:term};
         }
       }
-    });
+    }).on('change', (function(_this) {
+      return function(event) {
+        var tag_list = $(event.target).val();
+        tag_list = tag_list.split(',');
+        // console.log('tags current: ', _this.model.attributes);
+        // console.log('tags new: ', tag_list);
+        _this.model.set({tag_list: tag_list});
+        // _this.saving();
+      }
+    })(this));
   }
 });
