@@ -203,10 +203,17 @@ body.account {
 
     .panel {
       @include transition(box-shadow .2s ease);
-
       backface-visibility: hidden;
-
       border-radius: 3px !important;
+
+      .panel-heading {
+        padding: 10px;
+      }
+
+      .panel-body {
+        padding: 10px;
+        min-height: 70px;
+      }
 
       &.show-panel {
         xposition: absolute;
@@ -527,6 +534,13 @@ body.account {
         }
       }
 
+      .tags-title {
+        font-size: 12px;
+        font-weight: normal;
+        text-transform: uppercase;
+        color: #999;
+      }
+
       ul.tag-list {
         min-height: 26px;
         margin: 0;
@@ -534,56 +548,57 @@ body.account {
         overflow: hidden;
         list-style: none;
 
-        li.empty-tag {
+        li {
           float: left;
           list-style: none;
+          padding: 3px 6px;
+          font-size: 12px;
+          font-weight: 600;
+          text-transform: uppercase;
+        }
+
+        li.empty-tag {
           font-size: 12px;
           white-space: nowrap;
-          xpadding: 3px 5px;
-          margin: 3px 5px 3px 0;
-          white-space: nowrap;
+          margin: 2px 5px 2px 0;
           color: #999;
-          xpadding: 3px 5px;
-          xmargin: 3px 5px 3px 0;
+          font-weight: 600;
+          padding: 0;
         }
 
         li.tag {
           @include transition(all .2s ease-in-out);
-          float: left;
-          border: 0;
+          border: 1px solid #f0f0f0;
           border-radius: $btn-default-radius;
           position: relative;
           max-width: 96%;
-          margin: 0 5px 5px 0;
-          background-color: #cfd6d9;
-          xpadding-top: 3px;
-          xpadding-bottom: 3px;
+          background-color: #fafafa;
           cursor: default;
           display: list-item;
           text-align: -webkit-match-parent;
-          font-size: 12px;
 
           &:hover {
-            background-color: #868d91;
+            border-color: #a9d8b2;
+            background-color: rgba(87, 173, 104, 0.2);
           }
 
           a {
-            padding: 3px 5px;
+            xpadding: 3px 5px;
             line-height: 1.4em;
             display: block;
             overflow: hidden;
             white-space: nowrap;
             text-overflow: ellipsis;
             text-decoration: none;
-            color: #212124;
-            font-weight: 400;
+            color: rgba(0,0,0,0.5);
 
             &:hover {
-              color: #fff
+              text-decoration: underline;
+              color: #468c54;
             };
           }
-        }
-      }
+        } /* li.tag */
+      } /* ul.tag-list */
 
       ul.dropdown-menu {
         margin: 25px 0 0 0;

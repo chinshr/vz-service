@@ -359,7 +359,7 @@ App.Views.DocumentsBase = Backbone.View.extend({
       return function(delta, source) {
         // expand window
         // $('#title-editor').height(_this.titleEditor.root.ownerDocument.body.scrollHeight);
-        _this.moveUserInitials(this, -75);
+        _this.moveUserInitials(this, $('header').height());
       }
     })(this));
 
@@ -376,7 +376,7 @@ App.Views.DocumentsBase = Backbone.View.extend({
         if (range) {
           if (range.start == range.end) {
             // console.log('User cursor is on', range.start);
-            _this.moveUserInitials(this, -75);
+            _this.moveUserInitials(this, $('header').height() + 5);
           } else {
             // var text = editor.getText(range.start, range.end);
             // console.log('User has highlighted', text);
@@ -531,7 +531,7 @@ App.Views.DocumentsBase = Backbone.View.extend({
   },
 
   moveUserInitials: function(editor, margin) {
-    margin = margin || -86;
+    margin = margin || ($('header').height() + 15);
     var sel = editor.root.ownerDocument.getSelection();
     if (sel && sel.rangeCount > 0) {
       var selrg = sel.getRangeAt(0);
@@ -540,7 +540,7 @@ App.Views.DocumentsBase = Backbone.View.extend({
         if (rects.length > 0) {
           var ui = $(".user-initials");
           ui.stop().animate({
-            top: margin - (ui.height() / 2) + window.scrollY + rects[0].top
+            top: (-1 * margin) - (ui.height() / 2) + window.scrollY + rects[0].top
           }, 0);
         }
       }

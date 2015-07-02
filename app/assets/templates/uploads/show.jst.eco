@@ -29,9 +29,10 @@
         <span class="slug" hidden><i class="glyphicon glyphicon-link"><a href="YdG3bj" target="_blank">http://localhost:3000/YdG3bj</a></i></span>
       </div><!-- .panel-heading -->
       <div class="panel-body">
+        <div class="tags-title">Tagged in</div>
         <ul class="tag-list">
           <% if @tag_list.length == 0: %>
-          <li class="empty-tag">No tags.</li>
+          <li class="empty-tag">Add up to 3 optional tags.</li>
           <% else: %>
             <% for tag in @tag_list: %>
             <li class="tag"><a href="#"><%= tag %></a></li>
