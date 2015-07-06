@@ -252,6 +252,7 @@ class DocumentTest < ActiveSupport::TestCase
 
     should "parse uid" do
       assert_equal "37fc59fc-ac05-4a1f-9b72-b94f17f00f2d", Document.parse_segment_uid(@segment)
+      assert_equal nil, Document.parse_segment_uid(nil)
     end
 
     should "parse time" do
