@@ -244,4 +244,37 @@ class DocumentTest < ActiveSupport::TestCase
     assert_equal true, document.is_root?
     assert_equal true, document.is_root
   end
+
+  context "parse segment" do
+    setup do
+      @segment = "37fc59fc-ac05-4a1f-9b72-b94f17f00f2d^0.02-3.3%0.75#rgba(45,23,89,0.2)@123456"
+    end
+
+    should "parse uid" do
+      assert_equal "37fc59fc-ac05-4a1f-9b72-b94f17f00f2d", Document.parse_segment_uid(@segment)
+    end
+
+    should "parse time" do
+      assert_equal [0.02, 3.3], Document.parse_segment_time(@segment)
+      assert_equal nil, Document.parse_segment_time("no-time")
+    end
+
+    should "parse score" do
+      assert_equal 0.75, Document.parse_segment_score(@segment)
+      assert_equal 0.33, Document.parse_segment_score("37f^0.02-3.3%0.33")
+      assert_equal nil, Document.parse_segment_score("no-score#aaa")
+    end
+
+    should "parse profile" do
+      assert_equal "123456", Document.parse_segment_profile(@segment)
+      assert_equal "abcdef", Document.parse_segment_profile("123@abcdef#ccc")
+      assert_equal nil, Document.parse_segment_profile("no-profile#aaa^1-2")
+    end
+
+    should "parse color" do
+      assert_equal "rgba(45,23,89,0.2)", Document.parse_segment_color(@segment)
+      assert_equal "rgba(45,23,89,0.2)", Document.parse_segment_color("37fc59fc-ac05-4a1f-9b72-b94f17f00f2d^0.02-3.3%0.75#rgba(45,23,89,0.2)")
+      assert_equal nil, Document.parse_segment_color("no-color^1-2")
+    end
+  end
 end

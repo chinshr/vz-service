@@ -83,6 +83,38 @@ class Document < ActiveRecord::Base
     def generate_uid
       SecureRandom.uuid
     end
+
+    # "c4ea2bad-6f84-4b6c-869b-8ddcd4128d83^..." -> 'c4ea2bad-6f84-4b6c-869b-8ddcd4128d83'
+    def parse_segment_uid(segment)
+      um = segment.match(/^([a-z,0-9,-]*)(?![a-z,0-9,-])/)
+      um.try(:[], 1).present? ? um[1] : nil;
+    end
+
+    # "...^1.45-3.52..." -> [1.45, 3.52]
+    def parse_segment_time(segment)
+      tm = segment.match(/\^([0-9.]*)-([0-9.]*)/)
+      tm = tm.try(:to_a).try(:slice, 1, 2)
+      tm.try(:present?) ? tm.map(&:to_f) : nil
+    end
+
+    # "...@12345678..." -> '12345678'
+    def parse_segment_profile(segment)
+      pm = segment.match(/@(.+?(?=(@|^|#|%|$)))/)
+      pm.try(:[], 1)
+    end
+
+    # "...#afafaf..." -> 'afafaf'
+    def parse_segment_color(segment)
+      cm = segment.match(/#(.+?(?=(@|^|#|%|$)))/)
+      cm.try(:[], 1)
+    end
+
+    # "...%0.75..." -> 0.75
+    def parse_segment_score(segment)
+      sc = segment.match(/%([0-9.]+?(?=(@|^|#|%|$)))/)
+      sc = sc.try(:[], 1)
+      sc ? sc.to_f : nil
+    end
   end  # class
 
   def best_chunks
@@ -175,6 +207,17 @@ class Document < ActiveRecord::Base
     self[:rich_text] || best_chunks.rich_text
   end
 
+  def rich_text=(value)
+    self[:rich_text] = value if value
+  end
+
+  def update_chunks_from(rich_text)
+    result = {}
+    if segments = rich_text[:ops]
+      result
+    end
+  end
+
   protected
 
   def generate_slug
@@ -195,4 +238,5 @@ class Document < ActiveRecord::Base
   def after_add_child_segment(segment)
     segment.document ||= self.document if new_record?
   end
+
 end
