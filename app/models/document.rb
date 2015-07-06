@@ -27,7 +27,9 @@ class Document < ActiveRecord::Base
   has_one :master_document_segment, -> { where(is_master: true) }, foreign_key: :document_id, dependent: :destroy, class_name: "Segment::DocumentSegment"
   has_one :track, through: :master_document_segment, class_name: "Track::DocumentTrack"
   accepts_nested_attributes_for :track, allow_destroy: true
+
   acts_as_ordered_taggable_on :tags, :auto
+  has_paper_trail :only => [:title, :description, :text, :html, :rich_text]
 
   validates :slug, presence: true, uniqueness: {case_sensitive: false}
   validates :title, presence: true, length: {maximum: 255}, if: :is_root?
@@ -214,7 +216,8 @@ class Document < ActiveRecord::Base
 
   def update_chunks_from(rich_text)
     result = {}
-    if rich_text && (segments = rich_text.try(:[], :ops))
+    segments = rich_text.is_a?(Array) ? rich_text : rich_text.try(:[], :ops)
+    if segments
       # filter by chunk id
       segments.each do |segment|
         id = segment.try(:[], :attributes).try(:[], :segment)
