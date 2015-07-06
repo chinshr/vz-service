@@ -278,4 +278,14 @@ class DocumentTest < ActiveSupport::TestCase
       assert_equal nil, Document.parse_segment_color("no-color^1-2")
     end
   end
+
+  should "have versions" do
+    document = FactoryGirl.create(:document, title: "Title", description: "Desc",
+      html: "<p>The article.</p>", text: "The article.", rich_text: {"ops" => [{"insert" => "The article."}]})
+    assert_equal 1, document.versions.size
+    document.rich_text = {"ops" => [{"insert" => "The article."}, {"insert" => "What a beauty."}]}
+    document.save
+    assert_equal 2, document.versions.size
+    assert_equal({"ops" => [{"insert" => "The article."}]}, document.previous_version.rich_text)
+  end
 end
