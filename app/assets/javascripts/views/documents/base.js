@@ -345,7 +345,8 @@ App.Views.DocumentsBase = Backbone.View.extend({
           console.log("An API call triggered this change.");
         } else if (source == 'user') {
           console.log(this.getContents());
-          // _this.model.set({html: $.trim(this.getHTML()), rich_text: this.getContents(), text: this.getText()})
+          _this.model.set({rich_text: this.getContents()});
+          // _this.model.set({html: $.trim(this.getHTML()), rich_text: this.getContents(), text: this.getText()});
         }
       };
     })(this));
@@ -642,6 +643,31 @@ App.Views.DocumentsBase = Backbone.View.extend({
   loadRegions: function() {
     var regions, ops;
 
+    // "c4ea2bad-6f84-4b6c-869b-8ddcd4128d83^..." -> 'c4ea2bad-6f84-4b6c-869b-8ddcd4128d83'
+    var uid = function(segment) {
+      um = segment.match(/^([a-z,0-9,-]*)(?![a-z,0-9,-])/);
+      return um ? um[1] : null;
+    };
+
+    // "...^1.45-3.52..." -> [1.45, 3.52]
+    var time = function(segment) {
+      var tm;
+      tm = segment.match(/\^([0-9.]*)-([0-9.]*)/);
+      return tm ? _.map(tm.slice(1, 3), function(t) { return parseFloat(t); }) : null;
+    };
+
+    // "...@12345678..." -> '12345678'
+    var profile = function(segment) {
+      var pm = segment.match(/@(.*(?=#)|(.*)$)/);
+      return pm ? pm[1] : null;
+    };
+
+    // "...#afafaf..." -> 'afafaf'
+    var color = function(segment) {
+      var cm = segment.match(/#(.*(?!#)|(.*)$)/);
+      return cm ? cm[1] : null;
+    };
+
     // extract ops
     if (Object.prototype.toString.call(this.model.attributes.rich_text) === '[object Array]') {
       ops = this.model.attributes.rich_text;
@@ -649,22 +675,26 @@ App.Views.DocumentsBase = Backbone.View.extend({
       ops = this.model.attributes.rich_text['ops'] || [];
     }
 
-    // build regions
+    // build segmented regions
     regions = ops.map(_.bind(function (op) {
       var region = {};
-      if (op.attributes) {
+      if (op.attributes && op.attributes.segment) {
+        var ts = time(op.attributes.segment);
+        var cs = color(op.attributes.segment);
         region.id    = op.attributes.segment;
-        region.start = op.attributes.start;
-        region.end   = op.attributes.end;
-        region.color = this.randomColor(0.3);
+        region.start = ts ? ts[0] : null;
+        region.end   = ts ? ts[1] : null;
+        region.color = cs || this.randomColor(0.3);
       }
       return region;
     }, this));
 
 
     regions.forEach(_.bind(function (region) {
-      console.log(region);
-      this.wavesurfer.addRegion(region);
+      if (!_.isEmpty(region)) {
+        console.log(region);
+        this.wavesurfer.addRegion(region);
+      }
     }, this));
   },
 

@@ -124,18 +124,36 @@ class Chunk < ::Document
       self.all.map(&:text).join(" ").to_s
     end
 
-    # See https://github.com/ottypes/rich-text
+    # Encode chunk information into a rich-text attribute.
+    # See: https://github.com/ottypes/rich-text
+    #
+    # We have to build an attribute syntax based on:
+    #
+    #   * uid
+    #   * time: start-time / end-time
+    #   * profile id
+    #   * segment color
+    #   * score
+    #
+    # to build formatted segment structures like this:
+    #
+    #     <uid>^<start-time>-<end-time>@<profile-id>#<color>
+    #
+    # E.g.
+    #
+    #     {"attributes": {"segment": "c4ea2bad-6f84-4b6c-869b-8ddcd4128d83^1.52-3.41@12345678#afafaf"}}
+    #
     def rich_text
-      self.all.map do |chunk|
+      rt = self.all.map do |chunk|
         json = {"insert" => chunk.text, "attributes" => {}}
-        json["attributes"]["start"]   = chunk.offset.to_f if chunk.offset
-        json["attributes"]["end"]     = (chunk.offset + chunk.duration).to_f if chunk.duration
-        json["attributes"]["segment"] = chunk.uid
-        # json["attributes"]["duration"] = chunk.duration.to_f if chunk.duration
-        # json["attributes"]["start_at"] = chunk.start_at.to_s if chunk.start_at
-        # json["attributes"]["end_at"]   = chunk.end_at.to_s if chunk.end_at
+        segment_id =  "#{chunk.uid}"
+        segment_id += "^#{chunk.offset.to_f}-#{(chunk.offset + chunk.duration).to_f}" if chunk.offset && chunk.duration
+        segment_id += "%#{chunk.score}" if chunk.score
+        json["attributes"]["segment"] = segment_id
         json
       end
+      # add spaces in between junks
+      rt.zip((rt.length - 1).times.map {{"insert" => " "}}).flatten.compact
     end
 
     private
