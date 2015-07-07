@@ -70,15 +70,6 @@ class Chunk < ::Document
   # private scopes
   scope :transcribed, -> {where(:processing_status => STATES[:transcribed])}
 
-=begin
-  scope :best, -> {
-    joins("INNER JOIN segments ys ON ys.chunk_id = documents.id AND ys.type IN ('Segment::ChunkSegment')").
-    joins("JOIN (SELECT ps.position AS position, MAX(score) AS max_score FROM documents p INNER JOIN segments ps ON ps.chunk_id = p.id AND ps.document_id = 163 AND ps.type IN ('Segment::ChunkSegment') GROUP BY ps.position) y ON y.position = ys.position AND y.max_score = documents.score").
-    order("ys.position")
-  }
-=end
-
-
   before_save :set_default_locale, on: :create
   after_validation :save_master_chunk_segment_and_track
 
@@ -147,10 +138,7 @@ class Chunk < ::Document
     def rich_text
       rt = self.all.map do |chunk|
         json = {"insert" => chunk.text, "attributes" => {}}
-        segment_id =  "#{chunk.uid}"
-        segment_id += "+t#{chunk.offset.to_f}-#{(chunk.offset + chunk.duration).to_f}".gsub('.', '_') if chunk.offset && chunk.duration
-        segment_id += "+s#{chunk.score}".gsub('.', '_') if chunk.score
-        json["attributes"]["segment"] = segment_id
+        json["attributes"]["segment"] = chunk.segment_id
         json
       end
       # add spaces in between junks
@@ -203,6 +191,13 @@ class Chunk < ::Document
 
   def master_segment
     master_chunk_segment
+  end
+
+  def segment_id
+    result =  "#{uid}"
+    result += "+t#{sprintf('%.2f', offset)}-#{sprintf('%.2f', offset + duration)}".gsub('.', '_') if offset && duration
+    result += "+s#{sprintf('%.3f', score)}".gsub('.', '_') if score
+    result
   end
 
   protected

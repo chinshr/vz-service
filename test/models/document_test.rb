@@ -290,4 +290,54 @@ class DocumentTest < ActiveSupport::TestCase
     assert_equal 2, document.versions.size
     assert_equal({"ops" => [{"insert" => "The article."}]}, document.previous_version.rich_text)
   end
+
+  context "rich text" do
+    setup do
+      assert_difference "Segment::ChunkSegment.count", 3 do
+        @document = FactoryGirl.create(:document)
+        @t0 = @document.create_track(s3_url: "http://t0")
+
+        @c1 = Chunk::GoogleSpeechChunk.create(:position => 1, :offset => 0, :text => "I hate to say", :score => 0.80, :document => @document)
+        @t1 = @c1.create_track(s3_url: "http://t1", :duration => 10)
+        @c2 = Chunk::GoogleSpeechChunk.create(:position => 2, :offset => 10, :text => "cat maths are", :score => 0.65, :document => @document)
+        @t2 = @c2.create_track(s3_url: "http://t2", :duration => 10)
+        @c3 = Chunk::GoogleSpeechChunk.create(:position => 3, :offset => 20, :text => "the cesty food in the world", :score => 0.85, :document => @document)
+        @t3 = @c3.create_track(s3_url: "http://t3", :duration => 10)
+      end
+    end
+
+    should "get rich_text sanity" do
+      assert_equal "I hate to say", @document.rich_text['ops'][0]['insert']
+      assert_equal [0.0, 10.0], Document.parse_segment_time(@document.rich_text['ops'][0]['attributes']['segment'])
+      assert_equal 0.8, Document.parse_segment_score(@document.rich_text['ops'][0]['attributes']['segment'])
+
+      assert_equal " ", @document.rich_text['ops'][1]['insert']
+
+      assert_equal "cat maths are", @document.rich_text['ops'][2]['insert']
+      assert_equal [10.0, 20.0], Document.parse_segment_time(@document.rich_text['ops'][2]['attributes']['segment'])
+      assert_equal 0.65, Document.parse_segment_score(@document.rich_text['ops'][2]['attributes']['segment'])
+
+      assert_equal " ", @document.rich_text['ops'][3]['insert']
+
+      assert_equal "the cesty food in the world", @document.rich_text['ops'][4]['insert']
+      assert_equal [20.0, 30.0], Document.parse_segment_time(@document.rich_text['ops'][4]['attributes']['segment'])
+      assert_equal 0.85, Document.parse_segment_score(@document.rich_text['ops'][4]['attributes']['segment'])
+    end
+
+    should "set rich_text text and score" do
+      rt = @document.rich_text
+
+      rt['ops'][2]['insert'] = "that cats make"
+      rt['ops'][4]['insert'] = "the best food in the world."
+
+      # @document.update_chunks_from(rt)
+      @document.rich_text = rt
+      assert_equal true, @document.save
+
+      assert_equal "that cats make", @c2.reload.text
+      assert_equal 1.0, @c2.reload.score
+      assert_equal "the best food in the world.", @c3.reload.text
+      assert_equal 1.0, @c3.reload.score
+    end
+  end
 end

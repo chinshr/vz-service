@@ -645,37 +645,6 @@ App.Views.DocumentsBase = Backbone.View.extend({
   loadRegions: function() {
     var regions, ops;
 
-    // "c4ea2bad-6f84-4b6c-869b-8ddcd4128d83+t..." -> 'c4ea2bad-6f84-4b6c-869b-8ddcd4128d83'
-    var uid = function(segment) {
-      um = segment.match(/^([a-z,0-9,-]*)(?![a-z,0-9,-])/);
-      return um ? um[1] : null;
-    };
-
-    // "...+t1_45-3_52..." -> [1.45, 3.52]
-    var time = function(segment) {
-      var tm;
-      tm = segment.match(/\+t([0-9_]*)-([0-9_]*)/);
-      return tm ? _.map(tm.slice(1, 3), function(t) { return parseFloat(t.replace(/_/g, '.')); }) : null;
-    };
-
-    // "...+p12345678..." -> '12345678'
-    var profile = function(segment) {
-      var pm = segment.match(/\+p(.+?(?=(\+|$)))/);
-      return pm ? pm[1] : null;
-    };
-
-    // "...+cafafaf..." -> 'afafaf'
-    var color = function(segment) {
-      var cm = segment.match(/\+c(.+?(?=(\+|$)))/);
-      return cm ? cm[1] : null;
-    };
-
-    // "...+s0_75..." -> 0.75
-    var score = function(segment) {
-      var sm = segment.match(/\+s([0-9_]+?(?=(\+|$)))/);
-      return sm ? parseFloat(sm[1].replace(/_/g, '.')) : null;
-    };
-
     // extract ops
     if (Object.prototype.toString.call(this.model.attributes.rich_text) === '[object Array]') {
       ops = this.model.attributes.rich_text;
@@ -687,8 +656,8 @@ App.Views.DocumentsBase = Backbone.View.extend({
     regions = ops.map(_.bind(function (op) {
       var region = {};
       if (op.attributes && op.attributes.segment) {
-        var ts = time(op.attributes.segment);
-        var cs = color(op.attributes.segment);
+        var ts = this.parseSegmentTime(op.attributes.segment);
+        var cs = this.parseSegmentColor(op.attributes.segment);
         region.id    = op.attributes.segment;
         region.start = ts ? ts[0] : null;
         region.end   = ts ? ts[1] : null;
@@ -708,6 +677,28 @@ App.Views.DocumentsBase = Backbone.View.extend({
 
   updateRegion: function(region) {
     console.log("updateRegion()", region);
+
+    var uid = this.parseSegmentUid(region.id),
+      contents = this.contentEditor.getContents(),
+      changes = false;
+    if (contents && contents.ops) {
+      var _this = this;
+      _.each(contents.ops, function(op) {
+        if (op.attributes && op.attributes.segment === region.id) {
+          var newId = _this.encodeSegmentFrom(region);
+          if (newId !== region.id) {
+            op.attributes.segment = newId;
+            region.id = newId;
+            changes = true;
+          }
+        }
+      });
+      if (changes) {
+        this.clearSegmentHighlights();
+        this.contentEditor.setContents(contents);
+        this.highlightSegment(region);
+      }
+    }
   },
 
   removeRegion: function(region) {
@@ -769,5 +760,67 @@ App.Views.DocumentsBase = Backbone.View.extend({
       this.wavesurfer.empty();
       this.wavesurfer.drawBuffer();
     }
+  },
+
+  // "c4ea2bad-6f84-4b6c-869b-8ddcd4128d83+t..." -> 'c4ea2bad-6f84-4b6c-869b-8ddcd4128d83'
+  parseSegmentUid: function(segment) {
+    um = segment.match(/^([a-z,0-9,-]*)(?![a-z,0-9,-])/);
+    return um ? um[1] : null;
+  },
+
+  // "...+t1_45-3_52..." -> [1.45, 3.52]
+  parseSegmentTime: function(segment) {
+    var tm;
+    tm = segment.match(/\+t([0-9_]*)-([0-9_]*)/);
+    return tm ? _.map(tm.slice(1, 3), function(t) { return parseFloat(t.replace(/_/g, '.')); }) : null;
+  },
+
+  // "...+p12345678..." -> '12345678'
+  parseSegmentProfile: function(segment) {
+    var pm = segment.match(/\+p(.+?(?=(\+|$)))/);
+    return pm ? pm[1] : null;
+  },
+
+  // "...+cafafaf..." -> 'afafaf'
+  parseSegmentColor: function(segment) {
+    var cm = segment.match(/\+c(.+?(?=(\+|$)))/);
+    return cm ? cm[1] : null;
+  },
+
+  // "...+s0_75..." -> 0.75
+  parseSegmentScore: function(segment) {
+    var sm = segment.match(/\+s([0-9_]+?(?=(\+|$)))/);
+    return sm ? parseFloat(sm[1].replace(/_/g, '.')) : null;
+  },
+
+  encodeSegmentFrom: function(region) {
+    var sid, uid, time, score, color, profile;
+    uid = this.parseSegmentUid(region.id);
+    time = this.parseSegmentTime(region.id);
+    score = this.parseSegmentScore(region.id);
+    color = this.parseSegmentColor(region.id);
+    profile = this.parseSegmentProfile(region.id);
+
+    sid = uid;
+    if (region.start && region.end) {
+      sid = sid + "+t" + region.start.toFixed(2).toString().replace(/\./g, '_') + "-" + region.end.toFixed(2).toString().replace(/\./g, '_');
+    } else {
+      sid = sid + "+t" + time[0].toString().replace(/\./g, '_') + "-" + time[1].toString().replace(/\./g, '_');
+    }
+
+    if (score) {
+      sid = sid + "+s" + score.toFixed(3).toString().replace(/\./g, '_');
+    }
+
+    if (color) {
+      sid = sid + "+c" + color;
+    }
+
+    if (profile) {
+      sid = sid + "+p" + profile;
+    }
+
+    return sid;
   }
+
 });

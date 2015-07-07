@@ -216,16 +216,15 @@ class Document < ActiveRecord::Base
 
   def update_chunks_from(rich_text)
     result = {}
-    segments = rich_text.is_a?(Array) ? rich_text : rich_text.try(:[], :ops)
-    if segments
+    if segments = rich_text.is_a?(Array) ? rich_text : rich_text.try(:[], 'ops')
       # filter by chunk id
       segments.each do |segment|
-        id = segment.try(:[], :attributes).try(:[], :segment)
+        id = segment.try(:[], 'attributes').try(:[], 'segment')
         if uid = self.class.parse_segment_uid(id)
           if result[uid]
-            result[uid] += [segment[:insert]]
+            result[uid] += [segment['insert']]
           else
-            result[uid] = [segment[:insert]]
+            result[uid] = [segment['insert']]
           end
         end
       end
