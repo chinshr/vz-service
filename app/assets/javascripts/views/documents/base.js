@@ -47,6 +47,7 @@ App.Views.DocumentsBase = Backbone.View.extend({
     'reset': function () {
       $('.player-play-pause').addClass('fa-play').removeClass('fa-pause');
       this.wavesurfer.stop();
+      this.clearSegmentHighlights();
     },
 
     'toggle-mute': function (event) {
@@ -194,6 +195,7 @@ App.Views.DocumentsBase = Backbone.View.extend({
     this.wavesurfer.on('finish', _.bind(function () {
       $(event.target).addClass('fa-play').removeClass('fa-pause');
       this.updatePlayTime();
+      this.clearSegmentHighlights();
     }, this));
 
     /* On error */
@@ -219,9 +221,9 @@ App.Views.DocumentsBase = Backbone.View.extend({
       e.shiftKey ? region.playLoop() : region.play();
     });
 
-    this.wavesurfer.on('region-click', this.editAnnotation);
-    this.wavesurfer.on('region-updated', this.saveRegions);
-    this.wavesurfer.on('region-removed', this.saveRegions);
+    this.wavesurfer.on('region-click', _.bind(this.editAnnotation, this));
+    this.wavesurfer.on('region-updated', _.bind(this.updateRegion, this));
+    this.wavesurfer.on('region-removed', _.bind(this.removeRegion, this));
     this.wavesurfer.on('region-in', _.bind(this.highlightSegment, this));
     this.wavesurfer.on('region-out', _.bind(this.lowlightSegment, this));
 
@@ -643,29 +645,35 @@ App.Views.DocumentsBase = Backbone.View.extend({
   loadRegions: function() {
     var regions, ops;
 
-    // "c4ea2bad-6f84-4b6c-869b-8ddcd4128d83^..." -> 'c4ea2bad-6f84-4b6c-869b-8ddcd4128d83'
+    // "c4ea2bad-6f84-4b6c-869b-8ddcd4128d83+t..." -> 'c4ea2bad-6f84-4b6c-869b-8ddcd4128d83'
     var uid = function(segment) {
       um = segment.match(/^([a-z,0-9,-]*)(?![a-z,0-9,-])/);
       return um ? um[1] : null;
     };
 
-    // "...^1.45-3.52..." -> [1.45, 3.52]
+    // "...+t1_45-3_52..." -> [1.45, 3.52]
     var time = function(segment) {
       var tm;
-      tm = segment.match(/\^([0-9.]*)-([0-9.]*)/);
-      return tm ? _.map(tm.slice(1, 3), function(t) { return parseFloat(t); }) : null;
+      tm = segment.match(/\+t([0-9_]*)-([0-9_]*)/);
+      return tm ? _.map(tm.slice(1, 3), function(t) { return parseFloat(t.replace(/_/g, '.')); }) : null;
     };
 
-    // "...@12345678..." -> '12345678'
+    // "...+p12345678..." -> '12345678'
     var profile = function(segment) {
-      var pm = segment.match(/@(.*(?=#)|(.*)$)/);
+      var pm = segment.match(/\+p(.+?(?=(\+|$)))/);
       return pm ? pm[1] : null;
     };
 
-    // "...#afafaf..." -> 'afafaf'
+    // "...+cafafaf..." -> 'afafaf'
     var color = function(segment) {
-      var cm = segment.match(/#(.*(?!#)|(.*)$)/);
+      var cm = segment.match(/\+c(.+?(?=(\+|$)))/);
       return cm ? cm[1] : null;
+    };
+
+    // "...+s0_75..." -> 0.75
+    var score = function(segment) {
+      var sm = segment.match(/\+s([0-9_]+?(?=(\+|$)))/);
+      return sm ? parseFloat(sm[1].replace(/_/g, '.')) : null;
     };
 
     // extract ops
@@ -698,6 +706,14 @@ App.Views.DocumentsBase = Backbone.View.extend({
     }, this));
   },
 
+  updateRegion: function(region) {
+    console.log("updateRegion()", region);
+  },
+
+  removeRegion: function(region) {
+    console.log("removeRegion()", region);
+  },
+
   saveRegions: function() {
     console.log("saveRegions()");
   },
@@ -708,21 +724,25 @@ App.Views.DocumentsBase = Backbone.View.extend({
 
   clearSegmentHighlights: function() {
     console.log("clearSegmentHighlights()");
-    $('span').filter(function() { return $(this).attr('class').match(/segment-/) }).removeClass('segment-highlight');
+    $('#content-editor span').filter(function() { return $(this).attr('class').match(/segment-/) }).removeClass("segment-highlight");
   },
 
   highlightSegment: function(region) {
-    console.log("highlightSegment()");
+    console.log("highlightSegment()", region);
     this.clearSegmentHighlights();
     if (region && region.id) {
-      $(".segment-" + region.id).addClass("segment-highlight");
+      $(".segment-" + this.jq(region.id)).addClass("segment-highlight");
     }
+  },
+
+  jq: function(segment) {
+    return segment.replace(/(:|\.|\+|\[|\]|,)/g, "\\$1");
   },
 
   lowlightSegment: function(region) {
     console.log("lowlightSegment()");
     if (region && region.id) {
-      $(".segment-" + region.id).removeClass("segment-highlight");
+      // $(".segment-" + region.id).removeClass("segment-highlight");
     }
   },
 

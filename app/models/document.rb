@@ -86,36 +86,36 @@ class Document < ActiveRecord::Base
       SecureRandom.uuid
     end
 
-    # "c4ea2bad-6f84-4b6c-869b-8ddcd4128d83^..." -> 'c4ea2bad-6f84-4b6c-869b-8ddcd4128d83'
+    # "c4ea2bad-6f84-4b6c-869b-8ddcd4128d83+t..." -> 'c4ea2bad-6f84-4b6c-869b-8ddcd4128d83'
     def parse_segment_uid(segment)
       um = segment.to_s.match(/^([a-z,0-9,-]*)(?![a-z,0-9,-])/)
       um.try(:[], 1).present? ? um[1] : nil;
     end
 
-    # "...^1.45-3.52..." -> [1.45, 3.52]
+    # "...+t1_45-3_52..." -> [1.45, 3.52]
     def parse_segment_time(segment)
-      tm = segment.to_s.match(/\^([0-9.]*)-([0-9.]*)/)
+      tm = segment.to_s.match(/\+t([0-9_]*)-([0-9_]*)/)
       tm = tm.try(:to_a).try(:slice, 1, 2)
-      tm.try(:present?) ? tm.map(&:to_f) : nil
+      tm.try(:present?) ? tm.map {|t| t.gsub('_', '.')}.map(&:to_f) : nil
     end
 
-    # "...@12345678..." -> '12345678'
+    # "...+p12345678..." -> '12345678'
     def parse_segment_profile(segment)
-      pm = segment.to_s.match(/@(.+?(?=(@|^|#|%|$)))/)
+      pm = segment.to_s.match(/\+p(.+?(?=(\+|$)))/)
       pm.try(:[], 1)
     end
 
     # "...#afafaf..." -> 'afafaf'
     def parse_segment_color(segment)
-      cm = segment.to_s.match(/#(.+?(?=(@|^|#|%|$)))/)
+      cm = segment.to_s.match(/\+c(.+?(?=(\+|$)))/)
       cm.try(:[], 1)
     end
 
-    # "...%0.75..." -> 0.75
+    # "...%0_75..." -> 0.75
     def parse_segment_score(segment)
-      sc = segment.to_s.match(/%([0-9.]+?(?=(@|^|#|%|$)))/)
+      sc = segment.to_s.match(/\+s([0-9_]+?(?=(\+|$)))/)
       sc = sc.try(:[], 1)
-      sc ? sc.to_f : nil
+      sc ? sc.gsub('_', '.').to_f : nil
     end
   end  # class
 

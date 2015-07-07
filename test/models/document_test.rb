@@ -247,7 +247,7 @@ class DocumentTest < ActiveSupport::TestCase
 
   context "parse segment" do
     setup do
-      @segment = "37fc59fc-ac05-4a1f-9b72-b94f17f00f2d^0.02-3.3%0.75#rgba(45,23,89,0.2)@123456"
+      @segment = "37fc59fc-ac05-4a1f-9b72-b94f17f00f2d+t0_02-3_3+s0_75+crgba(45,23,89,0.2)+p123456"
     end
 
     should "parse uid" do
@@ -257,24 +257,26 @@ class DocumentTest < ActiveSupport::TestCase
 
     should "parse time" do
       assert_equal [0.02, 3.3], Document.parse_segment_time(@segment)
+      assert_equal [1.0, 2.0], Document.parse_segment_time("37f+t1-2")
       assert_equal nil, Document.parse_segment_time("no-time")
     end
 
     should "parse score" do
       assert_equal 0.75, Document.parse_segment_score(@segment)
-      assert_equal 0.33, Document.parse_segment_score("37f^0.02-3.3%0.33")
+      assert_equal 0.33, Document.parse_segment_score("37f+t0_02-3_3+s0_33")
       assert_equal nil, Document.parse_segment_score("no-score#aaa")
     end
 
     should "parse profile" do
       assert_equal "123456", Document.parse_segment_profile(@segment)
-      assert_equal "abcdef", Document.parse_segment_profile("123@abcdef#ccc")
-      assert_equal nil, Document.parse_segment_profile("no-profile#aaa^1-2")
+      assert_equal "abcdef", Document.parse_segment_profile("123+pabcdef+cccc")
+      assert_equal nil, Document.parse_segment_profile("no-profile+caaa+t1-2")
     end
 
     should "parse color" do
       assert_equal "rgba(45,23,89,0.2)", Document.parse_segment_color(@segment)
-      assert_equal "rgba(45,23,89,0.2)", Document.parse_segment_color("37fc59fc-ac05-4a1f-9b72-b94f17f00f2d^0.02-3.3%0.75#rgba(45,23,89,0.2)")
+      assert_equal "rgba(45,23,89,0.2)", Document.parse_segment_color("37f+t0_02-3_3+s0_75+crgba(45,23,89,0.2)")
+      assert_equal "ccc", Document.parse_segment_color("37f+t0_02-3_3+s0_75+cccc")
       assert_equal nil, Document.parse_segment_color("no-color^1-2")
     end
   end

@@ -142,18 +142,21 @@ class Chunk < ::Document
     # E.g.
     #
     #     {"attributes": {"segment": "c4ea2bad-6f84-4b6c-869b-8ddcd4128d83^1.52-3.41@12345678#afafaf"}}
+    #     {"attributes": {"segment": "c4ea2bad-6f84-4b6c-869b-8ddcd4128d83+t1.52-3.41+p12345678+cafafaf+s0.75"}}
     #
     def rich_text
       rt = self.all.map do |chunk|
         json = {"insert" => chunk.text, "attributes" => {}}
         segment_id =  "#{chunk.uid}"
-        segment_id += "^#{chunk.offset.to_f}-#{(chunk.offset + chunk.duration).to_f}" if chunk.offset && chunk.duration
-        segment_id += "%#{chunk.score}" if chunk.score
+        segment_id += "+t#{chunk.offset.to_f}-#{(chunk.offset + chunk.duration).to_f}".gsub('.', '_') if chunk.offset && chunk.duration
+        segment_id += "+s#{chunk.score}".gsub('.', '_') if chunk.score
         json["attributes"]["segment"] = segment_id
         json
       end
       # add spaces in between junks
-      rt.zip((rt.length - 1).times.map {{"insert" => " "}}).flatten.compact
+      rt = rt.zip((rt.length - 1).times.map {{"insert" => " "}}).flatten.compact
+      # return ops
+      {"ops" => rt}
     end
 
     private
