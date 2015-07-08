@@ -715,8 +715,8 @@ App.Views.DocumentsBase = Backbone.View.extend({
   },
 
   clearSegmentHighlights: function() {
-    console.log("clearSegmentHighlights()");
-    $('#content-editor span, #content-editor b, #content-editor i, #content-editor s').filter(function() { return $(this).attr('class').match(/segment-/) }).removeClass("segment-highlight");
+    // console.log("clearSegmentHighlights()");
+    $('.segment-highlight').removeClass("segment-highlight");
   },
 
   highlightSegment: function(region) {

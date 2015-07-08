@@ -21,7 +21,8 @@ $.extend(true, $.notify.defaultOptions, {
 
 /* Tooltips */
 $(document).ready(function() {
-  $('.btn-tlb[data-toggle="tooltip"]').tooltip({});
+  // $('.btn-tlb[data-toggle="tooltip"]').tooltip({});
+  $('.btn-tlb').tooltip({});
 });
 
 /* Share popovers */

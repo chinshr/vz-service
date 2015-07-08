@@ -30,8 +30,8 @@
       </div><!-- .navbar-header -->
 
       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <!-- player -->
         <ul id="media-player-toolbar-container" class="nav navbar-nav toolbar-nav audio-player-nav">
-          <!-- player -->
           <li><button title="<%= key_cmd(:play, 'Esc') %>" type="button" class="btn btn-lg btn-tlb fa fa-play fa-fw player player-play-pause" data-action="toggle-play-pause" data-toggle="tooltip" data-placement="bottom"></button></li>
           <li><button type="button" class="btn btn-lg btn-tlb btn-elt"><p id="elt">00:00.0</p></button></li>
           <li><button type="button" class="btn btn-lg btn-tlb btn-ttp"><p id="ttp">-00:00.0</p></button></li>
@@ -54,8 +54,10 @@
           <li><button title="<%= key_cmd(:mute) %>" type="button" class="btn btn-md btn-tlb fa fa-volume-off fa-fw player player-mute-toggle" data-action="toggle-mute" data-toggle="tooltip" data-placement="bottom"></button></li>
           <li><button title="<%= key_cmd(:resize) %>" type="button" class="btn btn-md btn-tlb fa <%= waveform_visible? ? 'fa-compress' : 'fa-expand' %> fa-fw player player-resize-toggle" data-action="toggle-resize" data-toggle="tooltip" data-placement="bottom"></button></li>
         </ul>
+        <!-- /player -->
 
         <% if edit? %>
+        <!-- format -->
         <ul class="nav navbar-nav toolbar-nav content-editor-toolbar-container">
           <!-- font-style -->
           <li><button title="<%= key_cmd(:bold, 'B', :meta_key) %>" type="button" class="btn btn-md btn-tlb ql-bold fa fa-bold fa-fw" data-toggle="tooltip" data-placement="bottom"></button></li>
@@ -77,9 +79,11 @@
           <li><button title="<%= key_cmd(:numbered_list) %>" type="button" class="btn btn-md btn-tlb ql-list fa fa-list-ol fa-fw" data-toggle="tooltip" data-placement="bottom"></button></li>
           <li><button title="<%= key_cmd(:bulleted_list) %>" type="button" class="btn btn-md btn-tlb ql-bullet fa fa-list-ul fa-fw" data-toggle="tooltip" data-placement="bottom"></button></li>
         </ul>
+        <!-- /format popover -->
         <% end %>
 
         <% if show? %>
+        <!-- share-popover -->
         <ul class="nav navbar-nav toolbar-nav content-viewer-toolbar-container">
           <!-- highlight -->
           <li><button title="<%= key_cmd(:highlight, 'H', :ctrl_key) %>" type="button" class="btn btn-md btn-tlb ql-bold fa fa-bookmark fa-fw" data-toggle="tooltip" data-placement="bottom"></button></li>
@@ -95,11 +99,40 @@
           <li><button type="button" class="btn btn-md btn-tlb fa fa-linkedin fa-fw" data-toggle="tooltip" data-placement="bottom"></button></li>
 
         </ul>
+        <!-- /share-popover -->
         <% end %>
 
+        <!-- context menu -->
         <ul class="nav navbar-nav toolbar-nav pull-right">
-          <li>
-            <button id="share-button" class="btn btn-md btn-tlb btn-popover btn-share fa fa-share" type="button" data-container="body" data-toggle="popover tooltip" data-placement="bottom" data-target="share-popover"></button>
+          <li><!-- publish-->
+            <button title="Publish" id="publish-button" class="btn btn-md btn-tlb btn-popover btn-publish fa fa-rocket" type="button" data-toggle="tooltip popover" data-placement="bottom" data-target="publish-popover"></button>
+
+            <div id="publish-popover" class="popover fade bottom in" role="tooltip">
+              <div class="popover-content">
+                <div class="social-container">
+                  <ul class="nav navbar-nav toolbar-nav social-networks">
+                    <li class="facebook"><button class="btn btn-md btn-tlb fa fa-facebook fa-fw" href="#" data-href=""></button></li>
+                    <li class="twitter"><button class="btn btn-md btn-tlb fa fa-twitter fa-fw" href="#" data-href="" ></button></li>
+                    <li class="linkedin"><button class="btn btn-md btn-tlb fa fa-linkedin fa-fw" href="#" data-href=""></button></li>
+                    <!--<li class="email"><button class="btn btn-md btn-tlb fa fa-envelope fa-fw" href="#" data-href=""></button></li>-->
+                  </ul><!-- .social-networks -->
+                </div><!-- .social-container -->
+                <div class="share-link-container">
+                  <% if @document.privacy_private? %>
+                  <p><i class="fa fa-lock"></i>This document is private and may only be viewed by the owner.</p>
+                  <% else %>
+                  <p><i class="fa fa-info"></i>Copy and paste the link below to share this document.</p>
+                  <% end %>
+                  <input type="url" class="width-full" readonly="readonly" value="<%= web_document_url(@document.slug) %>">
+                </div>
+              </div><!-- popover-content -->
+            </div><!-- #share-popover .popover -->
+          </li><!-- /publish -->
+
+          <li class="separator">&nbsp;</li>
+
+          <li><!-- share -->
+            <button title="Share" id="share-button" class="btn btn-md btn-tlb btn-popover btn-share fa fa-share" type="button" data-toggle="popover tooltip" data-placement="bottom" data-target="share-popover"></button>
 
             <div id="share-popover" class="popover fade bottom in" role="tooltip">
               <!-- <h3 class="popover-title">Share!</h3> -->
@@ -122,10 +155,10 @@
                 </div>
               </div><!-- popover-content -->
             </div><!-- #share-popover .popover -->
+          </li><!-- /share -->
 
-          </li>
         </ul>
-
+        <!-- /context menu -->
       </div><!-- .collapse .navbar-collapse -->
     </nav>
   </div><!-- .container-fluid -->

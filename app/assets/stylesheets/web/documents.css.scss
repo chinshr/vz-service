@@ -3,12 +3,12 @@
 body.documents {
   background-color: #fff;
 
-   .simply-toast {
-     &.alert-save {
-       background-color: #292d33;
-       // border: #ddd solid 1px;
-       color: #fff;
-     }
+  .simply-toast {
+    &.alert-save {
+      background-color: #292d33;
+      // border: #ddd solid 1px;
+      color: #fff;
+    }
   }
 
   /* Used in toolbar and popover */
@@ -125,6 +125,54 @@ body.documents {
   } /* .sub-toolbar-nav */
 
   header {
+    nav {
+      .tooltip {
+        font-weight: bold;
+
+        .tooltip-inner {
+          text-transform: uppercase;
+          background-color: #292d33;
+          padding: 6px 10px;
+          /* wrap spaces */
+          // white-space:pre-wrap;
+          /* don't break spaces */
+          white-space:pre;
+          max-width:none;
+        }
+
+        &.top .tooltip-arrow {
+          border-top-color: #292d33;
+        }
+
+        &.right .tooltip-arrow {
+          border-right-color: rgba(41, 45, 51, 0.9);
+        }
+
+        &.bottom .tooltip-arrow {
+          border-bottom-color: #292d33;
+        }
+
+        &.left .tooltip-arrow {
+          border-left-color: #292d33;
+        }
+      }
+
+      .dropdown {
+        height: 50px;
+
+        .dropdown-toggle {
+          border: 0;
+          background-color: transparent;
+          padding: 0;
+
+          .caret {
+            color: #777;
+            margin: 23px 0;
+          }
+        }
+      } /* .dropdown */
+    }
+
     .topbar-primary {
       height: 50px;
 
@@ -185,51 +233,6 @@ body.documents {
             outline: 0;
           }
         }
-
-        .tooltip {
-          font-weight: bold;
-
-          .tooltip-inner {
-            background-color: #292d33;
-            padding: 6px 10px;
-            /* wrap spaces */
-            // white-space:pre-wrap;
-            /* don't break spaces */
-            white-space:pre;
-            max-width:none;
-          }
-
-          &.top .tooltip-arrow {
-            border-top-color: #292d33;
-          }
-
-          &.right .tooltip-arrow {
-            border-right-color: rgba(41, 45, 51, 0.9);
-          }
-
-          &.bottom .tooltip-arrow {
-            border-bottom-color: #292d33;
-          }
-
-          &.left .tooltip-arrow {
-            border-left-color: #292d33;
-          }
-        }
-
-        .dropdown {
-          height: 50px;
-
-          .dropdown-toggle {
-            border: 0;
-            background-color: transparent;
-            padding: 0;
-
-            .caret {
-              color: #777;
-              margin: 23px 0;
-            }
-          }
-        } /* .dropdown */
 
         #logo {
           margin: 5px 0;
