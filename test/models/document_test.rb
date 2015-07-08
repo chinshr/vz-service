@@ -324,20 +324,35 @@ class DocumentTest < ActiveSupport::TestCase
       assert_equal 0.85, Document.parse_segment_score(@document.rich_text['ops'][4]['attributes']['segment'])
     end
 
-    should "set rich_text text and score" do
+    should "set rich_text, text and score" do
       rt = @document.rich_text
 
       rt['ops'][2]['insert'] = "that cats make"
       rt['ops'][4]['insert'] = "the best food in the world."
 
-      # @document.update_chunks_from(rt)
       @document.rich_text = rt
       assert_equal true, @document.save
+      @document = Document.find @document.id
 
       assert_equal "that cats make", @c2.reload.text
-      assert_equal 1.0, @c2.reload.score
+      assert_equal true, @c2.reload.score > 0.9
       assert_equal "the best food in the world.", @c3.reload.text
-      assert_equal 1.0, @c3.reload.score
+      assert_equal true, @c3.reload.score > 0.9
+    end
+
+    should "set rich_text, offset and duration" do
+      rt = @document.rich_text
+      rt['ops'][2]['attributes']['segment'] = @c2.uid + "+t2_30-7_30+s0_650"
+      rt['ops'][4]['attributes']['segment'] = @c3.uid + "+t23_56-28_76+s0_850"
+
+      @document.rich_text = rt
+      assert_equal true, @document.save
+      @document = Document.find @document.id
+
+      assert_equal 2.3, @c2.reload.offset
+      assert_equal 5, @c2.reload.duration
+      assert_equal 23.56, @c3.reload.offset
+      assert_equal 5.2, @c3.reload.duration
     end
   end
 end

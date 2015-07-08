@@ -696,6 +696,7 @@ App.Views.DocumentsBase = Backbone.View.extend({
       if (changes) {
         this.clearSegmentHighlights();
         this.contentEditor.setContents(contents);
+        this.model.set({rich_text: this.contentEditor.getContents()});
         this.highlightSegment(region);
       }
     }
@@ -715,26 +716,30 @@ App.Views.DocumentsBase = Backbone.View.extend({
 
   clearSegmentHighlights: function() {
     console.log("clearSegmentHighlights()");
-    $('#content-editor span').filter(function() { return $(this).attr('class').match(/segment-/) }).removeClass("segment-highlight");
+    $('#content-editor span, #content-editor b, #content-editor i, #content-editor s').filter(function() { return $(this).attr('class').match(/segment-/) }).removeClass("segment-highlight");
   },
 
   highlightSegment: function(region) {
     console.log("highlightSegment()", region);
     this.clearSegmentHighlights();
     if (region && region.id) {
-      $(".segment-" + this.jq(region.id)).addClass("segment-highlight");
+      var match;
+      match = $(".segment-" + this.jq(region.id)).addClass("segment-highlight");
+      $('html, body').animate({
+        scrollTop: match.offset().top - ($('header').height() + $('.title-container').height() + 65)
+      }, 500);
     }
-  },
-
-  jq: function(segment) {
-    return segment.replace(/(:|\.|\+|\[|\]|,)/g, "\\$1");
   },
 
   lowlightSegment: function(region) {
     console.log("lowlightSegment()");
     if (region && region.id) {
-      // $(".segment-" + region.id).removeClass("segment-highlight");
+      $(".segment-" + this.jq(region.id)).removeClass("segment-highlight");
     }
+  },
+
+  jq: function(segment) {
+    return segment.replace(/(:|\.|\+|\[|\]|,)/g, "\\$1");
   },
 
   randomColor: function(alpha) {

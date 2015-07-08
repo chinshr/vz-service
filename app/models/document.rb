@@ -29,7 +29,8 @@ class Document < ActiveRecord::Base
   accepts_nested_attributes_for :track, allow_destroy: true
 
   acts_as_ordered_taggable_on :tags, :auto
-  has_paper_trail :only => [:title, :description, :text, :html, :rich_text]
+  has_paper_trail :only => [:title, :description, :text, :html, :rich_text,
+    :offset, :score]
 
   validates :slug, presence: true, uniqueness: {case_sensitive: false}
   validates :title, presence: true, length: {maximum: 255}, if: :is_root?
@@ -66,6 +67,7 @@ class Document < ActiveRecord::Base
 
   before_validation :generate_slug, :on => :create
   before_save :set_tag_owner
+  after_save :update_chunks_from_segments
 
   class << self
     # E.g. random_slug_string(5) => "12345"
@@ -204,37 +206,12 @@ class Document < ActiveRecord::Base
     master_document_segment
   end
 
-  # Overrides attribute
   def rich_text
     self[:rich_text] || best_chunks.rich_text
   end
 
   def rich_text=(value)
-    update_chunks_from(value)
-    self[:rich_text] = value if value
-  end
-
-  def update_chunks_from(rich_text)
-    result = {}
-    if segments = rich_text.is_a?(Array) ? rich_text : rich_text.try(:[], 'ops')
-      # filter by chunk id
-      segments.each do |segment|
-        id = segment.try(:[], 'attributes').try(:[], 'segment')
-        if uid = self.class.parse_segment_uid(id)
-          if result[uid]
-            result[uid] += [segment['insert']]
-          else
-            result[uid] = [segment['insert']]
-          end
-        end
-      end
-      # now, update those chunks that have changed and increase the score
-      result.keys.each do |uid|
-        text = result[uid].join.gsub(/\n|\r/, '')
-        chunks.where(uid: uid).where("documents.text != ?", text).update_all({text: text, score: 1.0})
-      end
-    end
-    result
+    self[:rich_text] = @rich_text = value if value
   end
 
   protected
@@ -258,4 +235,48 @@ class Document < ActiveRecord::Base
     segment.document ||= self.document if new_record?
   end
 
+  def update_chunks_from_segments
+    update_chunks_from(@rich_text) if @rich_text && changes[:rich_text]
+    @rich_text = nil
+  end
+
+  def update_chunks_from(rich_text)
+    result = {}
+    if segments = rich_text.is_a?(Array) ? rich_text : rich_text.try(:[], 'ops')
+      # filter by chunk id, building: {'xyz': {text: ['the', 'fox'], time: [1.52, 3.61]}}
+      segments.each do |segment|
+        id = segment.try(:[], 'attributes').try(:[], 'segment')
+        if uid = self.class.parse_segment_uid(id)
+          if result[uid]
+            result[uid]['text'] += [segment['insert']] if result[uid]['insert']
+          else
+            result[uid] ||= {}
+            result[uid]['text'] = [segment['insert']]
+            result[uid]['time'] = self.class.parse_segment_time(id)
+          end
+        end
+      end
+      # now, update those chunks that have changed and increase the score
+      result.keys.each do |uid|
+        text = (result[uid]['text'] || []).join.gsub(/\n|\r/, '')
+        time = result[uid]['time'] || []
+
+        chunks.where(uid: uid).each do |chunk|
+          similarity = chunk.text.to_s.levenshtein_similar(text)
+          # update text only if different
+          chunk.text = text if similarity < 1.0
+          # recalculate score
+          df = 1 + (1 - similarity)
+          new_score = [chunk.score * df, 1.0].min
+          chunk.score = new_score if new_score > chunk.score
+          # adjust offset/duration using time
+          chunk.offset = time[0] if time[0] && chunk.offset != time[0]
+          dr = time[1] - time[0] if time[0] && time[1]
+          chunk.track.duration = dr if dr && dr != chunk.track.duration
+          chunk.save if chunk.changed? || chunk.track.changed?
+        end
+      end
+    end
+    result
+  end
 end
