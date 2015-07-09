@@ -33,6 +33,7 @@ The service runs the Website and API.
 * Mobile Justice app -- https://www.mobilejusticeca.org
   - Article: http://www.theatlantic.com/technology/archive/2015/05/film-the-police/392483/
 * Record your life with a camera: http://memini.com
+* ClibMine, video captions, table of contents -- https://clip.mn
 
 ## Developer Resources
 
