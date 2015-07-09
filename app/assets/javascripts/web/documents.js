@@ -44,6 +44,8 @@ $(document).ready(function() {
   }).on('shown.bs.popover', function(e) {
     VZ.social.bind();
   }).click(function(e) {
+    $('#share-button').tooltip('hide');
+    /* close all other popovers except this */
     $('#share-button').not(this).popover('hide');
     $(this).popover('toggle');
   });
@@ -55,11 +57,39 @@ $(document).ready(function() {
   });
 });
 
+/* Publish popovers */
+$(document).ready(function() {
+
+  /* share button popover */
+  $('#publish-button').popover({
+    container: 'body',
+    html : true,
+    trigger: 'manual',
+    placement: 'bottom',
+    template: '<div class="popover publish-popover" id="publish-popover"><div class="arrow"></div><div class="popover-content"></div></div>',
+    title: function() {
+      return $('#' + $(this).data('target') + " .popover-title").html();
+    },
+    content: function() {
+      return $('#' + $(this).data('target') + " .popover-content").html();
+    }
+  }).on('shown.bs.popover', function(e) {
+    // VZ.social.bind();
+  }).click(function(e) {
+    $('#publish-button').tooltip('hide');
+    /* close all other popovers except this */
+    $('#publish-button').not(this).popover('hide');
+    $(this).popover('toggle');
+  });
+
+  $(document).click(function(e) {
+    if (!$(e.target).is('#publish-button, .popover-content, .popover-content input')) {
+      $('#publish-button').popover('hide');
+    }
+  });
+});
+
 /* Dropdowns */
 $(document).ready(function() {
   $('.dropdown-toggle').dropdown();
-});
-
-/* Sliders */
-$(document).ready(function() {
 });
