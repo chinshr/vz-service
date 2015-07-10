@@ -18,12 +18,12 @@ class TempModel < ActiveRecord::Base
   }
   scope :reverse_sort, lambda {|param| all.reverse_order if Model::Helper.booleanize(param)}
 
-  after_initialize :build_required_attributes
+  before_validation :build_required_attributes
 
   protected
 
   def build_required_attributes
-    self.slug = SecureRandom.uuid
+    self.slug = self.slug_id = SecureRandom.uuid
   end
 end
 

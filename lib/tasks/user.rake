@@ -9,4 +9,15 @@ namespace :user do
       end
     end
   end
+
+  namespace :username do
+    desc "Set 'username' if not present derived from email"
+    task :set_default => :environment do
+      ::User.where("users.username IS NULL").find_each do |user|
+        if un = user.email.split("@")[0]
+          user.update_column(:username, un) unless user.username
+        end
+      end
+    end
+  end
 end

@@ -11,6 +11,8 @@ class Ingest::AudioIngestTest < ActiveSupport::TestCase
     assert_equal document.title, ingest.title
     assert_equal document.description, ingest.description
     assert_equal document.tag_list, ingest.tag_list
+    assert_equal document.slug, ingest.slug
+    assert_equal document.slug_id, ingest.slug_id
   end
 
   should "delegate to document setters" do

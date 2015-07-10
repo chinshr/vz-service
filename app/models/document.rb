@@ -4,6 +4,7 @@ require "matrix"
 class Document < ActiveRecord::Base
   include Model::Filter
   include Model::Uid
+  extend FriendlyId
 
   PRIVACY_SETTINGS = {'public' => 0, 'private' => 1, 'unlisted' => 2}
 
@@ -28,11 +29,12 @@ class Document < ActiveRecord::Base
   has_one :track, through: :master_document_segment, class_name: "Track::DocumentTrack"
   accepts_nested_attributes_for :track, allow_destroy: true
 
+  friendly_id :title_and_slug_id, use: [:slugged, :history]
   acts_as_ordered_taggable_on :tags, :auto
   has_paper_trail :only => [:title, :description, :text, :html, :rich_text,
     :offset, :score]
 
-  validates :slug, presence: true, uniqueness: {case_sensitive: false}
+  validates :slug_id, presence: true, uniqueness: {case_sensitive: false}
   validates :title, presence: true, length: {maximum: 255}, if: :is_root?
 
   # public scopes
@@ -65,14 +67,14 @@ class Document < ActiveRecord::Base
   scope :with_privacy, lambda {|privacy| where("privacy_mask & #{privacy_mask(privacy)} > 0") }
   scope :with_user_privacy, lambda {|user| user && user.id ? where("documents.privacy_mask & #{privacy_mask("public")} > 0 OR documents.user_id = ?", user) : with_privacy("public") }
 
-  before_validation :generate_slug, :on => :create
+  # before_validation :generate_slug_id, :on => :create
   before_save :set_tag_owner
   after_save :update_chunks_from_segments
 
   class << self
     # E.g. random_slug_string(5) => "12345"
     def random_slug_string(len)
-      chars = [('a'..'z'), ('A'..'Z'), ('0'..'9')].map {|i| i.to_a}.flatten
+      chars = [('a'..'z'), ('0'..'9')].map {|i| i.to_a}.flatten
       String.new.tap {|s| 1.upto(len) {|i| s << chars[rand(chars.size - 1)]}} unless chars.empty?
     end
 
@@ -82,7 +84,7 @@ class Document < ActiveRecord::Base
       index ? 2**index : 0
     end
 
-    def slug_length; 7; end
+    def slug_id_length; 12; end
 
     def generate_uid
       SecureRandom.uuid
@@ -216,8 +218,24 @@ class Document < ActiveRecord::Base
 
   protected
 
-  def generate_slug
-    begin; self.slug = self.class.random_slug_string(self.class.slug_length); end while self.class.where(:slug => slug).present?
+  def set_slug_with_slug_id(normalized_slug = nil)
+    generate_slug_id if new_record? && !slug_id
+    set_slug_without_slug_id(normalized_slug)
+  end
+  alias_method_chain :set_slug, :slug_id
+
+  def should_generate_new_friendly_id?
+    new_record? || !!changes[:title] || slug.blank?
+  end
+
+  def title_and_slug_id
+    title.present? ? "#{title}-#{slug_id}" : slug_id
+  end
+
+  def generate_slug_id
+    begin
+      self.slug_id = self.class.random_slug_string(self.class.slug_id_length)
+    end while self.class.where(:slug_id => slug_id).present?
   end
 
   def set_tag_owner

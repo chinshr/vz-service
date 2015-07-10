@@ -322,9 +322,11 @@ class ChunkTest < ActiveSupport::TestCase
       end
 
       should "transform chunks to rich_text JSON" do
-        assert_equal 3, @ingest.document.best_chunks.rich_text.size
-        assert_equal "I hate to say", @ingest.document.best_chunks.rich_text[0]['insert']
-        assert_equal 0.0, @ingest.document.best_chunks.rich_text[0]['attributes']['start']
+        rt = @ingest.document.best_chunks.rich_text
+        assert_equal 5, rt['ops'].size, "spaces between chunks"
+        assert_equal "I hate to say", rt['ops'][0]['insert']
+        assert_equal @ingest.document.chunks.first.send(:segment_id),
+          rt['ops'][0]['attributes']['segment']
       end
     end
   end # context "scopes"
@@ -336,9 +338,17 @@ class ChunkTest < ActiveSupport::TestCase
     assert_equal 0.59, segment.score
   end
 
-  should "slug length" do
-    chunk = FactoryGirl.create(:chunk)
-    assert_equal 40, chunk.slug.length
+  context "slug" do
+    should "slug_id length" do
+      chunk = FactoryGirl.create(:chunk)
+      assert_equal 40, chunk.slug_id.length
+    end
+
+    should "be equal slug and slug_id" do
+      chunk = FactoryGirl.create(:chunk)
+      assert_equal 40, chunk.slug.length
+      assert_equal chunk.slug_id, chunk.slug
+    end
   end
 
   should "delegate to document's title" do

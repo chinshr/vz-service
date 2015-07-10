@@ -61,6 +61,9 @@ en:
           attributes:
             email:
               register_email: "has not registered"
+              email_format: "invalid format"
+            username:
+              username_format: "invalid format"
         registration:
           attributes:
             email:

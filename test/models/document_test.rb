@@ -56,23 +56,46 @@ class DocumentTest < ActiveSupport::TestCase
 
   context "validations" do
     should validate_presence_of :title
-    # should validate_presence_of :slug
     should ensure_length_of(:title).is_at_most(255)
 
     should "validate presence of slug" do
-      document = Document.new(:slug => "test")
+      document = Document.new(:title => "this is a title")
       document.valid?
-      assert_not_equal "test", document.slug
       assert_equal [], document.errors[:slug]
 
       document = Document.new
       document.valid?
       assert_equal [], document.errors[:slug]
     end
+  end
 
-    should "slug length" do
+  context "slug" do
+    should "slug_id length" do
       document = FactoryGirl.create(:document)
-      assert_equal 7, document.slug.length
+      assert_equal 12, document.slug_id.length
+    end
+
+    should "generate valid slug from title and slug_id" do
+      document = Document.create(title: "this is a title")
+      assert_equal "this-is-a-title-#{document.slug_id}", document.slug
+    end
+
+    should "generate new slug when title is changed but keep slug_id" do
+      document = Document.create(title: "This is a Title")
+      stored_slug_id = document.slug_id
+      assert_equal "this-is-a-title-#{document.slug_id}", document.slug
+      document.update_attributes(title: "When a man loves a woman!")
+      assert_equal "when-a-man-loves-a-woman-#{stored_slug_id}", document.slug
+    end
+
+    should "find history" do
+      document = Document.create(title: "This is a Title")
+      stored_slug = document.slug
+      assert Document.friendly.find(stored_slug)
+      assert Document.friendly.exists?(stored_slug)
+      document.update_attributes(title: "When a man loves a woman!")
+      assert Document.friendly.find(stored_slug)
+      assert Document.friendly.exists?(stored_slug)
     end
   end
 

@@ -129,3 +129,4 @@ gem 'kgio'
 gem 'turkee', git: 'https://github.com/chinshr/turkee.git', branch: 'master'
 gem 'activejob_backport'  # remove for Rails ~> 4.2
 gem 'paper_trail', '~> 4.0.0.rc'
+gem 'friendly_id', '~> 5.1.0'

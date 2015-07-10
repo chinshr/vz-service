@@ -36,7 +36,7 @@ protected
   end
 
   def account_update_params
-    params.require(:user).permit(:current_password, :email, :password, :password_confirmation)
+    params.require(:user).permit(:current_password, :email, :password, :password_confirmation, :username)
   end
 
   def clean_up_passwords(object)

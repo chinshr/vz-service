@@ -2,7 +2,7 @@
 <a class="navbar-tag" href="/dashboard">Account</a>
 <% end %>
 
-<h1 class="page-header">Account Settings</h1>
+<h1 class="page-header">Settings</h1>
 
 <%= form_for(current_user, {as: :user, url: web_account_settings_path, validate: true, remote: false, html: {method: :put, class: "form-horizontal", role: "form"}}) do |f| %>
   <%= render "web/shared/flash", remote: true, on: "#user_current_password" %>
@@ -13,14 +13,20 @@
     <span class="help-block">We need your current password to confirm your changes.</span>
   </div>
 
-  <h2 class="sub-header">Personal</h2>
+  <h2 class="sub-header">Account</h2>
 
   <div class="form-group">
     <%= f.label :email %>
     <%= f.text_field :email, :class => "form-control", :placeholder => "Enter email" %>
   </div>
 
-  <h2 class="sub-header">Change Password</h2>
+  <div class="form-group">
+    <%= f.label :username %>
+    <%= f.text_field :username, :class => "form-control", :placeholder => "Enter desired username" %>
+    <span class="help-block">Your profile at <i><%= "#{request.base_url}/@#{current_user.username}" %></i></span>
+  </div>
+
+  <h2 class="sub-header">Password</h2>
 
   <div class="form-group">
     <%= f.label :password %>

@@ -1,41 +1,63 @@
 <%#  Confirmation show %>
 <%= render "web/shared/devise_errors" %>
+<% content_for :javascript_includes do %>
+  <%= javascript_tag do %>
+
+  window.ClientSideValidations.validators.remote['username_format'] = function(element, options) {
+    if ($.ajax({
+      url: '/validators/username_format',
+      data: { username: element.val() },
+      // async *must* be false
+      async: false
+    }).status == 422) {
+      return options.message;
+    }
+  }
+
+  <% end %>
+<% end %>
 
 <div class="container-fluid content-primary">
   <%#= render "devise/shared/login_quote" %>
 
   <div class="tile form-tile animated fadeInUp">
-    <%= form_for(resource, :as => resource_name, :url => confirmation_path(resource_name), 
+    <%= form_for(resource, :as => resource_name, :url => confirmation_path(resource_name), validate: true, remote: true,
         :html => {:method => :put, :class => "form-signin panel animated fade-in-up"}) do |f| %>
       <div class="panel-heading">
         <h1 class="logo"><a class="signup-brand" href="/">Confirm your account with VOYZ.ES</a></h1>
         <p>You're almost done...</p>
       </div>
       <div class="panel-body">
-
-        <div class="form-group from-group-first-name">
+        <div class="form-group form-group-first-last-name clearfix">
+          <div class="col-md-6 form-horizontal left">
           <%= f.label :first_name, "First Name" %>
-          <%= f.text_field :first_name, :class => "form-control first", :autofocus => "autofocus", :autocapitalize => "on", :autocomplete => "off", :autocorrect => "off", :spellcheck => false, :placeholder => "Enter first name" %>
-        </div><!-- from-group-first-name -->
-        
-        <div class="form-group from-group-last-name">
-          <%= f.label :last_name, "Last Name" %>
-          <%= f.text_field :last_name, :class => "form-control first", :autocapitalize => "on", :autocomplete => "off", :autocorrect => "off", :spellcheck => false, :placeholder => "Enter last name" %>
-        </div><!-- from-group-last-name -->
+          <%= f.text_field :first_name, :class => "form-control first", :autofocus => "autofocus", :autocapitalize => "on", :autocomplete => "off", :autocorrect => "off", :spellcheck => false, :placeholder => "Enter first name", :validate => true, :"data-error-style" => "inline" %>
+          </div>
 
-        <div class="form-group from-group-password">
+          <div class="col-md-6 form-horizontal right">
+          <%= f.label :last_name, "Last Name" %>
+          <%= f.text_field :last_name, :class => "form-control first", :autocapitalize => "on", :autocomplete => "off", :autocorrect => "off", :spellcheck => false, :placeholder => "Enter last name", :validate => true, :"data-error-style" => "inline" %>
+          </div>
+        </div><!-- from-group-first-last-name -->
+
+        <div class="form-group form-group-username">
+          <%= f.label :username, "Username" %>
+          <%= f.password_field :username, :class => "form-control", :autocomplete => "off", :placeholder => "Enter username", :validate => true, :"data-error-style" => "inline" %>
+        </div><!-- from-group-username -->
+
+        <div class="form-group form-group-password">
           <%= f.label :password, "Password" %>
-          <%= f.password_field :password, :class => "form-control", :autocomplete => "off", :placeholder => "Enter password" %>
+          <%= f.password_field :password, :class => "form-control", :autocomplete => "off", :placeholder => "Enter password", :validate => true, :"data-error-style" => "inline" %>
         </div><!-- from-group-password -->
 
-        <div class="form-group from-group-password-confirmation">
+        <div class="form-group form-group-password-confirmation">
           <%= f.label :password_confirmation, "Password confirmation" %>
-          <%= f.password_field :password_confirmation, :class => "form-control", :autocomplete => "off", :placeholder => "Repeat password" %>
+          <%= f.password_field :password_confirmation, :class => "form-control", :autocomplete => "off", :placeholder => "Repeat password", :validate => true, :"data-error-style" => "inline" %>
         </div><!-- from-group-password-confirmation -->
 
         <%= hidden_field_tag :confirmation_token, @confirmation_token %>
-        
-      </div>  
+
+      </div>
       <div class="panel-footer">
         <button class="btn btn-lg btn-primary btn-block" type="submit">Finish</button>
       </div>

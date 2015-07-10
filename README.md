@@ -18,6 +18,26 @@ The service runs the Website and API.
 
 * Create SQS queues `rake sqs:queues:create`
 
+## Deploy
+
+After deployment to Heroku `git push heroku master`, the following tasks should be run:
+
+Create SQS queues for
+
+    rake sqs:queues:create
+
+Regenerate slugs after changing `slug_id`:
+
+    rake document:slugs:set_default
+
+Update roles for all users:
+
+    rake user:roles:set_default
+
+Set default username from email address:
+
+    rake user:username:set_default
+
 ## Business Resources
 
 * Competitive products:

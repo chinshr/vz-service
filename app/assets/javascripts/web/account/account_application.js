@@ -45,4 +45,9 @@ $(function() {
       }
     }, 200 );
   });
+
+
+  $("#user_username").on('keyup', function(event) {
+    $(event.target).parent().find(".help-block i").html(window.location.origin + "/@" + $(event.target).val());
+  });
 });

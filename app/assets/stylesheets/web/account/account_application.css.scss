@@ -576,6 +576,7 @@ body.account {
           cursor: default;
           display: list-item;
           text-align: -webkit-match-parent;
+          margin: 2px 3px 0 0;
 
           &:hover {
             border-color: #a9d8b2;
@@ -583,7 +584,6 @@ body.account {
           }
 
           a {
-            xpadding: 3px 5px;
             line-height: 1.4em;
             display: block;
             overflow: hidden;
@@ -728,6 +728,15 @@ body.account {
 
         &.action {
           margin-top: 40px;
+        }
+
+        .help-block {
+          font-size: 12px;
+
+          i {
+            font-style: normal;
+            font-weight: bold;
+          }
         }
       }
 

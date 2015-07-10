@@ -129,7 +129,7 @@ App.Views.UploadsBase = Backbone.View.extend({
       this.$('.action-preview').prop('disabled', false);
 
       // slug
-      this.$('.slug i').html("<a href=\"" + this.model.attributes.slug + "\" target=\"_blank\">http://voyz.es/" + this.model.attributes.slug + "</a>");
+      this.$('.slug i').html("<a href=\"" + window.location.origin + '/d/' + this.model.attributes.slug_id + "\" target=\"_blank\">voyz.es/d/" + this.model.attributes.slug_id + "</a>");
       this.$('.slug').show();
     } else {
       this.$('.action-edit').prop('disabled', true);

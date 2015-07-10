@@ -32,6 +32,7 @@ class User < ActiveRecord::Base
 
   validates :email, presence: true, email_format: true#, uniqueness: true
   validates :email, registration: true, on: :create, if: :should_perform_registration_validation?
+  validates :username, presence: true, length: { minimum: 2 }, username_format: true, if: :confirmed_or_confirmation_validation?
   validates :first_name, presence: true, if: :confirmed_or_confirmation_validation?
   validates :last_name, presence: true, if: :confirmed_or_confirmation_validation?
 

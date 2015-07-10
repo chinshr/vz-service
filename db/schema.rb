@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150706152226) do
+ActiveRecord::Schema.define(version: 20150713095232) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -124,7 +124,7 @@ ActiveRecord::Schema.define(version: 20150706152226) do
 
   create_table "documents", force: true do |t|
     t.string   "title"
-    t.string   "slug",                                                                   null: false
+    t.string   "slug_id",                                                                null: false
     t.text     "description"
     t.integer  "privacy_mask",                                         default: 0,       null: false
     t.string   "locale",            limit: 5,                          default: "en-US", null: false
@@ -143,6 +143,7 @@ ActiveRecord::Schema.define(version: 20150706152226) do
     t.string   "uid"
     t.integer  "ingest_iteration"
     t.integer  "turkee_task_id"
+    t.string   "slug"
   end
 
   add_index "documents", ["created_at"], name: "index_documents_on_created_at", using: :btree
@@ -153,12 +154,26 @@ ActiveRecord::Schema.define(version: 20150706152226) do
   add_index "documents", ["processing_status"], name: "index_documents_on_processing_status", using: :btree
   add_index "documents", ["score"], name: "index_documents_on_score", using: :btree
   add_index "documents", ["slug"], name: "index_documents_on_slug", unique: true, using: :btree
+  add_index "documents", ["slug_id"], name: "index_documents_on_slug_id", unique: true, using: :btree
   add_index "documents", ["title"], name: "index_documents_on_title", using: :btree
   add_index "documents", ["turkee_task_id"], name: "index_documents_on_turkee_task_id", using: :btree
   add_index "documents", ["type"], name: "index_documents_on_type", using: :btree
   add_index "documents", ["uid"], name: "index_documents_on_uid", using: :btree
   add_index "documents", ["updated_at"], name: "index_documents_on_updated_at", using: :btree
   add_index "documents", ["user_id"], name: "index_documents_on_user_id", using: :btree
+
+  create_table "friendly_id_slugs", force: true do |t|
+    t.string   "slug",                      null: false
+    t.integer  "sluggable_id",              null: false
+    t.string   "sluggable_type", limit: 50
+    t.string   "scope"
+    t.datetime "created_at"
+  end
+
+  add_index "friendly_id_slugs", ["slug", "sluggable_type", "scope"], name: "index_friendly_id_slugs_on_slug_and_sluggable_type_and_scope", unique: true, using: :btree
+  add_index "friendly_id_slugs", ["slug", "sluggable_type"], name: "index_friendly_id_slugs_on_slug_and_sluggable_type", using: :btree
+  add_index "friendly_id_slugs", ["sluggable_id"], name: "index_friendly_id_slugs_on_sluggable_id", using: :btree
+  add_index "friendly_id_slugs", ["sluggable_type"], name: "index_friendly_id_slugs_on_sluggable_type", using: :btree
 
   create_table "ingests", force: true do |t|
     t.integer  "upload_id"
@@ -409,6 +424,7 @@ ActiveRecord::Schema.define(version: 20150706152226) do
     t.string   "css_hex_color"
     t.string   "initials"
     t.integer  "roles_mask"
+    t.string   "username"
   end
 
   add_index "users", ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true, using: :btree
@@ -418,6 +434,7 @@ ActiveRecord::Schema.define(version: 20150706152226) do
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
   add_index "users", ["roles_mask"], name: "index_users_on_roles_mask", using: :btree
   add_index "users", ["unlock_token"], name: "index_users_on_unlock_token", unique: true, using: :btree
+  add_index "users", ["username"], name: "index_users_on_username", unique: true, using: :btree
 
   create_table "versions", force: true do |t|
     t.string   "item_type",  null: false

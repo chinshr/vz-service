@@ -63,11 +63,11 @@ App.Views.UploadsShow = App.Views.UploadsBase.extend({
   },
 
   onOpenEdit: function() {
-    window.location = '/' + this.model.attributes.slug + '/edit';
+    window.location = '/d/' + this.model.attributes.slug_id + '/edit';
   },
 
   onOpenPreview: function() {
-    window.location = '/' + this.model.attributes.slug;
+    window.location = '/d/' + this.model.attributes.slug_id;
   },
 
   onStop: function(e) {
