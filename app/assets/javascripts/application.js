@@ -14,6 +14,7 @@
 //= require jquery_ujs
 //= require jquery-ui/core
 //= require jquery-ui/widget
+//= require lib/nprogress
 //= require lib/sprintf
 //= require lib/chosen.jquery
 //= require lib/select2

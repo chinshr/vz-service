@@ -93,3 +93,13 @@ $(document).ready(function() {
 $(document).ready(function() {
   $('.dropdown-toggle').dropdown();
 });
+
+/* Progress bar start */
+NProgress.configure({
+  showSpinner: false,
+  trickleRate: 1,
+  trickleSpeed: 800,
+  speed: 500
+});
+
+NProgress.start();

@@ -168,6 +168,7 @@ App.Views.DocumentsBase = Backbone.View.extend({
     var hideProgress = function () {
       progressDiv.style.display = 'none';
       window.clearInterval(loadingInterval);
+      NProgress.done();
     };
 
     var loadingProgress = 0;
@@ -623,19 +624,23 @@ App.Views.DocumentsBase = Backbone.View.extend({
   },
 
   stopSaving: function() {
+    NProgress.done();
     return window.clearInterval(this.saveInterval);
   },
 
   save: function() {
     this.stopSaving();
+    NProgress.start();
     this.model.sync('update', this.model, {
       success: (function(_this) {
         return function(data) {
+          NProgress.done();
           $.notify("Document saved.", 'save');
         };
       })(this),
       error: (function(_this) {
         return function(model) {
+          NProgress.done();
           $.notify("Error when saving document.", 'error');
         };
       })(this)
