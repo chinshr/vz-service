@@ -19,14 +19,14 @@
           <label class="hidden" for="disabledSelect">Audio language</label>
           <select data-placeholder="Choose a Language..." id="file-locale" class="form-control input-sm input-single-searchable">
             <option value="en-US">English United States</option>
-            <option value="en-UK">English Great Britain</option>
-            <option value="de-DE">German Germany</option>
-            <option value="fr-FR">French France</option>
-            <option value="it-IT">Italian Italy</option>
-            <option value="es-ES">Spanish Spain</option>
-            <option value="es-MX">Spanish Mexico</option>
-            <option value="es-AR">Spanish Argentina</option>
-            <option value="es-VE">Spanish Venezuela</option>
+            <option value="en-UK" disabled>English Great Britain</option>
+            <option value="de-DE" disabled>German Germany</option>
+            <option value="fr-FR" disabled>French France</option>
+            <option value="it-IT" disabled>Italian Italy</option>
+            <option value="es-ES" disabled>Spanish Spain</option>
+            <option value="es-MX" disabled>Spanish Mexico</option>
+            <option value="es-AR" disabled>Spanish Argentina</option>
+            <option value="es-VE" disabled>Spanish Venezuela</option>
           </select>
         </div><!-- .form-group-locale -->
       </div><!-- .panel-body -->

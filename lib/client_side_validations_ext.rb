@@ -1,1 +1,2 @@
 require 'client_side_validations/middleware/registration'
+require 'client_side_validations/middleware/username_format'

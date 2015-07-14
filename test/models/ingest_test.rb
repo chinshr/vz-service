@@ -349,10 +349,10 @@ class IngestTest < ActiveSupport::TestCase
       @ingest.normalize_chunk_scores!
       @ingest.update_content_from @ingest.document.best_chunks
       rich_text = @ingest.document.best_chunks.rich_text
-      assert_equal 3, rich_text.size
-      assert_equal "I hate to say", rich_text[0]['insert']
-      assert_equal "that macaronies are", rich_text[1]['insert']
-      assert_equal "the best food in the world", rich_text[2]['insert']
+      assert_equal 5, rich_text['ops'].size, "includes spaces"
+      assert_equal "I hate to say", rich_text['ops'][0]['insert']
+      assert_equal "that macaronies are", rich_text['ops'][2]['insert']
+      assert_equal "the best food in the world", rich_text['ops'][4]['insert']
     end
   end
 

@@ -186,6 +186,8 @@ GEM
       dotenv (~> 0.11.1)
       thor (~> 0.19.1)
     formtastic_i18n (0.1.1)
+    friendly_id (5.1.0)
+      activerecord (>= 4.0.0)
     fuzzy_match (2.1.0)
     geocoder (1.2.6)
     gingerice (1.2.2)
@@ -419,6 +421,7 @@ DEPENDENCIES
   font_assets
   foreman (~> 0.73.0)
   formtastic!
+  friendly_id (~> 5.1.0)
   fuzzy_match
   geocoder
   gingerice

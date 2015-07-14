@@ -7,7 +7,7 @@ window.App = {
     if (window.location.pathname == "/dashboard") {
       new App.Routers.Dashboard();
       Backbone.history.start({pushState: !!(window.history && history.pushState), root: "/dashboard"});
-    } else if (window.location.pathname.match(/^\/documents/) >= 0) {
+    } else {
       new App.Routers.Documents();
       Backbone.history.start({pushState: !!(window.history && history.pushState), root: "/documents"});
     }

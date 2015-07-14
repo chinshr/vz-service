@@ -1,8 +1,10 @@
 App.Routers.Documents = Backbone.Router.extend({
   routes: {
     '' : 'index',
-    ':id/edit' : 'edit',
-    ':id' : 'show'
+    // ':id/edit' : 'edit',
+    // ':id' : 'show'
+    'd/:id/edit' : 'edit',
+    'd/:id' : 'show'
   },
 
   show: function(id) {

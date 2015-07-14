@@ -18,6 +18,7 @@ class Ingest::AudioIngest < ::Ingest
   delegate :user=, to: :document
 
   delegate :slug, to: :document
+  delegate :slug_id, to: :document
 
   after_commit :perform_async
 

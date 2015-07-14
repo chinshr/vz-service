@@ -26,6 +26,7 @@ class Upload < ActiveRecord::Base
   delegate :status, to: :ingest
   delegate :state, to: :ingest
   delegate :slug, to: :ingest
+  delegate :slug_id, to: :ingest
   delegate :progress, to: :ingest
 
   has_one :ingest

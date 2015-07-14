@@ -74,7 +74,7 @@ class Chunk < ::Document
   after_validation :save_master_chunk_segment_and_track
 
   class << self
-    def slug_length; 40; end
+    def slug_id_length; 40; end
 
     # Type casts to the class specified in :type parameter
     #
@@ -226,4 +226,9 @@ class Chunk < ::Document
       segment.track  ||= self.track
     end
   end
+
+  def title_and_slug_id
+    slug_id
+  end
+
 end
