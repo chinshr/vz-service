@@ -42,7 +42,7 @@ Voyzes::Application.routes.draw do
     end
 
     # web_document_path -> /x3ksk
-    # edit_web_document_path -> /x3ksk
+    # edit_web_document_path -> /x3ksk/edit
     resources :documents, only: [:show, :edit], path: "d"
 
     # profile_path('@chinshr') -> /@chinshr
