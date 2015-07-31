@@ -1,5 +1,6 @@
 class Web::DocumentsController < Web::ApplicationController
   include Pundit
+
   before_action :load_document, :only => [:show, :edit, :update, :destroy]
   before_action :authenticate_user_with_action!
 
@@ -41,4 +42,9 @@ class Web::DocumentsController < Web::ApplicationController
     params[:wf] && !Model::Helper.booleanize(params[:wf]) ? false : true
   end
   helper_method :waveform_visible?
+
+  def load_document
+    @document = Document.where("documents.slug_id = ?", params[:id]).first!
+  end
+
 end

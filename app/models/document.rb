@@ -214,6 +214,10 @@ class Document < ActiveRecord::Base
     self[:rich_text] = @rich_text = value if value
   end
 
+  def published?
+    !self.blank? && !self.privacy_private?
+  end
+
   protected
 
   def set_slug_with_slug_id(normalized_slug = nil)

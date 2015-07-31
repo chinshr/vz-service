@@ -47,8 +47,8 @@ Voyzes::Application.routes.draw do
 
     # profile_path('@chinshr') -> /@chinshr
     # profile_document_path -> /@chinshr/x3ksk
-    get '/:id', to: 'profiles#show', constraints: { id: /@[a-zA-Z0-9_]{2,15}/ }, as: :profile
-    get '/:user_id/:id', to: 'documents#show', constraints: { user_id: /@[a-zA-Z0-9_]{2,15}/ }, as: :profile_document
+    get '/:id', to: 'profiles#show', constraints: { id: /@([a-zA-Z0-9_]{2,15})/ }, as: :profile
+    get '/:user_id/:id', to: 'profiles/documents#show', constraints: { user_id: /@[a-zA-Z0-9_]{2,15}/ }, as: :profile_document
   end
 
   namespace :api do
