@@ -132,8 +132,8 @@ class Chunk < ::Document
     #
     # E.g.
     #
-    #     {"attributes": {"segment": "c4ea2bad-6f84-4b6c-869b-8ddcd4128d83^1.52-3.41@12345678#afafaf"}}
-    #     {"attributes": {"segment": "c4ea2bad-6f84-4b6c-869b-8ddcd4128d83+t1.52-3.41+p12345678+cafafaf+s0.75"}}
+    #     {"attributes": {"segment": "c4ea2bad-6f84-4b6c-869b-8ddcd4128d83+t1_52-3_41+s0_976"}}
+    #     {"attributes": {"segment": "c4ea2bad-6f84-4b6c-869b-8ddcd4128d83+t1_52-3_41+s0_75"}}
     #
     def rich_text
       rt = self.all.map do |chunk|
@@ -189,15 +189,21 @@ class Chunk < ::Document
     super || (document_id ? ::Document.find_by_id(document_id) : nil)
   end
 
-  def master_segment
-    master_chunk_segment
-  end
+  def master_segment; master_chunk_segment; end
 
   def segment_id
     result =  "#{uid}"
-    result += "+t#{sprintf('%.2f', offset)}-#{sprintf('%.2f', offset + duration)}".gsub('.', '_') if offset && duration
+    result += "+t#{sprintf('%.2f', start_time)}-#{sprintf('%.2f', end_time)}".gsub('.', '_') if start_time && end_time
     result += "+s#{sprintf('%.3f', score)}".gsub('.', '_') if score
     result
+  end
+
+  def start_time
+    self[:start_time] || offset
+  end
+
+  def end_time
+    self[:end_time] || (offset + (duration || 0))
   end
 
   protected

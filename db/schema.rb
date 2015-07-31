@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150713095232) do
+ActiveRecord::Schema.define(version: 20150714103439) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -144,6 +144,8 @@ ActiveRecord::Schema.define(version: 20150713095232) do
     t.integer  "ingest_iteration"
     t.integer  "turkee_task_id"
     t.string   "slug"
+    t.decimal  "start_time",                  precision: 15, scale: 3
+    t.decimal  "end_time",                    precision: 15, scale: 3
   end
 
   add_index "documents", ["created_at"], name: "index_documents_on_created_at", using: :btree
