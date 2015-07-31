@@ -204,9 +204,7 @@ class Document < ActiveRecord::Base
   end
   alias_method :is_root, :is_root?
 
-  def master_segment
-    master_document_segment
-  end
+  def master_segment; master_document_segment; end
 
   def rich_text
     self[:rich_text] || best_chunks.rich_text
@@ -285,13 +283,14 @@ class Document < ActiveRecord::Base
           chunk.text = text if similarity < 1.0
           # recalculate score
           df = 1 + (1 - similarity)
-          new_score = [chunk.score * df, 1.0].min
+          new_score   = [chunk.score * df, 1.0].min
           chunk.score = new_score if new_score > chunk.score
           # adjust offset/duration using time
-          chunk.offset = time[0] if time[0] && chunk.offset != time[0]
-          dr = time[1] - time[0] if time[0] && time[1]
-          chunk.track.duration = dr if dr && dr != chunk.track.duration
-          chunk.save if chunk.changed? || chunk.track.changed?
+          chunk.start_time = time[0] if time[0] && chunk.start_time != time[0]
+          chunk.end_time   = time[1] if time[1] && chunk.end_time != time[1]
+          # dr = time[1] - time[0] if time[0] && time[1]
+          # chunk.track.duration = dr if dr && dr != chunk.track.duration
+          chunk.save if chunk.changed? # || chunk.track.changed?
         end
       end
     end

@@ -239,11 +239,23 @@ class DocumentTest < ActiveSupport::TestCase
 
   should "set/get content as rich_text with attributes" do
     document = FactoryGirl.create(:document)
-    array = [{"insert" => "Das ist", "attributes" => {"offset" => 0, "duration" => 1.2}}]
-    document.attributes = {"rich_text" => array}
+    c1 = Chunk::GoogleSpeechChunk.create(position: 1, offset: 0, text: "Das ist", score: 0.80, document: document)
+    t1 = c1.create_track(s3_url: "http://t1", duration: 1.5)
+
+    assert_nil document[:rich_text]
+    assert_not_nil document.rich_text
+    c1.start_time = 0.32
+    c1.end_time   = 1.41
+    rt = {"ops"=>[{"insert"=>"Das ist das", "attributes"=>{"segment" => c1.segment_id}}]}
+    document.attributes = {"rich_text" => rt}
     document.save
     document = Document.find(document.id)
-    assert_equal array, document.rich_text
+    assert_equal rt, document[:rich_text]
+    assert_equal rt, document.rich_text
+    assert_equal 0.32, c1.reload.start_time.to_f
+    assert_equal 1.41, c1.reload.end_time.to_f
+    assert_equal 1.0, c1.reload.score.to_f
+    assert_equal "Das ist das", c1.reload.text
   end
 
   should "set/get content as html" do
@@ -364,6 +376,11 @@ class DocumentTest < ActiveSupport::TestCase
     end
 
     should "set rich_text, offset and duration" do
+      c2_offset   = @c2.offset
+      c2_duration = @c2.duration
+      c3_offset   = @c3.offset
+      c3_duration = @c3.duration
+
       rt = @document.rich_text
       rt['ops'][2]['attributes']['segment'] = @c2.uid + "+t2_30-7_30+s0_650"
       rt['ops'][4]['attributes']['segment'] = @c3.uid + "+t23_56-28_76+s0_850"
@@ -372,10 +389,15 @@ class DocumentTest < ActiveSupport::TestCase
       assert_equal true, @document.save
       @document = Document.find @document.id
 
-      assert_equal 2.3, @c2.reload.offset
-      assert_equal 5, @c2.reload.duration
-      assert_equal 23.56, @c3.reload.offset
-      assert_equal 5.2, @c3.reload.duration
+      assert_equal 2.3, @c2.reload.start_time
+      assert_equal 7.3, @c2.reload.end_time
+      assert_equal c2_offset, @c2.reload.offset, "remains unchanged"
+      assert_equal c2_duration, @c2.reload.duration
+
+      assert_equal 23.56, @c3.reload.start_time
+      assert_equal 28.76, @c3.reload.end_time
+      assert_equal c3_offset, @c3.reload.offset
+      assert_equal c3_duration, @c3.reload.duration
     end
   end
 end
