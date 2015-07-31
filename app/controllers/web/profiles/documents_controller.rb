@@ -1,9 +1,10 @@
 class Web::Profiles::DocumentsController < Web::ProfilesController
   include Pundit
+  include Web::DocumentsHelper
 
   before_action :load_user
   before_action :load_document
-  after_action :verify_authorized
+  # after_action :verify_authorized
 
   def show
     authorize @document
@@ -20,9 +21,18 @@ class Web::Profiles::DocumentsController < Web::ProfilesController
     @document = @user.documents.friendly.find(params[:id])
   end
 
+  def user_id
+    un = params[:user_id]
+    un.gsub!("@", "") if un
+    un
+  end
+
   # override to support nested policy 'profile/document'
   def authorize(record, query = nil)
     query ||= params[:action].to_s + "?"
+
+    @_pundit_policy_authorized = true
+
     policy = policy(:"profile/document")
     policy.record = record
 
@@ -31,11 +41,5 @@ class Web::Profiles::DocumentsController < Web::ProfilesController
     end
 
     true
-  end
-
-  def user_id
-    un = params[:user_id]
-    un.gsub!("@", "") if un
-    un
   end
 end
