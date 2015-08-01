@@ -95,7 +95,7 @@ VZ._social = (function() {
   var url = VZ.baseURL + document.location.pathname,
     trackingCodes = VZ.trackingCodes;
 
-  /* facebook init */ 
+  /* facebook init */
   (function(d, debug){
      var js, id = 'facebook-jssdk', ref = d.getElementsByTagName('script')[0];
      if (d.getElementById(id)) {return;}
@@ -104,7 +104,7 @@ VZ._social = (function() {
      ref.parentNode.insertBefore(js, ref);
   }(document, /* debug */ false));
 
-  /* twitter init */ 
+  /* twitter init */
   window.twttr = (function (d,s,id) {
     var t={}, js, fjs = d.getElementsByTagName(s)[0];
     if (d.getElementById(id)) return; js=d.createElement(s); js.id=id;

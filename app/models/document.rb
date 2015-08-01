@@ -2,11 +2,17 @@ require "fuzzy_match"
 require "matrix"
 
 class Document < ActiveRecord::Base
+  extend FriendlyId
+  include AASM
+  include Model::AASM::StatusSupport
   include Model::Filter
   include Model::Uid
-  extend FriendlyId
 
-  PRIVACY_SETTINGS = {'public' => 0, 'private' => 1, 'unlisted' => 2}
+  PRIVACY_SETTINGS  = {'public' => 0, 'private' => 1, 'unlisted' => 2}
+  ACCESSIBILITY_SETTINGS  = {'view' => 0, 'comment' => 1, 'edit' => 2}
+  STATE_UNPUBLISHED = 0
+  STATE_PUBLISHED   = 1
+  STATES            = {unpublished: STATE_UNPUBLISHED, published: STATE_PUBLISHED}
 
   delegate :duration, to: :track, allow_nil: true
   delegate :duration=, to: :track, allow_nil: true
@@ -39,7 +45,8 @@ class Document < ActiveRecord::Base
 
   # public scopes
   filtered_scopes :sort_order, :reverse_sort, :is_root, :any_of_locales,
-    :duration_lt, :duration_gt, :duration_lteq, :duration_gteq
+    :duration_lt, :duration_gt, :duration_lteq, :duration_gteq,
+    :any_of_status, :none_of_status
   scope :sort_order, lambda {|param|
     case param.first[0]  # E.g. get first key of {"id"=>"asc"}
     when "id"
@@ -61,11 +68,28 @@ class Document < ActiveRecord::Base
   scope :duration_gt, -> (param) {joins(:track).where(Track.arel_table[:duration].gt(param))}
   scope :duration_lteq, -> (param) {joins(:track).where(Track.arel_table[:duration].lteq(param))}
   scope :duration_gteq, -> (param) {joins(:track).where(Track.arel_table[:duration].gteq(param))}
+  scope :any_of_status, -> (params) {where("documents.aasm_state IN (?)", [params].flatten.map(&:to_s).
+    map {|s| s.match(/^([\-]{,1}[0-9]+)$/) ? s : nil}.reject(&:blank?).map {|s| Document::STATES.key(s.to_i)}.uniq)}
+  scope :none_of_status, -> (params) {where("documents.aasm_state NOT IN (?)", [params].flatten.map(&:to_s).
+    map {|s| s.match(/^([\-]{,1}[0-9]+)$/) ? s : nil}.reject(&:blank?).map {|s| Document::STATES.key(s.to_i)}.uniq)}
 
   # private scopes
   scope :recent, lambda {|n = 5| order("documents.created_at DESC").limit(n)}
   scope :with_privacy, lambda {|privacy| where("privacy_mask & #{privacy_mask(privacy)} > 0") }
   scope :with_user_privacy, lambda {|user| user && user.id ? where("documents.privacy_mask & #{privacy_mask("public")} > 0 OR documents.user_id = ?", user) : with_privacy("public") }
+
+  aasm column: 'aasm_state' do
+    state :unpublished, initial: true
+    state :published, :enter => :enter_published
+
+    event :publish do
+      transitions :from => [:unpublished, :published], :to => :published, :guard => :can_be_published?
+    end
+
+    event :unpublish do
+      transitions :from => :published, :to => :unpublished
+    end
+  end
 
   # before_validation :generate_slug_id, :on => :create
   before_save :set_tag_owner
@@ -80,6 +104,12 @@ class Document < ActiveRecord::Base
 
     def privacy_mask(number)
       numbers = PRIVACY_SETTINGS.map {|k,v| number.is_a?(Fixnum) ? v : k}
+      index   = numbers.index(number.is_a?(Fixnum) ? number : number.to_s)
+      index ? 2**index : 0
+    end
+
+    def accessibility_mask(number)
+      numbers = ACCESSIBILITY_SETTINGS.map {|k,v| number.is_a?(Fixnum) ? v : k}
       index   = numbers.index(number.is_a?(Fixnum) ? number : number.to_s)
       index ? 2**index : 0
     end
@@ -195,6 +225,14 @@ class Document < ActiveRecord::Base
     privacy.include?("unlisted")
   end
 
+  def accessibility=(values)
+    self.accessibility_mask = ([values].flatten.map(&:to_s) & ACCESSIBILITY_SETTINGS.keys).sum {|d| self.class.accessibility_mask(d)}
+  end
+
+  def accessibility
+    ACCESSIBILITY_SETTINGS.keys.reject {|d| ((accessibility_mask || 0) & self.class.accessibility_mask(d)).zero?}
+  end
+
   def transcribed?
     !!ingests.order(id: :desc).first.try(:finished?)
   end
@@ -214,8 +252,8 @@ class Document < ActiveRecord::Base
     self[:rich_text] = @rich_text = value if value
   end
 
-  def published?
-    !self.blank? && !self.privacy_private?
+  def published_path
+    "/@#{user.username}/#{slug}"
   end
 
   protected
@@ -227,11 +265,11 @@ class Document < ActiveRecord::Base
   alias_method_chain :set_slug, :slug_id
 
   def should_generate_new_friendly_id?
-    new_record? || !!changes[:title] || slug.blank?
+    new_record? || slug.blank? || recently_published? #&& !!changes[:title]
   end
 
   def title_and_slug_id
-    title.present? ? "#{title}-#{slug_id}" : slug_id
+    title.present? && published? ? "#{title}-#{slug_id}" : slug_id
   end
 
   def generate_slug_id
@@ -300,4 +338,17 @@ class Document < ActiveRecord::Base
     end
     result
   end
+
+  def enter_published
+    self.published_at = @recently_published = Time.zone.now
+  end
+
+  def recently_published?
+    !!@recently_published
+  end
+
+  def can_be_published?
+    true
+  end
+
 end

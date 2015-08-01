@@ -5,6 +5,8 @@ App.Views.DocumentsEdit = App.Views.DocumentsBase.extend({
     this.$el.html(this.template(this.model.attributes));
 
     if (this.model.ok) {
+      this.initSharePopover();
+      this.initPublishPopover();
       this.initEditor();
       this.initPlayer();
       this.initUserInitials();
@@ -12,6 +14,14 @@ App.Views.DocumentsEdit = App.Views.DocumentsBase.extend({
       this.initTagEditor();
       $('#document-loading').hide();
       $('#document-edit').show();
+
+      _.defer((function(_this) {
+        return function() {
+          // $('#publish-document').on('click', _.bind(this.publish, this));
+          $('#publish-document').on('click', function() { alert("wow!"); });
+        }
+      })(this));
+
     } else if (this.model.errors) {
       $('#loading').hide();
       $('#document-load-error').show();
@@ -75,5 +85,8 @@ App.Views.DocumentsEdit = App.Views.DocumentsBase.extend({
         // _this.saving();
       }
     })(this));
-  }
+  },
+
+  isEdit: function() { return true; }
+
 });

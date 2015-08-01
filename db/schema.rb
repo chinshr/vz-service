@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150714103439) do
+ActiveRecord::Schema.define(version: 20150818012041) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -124,36 +124,42 @@ ActiveRecord::Schema.define(version: 20150714103439) do
 
   create_table "documents", force: true do |t|
     t.string   "title"
-    t.string   "slug_id",                                                                null: false
+    t.string   "slug_id",                                                                       null: false
     t.text     "description"
-    t.integer  "privacy_mask",                                         default: 0,       null: false
-    t.string   "locale",            limit: 5,                          default: "en-US", null: false
+    t.integer  "privacy_mask",                                          default: 0,             null: false
+    t.string   "locale",             limit: 5,                          default: "en-US",       null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.text     "html"
     t.integer  "user_id"
     t.json     "rich_text"
     t.text     "text"
-    t.decimal  "offset",                      precision: 15, scale: 3
+    t.decimal  "offset",                       precision: 15, scale: 3
     t.float    "score"
     t.string   "type"
-    t.integer  "processing_status",                                    default: 0,       null: false
+    t.integer  "processing_status",                                     default: 0,             null: false
     t.json     "response"
     t.json     "processing_errors"
     t.string   "uid"
     t.integer  "ingest_iteration"
     t.integer  "turkee_task_id"
     t.string   "slug"
-    t.decimal  "start_time",                  precision: 15, scale: 3
-    t.decimal  "end_time",                    precision: 15, scale: 3
+    t.decimal  "start_time",                   precision: 15, scale: 3
+    t.decimal  "end_time",                     precision: 15, scale: 3
+    t.string   "aasm_state",                                            default: "unpublished", null: false
+    t.datetime "published_at"
+    t.integer  "accessibility_mask",                                    default: 0,             null: false
   end
 
+  add_index "documents", ["aasm_state"], name: "index_documents_on_aasm_state", using: :btree
+  add_index "documents", ["accessibility_mask"], name: "index_documents_on_accessibility_mask", using: :btree
   add_index "documents", ["created_at"], name: "index_documents_on_created_at", using: :btree
   add_index "documents", ["ingest_iteration"], name: "index_documents_on_ingest_iteration", using: :btree
   add_index "documents", ["locale"], name: "documents_locale_with_text_pattern_ops", using: :btree
   add_index "documents", ["offset"], name: "index_documents_on_offset", using: :btree
   add_index "documents", ["privacy_mask"], name: "index_documents_on_privacy_mask", using: :btree
   add_index "documents", ["processing_status"], name: "index_documents_on_processing_status", using: :btree
+  add_index "documents", ["published_at"], name: "index_documents_on_published_at", using: :btree
   add_index "documents", ["score"], name: "index_documents_on_score", using: :btree
   add_index "documents", ["slug"], name: "index_documents_on_slug", unique: true, using: :btree
   add_index "documents", ["slug_id"], name: "index_documents_on_slug_id", unique: true, using: :btree
@@ -427,6 +433,7 @@ ActiveRecord::Schema.define(version: 20150714103439) do
     t.string   "initials"
     t.integer  "roles_mask"
     t.string   "username"
+    t.string   "slug"
   end
 
   add_index "users", ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true, using: :btree
@@ -435,6 +442,7 @@ ActiveRecord::Schema.define(version: 20150714103439) do
   add_index "users", ["lng"], name: "index_users_on_lng", using: :btree
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
   add_index "users", ["roles_mask"], name: "index_users_on_roles_mask", using: :btree
+  add_index "users", ["slug"], name: "index_users_on_slug", unique: true, using: :btree
   add_index "users", ["unlock_token"], name: "index_users_on_unlock_token", unique: true, using: :btree
   add_index "users", ["username"], name: "index_users_on_username", unique: true, using: :btree
 

@@ -1,0 +1,8 @@
+<div class="title-container title-viewer-container">
+  <h1><div id="title-editor" class="viewer editor"><%= @title %></div></h1>
+</div><!-- .title-container .title-viewer-container -->
+<div class="content-container content-viewer-container">
+  <div id="content-editor" class="content-holder viewer editor">
+    <%- @html %>
+  </div>
+</div><!-- .content-container .content-viewer-container -->

@@ -400,7 +400,7 @@ body.documents {
   }
 
   .popover.share-popover {
-    max-width: 400px;
+    max-width: 450px;
     padding: 5px 5px;
     border: 0;
     right: 0 !important;
@@ -512,7 +512,7 @@ body.documents {
   } /* .popover.share-popover */
 
   .popover.publish-popover {
-    max-width: 400px;
+    max-width: 450px;
     padding: 5px 5px;
     border: 0;
     right: 0 !important;
@@ -527,6 +527,21 @@ body.documents {
           font-size: 14px;
           color: #dbdbdb;
           font-weight: bold;
+        }
+
+        .form-group-document-accessibility {
+          label {
+            color: #fff;
+            margin-right: 5px;
+            font-weight: normal;
+            font-size: 14px
+          }
+
+          select {
+            background-color: transparent;
+            color: #fff;
+            font-size: 14px
+          }
         }
       }/* .popover-heading */
 
@@ -549,12 +564,19 @@ body.documents {
               &:hover {
                 color: #fff;
               }
+
+              i {
+                font-style: normal;
+                font-weight: bold;
+              }
             }
           }
         }
       }/* .popover-body */
 
       .popover-footer {
+        padding: 5px 0 0 0;
+
         .btn-publish {
           font-weight: bold;
         }

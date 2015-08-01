@@ -37,12 +37,8 @@ class Api::DocumentsController < Api::ApplicationController
   protected
 
   def update_params
-    params.require(:document).permit(*whitelisted_keys).tap do |whitelisted|
+    params.require(:document).permit(*policy(@document).permitted_attributes).tap do |whitelisted|
       whitelisted[:rich_text] = params[:document][:rich_text] if params[:document][:rich_text]
     end
-  end
-
-  def whitelisted_keys
-    [:title, :description, {:tag_list => []}, :locale, :privacy, :html, :rich_text, :text]
   end
 end

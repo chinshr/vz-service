@@ -129,4 +129,11 @@ class UserTest < ActiveSupport::TestCase
     assert_equal true, user1.owner_of?(document1)
     assert_equal false, user1.owner_of?(document2)
   end
+
+  context "slug" do
+    should "generate valid slug with username" do
+      user = FactoryGirl.create(:user, username: "hellotest")
+      assert_equal "hellotest", user.slug
+    end
+  end
 end

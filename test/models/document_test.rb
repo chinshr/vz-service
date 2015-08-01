@@ -75,16 +75,33 @@ class DocumentTest < ActiveSupport::TestCase
       assert_equal 12, document.slug_id.length
     end
 
-    should "generate valid slug from title and slug_id" do
-      document = Document.create(title: "this is a title")
+    should "generate valid slug with title and slug_id when published" do
+      document = Document.create(title: "this is a title", aasm_state: "published")
       assert_equal "this-is-a-title-#{document.slug_id}", document.slug
     end
 
-    should "generate new slug when title is changed but keep slug_id" do
-      document = Document.create(title: "This is a Title")
+    should "generate valid slug with only slug_id when unpublished" do
+      document = Document.create(title: "this is a title", aasm_state: "unpublished")
+      assert_equal "#{document.slug_id}", document.slug
+    end
+
+    should "generate new slug only when published and title has changed" do
+      document = Document.create(title: "This is a Title", aasm_state: "published")
       stored_slug_id = document.slug_id
       assert_equal "this-is-a-title-#{document.slug_id}", document.slug
-      document.update_attributes(title: "When a man loves a woman!")
+      document.attributes = {title: "When a man loves a woman!"}
+      assert_equal true, document.publish!
+      assert_equal "when-a-man-loves-a-woman-#{stored_slug_id}", document.slug
+    end
+
+    should "not generate new slug when title is changed but not recently published" do
+      document = Document.create(title: "This is a Title", aasm_state: "published")
+      stored_slug_id = document.slug_id
+      assert_equal "this-is-a-title-#{document.slug_id}", document.slug
+      document.update_attributes({title: "When a man loves a woman!"})
+      assert_equal "When a man loves a woman!", document.reload.title
+      assert_equal "this-is-a-title-#{document.slug_id}", document.slug
+      assert_equal true, document.publish!
       assert_equal "when-a-man-loves-a-woman-#{stored_slug_id}", document.slug
     end
 
@@ -120,6 +137,27 @@ class DocumentTest < ActiveSupport::TestCase
     end
   end
 
+  context "privacy mask" do
+    setup do
+      @document = FactoryGirl.create(:document)
+    end
+
+    should "have accessibility" do
+      assert_equal [], @document.accessibility
+      @document.accessibility = :view
+      assert_equal ["view"], @document.accessibility
+
+      @document.accessibility = :comment
+      assert_equal ["comment"], @document.accessibility
+
+      @document.accessibility = :edit
+      assert_equal ["edit"], @document.accessibility
+
+      @document.accessibility = :foobar
+      assert_equal [], @document.accessibility
+    end
+  end
+
   context "scopes" do
     setup do
       Document.destroy_all
@@ -127,7 +165,8 @@ class DocumentTest < ActiveSupport::TestCase
 
     should "have filtered scopes" do
       assert_equal [:sort_order, :reverse_sort, :is_root, :offset, :limit,
-        :any_of_locales, :duration_lt, :duration_gt, :duration_lteq, :duration_gteq].to_set,
+        :any_of_locales, :duration_lt, :duration_gt, :duration_lteq, :duration_gteq,
+        :any_of_status, :none_of_status].to_set,
         Document.scopes.to_set
     end
 
@@ -171,6 +210,18 @@ class DocumentTest < ActiveSupport::TestCase
       assert_equal [d2], Document.any_of_locales("en-us")
       assert_equal [d1, d2, d3], Document.any_of_locales("en")
       assert_equal [d4], Document.any_of_locales("de")
+    end
+
+    should "#any_of_status" do
+      d1 = FactoryGirl.create(:document, aasm_state: "published")
+      d2 = FactoryGirl.create(:document, aasm_state: "unpublished")
+      assert_equal [d1], Document.any_of_status([Document::STATE_PUBLISHED])
+    end
+
+    should "#none_of_status" do
+      d1 = FactoryGirl.create(:document, aasm_state: "published")
+      d2 = FactoryGirl.create(:document, aasm_state: "unpublished")
+      assert_equal [d2], Document.none_of_status([Document::STATE_PUBLISHED])
     end
 
   end
@@ -399,5 +450,41 @@ class DocumentTest < ActiveSupport::TestCase
       assert_equal c3_offset, @c3.reload.offset
       assert_equal c3_duration, @c3.reload.duration
     end
+  end
+
+  context "state machine" do
+    should "have state and status" do
+      document = FactoryGirl.create(:document)
+      assert_equal :unpublished, document.state
+      assert_equal 0, document.status
+      assert_nil document.published_at
+    end
+
+    should "#publish! when unpublished" do
+      document = FactoryGirl.create(:document)
+      assert_equal :unpublished, document.state
+      assert_equal true, document.publish!
+      assert_equal :published, document.state
+      assert_equal 1, document.status
+      assert_not_nil document.published_at
+    end
+
+    should "#publish! when published" do
+      document = FactoryGirl.create(:document, aasm_state: "published", published_at: (ot = Time.zone.now - 1.day))
+      assert_equal true, document.publish!
+      assert_equal :published, document.state
+      assert_not_equal ot, document.published_at
+    end
+
+    should "#unpublish! when published" do
+      document = FactoryGirl.create(:document, aasm_state: "published", published_at: (ot = Time.zone.now - 1.day))
+      assert_equal true, document.unpublish!
+      assert_equal :unpublished, document.state
+    end
+  end
+
+  should "#published_path" do
+    document = FactoryGirl.create(:document)
+    assert_equal "/@#{document.user.username}/#{document.slug}", document.published_path
   end
 end

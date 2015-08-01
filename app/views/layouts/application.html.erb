@@ -5,7 +5,7 @@
   <meta name="description" content="Record your life. Your conversations deserve a place to be found.">
   <meta name="author" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title><%= content_for?(:title) ? "#{yield(:title)} — VOYZ.ES" : "VOYZ.ES" %></title>
+  <title><%= content_for?(:title) ? "#{yield(:title)}" : "VOYZ.ES" %></title>
   <%= csrf_meta_tags %>
 
   <link rel="dns-prefetch" href="//fonts.googleapis.com">
@@ -67,6 +67,14 @@
   <!-- JavaScripts
   ================================================== -->
   <%= javascript_include_tag "application" %>
+  <%= javascript_tag do %>
+    if (typeof(VZ) !== 'undefined' && VZ.config) {
+      VZ.config.user = {};
+      <% if defined?(current_user) && current_user %>
+      VZ.config.user.username = "<%= current_user.username %>";
+      <% end %>
+    }
+  <% end %>
   <%= yield :javascript_includes %>
   <div id="fb-root"></div>
 </body>
