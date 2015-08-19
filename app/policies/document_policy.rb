@@ -20,4 +20,11 @@ class DocumentPolicy < ApplicationPolicy
     backend_role? || owner_of?(record)
   end
 
+  def publish?
+    owner_of?(record)
+  end
+
+  def permitted_attributes(controller = nil)
+    [:title, :description, {:tag_list => []}, :locale, :privacy, :accessibility, :html, :rich_text, :text, :status]
+  end
 end

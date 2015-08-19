@@ -114,14 +114,6 @@ module Web::ApplicationHelper
     "#{string.to_s.humanize} #{key}".html_safe
   end
 
-  def edit?
-    action_name == "edit"
-  end
-
-  def show?
-    action_name == "show"
-  end
-
   def use_account_split_view?
     controller.is_a?(Web::Account::ApplicationController) && !controller.is_a?(Web::Account::DashboardsController)
   end

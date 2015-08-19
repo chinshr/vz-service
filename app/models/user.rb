@@ -1,4 +1,5 @@
 class User < ActiveRecord::Base
+  extend FriendlyId
   include Model::User::Roles
 
   attr_accessor :force_registration_validation
@@ -29,6 +30,7 @@ class User < ActiveRecord::Base
   has_many :client_accesses, dependent: :destroy, class_name: "Api::ClientAccess"
 
   acts_as_tagger
+  friendly_id :username, use: [:slugged, :history]
 
   validates :email, presence: true, email_format: true#, uniqueness: true
   validates :email, registration: true, on: :create, if: :should_perform_registration_validation?

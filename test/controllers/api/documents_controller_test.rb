@@ -99,6 +99,7 @@ class Api::DocumentsControllerTest < ActionController::TestCase
         tag_list: ["entrevista", "fiesta"],
         locale: "es-AR",
         privacy: "private",
+        accessibility: "edit",
         html: html_content,
         rich_text: rich_text_content,
         text: text_content
@@ -110,6 +111,7 @@ class Api::DocumentsControllerTest < ActionController::TestCase
       assert_equal ["entrevista", "fiesta"], @document2.reload.tag_list
       assert_equal "es-AR", @document2.reload.locale
       assert_equal ["private"], @document2.reload.privacy
+      assert_equal ["edit"], @document2.reload.accessibility
       assert_equal html_content, @document2.reload.html
       assert_equal text_content, @document2.reload.text
       # assert_equal rich_text_content, @document2.reload.rich_text
@@ -131,6 +133,21 @@ class Api::DocumentsControllerTest < ActionController::TestCase
       put :update, {:id => @document2.id, :document => {:title => "No autorizado!"}, format: :json}
       assert_response :unauthorized
     end
+
+    should "publish document" do
+      sign_in :user, @user2
+      assert_equal 0, @document2.status
+      put :update, {:id => @document2.id, :document => {
+        status: 1,
+        html: "<p>Published content.</p>"
+      }, format: :json}
+      assert_response :success
+      assert_response_body_attributes_with "document"
+      assert_equal 1, @document2.reload.status
+      assert_equal :published, @document2.reload.state
+      assert_equal "<p>Published content.</p>", @document2.reload.html
+    end
+
   end
 
   context "DELETE /api/documents/:id" do
@@ -162,7 +179,7 @@ class Api::DocumentsControllerTest < ActionController::TestCase
   protected
 
   def assert_attributes(params, expected_attributes = {})
-    (expected_attributes.keys + %w(id title description html rich_text text uid tag_list slug slug_id)).each do |attribute|
+    (expected_attributes.keys + %w(id title description html rich_text text uid tag_list locale privacy accessibility slug slug_id published_path published_at)).each do |attribute|
       assert params.has_key?(attribute), "should containt key '#{attribute}' in response '#{params}'"
     end
 

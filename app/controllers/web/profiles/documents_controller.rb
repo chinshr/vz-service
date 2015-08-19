@@ -4,21 +4,25 @@ class Web::Profiles::DocumentsController < Web::ProfilesController
 
   before_action :load_user
   before_action :load_document
-  # after_action :verify_authorized
+  after_action :verify_authorized, only: [:show]
 
   def show
     authorize @document
-    render "web/documents/show"
   end
 
   protected
 
   def load_user
-    @user = User.find_by_username!(user_id)
+    @user = User.friendly.find(user_id)
+    # found, but since historic slug, redirect to canonical URL
+    redirect_permanently_to_canonical_url if @user.slug != user_id
+    true
   end
 
   def load_document
     @document = @user.documents.friendly.find(params[:id])
+    # found, but since historic slug, redirect to canonical URL
+    redirect_permanently_to_canonical_url if @document.slug != params[:id]
   end
 
   def user_id
@@ -41,5 +45,17 @@ class Web::Profiles::DocumentsController < Web::ProfilesController
     end
 
     true
+  end
+
+  def redirect_permanently_to_canonical_url
+    redirect_to web_profile_document_url("@#{user_id}", params[:id]), status: :moved_permanently
+  end
+
+  def verify_authorized
+    raise AuthorizationNotPerformedError unless pundit_policy_authorized?
+  end
+
+  def pundit_policy_authorized?
+    !!@_pundit_policy_authorized
   end
 end

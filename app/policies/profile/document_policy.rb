@@ -4,4 +4,8 @@ class Profile::DocumentPolicy < ApplicationPolicy
     record.published?
   end
 
+  def publish?
+    owner_of?(record)
+  end
+
 end

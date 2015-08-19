@@ -1,5 +1,4 @@
-App.Views.DocumentsShow = App.Views.DocumentsBase.extend({
-  template: JST['documents/show'],
+App.Views.DocumentsPublish = App.Views.DocumentsBase.extend({
 
   initialize: function() {
     App.Views.DocumentsBase.prototype.initialize.call(this); // super
@@ -7,20 +6,10 @@ App.Views.DocumentsShow = App.Views.DocumentsBase.extend({
   },
 
   render: function() {
-    this.$el.html(this.template(this.model.attributes));
-
     if (this.model.ok) {
       this.initSharePopover();
-      this.initPublishPopover();
-      this.initEditor();
       this.initPlayer();
-      // this.initContentViewerSelectionPopover();
-
-      $('#document-loading').hide();
-      $('#document-show').show();
-    } else {
-      $('#loading').hide();
-      $('#document-load-error').show();
+      this.initContentViewerSelectionPopover();
     }
 
     return this;
@@ -129,6 +118,6 @@ App.Views.DocumentsShow = App.Views.DocumentsBase.extend({
     }
   },
 
-  isShow: function() { return true; }
+  isPublish: function() { return true; }
 
 });

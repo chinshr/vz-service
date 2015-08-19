@@ -82,9 +82,9 @@
         <!-- /format popover -->
         <% end %>
 
-        <% if show? %>
+        <% if show? || publish? %>
         <!-- share-popover -->
-        <ul class="nav navbar-nav toolbar-nav content-viewer-toolbar-container">
+        <ul class="nav navbar-nav toolbar-nav content-editor-toolbar-container content-viewer-toolbar-container">
           <!-- highlight -->
           <li><button title="<%= key_cmd(:highlight, 'H', :ctrl_key) %>" type="button" class="btn btn-md btn-tlb ql-bold fa fa-bookmark fa-fw" data-toggle="tooltip" data-placement="bottom"></button></li>
 
@@ -104,9 +104,10 @@
 
         <!-- context menu -->
         <ul class="nav navbar-nav toolbar-nav pull-right">
+          <% if (edit? || show?) && policy(@document).publish? %>
           <li><!-- publish-->
-            <button title="Publish" id="publish-button" class="btn btn-md btn-tlb btn-popover btn-publish fa fa-rocket" type="button" data-toggle="tooltip popover" data-placement="bottom" data-target="publish-popover"></button>
-
+            <button title="Publish" id="publish-button" class="btn btn-md btn-tlb btn-popover btn-publish fa <%= publish_icon_class -%>" type="button" data-toggle="tooltip popover" data-placement="bottom" data-target="publish-popover"></button>
+            <script type="text/html" id="pp">
             <div id="publish-popover" class="popover fade bottom in" role="tooltip">
               <div class="popover-content">
 
@@ -116,52 +117,53 @@
                   </div>
                   <div class="popover-body">
                     <ul class="privacy-options">
-                      <li><button class="btn btn-link btn-options btn-privacy" data-action="show-privacy-popover">Visibility: <%= @document.privacy.join.humanize %></button></li>
+                      <li><button class="btn btn-link btn-options btn-privacy" data-target="publish-popover-privacy-page">Visibility: <i class="btn-privacy-selection"><%= @document.privacy.join.humanize %></i></button></li>
                       <% if false %>
-                      <li><button class="btn btn-link btn-options btn-license" data-action="show-license-popover">License: All rights reserved</button></li>
+                      <li><button class="btn btn-link btn-options btn-license" data-target="show-license-popover">License: All rights reserved</button></li>
                       <% end %>
                     </ul>
                   </div><!-- .popover-body -->
                   <div class="popover-footer">
-                    <button class="btn btn-md btn-success btn-publish" type="submit" data-loading-text="Updating...">Publish Changes</button>
+                    <button class="btn btn-md btn-success btn-publish btn-publish-document" type="submit" id="btn-publish-document" data-loading-text="Updating...">Publish Changes</button>
                   </div>
                 </div><!-- #publish-popover-publishing-page -->
 
                 <div style="display:none;" id="publish-popover-privacy-page">
-                  <div class="popover-heading">
-                    <p>Publishing visibility?</p>
-                    <div class="form-group from-group-privacy clearfix">
-                      <div class="btn-group group-privacy pull-left" data-toggle="buttons">
-                        <label class="btn btn-primary btn-sm active">
-                          <input type="radio" name="document[privacy]" id="document-privacy-public" value="public" checked=""><i class="fa fa-book icon-public"></i>&nbsp;Public
-                        </label>
-                        <label class="btn btn-primary btn-sm">
-                          <input type="radio" name="document[privacy]" id="document-privacy-unlisted" value="unlisted" checked=""><i class="fa fa-eye-slash icon-unlisted"></i>&nbsp;Unlisted
-                        </label>
-                        <label class="btn btn-primary btn-sm">
-                          <input type="radio" name="document[privacy]" id="document-privacy-private" value="private"><i class="fa fa-lock icon-private"></i>&nbsp;Private
-                        </label>
-                      </div><!-- .btn-group .group-file-privacy -->
-                    </div><!-- .form-group .from-group-file-privacy -->
-                  </div>
+                  <form class="xform-horizontal" role="form" disabled="true">
+                    <div class="popover-heading">
+                      <p>Publishing visibility?</p>
+                      <div class="form-group from-group-privacy clearfix">
+                        <div class="btn-group group-privacy pull-left" data-toggle="buttons">
+                          <label class="btn btn-primary btn-sm btn-radio active">
+                            <input type="radio" name="document[privacy]" id="document-privacy-public" value="public" checked="" data-title="Public" data-description="The document will be public. It can be viewed by everyone but only you can edit."><i class="fa fa-unlock icon-public"></i>&nbsp;Public
+                          </label>
+                          <label class="btn btn-primary btn-sm btn-radio">
+                            <input type="radio" name="document[privacy]" id="document-privacy-unlisted" value="unlisted" checked="" data-title="Unlisted" data-description="The document will only be visible to those with the link. It won't be listed on VOYZ.ES' public pages."><i class="fa fa-eye-slash icon-unlisted"></i>&nbsp;Unlisted
+                          </label>
+                          <label class="btn btn-primary btn-sm btn-radio">
+                            <input type="radio" name="document[privacy]" id="document-privacy-private" value="private" data-title="Private" data-description="The document will be private. Only you can view and edit the document."><i class="fa fa-lock icon-private"></i>&nbsp;Private
+                          </label>
+                        </div><!-- .btn-group .group-file-privacy -->
+                      </div><!-- .form-group .from-group-file-privacy -->
+                    </div>
 
-                  <div class="popover-body">
-                    <p id="privacy-help-public" class="privacy-help">The document will be public. Your followers will be notified when you publish for the first time.</p>
+                    <div class="popover-body">
+                      <p id="privacy-help-description" class="privacy-help">The document will be public. Your followers will be notified when you publish for the first time.</p>
+                    </div><!-- .popover-body -->
 
-                    <p style="display:none;" id="privacy-help-unlisted" class="privacy-help">The document will only be visible to those with the link. It won't be listed on VOYZ.ES's public pages.</p>
-
-                    <p style="display:none;" id="privacy-help-private" class="privacy-help">The document will be private. Only you can view or edit the document.</p>
-                  </div><!-- .popover-body -->
-
-                  <div class="popover-footer">
-                    <button class="btn btn-sm btn-success btn-submit" type="submit" data-loading-text="Updating...">Update</button>
-                    <button class="btn btn-sm btn-link btn-cancel" type="cancel">Cancel</button>
-                  </div><!-- .popover-footer -->
+                    <div class="popover-footer">
+                      <button class="btn btn-sm btn-success btn-submit" type="submit" data-loading-text="Updating...">Update</button>
+                      <button class="btn btn-sm btn-link btn-cancel" type="button">Cancel</button>
+                    </div><!-- .popover-footer -->
+                  </form>
                 </div><!-- #publish-popover-privacy-page -->
               </div><!-- .popover-content -->
             </div><!-- #share-popover .popover -->
+            </script>
           </li><!-- /publish -->
+          <% end %>
 
+          <% if publish? %>
           <li class="separator">&nbsp;</li>
 
           <li><!-- share -->
@@ -172,9 +174,9 @@
               <div class="popover-content">
                 <div class="social-container">
                   <ul class="nav navbar-nav toolbar-nav social-networks">
-                    <li class="facebook"><button class="btn btn-md btn-tlb fa fa-facebook fa-fw" href="#" data-href=""></button></li>
-                    <li class="twitter"><button class="btn btn-md btn-tlb fa fa-twitter fa-fw" href="#" data-href="" ></button></li>
-                    <li class="linkedin"><button class="btn btn-md btn-tlb fa fa-linkedin fa-fw" href="#" data-href=""></button></li>
+                    <li class="facebook"><button class="btn btn-md btn-tlb fa fa-facebook fa-fw" href="#" data-href="<%= published_document_url %>"></button></li>
+                    <li class="twitter"><button class="btn btn-md btn-tlb fa fa-twitter fa-fw" href="#" data-href="<%= published_document_url %>" ></button></li>
+                    <li class="linkedin"><button class="btn btn-md btn-tlb fa fa-linkedin fa-fw" href="#" data-href="<%= published_document_url %>"></button></li>
                     <!--<li class="email"><button class="btn btn-md btn-tlb fa fa-envelope fa-fw" href="#" data-href=""></button></li>-->
                   </ul><!-- .social-networks -->
                 </div><!-- .social-container -->
@@ -184,12 +186,12 @@
                   <% else %>
                   <p><i class="fa fa-info"></i>Copy and paste the link below to share this document.</p>
                   <% end %>
-                  <input type="url" class="width-full" readonly="readonly" value="<%= web_document_url(@document.slug) %>">
+                  <input type="url" class="width-full" readonly="readonly" value="<%= published_document_url %>">
                 </div>
               </div><!-- popover-content -->
             </div><!-- #share-popover .popover -->
           </li><!-- /share -->
-
+          <% end %>
         </ul>
         <!-- /context menu -->
       </div><!-- .collapse .navbar-collapse -->

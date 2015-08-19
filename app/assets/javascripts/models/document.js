@@ -11,8 +11,15 @@ App.Models.Document = Backbone.Model.extend({
 
   toJSON: function() {
     return {
-      document: _.clone(this.attributes) 
+      document: _.clone(this.attributes)
     }
   },
+
+  publish: function(attributes, options) {
+    if (attributes && typeof(attributes) === 'object') {
+      attributes.status = 1;
+    }
+    this.save(attributes, options);
+  }
 
 }, {className: 'Document'});

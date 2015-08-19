@@ -1,5 +1,6 @@
 App.Views.DocumentsBase = Backbone.View.extend({
-  events: {},
+  events: {
+  },
 
   handlers: {
     'toggle-play-pause': function (event) {
@@ -272,11 +273,13 @@ App.Views.DocumentsBase = Backbone.View.extend({
     /* Play time */
     this.wavesurfer.on('play', _.bind(function (e) {
       this.playTimer();
+      this.setPlayPageTitle();
     }, this));
 
     this.wavesurfer.on('pause', _.bind(function (e) {
       this.stopPlayTimer();
       this.updatePlayTime();
+      this.resetPlayPageTitle();
     }, this));
 
     this.wavesurfer.on('finish', _.bind(function (e) {
@@ -310,11 +313,16 @@ App.Views.DocumentsBase = Backbone.View.extend({
   },
 
   initEditor: function() {
-    this.titleEditor = new Quill('#title-editor', {
+    this.titleEditor = new Quill(this.isEdit() ? '#title-editor' : '#title-editor',
+      {
       'modules': {
       },
       'styles': false // '/assets/web/quill-title-editor.css'
     });
+
+    if (this.isShow()) {
+      this.titleEditor.editor.disable();
+    }
 
     this.titleEditor.on('text-change', (function(_this) {
       return function(delta, source) {
@@ -332,15 +340,20 @@ App.Views.DocumentsBase = Backbone.View.extend({
       this.titleEditor.setHTML(this.model.attributes.title);
     }
 
-    this.contentEditor = new Quill('#content-editor', {
+    this.contentEditor = new Quill(this.isEdit() ? '#content-editor' : '#content-editor',
+      {
       'modules': {
         'segmentation': { enabled: true },
         'toolbar': {
           container: '.content-editor-toolbar-container'
         },
       },
-      'styles': false  // '/assets/web/quill-content-editor.css'
+      'styles': false
     });
+
+    if (this.isShow()) {
+      this.contentEditor.editor.disable();
+    }
 
     if (this.model.attributes.rich_text) {
       this.contentEditor.setContents(this.model.attributes.rich_text);
@@ -597,6 +610,21 @@ App.Views.DocumentsBase = Backbone.View.extend({
     return window.clearInterval(this.playTimerInterval);
   },
 
+  setPlayPageTitle: function() {
+    if (navigator.userAgent.toLowerCase().indexOf('chrome') === -1) {
+      // Chrome has it's built in title play indicator
+      this.resetPlayPageTitle();
+      $('title').html("▶ " + $('title').html());
+    }
+  },
+
+  resetPlayPageTitle: function() {
+    if (navigator.userAgent.toLowerCase().indexOf('chrome') === -1) {
+      var title = $('title').html();
+      $('title').html(title.replace("▶ ", ""));
+    }
+  },
+
   formatTime: function(number) {
     var h, m, s, f;
     number = Math.round(number * 10) / 10;
@@ -839,6 +867,174 @@ App.Views.DocumentsBase = Backbone.View.extend({
     }
 
     return sid;
-  }
+  },
+
+  initSharePopover: function() {
+    $('#share-button').popover({
+      container: 'body',
+      html : true,
+      trigger: 'manual',
+      placement: 'bottom',
+      template: '<div class="popover share-popover" id="share-popover"><div class="arrow"></div><div class="popover-content"></div></div>',
+      title: function() {
+        return $('#' + $(this).data('target') + " .popover-title").html();
+      },
+      content: function() {
+        return $('#' + $(this).data('target') + " .popover-content").html();
+      }
+    }).on('shown.bs.popover', function(e) {
+      VZ.social.bind();
+    }).click(function(e) {
+      $('#share-button').tooltip('hide');
+      /* close all other popovers except this */
+      $('#share-button').not(this).popover('hide');
+      $(this).popover('toggle');
+    });
+
+    $(document).click(function(e) {
+      if (!$(e.target).is('#share-button, .popover-content, .popover-content input')) {
+        $('#share-button').popover('hide');
+      }
+    });
+  },
+
+  initPublishPopover: function() {
+    this.publishPopoverView = new App.Views.DocumentsPublishPopover({
+      model: this.model,
+      parent: this
+    }).render();
+    return;
+
+    /* publish button popover */
+    $('#publish-button').popover({
+      container: 'body',
+      html : true,
+      trigger: 'manual',
+      placement: 'bottom',
+      template: '<div class="popover publish-popover" id="publish-popover"><div class="arrow"></div><div class="popover-content"></div></div>',
+      title: function() {
+        return $('#' + $(this).data('target') + " .popover-title").html();
+      },
+      content: function() {
+        return $('#' + $(this).data('target') + " .popover-content").html();
+      }
+    }).on('shown.bs.popover', _.bind(function(event) {
+      var popover = $(event.target).data('bs.popover');
+      var begin = $('#publish-popover-publishing-page');
+
+      var setup = (function setup(_this) {
+        var reset = function() {
+          popover.setContent();
+          popover.$tip.addClass(popover.options.placement);
+        }
+
+        /* publish-button */
+        $('.btn-publish-document').off('click').on('click', _.bind(_this.publish, _this));
+
+        $('.privacy-options .btn-options').each(function(ix, btn) {
+          $(btn).on('click', function(e) {
+            var view = $('#' + $(btn).data('target'));
+            var goback = function() {
+              view.hide();
+              begin.show();
+              reset();
+              setup(_this);
+            }
+
+            /* set privacy from model */
+            $("input[type='radio'][value='" + _this.model.attributes.privacy + "']")
+              .prop('checked', true)
+              .closest('.btn-group .btn')
+              .trigger('click');
+
+            view.show();
+            begin.hide();
+            reset();
+
+            // $(".btn-radio").on('click', function() {
+            //   alert('a');
+            // });
+
+            $("input[type='radio']").on('change', function(e) {
+              var radio = $(e.currentTarget);
+              if (radio.is(':checked')) {
+                $(".privacy-help").html(radio.data('description'));
+              }
+            });
+
+            $('form').on('submit', function(e) {
+              var data = {},
+                form = $(e.target) ;
+
+              e.originalEvent.preventDefault();
+              _.map(form.serializeArray(), function(n) {
+                var key;
+                key = n['name'].match(/\[(.+)\]/);
+                if (!!key && _.isArray(key) && key.length > 1) {
+                  return data[key[1]] = n['value'];
+                }
+              });
+
+              _this.model.set(data, {validate: true});
+              if (_this.model.isValid()) {
+                //$(":submit").button("loading");
+                return _this.model.sync('update', _this.model, {
+                  success: (function(_this) {
+                    return function() {
+                      var title = $("input[type='radio'][value='" + _this.model.attributes.privacy + "']").data('title');
+                      $('.btn-privacy-selection').html(title);
+                      return goback();
+                    };
+                  })(_this),
+                  error: (function(_this) {
+                    return function() {
+                      // return _this.$(":submit").button("reset");
+                    };
+                  })(_this)
+                });
+              }
+            });
+
+            $('.btn-cancel').on('click', goback);
+          });
+        });
+      })(this);
+
+    }, this)).off('click').on('click', function(e) {
+      $('#publish-button').tooltip('hide');
+      /* close all other popovers except this */
+      $('#publish-button').not(this).popover('hide');
+      $(this).popover('toggle');
+    });
+
+    $(document).click(function(e) {
+      if (!$(e.target).is('#publish-button, .popover-content, .popover-content input')) {
+       // $('#publish-button').popover('hide');
+      }
+    });
+  },
+
+  publish: function() {
+    this.stopSaving();
+    NProgress.start();
+    this.model.publish({ html: this.contentEditor.getHTML() }, {
+      success: (function(_this) {
+        return function(model) {
+          NProgress.done();
+          window.location = window.location.origin + model.attributes.published_path;
+        };
+      })(this),
+      error: (function(_this) {
+        return function(model) {
+          NProgress.done();
+          $.notify("Error when saving document.", 'error');
+        };
+      })(this)
+    });
+  },
+
+  isShow: function() { return false; },
+  isEdit: function() { return false; },
+  isPublish: function() { return false; }
 
 });
