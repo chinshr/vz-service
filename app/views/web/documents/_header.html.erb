@@ -107,59 +107,6 @@
           <% if (edit? || show?) && policy(@document).publish? %>
           <li><!-- publish-->
             <button title="Publish" id="publish-button" class="btn btn-md btn-tlb btn-popover btn-publish fa <%= publish_icon_class -%>" type="button" data-toggle="tooltip popover" data-placement="bottom" data-target="publish-popover"></button>
-            <script type="text/html" id="pp">
-            <div id="publish-popover" class="popover fade bottom in" role="tooltip">
-              <div class="popover-content">
-
-                <div style="xdisplay:none;" id="publish-popover-publishing-page">
-                  <div class="popover-heading">
-                    <p>Do you want to publish your changes?</p>
-                  </div>
-                  <div class="popover-body">
-                    <ul class="privacy-options">
-                      <li><button class="btn btn-link btn-options btn-privacy" data-target="publish-popover-privacy-page">Visibility: <i class="btn-privacy-selection"><%= @document.privacy.join.humanize %></i></button></li>
-                      <% if false %>
-                      <li><button class="btn btn-link btn-options btn-license" data-target="show-license-popover">License: All rights reserved</button></li>
-                      <% end %>
-                    </ul>
-                  </div><!-- .popover-body -->
-                  <div class="popover-footer">
-                    <button class="btn btn-md btn-success btn-publish btn-publish-document" type="submit" id="btn-publish-document" data-loading-text="Updating...">Publish Changes</button>
-                  </div>
-                </div><!-- #publish-popover-publishing-page -->
-
-                <div style="display:none;" id="publish-popover-privacy-page">
-                  <form class="xform-horizontal" role="form" disabled="true">
-                    <div class="popover-heading">
-                      <p>Publishing visibility?</p>
-                      <div class="form-group from-group-privacy clearfix">
-                        <div class="btn-group group-privacy pull-left" data-toggle="buttons">
-                          <label class="btn btn-primary btn-sm btn-radio active">
-                            <input type="radio" name="document[privacy]" id="document-privacy-public" value="public" checked="" data-title="Public" data-description="The document will be public. It can be viewed by everyone but only you can edit."><i class="fa fa-unlock icon-public"></i>&nbsp;Public
-                          </label>
-                          <label class="btn btn-primary btn-sm btn-radio">
-                            <input type="radio" name="document[privacy]" id="document-privacy-unlisted" value="unlisted" checked="" data-title="Unlisted" data-description="The document will only be visible to those with the link. It won't be listed on VOYZ.ES' public pages."><i class="fa fa-eye-slash icon-unlisted"></i>&nbsp;Unlisted
-                          </label>
-                          <label class="btn btn-primary btn-sm btn-radio">
-                            <input type="radio" name="document[privacy]" id="document-privacy-private" value="private" data-title="Private" data-description="The document will be private. Only you can view and edit the document."><i class="fa fa-lock icon-private"></i>&nbsp;Private
-                          </label>
-                        </div><!-- .btn-group .group-file-privacy -->
-                      </div><!-- .form-group .from-group-file-privacy -->
-                    </div>
-
-                    <div class="popover-body">
-                      <p id="privacy-help-description" class="privacy-help">The document will be public. Your followers will be notified when you publish for the first time.</p>
-                    </div><!-- .popover-body -->
-
-                    <div class="popover-footer">
-                      <button class="btn btn-sm btn-success btn-submit" type="submit" data-loading-text="Updating...">Update</button>
-                      <button class="btn btn-sm btn-link btn-cancel" type="button">Cancel</button>
-                    </div><!-- .popover-footer -->
-                  </form>
-                </div><!-- #publish-popover-privacy-page -->
-              </div><!-- .popover-content -->
-            </div><!-- #share-popover .popover -->
-            </script>
           </li><!-- /publish -->
           <% end %>
 
