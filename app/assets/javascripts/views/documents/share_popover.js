@@ -23,9 +23,9 @@ App.Views.DocumentsSharePopover = App.Views.DocumentsPopoverBase.extend({
 
     this.button.on('click', (function(_this) {
       return function(e) {
-        $('#share-button').tooltip('hide');
+        _this.button.tooltip('hide');
         /* close all other popovers except this */
-        $('#share-button').not(this).popover('hide');
+        _this.button.not(this).popover('hide');
         _this.popover.toggle();
       };
     })(this));
