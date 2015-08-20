@@ -1,10 +1,9 @@
-App.Views.DocumentsSharePopover = Backbone.View.extend({
+App.Views.DocumentsSharePopover = App.Views.DocumentsPopoverBase.extend({
   template: JST['documents/share_popover'],
 
   initialize: function(options) {
-    this.parent = options.parent;
-    _.bindAll(this, "render", "show", "hide", "toggle", "destroy", 
-      "remove", "setup", "teardown");
+    App.Views.DocumentsPopoverBase.prototype.initialize.call(this, options); // super
+    _.bindAll(this, "setup", "teardown");
   },
 
   render: function() {
@@ -48,27 +47,5 @@ App.Views.DocumentsSharePopover = Backbone.View.extend({
 
   teardown: function() {
     VZ.social.unbind();
-  },
-
-  show: function() {
-    this.button.popover("show");
-  },
-
-  hide: function() {
-    this.button.popover("hide");
-  },
-
-  toggle: function() {
-    this.button.popover("toggle");
-  },
-
-  destroy: function() {
-    this.button.popover("destroy");
-    this.button.remove();
-    this.button = null;
-  },
-
-  remove: function() {
-    this.destroy();
   }
 });

@@ -1,11 +1,10 @@
-App.Views.DocumentsPublishPopover = Backbone.View.extend({
+App.Views.DocumentsPublishPopover = App.Views.DocumentsPopoverBase.extend({
   template: JST['documents/publish_popover'],
 
   initialize: function(options) {
+    App.Views.DocumentsPopoverBase.prototype.initialize.call(this, options); // super
     this.pages = {};
-    this.parent = options.parent;
-    _.bindAll(this, "render", "show", "hide", "toggle", "destroy", "remove",
-      "publish", "rerender", "pushPage", "showPage", "showStartPage",
+    _.bindAll(this, "publish", "rerender", "pushPage", "showPage", "showStartPage",
       "bindPage", "setup", "teardown");
   },
 
@@ -226,27 +225,5 @@ App.Views.DocumentsPublishPopover = Backbone.View.extend({
     });
     this.showStartPage();
     this.pages = {};
-  },
-
-  show: function() {
-    this.button.popover("show");
-  },
-
-  hide: function() {
-    this.button.popover("hide");
-  },
-
-  toggle: function() {
-    this.button.popover("toggle");
-  },
-
-  destroy: function() {
-    this.button.popover("destroy");
-    this.button.remove();
-    this.button = null;
-  },
-
-  remove: function() {
-    this.destroy();
   }
 });
