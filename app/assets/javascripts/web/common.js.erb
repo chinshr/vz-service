@@ -201,12 +201,19 @@ VZ._social = (function() {
 
   };
 
+  var unbind = function bind() {
+    $('.social-networks .facebook a, .social-networks .facebook button').off('click');
+    $('.social-networks .twitter a, .social-networks .twitter button').off('click');
+    $('.social-networks .linkedin a, .social-networks .linkedin button').off('click');
+  };
+
   $(function() {
     bind();
   });
 
   VZ.social = {facebook: {}, twitter: {}, linkedin: {}};
   VZ.social.bind = bind;
+  VZ.social.unbind = unbind;
 })();
 
 $.extend({

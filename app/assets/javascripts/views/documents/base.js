@@ -870,147 +870,16 @@ App.Views.DocumentsBase = Backbone.View.extend({
   },
 
   initSharePopover: function() {
-    $('#share-button').popover({
-      container: 'body',
-      html : true,
-      trigger: 'manual',
-      placement: 'bottom',
-      template: '<div class="popover share-popover" id="share-popover"><div class="arrow"></div><div class="popover-content"></div></div>',
-      title: function() {
-        return $('#' + $(this).data('target') + " .popover-title").html();
-      },
-      content: function() {
-        return $('#' + $(this).data('target') + " .popover-content").html();
-      }
-    }).on('shown.bs.popover', function(e) {
-      VZ.social.bind();
-    }).click(function(e) {
-      $('#share-button').tooltip('hide');
-      /* close all other popovers except this */
-      $('#share-button').not(this).popover('hide');
-      $(this).popover('toggle');
-    });
-
-    $(document).click(function(e) {
-      if (!$(e.target).is('#share-button, .popover-content, .popover-content input')) {
-        $('#share-button').popover('hide');
-      }
+    return this.sharePopoverView = new App.Views.DocumentsSharePopover({
+      model: this.model,
+      parent: this
     });
   },
 
   initPublishPopover: function() {
-    this.publishPopoverView = new App.Views.DocumentsPublishPopover({
+    return this.publishPopoverView = new App.Views.DocumentsPublishPopover({
       model: this.model,
       parent: this
-    }).render();
-    return;
-
-    /* publish button popover */
-    $('#publish-button').popover({
-      container: 'body',
-      html : true,
-      trigger: 'manual',
-      placement: 'bottom',
-      template: '<div class="popover publish-popover" id="publish-popover"><div class="arrow"></div><div class="popover-content"></div></div>',
-      title: function() {
-        return $('#' + $(this).data('target') + " .popover-title").html();
-      },
-      content: function() {
-        return $('#' + $(this).data('target') + " .popover-content").html();
-      }
-    }).on('shown.bs.popover', _.bind(function(event) {
-      var popover = $(event.target).data('bs.popover');
-      var begin = $('#publish-popover-publishing-page');
-
-      var setup = (function setup(_this) {
-        var reset = function() {
-          popover.setContent();
-          popover.$tip.addClass(popover.options.placement);
-        }
-
-        /* publish-button */
-        $('.btn-publish-document').off('click').on('click', _.bind(_this.publish, _this));
-
-        $('.privacy-options .btn-options').each(function(ix, btn) {
-          $(btn).on('click', function(e) {
-            var view = $('#' + $(btn).data('target'));
-            var goback = function() {
-              view.hide();
-              begin.show();
-              reset();
-              setup(_this);
-            }
-
-            /* set privacy from model */
-            $("input[type='radio'][value='" + _this.model.attributes.privacy + "']")
-              .prop('checked', true)
-              .closest('.btn-group .btn')
-              .trigger('click');
-
-            view.show();
-            begin.hide();
-            reset();
-
-            // $(".btn-radio").on('click', function() {
-            //   alert('a');
-            // });
-
-            $("input[type='radio']").on('change', function(e) {
-              var radio = $(e.currentTarget);
-              if (radio.is(':checked')) {
-                $(".privacy-help").html(radio.data('description'));
-              }
-            });
-
-            $('form').on('submit', function(e) {
-              var data = {},
-                form = $(e.target) ;
-
-              e.originalEvent.preventDefault();
-              _.map(form.serializeArray(), function(n) {
-                var key;
-                key = n['name'].match(/\[(.+)\]/);
-                if (!!key && _.isArray(key) && key.length > 1) {
-                  return data[key[1]] = n['value'];
-                }
-              });
-
-              _this.model.set(data, {validate: true});
-              if (_this.model.isValid()) {
-                //$(":submit").button("loading");
-                return _this.model.sync('update', _this.model, {
-                  success: (function(_this) {
-                    return function() {
-                      var title = $("input[type='radio'][value='" + _this.model.attributes.privacy + "']").data('title');
-                      $('.btn-privacy-selection').html(title);
-                      return goback();
-                    };
-                  })(_this),
-                  error: (function(_this) {
-                    return function() {
-                      // return _this.$(":submit").button("reset");
-                    };
-                  })(_this)
-                });
-              }
-            });
-
-            $('.btn-cancel').on('click', goback);
-          });
-        });
-      })(this);
-
-    }, this)).off('click').on('click', function(e) {
-      $('#publish-button').tooltip('hide');
-      /* close all other popovers except this */
-      $('#publish-button').not(this).popover('hide');
-      $(this).popover('toggle');
-    });
-
-    $(document).click(function(e) {
-      if (!$(e.target).is('#publish-button, .popover-content, .popover-content input')) {
-       // $('#publish-button').popover('hide');
-      }
     });
   },
 

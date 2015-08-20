@@ -6,7 +6,7 @@ App.Views.DocumentsEdit = App.Views.DocumentsBase.extend({
 
     if (this.model.ok) {
       this.initSharePopover();
-      this.initPublishPopover();
+      this.initPublishPopover().render();
       this.initEditor();
       this.initPlayer();
       this.initUserInitials();

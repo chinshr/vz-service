@@ -24,11 +24,19 @@ App.Views.DocumentsPublishPopover = Backbone.View.extend({
 
     this.button.on('click', (function(_this) {
       return function(e) {
-        $('#publish-button').tooltip('hide');
+        _this.button.tooltip('hide');
         /* close all other popovers except this */
-        $('#publish-button').not(this).popover('hide');
+        _this.button.not(this).popover('hide');
         _this.popover.toggle();
       };
+    })(this));
+
+    $(document).on('click', (function(_this) {
+      return function(e) {
+        if (!$(e.target).is(_this.button) && $('#publish-popover').find($(e.target)).length === 0) {
+          _this.hide();
+        }
+      }
     })(this));
 
     return this;
