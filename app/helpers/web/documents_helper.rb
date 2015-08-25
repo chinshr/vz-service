@@ -19,8 +19,18 @@ module Web::DocumentsHelper
 
     def published_document_url(user_slug = nil, document_slug = nil)
       user_slug     ||= current_user.slug if defined?(current_user) && current_user
-      document_slug ||= @document.slug if @document
+      document_slug ||= if @document && !@document.privacy_private? && @document.published?
+        @document.slug
+      end
       web_profile_document_url("@#{user_slug}", document_slug) if user_slug && document_slug
+    end
+
+    def show_document_url
+      if @document && @document.privacy_private?
+        web_document_url(@document.slug_id)
+      elsif @document && !@document.privacy_private? && @document.published?
+        published_document_url
+      end
     end
 
     def edit?

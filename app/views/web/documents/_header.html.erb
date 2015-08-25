@@ -58,7 +58,7 @@
 
         <% if edit? %>
         <!-- format -->
-        <ul class="nav navbar-nav toolbar-nav content-editor-toolbar-container">
+        <ul class="nav navbar-nav toolbar-nav content-toolbar-container content-editor-toolbar-container">
           <!-- font-style -->
           <li><button title="<%= key_cmd(:bold, 'B', :meta_key) %>" type="button" class="btn btn-md btn-tlb ql-bold fa fa-bold fa-fw" data-toggle="tooltip" data-placement="bottom"></button></li>
           <li><button title="<%= key_cmd(:italic, 'I', :meta_key) %>" type="button" class="btn btn-md btn-tlb ql-italic fa fa-italic fa-fw" data-toggle="tooltip" data-placement="bottom"></button></li>
@@ -84,7 +84,7 @@
 
         <% if show? || publish? %>
         <!-- share-popover -->
-        <ul class="nav navbar-nav toolbar-nav content-editor-toolbar-container content-viewer-toolbar-container">
+        <ul class="nav navbar-nav toolbar-nav content-toolbar-container content-editor-toolbar-container content-viewer-toolbar-container">
           <!-- highlight -->
           <li><button title="<%= key_cmd(:highlight, 'H', :ctrl_key) %>" type="button" class="btn btn-md btn-tlb ql-bold fa fa-bookmark fa-fw" data-toggle="tooltip" data-placement="bottom"></button></li>
 
@@ -104,17 +104,53 @@
 
         <!-- context menu -->
         <ul class="nav navbar-nav toolbar-nav pull-right">
-          <% if (edit? || show?) && policy(@document).publish? %>
+          <% if (publish? || show?) && policy(@document).edit? %>
+          <li><!-- edit -->
+            <a href="<%= edit_web_document_path(@document.slug_id) %>" title="Edit" id="edit-button" class="btn btn-md btn-tlb btn-edit fa fa-edit" type="button" data-toggle="tooltip" data-placement="bottom"></a>
+          </li><!-- /edit -->
+          <% end %>
+
+          <% if edit? && policy(@document).publish? %>
           <li><!-- publish-->
-            <button title="Publish" id="publish-button" class="btn btn-md btn-tlb btn-popover btn-publish fa <%= publish_icon_class -%>" type="button" data-toggle="tooltip popover" data-placement="bottom" data-target="publish-popover"></button>
+            <button title="Publish" id="publish-button" class="btn btn-md btn-tlb btn-popover btn-publish fa <%= publish_icon_class -%>" type="button" data-toggle="tooltip popover" data-placement="bottom"></button>
           </li><!-- /publish -->
           <% end %>
 
           <% if publish? %>
-          <li class="separator">&nbsp;</li>
           <li><!-- share -->
-            <button title="Share" id="share-button" class="btn btn-md btn-tlb btn-popover btn-share fa fa-share" type="button" data-toggle="popover tooltip" data-placement="bottom" data-target="share-popover"></button>
+            <button title="Share" id="share-button" class="btn btn-md btn-tlb btn-popover btn-share fa fa-share" type="button" data-toggle="popover tooltip" data-placement="bottom"></button>
           </li><!-- /share -->
+          <% end %>
+
+          <% if edit? && policy(@document).edit? %>
+          <li><!-- more-edit -->
+            <button title="More" id="more-edit-button" class="btn btn-md btn-tlb btn-popover btn-more-edit fa fa-ellipsis-h" type="button" data-toggle="tooltip popover" data-placement="bottom" data-target="more-edit-popover-template" data-popover-id="more-edit-popover" data-popover-class="dropdown-popover more-edit-popover"></button>
+            <script type="text/html" id="more-edit-popover-template">
+            <ul class="popdown-menu">
+              <li role="presentation"><a role="menuitem" href="<%= show_document_url %>">Cancel Editing</a></li>
+            </ul>
+            </script>
+          </li><!-- /more-edit -->
+          <% end %>
+
+          <% if current_user %>
+          <li class="separator">&nbsp;</li>
+          <li><!-- profile -->
+            <button title="Profile" id="profile-button" class="btn btn-md btn-tlb btn-popover btn-profile" type="button" data-toggle="tooltip" data-placement="bottom" data-target="profile-popover-template" data-popover-id="profile-popover" data-popover-class="dropdown-popover profile-popover">
+            <%= image_tag(avatar_url(current_user), class: "avatar", style: "background-color: #{current_user.css_hex_color}") %>
+            </button>
+            <script type="text/html" id="profile-popover-template">
+            <ul class="popdown-menu">
+              <li role="presentation"><a role="menuitem" href="/dashboard">Dashboard</a></li>
+              <li class="divider"></li>
+              <li role="presentation"><a role="menuitem" href="<%= web_account_profile_path %>">Profile</a></li>
+              <li role="presentation"><a role="menuitem" href="<%= web_account_settings_path %>">Settings</a></li>
+              <li role="presentation">
+                <%= link_to "Logout", destroy_user_session_path, :method => :delete, :class => "btn btn-small btn-danger" %>
+              </li>
+            </ul>
+            </script>
+          </li><!-- /profile -->
           <% end %>
         </ul>
         <!-- /context menu -->
