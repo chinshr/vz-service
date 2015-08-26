@@ -33,12 +33,10 @@
         <!-- player -->
         <ul id="media-player-toolbar-container" class="nav navbar-nav toolbar-nav audio-player-nav">
           <li><button title="<%= key_cmd(:play, 'Esc') %>" type="button" class="btn btn-lg btn-tlb fa fa-play fa-fw player player-play-pause" data-action="toggle-play-pause" data-toggle="tooltip" data-placement="bottom"></button></li>
-          <li><button type="button" class="btn btn-lg btn-tlb btn-elt"><p id="elt">00:00.0</p></button></li>
-          <li><button type="button" class="btn btn-lg btn-tlb btn-ttp"><p id="ttp">-00:00.0</p></button></li>
-          <li><button title="<%= key_cmd(:step_backward, "F1") %>" type="button" class="btn btn-md btn-tlb fa fa-backward fa-fw player player-step-backward" data-action="step-backward" data-toggle="tooltip" data-placement="bottom"></button></li>
-          <li><button title="<%= key_cmd(:step_forward, "F2") %>" type="button" class="btn btn-md btn-tlb fa fa-forward fa-fw player player-step-forward" data-action="step-forward" data-toggle="tooltip" data-placement="bottom"></button></li>
+          <li><button title="<%= key_cmd(:step_backward, "F1") %>" type="button" class="btn btn-md btn-tlb fa fa-step-backward fa-fw player player-step-backward" data-action="step-backward" data-toggle="tooltip" data-placement="bottom"></button></li>
+          <li><button title="<%= key_cmd(:step_forward, "F2") %>" type="button" class="btn btn-md btn-tlb fa fa-step-forward fa-fw player player-step-forward" data-action="step-forward" data-toggle="tooltip" data-placement="bottom"></button></li>
           <li>
-            <button type="button" id="playback-speed-btn" class="btn btn-lg btn-tlb btn-speed player dropdown-toggle" data-toggle="dropdown"><p>1×</p></button>
+            <button title="<%= key_cmd(:playback_speed) %>" type="button" id="playback-speed-btn" class="btn btn-lg btn-tlb btn-speed player dropdown-toggle" data-toggle="dropdown"><p>1×</p></button>
             <ul id="playback-speed-menu" class="dropdown-menu">
               <li>
                 <ul class="toolbar-nav sub-toolbar-nav">
@@ -49,9 +47,11 @@
               </li>
             </ul>
           </li>
+          <li><button title="<%= key_cmd(:mute) %>" type="button" class="btn btn-md btn-tlb fa fa-volume-up fa-fw player player-mute-toggle" data-action="toggle-mute" data-toggle="tooltip" data-placement="bottom"></button></li>
+          <li><button type="button" class="btn btn-lg btn-tlb btn-elt"><p id="elt">00:00.0</p></button></li>
+          <li><button type="button" class="btn btn-lg btn-tlb btn-ttp"><p id="ttp">-00:00.0</p></button></li>
           <li><button title="<%= key_cmd(:reset, 'Esc', [:shift_key]) %>" type="button" class="btn btn-md btn-tlb fa fa-stop fa-fw player player-reset" data-action="reset" data-toggle="tooltip" data-placement="bottom"></button></li>
           <li class="separator">&nbsp;</li>
-          <li><button title="<%= key_cmd(:mute) %>" type="button" class="btn btn-md btn-tlb fa fa-volume-off fa-fw player player-mute-toggle" data-action="toggle-mute" data-toggle="tooltip" data-placement="bottom"></button></li>
           <li><button title="<%= key_cmd(:resize) %>" type="button" class="btn btn-md btn-tlb fa <%= waveform_visible? ? 'fa-compress' : 'fa-expand' %> fa-fw player player-resize-toggle" data-action="toggle-resize" data-toggle="tooltip" data-placement="bottom"></button></li>
         </ul>
         <!-- /player -->
@@ -118,7 +118,7 @@
 
           <% if publish? %>
           <li><!-- share -->
-            <button title="Share" id="share-button" class="btn btn-md btn-tlb btn-popover btn-share fa fa-share" type="button" data-toggle="popover tooltip" data-placement="bottom"></button>
+            <button title="Share" id="share-button" class="btn btn-md btn-tlb btn-popover btn-share fa fa-share-square-o" type="button" data-toggle="popover tooltip" data-placement="bottom"></button>
           </li><!-- /share -->
           <% end %>
 

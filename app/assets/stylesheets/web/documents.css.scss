@@ -20,6 +20,7 @@ body.documents {
 
       a {
         line-height: 30px;
+        border: 0;
       }
 
       button {
@@ -61,16 +62,13 @@ body.documents {
       font-size: 17px;
       font-weight: bold;
       letter-spacing: -2px;
-      width: 35px !important;
 
       p {
         margin: 0;
         border: 0;
-        width: 28px;
-        height: 28px;
-        line-height: 28px;
-        display: -webkit-flex; /* Safari */
-        -webkit-justify-content: space-around; /* Safari 6.1+ */
+        padding: 0;
+        display: -webkit-flex; // Safari
+        -webkit-justify-content: space-around; // Safari 6.1+
         display: flex;
         justify-content: space-around;
         text-align: justify;
@@ -136,7 +134,7 @@ body.documents {
 
       button, a {
         height: 50px;
-        width: 20px;
+        width: 20px !important;
       }
     }
   } /* .sub-toolbar-nav */
@@ -504,7 +502,7 @@ body.documents {
     position: fixed;
 
     .popover-content {
-      padding: 5px;
+      padding: 10px;
 
       .social-container {
         margin: 0 0 5px 0;
@@ -578,7 +576,7 @@ body.documents {
         p {
           margin: 10px 0;
           white-space: normal;
-          font-size: 12px;
+          font-size: 14px;
           color: #dbdbdb;
 
           i {
@@ -598,7 +596,7 @@ body.documents {
           padding: 7px;
           transition: border linear .2s, box-shadow linear .2s;
           outline: none;
-          font-size: 11px;
+          font-size: 14px;
         }
 
         .width-full {
@@ -616,7 +614,7 @@ body.documents {
     position: fixed;
 
     .popover-content {
-      padding: 5px;
+      padding: 10px;
 
       .popover-heading {
         p {
@@ -654,7 +652,7 @@ body.documents {
       .popover-body {
         p.privacy-help {
           white-space: normal;
-          font-size: 16px;
+          font-size: 14px;
           color: #dbdbdb;
         }
 

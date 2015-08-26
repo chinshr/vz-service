@@ -19,15 +19,16 @@ $.extend(true, $.notify.defaultOptions, {
   "type": "warning"
 });
 
+/* Dropdowns */
+// $(document).ready(function() {
+//   $('.dropdown-toggle').dropdown();
+// });
+
 /* Tooltips */
 $(document).ready(function() {
   // $('.btn-tlb[data-toggle="tooltip"]').tooltip({});
   $('.btn-tlb').tooltip({});
-});
-
-/* Dropdowns */
-$(document).ready(function() {
-  $('.dropdown-toggle').dropdown();
+  $('.btn-tlb').tooltip({});
 });
 
 /* Popovers */
