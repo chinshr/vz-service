@@ -56,14 +56,16 @@ module Web::DocumentsHelper
       end
     end
 
-    def document_title
-      if publish?
+    def page_title(caption = nil, with_brand_name = false)
+      caption ||= if publish?
         "#{@document.title} — VOYZ.ES"
       elsif show?
         "Viewing #{@document.title}"
       elsif edit?
         "Editing #{@document.title}"
       end
+      caption += " — VOYZ.ES" if with_brand_name
+      content_for(:title, caption)
     end
   end
 

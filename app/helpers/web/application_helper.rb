@@ -155,4 +155,9 @@ module Web::ApplicationHelper
       'warning'
     end
   end
+
+  def page_title(caption, with_brand_name = true)
+    caption += " — VOYZ.ES" if with_brand_name
+    content_for(:title, caption)
+  end
 end

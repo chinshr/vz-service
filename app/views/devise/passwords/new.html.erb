@@ -1,9 +1,10 @@
 <%# Forgot password? %>
+<%= page_title "Recover password"%>
 <%= render "web/shared/devise_errors" %>
 
 <div class="container-fluid content-primary">
   <div class="tile form-tile animated fadeInUp">
-    <%= form_for(resource, :as => resource_name, :url => password_path(resource_name), 
+    <%= form_for(resource, :as => resource_name, :url => password_path(resource_name),
       :html => {:method => :post, :class => "form-signup  panel animated fade-in-up"}) do |f| %>
       <div class="panel-heading">
         <h1 class="logo"><a class="signup-brand" href="/">Forgot your password?</a></h1>
@@ -14,7 +15,7 @@
           <%= f.label :email, "Email address" %>
           <%= f.email_field :email, :autofocus => "autofocus", :autocapitalize => "off", :autocomplete => "off", :autocorrect => "off", :spellcheck => false, :class => "form-control first", :placeholder => "Enter email address" %>
         </div>
-      </div>  
+      </div>
       <div class="panel-footer">
         <button class="btn btn-lg btn-primary btn-block" type="submit">Recover Password</button>
       </div>
