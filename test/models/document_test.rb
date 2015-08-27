@@ -137,7 +137,7 @@ class DocumentTest < ActiveSupport::TestCase
     end
   end
 
-  context "privacy mask" do
+  context "accessibility" do
     setup do
       @document = FactoryGirl.create(:document)
     end
@@ -155,6 +155,27 @@ class DocumentTest < ActiveSupport::TestCase
 
       @document.accessibility = :foobar
       assert_equal [], @document.accessibility
+    end
+
+    should "be viewable" do
+      @document.accessibility = :view
+      assert_equal true, @document.accessibility_viewable?
+      assert_equal false, @document.accessibility_commentable?
+      assert_equal false, @document.accessibility_editable?
+    end
+
+    should "be commentable" do
+      @document.accessibility = :comment
+      assert_equal true, @document.accessibility_viewable?
+      assert_equal true, @document.accessibility_commentable?
+      assert_equal false, @document.accessibility_editable?
+    end
+
+    should "be editable" do
+      @document.accessibility = :edit
+      assert_equal true, @document.accessibility_viewable?
+      assert_equal true, @document.accessibility_commentable?
+      assert_equal true, @document.accessibility_editable?
     end
   end
 

@@ -233,6 +233,18 @@ class Document < ActiveRecord::Base
     ACCESSIBILITY_SETTINGS.keys.reject {|d| ((accessibility_mask || 0) & self.class.accessibility_mask(d)).zero?}
   end
 
+  def accessibility_viewable?
+    accessibility.include?("view") || accessibility.include?("comment") || accessibility.include?("edit")
+  end
+
+  def accessibility_commentable?
+    accessibility.include?("comment") || accessibility.include?("edit")
+  end
+
+  def accessibility_editable?
+    accessibility.include?("edit")
+  end
+
   def transcribed?
     !!ingests.order(id: :desc).first.try(:finished?)
   end
