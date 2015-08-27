@@ -1,4 +1,4 @@
-class Web::Devise::ConfirmationsController < Devise::ConfirmationsController
+class Web::Devise::ConfirmationsController < ::Devise::ConfirmationsController
   respond_to :html, :js
 
   # Remove the first skip_before_filter (:require_no_authentication) if you
@@ -17,7 +17,7 @@ class Web::Devise::ConfirmationsController < Devise::ConfirmationsController
     end
     if !@confirmable.errors.empty?
       self.resource = @confirmable
-      render 'devise/confirmations/new' #Change this if you don't have the views on default path
+      render 'new' #Change this if you don't have the views on default path
     end
   end
 
@@ -39,7 +39,7 @@ class Web::Devise::ConfirmationsController < Devise::ConfirmationsController
     end
 
     if !@confirmable.errors.empty?
-      render 'devise/confirmations/new' #Change this if you don't have the views on default path
+      render 'new' #Change this if you don't have the views on default path
     end
   end
 
@@ -58,7 +58,7 @@ class Web::Devise::ConfirmationsController < Devise::ConfirmationsController
     @confirmation_token = params[:confirmation_token]
     @requires_password = true
     self.resource = @confirmable
-    render 'devise/confirmations/show' # Change this if you don't have the views on default path
+    render 'show' # Change this if you don't have the views on default path
   end
 
   def do_confirm
