@@ -87,7 +87,7 @@ class Document < ActiveRecord::Base
     end
 
     event :unpublish do
-      transitions :from => :published, :to => :unpublished
+      transitions :from => [:published, :unpublished], :to => :unpublished
     end
   end
 
@@ -360,7 +360,7 @@ class Document < ActiveRecord::Base
   end
 
   def can_be_published?
-    true
+    !privacy_private?
   end
 
 end

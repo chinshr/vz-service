@@ -481,8 +481,8 @@ class DocumentTest < ActiveSupport::TestCase
       assert_nil document.published_at
     end
 
-    should "#publish! when unpublished" do
-      document = FactoryGirl.create(:document)
+    should "#publish! when unpublished public document" do
+      document = FactoryGirl.create(:document, privacy: ['public'])
       assert_equal :unpublished, document.state
       assert_equal true, document.publish!
       assert_equal :published, document.state
@@ -490,7 +490,17 @@ class DocumentTest < ActiveSupport::TestCase
       assert_not_nil document.published_at
     end
 
-    should "#publish! when published" do
+    should "not #publish! when privacy private" do
+      document = FactoryGirl.create(:document, privacy: ['private'])
+      assert_equal true, document.privacy_private?
+      assert_equal :unpublished, document.state
+      assert_raise AASM::InvalidTransition do
+        document.publish!
+      end
+      assert_equal :unpublished, document.state
+    end
+
+    should "#publish! when already published" do
       document = FactoryGirl.create(:document, aasm_state: "published", published_at: (ot = Time.zone.now - 1.day))
       assert_equal true, document.publish!
       assert_equal :published, document.state
@@ -499,6 +509,12 @@ class DocumentTest < ActiveSupport::TestCase
 
     should "#unpublish! when published" do
       document = FactoryGirl.create(:document, aasm_state: "published", published_at: (ot = Time.zone.now - 1.day))
+      assert_equal true, document.unpublish!
+      assert_equal :unpublished, document.state
+    end
+
+    should "#unpublish! when already unpublished" do
+      document = FactoryGirl.create(:document, aasm_state: "unpublished")
       assert_equal true, document.unpublish!
       assert_equal :unpublished, document.state
     end
