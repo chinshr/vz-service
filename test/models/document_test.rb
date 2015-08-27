@@ -135,6 +135,15 @@ class DocumentTest < ActiveSupport::TestCase
       assert_equal ["unlisted"], @document.privacy
       assert_equal true, @document.privacy_unlisted?
     end
+
+    should "unpublish document when privacy private" do
+      @document = FactoryGirl.create(:document, aasm_state: "published", privacy: ['public'], published_at: Time.zone.now - 1.day)
+      assert_equal :published, @document.state
+      assert_equal true, @document.privacy_public?
+      @document.update_attributes(privacy: "private")
+      assert_equal true, @document.privacy_private?
+      assert_equal :unpublished, @document.state
+    end
   end
 
   context "accessibility" do

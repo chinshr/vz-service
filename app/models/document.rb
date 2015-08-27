@@ -206,7 +206,9 @@ class Document < ActiveRecord::Base
   end
 
   def privacy=(values)
-    self.privacy_mask = ([values].flatten.map(&:to_s) & PRIVACY_SETTINGS.keys).sum {|d| self.class.privacy_mask(d)}
+    values = ([values].flatten.map(&:to_s) & PRIVACY_SETTINGS.keys)
+    self.unpublish if values.include?('private')
+    self.privacy_mask = values.sum {|d| self.class.privacy_mask(d)}
   end
 
   def privacy
