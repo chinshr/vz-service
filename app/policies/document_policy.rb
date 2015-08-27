@@ -5,15 +5,15 @@ class DocumentPolicy < ApplicationPolicy
   end
 
   def show?
-    backend_role? || (record.privacy_private? ? owner_of?(record) : true)
+    backend_role? || (record.privacy_private? ? owner_of?(record) : record.accessibility_viewable?)
   end
 
   def edit?
-    backend_role? || owner_of?(record)
+    backend_role? || owner_of?(record) || record.accessibility_editable?
   end
 
   def update?
-    backend_role? || owner_of?(record)
+    backend_role? || owner_of?(record) || record.accessibility_editable?
   end
 
   def destroy?

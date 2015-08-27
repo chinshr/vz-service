@@ -1,7 +1,7 @@
 class Profile::DocumentPolicy < ApplicationPolicy
 
   def show?
-    record.published?
+    !record.privacy_private? && record.published?
   end
 
   def publish?

@@ -242,7 +242,7 @@ $.extend({
       '</div><!-- /.modal-dialog -->' +
     '</div><!-- /.modal -->';
 
-    $("#alert-modal").remove();
+    $("#alert-modal").remove();  // close any existing alerts
     $('body').append(html);
     $('#alert-modal').modal();
   },

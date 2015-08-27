@@ -1,8 +1,8 @@
 class Web::RegistrationsController < Web::ApplicationController
 
   def create
-    @registration = Registration.instance_for(params[:registration], 
-      request.location.data, 
+    @registration = Registration.instance_for(params[:registration],
+      request.location.data,
       {
         :locale     => I18n.locale,
         :ip_address => request.remote_ip

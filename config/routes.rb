@@ -6,7 +6,7 @@ Voyzes::Application.routes.draw do
   ActiveAdmin.routes(self)
 
   # user devise
-  devise_for :users, :controllers => {:confirmations => 'confirmations'},
+  devise_for :users, :controllers => {registrations: 'web/devise/registrations', confirmations: 'web/devise/confirmations'},
     :path_names => {:sign_in => 'sign-in', :sign_up => 'sign-up', :sign_out => 'sign-out'}
   devise_scope :user do
     put "/users/confirmation" => "confirmations#update", :as => :update_user_confirmation
@@ -24,7 +24,7 @@ Voyzes::Application.routes.draw do
     get '/terms/privacy-policy' => "terms#privacy_policy"
     get '/terms/terms-of-service' => "terms#terms_of_service"
 
-    resources :registrations, :only => :create
+    resources :registrations, only: :create
 
     # Web:Account::Application
     get "/account" => 'account/application#index'  # => redirects /dashboard
