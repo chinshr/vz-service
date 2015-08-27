@@ -104,10 +104,10 @@
 
         <!-- context menu -->
         <ul class="nav navbar-nav toolbar-nav pull-right">
-          <% if (publish? || show?) && policy(@document).edit? %>
-          <li><!-- edit -->
+          <% if current_user && (publish? || show?) && policy(@document).edit? %>
+          <li><!-- edit button -->
             <a href="<%= edit_web_document_path(@document.slug_id) %>" title="Edit" id="edit-button" class="btn btn-md btn-tlb btn-edit fa fa-edit" type="button" data-toggle="tooltip" data-placement="bottom"></a>
-          </li><!-- /edit -->
+          </li><!-- /edit button -->
           <% end %>
 
           <% if edit? && policy(@document).publish? %>
@@ -133,8 +133,8 @@
           </li><!-- /more-edit -->
           <% end %>
 
-          <% if current_user %>
           <li class="separator">&nbsp;</li>
+          <% if current_user %>
           <li><!-- profile -->
             <button title="Profile" id="profile-button" class="btn btn-md btn-tlb btn-popover btn-profile" type="button" data-toggle="tooltip" data-placement="bottom" data-target="profile-popover-template" data-popover-id="profile-popover" data-popover-class="dropdown-popover profile-popover">
             <%= image_tag(avatar_url(current_user), class: "avatar", style: "background-color: #{current_user.css_hex_color}") %>
@@ -151,6 +151,10 @@
             </ul>
             </script>
           </li><!-- /profile -->
+          <% else %>
+          <!-- login -->
+          <li><a title="Login" href="<%= new_user_session_path %>" type="button" class="btn btn-lg btn-tlb btn-login"><p>Login</p></a></li>
+          <!-- /login -->
           <% end %>
         </ul>
         <!-- /context menu -->

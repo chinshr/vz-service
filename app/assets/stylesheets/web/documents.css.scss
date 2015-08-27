@@ -96,6 +96,24 @@ body.documents {
       }
     }
 
+    .btn-login {
+      width: 55px;
+      font-size: 12px;
+      border: 1px solid #bbb;
+      line-height: 12px;
+      padding: 8px;
+      margin: 10px 0;
+      font-weight: bold;
+
+      &:hover {
+        border-color: #ccc;
+      }
+
+      p {
+        margin: 0;
+      }
+    }
+
     .avatar {
       border-radius: 300px;
       width: 30px;
