@@ -200,6 +200,7 @@ App.Views.DocumentsPublishPopover = App.Views.DocumentsPopoverBase.extend({
   },
 
   setup: function() {
+    this.button.tooltip('disable');
     this.pushPage('start', this.$('#publish-popover-publishing-page'));
 
     this.publishButtonElement = this.$('.btn-publish-document');
@@ -224,6 +225,7 @@ App.Views.DocumentsPublishPopover = App.Views.DocumentsPopoverBase.extend({
       $(btn).off('click');
     });
     this.showStartPage();
+    this.button.tooltip('enable');
     this.pages = {};
   }
 });

@@ -465,7 +465,7 @@ body.documents {
           text-decoration: none;
           text-transform: uppercase;
           font-weight: bold;
-          border-radius: inherit;
+          border-radius: 2px;
 
           i {
             padding-right: 10px;
@@ -478,7 +478,6 @@ body.documents {
           text-decoration: none;
           // background-color: #292d33;
           background-color: #3d444b;
-          border-radius: inherit;
         }
 
         & > .active > a,

@@ -42,10 +42,12 @@ App.Views.DocumentsSharePopover = App.Views.DocumentsPopoverBase.extend({
   },
 
   setup: function() {
+    this.button.tooltip('disable');
     VZ.social.bind();
   },
 
   teardown: function() {
     VZ.social.unbind();
+    this.button.tooltip('enable');
   }
 });

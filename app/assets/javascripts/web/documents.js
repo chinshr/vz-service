@@ -38,11 +38,8 @@ $(document).ready(function() {
     var target;
     if (target = $(btn).data('target')) {
       target = $('#' + $(btn).data('target'));
-      console.log(btn);
       var poId = $(btn).data('popover-id');
       var poClass = $(btn).data('popover-class');
-
-      console.log($(target.html()));
 
       $(btn).popover({
         container: 'body',
@@ -53,8 +50,12 @@ $(document).ready(function() {
         content: function() {
           return target.html();
         }
-      }).on('shown.bs.popover', function() {})
-      .on('hidden.bs.popover', function() {});
+      }).on('shown.bs.popover', function() {
+        $(btn).tooltip('disable');
+      })
+      .on('hidden.bs.popover', function() {
+        $(btn).tooltip('enable');
+      });
 
       $(btn).on('click', function(e) {
         $(btn).tooltip('hide');
