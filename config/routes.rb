@@ -9,7 +9,7 @@ Voyzes::Application.routes.draw do
   devise_for :users, :controllers => {registrations: 'web/devise/registrations', confirmations: 'web/devise/confirmations'},
     :path_names => {:sign_in => 'sign-in', :sign_up => 'sign-up', :sign_out => 'sign-out'}
   devise_scope :user do
-    put "/users/confirmation" => "confirmations#update", :as => :update_user_confirmation
+    put "/users/confirmation" => "web/devise/confirmations#update", :as => :update_user_confirmation
   end
 
   # sidekick

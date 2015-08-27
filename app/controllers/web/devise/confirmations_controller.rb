@@ -49,6 +49,7 @@ class Web::Devise::ConfirmationsController < ::Devise::ConfirmationsController
     original_token = params[:confirmation_token]
     confirmation_token = Devise.token_generator.digest(User, :confirmation_token, original_token)
     @confirmable = User.find_or_initialize_with_error_by(:confirmation_token, confirmation_token)
+    @confirmable.confirmation_validation = true if @confirmable
     if !@confirmable.new_record?
       @confirmable.only_if_unconfirmed { yield }
     end
@@ -64,10 +65,14 @@ class Web::Devise::ConfirmationsController < ::Devise::ConfirmationsController
   def do_confirm
     @confirmable.confirm!
     set_flash_message :notice, :confirmed
-    sign_in_and_redirect(resource_name, @confirmable)
+
+    respond_to do |format|
+      format.html { sign_in_and_redirect(resource_name, @confirmable) }
+      format.js { sign_in(resource_name, @confirmable) }
+    end
   end
 
   def user_params
-    params.require(:user).permit(:password, :password_confirmation, :first_name, :last_name)
+    params.require(:user).permit(:password, :password_confirmation, :first_name, :last_name, :username)
   end
 end

@@ -1,0 +1,15 @@
+<% if resource && !resource.errors.empty? %>
+  <%
+    messages = resource.errors.full_messages.join(", ")
+    notifier_options ||= {
+      customClass: "#{dom_controller_class} #{dom_controller_action_class}",
+      offset: {
+        from: "top",
+        amount: 10
+      },
+      align: "right",
+      delay: 5000,
+    }
+  %>
+  $.notify('<%= messages %>', 'info', <%= raw(notifier_options.to_json) %>);
+<% end %>
