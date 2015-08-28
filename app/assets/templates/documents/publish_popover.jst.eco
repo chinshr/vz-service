@@ -28,7 +28,7 @@
             <input type="radio" name="document[privacy]" id="document-privacy-unlisted" value="unlisted" checked="" data-title="Limited" data-title-can-view="Limited, can view" data-title-can-edit="Limited, can edit" data-description="The document will only be visible to those with the link. Only you can edit and publish the document." data-description-can-view="The document will only be visible to those with the link. Only you can edit and publish it." data-description-can-edit="The document will only be visible and editable to those with the link. Only you can publish it."><i class="fa fa-eye-slash icon-unlisted"></i>&nbsp;Limited
           </label>
           <label class="btn btn-primary btn-sm btn-radio">
-            <input type="radio" name="document[privacy]" id="document-privacy-private" value="private" data-title="Private" data-description="The document will be private and cannot be published. Only you can edit and view the document."><i class="fa fa-lock icon-private"></i>&nbsp;Private
+            <input type="radio" name="document[privacy]" id="document-privacy-private" value="private" data-title="Private" data-description="The document will be private and not be published. Only you can edit and view the document."><i class="fa fa-lock icon-private"></i>&nbsp;Private
           </label>
         </div><!-- .btn-group .group-file-privacy -->
       </div><!-- .form-group .from-group-file-privacy -->
