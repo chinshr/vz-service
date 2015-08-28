@@ -12,20 +12,20 @@ class Api::ApplicationController < ApplicationController
 
   before_filter :set_response_version_header
 
-  rescue_from ActiveRecord::RecordNotFound do |exception|
-    process_exception(exception)
+  rescue_from ActiveRecord::RecordNotFound do |error|
+    process_exception(error)
   end
 
-  rescue_from Pundit::NotAuthorizedError do |exception|
-    process_exception(exception)
+  rescue_from Pundit::NotAuthorizedError do |error|
+    process_exception(error)
   end
 
-  rescue_from Api::Exception do |exception|
-    process_exception(exception)
+  rescue_from Api::Exception do |error|
+    process_exception(error)
   end
 
-  rescue_from ActionController::ParameterMissing do |exception|
-    process_exception(exception)
+  rescue_from ActionController::ParameterMissing do |error|
+    process_exception(error)
   end
 
   protected
@@ -34,12 +34,12 @@ class Api::ApplicationController < ApplicationController
     @api_response || @api_response = Api::Response.new(error)
   end
 
-  def process_exception(exception)
-    api_response(exception)
+  def process_exception(error)
+    api_response(error)
 
     # NewRelic & Rails log manual catching error
-    Rails.logger.error pretty_exception(exception)
-    NewRelic::Agent.agent.error_collector.notice_error(exception, :request_params => request.params)
+    Rails.logger.error pretty_exception(error)
+    NewRelic::Agent.agent.error_collector.notice_error(error, :request_params => request.params)
 
     # Note: respond_with doesn't work with PUT request, always return empty
     # respond_with api_response, :status => api_response.http_status || 400

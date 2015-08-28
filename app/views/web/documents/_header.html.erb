@@ -116,7 +116,7 @@
           </li><!-- /publish -->
           <% end %>
 
-          <% if publish? %>
+          <% if !@document.privacy_private? && @document.published? %>
           <li><!-- share -->
             <button title="Share" id="share-button" class="btn btn-md btn-tlb btn-popover btn-share fa fa-share-square-o" type="button" data-toggle="popover tooltip" data-placement="bottom"></button>
           </li><!-- /share -->

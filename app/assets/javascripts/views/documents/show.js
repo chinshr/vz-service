@@ -10,7 +10,7 @@ App.Views.DocumentsShow = App.Views.DocumentsBase.extend({
     this.$el.html(this.template(this.model.attributes));
 
     if (this.model.ok) {
-      this.initSharePopover();
+      this.initSharePopover().render();
       this.initPublishPopover().render();
       this.initEditor();
       this.initPlayer();

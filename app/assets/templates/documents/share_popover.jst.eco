@@ -10,7 +10,7 @@
   <% if @privacy.indexOf('private') > -1: %>
   <p><i class="fa fa-lock"></i>This document is private and may only be viewed by the owner.</p>
   <% else: %>
-  <p>Copy and paste the link below to share this document.</p>
+  <p>Copy and paste the link below to share this published document.</p>
   <% end %>
   <input type="url" class="width-full" notreadonly value="<%= @published_url %>">
 </div>
