@@ -56,6 +56,41 @@ module Web::DocumentsHelper
       end
     end
 
+    def meta_privacy_description
+      return unless @document
+      if @document.privacy_public?
+        "The document is publicly visible. It will be listed on VOYZ.ES public pages (e.g. homepage) and it can be found using a search engine."
+      elsif @document.privacy_unlisted?
+        "The document is only visible to those with the link. It won't be listed on VOYZ.ES public pages (e.g. homepage) and it cannot be found using a search engine."
+      elsif @document.privacy_private?
+        "The document will be private and not be published. Only you can edit and view the document."
+      end
+    end
+
+    def meta_privacy_title
+      return unless @document
+      if @document.privacy_public?
+        "Public"
+      elsif @document.privacy_unlisted?
+        "Limited"
+      elsif @document.privacy_private?
+        "Private"
+      end
+    end
+
+    def meta_privacy_icon
+      return unless @document
+      if @document.privacy_public?
+        "fa fa-unlock"
+      elsif @document.privacy_unlisted?
+        "fa fa-eye-slash"
+      elsif @document.privacy_private?
+        "fa fa-lock"
+      end
+
+    end
+
+    # override from app helper
     def page_title(caption = nil, with_brand_name = false)
       caption ||= if publish?
         "#{@document.title} — VOYZ.ES"

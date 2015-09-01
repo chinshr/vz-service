@@ -28,7 +28,7 @@ $.extend(true, $.notify.defaultOptions, {
 $(document).ready(function() {
   // $('.btn-tlb[data-toggle="tooltip"]').tooltip({});
   $('.btn-tlb').tooltip({});
-  $('.btn-tlb').tooltip({});
+  $('[data-toggle=tooltip]').tooltip({});
 });
 
 /* Popovers */
