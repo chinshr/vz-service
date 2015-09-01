@@ -1,3 +1,5 @@
+[ ![Codeship Status for vzo/vz-service](https://codeship.com/projects/2b91edd0-fd6c-0132-627a-46b29513b11c/status?branch=master)](https://codeship.com/projects/87798)
+
 # VOYZ.ES Service
 
 The service runs the Website and API.
