@@ -1,0 +1,22 @@
+<header class="meta-header">
+  <div class="meta-header-container row">
+    <div class="meta-ownership col-lg-5 col-lg-offset-1 col-md-5 col-md-offset-1 col-sm-4 col-sm-offset-2 col-xs-12">
+      <div class="meta-avatar">
+        <a class="link avatar-link" href="<%= web_profile_url("@#{@document.user.username}") %>" title="Go to the profile of <%= @document.user.name %>" aria-label="Go to the profile of <%= @document.user.name %>" dir="auto">
+          <%= image_tag(avatar_url(@document.user), class: "avatar-image sm-size xs-size", style: "background-color: #{current_user.css_hex_color}", alt: "Go to the profile of #{@document.user.name}") %>
+        </a>
+      </div>
+      <div class="meta-summary">
+        <a class="link" href="<%= web_profile_url("@#{@document.user.username}") %>" title="Go to the profile of <%= @document.user.name %>" aria-label="Go to the profile of <%= @document.user.name %>" dir="auto"><%= @document.user.name %></a>
+        <span class="supplemental">May 6<span class="divider"></span><span class="reading-time">6 min read</span>
+        <% if current_user && current_user.owner_of?(@document) %>
+        <span class="divider"></span>
+        <span class="privacy visibility" data-original-title="<%= meta_privacy_description %>" data-placement="bottom" data-toggle="tooltip"><i class="<%= meta_privacy_icon %> icon-unlisted"></i><span><%= meta_privacy_title %></span></span>
+        <% end %>
+        </span>
+      </div><!-- .meta-summary -->
+    </div><!-- .meta-ownership -->
+    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+    </div>
+  </div><!-- .meta-header-container -->
+</header><!-- .meta-header -->

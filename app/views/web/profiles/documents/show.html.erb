@@ -1,35 +1,7 @@
 <% page_title %>
-<div id="document" class="container">
-
-  <div class="meta-header row">
-    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-      <div class="meta-roundup pull-left">
-        <div class="meta-avatar">
-          <a class="link avatar-link" href="<%= web_profile_url("@#{@document.user.username}") %>" title="Go to the profile of <%= @document.user.name %>" aria-label="Go to the profile of <%= @document.user.name %>" dir="auto">
-            <%= image_tag(avatar_url(@document.user), class: "avatar-image sm-size xs-size", style: "background-color: #{current_user.css_hex_color}", alt: "Go to the profile of #{@document.user.name}") %>
-          </a>
-        </div>
-        <div class="meta-summary">
-          <a class="link" href="<%= web_profile_url("@#{@document.user.username}") %>" title="Go to the profile of <%= @document.user.name %>" aria-label="Go to the profile of <%= @document.user.name %>" dir="auto"><%= @document.user.name %></a>
-          <span class="supplemental">May 6<span class="divider"></span><span class="reading-time">6 min read</span>
-          <% if current_user && current_user.owner_of?(@document) %>
-          <span class="divider"></span>
-          <span class="privacy visibility" data-original-title="<%= meta_privacy_description %>" data-placement="bottom" data-toggle="tooltip"><i class="<%= meta_privacy_icon %> icon-unlisted"></i><span><%= meta_privacy_title %></span></span>
-          <% end %>
-          </span>
-        </div><!-- .meta-summary -->
-      </div>
-    </div>
-    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-      <div class="pull-right">
-        <div class="voteWidget postMetaHeader-socialProof js-voteWidget is-iconVisible">
-          <span class="js-voteWidgetText"><svg viewBox="0 0 19 19" width="19" height="19" class="svgIcon svgIcon--heartFilled svgIcon-size--19px"><use xlink:href="/_/static/_/fp/icons/icons.fmpTqLjNd8xw9NvZvTWWXQ.svg#svg-heartFilled19px"></use></svg><a class="link" href="https://medium.com/@AnaMariaCarrano" title="Go to the profile of Ana María Carrano" aria-label="Go to the profile of Ana María Carrano" data-user-id="eacec019338" dir="auto">Ana María Carrano</a><span class="u-xs-hide"> recommended</span></span>
-        </div>
-      </div>
-    </div>
-  </div>
-
+<article id="document" class="container" lang="<%= @document.locale %>">
+  <%= render "web/documents/meta_header" %>
   <div id="document-show" class="document-show document-publish">
     <%= render "show" %>
   </div><!-- .document-show -->
-</div><!-- #document .container -->
+</article><!-- #document .container -->
