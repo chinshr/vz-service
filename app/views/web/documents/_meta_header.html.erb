@@ -3,7 +3,7 @@
     <div class="meta-ownership col-lg-5 col-lg-offset-1 col-md-5 col-md-offset-1 col-sm-4 col-sm-offset-2 col-xs-12">
       <div class="meta-avatar">
         <a class="link avatar-link" href="<%= web_profile_url("@#{@document.user.username}") %>" title="Go to the profile of <%= @document.user.name %>" aria-label="Go to the profile of <%= @document.user.name %>" dir="auto">
-          <%= image_tag(avatar_url(@document.user), class: "avatar-image sm-size xs-size", style: "background-color: #{current_user.css_hex_color}", alt: "Go to the profile of #{@document.user.name}") %>
+          <%= image_tag(avatar_url(@document.user), class: "avatar-image sm-size xs-size", style: "background-color: #{@document.user.css_hex_color}", alt: "Go to the profile of #{@document.user.name}") %>
         </a>
       </div>
       <div class="meta-summary">
