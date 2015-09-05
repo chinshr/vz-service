@@ -17,6 +17,19 @@ module Web::DocumentsHelper
 
   module Helper
 
+    # override from app helper
+    def page_title(caption = nil, with_brand_name = false)
+      caption ||= if publish?
+        "#{@document.title} — VOYZ.ES"
+      elsif show?
+        "Viewing #{@document.title}"
+      elsif edit?
+        "Editing #{@document.title}"
+      end
+      caption += " — VOYZ.ES" if with_brand_name
+      content_for(:title, caption)
+    end
+
     def published_document_url(user_slug = nil, document_slug = nil)
       user_slug     ||= current_user.slug if defined?(current_user) && current_user
       document_slug ||= if @document && !@document.privacy_private? && @document.published?
@@ -87,20 +100,14 @@ module Web::DocumentsHelper
       elsif @document.privacy_private?
         "fa fa-lock"
       end
-
     end
 
-    # override from app helper
-    def page_title(caption = nil, with_brand_name = false)
-      caption ||= if publish?
-        "#{@document.title} — VOYZ.ES"
-      elsif show?
-        "Viewing #{@document.title}"
-      elsif edit?
-        "Editing #{@document.title}"
+    def humanize_date(date_or_time)
+      if date_or_time.year == Time.zone.now.year
+        date_or_time.strftime("%b %-d")
+      else
+        date_or_time.strftime("%b %-d, %Y")
       end
-      caption += " — VOYZ.ES" if with_brand_name
-      content_for(:title, caption)
     end
   end
 
