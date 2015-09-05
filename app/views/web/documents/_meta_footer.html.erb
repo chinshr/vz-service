@@ -1,0 +1,25 @@
+<footer class="meta-footer">
+  <div class="document-footer-container container">
+    <div class="row">
+      <div class="col-lg-10 col-lg-offset-1 col-md-10 col-md-offset-1 col-sm-9 col-sm-offset-2 col-xs-12 document-tags-container">
+        <div class="tags-title">Tagged in</div>
+        <% if show? || publish? %>
+        <ul class="tag-list">
+          <% if @document.tag_list.empty? %>
+          <li class="empty-tag">Add up to 3 optional tags.</li>
+          <% else %>
+            <% @document.tag_list.each do |tag_string| %>
+            <li class="tag"><a href="#"><%= tag_string %></a></li>
+            <% end %>
+          <% end %>
+        </ul>
+        <% else %>
+        <div class="form-group form-group-tags">
+          <label class="sr-only" for="">Tags</label>
+          <input type="text" class="form-control input-sm input-taggable" placeholder="Add up to 3 optional tags." name="upload[tag_list]" value="<%= (@document.tag_list || []).join(',') %>" data-error-style="tooltip" data-tooltip-position="right"></input>
+        </div><!-- form-group-tags -->
+        <% end %>
+      </div><!-- document-tags-container -->
+    </div><!-- .row -->
+  </div><!-- document-footer-container -->
+</footer><!-- .meta-footer -->

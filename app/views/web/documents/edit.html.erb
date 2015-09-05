@@ -1,7 +1,8 @@
 <% page_title %>
-<div id="document" class="container">
+<article id="document" class="container" lang="<%= I18n.locale_language(@document.locale) %>">
   <%= render "web/documents/loading" %>
   <div id="document-edit" style="display: none">
     <%= render "edit" %>
   </div><!-- #document-edit -->
-</div><!-- #document .container -->
+  <%= render "web/documents/meta_footer" %>
+</article><!-- article#document .container -->

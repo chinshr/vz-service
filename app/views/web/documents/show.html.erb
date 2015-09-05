@@ -1,7 +1,9 @@
 <% page_title %>
-<div id="document" class="container">
+<article id="document" class="container" lang="<%= I18n.locale_language(@document.locale) %>">
   <%= render "web/documents/loading" %>
+  <%= render "web/documents/meta_header" %>
   <div id="document-show" style="display: none">
     <%= render "show" %>
   </div><!-- .document-show -->
-</div><!-- #document .container -->
+  <%= render "web/documents/meta_footer" %>
+</article><!-- #document .container -->
