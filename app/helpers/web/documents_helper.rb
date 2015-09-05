@@ -109,6 +109,10 @@ module Web::DocumentsHelper
         date_or_time.strftime("%b %-d, %Y")
       end
     end
+
+    def confidence_score_percent
+      sprintf("%d%", @document.score.to_f * 100)
+    end
   end
 
   def waveform_visible?

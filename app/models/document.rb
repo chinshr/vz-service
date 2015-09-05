@@ -270,6 +270,11 @@ class Document < ActiveRecord::Base
     "/@#{user.username}/#{slug}"
   end
 
+  # override
+  def score
+    chunks.average(:score)
+  end
+
   protected
 
   def set_slug_with_slug_id(normalized_slug = nil)
