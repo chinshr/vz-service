@@ -8,9 +8,9 @@ App.Views.DocumentsEdit = App.Views.DocumentsBase.extend({
       this.initSharePopover().render();
       this.initPublishPopover().render();
       this.initEditor();
+      this.initContentEditorFormatPopover().render();
       this.initPlayer();
       this.initUserInitials();
-      this.initContentEditorFormatPopover();
       this.initTagEditor();
       $('#document-loading').hide();
       $('#document-edit').show();

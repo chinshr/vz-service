@@ -57,7 +57,7 @@
         <!-- /player -->
 
         <% if edit? %>
-        <!-- format -->
+        <script type="text/html" id="content-editor-format-template">
         <ul class="nav navbar-nav toolbar-nav content-toolbar-container content-editor-toolbar-container">
           <!-- font-style -->
           <li><button title="<%= key_cmd(:bold, 'B', :meta_key) %>" type="button" class="btn btn-md btn-tlb ql-bold fa fa-bold fa-fw" data-toggle="tooltip" data-placement="bottom"></button></li>
@@ -79,7 +79,7 @@
           <li><button title="<%= key_cmd(:numbered_list) %>" type="button" class="btn btn-md btn-tlb ql-list fa fa-list-ol fa-fw" data-toggle="tooltip" data-placement="bottom"></button></li>
           <li><button title="<%= key_cmd(:bulleted_list) %>" type="button" class="btn btn-md btn-tlb ql-bullet fa fa-list-ul fa-fw" data-toggle="tooltip" data-placement="bottom"></button></li>
         </ul>
-        <!-- /format popover -->
+        </script>
         <% end %>
 
         <% if show? || publish? %>

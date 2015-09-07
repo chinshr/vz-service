@@ -345,7 +345,7 @@ App.Views.DocumentsBase = Backbone.View.extend({
       'modules': {
         'segmentation': { enabled: true },
         'toolbar': {
-          container: '.content-editor-toolbar-container'
+          container: '#content-editor-format-template' // '.content-editor-toolbar-container'
         },
       },
       'styles': false
@@ -419,12 +419,14 @@ App.Views.DocumentsBase = Backbone.View.extend({
             console.log('User cursor is on', range.start);
             _this.moveUserInitials(this);
             // TODO remove all popups
-            _this.hideContentEditorFormatPopover();
+            // _this.hideContentEditorFormatPopover();
+            _this.contentEditorFormatPopoverView.hide();
           } else {
             var text = _this.contentEditor.getText(range.start, range.end);
             // TODO show format popup
             console.log('User has highlighted', text);
-            _this.showContentEditorFormatPopover(this);
+            // _this.showContentEditorFormatPopover(this);
+            _this.contentEditorFormatPopoverView.show(this);
           }
         } else {
           // TODO remove, this block is never reached
@@ -474,6 +476,11 @@ App.Views.DocumentsBase = Backbone.View.extend({
   },
 
   initContentEditorFormatPopover: function() {
+    return this.contentEditorFormatPopoverView = new App.Views.DocumentsContentEditorFormatPopover({
+      model: this.model,
+      parent: this
+    });
+/*
     $('#content-editor').popover({
       container: 'body',
       html : true,
@@ -491,13 +498,13 @@ App.Views.DocumentsBase = Backbone.View.extend({
       // console.log("show popover");
     }).on('shown.bs.popover', _.bind(function(e) {
       // console.log("shown popover");
-      /* override = unset `!important` */
+      // override = unset `!important`
       $('#content-editor-format-popover').each(function () {
         var style = this.style.cssText;
         style = style.replace(new RegExp('\\!important', 'g'), '');
         this.style.cssText = style;
       });
-      /* re-bind toolbar */
+      // re-bind toolbar
       this.contentEditor.modules.toolbar.bind("#foo");
     }, this));
 
@@ -515,8 +522,9 @@ App.Views.DocumentsBase = Backbone.View.extend({
         }
       }
     })(this));
+*/
   },
-
+/*
   showContentEditorFormatPopover: function(editor) {
     var sel = editor.root.ownerDocument.getSelection();
     if (sel && sel.rangeCount > 0) {
@@ -554,6 +562,7 @@ App.Views.DocumentsBase = Backbone.View.extend({
       $("#content-editor").popover("hide");
     }
   },
+*/
 
   moveUserInitials: function(editor, margin) {
     margin = margin || ($('header').height() + 15);

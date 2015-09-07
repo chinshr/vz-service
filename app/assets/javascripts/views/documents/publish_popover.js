@@ -1,16 +1,16 @@
-App.Views.DocumentsPublishPopover = App.Views.DocumentsPopoverBase.extend({
+App.Views.DocumentsPublishPopover = App.Views.DocumentsBasePopover.extend({
   template: JST['documents/publish_popover'],
 
   initialize: function(options) {
-    App.Views.DocumentsPopoverBase.prototype.initialize.call(this, options); // super
+    App.Views.DocumentsBasePopover.prototype.initialize.call(this, options); // super
     this.pages = {};
     _.bindAll(this, "publish", "rerender", "pushPage", "showPage", "showStartPage",
       "bindPage", "setup", "teardown");
   },
 
   render: function() {
-    this.button = $('#publish-button');
-    this.popover = this.button.popover({
+    this.holder = $('#publish-button');
+    this.popover = this.holder.popover({
       container: 'body',
       html : true,
       trigger: 'manual',
@@ -21,18 +21,18 @@ App.Views.DocumentsPublishPopover = App.Views.DocumentsPopoverBase.extend({
       .on('hidden.bs.popover', this.teardown)
       .data("bs.popover");
 
-    this.button.on('click', (function(_this) {
+    this.holder.on('click', (function(_this) {
       return function(e) {
-        _this.button.tooltip('hide');
+        _this.holder.tooltip('hide');
         /* close all other popovers except this */
-        _this.button.not(this).popover('hide');
+        _this.holder.not(this).popover('hide');
         _this.popover.toggle();
       };
     })(this));
 
     $(document).on('click', (function(_this) {
       return function(e) {
-        if (!$(e.target).is(_this.button) && $('#publish-popover').find($(e.target)).length === 0) {
+        if (!$(e.target).is(_this.holder) && $('#publish-popover').find($(e.target)).length === 0) {
           _this.hide();
         }
       }
@@ -200,7 +200,7 @@ App.Views.DocumentsPublishPopover = App.Views.DocumentsPopoverBase.extend({
   },
 
   setup: function() {
-    this.button.tooltip('disable');
+    this.holder.tooltip('disable');
     this.pushPage('start', this.$('#publish-popover-publishing-page'));
 
     this.publishButtonElement = this.$('.btn-publish-document');
@@ -225,7 +225,7 @@ App.Views.DocumentsPublishPopover = App.Views.DocumentsPopoverBase.extend({
       $(btn).off('click');
     });
     this.showStartPage();
-    this.button.tooltip('enable');
+    this.holder.tooltip('enable');
     this.pages = {};
   }
 });

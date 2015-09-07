@@ -1,4 +1,4 @@
-App.Views.DocumentsPopoverBase = Backbone.View.extend({
+App.Views.DocumentsBasePopover = Backbone.View.extend({
 
   initialize: function(options) {
     this.parent = options.parent;
@@ -10,21 +10,21 @@ App.Views.DocumentsPopoverBase = Backbone.View.extend({
   },
 
   show: function() {
-    this.button.popover("show");
+    this.holder.popover("show");
   },
 
   hide: function() {
-    this.button.popover("hide");
+    this.holder.popover("hide");
   },
 
   toggle: function() {
-    this.button.popover("toggle");
+    this.holder.popover("toggle");
   },
 
   destroy: function() {
-    this.button.popover("destroy");
-    this.button.remove();
-    this.button = null;
+    this.holder.popover("destroy");
+    this.holder.remove();
+    this.holder = null;
   },
 
   remove: function() {
