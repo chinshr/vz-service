@@ -3,8 +3,11 @@ App.Views.DocumentsContentEditorFormatPopover = App.Views.DocumentsBasePopover.e
 
   initialize: function(options) {
     App.Views.DocumentsBasePopover.prototype.initialize.call(this, options); // super
-    _.bindAll(this, "setup", "teardown");
+    _.bindAll(this, "setup", "teardown", "reposition");
     this.shown = false;
+    this.oid = this.generateObjectId();
+    this.tid = null;
+    this.pid = null;
   },
 
   render: function() {
@@ -15,11 +18,13 @@ App.Views.DocumentsContentEditorFormatPopover = App.Views.DocumentsBasePopover.e
       html : true,
       trigger: 'manual',
       placement: 'top',
-      template: '<div class="popover content-editor-format-popover" id="content-editor-format-popover"><div class="arrow"></div><div class="popover-content toolbar-nav"></div></div>',
+      template: '<div class="popover content-editor-format-popover ace" id="content-editor-format-popover"><div class="arrow"></div><div class="popover-content toolbar-nav"></div></div>',
       content: this.$el.html(this.template)
-    }).on('show.bs.popover', function(e) {
-      // console.log("show popover");
-    }).on('shown.bs.popover', this.setup)
+    }).on('show.bs.popover', (function(_this) {
+      return function(e) {
+        //_this.reposition(_this.popover.$tip);
+      }
+    })(this)).on('shown.bs.popover', this.setup)
       .on('hidden.bs.popover', this.teardown)
       .on('inserted.bs.popover', function() { /* not firing! */ })
       .data("bs.popover");
@@ -30,13 +35,7 @@ App.Views.DocumentsContentEditorFormatPopover = App.Views.DocumentsBasePopover.e
     $('body').on('DOMNodeInserted', (function(_this) {
       return function (e) {
         if ($(e.target).attr("id") === 'content-editor-format-popover') {
-          pos = _this.callback(e.target);
-          // $('#content-editor-format-popover').each(function () {
-          _this.popover.$tip.each(function () {
-            console.log(pos);
-            this.style.setProperty('left', pos[0] + 'px', 'important');
-            this.style.setProperty('top', pos[1] + 'px', 'important');
-          });
+          _this.reposition(e.target);
         }
       }
     })(this));
@@ -45,24 +44,16 @@ App.Views.DocumentsContentEditorFormatPopover = App.Views.DocumentsBasePopover.e
   },
 
   setup: function() {
-    // console.log("shown popover");
-    /* override = unset `!important` */
-    // $('#content-editor-format-popover').each(function () {
-    this.popover.$tip.each(function () {
-      var style = this.style.cssText;
-      style = style.replace(new RegExp('\\!important', 'g'), '');
-      this.style.cssText = style;
-    });
-
     /* re-bind toolbar */
-    this.oid = 'format-' + this.generateObjectName();
-    this.$el.attr('id', this.oid);
-    this.parent.contentEditor.modules.toolbar.bind("#" + this.oid);
+    this.tid = 'content-editor-format-toolbar-' + this.oid;
+    this.$el.attr('id', this.tid);
+    this.parent.contentEditor.modules.toolbar.bind("#" + this.tid);
     this.shown = true;
   },
 
   teardown: function() {
     this.shown = false;
+    $("#" + this.pid).remove();
   },
 
   show: function(editor) {
@@ -80,16 +71,16 @@ App.Views.DocumentsContentEditorFormatPopover = App.Views.DocumentsBasePopover.e
             }
           })(rects[0]);
 
-          var popover = $('#content-editor-format-popover');
-          if (popover && popover.is(':visible')) {
-            var pos = this.callback(popover);
-            popover.stop().animate({
-              left: pos[0],
-              top: pos[1]
-            }, 0);
+          // var popover = $('#content-editor-format-popover');
+          // if (popover && popover.is(':visible')) {
+          if (this.shown) {
+            this.reposition(this.popover.$tip);
           } else {
-            // triggers event to position using callback
-            $("#content-editor").popover("show");
+            // Popover not visible, yet, so show it for
+            // the first time.
+            // Triggers event to position using callback
+            //$("#content-editor").popover("show");
+            this.holder.popover('show');
           }
         }
       }
@@ -102,11 +93,54 @@ App.Views.DocumentsContentEditorFormatPopover = App.Views.DocumentsBasePopover.e
     }
   },
 
-  generateObjectName: function() {
+  reposition: function(target) {
+    var pos = this.callback(target);
+
+    if (this.shown) {
+      $("#" + this.pid).remove();
+
+      // remove !important
+/*
+      $(target).each(function () {
+        var inline = this.style.cssText;
+        inline = inline.replace(new RegExp('\\!important', 'g'), '');
+        this.style.cssText = inline;
+      });
+*/
+      $(target).stop().animate({
+        left: pos[0],
+        top: pos[1]
+      }, 0);
+      console.log('reposition(true)', pos);
+    } else {
+      this.pid = 'content-editor-format-css-' + this.oid;
+
+      $("<style>")
+      .prop("type", "text/css")
+      .prop("id", this.pid)
+      .html("\
+        .ace {\
+          left: " + pos[0] + "px !important;\
+          top: " + pos[1] + "px !important;\
+        }\
+      ")
+      .appendTo("head");
+
+/*
+     $(target).each(function () {
+        // set style property
+        this.style.setProperty('left', pos[0] + 'px', 'important');
+        this.style.setProperty('top', pos[1] + 'px', 'important');
+      });
+*/
+      console.log('reposition(false)', pos);
+    }
+  },
+
+  generateObjectId: function() {
     var text = "";
     var possible = "abcdefghijklmnopqrstuvwxyz0123456789";
-
-    for (var i = 0; i < 10; i++) {
+    for (var i = 0; i < 5; i++) {
       text += possible.charAt(Math.floor(Math.random() * possible.length));
     }
     return text;

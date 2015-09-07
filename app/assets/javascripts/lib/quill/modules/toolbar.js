@@ -71,19 +71,23 @@ Toolbar = (function() {
       };
     })(this));
 
-    this.quill.on(Quill.events.SELECTION_CHANGE, (function(_this) {
-      return function(range) {
-        if (range != null) {
-          return _this.updateActive(range);
-        }
-      };
-    })(this));
+    if (this.quill.listeners(Quill.events.SELECTION_CHANGE).length === 0) {
+      this.quill.on(Quill.events.SELECTION_CHANGE, (function(_this) {
+        return function(range) {
+          if (range != null) {
+            return _this.updateActive(range);
+          }
+        };
+      })(this));
+    }
 
-    this.quill.on(Quill.events.TEXT_CHANGE, (function(_this) {
-      return function() {
-        return _this.updateActive();
-      };
-    })(this));
+    if (this.quill.listeners(Quill.events.TEXT_CHANGE).length === 0) {
+      this.quill.on(Quill.events.TEXT_CHANGE, (function(_this) {
+        return function() {
+          return _this.updateActive();
+        };
+      })(this));
+    }
 
     this.quill.onModuleLoad('keyboard', (function(_this) {
       return function(keyboard) {

@@ -333,7 +333,8 @@ class Document < ActiveRecord::Base
           end
         end
       end
-      # now, update those chunks that have changed and increase the score
+      # now, update those chunks that have changed and
+      # increase the score with difference score factor
       result.keys.each do |uid|
         text = (result[uid]['text'] || []).join.gsub(/\n|\r/, '')
         time = result[uid]['time'] || []
@@ -344,8 +345,10 @@ class Document < ActiveRecord::Base
           chunk.text = text if similarity < 1.0
           # recalculate score
           df = 1 + (1 - similarity)
-          new_score   = [chunk.score * df, 1.0].min
-          chunk.score = new_score if new_score > chunk.score
+          if chunk.score
+            new_score   = [chunk.score * df, 1.0].min
+            chunk.score = new_score if new_score > chunk.score
+          end
           # adjust offset/duration using time
           chunk.start_time = time[0] if time[0] && chunk.start_time != time[0]
           chunk.end_time   = time[1] if time[1] && chunk.end_time != time[1]
