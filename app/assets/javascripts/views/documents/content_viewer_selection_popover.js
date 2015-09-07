@@ -1,4 +1,4 @@
-App.Views.DocumentsContentEditorFormatPopover = App.Views.DocumentsBasePopover.extend({
+App.Views.DocumentsContentViewerSelectionPopover = App.Views.DocumentsBasePopover.extend({
 
   initialize: function(options) {
     App.Views.DocumentsBasePopover.prototype.initialize.call(this, options); // super
@@ -11,13 +11,13 @@ App.Views.DocumentsContentEditorFormatPopover = App.Views.DocumentsBasePopover.e
 
   render: function() {
     this.template = _.template($('#content-editor-toolbar-template').html(), {});
-    this.holder = $('#content-editor');
+    this.holder = $('#content-viewer');
     this.popover = this.holder.popover({
       container: 'body',
       html : true,
       trigger: 'manual',
       placement: 'top',
-      template: '<div class="popover content-editor-format-popover popover-ace" id="content-editor-format-popover"><div class="arrow"></div><div class="popover-content toolbar-nav"></div></div>',
+      template: '<div class="popover content-viewer-selection-popover popover-ace" id="content-viewer-selection-popover"><div class="arrow"></div><div class="popover-content toolbar-nav"></div></div>',
       content: this.$el.html(this.template)
     }).on('show.bs.popover', (function(_this) {
       return function(e) {
@@ -33,7 +33,7 @@ App.Views.DocumentsContentEditorFormatPopover = App.Views.DocumentsBasePopover.e
     // position before the popover is inserted into DOM.
     $('body').on('DOMNodeInserted', (function(_this) {
       return function (e) {
-        if ($(e.target).attr("id") === 'content-editor-format-popover') {
+        if ($(e.target).attr("id") === 'content-viewer-selection-popover') {
           _this.reposition(e.target);
         }
       }
@@ -44,9 +44,8 @@ App.Views.DocumentsContentEditorFormatPopover = App.Views.DocumentsBasePopover.e
 
   setup: function() {
     /* re-bind toolbar */
-    this.tid = 'content-editor-format-toolbar-' + this.oid;
+    this.tid = 'content-viewer-selection-toolbar-' + this.oid;
     this.$el.attr('id', this.tid);
-    this.parent.contentEditor.modules.toolbar.bind("#" + this.tid);
     this.shown = true;
   },
 
@@ -55,8 +54,8 @@ App.Views.DocumentsContentEditorFormatPopover = App.Views.DocumentsBasePopover.e
     $("#" + this.pid).remove();
   },
 
-  show: function(editor) {
-    var sel = editor.root.ownerDocument.getSelection();
+  show: function(sel) {
+    sel = sel || this.parent.getSelection();
     if (sel && sel.rangeCount > 0) {
       var selrg = sel.getRangeAt(0);
       if (selrg) {
@@ -97,7 +96,7 @@ App.Views.DocumentsContentEditorFormatPopover = App.Views.DocumentsBasePopover.e
       }, 0);
       // console.log('reposition(true)', pos);
     } else {
-      this.pid = 'content-editor-format-popover-css-' + this.oid;
+      this.pid = 'content-viewer-popover-position-css-' + this.oid;
 
       $("<style>")
       .prop("type", "text/css")
