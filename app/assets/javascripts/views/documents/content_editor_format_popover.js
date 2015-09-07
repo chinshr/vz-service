@@ -111,15 +111,5 @@ App.Views.DocumentsContentEditorFormatPopover = App.Views.DocumentsBasePopover.e
       .appendTo("head");
       // console.log('reposition(false)', pos);
     }
-  },
-
-  generateObjectId: function() {
-    var text = "";
-    var possible = "abcdefghijklmnopqrstuvwxyz0123456789";
-    for (var i = 0; i < 5; i++) {
-      text += possible.charAt(Math.floor(Math.random() * possible.length));
-    }
-    return text;
   }
-
 });

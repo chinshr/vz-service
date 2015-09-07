@@ -29,5 +29,14 @@ App.Views.DocumentsBasePopover = Backbone.View.extend({
 
   remove: function() {
     this.destroy();
+  },
+
+  generateObjectId: function() {
+    var text = "";
+    var possible = "abcdefghijklmnopqrstuvwxyz0123456789";
+    for (var i = 0; i < 5; i++) {
+      text += possible.charAt(Math.floor(Math.random() * possible.length));
+    }
+    return text;
   }
 });
