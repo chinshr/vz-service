@@ -11,7 +11,7 @@ App.Views.DocumentsContentEditorFormatPopover = App.Views.DocumentsBasePopover.e
   },
 
   render: function() {
-    this.template = _.template($('#content-editor-format-template').html(), {});
+    this.template = _.template($('#content-editor-toolbar-template').html(), {});
     this.holder = $('#content-editor');
     this.popover = this.holder.popover({
       container: 'body',
