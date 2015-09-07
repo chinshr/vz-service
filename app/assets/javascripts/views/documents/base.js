@@ -345,7 +345,7 @@ App.Views.DocumentsBase = Backbone.View.extend({
       'modules': {
         'segmentation': { enabled: true },
         'toolbar': {
-          container: '#content-editor-format-template' // '.content-editor-toolbar-container'
+          container: '#content-editor-toolbar-template' // '.content-editor-toolbar-container'
         },
       },
       'styles': false
