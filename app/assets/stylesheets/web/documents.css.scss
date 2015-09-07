@@ -410,6 +410,18 @@ body.documents {
   .popover.content-editor-format-popover {
     max-width: 100%;
 
+    &.fade.top.in {
+      -webkit-animation-duration: .2s;
+      -moz-animation-duration: .2s;
+      -o-animation-duration: .2s;
+      animation-duration: .2;
+
+      -webkit-animation-name: fadeInUp;
+      -moz-animation-name: fadeInUp;
+      -o-animation-name: fadeInUp;
+      animation-name: fadeInUp;
+    }
+
     .popover-content {
       padding: 0 15px;
 
@@ -427,6 +439,18 @@ body.documents {
 
   .popover.content-viewer-selection-popover {
     max-width: 100%;
+
+    &.fade.top.in {
+      -webkit-animation-duration: .2s;
+      -moz-animation-duration: .2s;
+      -o-animation-duration: .2s;
+      animation-duration: .2;
+
+      -webkit-animation-name: fadeInUp;
+      -moz-animation-name: fadeInUp;
+      -o-animation-name: fadeInUp;
+      animation-name: fadeInUp;
+    }
 
     .popover-content {
       padding: 0 15px;
