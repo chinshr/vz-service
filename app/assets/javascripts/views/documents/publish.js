@@ -25,7 +25,8 @@ App.Views.DocumentsPublish = App.Views.DocumentsBase.extend({
     var sel = this.getSelection();
     if (sel.rangeCount > 0) {
       var range = sel.getRangeAt(0);
-      if (range.startOffset && range.endOffset && range.endOffset > range.startOffset) {
+      // console.log(range);
+      if (typeof(range.startOffset) === 'number' && typeof(range.endOffset) === 'number' && Math.abs(range.endOffset - range.startOffset) > 0) {
         // this.showContentViewerSelectionPopover(sel);
         this.contentViewerSelectionPopoverView.show(sel);
       } else {
@@ -41,8 +42,10 @@ App.Views.DocumentsPublish = App.Views.DocumentsBase.extend({
   getSelection: function() {
     if (window.getSelection) {
       return window.getSelection();
-    } else if (document.selection && document.selection.type != "Control") {
-      return document.selection;
+    } else if (document.getSelection) {
+      return document.getSelection();
+    } else if (document.selection) {
+      return document.selection.createRange();
     }
   },
 
