@@ -401,7 +401,7 @@ App.Views.DocumentsBase = Backbone.View.extend({
         if (range) {
           if (range.start == range.end) {
             // console.log('User cursor is on', range.start);
-            _this.moveUserInitials(this, $('header').height() + 5);
+            _this.moveUserInitials(this, $('header').height());
           } else {
             // var text = editor.getText(range.start, range.end);
             // console.log('User has highlighted', text);
@@ -483,7 +483,7 @@ App.Views.DocumentsBase = Backbone.View.extend({
   },
 
   moveUserInitials: function(editor, margin) {
-    margin = margin || ($('header').height() + 15);
+    margin = margin || ($('header').height() + 25);
     var sel = editor.root.ownerDocument.getSelection();
     if (sel && sel.rangeCount > 0) {
       var selrg = sel.getRangeAt(0);
