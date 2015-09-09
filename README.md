@@ -58,6 +58,18 @@ Set default username from email address:
 * ClibMine, video captions, table of contents -- https://clip.mn
 * Koemei, automatic video transcriptions and analysis, sentiment detection, etc. -- https://koemei.com/
 
+## Patentable Ideas
+
+Should file a "Provisional Patent" i.e. a [Provisional Patent Application](http://www.ipwatchdog.com/2013/09/14/the-benefits-of-a-provisional-patent-application/id=45156/)with the USPTO, ~$130 fees. Protected as "Patent Pending" for up to 12 months after filing.
+
+1. Invention:  System for the automatic improvement of speech-to-text transcription with a hybrid machine and human approach.
+
+Similar to:
+
+* [System for organizing videos based on closed-caption information](https://patents.google.com/patent/US6580437B1/en?q=system&q=automatic&q=improvement&q=speech&q=to&q=text&q=transcription&q=hybrid&q=machine&q=human+approach)
+
+* [Human-augmented, automatic speech recognition engine](https://patents.google.com/patent/US20020152071A1/en?q=system&q=automatic&q=improvement&q=speech&q=to&q=text&q=transcription&q=hybrid&q=machine&q=human+approach)
+
 ## Developer Resources
 
 * Bootstrap templates -- http://bootply.com/templates
