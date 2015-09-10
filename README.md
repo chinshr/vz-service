@@ -60,7 +60,7 @@ Set default username from email address:
 
 ## Patentable Ideas
 
-Should file a "Provisional Patent" i.e. a [Provisional Patent Application](http://www.ipwatchdog.com/2013/09/14/the-benefits-of-a-provisional-patent-application/id=45156/)with the USPTO, ~$130 fees. Protected as "Patent Pending" for up to 12 months after filing.
+Should file a "Provisional Patent" i.e. a [Provisional Patent Application](http://www.ipwatchdog.com/2013/09/14/the-benefits-of-a-provisional-patent-application/id=45156/) with the USPTO, ~$130 fees. Protected as "Patent Pending" for up to 12 months after filing.
 
 1. Invention:  System for the automatic improvement of speech-to-text transcription with a hybrid machine and human approach.
 
@@ -216,7 +216,6 @@ Similar to:
   - Another amazing bootstrap home page theme -- http://themify.me/demo/themes/fullpane/
   - Bootstrap modal manager and fix for responsive layouts -- https://github.com/jschr/bootstrap-modal
   - Alternatives bootstrap checkbox -- http://montrezorro.github.io/bootstrap-checkbox/
-  - Pinterest layout with bootstrap -- http://bragthemes.com/demo/pinstrap/
   - Dropdown select with lookahead and tagging -- http://ivaynberg.github.io/select2/
   - Bootstrap Combobox -- https://github.com/danielfarrell/bootstrap-combobox
   - FuelUX, http://exacttarget.github.io/fuelux/
@@ -284,6 +283,10 @@ Similar to:
 * Avatar uploading, cropping, S3:
   - Carrierwave direct to S3 -- https://github.com/dwilkie/carrierwave_direct
   - Rails Demo app with Carrierwave, S3, jCrop -- https://github.com/n0ne/Rails-Carrierwave-jQuery-File-Upload
+* Pinterest layout for Dashboard with Bootstrap
+  - [Wookmark jQuery library](https://github.com/germanysbestkeptsecret/Wookmark-jQuery)
+  - [Pinterest layout demo](http://bragthemes.com/demo/pinstrap/) based on [Wookmark jQuery library](https://github.com/germanysbestkeptsecret/Wookmark-jQuery)
+
 
 ### SendGrid Setup
 
