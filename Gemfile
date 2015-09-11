@@ -87,8 +87,7 @@ gem 'autoscaler'
 gem "sinatra", require: false
 gem 'unicorn'
 
-gem 'uuid'
-gem 'curb'
+# gem 'uuid'
 gem 'json'
 gem 'devise'
 
@@ -108,7 +107,6 @@ gem 'nokogiri'
 gem 'whatlanguage'
 gem 'griddler', :git => "https://github.com/chinshr/griddler.git" # :path => "../griddler"
 gem 'newrelic_rpm'
-gem 'att-codekit', :git => "https://github.com/chinshr/codekit-ruby.git" # :path => "/Users/juergen/work/ruby/codekit-ruby"
 # gem 'engtagger'
 gem 'amatch'
 gem 'fuzzy_match'

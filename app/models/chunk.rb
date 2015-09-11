@@ -1,13 +1,7 @@
 class Chunk < ::Document
-  STATES = {
-    :unprocessed         => Speech::AudioSplitter::AudioChunk::STATUS_UNPROCESSED,
-    :built               => Speech::AudioSplitter::AudioChunk::STATUS_BUILT,
-    :encoded             => Speech::AudioSplitter::AudioChunk::STATUS_ENCODED,
-    :transcribed         => Speech::AudioSplitter::AudioChunk::STATUS_TRANSCRIBED,
-    :build_error         => Speech::AudioSplitter::AudioChunk::STATUS_BUILD_ERROR,
-    :encoding_error      => Speech::AudioSplitter::AudioChunk::STATUS_ENCODING_ERROR,
-    :transcription_error => Speech::AudioSplitter::AudioChunk::STATUS_TRANSCRIPTION_ERROR
-  }
+  STATES = {unprocessed: 0, built: 1, encoded: 2,
+    transcribed: 3, build_error: -1, encoding_error: -2,
+    transcription_error: -3}
 
   delegate :title, to: :document
   delegate :document_id, to: :master_chunk_segment, allow_nil: true
@@ -204,6 +198,11 @@ class Chunk < ::Document
 
   def end_time
     self[:end_time] || (offset + (duration || 0))
+  end
+
+  # override from document
+  def score
+    self[:score]
   end
 
   protected

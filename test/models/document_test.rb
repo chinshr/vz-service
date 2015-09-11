@@ -327,6 +327,7 @@ class DocumentTest < ActiveSupport::TestCase
     assert_not_nil document.rich_text
     c1.start_time = 0.32
     c1.end_time   = 1.41
+    c1.score      = 0.2
     rt = {"ops"=>[{"insert"=>"Das ist das", "attributes"=>{"segment" => c1.segment_id}}]}
     document.attributes = {"rich_text" => rt}
     document.save
