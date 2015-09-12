@@ -10,6 +10,7 @@ class Api::DocumentsControllerTest < ActionController::TestCase
     @ingest1            = FactoryGirl.create(:ingest_audio, :document => @document1)
 
     @document1.privacy  = [:"public"]
+    @document1.accessibility = [:"view"]
     @document1.user     = @user1
     @document1.tag_list = ["brown", "fox", "jumps", "over", "fence"]
     @document1.save
@@ -134,20 +135,29 @@ class Api::DocumentsControllerTest < ActionController::TestCase
       assert_response :unauthorized
     end
 
-    should "publish document" do
+    should "not publish private document" do
       sign_in :user, @user2
       assert_equal 0, @document2.status
       put :update, {:id => @document2.id, :document => {
         status: 1,
         html: "<p>Published content.</p>"
       }, format: :json}
-      assert_response :success
-      assert_response_body_attributes_with "document"
-      assert_equal 1, @document2.reload.status
-      assert_equal :published, @document2.reload.state
-      assert_equal "<p>Published content.</p>", @document2.reload.html
+      assert_response :unprocessable_entity
     end
 
+    should "publish public document" do
+      sign_in :user, @user1
+      assert_equal true, @document1.unpublish!
+      put :update, {:id => @document1.id, :document => {
+        status: 1,
+        html: "<p>Published content.</p>"
+      }, format: :json}
+      assert_response :success
+      assert_response_body_attributes_with "document"
+      assert_equal 1, @document1.reload.status
+      assert_equal :published, @document1.reload.state
+      assert_equal "<p>Published content.</p>", @document1.reload.html
+    end
   end
 
   context "DELETE /api/documents/:id" do

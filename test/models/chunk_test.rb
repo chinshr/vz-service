@@ -147,18 +147,18 @@ class ChunkTest < ActiveSupport::TestCase
     end
 
     should "have any_of_processing_status" do
-      @chunk.update_attribute(:processing_status, Speech::AudioSplitter::AudioChunk::STATUS_ENCODED)
-      assert_equal true, Chunk.any_of_processing_status([Speech::AudioSplitter::AudioChunk::STATUS_ENCODED]).include?(@chunk)
+      @chunk.update_attribute(:processing_status, Chunk::STATES[:encoded])
+      assert_equal true, Chunk.any_of_processing_status([Chunk::STATES[:encoded]]).include?(@chunk)
     end
 
     should "have none_of_processing_status" do
-      @chunk.update_attribute(:processing_status, Speech::AudioSplitter::AudioChunk::STATUS_ENCODED)
-      assert_equal false, Chunk.none_of_processing_status([Speech::AudioSplitter::AudioChunk::STATUS_ENCODED]).include?(@chunk)
+      @chunk.update_attribute(:processing_status, Chunk::STATES[:encoded])
+      assert_equal false, Chunk.none_of_processing_status([Chunk::STATES[:encoded]]).include?(@chunk)
     end
 
     context "#sort_order" do
       should "position => asc" do
-        @chunk.update_attributes(processing_status: Speech::AudioSplitter::AudioChunk::STATUS_ENCODED,
+        @chunk.update_attributes(processing_status: Chunk::STATES[:encoded],
           position: 999)
         assert_equal [@chunk], Chunk.sort_order("position" => "asc").reverse_sort("true").limit(1)
       end
