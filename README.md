@@ -723,5 +723,3 @@ Y vio dios que la luz era buena;
 Y separó dios la luz de las tinieblas.
 Y llamó dios a la luz día, y a las tinieblas llamó noche.
 Y fue la tarde y la mañana un día.
-
-
