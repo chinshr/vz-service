@@ -1,6 +1,6 @@
 namespace :sqs do
   namespace :queues do
-    desc "Create queues"
+    desc "Create SQS queues"
     task :create => :environment do
       AWS.config(
         :access_key_id     => APP_CONFIG['S3_KEY'],

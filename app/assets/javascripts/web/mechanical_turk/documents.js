@@ -1,7 +1,11 @@
 //= require underscore
 //= require lib/WAAPISim/waapisim
-//= require lib/wavesurfer/wavesurfer.min
-//= require lib/wavesurfer/plugin/wavesurfer.timeline.min
+//= require lib/wavesurfer/wavesurfer
+//= require lib/wavesurfer/util
+//= require lib/wavesurfer/webaudio
+//= require lib/wavesurfer/mediaelement
+//= require lib/wavesurfer/drawer
+//= require lib/wavesurfer/drawer.canvas
 
 var Player = (function() {
   var wavesurfer = Object.create(WaveSurfer);
