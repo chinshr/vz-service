@@ -8,12 +8,6 @@ The service runs the Website and API.
 
 * Install bundles `bundle install`
 
-* ffmpeg `brew install ffmpeg`
-
-* sox `brew install sox`
-
-* opus `brew install opus & brew install opusenc`
-
 * Migrate database `rake db:migrate` (after`rake db:create`)
 
 * Create seeds `rake db:seed`
@@ -723,5 +717,3 @@ Y vio dios que la luz era buena;
 Y separó dios la luz de las tinieblas.
 Y llamó dios a la luz día, y a las tinieblas llamó noche.
 Y fue la tarde y la mañana un día.
-
-
