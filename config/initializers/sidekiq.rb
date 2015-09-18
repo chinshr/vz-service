@@ -8,7 +8,7 @@ require 'autoscaler/stub_scaler'
 Sidekiq.configure_client do |config|
   # Number of connections per Web dyno, (per Unicorn worker) minimum 1.
   # Only change this value if you query the Redis database more than just for adding tasks to the Sidekiq queue.
-  config.redis = {:size => 1}
+  config.redis = {size: 1, url: ENV["REDISTOGO_URL"] || "redis://localhost:6379/", namespace: 'sidekiq'}
   config.logger = nil
   config.client_middleware do |chain|
     if Rails.env.production?
