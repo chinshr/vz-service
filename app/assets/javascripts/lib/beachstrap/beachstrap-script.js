@@ -36,7 +36,7 @@ $(document).ready(function() {
 		$("nav").onePageNav({
 			changeHash: false,
 			scrollSpeed: 750,
-			scrollOffset: 5
+			scrollOffset: 69
 		});
 
 		$('#navigation').scrollspy();

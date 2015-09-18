@@ -70,7 +70,7 @@ VZ._registration = (function() {
 */
 
 $(function() {
-  $(".youtube").YouTubeModal({autoplay:1, width:680, height:380, color: "#151a28", controls: 0, theme: "dark", 
+  $(".youtube").YouTubeModal({autoplay:1, width:680, height:380, color: "#151a28", controls: 0, theme: "dark",
     title: "Stanford Knight Talk: Ana María Carrano"});
 
   $('body.pages').on('activate.bs.scrollspy', function(event) {
@@ -82,8 +82,8 @@ $(function() {
       }
       $('body').addClass(event.target.id);
 
-      VZ.trackEvent('home-page-scroll', 
-        {action: 'scroll-to-' + event.target.id, name: event.target.id}, 
+      VZ.trackEvent('home-page-scroll',
+        {action: 'scroll-to-' + event.target.id, name: event.target.id},
         function(event, data) {
           // console.log(event, data);
         }
@@ -106,8 +106,8 @@ $(function() {
   });
 
   $('#play-video').on('click', function() {
-    VZ.trackEvent('home-page-play-video', 
-      {action: 'click-play-video', name: 'Knight Talk: Ana María Carrano'}, 
+    VZ.trackEvent('home-page-play-video',
+      {action: 'click-play-video', name: 'Knight Talk: Ana María Carrano'},
       function(event, data) {
         // console.log(event, data);
       }
@@ -115,8 +115,8 @@ $(function() {
   });
 
   $('#registration_email').on('focus', function() {
-    VZ.trackEvent('home-page-registration', 
-      {action: 'focus-input-email-field'}, 
+    VZ.trackEvent('home-page-registration',
+      {action: 'focus-input-email-field'},
       function(event, data) {
          //console.log(event, data);
       }
@@ -125,8 +125,8 @@ $(function() {
 
   // #new_registration
   $('#new_registration').on('submit', function() {
-    VZ.trackEvent('home-page-registration-submit', 
-      {action: 'submit-form-success'}, 
+    VZ.trackEvent('home-page-registration-submit',
+      {action: 'submit-form-success'},
       function(event, data) {
         // console.log(event, data);
       }

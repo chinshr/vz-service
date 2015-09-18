@@ -325,7 +325,7 @@ header {
     }
     .navbar-toggle:hover,
     .navbar-toggle:focus {
-      xbackground-color: rgba(55, 61, 68, 0.8);
+      background-color: rgba(55, 61, 68, 0.8);
     }
 
     .navbar-brand {
@@ -773,14 +773,14 @@ footer{
       }
 
       li:nth-child(4) {
-        display: none;
       }
     }
   }
 }
 
 @media only screen and (min-width: 480px) and (max-width: 767px){
-  /* iPhone Portrait /*
+  /* iPhone Landscape */
+  /*
   header {
     a.mini-nav {
       font-size: 28px;
@@ -812,6 +812,26 @@ footer{
         a {
           display: block;
           width:100%;
+        }
+      }
+    }
+  }
+  */
+
+  header {
+    nav {
+      .navbar-collapse {
+        border: 0;
+        background-color: rgba(0, 0, 0, 0.7)
+      }
+
+      &.navbar-default {
+        ul.navbar-nav {
+          width: 100%;
+
+          li {
+            border-bottom: 1px solid transparent;
+          }
         }
       }
     }
@@ -905,14 +925,32 @@ footer{
           display: block !important;
         }
       }
+
+      &.navbar-default {
+        ul.navbar-nav {
+          width: 100%;
+
+          li {
+            border-bottom: 1px solid transparent;
+          }
+        }
+      }
+
     }
   }
 }
 
 @media only screen and (min-width: 0px) and (max-width: 479px){
-  /* iPhone Landscape */
+  /* iPhone Portrait */
   header {
     min-height:50px;
+
+    nav {
+      .navbar-collapse {
+        border: 0;
+        background-color: rgba(0, 0, 0, 0.7)
+      }
+    }
 
     nav ul.nav {
       li {
