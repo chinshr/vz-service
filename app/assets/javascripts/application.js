@@ -32,6 +32,7 @@
 //= require lib/s3upload
 //= require lib/bootstrap-colorpicker
 //= require lib/bootstrap-slider.min
+//= require web/common
 //= require web/documents
 //= require app
 //= require_tree ../templates
