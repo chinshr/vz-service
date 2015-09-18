@@ -1,8 +1,13 @@
 //= require lib/WAAPISim/waapisim
-//= require lib/wavesurfer/wavesurfer.min
-//= require lib/wavesurfer/plugin/wavesurfer.minimap.min
-//= require lib/wavesurfer/plugin/wavesurfer.regions.min
-//= require lib/wavesurfer/plugin/wavesurfer.timeline.min
+//= require lib/wavesurfer/wavesurfer
+//= require lib/wavesurfer/util
+//= require lib/wavesurfer/webaudio
+//= require lib/wavesurfer/mediaelement
+//= require lib/wavesurfer/drawer
+//= require lib/wavesurfer/drawer.canvas
+//= require lib/wavesurfer/plugin/wavesurfer.timeline
+//= require lib/wavesurfer/plugin/wavesurfer.minimap
+//= require lib/wavesurfer/plugin/wavesurfer.regions
 //= require lib/quill/quill
 //= require lib/quill/modules/segmentation
 //= require lib/quill/modules/toolbar
