@@ -8,12 +8,6 @@ The service runs the Website and API.
 
 * Install bundles `bundle install`
 
-* ffmpeg `brew install ffmpeg`
-
-* sox `brew install sox`
-
-* opus `brew install opus & brew install opusenc`
-
 * Migrate database `rake db:migrate` (after`rake db:create`)
 
 * Create seeds `rake db:seed`
