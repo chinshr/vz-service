@@ -17,6 +17,7 @@ if @cpw_user.new_record?
   @cpw_user.skip_registration_validation = true
   @cpw_user.first_name            = 'Content P.'
   @cpw_user.last_name             = 'Workflow'
+  @cpw_user.username              = 'cpw'
   @cpw_user.password              = 'paloalto605:voyzescpw'
   @cpw_user.password_confirmation = 'paloalto605:voyzescpw'
   @cpw_user.roles                 = [:backend]
