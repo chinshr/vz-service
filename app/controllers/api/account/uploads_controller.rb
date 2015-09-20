@@ -59,7 +59,7 @@ class Api::Account::UploadsController < Api::Account::ApplicationController
     signature      = CGI::escape(Base64.strict_encode64(OpenSSL::HMAC.digest('sha1', APP_CONFIG['S3_SECRET'], string_to_sign)))
 
     @sign_s3 = {
-      signed_request: CGI::escape("#{APP_CONFIG['S3_URL']}#{APP_CONFIG['S3_INBOUND_BUCKET']}/#{object_name}?AWSAccessKeyId=#{APP_CONFIG['S3_KEY']}&Expires=#{expires}&Signature=#{signature}"),
+      signed_request: CGI::escape("#{s3_url}#{APP_CONFIG['S3_INBOUND_BUCKET']}/#{object_name}?AWSAccessKeyId=#{APP_CONFIG['S3_KEY']}&Expires=#{expires}&Signature=#{signature}"),
       url: "#{s3_url}#{APP_CONFIG['S3_INBOUND_BUCKET']}/#{object_name}"
     }
     respond_with @sign_s3
