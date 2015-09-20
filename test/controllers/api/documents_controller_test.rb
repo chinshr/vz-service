@@ -75,16 +75,72 @@ class Api::DocumentsControllerTest < ActionController::TestCase
       assert_response :unauthorized
     end
 
-    should "get user 2's private document when signed in as user 2" do
-      sign_in :user, @user2
-      get :show, :id => @document2, format: :json
-      assert_response :success
+    context "private" do
+      setup do
+        @document2.update_attributes(privacy: [:private], accessibility: [])
+      end
+
+      should "get owners private document when signed in as owner" do
+        sign_in :user, @user2
+        get :show, :id => @document2, format: :json
+        assert_response :success
+      end
+
+      should "not get private document when not signed in as owner" do
+        sign_in :user, @user1
+        get :show, :id => @document2, format: :json
+        assert_response :unauthorized
+      end
     end
 
-    should "not get user 2's private document when signed in as user 1" do
-      sign_in :user, @user1
-      get :show, :id => @document2, format: :json
-      assert_response :unauthorized
+    context "public" do
+      setup do
+        @document2.update_attributes(privacy: [:public], accessibility: [])
+      end
+
+      should "get owners public document when signed in as owner" do
+        sign_in :user, @user2
+        get :show, :id => @document2, format: :json
+        assert_response :success
+      end
+
+      should "not get public document whithout accessibility" do
+        sign_in :user, @user1
+        get :show, :id => @document2, format: :json
+        assert_response :unauthorized
+      end
+
+      should "get public document when viewable" do
+        @document2.update_attributes(accessibility: [:view])
+        sign_in :user, @user1
+        get :show, :id => @document2, format: :json
+        assert_response :success
+      end
+    end
+
+    context "unlisted" do
+      setup do
+        @document2.update_attributes(privacy: [:unlisted], accessibility: [])
+      end
+
+      should "get owners unlisted document when signed in as owner" do
+        sign_in :user, @user2
+        get :show, :id => @document2, format: :json
+        assert_response :success
+      end
+
+      should "not get unlisted document whithout accessibility" do
+        sign_in :user, @user1
+        get :show, :id => @document2, format: :json
+        assert_response :unauthorized
+      end
+
+      should "get unlisted document when viewable" do
+        @document2.update_attributes(accessibility: [:view])
+        sign_in :user, @user1
+        get :show, :id => @document2, format: :json
+        assert_response :success
+      end
     end
   end
 

@@ -5,7 +5,7 @@ class DocumentPolicy < ApplicationPolicy
   end
 
   def show?
-    backend_role? || (record.privacy_private? ? owner_of?(record) : record.accessibility_viewable?)
+    backend_role? || owner_of?(record) || record.accessibility_viewable?
   end
 
   def edit?

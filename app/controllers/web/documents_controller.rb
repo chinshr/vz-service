@@ -11,17 +11,6 @@ class Web::DocumentsController < Web::ApplicationController
     redirect_to_published_unless_previewable
   end
 
-  def redirect_to_published_unless_previewable
-    # The idea is that if a user shares the 'preview' link
-    # with another user and the document is not editable, then
-    # it does not make sense to show the preview, since the
-    # document is not editable anyway.
-    if (!current_user|| (current_user && !current_user.owner_of?(@document))) && !@document.privacy_private? && !@document.accessibility_editable?
-      redirect_to web_profile_document_path("@#{@document.user.username}", @document.slug), status: :moved_permanently
-      return
-    end
-  end
-
   def edit
     authorize @document
   end
@@ -49,5 +38,17 @@ class Web::DocumentsController < Web::ApplicationController
 
   def load_document
     @document = Document.where("documents.slug_id = ?", params[:id]).first!
+  end
+
+  def redirect_to_published_unless_previewable
+    # The idea is that if a user shares the 'preview' link
+    # with another user and the document is not editable, then
+    # it does not make sense to show the preview, since the
+    # document is not editable anyway, so redirect to
+    # the published link.
+    if (!current_user|| (current_user && !current_user.owner_of?(@document))) && !@document.privacy_private? && !@document.accessibility_editable?
+      redirect_to web_profile_document_path("@#{@document.user.username}", @document.slug), status: :moved_permanently
+      return
+    end
   end
 end
