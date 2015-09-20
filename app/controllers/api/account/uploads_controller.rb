@@ -60,7 +60,7 @@ class Api::Account::UploadsController < Api::Account::ApplicationController
 
     @sign_s3 = {
       signed_request: CGI::escape("#{APP_CONFIG['S3_URL']}#{APP_CONFIG['S3_INBOUND_BUCKET']}/#{object_name}?AWSAccessKeyId=#{APP_CONFIG['S3_KEY']}&Expires=#{expires}&Signature=#{signature}"),
-      url: "#{APP_CONFIG['S3_URL']}#{APP_CONFIG['S3_INBOUND_BUCKET']}/#{object_name}"
+      url: "#{s3_url}#{APP_CONFIG['S3_INBOUND_BUCKET']}/#{object_name}"
     }
     respond_with @sign_s3
   end
@@ -80,5 +80,11 @@ class Api::Account::UploadsController < Api::Account::ApplicationController
     response.headers['Access-Control-Allow-Credentials'] = 'true'
     response.headers['Access-Control-Allow-Methods']     = 'OPTIONS, GET, POST'
     response.headers['Access-Control-Allow-Headers']     = 'Content-Type, Depth, User-Agent, X-File-Size, X-Requested-With, If-Modified-Since, X-File-Name, Cache-Control'
+  end
+
+  def s3_url
+    uri = URI(APP_CONFIG['S3_URL'])
+    uri.scheme = request.ssl? ? 'https' : 'http'
+    uri.to_s
   end
 end
