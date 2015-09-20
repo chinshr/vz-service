@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
-ruby '2.1.1'
+ruby '2.1.7'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.1.9' # '4.0.5'
@@ -107,7 +107,6 @@ gem 'nokogiri'
 gem 'whatlanguage'
 gem 'griddler', :git => "https://github.com/chinshr/griddler.git" # :path => "../griddler"
 gem 'newrelic_rpm'
-# gem 'engtagger'
 gem 'amatch'
 gem 'fuzzy_match'
 gem 'psych'
