@@ -121,7 +121,7 @@ class Track < ActiveRecord::Base
   def mp3_stream_url
     s3 = AWS::S3.new
     object = s3.buckets[s3_origin_bucket_name].objects[s3_mp3_key]
-    object.url_for(:get, {expires: 20.minutes.from_now, secure: false,
+    object.url_for(:get, {expires: 20.minutes.from_now, secure: Rails.env.production?,
       response_content_type: "audio/mpeg"}).to_s
   end
 
@@ -137,7 +137,7 @@ class Track < ActiveRecord::Base
   def waveform_json_stream_url
     s3 = AWS::S3.new
     object = s3.buckets[s3_origin_bucket_name].objects[s3_waveform_json_key]
-    object.url_for(:get, {expires: 20.minutes.from_now, secure: false,
+    object.url_for(:get, {expires: 20.minutes.from_now, secure: Rails.env.production?,
       response_content_type: "application/json"}).to_s
   end
 
