@@ -280,7 +280,7 @@ Similar to:
 * Pinterest layout for Dashboard with Bootstrap
   - [Wookmark jQuery library](https://github.com/germanysbestkeptsecret/Wookmark-jQuery)
   - [Pinterest layout demo](http://bragthemes.com/demo/pinstrap/) based on [Wookmark jQuery library](https://github.com/germanysbestkeptsecret/Wookmark-jQuery)
-
+* Run command each time an [EC2 instance boots](http://serverfault.com/questions/369872/run-a-bash-script-after-ec2-instance-boots)
 
 ### SendGrid Setup
 
