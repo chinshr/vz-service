@@ -204,9 +204,10 @@ class Api::Account::UploadsControllerTest < ActionController::TestCase
     should "destroy upload" do
       upload = FactoryGirl.create(:upload_audio)
       upload.user = @user and upload.save
-      assert_no_difference 'Document.count', -1 do
+      assert_no_difference 'Document.count' do
         assert_no_difference 'Ingest.count', -1 do
-          assert_difference 'Upload.count', -1 do
+          assert_enqueued_with(job: Upload::DeleteJob) do
+          #assert_difference 'Upload.count', -1 do
             delete :destroy, {id: upload.id, format: :json}
             assert_response :success
             assert_equal :removing, upload.ingest.reload.state

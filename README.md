@@ -56,13 +56,15 @@ Set default username from email address:
 
 Should file a "Provisional Patent" i.e. a [Provisional Patent Application](http://www.ipwatchdog.com/2013/09/14/the-benefits-of-a-provisional-patent-application/id=45156/) with the USPTO, ~$130 fees. Protected as "Patent Pending" for up to 12 months after filing.
 
-1. Invention:  System for the automatic improvement of speech-to-text transcription with a hybrid machine and human approach.
+1. Invention: "System for processing and improving speech-to-text transcripts with a hybrid machine and human approach."
 
 Similar to:
 
 * [System for organizing videos based on closed-caption information](https://patents.google.com/patent/US6580437B1/en?q=system&q=automatic&q=improvement&q=speech&q=to&q=text&q=transcription&q=hybrid&q=machine&q=human+approach)
 
 * [Human-augmented, automatic speech recognition engine](https://patents.google.com/patent/US20020152071A1/en?q=system&q=automatic&q=improvement&q=speech&q=to&q=text&q=transcription&q=hybrid&q=machine&q=human+approach)
+
+2. Invention: "Apparatus for interposing multi-media content with annotated text excerpts."
 
 ## Developer Resources
 
@@ -276,11 +278,14 @@ Similar to:
   - Turkee: http://rubysnippets.com/2012/11/19/using-mechanical-turk-in-your-rails-app/
 * Avatar uploading, cropping, S3:
   - Carrierwave direct to S3 -- https://github.com/dwilkie/carrierwave_direct
-  - Rails Demo app with Carrierwave, S3, jCrop -- https://github.com/n0ne/Rails-Carrierwave-jQuery-File-Upload
+  - Rails Demo app with Carrierwave, S3, [jCrop](https://github.com/n0ne/Rails-Carrierwave-jQuery-File-Upload)
 * Pinterest layout for Dashboard with Bootstrap
   - [Wookmark jQuery library](https://github.com/germanysbestkeptsecret/Wookmark-jQuery)
   - [Pinterest layout demo](http://bragthemes.com/demo/pinstrap/) based on [Wookmark jQuery library](https://github.com/germanysbestkeptsecret/Wookmark-jQuery)
-* Run command each time an [EC2 instance boots](http://serverfault.com/questions/369872/run-a-bash-script-after-ec2-instance-boots)
+* EC2 instance setup
+  - Run command each time an [EC2 instance boots](http://serverfault.com/questions/369872/run-a-bash-script-after-ec2-instance-boots)
+  - [User Data Scripts](https://alestic.com/2009/06/ec2-user-data-scripts/)
+  - Ruby AWS [user data example](https://github.com/aws/aws-sdk-ruby/issues/191)
 
 ### SendGrid Setup
 

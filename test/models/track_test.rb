@@ -113,7 +113,7 @@ class TrackTest < ActiveSupport::TestCase
 
   should "destroy with job" do
     track = FactoryGirl.create(:track)
-    assert_difference "Track.count", -1 do
+    assert_enqueued_with(job: Track::DeleteJob) do
       track.destroy
     end
   end

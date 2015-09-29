@@ -271,4 +271,22 @@ FactoryGirl.define do
     s.updated_at Time.now
   end
 
+  factory :cpw_ingest_server, :class => Ingest::Server::CPWServer do
+    name "cpw"
+    version "1.0.0"
+    public_ip_address "57.12.54.12"
+    private_ip_address "10.1.1.123"
+    vpc_id nil
+    number 1
+    max_processes 5
+    region "us-east-1"
+    dns "vz-cpw-1.sample-voyzes.com"
+    sequence(:instance_id) {|n| "xyz-#{n}"}
+    tenancy :shared
+  end
+
+  factory :cpw_ingest_process, :class => Ingest::Process do
+    association :ingest, factory: :ingest_audio
+    association :server, factory: :cpw_server
+  end
 end

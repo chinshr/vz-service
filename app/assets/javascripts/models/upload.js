@@ -29,7 +29,7 @@ App.Models.Upload = Backbone.Model.extend({
     // wrapped as 'upload', 'upload':{'id':1, ...} vs. 'uploads':[{'id':1,...}, {'id':2, ...}, ...]
     var res = response && response.upload ? response.upload : response;
     // we want to modify some attributes
-    for(var key in res) { 
+    for(var key in res) {
       if (res.hasOwnProperty(key)) {
         if (key === 'privacy' && _.isArray(res[key])) {
           res[key] = res[key].toString();
@@ -41,10 +41,10 @@ App.Models.Upload = Backbone.Model.extend({
 
   toJSON: function() {
     return {
-      upload: _.clone(this.attributes) 
+      upload: _.clone(this.attributes)
     }
   },
-  
+
   hasFinished: function() {
     return this.attributes.status === 9 ? true : false
   },
@@ -52,7 +52,7 @@ App.Models.Upload = Backbone.Model.extend({
   hasStopped: function() {
     return this.attributes.status === 4 ? true : false
   },
-    
+
   hasProgress: function() {
     switch (this.attributes.status) {
       case 0:

@@ -161,14 +161,14 @@ class Chunk::MechanicalTurkChunk < ::Chunk
     confidence / reference_chunks.count.to_f
   end
 
-  # Good quality reference shunks
+  # Good quality reference chunks
   def reference_chunks
     @reference_chunks ||= begin
       document.chunks.none_of_types(self.class.name).score_gteq(REFERENCE_CHUNK_SCORE_THRESHOLD)
     end
   end
 
-  # Chunk that is under under test
+  # Chunk that is under test
   def source_chunk
     @source_chunk ||= begin
       document.chunks.none_of_types(self.class.name).where("documents.id NOT IN (?)", reference_chunks.map(&:id)).first
@@ -181,7 +181,7 @@ class Chunk::MechanicalTurkChunk < ::Chunk
     document && document.is_a?(Chunk::CaptchaChunk)
   end
 
-  # Promotes the current chunk to one equal to the give one, e.g. source chunk
+  # Promotes the current chunk to one equal to the given one, e.g. source chunk
   def promote_to_sibling_of(sibling, chunk_attributes = {})
     previous_parent       = document
     self.document         = sibling.document

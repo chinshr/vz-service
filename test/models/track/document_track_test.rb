@@ -20,13 +20,17 @@ class Track::DocumentTrackTest < ActiveSupport::TestCase
     assert_equal 1, ingest.document.track.segments.count
     assert_no_difference "Track::DocumentTrack.count" do
       assert_no_difference "Segment::DocumentSegment.count" do
-        track = Track.create({
-          type: "document_track",
-          ingest: ingest,
-          s3_url: "http://s3.amazonaws.com/vz-test-origin/13dba008-7ba2-4804-a534-43d03c65260b/t0",
-          ingest_iteration: ingest.iteration
-        })
-        assert_equal true, track.document_segment.is_master?
+        track = nil
+        assert_enqueued_with(job: Track::DeleteJob) do
+          track = Track.create({
+            type: "document_track",
+            ingest: ingest,
+            s3_url: "http://s3.amazonaws.com/vz-test-origin/13dba008-7ba2-4804-a534-43d03c65260b/t0",
+            ingest_iteration: ingest.iteration
+          })
+          assert_equal true, track.document_segment.is_master?
+        end
+        Track::DeleteJob.new.perform(track.id)
       end
     end
   end
