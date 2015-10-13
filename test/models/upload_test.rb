@@ -176,7 +176,9 @@ class UploadTest < ActiveSupport::TestCase
     assert upload.ingest, "should have an ingest"
     ingest = upload.ingest
     assert_difference "Upload.count", -1 do
-      upload.destroy
+      assert_enqueued_with(job: Upload::DeleteJob) do
+        upload.destroy
+      end
       ingest.reload
       assert_equal :removing, ingest.state
     end
@@ -199,8 +201,9 @@ class UploadTest < ActiveSupport::TestCase
 
   should "destroy" do
     upload = FactoryGirl.create(:upload_audio)
-    assert_difference "Upload.count", -1 do
+    assert_enqueued_with(job: Upload::DeleteJob) do
       upload.destroy
     end
+    assert_equal :removing, upload.ingest.reload.state
   end
 end

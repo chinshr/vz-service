@@ -13,6 +13,8 @@ class IngestTest < ActiveSupport::TestCase
     should have_many(:segments).dependent(:nullify)
     should have_many(:chunks).through(:segments)
     should have_many(:tracks).through(:chunks)
+    should have_many(:processes).dependent(:destroy)
+    should have_many(:servers).through(:processes)
   end
 
   context "validations" do
@@ -126,10 +128,11 @@ class IngestTest < ActiveSupport::TestCase
     should "remove when upload is destroyed" do
       upload = FactoryGirl.create(:upload_audio)
       ingest = upload.ingest
-      # Ingest::RemoveWorker.jobs.clear
       assert_no_difference "Ingest.count" do
-        assert_difference "Upload.count", -1 do
-          upload.destroy
+        assert_no_difference "Upload.count" do
+          assert_enqueued_with(job: Upload::DeleteJob) do
+            upload.destroy
+          end
           assert_equal :removing, ingest.state
           assert_equal true, ingest.process!, "should be able to process"
           assert_equal :removed, ingest.state
@@ -368,5 +371,46 @@ class IngestTest < ActiveSupport::TestCase
     assert_equal @ingest, @chunk1.reload.ingest
     assert_equal @ingest.document, @chunk1.reload.document
     assert_equal 1, @chunk1.reload.position
+  end
+
+  should "stop server when server is removed" do
+    ingest = FactoryGirl.create(:ingest_audio)
+    server = FactoryGirl.create(:cpw_ingest_server)
+    ingest.servers << server
+    assert_difference "Ingest::Process.count", -1 do
+      assert_enqueued_with(job: Ingest::Server::StopJob) do
+        ingest.servers.delete(server)
+      end
+    end
+  end
+
+  context "stop servers" do
+    setup do
+      @ingest = FactoryGirl.create(:ingest_audio, aasm_state: "started")
+      @server = FactoryGirl.create(:cpw_ingest_server)
+      @ingest.servers << @server
+    end
+
+    should "when finished" do
+      @ingest.update_attributes(aasm_state: "started")
+      assert_difference "Ingest::Process.count", -1 do
+        assert_enqueued_with(job: Ingest::Server::StopJob) do
+          assert_equal true, @ingest.finish!
+        end
+      end
+      assert_equal :finished, @ingest.state
+      assert_equal [], @ingest.reload.servers
+    end
+
+    should "when stopped" do
+      @ingest.update_attributes(aasm_state: "stopping")
+      assert_difference "Ingest::Process.count", -1 do
+        assert_enqueued_with(job: Ingest::Server::StopJob) do
+          assert_equal true, @ingest.process!
+        end
+      end
+      assert_equal :stopped, @ingest.state
+      assert_equal [], @ingest.reload.servers
+    end
   end
 end

@@ -24,11 +24,24 @@ class Ingest::AudioIngest < ::Ingest
 
   protected
 
+  # is called by after_commit as we need to wait
+  # to do a specific background job until the record
+  # has been commited to the DB and not at the time
+  # the state is changed.
   def perform_async
-    Ingest::StartWorker.perform_workflow(self.id) if perform_async_start_scheduled?
-    Ingest::StopWorker.perform_async(self.id, {force: true}) if perform_async_stop_scheduled?
-    Ingest::ResetWorker.perform_async(self.id, {force: true}) if perform_async_reset_scheduled?
-    Ingest::RemoveWorker.perform_async(self.id, {force: true}) if perform_async_remove_scheduled?
+    if perform_async_start_scheduled?
+      # Start server
+      Ingest::StartJob.perform_later(self.id)
+      # Start CPW workflow
+      Ingest::StartWorker.perform_workflow(self.id)
+    elsif perform_async_stop_scheduled?
+      Ingest::StopWorker.perform_async(self.id, {force: true})
+    elsif perform_async_reset_scheduled?
+      Ingest::ResetWorker.perform_async(self.id, {force: true})
+    elsif perform_async_remove_scheduled?
+      Ingest::RemoveWorker.perform_async(self.id, {force: true})
+    end
+
     clear_all_perform_async!
   end
 

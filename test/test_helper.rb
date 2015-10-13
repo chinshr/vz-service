@@ -7,6 +7,7 @@ require 'shoulda'
 require 'sidekiq/testing'
 require 'geocoder'
 require 'webmock/minitest'
+require 'active_job/test_helper.rb'
 
 Sidekiq::Testing.fake!
 AWS.stub!
@@ -47,6 +48,7 @@ class ActiveSupport::TestCase
   extend Shoulda::Matchers::ActiveRecord
   include Shoulda::Matchers::ActiveModel
   extend Shoulda::Matchers::ActiveModel
+  include ActiveJob::TestHelper
 
   def assert_error_on(record, *fields)
     record.valid?

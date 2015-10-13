@@ -36,35 +36,38 @@ class Api::Ingests::TracksControllerTest < ActionController::TestCase
       start_at = Time.parse("1972-02-26 11:11:11 +0100")
       end_at   = Time.parse("1972-02-26 11:11:11 +0100") + duration
 
-      post :create, ingest_id: @ingest.id, track: {
-        s3_url: @s3_url, s3_mp3_url: @s3_mp3_url,
-        s3_waveform_json_url: @s3_waveform_json_url,
-        ingest_iteration: @ingest.iteration,
-        duration: duration,
-        start_at: start_at,
-        end_at: end_at,
-        type: "document_track"
-      }, format: :json
-      assert_response :success
-      assert_attributes response_body["track"]
-      assert_equal @s3_url, response_body["track"]["s3_url"]
-      assert_equal @s3_mp3_url, response_body["track"]["s3_mp3_url"]
-      assert_equal @ingest.id, response_body["track"]["ingest_id"]
-      assert_equal @document.id, response_body["track"]["document_id"]
-      assert_equal @ingest.iteration, response_body["track"]["ingest_iteration"]
-      assert_equal @s3_waveform_json_url, response_body["track"]["s3_waveform_json_url"]
-      assert_equal duration, response_body["track"]["duration"]
-      assert_equal start_at, response_body["track"]["start_at"]
-      assert_not_nil response_body["track"]["end_at"]
+      assert_enqueued_with(job: Track::DeleteJob) do
 
-      @ingest.reload
-      # assert_not_equal old_segment_id, @ingest.document.master_segment.id
-      # assert_not_equal old_track_id, @ingest.document.track.id
-      # assert_nil Segment.find_by_id(old_segment_id)
-      assert_nil Track.find_by_id(old_track_id)
-      # assert_equal @ingest.document.track.id, @ingest.track.id
-      assert_equal old_track_count, Track.count, "should have same track count"
-      assert_equal old_segment_count, Segment.count, "should have same segment count"
+        post :create, ingest_id: @ingest.id, track: {
+          s3_url: @s3_url, s3_mp3_url: @s3_mp3_url,
+          s3_waveform_json_url: @s3_waveform_json_url,
+          ingest_iteration: @ingest.iteration,
+          duration: duration,
+          start_at: start_at,
+          end_at: end_at,
+          type: "document_track"
+        }, format: :json
+        assert_response :success
+        assert_attributes response_body["track"]
+        assert_equal @s3_url, response_body["track"]["s3_url"]
+        assert_equal @s3_mp3_url, response_body["track"]["s3_mp3_url"]
+        assert_equal @ingest.id, response_body["track"]["ingest_id"]
+        assert_equal @document.id, response_body["track"]["document_id"]
+        assert_equal @ingest.iteration, response_body["track"]["ingest_iteration"]
+        assert_equal @s3_waveform_json_url, response_body["track"]["s3_waveform_json_url"]
+        assert_equal duration, response_body["track"]["duration"]
+        assert_equal start_at, response_body["track"]["start_at"]
+        assert_not_nil response_body["track"]["end_at"]
+
+        @ingest.reload
+        # assert_not_equal old_segment_id, @ingest.document.master_segment.id
+        # assert_not_equal old_track_id, @ingest.document.track.id
+        # assert_nil Segment.find_by_id(old_segment_id)
+        # assert_nil Track.find_by_id(old_track_id)
+        # assert_equal @ingest.document.track.id, @ingest.track.id
+        #assert_equal old_track_count, Track.count, "should have same track count"
+        assert_equal old_segment_count, Segment.count, "should have same segment count"
+      end
     end
 
     should "be unauthorized without user" do
@@ -147,7 +150,8 @@ class Api::Ingests::TracksControllerTest < ActionController::TestCase
   context "DELETE /api/ingests/:ingest_id/tracks/:id.json" do
     should "#delete" do
       sign_in :user, @user2
-      assert_difference "Track.count", -1 do
+      assert_enqueued_with(job: Track::DeleteJob) do
+      #assert_difference "Track.count", -1 do
         delete :destroy, :ingest_id => @ingest.id, :id => @t0.id, format: :json
         assert_response :success
         assert_response_body_attributes_with "track"

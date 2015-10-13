@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150818012041) do
+ActiveRecord::Schema.define(version: 20151007031459) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -182,6 +182,46 @@ ActiveRecord::Schema.define(version: 20150818012041) do
   add_index "friendly_id_slugs", ["slug", "sluggable_type"], name: "index_friendly_id_slugs_on_slug_and_sluggable_type", using: :btree
   add_index "friendly_id_slugs", ["sluggable_id"], name: "index_friendly_id_slugs_on_sluggable_id", using: :btree
   add_index "friendly_id_slugs", ["sluggable_type"], name: "index_friendly_id_slugs_on_sluggable_type", using: :btree
+
+  create_table "ingest_processes", force: true do |t|
+    t.integer  "ingest_id"
+    t.integer  "server_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "ingest_processes", ["ingest_id", "server_id"], name: "index_ingest_processes_on_ingest_id_and_server_id", unique: true, using: :btree
+  add_index "ingest_processes", ["server_id", "ingest_id"], name: "index_ingest_processes_on_server_id_and_ingest_id", unique: true, using: :btree
+
+  create_table "ingest_servers", force: true do |t|
+    t.string   "type",                           null: false
+    t.string   "name"
+    t.string   "version"
+    t.string   "vpc_id"
+    t.integer  "tenancy_mask",       default: 0, null: false
+    t.integer  "number",             default: 0, null: false
+    t.integer  "max_processes",      default: 1, null: false
+    t.string   "private_ip_address"
+    t.string   "public_ip_address"
+    t.string   "instance_id"
+    t.string   "region"
+    t.string   "dns"
+    t.string   "image_id"
+    t.string   "instance_type"
+    t.datetime "launched_at"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "ingest_servers", ["image_id"], name: "index_ingest_servers_on_image_id", using: :btree
+  add_index "ingest_servers", ["instance_type"], name: "index_ingest_servers_on_instance_type", using: :btree
+  add_index "ingest_servers", ["launched_at"], name: "index_ingest_servers_on_launched_at", using: :btree
+  add_index "ingest_servers", ["max_processes"], name: "index_ingest_servers_on_max_processes", using: :btree
+  add_index "ingest_servers", ["name"], name: "index_ingest_servers_on_name", using: :btree
+  add_index "ingest_servers", ["tenancy_mask"], name: "index_ingest_servers_on_tenancy_mask", using: :btree
+  add_index "ingest_servers", ["type"], name: "index_ingest_servers_on_type", using: :btree
+  add_index "ingest_servers", ["version"], name: "index_ingest_servers_on_version", using: :btree
+  add_index "ingest_servers", ["vpc_id"], name: "index_ingest_servers_on_vpc_id", using: :btree
 
   create_table "ingests", force: true do |t|
     t.integer  "upload_id"

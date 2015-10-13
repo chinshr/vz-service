@@ -37,6 +37,8 @@ class Ingest < ActiveRecord::Base
   end
   has_many :tracks, -> { uniq }, through: :chunks, source: :track
   has_many :tracks_including_master_track, -> {uniq}, through: :segments, source: :track, class_name: "Track"
+  has_many :processes, class_name: "Ingest::Process", dependent: :destroy
+  has_many :servers, through: :processes, after_remove: :async_server_update
 
   validates :upload, presence: true, on: :create
   validates :document, presence: true
@@ -66,12 +68,12 @@ class Ingest < ActiveRecord::Base
     state :starting, :enter => :enter_starting, :after_enter => :after_enter_starting
     state :started, :enter => :enter_started
     state :stopping, :after_enter => :after_enter_stopping
-    state :stopped, :enter => :enter_stopped
+    state :stopped, :enter => :enter_stopped, :after_enter => :after_enter_stopped
     state :resetting, :after_enter => :after_enter_resetting
     state :reset, :enter => :enter_reset
     state :removing, :enter => :enter_removing, :after_enter => :after_enter_removing
     state :removed, :enter => :enter_removed
-    state :finished, :enter => :enter_finished
+    state :finished, :enter => :enter_finished, :after_enter => :after_enter_finished
     state :restarting, :after_exit => :after_exit_restarting, :after_enter => :after_enter_restarting
 
     event :start do
@@ -374,6 +376,10 @@ class Ingest < ActiveRecord::Base
     self.busy       = false
   end
 
+  def after_enter_stopped
+    stop_servers
+  end
+
   def enter_reset
     self.reset_at  = Time.now.utc
     self.messages  = {}
@@ -388,6 +394,10 @@ class Ingest < ActiveRecord::Base
     self.finished_at = Time.now.utc
   end
 
+  def after_enter_finished
+    stop_servers
+  end
+
   def enter_removing
     self.terminate = true
   end
@@ -397,13 +407,13 @@ class Ingest < ActiveRecord::Base
     self.removed_at = Time.now.utc
   end
 
-  def after_exit_restarting
-    update_attributes(messages: {}, stage: nil, iteration: iteration + 1)
-  end
-
   def after_enter_restarting
     self.restarted_at = Time.now.utc
     self.terminate    = true
+  end
+
+  def after_exit_restarting
+    update_attributes(messages: {}, stage: nil, iteration: iteration + 1)
   end
 
   def after_enter_removing
@@ -423,5 +433,20 @@ class Ingest < ActiveRecord::Base
       return send(:"#{event}")
     end
     false
+  end
+
+  def async_server_update(server = nil)
+    server.stop if server && server.ingests.count == 0
+  end
+
+  private
+
+  def stop_servers
+    # will shutdown (stop) server(s) using an
+    # on :after_remove callback on ingests assocation
+    # and starting Ingest::Server::StopJob job.
+    servers.each do |server|
+      server.ingests.delete(self)
+    end
   end
 end

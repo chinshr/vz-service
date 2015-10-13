@@ -12,7 +12,8 @@ class SegmentTest < ActiveSupport::TestCase
     should "if last track" do
       segment = FactoryGirl.create(:segment)
       assert_difference "Segment.count", -1 do
-        assert_difference "Track.count", -1 do
+        assert_enqueued_with(job: Track::DeleteJob) do
+        # assert_difference "Track.count", -1 do
           segment.destroy
         end
       end

@@ -297,7 +297,8 @@ class DocumentTest < ActiveSupport::TestCase
 
   should "#create_track and have one and only one master track" do
     @document = FactoryGirl.create(:document)
-    assert_difference "Track.count", 1 do
+    assert_enqueued_with(job: Track::DeleteJob) do
+    # assert_difference "Track.count", 1 do
       assert_difference "Segment.count", 1 do
         track = @document.create_track(s3_url: "http://foo/bar")
         assert_equal "http://foo/bar", @document.reload.track.s3_url
