@@ -226,10 +226,10 @@ GEM
       mini_portile (~> 0.6.0)
     oj (2.11.1)
     orm_adapter (0.5.0)
-    paper_trail (4.0.0.rc1)
+    paper_trail (4.0.0)
       activerecord (>= 3.0, < 6.0)
       activesupport (>= 3.0, < 6.0)
-      request_store (~> 1.1.0)
+      request_store (~> 1.1)
     pg (0.18.1)
     polyglot (0.3.5)
     pry (0.10.1)
@@ -291,7 +291,7 @@ GEM
     redis (3.2.0)
     redis-namespace (1.5.1)
       redis (~> 3.0, >= 3.0.4)
-    request_store (1.1.0)
+    request_store (1.2.0)
     responders (1.1.2)
       railties (>= 3.2, < 4.2)
     rest-client (1.7.2)
@@ -417,7 +417,7 @@ DEPENDENCIES
   newrelic_rpm
   nokogiri
   oj
-  paper_trail (~> 4.0.0.rc)
+  paper_trail (~> 4)
   pg
   polyamorous!
   pry-nav
