@@ -70,15 +70,12 @@ group :production do
 end
 
 gem 'modernizr-rails'
-
 gem 'aws-sdk-v1'
-# gem 'sass'
 gem 'backbone-on-rails'
 gem 'backbone-support'
 #gem 'backbone-validation-rails'
 gem 'eco'
 gem 'ejs'
-# gem 'jquery-fileupload-rails'
 gem 'rabl'
 gem 'oj'
 gem 'aasm', '3.3.2'
@@ -86,20 +83,15 @@ gem 'sidekiq'
 gem 'autoscaler'
 gem "sinatra", require: false
 gem 'unicorn'
-
-# gem 'uuid'
 gem 'json'
 gem 'devise'
-
-#gem 'activeadmin', github: 'gregbell/active_admin'
 gem 'activeadmin', github: 'activeadmin'
-# <hack> for Rails 4.1
+# <active_admin hack> for Rails 4.1
 gem 'formtastic', github: "justinfrench/formtastic"
 gem 'polyamorous', :github => "activerecord-hackery/polyamorous"
 #gem "ransack", github: "activerecord-hackery/ransack", branch: "rails-4.1"
 # </hack> for Rails 4.1
 
-# gem 'client_side_validations', github: "tagliala/client_side_validations", branch: "rails4"
 gem 'client_side_validations', github: "DavyJonesLocker/client_side_validations"
 gem 'geocoder'
 gem 'gmaps4rails'
