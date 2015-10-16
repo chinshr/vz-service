@@ -27,6 +27,6 @@ after_fork do |server, worker|
 
   # Three unicorns = 3 connections
   Sidekiq.configure_client do |config|
-    config.redis = {:size => 1}
+    config.redis = {size: 1, url: ENV["REDISTOGO_URL"] || "redis://localhost:6379/", namespace: 'sidekiq'}
   end
 end
