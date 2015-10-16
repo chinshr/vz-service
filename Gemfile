@@ -79,9 +79,9 @@ gem 'ejs'
 gem 'rabl'
 gem 'oj'
 gem 'aasm', '3.3.2'
-gem 'sidekiq'
-gem 'autoscaler'
-gem "sinatra", require: false
+gem 'sidekiq', '~> 3.5.1'
+gem 'autoscaler', github: "chinshr/autoscaler"
+gem 'sinatra', require: false
 gem 'unicorn'
 gem 'json'
 gem 'devise'
