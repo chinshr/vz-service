@@ -89,6 +89,8 @@ App.Models.Upload = Backbone.Model.extend({
       return "Removed.";
       case 9:
       return "Finished.";
+      default:
+      return "Uploading."
     }
   }
 }, {className: 'Upload'});
