@@ -1,10 +1,10 @@
 require 'test_helper'
 
 class UploadTest < ActiveSupport::TestCase
-  should "build subclass with type" do
-    assert_equal "Upload::AudioUpload", Upload.new(type: "Upload::AudioUpload").class.name
-    assert_equal "Upload::AudioUpload", Upload.new(type: "audio_upload").class.name
-    assert_equal "Upload::AudioUpload", Upload.new(type: :"audio").class.name
+  context "class" do
+    should "#class_name_from_file_type_for" do
+      assert_equal nil, Upload.class_name_from_file_type_for("foo/bar")
+    end
   end
 
   context "associations" do

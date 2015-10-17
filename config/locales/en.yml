@@ -56,7 +56,8 @@ en:
         upload:
           attributes:
             file_type:
-              audio_expected: "is not an audio file"
+              audio_expected: "is not an accepted audio file"
+              video_expected: "is not an accepted video file"
         user:
           attributes:
             email:

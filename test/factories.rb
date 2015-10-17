@@ -11,6 +11,17 @@ FactoryGirl.define do
     end
   end
 
+  factory :upload_video, :class => "Upload::VideoUpload" do
+    sequence(:file_name) {|n| "sample-video-#{n}.mp4"}
+    file_type "video/mp4"
+    file_size 62676676
+    recorded_at Time.parse("26/4/1974 15:32 UTC")
+    sequence(:s3_url) {|n| "http://s3.amazonaws.com/dropbox/sample-video-#{n}.mp4"}
+    before(:create) do |upload|
+      upload.build_ingest(type: "Ingest::VideoIngest", upload: upload, document: FactoryGirl.create(:document))
+    end
+  end
+
   factory :document do
     association :user
     sequence(:title) {|n| "title-#{n}"}

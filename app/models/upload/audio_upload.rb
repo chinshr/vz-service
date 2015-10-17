@@ -2,7 +2,7 @@ class Upload::AudioUpload < ::Upload
   validate :audio_file_type
 
   class << self
-    def accepted_audio_file_type?(file_type)
+    def accepted_file_type?(file_type)
       !!(file_type && file_type.match(/^(audio)\/?.*$/))
     end
   end
@@ -10,7 +10,7 @@ class Upload::AudioUpload < ::Upload
   protected
 
   def audio_file_type
-    errors.add(:file_type, :audio_expected) unless Upload::AudioUpload.accepted_audio_file_type?(file_type)
+    errors.add(:file_type, :audio_expected) unless self.class.accepted_file_type?(file_type)
   end
 
   def build_ingest_and_document

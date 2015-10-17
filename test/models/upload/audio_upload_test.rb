@@ -1,6 +1,23 @@
 require 'test_helper'
 
 class Upload::AudioUploadTest < ActiveSupport::TestCase
+  context "class" do
+    should "#class_name_from_file_type_for" do
+      assert_equal "Upload::AudioUpload", Upload.class_name_from_file_type_for("audio/mp3")
+    end
+
+    should "#accepted_file_type?" do
+      assert_equal true, Upload::AudioUpload.accepted_file_type?("audio/x-m4a")
+      assert_equal false, Upload::AudioUpload.accepted_file_type?("foo/bar")
+    end
+
+    should "build Upload::AudioUpload instance with :type" do
+      assert_equal "Upload::AudioUpload", Upload.new(type: "Upload::AudioUpload").class.name
+      assert_equal "Upload::AudioUpload", Upload.new(type: "audio_upload").class.name
+      assert_equal "Upload::AudioUpload", Upload.new(type: :"audio").class.name
+    end
+  end
+
   context "validations" do
     should validate_presence_of :type
 
@@ -47,7 +64,7 @@ class Upload::AudioUploadTest < ActiveSupport::TestCase
     assert upload.valid?, "should be true"
   end
 
-  should "have slug" do
+  should "associated document have slug" do
     upload = FactoryGirl.create(:upload_audio)
     assert_equal upload.ingest.document.slug, upload.slug
   end
@@ -56,11 +73,6 @@ class Upload::AudioUploadTest < ActiveSupport::TestCase
     upload = FactoryGirl.create(:upload_audio)
     assert_equal "en-US", upload.locale
     assert_equal upload.ingest.document.locale, upload.locale
-  end
-
-  should "build Upload::Audio" do
-    audio_upload = Upload.new type: "audio"
-    assert audio_upload.is_a?(Upload::AudioUpload), "should instantiate with :type parameter"
   end
 
   should "create audio ingest and document for audio upload" do
@@ -72,5 +84,4 @@ class Upload::AudioUploadTest < ActiveSupport::TestCase
     assert_equal ::Document, upload.ingest.document.class
     assert_equal upload.ingest.title, upload.humanized_file_name
   end
-
 end
