@@ -7,7 +7,7 @@
         </div>
         <div class="panel-heading">
           <button type="button" class="close action-close">×</button>
-          <h3><i class="glyphicon icon-privacy <%= if @privacy == 'private': %> glyphicon-lock icon-private <% else: %> glyphicon-book icon-public <% end %> "></i>i-like-pickles.wav</h3>
+          <h3><i class="glyphicon icon-privacy <%= if @privacy == 'private': %> glyphicon-lock icon-private <% else: %> glyphicon-book icon-public <% end %> "></i><%= @title || @file_name %></h3>
 
           <span class="label label-info label-status"><span class="message"><%= @message %></span></span>
           <span class="slug" hidden><i class="glyphicon glyphicon-link"><a href="YdG3bj" target="_blank">http://localhost:3000/YdG3bj</a></i></span>
