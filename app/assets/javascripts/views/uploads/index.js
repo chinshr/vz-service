@@ -94,8 +94,9 @@ App.Views.UploadsIndex = Backbone.View.extend({
   },
 
   uploadToS3: function(options) {
-    var newUploads, s3upload;
-    newUploads = {};
+    var newUploads = {},
+      s3upload;
+
     return s3upload = new S3Upload({
       files_dropped: options.files_dropped,
       file_list: options.file_list,
@@ -103,9 +104,9 @@ App.Views.UploadsIndex = Backbone.View.extend({
       s3_sign_put_url: 'api/account/uploads/sign_s3.json',
 
       onProgress: (function(_this) {
-        return function(xhr, file, percent, message) {
+        return function(xhr, file, percent, status) {
           var upload;
-          if (percent === 0) {
+          if (!xhr && percent === 0) {
             upload = new App.Models.Upload({
               file_name: file.name,
               s3_url: '',
@@ -123,7 +124,7 @@ App.Views.UploadsIndex = Backbone.View.extend({
             if (upload) {
               return upload.trigger('upload:progress', {
                 percent: percent,
-                message: message,
+                message: _this.statusMessage(status),
                 xhr: xhr
               });
             }
@@ -132,7 +133,7 @@ App.Views.UploadsIndex = Backbone.View.extend({
       })(this),
 
       onAbort: (function(_this) {
-        return function(file, message) {
+        return function(file, status) {
           var upload;
           upload = newUploads[file.size];
           upload.destroy();
@@ -142,10 +143,11 @@ App.Views.UploadsIndex = Backbone.View.extend({
       })(this),
 
       onFinishS3Put: (function(_this) {
-        return function(public_url, file) {
-          var upload;
-          upload = newUploads[file.size];
-          return upload.save({s3_url: public_url});
+        return function(publicUrl, file) {
+          var upload = newUploads[file.size];
+          if (upload) {
+            return upload.save({s3_url: publicUrl});
+          }
         };
       })(this),
 
@@ -159,6 +161,21 @@ App.Views.UploadsIndex = Backbone.View.extend({
         };
       })(this)
     });
+  },
+
+  statusMessage: function(state) {
+    switch (state) {
+      case 'starting':
+      return "Upload starting.";
+      case 'completed':
+      return "Upload completed.";
+      case 'completing':
+      return "Upload finalizing.";
+      case 'uploading':
+      return "Uploading.";
+      default:
+      return "Unknown upload state";
+    }
   },
 
   updateMail: function() {
