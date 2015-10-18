@@ -9,9 +9,9 @@
         <div class="dropdown">
           <button type="button" aria-hidden="true" data-toggle="dropdown" class="cog btn-dropdown-toggle"><i class="glyphicon glyphicon-cog"></i></button>
           <ul class="dropdown-menu dropdown-menu-right" role="menu" xaria-labelledby="settings-button">
-            <li role="presentation"><a class="action-update" role="menuitem" tabindex="-1" href="#"><i class="glyphicon glyphicon-wrench"></i>Change</a></li>
+            <li role="presentation"><a class="action-update" role="menuitem" tabindex="-1" href="#"><i class="glyphicon glyphicon-wrench"></i>Settings</a></li>
             <li role="presentation"><a class="action-edit" role="menuitem" tabindex="-1" href="#"><i class="glyphicon glyphicon-pencil"></i>Edit</a></li>
-            <li role="presentation"><a class="action-preview" role="menuitem" tabindex="-1" href="#"><i class="glyphicon glyphicon-eye-open"></i>Show</a></li>
+            <li role="presentation"><a class="action-preview" role="menuitem" tabindex="-1" href="#"><i class="glyphicon glyphicon-eye-open"></i>Preview</a></li>
             <li role="presentation" class="divider"></li>
             <!--
             <li role="presentation"><a class="action-collaborate" role="menuitem" tabindex="-1" href="#"><i class="glyphicon glyphicon-plus"></i>Add collaborator</a></li>
@@ -24,9 +24,9 @@
           </ul>
         </div><!-- dropdown -->
 
-        <h3><i class="glyphicon icon-privacy <%= if @privacy == 'private': %> glyphicon-lock icon-private <% else: %> glyphicon-book icon-public <% end %>"></i><%= @title || @file_name %></h3>
+        <h3><i class="fa icon-privacy <%= if @privacy == 'private': %> fa-lock icon-private <% else: %> fa-unlock icon-public <% end %>"></i><%= @title || @file_name %></h3>
         <span class="label label-success label-status"><span class="message"><%= @message %></span></span>
-        <span class="slug" hidden><i class="glyphicon glyphicon-link"><a href="YdG3bj" target="_blank">http://localhost:3000/YdG3bj</a></i></span>
+        <span class="slug" hidden><i class="fa fa-link"><a href="#" target="_blank">http://foo.bar</a></i></span>
       </div><!-- .panel-heading -->
       <div class="panel-body">
         <div class="tags-title">Tagged in</div>
@@ -46,13 +46,13 @@
             <img src="/images/backgrounds/13378352314_636bca078c_z.jpg" />
           </div>
           <div class="action-panel-btn-group">
-            <button class="btn btn-primary btn-lg btn-panel-action action-update"><i class="glyphicon glyphicon-wrench"></i>&nbsp;Change</button>
+            <button class="btn btn-primary btn-lg btn-panel-action action-update"><i class="glyphicon glyphicon-wrench"></i>&nbsp;Settings</button>
             <button class="btn btn-primary btn-lg btn-panel-action action-edit"><i class="glyphicon glyphicon-pencil"></i>&nbsp;Edit</button>
-            <button class="btn btn-primary btn-lg btn-panel-action action-preview"><i class="glyphicon glyphicon-eye-open"></i>&nbsp;Show</button>
+            <button class="btn btn-primary btn-lg btn-panel-action action-preview"><i class="glyphicon glyphicon-eye-open"></i>&nbsp;Preview</button>
           </div><!-- .action-panel-btn-group -->
         </div><!-- .action-panel-->
         <div class="description-holder">
-          <p><%= @description %></p> 
+          <p><%= @description %></p>
         </div><!-- .description-holder -->
       </div><!-- .panel-background -->
     </div><!-- .panel -->

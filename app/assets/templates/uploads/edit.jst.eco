@@ -7,10 +7,10 @@
         </div>
         <div class="panel-heading">
           <button type="button" class="close action-close">×</button>
-          <h3><i class="glyphicon icon-privacy <%= if @privacy == 'private': %> glyphicon-lock icon-private <% else: %> glyphicon-book icon-public <% end %> "></i><%= @title || @file_name %></h3>
+          <h3><i class="fa icon-privacy <%= if @privacy == 'private': %> fa-lock icon-private <% else: %> fa-unlock icon-public <% end %> "></i><%= @title || @file_name %></h3>
 
           <span class="label label-info label-status"><span class="message"><%= @message %></span></span>
-          <span class="slug" hidden><i class="glyphicon glyphicon-link"><a href="YdG3bj" target="_blank">http://localhost:3000/YdG3bj</a></i></span>
+          <span class="slug" hidden><i class="fa fa-link"><a href="YdG3bj" target="_blank">http://localhost:3000/YdG3bj</a></i></span>
         </div><!-- panel-heading -->
         <div class="panel-body">
           <div class="form-fields">
@@ -51,10 +51,10 @@
           <div class="form-group from-group-file-privacy clearfix">
             <div class="btn-group group-file-privacy pull-left" data-toggle="buttons">
               <label class="btn btn-primary btn-sm active">
-                <input type="radio" name="upload[privacy]" id="upload-privacy-public" value="public" checked=""><i class="glyphicon glyphicon-book icon-public"></i>&nbsp;Public
+                <input type="radio" name="upload[privacy]" id="upload-privacy-public" value="public" checked=""><i class="fa fa-unlock icon-public"></i>&nbsp;Public
               </label>
               <label class="btn btn-primary btn-sm">
-                <input type="radio" name="upload[privacy]" id="upload-privacy-private" value="private"><i class="glyphicon glyphicon-lock icon-private"></i>&nbsp;Private
+                <input type="radio" name="upload[privacy]" id="upload-privacy-private" value="private"><i class="fa fa-lock icon-private"></i>&nbsp;Private
               </label>
             </div><!-- group-file-privacy -->
 

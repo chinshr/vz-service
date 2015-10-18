@@ -10,7 +10,7 @@
 
         <div class="form-group form-group-file-upload">
           <label for="" class="control-label hidden">Add files</label>
-          <button id="files-proxy" class="btn btn-primary btn-lg btn-file-upload"><i class="glyphicon glyphicon-cloud-upload"></i>&nbsp;Add files...</button>
+          <button id="files-proxy" class="btn btn-primary btn-lg btn-file-upload"><i class="fa fa-cloud-upload"></i>&nbsp;Add files...</button>
           <input type="file" id="files" name="files[]" multiple />
           <div class="email-file-upload-holder">or send to <a href="mailto:my@voyz.es?subject=Document title&body=—%0DAttach all your audio files you want transcribed for English United States (en-US)." class="xbtn xbtn-link btn-email-upload">my@voyz.es</a></div>
         </div><!-- .form-group-file-upload -->
@@ -34,11 +34,14 @@
         <!-- privacy -->
         <div class="form-group form-group-file-privacy">
           <div class="btn-group group-file-privacy" data-toggle="buttons">
-            <label class="btn btn-primary btn-sm active">
-              <input type="radio" name="file-privacy" id="file-privacy-public" value="public" checked=""><i class="glyphicon glyphicon-book icon-public"></i>&nbsp;Public
+            <label class="btn btn-primary btn-sm disabled">
+              <input type="radio" name="file-privacy" id="file-privacy-public" value="public" checked=""><i class="fa fa-unlock icon-public"></i>&nbsp;Public
             </label>
-            <label class="btn btn-primary btn-sm">
-              <input type="radio" name="file-privacy" id="file-privacy-private" value="private"><i class="glyphicon glyphicon-lock icon-private"></i>&nbsp;Private
+            <label class="btn btn-primary btn-sm active">
+              <input type="radio" name="file-privacy" id="file-privacy-unlisted" value="unlisted" checked=""><i class="fa fa-eye-slash icon-unlisted"></i>&nbsp;Limited
+            </label>
+            <label class="btn btn-primary btn-sm disabled">
+              <input type="radio" name="file-privacy" id="file-privacy-private" value="private"><i class="fa fa-lock icon-private"></i>&nbsp;Private
             </label>
           </div>
         </div><!-- form-group-file-privacy -->
