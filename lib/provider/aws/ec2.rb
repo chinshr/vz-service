@@ -11,8 +11,8 @@ module Provider
       # http://stackoverflow.com/questions/22365470/launching-instance-vpc-security-groups-may-not-be-used-for-a-non-vpc-launch
       TYPES = {
         "cpw" => {
-          security_groups: "vz-cpw", # ["sg-ba9710dd"]
-          instance_type:   "t2.micro",
+          security_groups: "vz-cpw",
+          instance_type:   "c1.medium",  # "t2.micro",
           key_name:        "vz-cpw-ec2",
           subnet_id:       "subnet-20054d79",
           # network_interfaces: [{
