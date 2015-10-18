@@ -42,7 +42,7 @@ class Api::IngestsControllerTest < ActionController::TestCase
       get :index, format: :json
       assert_response :success
       assert response_body.has_key?("ingests"), "should have root"
-      assert_equal 4, response_body["ingests"].size, "should have one ingest"
+      assert_equal 2, response_body["ingests"].size, "should have one ingest"
       assert_attributes response_body["ingests"].first
     end
 
@@ -153,7 +153,7 @@ class Api::IngestsControllerTest < ActionController::TestCase
 
     should "change ingest state to 'started' via #status=" do
       sign_in :user, @user2
-      @ingest2.start!
+      #@ingest2.start!
       assert_equal :starting, @ingest2.state
       put :update, {:id => @ingest2.id, :ingest => {
         stage: "start", progress: 1, status: Ingest::STATE_STARTED
@@ -166,12 +166,15 @@ class Api::IngestsControllerTest < ActionController::TestCase
 
     should "NOT change ingest state due to invalid transition via #status=" do
       sign_in :user, @user2
-      assert_equal :created, @ingest2.state
+      assert_equal :starting, @ingest2.state
       put :update, {:id => @ingest2.id, :ingest => {
         stage: "start", progress: 1, status: Ingest::STATE_RESET
       }, format: :json}
       assert_response :unprocessable_entity
-      assert_equal :created, @ingest2.reload.state
+      assert_equal true, response_body.has_key?("errors")
+      assert_equal true, response_body["errors"].has_key?("status")
+      assert_equal ["cannot transition from state 'starting'"], response_body["errors"]["status"]
+      assert_equal :starting, @ingest2.reload.state
     end
 
     should "NOT update without user" do

@@ -40,8 +40,11 @@ FactoryGirl.define do
   end
 
   factory :ingest_audio, :class => "Ingest::AudioIngest" do
-    association :upload, factory: :upload_audio
+    # association :upload, factory: :upload_audio
     association :document, factory: :document_with_track
+    before(:create) do |ingest|
+      ingest.upload = FactoryGirl.build(:upload_audio, ingest: ingest)
+    end
     after(:create) do |ingest|
       ingest.document.master_segment.ingest_id = ingest.id
       ingest.document.master_segment.save
@@ -50,6 +53,23 @@ FactoryGirl.define do
 
   factory :ingest_audio_without_track, :class => "Ingest::AudioIngest" do
     association :upload, factory: :upload_audio
+    association :document, factory: :document
+  end
+
+  factory :ingest_video, :class => "Ingest::VideoIngest" do |i|
+    # association :upload, factory: :upload_video
+    association :document, factory: :document_with_track
+    before(:create) do |ingest|
+      ingest.upload = FactoryGirl.build(:upload_video, ingest: ingest)
+    end
+    after(:create) do |ingest|
+      ingest.document.master_segment.ingest_id = ingest.id
+      ingest.document.master_segment.save
+    end
+  end
+
+  factory :ingest_video_without_track, :class => "Ingest::VideoIngest" do
+    association :upload, factory: :upload_video
     association :document, factory: :document
   end
 
@@ -296,7 +316,7 @@ FactoryGirl.define do
     tenancy :shared
   end
 
-  factory :cpw_ingest_process, :class => Ingest::Process do
+  factory :cpw_ingest_process, :class => ::Ingest::Process do
     association :ingest, factory: :ingest_audio
     association :server, factory: :cpw_server
   end

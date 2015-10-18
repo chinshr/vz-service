@@ -2,8 +2,8 @@ require 'test_helper'
 
 class Upload::VideoUploadTest < ActiveSupport::TestCase
   context "class" do
-    should "#class_name_from_file_type_for" do
-      assert_equal "Upload::VideoUpload", Upload.class_name_from_file_type_for("video/mp4")
+    should "#class_name_from_content_type_for" do
+      assert_equal "Upload::VideoUpload", Upload.class_name_from_content_type_for("video/mp4")
     end
 
     should "#accepted_file_type?" do

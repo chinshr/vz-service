@@ -1,12 +1,12 @@
 class EmailProcessor
   class << self
     def process(email)
-      process_audio(email)
+      process_attachments(email)
     end
 
     protected
 
-    def process_audio(email)
+    def process_attachments(email)
       user, message, exception = nil, nil, nil
       if email.attachments.count > 0
         user    = User.find_or_initialize_by(email: Mailer::Helper::unprettify(email.from))
@@ -23,8 +23,8 @@ class EmailProcessor
 
         email.attachments.each do |attached_file|
           content_type = mime_type(attached_file.tempfile.path) || attached_file.content_type
-          if Upload::AudioUpload.accepted_audio_file_type?(content_type)
-            upload = with message.attachments.build(:type => "audio") do |upload|
+          if upload_class_name = Upload.class_name_from_content_type_for(content_type)
+            upload = with message.attachments.build(:type => upload_class_name) do |upload|
               upload.user        = user
               upload.title       = if email.subject.blank?
                 Upload.humanized_file_name(attached_file.original_filename)
@@ -36,7 +36,7 @@ class EmailProcessor
               upload.file_size   = attached_file.tempfile.size
               upload.file_type   = content_type
               upload.locale      = address_locale(email.to) || message.locale || "en-US"
-              upload.privacy     = [:private]
+              upload.privacy     = [:unlisted]
             end
 
             Rails.logger.info "* mime_type: #{mime_type(attached_file.tempfile.path)}"
@@ -50,11 +50,11 @@ class EmailProcessor
             Rails.logger.error "* Message invalid: #{message.inspect}" unless message.valid?
             Rails.logger.error "** Message attachment invalid: #{upload.inspect}" unless upload.valid?
           else
-            Rails.logger.info "* Attachment '#{attached_file.original_filename} (#{content_type}:#{attached_file.content_type})' is not an audio file."
+            Rails.logger.info "* Attachment '#{attached_file.original_filename} (#{content_type}:#{attached_file.content_type})' is not an audio/video file."
           end
         end
       else
-        Rails.logger.warn "Thanks #{email.from} for your message, but we didn't find any audio attachments."
+        Rails.logger.warn "Thanks #{email.from} for your message, but we didn't find any audio/video attachments."
       end
     rescue Exception => exception
       log_exception(exception)
@@ -73,7 +73,7 @@ class EmailProcessor
         Rails.logger.error "Oops, the user cannot be saved." if user && user.new_record?
         Rails.logger.error "Oops, no message was built." if !message
         Rails.logger.error "Oops, the message cannot be saved." if message && !message.valid?
-        Rails.logger.error "Oops, we've noticed we could not process any audio attachments." if message && message.attachments.count == 0
+        Rails.logger.error "Oops, we've noticed we could not process any audio/video attachments." if message && message.attachments.count == 0
       end
     end
 

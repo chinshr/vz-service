@@ -114,8 +114,8 @@ class IngestTest < ActiveSupport::TestCase
   context "state machine" do
     should "have state and status" do
       ingest = FactoryGirl.create(:ingest_audio)
-      assert_equal :created, ingest.state
-      assert_equal 0, ingest.status
+      assert_equal :starting, ingest.state
+      assert_equal 1, ingest.status
     end
 
     should "remove" do
@@ -142,17 +142,18 @@ class IngestTest < ActiveSupport::TestCase
 
     should "transition on status=2" do
       ingest = FactoryGirl.create(:ingest_audio, :terminate => true, :busy => true)
-      assert_equal :created, ingest.state
-      ingest.status = Ingest::STATE_STARTING
-      assert_equal true, ingest.save
-      assert_equal :starting, ingest.reload.state
+      assert_equal :starting, ingest.state
       ingest.status = Ingest::STATE_STARTED
       assert_equal true, ingest.save
       assert_equal :started, ingest.reload.state
+      ingest.status = Ingest::STATE_FINISHED
+      assert_equal true, ingest.save
+      assert_equal :finished, ingest.reload.state
     end
 
     should "events should transition states" do
       ingest = FactoryGirl.create(:ingest_audio, :terminate => true, :busy => true)
+      ingest.update_attributes(aasm_state: "created")
       assert_equal :created, ingest.state
       ingest.start!
       assert_equal :starting, ingest.state
@@ -232,15 +233,15 @@ class IngestTest < ActiveSupport::TestCase
 
     should "event setter to force and events getter to receive permissible events" do
       ingest = FactoryGirl.create(:ingest_audio, :terminate => true, :busy => true)
-      assert_equal :created, ingest.state
-      ingest.event = "start"
       assert_equal :starting, ingest.state
-      assert_equal [:remove, :restart], ingest.events
+      ingest.event = "process"
+      assert_equal :started, ingest.state
+      assert_equal [:stop, :remove, :restart], ingest.events
 
       ingest = FactoryGirl.create(:ingest_audio, :terminate => true, :busy => true)
-      assert_equal :created, ingest.state
-      ingest.event = :start
       assert_equal :starting, ingest.state
+      ingest.event = :process
+      assert_equal :started, ingest.state
     end
   end
 

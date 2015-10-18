@@ -68,7 +68,7 @@ class Upload < ActiveRecord::Base
 
   class << self
 
-    def class_name_from_file_type_for(file_type)
+    def class_name_from_content_type_for(file_type)
       upload_class = self.subclasses.find {|uc| uc.respond_to?(:accepted_file_type?) && uc.send(:accepted_file_type?, file_type)}
       upload_class.name if upload_class
     end

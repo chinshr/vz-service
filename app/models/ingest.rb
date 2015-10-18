@@ -203,12 +203,6 @@ class Ingest < ActiveRecord::Base
     aasm.events(aasm.current_state) - [:process, :fail, :finish]
   end
 
-  # force an event
-  def event=(value)
-    events = Array.wrap(value)
-    may_transition?(events) ? call_transition_with(events) : false
-  end
-
   def continue_processing?
     !stage.blank? && starting?
   end
@@ -422,17 +416,6 @@ class Ingest < ActiveRecord::Base
 
   def has_valid_upload?
     !!(upload && upload.s3_url)
-  end
-
-  def may_transition?(events)
-    events.present? ? events.any? {|e| send(:"may_#{e}?")} : false
-  end
-
-  def call_transition_with(events)
-    if event = events.find {|e| send(:"may_#{e}?") ? e : false}
-      return send(:"#{event}")
-    end
-    false
   end
 
   def async_server_update(server = nil)

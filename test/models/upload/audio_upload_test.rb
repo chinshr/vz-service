@@ -2,8 +2,8 @@ require 'test_helper'
 
 class Upload::AudioUploadTest < ActiveSupport::TestCase
   context "class" do
-    should "#class_name_from_file_type_for" do
-      assert_equal "Upload::AudioUpload", Upload.class_name_from_file_type_for("audio/mp3")
+    should "#class_name_from_content_type_for" do
+      assert_equal "Upload::AudioUpload", Upload.class_name_from_content_type_for("audio/mp3")
     end
 
     should "#accepted_file_type?" do

@@ -45,17 +45,19 @@ module Model::AASM::StatusSupport
     value = value.to_i if /^[-+]?[0-9]+$/ === value
     if status != value  # CHANGED: self[:status] != value
       events = []
-      if new_state = self.class.aasm_status_lookup.key(value)
-        events = self.class.aasm.events.values.select { |e| e.transitions_to_state?(new_state) }
-        events.map! { |e| e.name }
+      if to_state = self.class.aasm_status_lookup.key(value)
+        events = self.class.aasm.events.values.select { |e| e.transitions_to_state?(to_state) && e.may_fire?(self, to_state) }
       end
-
-      if may_transition?(events)
-        call_transition_with(events)
-      else
+      unless call_transition_to_state_with(events, to_state)
         @status_error = true
       end
     end
+  end
+
+  # force an event to fire
+  def event=(value)
+    events = self.class.aasm.events.values.select {|e| e.name == value.to_sym && e.may_fire?(self)}
+    call_transition_with(events)
   end
 
   def aasm_write_state_with_status(state)
@@ -84,13 +86,20 @@ module Model::AASM::StatusSupport
 
   private
 
-  def may_transition?(events)
-    events.present? ? events.any? {|e| send(:"may_#{e}?")} : false
+  def may_transition?(events, to_state = nil)
+    events.present? ? events.any? {|e| e.may_fire?(self, to_state)} : false
   end
 
-  def call_transition_with(events)
-    if event = events.find {|e| send(:"may_#{e}?") ? e : false}
-      return send(:"#{event}")
+  def call_transition_to_state_with(events, to_state)
+    if event = events.find {|e| e.may_fire?(self, to_state) ? e : false}
+      return send(:"#{event.name}")
+    end
+    false
+  end
+
+  def call_transition_with(events, to_state = nil)
+    if event = events.find {|e| e.may_fire?(self, to_state) ? e : false}
+      return send(:"#{event.name}")
     end
     false
   end

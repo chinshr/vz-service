@@ -2,8 +2,8 @@ require 'test_helper'
 
 class UploadTest < ActiveSupport::TestCase
   context "class" do
-    should "#class_name_from_file_type_for" do
-      assert_equal nil, Upload.class_name_from_file_type_for("foo/bar")
+    should "#class_name_from_content_type_for" do
+      assert_equal nil, Upload.class_name_from_content_type_for("foo/bar")
     end
   end
 
