@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151007031459) do
+ActiveRecord::Schema.define(version: 20151018084755) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -194,13 +194,13 @@ ActiveRecord::Schema.define(version: 20151007031459) do
   add_index "ingest_processes", ["server_id", "ingest_id"], name: "index_ingest_processes_on_server_id_and_ingest_id", unique: true, using: :btree
 
   create_table "ingest_servers", force: true do |t|
-    t.string   "type",                           null: false
+    t.string   "type",                                   null: false
     t.string   "name"
     t.string   "version"
     t.string   "vpc_id"
-    t.integer  "tenancy_mask",       default: 0, null: false
-    t.integer  "number",             default: 0, null: false
-    t.integer  "max_processes",      default: 1, null: false
+    t.integer  "tenancy_mask",       default: 0,         null: false
+    t.integer  "number",             default: 0,         null: false
+    t.integer  "max_processes",      default: 1,         null: false
     t.string   "private_ip_address"
     t.string   "public_ip_address"
     t.string   "instance_id"
@@ -211,8 +211,13 @@ ActiveRecord::Schema.define(version: 20151007031459) do
     t.datetime "launched_at"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "aasm_state",         default: "pending", null: false
+    t.datetime "enabled_at"
+    t.datetime "disabled_at"
+    t.string   "uid"
   end
 
+  add_index "ingest_servers", ["aasm_state"], name: "index_ingest_servers_on_aasm_state", using: :btree
   add_index "ingest_servers", ["image_id"], name: "index_ingest_servers_on_image_id", using: :btree
   add_index "ingest_servers", ["instance_type"], name: "index_ingest_servers_on_instance_type", using: :btree
   add_index "ingest_servers", ["launched_at"], name: "index_ingest_servers_on_launched_at", using: :btree
@@ -220,6 +225,7 @@ ActiveRecord::Schema.define(version: 20151007031459) do
   add_index "ingest_servers", ["name"], name: "index_ingest_servers_on_name", using: :btree
   add_index "ingest_servers", ["tenancy_mask"], name: "index_ingest_servers_on_tenancy_mask", using: :btree
   add_index "ingest_servers", ["type"], name: "index_ingest_servers_on_type", using: :btree
+  add_index "ingest_servers", ["uid"], name: "index_ingest_servers_on_uid", unique: true, using: :btree
   add_index "ingest_servers", ["version"], name: "index_ingest_servers_on_version", using: :btree
   add_index "ingest_servers", ["vpc_id"], name: "index_ingest_servers_on_vpc_id", using: :btree
 

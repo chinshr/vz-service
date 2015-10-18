@@ -5,6 +5,7 @@ class Ingest::VideoIngestTest < ActiveSupport::TestCase
     assert_difference "Ingest::VideoIngest.count", 1 do
       assert_difference "Upload::VideoUpload.count", 1 do
         ingest = FactoryGirl.create(:ingest_video)
+        assert_match /vi-.*/, ingest.uid
       end
     end
   end

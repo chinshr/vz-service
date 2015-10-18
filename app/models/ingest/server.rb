@@ -1,5 +1,16 @@
 class Ingest::Server < ActiveRecord::Base
+  include AASM
+  include Model::AASM::Support
+  include Model::Uid
+
   self.table_name = "ingest_servers"
+  self.uid_length = 5
+
+  STATE_PENDING   = 0
+  STATE_ENABLED   = 1
+  STATE_DISABLED  = 2
+  STATES = {pending: STATE_PENDING,
+    enabled: STATE_ENABLED, disabled: STATE_DISABLED}
 
   TENANCY_SHARED   = 0
   TENANCY_PRIVATE  = 1
@@ -12,6 +23,7 @@ class Ingest::Server < ActiveRecord::Base
 
   scope :available, -> (tenancy = :shared) {
     select("ingest_servers.*, (SELECT COUNT(ingest_processes.id) FROM ingest_processes WHERE ingest_processes.server_id = ingest_servers.id) AS processes_count, (ingest_servers.max_processes - (SELECT COUNT(ingest_processes.id) FROM ingest_processes WHERE ingest_processes.server_id = ingest_servers.id)) AS available_processes_count")
+      .enabled
       .with_tenancy(tenancy)
       .having("(max_processes - (SELECT COUNT(ingest_processes.id) FROM ingest_processes WHERE ingest_processes.server_id = ingest_servers.id)) > 0")
       .group("ingest_servers.id")
@@ -20,6 +32,20 @@ class Ingest::Server < ActiveRecord::Base
   scope :with_tenancy, -> (tenancy) {
     where("ingest_servers.tenancy_mask & #{tenancy_mask(tenancy)} > 0")
   }
+
+  aasm column: 'aasm_state' do
+    state :pending, initial: true
+    state :enabled, :enter => :enter_enabled
+    state :disabled, :enter => :enter_disabled
+
+    event :enable do
+      transitions :from => [:pending, :enabled], :to => :enabled
+    end
+
+    event :disable do
+      transitions :from => [:pending, :enabled, :disabled], :to => :disabled
+    end
+  end
 
   before_destroy :terminate
 
@@ -129,7 +155,7 @@ class Ingest::Server < ActiveRecord::Base
   def _restart
     case instance.status
     when :running, :pending
-      true
+      enable!
     when :terminated, :shutting_down
       false
     when :stopping
@@ -137,7 +163,7 @@ class Ingest::Server < ActiveRecord::Base
       _restart
     when :stopped
       instance.start unless Rails.env.development?
-      true
+      enable!
     end
   end
 
@@ -160,7 +186,7 @@ class Ingest::Server < ActiveRecord::Base
     case instance.status
     when :running
       instance.terminate unless Rails.env.development?
-      true
+      disable!
     when :pending
       wait_until(:running)
       _terminate
@@ -171,7 +197,7 @@ class Ingest::Server < ActiveRecord::Base
       _terminate
     when :stopped
       instance.terminate unless Rails.env.development?
-      true
+      disable!
     end
   end
 
@@ -189,5 +215,13 @@ class Ingest::Server < ActiveRecord::Base
 
   def async_server_update(record = nil)
     stop if ingests.count == 0
+  end
+
+  def enter_enabled
+    self.enabled_at = Time.current
+  end
+
+  def enter_disabled
+    self.disabled_at = Time.current
   end
 end
