@@ -31,7 +31,7 @@ en:
 
   lib:
     model:
-      status_support:
+      aasm_support:
         status: "cannot transition from state '%{current_state}'"
 
   api:

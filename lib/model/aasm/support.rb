@@ -4,7 +4,7 @@
 #
 #    class Example < ActiveRecord::Base
 #      include AASM
-#      include Model::AASM::StatusSupport
+#      include Model::AASM::Support
 #    end
 #
 # A hash lookup of state mapped to status integer values is required. By default, STATES constant is referenced
@@ -12,7 +12,7 @@
 #
 # The assumption here is that users consuming the API can only set the state thru changing the status value.
 # Therefore there should only be one valid event that triggers this transition of both status values and state.
-module Model::AASM::StatusSupport
+module Model::AASM::Support
   extend ActiveSupport::Concern
 
   included do
@@ -73,7 +73,7 @@ module Model::AASM::StatusSupport
   protected
 
   def check_status
-    errors.add(:status, I18n.t("lib.model.status_support.status", :current_state => aasm.current_state)) if @status_error
+    errors.add(:status, I18n.t("lib.model.aasm_support.status", :current_state => aasm.current_state)) if @status_error
   end
 
   def set_state_updated

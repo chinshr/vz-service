@@ -1,6 +1,6 @@
 class Ingest < ActiveRecord::Base
   include AASM
-  include Model::AASM::StatusSupport
+  include Model::AASM::Support
   include Model::Filter
   include Model::Uid
 

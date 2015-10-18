@@ -4,7 +4,7 @@ require "matrix"
 class Document < ActiveRecord::Base
   extend FriendlyId
   include AASM
-  include Model::AASM::StatusSupport
+  include Model::AASM::Support
   include Model::Filter
   include Model::Uid
 
