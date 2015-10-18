@@ -12,7 +12,7 @@ module Provider
       TYPES = {
         "cpw" => {
           security_groups: "vz-cpw",
-          instance_type:   "c1.medium",  # "t2.micro",
+          instance_type:   "m1.large",  # "t2.micro",
           key_name:        "vz-cpw-ec2",
           subnet_id:       "subnet-20054d79",
           # network_interfaces: [{
