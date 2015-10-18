@@ -136,7 +136,7 @@ class Ingest::Server < ActiveRecord::Base
       wait_until(:stopped)
       _restart
     when :stopped
-      instance.start
+      instance.start unless Rails.env.development?
       true
     end
   end
@@ -144,7 +144,7 @@ class Ingest::Server < ActiveRecord::Base
   def _stop
     case instance.status
     when :running
-      instance.stop
+      instance.stop unless Rails.env.development?
       true
     when :pending
       wait_until(:running)
@@ -159,7 +159,7 @@ class Ingest::Server < ActiveRecord::Base
   def _terminate
     case instance.status
     when :running
-      instance.terminate
+      instance.terminate unless Rails.env.development?
       true
     when :pending
       wait_until(:running)
@@ -170,7 +170,7 @@ class Ingest::Server < ActiveRecord::Base
       wait_until(:stopped)
       _terminate
     when :stopped
-      instance.terminate
+      instance.terminate unless Rails.env.development?
       true
     end
   end

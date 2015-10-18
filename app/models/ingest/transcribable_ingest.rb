@@ -30,7 +30,7 @@ class Ingest::TranscribableIngest < ::Ingest
   # the state is changed.
   def perform_async
     if perform_async_start_scheduled?
-      # Start server
+      # Allocate server
       Ingest::StartJob.perform_later(self.id)
       # Start CPW workflow
       Ingest::StartWorker.perform_workflow(self.id)
@@ -74,8 +74,6 @@ class Ingest::TranscribableIngest < ::Ingest
     super
     schedule_perform_async_remove!
   end
-
-  protected
 
   def perform_async_start_scheduled?
     !!@schedule_perform_async_start

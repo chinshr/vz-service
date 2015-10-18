@@ -112,9 +112,8 @@ App.Views.UploadsIndex = Backbone.View.extend({
               s3_url: '',
               file_type: file.type,
               file_size: parseFloat(file.size),
-              type: "audio",
               locale: _this.$("#file-locale").val() || "en-US",
-              privacy: _this.$('.group-file-privacy input[type=radio]:checked').val() || "public",
+              privacy: _this.$('.group-file-privacy input[type=radio]:checked').val() || "unlisted",
               editable: true
             });
             newUploads[file.size] = upload;

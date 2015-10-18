@@ -8,9 +8,7 @@ class Api::Account::UploadsController < Api::Account::ApplicationController
   # [POST] /api/account/uploads(.:format)
   def create
     authorize :"account/upload"
-    @upload = Upload.new(create_params.permit(:type)) do |u|
-      # u.session_id = current_session.id if current_session
-    end
+    @upload = Upload.new({type: upload_class_name(create_params)})
     @upload.attributes = create_params.except(:type)
     @upload.user = current_user if current_user
     @upload.save
@@ -86,5 +84,9 @@ class Api::Account::UploadsController < Api::Account::ApplicationController
     uri = URI(APP_CONFIG['S3_URL'])
     uri.scheme = request.ssl? ? 'https' : 'http'
     uri.to_s
+  end
+
+  def upload_class_name(attributes)
+    Upload.class_name_from_content_type_for(attributes[:file_type])
   end
 end

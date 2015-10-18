@@ -59,11 +59,20 @@
       return xhr;
     };
 
+    S3Upload.prototype.randomObjectName = function() {
+      var possible = "abcdefghijklmnopqrstuvwxyz0123456789",
+        result = "";
+      for (var i = 0; i < 20; i++) {
+        result += possible.charAt(Math.floor(Math.random() * possible.length));
+      }
+      return result;
+    };
+
     S3Upload.prototype.executeOnSignedUrl = function(file, callback) {
       var _this = this,
         xhr = new XMLHttpRequest();
       xhr.withCredentials = this.with_credentials;
-      xhr.open('GET', this.s3_sign_put_url + '?s3_object_type=' + file.type + '&s3_object_name=' + this.s3_object_name, true);
+      xhr.open('GET', this.s3_sign_put_url + '?s3_object_type=' + file.type + '&s3_object_name=' + this.randomObjectName(), true);
       xhr.overrideMimeType('text/plain; charset=x-user-defined');
       xhr.onreadystatechange = function(e) {
         var error, result;

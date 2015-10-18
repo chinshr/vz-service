@@ -27,6 +27,33 @@ class Api::Account::UploadsControllerTest < ActionController::TestCase
             assert_equal "en-UK", upload.locale
             assert_equal ["private"], upload.privacy
             assert_equal 0, upload.progress
+            assert_equal :starting, upload.state
+          end
+        end
+      end
+    end
+
+    should "create video upload when signed in" do
+      assert_difference 'Document.count', 1 do
+        assert_difference 'Ingest::VideoIngest.count', 1 do
+          assert_difference 'Upload::VideoUpload.count', 1 do
+            post :create, :upload => {:file_name => "i-like-videos.mp4", :s3_url => "http://s3.amazonaws.com/vz-dropbox/6e3YeXJ3Ad",
+              :file_type => "video/mp4", :file_size => 53232284, :locale => "de-DE", :privacy => "unlisted"},
+              format: :json
+            assert_response :success
+            assert_response_body_attributes_with "upload"
+
+            upload = Upload.last
+            assert_equal @user.id, upload.user.id
+            assert_equal "Upload::VideoUpload", upload.type
+            assert_equal "video/mp4", upload.file_type
+            assert_equal "i-like-videos.mp4", upload.file_name
+            assert_equal 53232284, upload.file_size
+            assert_equal "http://s3.amazonaws.com/vz-dropbox/6e3YeXJ3Ad", upload.s3_url
+            assert_equal "de-DE", upload.locale
+            assert_equal ["unlisted"], upload.privacy
+            assert_equal 0, upload.progress
+            assert_equal :starting, upload.state
           end
         end
       end
