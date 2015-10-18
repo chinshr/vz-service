@@ -135,7 +135,7 @@ class Ingest::Server < ActiveRecord::Base
   end
 
   def status
-    instance.status
+    instance.status unless test?
   end
 
   def restart
@@ -152,6 +152,10 @@ class Ingest::Server < ActiveRecord::Base
 
   protected
 
+  def test?
+    Rails.env.development?
+  end
+
   def _restart
     case instance.status
     when :running, :pending
@@ -162,7 +166,7 @@ class Ingest::Server < ActiveRecord::Base
       wait_until(:stopped)
       _restart
     when :stopped
-      instance.start unless Rails.env.development?
+      instance.start unless test?
       enable!
     end
   end
@@ -170,7 +174,7 @@ class Ingest::Server < ActiveRecord::Base
   def _stop
     case instance.status
     when :running
-      instance.stop unless Rails.env.development?
+      instance.stop unless test?
       true
     when :pending
       wait_until(:running)
@@ -183,10 +187,11 @@ class Ingest::Server < ActiveRecord::Base
   end
 
   def _terminate
+    disable!
     case instance.status
     when :running
-      instance.terminate unless Rails.env.development?
-      disable!
+      instance.terminate unless test?
+      true
     when :pending
       wait_until(:running)
       _terminate
@@ -196,12 +201,13 @@ class Ingest::Server < ActiveRecord::Base
       wait_until(:stopped)
       _terminate
     when :stopped
-      instance.terminate unless Rails.env.development?
-      disable!
+      instance.terminate unless test?
+      true
     end
   end
 
   def wait_until(status)
+    return true if test?
     wait_time = 2.minutes
     while wait_time > 0
       puts "Waiting for instance to #{status}...#{instance.id}, status: #{instance.status}"

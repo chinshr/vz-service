@@ -30,9 +30,9 @@ class Ingest::TranscribableIngest < ::Ingest
   # the state is changed.
   def perform_async
     if perform_async_start_scheduled?
-      # Allocate server
-      Ingest::StartJob.perform_later(self.id)
-      # Start CPW workflow
+      # allocate server
+      Ingest::StartJob.perform_later(self.id) unless Rails.env.development?
+      # start CPW workflow
       Ingest::StartWorker.perform_workflow(self.id)
     elsif perform_async_stop_scheduled?
       Ingest::StopWorker.perform_async(self.id, {force: true})
