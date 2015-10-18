@@ -126,7 +126,7 @@ class Ingest::Server < ActiveRecord::Base
   end
 
   def stats
-    Provider::AWS::CloudWatch.new(self.region).get_ec2_stats([self.instance_id])
+    Provider::AWS::CloudWatch.new(self.region).get_ec2_stats(instance)
   end
 
   def instance

@@ -104,6 +104,6 @@ eos
           @instances.push(@instance)
         end
       end
-    end # EC2
-  end # AWS
-end # Provider
+    end
+  end
+end
