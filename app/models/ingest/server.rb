@@ -135,7 +135,7 @@ class Ingest::Server < ActiveRecord::Base
   end
 
   def status
-    instance.status unless test?
+    instance.status
   end
 
   def restart

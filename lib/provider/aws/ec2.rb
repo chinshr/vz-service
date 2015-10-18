@@ -6,13 +6,13 @@ module Provider
         :wait_time, :wait, :server
 
       SECURITY_GROUPS = ["vz-cpw"]
-      INSTANCE_TYPES  = ["t2.micro", "c1.medium", "m1.large"]
+      INSTANCE_TYPES  = ["t2.micro", "c4.medium", "m4.large"]
 
       # http://stackoverflow.com/questions/22365470/launching-instance-vpc-security-groups-may-not-be-used-for-a-non-vpc-launch
       TYPES = {
         "cpw" => {
           security_groups: "vz-cpw",
-          instance_type:   "m1.large",  # "t2.micro",
+          instance_type:   "m4.large",  # "t2.micro",
           key_name:        "vz-cpw-ec2",
           subnet_id:       "subnet-20054d79",
           # network_interfaces: [{
@@ -29,23 +29,23 @@ eos
       }
 
       def launch(params = {})
-        type  = params[:type] || @type
+        type  = params.delete(:type) || @type
         raise "You must pass a machine type, e.g. #{TYPES.inspect}" if !type || !TYPES[type]
 
-        count   = params[:count] || 1
-        wait    = params[:wait] || @wait
-        @image  = ec2.images[params[:image]] if params[:image]
-        @image  ||= get_latest_image(type)
+        count    = params.delete(:count) || 1
+        wait     = params.delete(:wait) || @wait
+        image_id = params.delete(:image_id)
+        @image   = ec2.images[image_id] if image_id
+        @image   ||= get_latest_image(type)
 
         raise "Missing image!  The latest image could not be found!" unless @image and @image.exists?
 
-        launch_params = TYPES[type]
-
+        launch_params = TYPES[type.to_s] || {}
         launch_params.merge!({
           count: count,
           key_pair: @key_pair,
           image_id: @image.id,
-        })
+        }.merge(params))
 
         @instance = @ec2.instances.create(launch_params)
 
@@ -90,7 +90,7 @@ eos
         kp = Rails.env.production? ? "vz-cpw-ec2" : "vz-cpw-ec2"
         @key_pair   = ::AWS::EC2::KeyPair.new(kp)
         @ec2        = ::AWS::EC2.new
-        @instances  = Array.new
+        @instances  = []
         @instance   = nil
         @image_id   = params[:image_id]
         @wait_time  = params[:wait_time] || 600
