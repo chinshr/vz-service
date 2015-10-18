@@ -45,7 +45,8 @@ class Ingest::ServerTest < ActiveSupport::TestCase
 
   should "create CPW server" do
     assert_difference "Ingest::Server::CPWServer.count" do
-      FactoryGirl.create(:cpw_ingest_server)
+      server = FactoryGirl.create(:cpw_ingest_server)
+      assert_equal 5, server.uid.length
     end
   end
 
@@ -270,32 +271,59 @@ class Ingest::ServerTest < ActiveSupport::TestCase
   end
 
   context "scopes" do
-    context "with_tenancy" do
+    context "state machine" do
+      should "#pending" do
+        server = FactoryGirl.create(:cpw_ingest_server, aasm_state: "pending")
+        assert_equal server, Ingest::Server.pending.first
+      end
+
+      should "#enabled" do
+        server = FactoryGirl.create(:cpw_ingest_server, aasm_state: "enabled")
+        assert_equal server, Ingest::Server.enabled.first
+      end
+
+      should "#disabled" do
+        server = FactoryGirl.create(:cpw_ingest_server, aasm_state: "disabled")
+        assert_equal server, Ingest::Server.disabled.first
+      end
+    end
+
+    context "#with_tenancy" do
       should "find with :private" do
         server = FactoryGirl.create(:cpw_ingest_server, tenancy: "private")
         assert_equal server, Ingest::Server.with_tenancy(:private).first
       end
     end
 
-    context "available" do
+    context "#available" do
       should "be empty" do
         assert_nil Ingest::Server.available.first
       end
 
-      should "not be consumed" do
-        server = FactoryGirl.create(:cpw_ingest_server, max_processes: 1)
+      should "be available when enabled and without consumption" do
+        server = FactoryGirl.create(:cpw_ingest_server, max_processes: 1, aasm_state: "enabled")
         assert_equal server, Ingest::Server.available.first
       end
 
+      should "not be available when pending" do
+        server = FactoryGirl.create(:cpw_ingest_server, max_processes: 1, aasm_state: "pending")
+        assert_nil Ingest::Server.available.first
+      end
+
+      should "not be available when disabled" do
+        server = FactoryGirl.create(:cpw_ingest_server, max_processes: 1, aasm_state: "disabled")
+        assert_nil Ingest::Server.available.first
+      end
+
       should "be consumed for 1 ingest" do
-        server = FactoryGirl.create(:cpw_ingest_server, max_processes: 1)
+        server = FactoryGirl.create(:cpw_ingest_server, max_processes: 1, aasm_state: "enabled")
         ingest = FactoryGirl.create(:ingest_audio)
         server.ingests << ingest
         assert_nil Ingest::Server.available.first
       end
 
       should "be consumed for 2 ingests" do
-        server = FactoryGirl.create(:cpw_ingest_server, max_processes: 2)
+        server = FactoryGirl.create(:cpw_ingest_server, max_processes: 2, aasm_state: "enabled")
         ingest1 = FactoryGirl.create(:ingest_audio)
         ingest2 = FactoryGirl.create(:ingest_audio)
         server.ingests << ingest1
@@ -317,4 +345,26 @@ class Ingest::ServerTest < ActiveSupport::TestCase
     end
   end
 
+  context "state machine" do
+
+    should "transition" do
+      @server = FactoryGirl.create(:cpw_ingest_server)
+      assert_equal :pending, @server.state
+      assert_equal true, @server.enable!
+      assert_equal :enabled, @server.state
+      assert_not_nil @server.enabled_at
+      assert_equal true, @server.disable!
+      assert_equal :disabled, @server.state
+      assert_not_nil @server.disabled_at
+    end
+
+    should "not transition" do
+      @server = FactoryGirl.create(:cpw_ingest_server, aasm_state: "disabled")
+      assert_equal :disabled, @server.state
+      assert_raise AASM::InvalidTransition do
+        assert_equal false, @server.enable!
+      end
+    end
+
+  end
 end

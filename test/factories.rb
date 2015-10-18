@@ -314,6 +314,7 @@ FactoryGirl.define do
     dns "vz-cpw-1.sample-voyzes.com"
     sequence(:instance_id) {|n| "xyz-#{n}"}
     tenancy :shared
+    aasm_state "pending"
   end
 
   factory :cpw_ingest_process, :class => ::Ingest::Process do

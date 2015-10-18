@@ -363,7 +363,6 @@ class IngestTest < ActiveSupport::TestCase
   should "have uid" do
     @ingest = FactoryGirl.create(:ingest_audio)
     assert_not_nil @ingest.uid
-    assert_equal 36, @ingest.uid.length
   end
 
   should "create chunks through ingest" do
