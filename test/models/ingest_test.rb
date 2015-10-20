@@ -140,15 +140,47 @@ class IngestTest < ActiveSupport::TestCase
       end
     end
 
-    should "transition on status=2" do
-      ingest = FactoryGirl.create(:ingest_audio, :terminate => true, :busy => true)
-      assert_equal :starting, ingest.state
-      ingest.status = Ingest::STATE_STARTED
-      assert_equal true, ingest.save
-      assert_equal :started, ingest.reload.state
-      ingest.status = Ingest::STATE_FINISHED
-      assert_equal true, ingest.save
-      assert_equal :finished, ingest.reload.state
+    context "#status=" do
+      should "transition to started from starting" do
+        ingest = FactoryGirl.create(:ingest_audio, :terminate => true, :busy => true)
+        assert_equal :starting, ingest.state
+        ingest.status = Ingest::STATE_STARTED
+        assert_equal true, ingest.save
+        assert_equal :started, ingest.reload.state
+        ingest.status = Ingest::STATE_FINISHED
+        assert_equal true, ingest.save
+        assert_equal :finished, ingest.reload.state
+      end
+
+      should "transition to finished from started" do
+        ingest = FactoryGirl.create(:ingest_audio, :terminate => true, :busy => true)
+        ingest.update_attributes(aasm_state: :started)
+        ingest.status = Ingest::STATE_FINISHED
+        assert_equal true, ingest.save
+        assert_equal :finished, ingest.reload.state
+      end
+
+      should "transition to stopped from stopping" do
+        ingest = FactoryGirl.create(:ingest_audio, :terminate => false, :busy => true)
+        ingest.update_attributes(aasm_state: :started)
+        ingest.status = Ingest::STATE_STOPPING
+        assert_equal true, ingest.save
+        assert_equal :stopping, ingest.reload.state
+        ingest.status = Ingest::STATE_STOPPED
+        assert_equal true, ingest.save
+        assert_equal :stopped, ingest.reload.state
+        assert_equal false, ingest.terminate
+      end
+
+      should "transition to reset from resetting" do
+        ingest = FactoryGirl.create(:ingest_audio, :terminate => true, :busy => true)
+        ingest.update_attributes(aasm_state: :resetting)
+        ingest.status = Ingest::STATE_RESET
+        assert_equal true, ingest.save
+        assert_equal :reset, ingest.reload.state
+        assert_equal false, ingest.terminate
+        assert_equal false, ingest.busy
+      end
     end
 
     should "events should transition states" do
