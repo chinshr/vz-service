@@ -47,8 +47,8 @@ Voyzes::Application.configure do
   config.assets.compress = true
 
   # Setting compressor currently doesn't work (thx to @carhartl for the tip) https://github.com/rails/sass-rails/issues/104
-  # config.assets.css_compressor = :yui
-  config.assets.css_compressor = :sass
+  config.assets.css_compressor = :yui
+  # config.assets.css_compressor = :sass
   config.assets.js_compressor = :uglifier
 
 
