@@ -29,5 +29,6 @@ module Voyzes
 
     # http://kennethjiang.blogspot.com/2014/07/set-up-cors-in-cloudfront-for-custom.html
     config.font_assets.origin = '*'
+    config.assets.precompile += ['application-custom.css.scss']
   end
 end
