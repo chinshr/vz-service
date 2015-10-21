@@ -4,9 +4,9 @@
 <div class="container-fluid content-primary">
   <%= render "devise/shared/login_quote" %>
 
-  <div class="tile form-tile animated fadeInUp">
+  <div class="tile form-tile animated fade-in-up">
     <%= form_for(resource, {:as => resource_name, :url => session_path(resource_name),
-        :html => {:class => "form-signin panel animated fade-in-up"}}) do |f| %>
+        :html => {:class => "form-signin panel"}}) do |f| %>
       <div class="panel-heading">
         <h1 class="logo"><a class="signup-brand" href="/">Login to VOYZ.ES</a></h1>
         <p>Welcome back!</p>
