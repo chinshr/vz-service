@@ -48,7 +48,8 @@ class Web::Profiles::DocumentsController < Web::ProfilesController
   end
 
   def redirect_permanently_to_canonical_url
-    redirect_to web_profile_document_url("@#{user_id}", params[:id]), status: :moved_permanently
+    redirect_to web_profile_document_url("@#{user_id}", @document.slug), status: :moved_permanently
+    return
   end
 
   def verify_authorized
