@@ -43,14 +43,12 @@ module Model::AASM::Support
 
   def status=(value)
     value = value.to_i if /^[-+]?[0-9]+$/ === value
-    if status != value  # CHANGED: self[:status] != value
-      events = []
-      if to_state = self.class.aasm_status_lookup.key(value)
-        events = self.class.aasm.events.values.select { |e| e.transitions_to_state?(to_state) && e.may_fire?(self, to_state) }
-      end
-      unless call_transition_to_state_with(events, to_state)
-        @status_error = true
-      end
+    events = []
+    if to_state = self.class.aasm_status_lookup.key(value)
+      events = self.class.aasm.events.values.select { |e| e.transitions_to_state?(to_state) && e.may_fire?(self, to_state) }
+    end
+    unless call_transition_to_state_with(events, to_state)
+      @status_error = true
     end
   end
 

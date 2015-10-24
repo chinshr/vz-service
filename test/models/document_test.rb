@@ -75,9 +75,27 @@ class DocumentTest < ActiveSupport::TestCase
       assert_equal 12, document.slug_id.length
     end
 
-    should "generate valid slug with title and slug_id when published" do
+    should "generate valid slug with title and slug_id when re-publish" do
       document = Document.create(title: "this is a title", aasm_state: "published")
       assert_equal "this-is-a-title-#{document.slug_id}", document.slug
+    end
+
+    should "generate with title and slug_id when re-publishing with event=" do
+      document = Document.create(title: "start-title", aasm_state: "published")
+      assert_equal "start-title-#{document.slug_id}", document.slug
+      document.event = :publish
+      document.title  = "document-published-with-event"
+      assert_equal true, document.save
+      assert_equal "document-published-with-event-#{document.slug_id}", document.slug
+    end
+
+    should "generate with title and slug_id when re-publishing with status=" do
+      document = Document.create(title: "start-title", aasm_state: "published")
+      assert_equal "start-title-#{document.slug_id}", document.slug
+      document.status = 1
+      document.title  = "document-published-with-status"
+      assert_equal true, document.save
+      assert_equal "document-published-with-status-#{document.slug_id}", document.slug
     end
 
     should "generate valid slug with only slug_id when unpublished" do
