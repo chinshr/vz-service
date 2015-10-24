@@ -164,6 +164,18 @@ class Api::IngestsControllerTest < ActionController::TestCase
       assert_equal :started, @ingest2.reload.state
     end
 
+    should "change ingest state to 'started' via #event=" do
+      sign_in :user, @user2
+      assert_equal :starting, @ingest2.state
+      put :update, {:id => @ingest2.id, :ingest => {
+        stage: "start", progress: 1, event: "process"
+      }, format: :json}
+      assert_response :success
+      assert_response_body_attributes_with "ingest"
+      assert_equal Ingest::STATE_STARTED, response_body["ingest"]["status"]
+      assert_equal :started, @ingest2.reload.state
+    end
+
     should "NOT change ingest state due to invalid transition via #status=" do
       sign_in :user, @user2
       assert_equal :starting, @ingest2.state

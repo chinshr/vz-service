@@ -5,6 +5,7 @@
 //= require lib/wavesurfer/mediaelement
 //= require lib/wavesurfer/drawer
 //= require lib/wavesurfer/drawer.canvas
+//= require lib/wavesurfer/html-init
 //= require lib/wavesurfer/plugin/wavesurfer.timeline
 //= require lib/wavesurfer/plugin/wavesurfer.minimap
 //= require lib/wavesurfer/plugin/wavesurfer.regions

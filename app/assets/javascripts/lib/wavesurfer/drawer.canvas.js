@@ -65,6 +65,70 @@ WaveSurfer.util.extend(WaveSurfer.Drawer.Canvas, {
         }
     },
 
+    drawBars: function (peaks, channelIndex) {
+        // Split channels
+        if (peaks[0] instanceof Array) {
+            var channels = peaks;
+            if (this.params.splitChannels) {
+                this.setHeight(channels.length * this.params.height * this.params.pixelRatio);
+                channels.forEach(this.drawBars, this);
+                return;
+            } else {
+                peaks = channels[0];
+            }
+        }
+
+        // A half-pixel offset makes lines crisp
+        var $ = 0.5 / this.params.pixelRatio;
+        var width = this.width;
+        var height = this.params.height * this.params.pixelRatio;
+        var offsetY = height * channelIndex || 0;
+        var halfH = height / 2;
+        var length = ~~(peaks.length / 2);
+        var bar = this.params.barWidth * this.params.pixelRatio;
+        var gap = Math.max(this.params.pixelRatio, ~~(bar / 2));
+        var step = bar + gap;
+
+        var absmax = 1;
+        if (this.params.normalize) {
+            var min, max;
+            max = Math.max.apply(Math, peaks);
+            min = Math.min.apply(Math, peaks);
+            absmax = max;
+            if (-min > absmax) {
+                absmax = -min;
+            }
+        }
+
+        var scale = length / width;
+
+        this.waveCc.fillStyle = this.params.waveColor;
+        if (this.progressCc) {
+            this.progressCc.fillStyle = this.params.progressColor;
+        }
+
+        [ this.waveCc, this.progressCc ].forEach(function (cc) {
+            if (!cc) { return; }
+
+            if (this.params.reflection) {
+                for (var i = 0; i < width; i += step) {
+                    var h = Math.round(peaks[Math.floor(2 * i * scale)] / absmax * halfH);
+                    cc.fillRect(i + $, halfH - h + offsetY, bar + $, h * 2);
+                }
+            } else {
+                for (var i = 0; i < width; i += step) {
+                    var h = Math.round(peaks[Math.floor(2 * i * scale)] / absmax * halfH);
+                    cc.fillRect(i + $, halfH - h + offsetY, bar + $, h);
+                }
+
+                for (var i = 0; i < width; i += step) {
+                    var h = Math.round(peaks[2 * i * scale + 1] / absmax * halfH);
+                    cc.fillRect(i + $, halfH - h + offsetY, bar + $, h);
+                }
+            }
+        }, this);
+    },
+
     drawWave: function (peaks, channelIndex) {
         // Split channels
         if (peaks[0] instanceof Array) {
@@ -80,18 +144,25 @@ WaveSurfer.util.extend(WaveSurfer.Drawer.Canvas, {
 
         // A half-pixel offset makes lines crisp
         var $ = 0.5 / this.params.pixelRatio;
-        // A margin between split waveforms
         var height = this.params.height * this.params.pixelRatio;
         var offsetY = height * channelIndex || 0;
         var halfH = height / 2;
-        var length = peaks.length;
+        var length = ~~(peaks.length / 2);
+
         var scale = 1;
         if (this.params.fillParent && this.width != length) {
             scale = this.width / length;
         }
-        var max = 1;
+
+        var absmax = 1;
         if (this.params.normalize) {
+            var min, max;
             max = Math.max.apply(Math, peaks);
+            min = Math.min.apply(Math, peaks);
+            absmax = max;
+            if (-min > absmax) {
+                absmax = -min;
+            }
         }
 
         this.waveCc.fillStyle = this.params.waveColor;
@@ -106,19 +177,17 @@ WaveSurfer.util.extend(WaveSurfer.Drawer.Canvas, {
             cc.moveTo($, halfH + offsetY);
 
             for (var i = 0; i < length; i++) {
-                var h = Math.round(peaks[i] / max * halfH);
-                cc.lineTo(i * scale + $, halfH + h + offsetY);
-            }
-
-            cc.lineTo(this.width + $, halfH + offsetY);
-            cc.moveTo($, halfH + offsetY);
-
-            for (var i = 0; i < length; i++) {
-                var h = Math.round(peaks[i] / max * halfH);
+                var h = Math.round(peaks[2 * i] / absmax * halfH);
                 cc.lineTo(i * scale + $, halfH - h + offsetY);
             }
 
-            cc.lineTo(this.width + $, halfH + offsetY);
+            // Draw the bottom edge going backwards, to make a single
+            // closed hull to fill.
+            for (var i = length - 1; i >= 0; i--) {
+                var h = Math.round(peaks[2 * i + 1] / absmax * halfH);
+                cc.lineTo(i * scale + $, halfH - h + offsetY);
+            }
+
             cc.closePath();
             cc.fill();
 
