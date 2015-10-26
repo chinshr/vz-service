@@ -17,7 +17,7 @@ App.Models.Document = Backbone.Model.extend({
 
   publish: function(attributes, options) {
     if (attributes && typeof(attributes) === 'object') {
-      attributes.status = 1;
+      attributes.event = 'publish';
     }
     this.save(attributes, options);
   }
