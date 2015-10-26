@@ -166,6 +166,7 @@ class IngestTest < ActiveSupport::TestCase
         ingest.status = Ingest::STATE_STOPPING
         assert_equal true, ingest.save
         assert_equal :stopping, ingest.reload.state
+        assert_equal true, ingest.reload.terminate
         ingest.status = Ingest::STATE_STOPPED
         assert_equal true, ingest.save
         assert_equal :stopped, ingest.reload.state

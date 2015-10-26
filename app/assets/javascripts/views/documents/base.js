@@ -143,12 +143,26 @@ App.Views.DocumentsBase = Backbone.View.extend({
       progressColor : '#fff', // '#3f6169', // '#fff',
       loaderColor   : '#555',
       cursorColor   : '#5492ce',
-      markerWidth   : 1,
+      cursorWidth   : 1,
       audioRate     : 1,
       scrollParent  : true,
       normalize     : true,
-      minimap       : true,
-      backend       : 'AudioElement'
+      minimap       : false,
+      pixelRatio    : 2, // window.devicePixelRatio,
+      // backend       : 'AudioElement',
+      backend       : 'MediaElement',
+      // backend       : 'WebAudio',
+      fillParent    : true,     // ???
+      hideScrollbar : false,    // audio to scroll
+      dragSelection : false,     // ???
+      loopSelection : false,    // ???
+      interact      : true,
+      splitChannels : false,    // display waveform per channel
+      skipLength    : 2,        // Number of seconds to skip forward/backward
+      mediaType     : 'audio',  // html element to create
+      mediaControls : false,
+      barWidth      : 0,        // bar width
+      //minPxPerSec   : 20        // Minimum number of pixels per second of audio
     };
 
     /* Init playback speed slider */
@@ -172,6 +186,17 @@ App.Views.DocumentsBase = Backbone.View.extend({
       NProgress.done();
     };
 
+    var zipData = function(data) {
+      if ((data.left && data.left.length > 0) && (data.right && data.right.length > 0)) {
+        return _.flatten(_.zip(data.left, _.map(data.right, function(n) { return -n; })));
+      } else if ((data.left && data.left.length > 0) && (data.right && data.right.length === 0)) {
+        return _.flatten(_.zip(data.left, _.map(data.left, function(n) { return -n; })));
+      } else if ((data.left && data.left.length === 0) && (data.right && data.right.length > 0)) {
+        return _.flatten(_.zip(data.right, _.map(data.right, function(n) { return -n; })));
+      }
+      return [];
+    };
+
     var loadingProgress = 0;
     var loadingInterval = window.setInterval(function() {
       loadingProgress += 3;
@@ -192,7 +217,7 @@ App.Views.DocumentsBase = Backbone.View.extend({
       // console.log(data.left);
       this.wavesurfer.load(
         this.adjustProtocol(this.model.attributes.track.mp3_stream_url),
-        data.left
+        zipData(data)
       );
     }, this));
 

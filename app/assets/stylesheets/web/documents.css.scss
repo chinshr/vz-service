@@ -286,6 +286,19 @@ body.documents {
               margin-left: 2px;
               margin-right: 2px;
               width: 22px;
+
+              &.player-step-backward,
+              &.player-step-forward {
+                font-size: 16px;
+              }
+
+              &.player-mute-toggle {
+                font-size: 18px;
+              }
+
+              &.player-reset {
+                font-size: 18px;
+              }
             }
           }
 

@@ -29,6 +29,8 @@ var WaveSurfer = {
         audioRate     : 1,
         interact      : true,
         splitChannels : false,
+        mediaContainer: null,
+        mediaControls : false,
         renderer      : 'Canvas',
         backend       : 'WebAudio',
         mediaType     : 'audio'
@@ -46,7 +48,7 @@ var WaveSurfer = {
             throw new Error('Container element not found');
         }
 
-        if (typeof this.params.mediaContainer == 'undefined') {
+        if (this.params.mediaContainer == null) {
             this.mediaContainer = this.container;
         } else if (typeof this.params.mediaContainer == 'string') {
             this.mediaContainer = document.querySelector(this.params.mediaContainer);
@@ -114,9 +116,9 @@ var WaveSurfer = {
         this.backend = Object.create(WaveSurfer[this.params.backend]);
         this.backend.init(this.params);
 
-        this.backend.on('finish', function () {
-            my.fireEvent('finish');
-        });
+        this.backend.on('finish', function () { my.fireEvent('finish'); });
+        this.backend.on('play', function () { my.fireEvent('play'); });
+        this.backend.on('pause', function () { my.fireEvent('pause'); });
 
         this.backend.on('audioprocess', function (time) {
             my.drawer.progress(my.backend.getPlayedPercents());
@@ -134,12 +136,10 @@ var WaveSurfer = {
 
     play: function (start, end) {
         this.backend.play(start, end);
-        this.fireEvent('play');
     },
 
     pause: function () {
         this.backend.pause();
-        this.fireEvent('pause');
     },
 
     playPause: function () {
@@ -259,6 +259,18 @@ var WaveSurfer = {
         var peaks = this.backend.getPeaks(width);
         this.drawer.drawPeaks(peaks, width);
         this.fireEvent('redraw', peaks, width);
+    },
+
+    zoom: function (pxPerSec) {
+        this.params.minPxPerSec = pxPerSec;
+
+        this.params.scrollParent = true;
+
+        this.drawBuffer();
+
+        this.seekAndCenter(
+            this.getCurrentTime() / this.getDuration()
+        );
     },
 
     /**
