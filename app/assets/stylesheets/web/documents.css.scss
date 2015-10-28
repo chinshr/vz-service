@@ -52,9 +52,13 @@ body.documents {
         outline: none !important;
         height: 50px;
         margin: auto 2px;
-        width: 30px;
+        width: 22px;
         padding: 10px 0;
         border: 1px;
+      }
+
+      #profile-button {
+        width: 30px;
       }
 
       &.separator {
@@ -183,6 +187,11 @@ body.documents {
   } /* .sub-toolbar-nav */
 
   header.page-document-header {
+    .container-fluid {
+      padding-left: 10px;
+      padding-right: 10px;
+    }
+
     nav {
       .tooltip {
         font-weight: bold;
