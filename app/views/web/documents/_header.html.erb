@@ -1,16 +1,17 @@
 <header class="page-document-header">
   <div class="container-fluid topbar-primary">
     <nav class="navbar navbar-default" id="navigation" role="navigation">
-      <!-- Brand and toggle get grouped for better mobile display -->
-      <div class="navbar-header">
+      <div id="brand-navbar" class="navbar-header">
+<!--
         <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
           <span class="sr-only">Toggle navigation</span>
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <div class="dropdown xdropdown-toggle">
-          <button id="dropdownMenu1" class="dropdown-toggle" type="button" data-toggle="dropdown">
+ -->
+        <div class="dropdown">
+          <button id="dropdown-brand-button" class="dropdown-toggle" type="button" data-toggle="dropdown">
             <a id="logo" class="navbar-brand">VOYZ.ES</a>
             <span class="caret"></span>
           </button>
@@ -27,10 +28,10 @@
             <% end %>
           </ul>
         </div>
-      </div><!-- .navbar-header -->
+      </div><!-- #brand-navbar.navbar-header -->
 
-      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-        <!-- player -->
+      <div id="main-navbar" class="xnavbar-header">
+        <!-- player controls -->
         <ul id="media-player-toolbar-container" class="nav navbar-nav toolbar-nav audio-player-nav">
           <li><button title="<%= key_cmd(:play, 'Esc') %>" type="button" class="btn btn-lg btn-tlb fa fa-play fa-fw player player-play-pause" data-action="toggle-play-pause" data-toggle="tooltip" data-placement="bottom"></button></li>
           <li><button title="<%= key_cmd(:step_backward, "F1") %>" type="button" class="btn btn-md btn-tlb fa fa-backward fa-fw player player-step-backward" data-action="step-backward" data-toggle="tooltip" data-placement="bottom"></button></li>
@@ -49,10 +50,10 @@
           </li>
           <li><button title="<%= key_cmd(:mute) %>" type="button" class="btn btn-md btn-tlb fa fa-volume-up fa-fw player player-mute-toggle" data-action="toggle-mute" data-toggle="tooltip" data-placement="bottom"></button></li>
           <li><button type="button" class="btn btn-lg btn-tlb btn-elt"><p id="elt">00:00.0</p></button></li>
-          <li><button type="button" class="btn btn-lg btn-tlb btn-ttp"><p id="ttp">-00:00.0</p></button></li>
-          <li><button title="<%= key_cmd(:reset, 'Esc', [:shift_key]) %>" type="button" class="btn btn-md btn-tlb fa fa-stop fa-fw player player-reset" data-action="reset" data-toggle="tooltip" data-placement="bottom"></button></li>
+          <li><button type="button" class="btn btn-lg btn-tlb btn-dispensable-xs btn-ttp"><p id="ttp">-00:00.0</p></button></li>
+          <li><button title="<%= key_cmd(:reset, 'Esc', [:shift_key]) %>" type="button" class="btn btn-md btn-tlb btn-dispensable-xs fa fa-stop fa-fw player player-reset" data-action="reset" data-toggle="tooltip" data-placement="bottom"></button></li>
           <li class="separator">&nbsp;</li>
-          <li><button title="<%= key_cmd(:resize) %>" type="button" class="btn btn-md btn-tlb fa <%= waveform_visible? ? 'fa-compress' : 'fa-expand' %> fa-fw player player-resize-toggle" data-action="toggle-resize" data-toggle="tooltip" data-placement="bottom"></button></li>
+          <li><button title="<%= key_cmd(:resize) %>" type="button" class="btn btn-md btn-tlb btn-dispensable-xs fa <%= waveform_visible? ? 'fa-compress' : 'fa-expand' %> fa-fw player player-resize-toggle" data-action="toggle-resize" data-toggle="tooltip" data-placement="bottom"></button></li>
         </ul>
         <!-- /player -->
 
@@ -108,7 +109,7 @@
         <% end %>
 
         <!-- context menu -->
-        <ul class="nav navbar-nav toolbar-nav pull-right">
+        <ul class="nav navbar-nav navbar-right toolbar-nav">
           <% if current_user && (publish? || show?) && policy(@document).edit? %>
           <li><!-- edit button -->
             <a href="<%= edit_web_document_path(@document.slug_id) %>" title="Edit" id="edit-button" class="btn btn-md btn-tlb btn-edit fa fa-edit" type="button" data-toggle="tooltip" data-placement="bottom"></a>
@@ -163,7 +164,7 @@
           <% end %>
         </ul>
         <!-- /context menu -->
-      </div><!-- .collapse .navbar-collapse -->
+      </div>
     </nav>
   </div><!-- .container-fluid -->
 

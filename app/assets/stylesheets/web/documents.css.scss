@@ -11,10 +11,35 @@ body.documents {
     }
   }
 
+  /* Remove media query */
+  .navbar-header {
+    float: left;
+  }
+
+  .navbar-nav {
+    float: left;
+    margin: 0;
+
+    &.navbar-right {
+      float: right;
+      margin-right: 0;
+    }
+
+    li {
+      float: left;
+
+      @media (max-width: 479px) {
+
+        button.btn-dispensable-xs {
+          display: none;
+        }
+
+      }
+    }
+  }
+
   /* Used in toolbar and popover */
   .toolbar-nav {
-    padding-left: 20px;
-
     li {
       padding: 0;
 
@@ -278,7 +303,7 @@ body.documents {
           }
         }
 
-        .audio-player-nav {
+        ul.audio-player-nav {
           padding-left: 15px;
 
           li {
@@ -302,7 +327,19 @@ body.documents {
             }
           }
 
-        } /* .audio-player-nav */
+        } /* ul.audio-player-nav */
+
+        .uncollapse {
+          display: block !important;
+
+          &.navbar-uncollapse {
+            padding-right: 0;
+
+            height: auto !important;
+            padding-bottom: 0;
+            overflow: hidden !important;
+          }
+        }
 
         .navbar-collapse {
           padding-right: 0;

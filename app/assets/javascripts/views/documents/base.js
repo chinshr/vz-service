@@ -111,7 +111,7 @@ App.Views.DocumentsBase = Backbone.View.extend({
   initialize: function() {
     $(document).on('click', _.bind(this.playerToolbarHandler, this));
     $(document).on('keydown', _.bind(this.playerKeyboardHandler, this));
-    $(window).on('resize', _.bind(this.redrawWaveform, this))
+    // $(window).on('resize', _.bind(this.redrawWaveform, this))
 
     this.model.fetch({
       success: (function(_this) {
@@ -147,7 +147,7 @@ App.Views.DocumentsBase = Backbone.View.extend({
       audioRate     : 1,
       scrollParent  : true,
       normalize     : true,
-      minimap       : false,
+      minimap       : true,
       pixelRatio    : 2, // window.devicePixelRatio,
       // backend       : 'AudioElement',
       backend       : 'MediaElement',
@@ -274,7 +274,6 @@ App.Views.DocumentsBase = Backbone.View.extend({
       height: 15,
       waveColor: '#ddd',
       progressColor: '#999',
-      // cursorColor: '#999'
       cursorColor: '#5492ce',
     });
 
