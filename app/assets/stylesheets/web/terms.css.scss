@@ -1,6 +1,33 @@
 body.terms {
   background-color: #fff;
 
+  /* Remove media query */
+  .navbar-header {
+    float: left;
+  }
+
+  .navbar-nav {
+    float: left;
+    margin: 0;
+
+    &.navbar-right {
+      float: right;
+      margin-right: 0;
+    }
+
+    li {
+      float: left;
+
+      @media (max-width: 479px) {
+
+        button.btn-dispensable-xs {
+          display: none;
+        }
+
+      }
+    }
+  }
+
   header {
     #login-buttons {
       margin: 20px 0;
