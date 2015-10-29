@@ -163,6 +163,7 @@ App.Views.DocumentsBase = Backbone.View.extend({
       mediaControls : false,
       barWidth      : 0,        // bar width
       //minPxPerSec   : 20        // Minimum number of pixels per second of audio
+      autoplay      : true
     };
 
     /* Init playback speed slider */
@@ -214,7 +215,6 @@ App.Views.DocumentsBase = Backbone.View.extend({
       responseType: 'json',
       url: this.adjustProtocol(this.model.attributes.track.waveform_json_stream_url)
     }).on('success', _.bind(function (data) {
-      // console.log(data.left);
       this.wavesurfer.load(
         this.adjustProtocol(this.model.attributes.track.mp3_stream_url),
         zipData(data)
@@ -244,6 +244,7 @@ App.Views.DocumentsBase = Backbone.View.extend({
     });
 
     this.wavesurfer.on('ready', _.bind(function onReady() {
+      this.wavesurfer.pause();
       this.loadRegions();
       this.saveRegions();
       this.clearSegmentHighlights();
