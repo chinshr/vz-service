@@ -148,6 +148,7 @@ App.Views.DocumentsBase = Backbone.View.extend({
       scrollParent  : true,
       normalize     : true,
       minimap       : true,
+      minPxPerSec   : 10,        // Minimum number of pixels per second of audio
       pixelRatio    : 2, // window.devicePixelRatio,
       // backend       : 'AudioElement',
       backend       : 'MediaElement',
@@ -162,7 +163,6 @@ App.Views.DocumentsBase = Backbone.View.extend({
       mediaType     : 'audio',  // html element to create
       mediaControls : false,
       barWidth      : 0,        // bar width
-      //minPxPerSec   : 20        // Minimum number of pixels per second of audio
       autoplay      : true
     };
 
