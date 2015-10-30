@@ -6,7 +6,7 @@ App.Views.DocumentsPublish = App.Views.DocumentsBase.extend({
   },
 
   render: function() {
-    if (this.model.ok) {
+    if (this.model.ok === true) {
       this.initSharePopover().render();
       this.initPlayer();
       this.initContentViewerSelectionPopover().render();

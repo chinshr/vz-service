@@ -9,7 +9,7 @@ App.Views.DocumentsShow = App.Views.DocumentsBase.extend({
   render: function() {
     this.$el.html(this.template(this.model.attributes));
 
-    if (this.model.ok) {
+    if (this.model.ok === true) {
       this.initSharePopover().render();
       this.initPublishPopover().render();
       this.initEditor();
@@ -18,7 +18,7 @@ App.Views.DocumentsShow = App.Views.DocumentsBase.extend({
 
       $('#document-loading').hide();
       $('#document-show').show();
-    } else {
+    } else if (this.model.errors) {
       $('#loading').hide();
       $('#document-load-error').show();
     }
