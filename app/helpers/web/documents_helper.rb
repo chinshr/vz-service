@@ -30,7 +30,7 @@ module Web::DocumentsHelper
       content_for(:title, caption)
     end
 
-    def published_document_url(user_slug = nil, document_slug = nil)
+    def web_published_document_url(user_slug = nil, document_slug = nil)
       user_slug     ||= current_user.slug if defined?(current_user) && current_user
       document_slug ||= if @document && !@document.privacy_private? && @document.published?
         @document.slug
@@ -38,11 +38,11 @@ module Web::DocumentsHelper
       web_profile_document_url("@#{user_slug}", document_slug) if user_slug && document_slug
     end
 
-    def show_document_url
+    def web_show_document_url
       if @document && @document.privacy_private?
         web_document_url(@document.slug_id)
       elsif @document && !@document.privacy_private? && @document.published?
-        published_document_url
+        web_published_document_url
       end
     end
 

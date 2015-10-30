@@ -16,15 +16,22 @@
             <span class="caret"></span>
           </button>
           <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+            <% if current_user %>
             <li role="presentation"><a role="menuitem" href="/dashboard"><i class="fa fa-level-up"></i>Dashboard</a></li>
-            <% if (show? || edit?) && (policy(@document).edit? || policy(@document).show?) %>
+            <% if policy(@document).edit? || policy(@document).show? %>
             <li class="divider"></li>
             <% end %>
-            <% if show? && policy(@document).edit? %>
-            <li role="presentation"><a role="menuitem" href="<%= edit_web_document_path(@document.slug_id) %>"><i class="glyphicon glyphicon-pencil"></i>Edit</a></li>
+            <% if !edit? && policy(@document).edit? %>
+            <li role="presentation"><a role="menuitem" href="<%= edit_web_document_path(@document.slug_id) %>"><i class="fa fa-pencil"></i>Edit</a></li>
             <% end %>
-            <% if edit? && policy(@document).show? %>
-            <li role="presentation"><a role="menuitem" href="<%= web_document_path(@document.slug_id) %>"><i class="glyphicon glyphicon-eye-open"></i>Preview</a></li>
+            <% if !show? && policy(@document).show? %>
+            <li role="presentation"><a role="menuitem" href="<%= web_document_path(@document.slug_id) %>"><i class="fa fa-eye"></i>Preview</a></li>
+            <% end %>
+            <% if !publish? && policy(@document).publish? && @document.published? %>
+            <li role="presentation"><a role="menuitem" href="<%= web_published_document_url %>"><i class="fa fa-dot-circle-o"></i>Published</a></li>
+            <% end %>
+            <% else %>
+              <li role="presentation"><a role="menuitem" href="<%= new_user_session_path %>"><i class="fa fa-sign-in"></i>Login</a></li>
             <% end %>
           </ul>
         </div>
@@ -133,7 +140,7 @@
             <button title="More" id="more-edit-button" class="btn btn-md btn-tlb btn-popover btn-more-edit fa fa-ellipsis-h" type="button" data-toggle="tooltip popover" data-placement="bottom" data-target="more-edit-popover-template" data-popover-id="more-edit-popover" data-popover-class="dropdown-popover more-edit-popover"></button>
             <script type="text/html" id="more-edit-popover-template">
             <ul class="popdown-menu">
-              <li role="presentation"><a role="menuitem" href="<%= show_document_url %>">Cancel Editing</a></li>
+              <li role="presentation"><a role="menuitem" href="<%= web_show_document_url %>">Cancel Editing</a></li>
             </ul>
             </script>
           </li><!-- /more-edit -->
