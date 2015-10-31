@@ -175,12 +175,15 @@ class DocumentTest < ActiveSupport::TestCase
       assert_equal [], @document.accessibility
       @document.accessibility = :view
       assert_equal ["view"], @document.accessibility
+      assert_equal true, @document.accessibility_viewable?
 
       @document.accessibility = :comment
       assert_equal ["comment"], @document.accessibility
+      assert_equal true, @document.accessibility_commentable?
 
       @document.accessibility = :edit
       assert_equal ["edit"], @document.accessibility
+      assert_equal true, @document.accessibility_editable?
 
       @document.accessibility = :foobar
       assert_equal [], @document.accessibility

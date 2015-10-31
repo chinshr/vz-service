@@ -63,13 +63,6 @@ class Api::DocumentsControllerTest < ActionController::TestCase
   end
 
   context "GET /api/documents/:id" do
-    should "get public document when not signed in" do
-      get :show, :id => @document1, format: :json
-      assert_response :success
-      assert_response_body_attributes_with "document"
-      assert response_body['document']['track']['mp3_stream_url'], "should have stream URL"
-    end
-
     should "not get private document when not signed in" do
       get :show, :id => @document2, format: :json
       assert_response :unauthorized
@@ -98,23 +91,45 @@ class Api::DocumentsControllerTest < ActionController::TestCase
         @document2.update_attributes(privacy: [:public], accessibility: [])
       end
 
-      should "get owners public document when signed in as owner" do
-        sign_in :user, @user2
-        get :show, :id => @document2, format: :json
-        assert_response :success
+      context "not signed-in" do
+        should "#get when unpublished, viewable" do
+          @document2.update_attributes(accessibility: [:view])
+          assert_equal false, @document2.published?
+          get :show, :id => @document2, format: :json
+          assert_response :success
+          assert_response_body_attributes_with "document"
+          assert response_body['document']['track']['mp3_stream_url'], "should have stream URL"
+        end
+
+        should "#get when published, no accessibility" do
+          @document2.update_attributes(accessibility: [])
+          @document2.publish!
+          get :show, :id => @document2, format: :json
+          assert_response :success
+          assert_response_body_attributes_with "document"
+          assert response_body['document']['track']['mp3_stream_url'], "should have stream URL"
+        end
       end
 
-      should "not get public document whithout accessibility" do
-        sign_in :user, @user1
-        get :show, :id => @document2, format: :json
-        assert_response :unauthorized
-      end
+      context "signed-in" do
+        should "get owners public document when signed in as owner" do
+          sign_in :user, @user2
+          get :show, :id => @document2, format: :json
+          assert_response :success
+        end
 
-      should "get public document when viewable" do
-        @document2.update_attributes(accessibility: [:view])
-        sign_in :user, @user1
-        get :show, :id => @document2, format: :json
-        assert_response :success
+        should "not get public document whithout accessibility" do
+          sign_in :user, @user1
+          get :show, :id => @document2, format: :json
+          assert_response :unauthorized
+        end
+
+        should "get public document when viewable" do
+          @document2.update_attributes(accessibility: [:view])
+          sign_in :user, @user1
+          get :show, :id => @document2, format: :json
+          assert_response :success
+        end
       end
     end
 
