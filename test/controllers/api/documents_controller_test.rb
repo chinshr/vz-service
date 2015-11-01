@@ -98,15 +98,17 @@ class Api::DocumentsControllerTest < ActionController::TestCase
           get :show, :id => @document2, format: :json
           assert_response :success
           assert_response_body_attributes_with "document"
+          assert_equal 0, response_body['document']['status']
           assert response_body['document']['track']['mp3_stream_url'], "should have stream URL"
         end
 
         should "#get when published, no accessibility" do
           @document2.update_attributes(accessibility: [])
-          @document2.publish!
+          assert_equal true, @document2.publish!
           get :show, :id => @document2, format: :json
           assert_response :success
           assert_response_body_attributes_with "document"
+          assert_equal 1, response_body['document']['status']
           assert response_body['document']['track']['mp3_stream_url'], "should have stream URL"
         end
       end
@@ -260,7 +262,7 @@ class Api::DocumentsControllerTest < ActionController::TestCase
   protected
 
   def assert_attributes(params, expected_attributes = {})
-    (expected_attributes.keys + %w(id title description html rich_text text uid tag_list locale privacy accessibility slug slug_id published_path published_at)).each do |attribute|
+    (expected_attributes.keys + %w(id title description html rich_text text uid tag_list locale privacy accessibility slug slug_id published_path published_at status)).each do |attribute|
       assert params.has_key?(attribute), "should containt key '#{attribute}' in response '#{params}'"
     end
 
