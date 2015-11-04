@@ -52,8 +52,8 @@ App.Views.UploadsEdit = App.Views.UploadsBase.extend({
               var results = [];
               $.each(data.tags, function(index, item){
                 results.push({
-                  id: item.id,
-                  text: item.name
+                  text: item.name,
+                  id: item.name  // item.id,
                 });
               });
               return {results: results, more: false};

@@ -105,7 +105,7 @@ gem 'psych'
 gem 'gingerice'
 gem 'redcarpet'
 gem 'coderay'
-gem 'acts-as-taggable-on'
+gem 'acts-as-taggable-on', '~> 3.4'
 gem 'pundit'
 gem 'highcharts-rails', "~> 3.0.0"
 gem 'rack-reverse-proxy', require: "rack/reverse_proxy"
