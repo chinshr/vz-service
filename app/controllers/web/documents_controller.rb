@@ -15,6 +15,7 @@ class Web::DocumentsController < Web::ApplicationController
     authorize @document
   end
 
+  # TODO: still needed?
   def stream
     redirect_to @document.tracks.last.stream_url
   end
