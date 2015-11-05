@@ -198,11 +198,6 @@ class Ingest < ActiveRecord::Base
 
   end
 
-  # permissible events
-  def events
-    aasm.events(aasm.current_state) - [:process, :fail, :finish]
-  end
-
   def continue_processing?
     !stage.blank? && starting?
   end

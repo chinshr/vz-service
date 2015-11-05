@@ -269,7 +269,7 @@ class IngestTest < ActiveSupport::TestCase
       assert_equal :starting, ingest.state
       ingest.event = "process"
       assert_equal :started, ingest.state
-      assert_equal [:stop, :remove, :restart], ingest.events
+      assert_equal [:stop, :remove, :process, :finish, :fail, :restart], ingest.events
 
       ingest = FactoryGirl.create(:ingest_audio, :terminate => true, :busy => true)
       assert_equal :starting, ingest.state
