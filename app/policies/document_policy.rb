@@ -25,6 +25,6 @@ class DocumentPolicy < ApplicationPolicy
   end
 
   def permitted_attributes(controller = nil)
-    [:title, :description, {:tag_list => []}, :locale, :privacy, :accessibility, :html, :rich_text, :text, :status, :event]
+    [:title, :description, {:tag_list => []}, :locale, :privacy, :accessibility, :html, :rich_text, :text, :event]
   end
 end
