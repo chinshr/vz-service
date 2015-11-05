@@ -16,9 +16,6 @@ module Model::AASM::Support
   extend ActiveSupport::Concern
 
   included do
-    alias_method_chain :aasm_write_state, :status
-    alias_method_chain :aasm_write_state_without_persistence, :status
-
     validate :check_status
     validates :state, :presence => true
 
@@ -46,7 +43,7 @@ module Model::AASM::Support
     if status != value  # CHANGED: self[:status] != value
       events = []
       if to_state = self.class.aasm_status_lookup.key(value)
-        events = self.class.aasm.events.values.select { |e| e.transitions_to_state?(to_state) && e.may_fire?(self, to_state) }
+        events = self.class.aasm.events.select { |e| e.transitions_to_state?(to_state) && e.may_fire?(self, to_state) }
       end
       unless call_transition_to_state_with(events, to_state)
         @status_error = true
@@ -56,18 +53,13 @@ module Model::AASM::Support
 
   # force an event to fire
   def event=(value)
-    events = self.class.aasm.events.values.select {|e| e.name == value.to_sym && e.may_fire?(self)}
-    call_transition_with(events)
+    send(:"#{value}") if value && respond_to?(:"#{value}")
+  rescue AASM::InvalidTransition => ex
+    @status_error = ex.message
   end
 
-  def aasm_write_state_with_status(state)
-    # write_attribute(:status, self.class.aasm_status_lookup[state])
-    aasm_write_state_without_status(state)
-  end
-
-  def aasm_write_state_without_persistence_with_status(state)
-    # write_attribute(:status, self.class.aasm_status_lookup[state])
-    aasm_write_state_without_persistence_without_status(state)
+  def events
+    aasm.events(state: :started, permitted: true).map {|e| e.name}
   end
 
   protected
@@ -87,18 +79,22 @@ module Model::AASM::Support
   private
 
   def may_transition?(events, to_state = nil)
-    events.present? ? events.any? {|e| e.may_fire?(self, to_state)} : false
+    if to_state
+      events.present? ? events.any? {|e| e.may_fire?(self, to_state)} == to_state : false
+    else
+      events.present? ? events.any? {|e| e.may_fire?(self, to_state)} : false
+    end
   end
 
   def call_transition_to_state_with(events, to_state)
-    if event = events.find {|e| e.may_fire?(self, to_state) ? e : false}
+    if event = events.find {|e| e.may_fire?(self, to_state) == to_state ? e : false}
       return send(:"#{event.name}")
     end
     false
   end
 
   def call_transition_with(events, to_state = nil)
-    if event = events.find {|e| e.may_fire?(self, to_state) ? e : false}
+    if event = events.find {|e| e.may_fire?(self, to_state) == to_state ? e : false}
       return send(:"#{event.name}")
     end
     false
