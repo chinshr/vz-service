@@ -210,9 +210,10 @@ class Api::DocumentsControllerTest < ActionController::TestCase
 
     should "not publish private document" do
       sign_in :user, @user2
+      assert_equal true, @document2.privacy_private?
       assert_equal 0, @document2.status
       put :update, {:id => @document2.id, :document => {
-        status: 1,
+        event: "publish",
         html: "<p>Published content.</p>"
       }, format: :json}
       assert_response :unprocessable_entity
@@ -222,7 +223,7 @@ class Api::DocumentsControllerTest < ActionController::TestCase
       sign_in :user, @user1
       assert_equal true, @document1.unpublish!
       put :update, {:id => @document1.id, :document => {
-        status: 1,
+        event: "publish",
         html: "<p>Published content.</p>"
       }, format: :json}
       assert_response :success

@@ -153,7 +153,6 @@ class Api::IngestsControllerTest < ActionController::TestCase
 
     should "change ingest state to 'started' via #status=" do
       sign_in :user, @user2
-      #@ingest2.start!
       assert_equal :starting, @ingest2.state
       put :update, {:id => @ingest2.id, :ingest => {
         stage: "start", progress: 1, status: Ingest::STATE_STARTED
