@@ -47,7 +47,7 @@
             <button title="<%= key_cmd(:playback_speed) %>" type="button" id="playback-speed-btn" class="btn btn-lg btn-tlb btn-speed player dropdown-toggle" data-toggle="dropdown"><p>1×</p></button>
             <ul id="playback-speed-menu" class="dropdown-menu">
               <li>
-                <ul class="toolbar-nav sub-toolbar-nav">
+                <ul class="toolbar-nav sub-toolbar-nav speed-slider-nav">
                   <li><button title="<%= key_cmd(:slower, "F3") %>" type="button" class="btn btn-md btn-tlb fa fa-angle-down fa-fw player player-step-backward" data-action="playback-rate-down" data-toggle="tooltip" data-placement="left"></button></li>
                   <li class="slider-container"><input id="playback-speed-slider" class="playback-speed-slider"/></li>
                   <li><button title="<%= key_cmd(:faster, "F4") %>" type="button" class="btn btn-md btn-tlb fa fa-angle-up fa-fw player player-step-backward" data-action="playback-rate-up" data-toggle="tooltip" data-placement="right"></button></li>

@@ -36,6 +36,10 @@ body.documents {
 
       }
     }
+
+    .open .dropdown-menu {
+      position: absolute;
+    }
   }
 
   /* Used in toolbar and popover */
@@ -155,28 +159,33 @@ body.documents {
 
   } /* .toolbar-nav */
 
-  ul.sub-toolbar-nav {
+  ul.speed-slider-nav {
     padding-left: 3px;
 
     li {
       display: inline;
 
-      #playback-speed-slider-wrapper {
-        margin-top: 4px;
-        width: 100px;
+      &.slider-container {
+        width: auto;
 
-        .slider-track {
-          height: 5px;
+        #playback-speed-slider-wrapper {
+          margin: 12px 0 8px 0;
+          width: 105px;
+          height: 30px;
+
+          .slider-track {
+            height: 5px;
+          }
+
+          .slider-handle {
+            height: 15px;
+            width: 15px;
+          }
         }
 
-        .slider-handle {
-          height: 15px;
-          width: 15px;
+        input.playback-speed-slider {
+          margin: 0 2px;
         }
-      }
-
-      input.playback-speed-slider {
-        margin: 0 2px;
       }
 
       button, a {
