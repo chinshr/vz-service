@@ -459,8 +459,16 @@ body.account {
             display: block;
             margin: 0 -25px 0 -25px;
             overflow: hidden;
-            background-color: #000;
-            xbackground-size: cover;
+            background-color: #292d33;
+
+            .img {
+              background: #292d33 image-url('bg/waveform-icon-white.png') no-repeat center;
+              background-size: 65% 65%;
+              xbackground-size: cover;
+              width: auto;
+              height: 225px;
+              position: 0;
+            }
 
             img {
               margin: -5px;

@@ -42,8 +42,9 @@
       </div><!-- .panel-body -->
       <div class="panel-background">
         <div class="action-panel">
-          <div class="action-panel-bg-holder">
-            <img src="/assets/bg/waveform-icon-white.png" />
+          <div class="action-panel-bg-holder img">
+            <div class="img"></div>
+            <!-- <img src="/assets/bg/waveform-icon-white.png" /> -->
           </div>
           <div class="action-panel-btn-group">
             <button class="btn btn-primary btn-lg btn-panel-action action-update"><i class="glyphicon glyphicon-wrench"></i>&nbsp;Settings</button>
