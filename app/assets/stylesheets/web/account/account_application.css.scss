@@ -90,7 +90,7 @@ body.account {
   }
 
   .blankstate-plain {
-    background: #242424 image-url('backgrounds/cartographer.png') bottom left repeat;
+    background: #242424 image-url('bg/cartographer.png') bottom left repeat;
   }
 
   /* for high resolution display */
@@ -101,9 +101,9 @@ body.account {
   }
 
   .blankstate-secondary {
-    background: #242424 image-url('backgrounds/cartographer.png') bottom left repeat;
-    background: -webkit-linear-gradient(270deg, rgba(63, 97, 105, 0) 0%, rgba(63, 97, 105, 0.1) 40%, rgba(63, 97, 105, 0.6) 100%), image-url('backgrounds/cartographer.png') bottom right;
-    background: linear-gradient(180deg, rgba(63, 97, 105, 0) 0%, rgba(63, 97, 105, 0.1) 40%, rgba(63, 97, 105, 0.6) 100%), image-url('backgrounds/cartographer.png') bottom right;
+    background: #242424 image-url('bg/cartographer.png') bottom left repeat;
+    background: -webkit-linear-gradient(270deg, rgba(63, 97, 105, 0) 0%, rgba(63, 97, 105, 0.1) 40%, rgba(63, 97, 105, 0.6) 100%), image-url('bg/cartographer.png') bottom right;
+    background: linear-gradient(180deg, rgba(63, 97, 105, 0) 0%, rgba(63, 97, 105, 0.1) 40%, rgba(63, 97, 105, 0.6) 100%), image-url('bg/cartographer.png') bottom right;
     background-color: #242424;
     background-size: cover;
   }
