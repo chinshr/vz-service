@@ -38,7 +38,9 @@
                 <% if false %>
                 <li><a href="<%= request.path == web_account_billing_path ? '#' : web_account_billing_path %>">Billing Information</a></li>
                 <% end %>
+                <% if current_user.developer_role? %>
                 <li><a href="/documentation">Documentation</a></li>
+                <% end %>
                 <li class="divider"></li>
                 <li class="logout">
                   <%= link_to "Logout", destroy_user_session_path, :method => :delete, :class => "btn btn-small btn-danger" %>
