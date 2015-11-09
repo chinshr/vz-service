@@ -30,7 +30,7 @@ You may not use as a username the name of another person or entity or that is no
 
 Our Service may contain links to third-party web sites or services that are not owned or controlled by VOYZES, Inc.
 
-Voyzes Record Your Life has no control over, and assumes no responsibility for, the content, privacy policies, or practices of any third party web sites or services. You further acknowledge and agree that Voyzes Record Your Life shall not be responsible or liable, directly or indirectly, for any damage or loss caused or alleged to be caused by or in connection with use of or reliance on any such content, goods or services available on or through any such web sites or services.
+VOYZES, Inc. has no control over, and assumes no responsibility for, the content, privacy policies, or practices of any third party web sites or services. You further acknowledge and agree that VOYZES, Inc. shall not be responsible or liable, directly or indirectly, for any damage or loss caused or alleged to be caused by or in connection with use of or reliance on any such content, goods or services available on or through any such web sites or services.
 
 We strongly advise you to read the terms and conditions and privacy policies of any third-party web sites or services that you visit.
 
@@ -48,9 +48,9 @@ All provisions of the Terms which by their nature should survive termination sha
 
 ## Indemnification
 
-You agree to defend, indemnify and hold harmless Voyzes Record Your Life and its licensee and licensors, and their employees, contractors, agents, officers and directors, from and against any and all claims, damages, obligations, losses, liabilities, costs or debt, and expenses (including but not limited to attorney's fees), resulting from or arising out of a) your use and access of the Service, by you or any person using your account and password, or b) a breach of these Terms.
+You agree to defend, indemnify and hold harmless VOYZES, Inc. and its licensee and licensors, and their employees, contractors, agents, officers and directors, from and against any and all claims, damages, obligations, losses, liabilities, costs or debt, and expenses (including but not limited to attorney's fees), resulting from or arising out of a) your use and access of the Service, by you or any person using your account and password, or b) a breach of these Terms.
 
-You agree to defend, indemnify and hold harmless Voyzes Record Your Life and its licensee and licensors, and their employees, contractors, agents, officers and directors, from and against any and all claims, damages, obligations, losses, liabilities, costs or debt, and expenses (including but not limited to attorney's fees), resulting from or arising out of a) your use and access of the Service, by you or any person using your account and password; b) a breach of these Terms, or c) Content posted on the Service.
+You agree to defend, indemnify and hold harmless VOYZES, Inc. and its licensee and licensors, and their employees, contractors, agents, officers and directors, from and against any and all claims, damages, obligations, losses, liabilities, costs or debt, and expenses (including but not limited to attorney's fees), resulting from or arising out of a) your use and access of the Service, by you or any person using your account and password; b) a breach of these Terms, or c) Content posted on the Service.
 
 ## Limitation Of Liability
 
