@@ -151,8 +151,7 @@ class UploadTest < ActiveSupport::TestCase
   end # context "delegate"
 
   should "humanize file name" do
-    assert_equal "I like pickles", Upload::AudioUpload.new(file_name: "i_like_pickles.m4a").humanized_file_name
-    assert_equal "I like pickles", Upload::AudioUpload.new(file_name: "i-like-pickles.m4a").humanized_file_name
+    assert_equal "I Like Pickles", Upload::AudioUpload.new(file_name: "i_like_pickles.m4a").humanized_file_name
   end
 
   should "have s3_key" do

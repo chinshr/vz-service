@@ -101,7 +101,7 @@ class Upload < ActiveRecord::Base
       return if result.blank?
       result = result.split(".").first unless result.blank?
       result.gsub!(/[-+]+/, ' ') unless result.blank?
-      result = result.humanize unless result.blank?
+      result = result.titleize unless result.blank?
       result
     end
 
