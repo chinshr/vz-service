@@ -2,6 +2,10 @@ class ActiveAdmin::BaseController
   http_basic_authenticate_with :name => "access", :password => "secret"
 end
 
+class ActiveAdmin::Devise::SessionsController
+  http_basic_authenticate_with :name => "access", :password => "secret"
+end
+
 ActiveAdmin.setup do |config|
 
   # == Site Title
