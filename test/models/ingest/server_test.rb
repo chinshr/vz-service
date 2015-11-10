@@ -295,6 +295,32 @@ class Ingest::ServerTest < ActiveSupport::TestCase
       end
     end
 
+    context "#without_processes" do
+      should "be empty" do
+        assert_nil Ingest::Server.without_processes.first
+      end
+
+      should "find server without processes" do
+        server = FactoryGirl.create(:cpw_ingest_server, max_processes: 1, aasm_state: "enabled")
+        assert_equal server, Ingest::Server.without_processes.first
+      end
+
+      should "not find server without processes" do
+        server = FactoryGirl.create(:cpw_ingest_server, max_processes: 1, aasm_state: "enabled")
+        server.ingests << FactoryGirl.create(:ingest_audio)
+        assert_equal nil, Ingest::Server.without_processes.first
+      end
+
+      should "find server with deleted processes" do
+        server = FactoryGirl.create(:cpw_ingest_server, max_processes: 1, aasm_state: "enabled")
+        ingest = FactoryGirl.create(:ingest_audio)
+        server.ingests << ingest
+        server.ingests.delete(ingest)
+        assert_equal server, Ingest::Server.without_processes.first
+      end
+
+    end
+
     context "#available" do
       should "be empty" do
         assert_nil Ingest::Server.available.first

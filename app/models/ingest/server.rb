@@ -32,6 +32,11 @@ class Ingest::Server < ActiveRecord::Base
   scope :with_tenancy, -> (tenancy) {
     where("ingest_servers.tenancy_mask & #{tenancy_mask(tenancy)} > 0")
   }
+  scope :without_processes, -> {
+    select("ingest_servers.*, (SELECT COUNT(ingest_processes.id) FROM ingest_processes WHERE ingest_processes.server_id = ingest_servers.id) AS processes_count")
+      .having("(SELECT COUNT(ingest_processes.id) FROM ingest_processes WHERE ingest_processes.server_id = ingest_servers.id) = 0")
+      .group("ingest_servers.id")
+  }
 
   aasm column: 'aasm_state' do
     state :pending, initial: true
