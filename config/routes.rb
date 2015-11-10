@@ -12,8 +12,11 @@ Voyzes::Application.routes.draw do
     put "/users/confirmation" => "web/devise/confirmations#update", :as => :update_user_confirmation
   end
 
-  # sidekick
-  mount Sidekiq::Web, at: "/sidekiq"
+  # sidekiq
+  active_admin_constraint = lambda {|request| request.env["warden"].authenticate? && request.env['warden'].user && request.env['warden'].user.is_a?(AdminUser)}
+  constraints active_admin_constraint do
+    mount Sidekiq::Web, at: "/admin/sidekiq"
+  end
 
   # site
   root 'web/pages#index'
