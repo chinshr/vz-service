@@ -72,7 +72,7 @@ class Ingest < ActiveRecord::Base
     state :resetting, :after_enter => :after_enter_resetting
     state :reset, :enter => :enter_reset
     state :removing, :enter => :enter_removing, :after_enter => :after_enter_removing
-    state :removed, :enter => :enter_removed
+    state :removed, :enter => :enter_removed, :after_enter => :after_enter_removed
     state :finished, :enter => :enter_finished, :after_enter => :after_enter_finished
     state :restarting, :after_exit => :after_exit_restarting, :after_enter => :after_enter_restarting
 
@@ -366,7 +366,7 @@ class Ingest < ActiveRecord::Base
   end
 
   def after_enter_stopped
-    stop_servers
+    remove_servers
   end
 
   def enter_reset
@@ -384,7 +384,7 @@ class Ingest < ActiveRecord::Base
   end
 
   def after_enter_finished
-    stop_servers
+    remove_servers
   end
 
   def enter_removing
@@ -394,6 +394,10 @@ class Ingest < ActiveRecord::Base
   def enter_removed
     self.terminate  = false
     self.removed_at = Time.now.utc
+  end
+
+  def after_enter_removed
+    remove_servers
   end
 
   def after_enter_restarting
@@ -414,14 +418,13 @@ class Ingest < ActiveRecord::Base
   end
 
   def async_server_update(server = nil)
+    # TODO: should this be moved into prune chron job
     server.stop if server && server.ingests.count == 0
   end
 
-  private
-
-  def stop_servers
+  def remove_servers
     # will shutdown (stop) server(s) using an
-    # on :after_remove callback on ingests assocation
+    # on :after_remove callback on ingests association
     # and starting Ingest::Server::StopJob job.
     servers.each do |server|
       server.ingests.delete(self)
