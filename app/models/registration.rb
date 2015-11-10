@@ -1,5 +1,6 @@
 class Registration < ActiveRecord::Base
   include AASM
+  include Model::AASM::Support
 
   geocoded_by :ip_address, :latitude  => :lat, :longitude => :lng
   reverse_geocoded_by :lat, :lng do |record, results|
