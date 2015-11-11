@@ -4,7 +4,7 @@ module Model::Filter
     base.send :class_attribute, :filter_scopes_list
     base.send :filtered_scopes # initalize filter_scopes even if they are not called in the included class
   end
-  
+
   module ClassMethods
     PRIORITY_KEYS = ["limit", "offset"].freeze
     EXCEPTED_KEYS = ["id", "action", "controller", "format"].freeze
@@ -20,7 +20,7 @@ module Model::Filter
         key, value = tuple.first, tuple.last
         if self.scopes.map(&:to_s).include?(key)
           value = ((key == "offset" || key == "limit") && value.to_i <= 0) ? 0 : value
-         
+
           if key == "sort_order"
             Array.wrap(value).flatten.each do |v|
               begin

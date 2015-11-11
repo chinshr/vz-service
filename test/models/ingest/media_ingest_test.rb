@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class Ingest::TranscribableIngestTest < ActiveSupport::TestCase
+class Ingest::MediaIngestTest < ActiveSupport::TestCase
   setup do
     ActionMailer::Base.deliveries.clear
   end
