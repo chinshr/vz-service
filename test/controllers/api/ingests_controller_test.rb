@@ -228,7 +228,7 @@ class Api::IngestsControllerTest < ActionController::TestCase
     assert_equal false, params.blank?, "response should not be empty"
     (expected_attributes.keys + %w(id upload_id document_id type status
       updated_at created_at started_at stopped_at restarted_at reset_at removed_at finished_at
-      progress messages stage iteration busy terminate uid workflow_stage_names previous_stage_name next_stage_name)).each do |attribute|
+      progress messages stage iteration busy terminate uid locale workflow_stage_names previous_stage_name next_stage_name)).each do |attribute|
       assert params.has_key?(attribute), "should contain key '#{attribute}' in response '#{params}'"
     end
 

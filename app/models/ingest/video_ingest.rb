@@ -1,4 +1,5 @@
-class Ingest::VideoIngest < ::Ingest::TranscribableIngest
+class Ingest::VideoIngest < Ingest
+  include Model::Ingest::MediaIngest
 
   class << self
     def generate_uid

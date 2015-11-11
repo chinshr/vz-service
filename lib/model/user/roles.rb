@@ -49,20 +49,6 @@ module Model::User::Roles
       roles.include?(:developer) || roles.include?(:admin)
     end
 
-=begin
-    # Similar to ActiveSupport::StringInquirer but for only roles
-    # Provides methods such as user.admin_role? and user.backend_role? which returns a boolean
-    def method_missing(method_name, *arguments)
-      inquiry = method_name[/(\w+)_role\?/, 1].try(:to_sym)
-
-      if inquiry && ROLES.include?(inquiry)
-        self.roles.include?(inquiry)
-      else
-        super
-      end
-    end
-=end
-
     private
 
     def create_role
