@@ -45,7 +45,7 @@ class Ingest < ActiveRecord::Base
 
   # public scopes
   filtered_scopes :sort_order, :reverse_sort, :any_of_status, :none_of_status,
-    :document_id
+    :document_id, :is_busy, :is_terminated
   scope :sort_order, -> (param) {
     case param.first[0]  # E.g. get first key of {"id"=>"asc"}
     when "id"
@@ -61,76 +61,61 @@ class Ingest < ActiveRecord::Base
     map {|s| s.match(/^([\-]{,1}[0-9]+)$/) ? s : nil}.reject(&:blank?).map {|s| Ingest::STATES.key(s.to_i)}.uniq)}
   scope :none_of_status, -> (params) {where("ingests.aasm_state NOT IN (?)", [params].flatten.map(&:to_s).
     map {|s| s.match(/^([\-]{,1}[0-9]+)$/) ? s : nil}.reject(&:blank?).map {|s| Ingest::STATES.key(s.to_i)}.uniq)}
-  scope :document_id, -> (params) {where(document_id: params)}
+  scope :document_id, -> (params) { where(document_id: params) }
+  scope :is_busy, -> (param) { where("ingests.busy = ?", Model::Helper.booleanize(param)) }
+  scope :is_terminated, -> (param) { where("ingests.terminate = ?", Model::Helper.booleanize(param)) }
 
   aasm column: 'aasm_state' do
     state :created, initial: true
     state :starting, :enter => :enter_starting, :after_enter => :after_enter_starting
     state :started, :enter => :enter_started
-    state :stopping, :after_enter => :after_enter_stopping
+    state :stopping, :enter => :enter_stopping, :after_enter => :after_enter_stopping
     state :stopped, :enter => :enter_stopped, :after_enter => :after_enter_stopped
     state :resetting, :after_enter => :after_enter_resetting
-    state :reset, :enter => :enter_reset
+    state :reset, :enter => :enter_reset, :after_enter => :after_enter_reset
     state :removing, :enter => :enter_removing, :after_enter => :after_enter_removing
     state :removed, :enter => :enter_removed, :after_enter => :after_enter_removed
     state :finished, :enter => :enter_finished, :after_enter => :after_enter_finished
     state :restarting, :after_exit => :after_exit_restarting, :after_enter => :after_enter_restarting
 
-    event :start do
+    event :start, :after_commit => :after_commit_event_start do
       transitions :from => [:created, :stopped, :reset], :to => :starting, :guard => :has_valid_upload?
     end
 
-    event :stop do
+    event :stop, :after_commit => :after_commit_event_stop do
       transitions :from => :started, :to => :stopping
     end
 
-    event :reset do
+    event :reset, :after_commit => :after_commit_event_reset do
       transitions :from => [:stopped, :finished], :to => :resetting
     end
 
-    event :remove do
+    event :remove, :after_commit => :after_commit_event_remove do
       transitions :from => [:created, :starting, :started, :stopping, :stopped, :resetting, :reset, :removing, :finished], :to => :removing
     end
 
-    event :process do
+    event :process, :after_commit => :after_commit_event_process do
       transitions :from => [:starting, :restarting, :started], :to => :started
-      transitions :from => [:stopping, :stopped], :to => :stopped
-      transitions :from => [:resetting, :reset], :to => :reset
-      transitions :from => [:removing, :removed], :to => :removed
+      transitions :from => [:stopping, :stopped], :to => :stopped, :guard => :not_busy?
+      transitions :from => [:resetting, :reset], :to => :reset, :guard => :not_busy?
+      transitions :from => [:removing, :removed], :to => :removed, :guard => :not_busy?
       transitions :from => :restarting, :to => :started
     end
 
-    event :finish do
+    event :finish, :after_commit => :after_commit_event_finish do
       transitions :from => [:started, :finished, :stopped], :to => :finished
     end
 
-    event :fail do
+    event :fail, :after_commit => :after_commit_event_fail do
       transitions :from => [:created, :starting, :started, :stopping, :stopped, :resetting, :reset, :removing], :to => :stopped
     end
 
-    event :restart do
+    event :restart, :after_commit => :after_commit_event_restart do
       transitions :from => [:starting, :started], :to => :restarting
     end
   end
 
   class << self
-    def stages
-      st = Worker::Ingest::Base.subclasses.map {|k| [k.stage_name, k.workflow_stage_id || -1]}
-      st.sort_by! {|t| t.last}
-      st.inject(ActiveSupport::OrderedHash.new) {|h, t| h.merge({t.first => t.last}) }
-    end
-
-    def stage_names
-      stages.map {|t| t.first}
-    end
-
-    def workflow_stages
-      stages.select {|k, v| v.to_i > 0}
-    end
-
-    def workflow_stage_names
-      workflow_stages.map {|t| t.first}
-    end
 
     # Type casts to the class specified in :type parameter
     #
@@ -154,10 +139,6 @@ class Ingest < ActiveRecord::Base
     # TODO: obsolete
     def policy_class
       IngestPolicy
-    end
-
-    def queue_name_for(stage_name)
-      "#{stage_name.to_s.upcase}_#{Rails.env.upcase}_QUEUE"
     end
 
     def generate_uid
@@ -196,10 +177,10 @@ class Ingest < ActiveRecord::Base
       klass
     end
 
-  end
+  end  # ClassMethods
 
-  def continue_processing?
-    !stage.blank? && starting?
+  def stages
+    []
   end
 
   def log(name, message)
@@ -215,6 +196,10 @@ class Ingest < ActiveRecord::Base
   def log!(name, message)
     log(name, message)
     save!
+  end
+
+  def purge_log!
+    update_attribute(:messages, nil)
   end
 
   # set_progress! 10 => 10%
@@ -246,6 +231,20 @@ class Ingest < ActiveRecord::Base
       save(:validate => false)
     end
   end
+
+  # NOT inverse
+  def not_busy?; !busy?; end
+  def not_terminated?; !terminate?; end
+  def not_created?; !created?; end
+  def not_starting?; !starting?; end
+  def not_started?; !started?; end
+  def not_stopping?; !stopping?; end
+  def not_stopped?; !stopped?; end
+  def not_resetting?; !resetting?; end
+  def not_reset?; !reset?; end
+  def not_removing?; !removing?; end
+  def not_finished?; !finished?; end
+  def not_restarting?; !restarting?; end
 
   def progress
     self[:progress].round if self[:progress]
@@ -315,76 +314,44 @@ class Ingest < ActiveRecord::Base
     end
   end
 
-  def current_stage_name
-    stage.to_sym if stage && self.class.stages[stage.to_sym].to_i > 0
-  end
-
-  def next_stage_name
-    if current_stage_name
-      workflow_stage_names[workflow_stage_names.index(current_stage_name) + 1]
-    end
-  end
-
-  def previous_stage_name
-    if current_stage_name && workflow_stage_names.index(current_stage_name) - 1 >= 0
-      workflow_stage_names[workflow_stage_names.index(current_stage_name) - 1]
-    end
-  end
-
-  def workflow_stage_names
-    # Note: TBD, we can remove a stage based on the user's subscription.
-    @workflow_stage_names ||= begin
-      self.class.workflow_stage_names
-    end
+  def reset_stage!
+    # overload in subclass
+    update_attribute(:aasm_stage, nil)
   end
 
   protected
+
+  #--- enter
 
   def enter_starting
     self.terminate = false
     self.busy      = false
   end
 
-  def after_enter_starting; end
-
-  def after_enter_stopping
-    self.terminate = true
-  end
-
-  def after_enter_resetting
+  def enter_stopping
     self.terminate = true
   end
 
   def enter_started
-    self.started_at = Time.now.utc
+    self.started_at = Time.zone.now
   end
 
   def enter_stopped
-    self.stopped_at = Time.now.utc
+    self.stopped_at = Time.zone.now
     self.terminate  = false
     self.busy       = false
   end
 
-  def after_enter_stopped
-    remove_servers
-  end
-
   def enter_reset
-    self.reset_at  = Time.now.utc
+    self.reset_at  = Time.zone.now
     self.messages  = {}
-    self.stage     = nil
     self.progress  = 0
     self.terminate = false
     self.busy      = false
-    increment(:iteration)
   end
 
   def enter_finished
-    self.finished_at = Time.now.utc
-  end
-
-  def after_enter_finished
-    remove_servers
+    self.finished_at = Time.zone.now
   end
 
   def enter_removing
@@ -393,7 +360,30 @@ class Ingest < ActiveRecord::Base
 
   def enter_removed
     self.terminate  = false
-    self.removed_at = Time.now.utc
+    self.removed_at = Time.zone.now
+  end
+
+  #--- after_enter
+  def after_enter_starting; end
+  def after_enter_stopping; end
+
+  def after_enter_resetting
+    self.terminate = true
+  end
+
+  def after_enter_stopped
+    remove_servers
+  end
+
+  def after_enter_reset
+    purge_log!
+    reset_stage!
+    increment! :iteration
+    remove_servers
+  end
+
+  def after_enter_finished
+    remove_servers
   end
 
   def after_enter_removed
@@ -401,17 +391,44 @@ class Ingest < ActiveRecord::Base
   end
 
   def after_enter_restarting
-    self.restarted_at = Time.now.utc
+    self.restarted_at = Time.zone.now
     self.terminate    = true
   end
 
   def after_exit_restarting
-    update_attributes(messages: {}, stage: nil, iteration: iteration + 1)
+    reset_stage!
+    increment! :iteration
+    purge_log!
   end
 
-  def after_enter_removing
-    # ::Ingest::RemoveWorker.perform_async(self.id)
+  def after_enter_removing; end
+
+  #--- after_commit_event
+
+  def after_commit_event_start; end
+
+  def after_commit_event_stop
+    Ingest::StopJob.perform_later(self.id)
   end
+
+  def after_commit_event_reset
+    Ingest::ResetJob.perform_later(self.id)
+  end
+
+  def after_commit_event_remove
+    Ingest::RemoveJob.perform_later(self.id)
+  end
+
+  def after_commit_event_process; end
+  def after_commit_event_finish; end
+
+  def after_commit_event_fail
+    update_attributes(terminate: true)
+  end
+
+  def after_commit_event_restart; end
+
+  private
 
   def has_valid_upload?
     !!(upload && upload.s3_url)

@@ -50,7 +50,7 @@ class Api::Account::UploadsController < Api::Account::ApplicationController
   def sign_s3
     object_name    = params[:s3_object_name]
     mime_type      = params[:s3_object_type]
-    expires        = Time.now.to_i + APP_CONFIG['EXPIRE_TIME'].to_i
+    expires        = Time.zone.now.to_i + APP_CONFIG['EXPIRE_TIME'].to_i
 
     amz_headers    = "x-amz-acl:public-read" # set the public read permission on the uploaded file
     string_to_sign = "PUT\n\n#{mime_type}\n#{expires}\n#{amz_headers}\n#{APP_CONFIG['S3_INBOUND_BUCKET']}/#{object_name}";

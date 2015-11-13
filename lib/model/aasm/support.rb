@@ -52,20 +52,26 @@ module Model::AASM::Support
   end
 
   # force an event to fire
+  # TODO: Security concern, should test if event exists,
+  # not only from list of available events.
   def event=(value)
-    send(:"#{value}") if value && respond_to?(:"#{value}")
+    send(:"#{value}") if value && respond_to?(value.to_sym)
   rescue AASM::InvalidTransition => ex
     @status_error = ex.message
   end
 
   def events
-    aasm.events(state: :started, permitted: true).map {|e| e.name}
+    aasm.events.map(&:name)
   end
 
   protected
 
   def check_status
-    errors.add(:status, I18n.t("lib.model.aasm_support.status", :current_state => aasm.current_state)) if @status_error
+    if @status_error == true
+      errors.add(:status, I18n.t("lib.model.aasm_support.status", :current_state => aasm.current_state))
+    elsif @status_error.is_a?(String)
+      errors.add(:status, @status_error)
+    end
   end
 
   def set_state_updated

@@ -1,5 +1,4 @@
 class Ingest::StartJob < ActiveJob::Base
-  include Job::Helper
   queue_as :default
 
   def perform(ingest_id)

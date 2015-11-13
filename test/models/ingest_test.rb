@@ -23,18 +23,6 @@ class IngestTest < ActiveSupport::TestCase
     should validate_presence_of :document
   end
 
-  context "class" do
-    should "#queue_name_for" do
-      Ingest::stages.each do |name, value|
-        assert_equal "#{name.to_s.upcase}_TEST_QUEUE", Ingest::queue_name_for(name)
-      end
-    end
-
-    should "#workflow should return list of stages" do
-      assert_equal [:start, :harvest, :transcode, :split, :crowdout, :archive, :finish], Ingest.workflow_stage_names
-    end
-  end
-
   context "delegate" do
     setup do
       @ingest = FactoryGirl.create(:ingest_audio)
@@ -52,7 +40,7 @@ class IngestTest < ActiveSupport::TestCase
 
     should "have filtered scopes" do
       assert_equal [:any_of_status, :none_of_status, :sort_order, :reverse_sort,
-        :offset, :limit, :document_id].to_set,
+        :offset, :limit, :document_id, :is_busy, :is_terminated].to_set,
         Ingest.scopes.to_set
     end
 
@@ -74,42 +62,17 @@ class IngestTest < ActiveSupport::TestCase
     should "#document_id" do
       assert_equal [@ingest], Ingest.document_id(@ingest.document.id)
     end
+
+    should "#is_busy" do
+      assert_equal [], Ingest.is_busy(true)
+      assert_equal [@ingest], Ingest.is_busy(false)
+    end
+
+    should "#is_terminated" do
+      assert_equal [], Ingest.is_terminated(true)
+      assert_equal [@ingest], Ingest.is_terminated(false)
+    end
   end # context "scopes"
-
-  context "stages" do
-    should "#workflow_stages" do
-      assert_equal [:"start", :"harvest", :"transcode", :"split", :"crowdout", :"archive", :"finish"],
-        Ingest.new.workflow_stage_names
-    end
-
-    should "#current_stage_name" do
-      assert_equal :harvest, Ingest.new(stage: "harvest").current_stage_name
-      assert_equal nil, Ingest.new(stage: "foobar").current_stage_name
-    end
-
-    should "#next_stage_name" do
-      assert_equal :harvest, Ingest.new(stage: "start").next_stage_name
-      assert_equal :transcode, Ingest.new(stage: "harvest").next_stage_name
-      assert_equal :split, Ingest.new(stage: "transcode").next_stage_name
-      assert_equal :crowdout, Ingest.new(stage: "split").next_stage_name
-      assert_equal :archive, Ingest.new(stage: "crowdout").next_stage_name
-      assert_equal nil, Ingest.new(stage: "finish").next_stage_name
-      assert_equal nil, Ingest.new(stage: "foobar").next_stage_name
-      assert_equal nil, Ingest.new(stage: nil).next_stage_name
-    end
-
-    should "#previous_stage_name" do
-      assert_equal nil, Ingest.new(stage: "start").previous_stage_name
-      assert_equal :start, Ingest.new(stage: "harvest").previous_stage_name
-      assert_equal :harvest, Ingest.new(stage: "transcode").previous_stage_name
-      assert_equal :transcode, Ingest.new(stage: "split").previous_stage_name
-      assert_equal :split, Ingest.new(stage: "crowdout").previous_stage_name
-      assert_equal :crowdout, Ingest.new(stage: "archive").previous_stage_name
-      assert_equal :archive, Ingest.new(stage: "finish").previous_stage_name
-      assert_equal nil, Ingest.new(stage: "foobar").previous_stage_name
-      assert_equal nil, Ingest.new(stage: nil).previous_stage_name
-    end
-  end
 
   context "state machine" do
     should "have state and status" do
@@ -154,6 +117,7 @@ class IngestTest < ActiveSupport::TestCase
 
       should "transition to finished from started" do
         ingest = FactoryGirl.create(:ingest_audio, :terminate => true, :busy => true)
+        ingest.expects(:remove_servers).once
         ingest.update_attributes(aasm_state: :started)
         ingest.status = Ingest::STATE_FINISHED
         assert_equal true, ingest.save
@@ -162,6 +126,7 @@ class IngestTest < ActiveSupport::TestCase
 
       should "transition to stopped from stopping" do
         ingest = FactoryGirl.create(:ingest_audio, :terminate => false, :busy => true)
+        ingest.expects(:remove_servers).once
         ingest.update_attributes(aasm_state: :started)
         ingest.status = Ingest::STATE_STOPPING
         assert_equal true, ingest.save
@@ -175,12 +140,22 @@ class IngestTest < ActiveSupport::TestCase
 
       should "transition to reset from resetting" do
         ingest = FactoryGirl.create(:ingest_audio, :terminate => true, :busy => true)
+        ingest.expects(:remove_servers).once
         ingest.update_attributes(aasm_state: :resetting)
         ingest.status = Ingest::STATE_RESET
         assert_equal true, ingest.save
         assert_equal :reset, ingest.reload.state
         assert_equal false, ingest.terminate
         assert_equal false, ingest.busy
+      end
+
+      should "transition to removed from removing" do
+        ingest = FactoryGirl.create(:ingest_audio, :busy => false)
+        ingest.expects(:remove_servers).once
+        ingest.update_attributes(aasm_state: :removing)
+        ingest.status = Ingest::STATE_REMOVED
+        assert_equal true, ingest.save
+        assert_equal :removed, ingest.reload.state
       end
     end
 
@@ -196,7 +171,7 @@ class IngestTest < ActiveSupport::TestCase
       assert_equal :started, ingest.state
       assert_not_nil ingest.started_at
       ingest.log! :started, "working"
-      ingest.update_attributes(stage: "transcoding")
+      ingest.update_attributes(aasm_stage: "transcode_stage")
       FactoryGirl.create(:chunk, :document => ingest.document)
       assert_equal 0, ingest.iteration
       assert_equal false, ingest.messages.empty?
@@ -210,11 +185,11 @@ class IngestTest < ActiveSupport::TestCase
       ingest.process!
       assert_equal :started, ingest.state
       assert_equal true, ingest.messages.empty?
-      assert_nil ingest.stage
+      assert_equal "begin_stage", ingest[:aasm_stage]
       # ingest.process!
       # assert_equal :started, ingest.state
       # ingest.log! :started, "working"
-      ingest.update_attributes(stage: "copy_object")
+      ingest.update_attributes(aasm_stage: "archive_stage")
 
       ingest.clear_terminate!
       assert_equal false, ingest.terminate?
@@ -269,13 +244,22 @@ class IngestTest < ActiveSupport::TestCase
       assert_equal :starting, ingest.state
       ingest.event = "process"
       assert_equal :started, ingest.state
-      assert_equal [:stop, :remove, :process, :finish, :fail, :restart], ingest.events
+      assert_equal true, ingest.events.include?(:stop)
+      assert_equal true, ingest.events.include?(:remove)
+      assert_equal true, ingest.events.include?(:process)
+      assert_equal true, ingest.events.include?(:finish)
+      assert_equal true, ingest.events.include?(:fail)
+      assert_equal true, ingest.events.include?(:restart)
 
       ingest = FactoryGirl.create(:ingest_audio, :terminate => true, :busy => true)
       assert_equal :starting, ingest.state
       ingest.event = :process
       assert_equal :started, ingest.state
     end
+  end
+
+  should "#stages" do
+    assert_equal [], Ingest.new.stages
   end
 
   should "log message" do
@@ -296,6 +280,58 @@ class IngestTest < ActiveSupport::TestCase
     assert_equal 76, ingest.progress
     ingest.set_progress!(101) and ingest.reload
     assert_equal 100, ingest.progress
+  end
+
+  context "inverse" do
+    should "not be busy" do
+      assert_equal false, Ingest.new(busy: true).not_busy?
+      assert_equal true, Ingest.new(busy: false).not_busy?
+    end
+
+    should "not be terminated" do
+      assert_equal false, Ingest.new(terminate: true).not_terminated?
+      assert_equal true, Ingest.new(terminate: false).not_terminated?
+    end
+
+    should "not be 'created'" do
+      assert_equal false, Ingest.new(aasm_state: 'created').not_created?
+    end
+
+    should "not be 'starting'" do
+      assert_equal false, Ingest.new(aasm_state: 'starting').not_starting?
+    end
+
+    should "not be 'started'" do
+      assert_equal false, Ingest.new(aasm_state: 'started').not_started?
+    end
+
+    should "not be 'stopping'" do
+      assert_equal false, Ingest.new(aasm_state: 'stopping').not_stopping?
+    end
+
+    should "not be 'stopped'" do
+      assert_equal false, Ingest.new(aasm_state: 'stopped').not_stopped?
+    end
+
+    should "not be 'resetting'" do
+      assert_equal false, Ingest.new(aasm_state: 'resetting').not_resetting?
+    end
+
+    should "not be 'reset'" do
+      assert_equal false, Ingest.new(aasm_state: 'reset').not_reset?
+    end
+
+    should "not be 'removing'" do
+      assert_equal false, Ingest.new(aasm_state: 'removing').not_removing?
+    end
+
+    should "not be 'finished'" do
+      assert_equal false, Ingest.new(aasm_state: 'finished').not_finished?
+    end
+
+    should "not be 'restarting'" do
+      assert_equal false, Ingest.new(aasm_state: 'restarting').not_restarting?
+    end
   end
 
   should "increment progress" do

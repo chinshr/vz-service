@@ -12,7 +12,7 @@ module Clockwork
   #   puts "Running #{job}, at #{time}"
   # end
 
-  every(1.hour, 'ingest.prune.job') {
+  every(15.minutes, 'ingest.prune.job') {
     Ingest::PruneJob.perform_later
   }
 end

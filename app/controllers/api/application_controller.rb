@@ -8,7 +8,7 @@ class Api::ApplicationController < ::ApplicationController
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :null_session
 
-  before_filter :set_response_version_header
+  before_action :set_response_version_header
 
   rescue_from ActiveRecord::RecordNotFound do |error|
     process_exception(error)

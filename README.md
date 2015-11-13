@@ -219,6 +219,7 @@ Similar to:
   - Twitter radio buttons from input http://dan.doezema.com/2012/03/twitter-bootstrap-radio-button-form-inputs/
   - File input with image -- http://jasny.github.io/bootstrap/javascript/#fileinput
   - Bootstrap Dropbox uploader -- http://tutorialzine.com/2012/11/dropbox-photo-crop/
+  - Cropper, image cropping with jQuery -- https://github.com/fengyuanchen/cropper
   - HTML5 image uploader with crop -- http://www.script-tutorials.com/html5-image-uploader-with-jcrop/
   - Image upload and crop -- http://www.jqueryrain.com/demo/jquery-crop-image-plugin/
   - Chosen, better select/combo -- http://harvesthq.github.io/chosen/
@@ -286,6 +287,7 @@ Similar to:
   - Run command each time an [EC2 instance boots](http://serverfault.com/questions/369872/run-a-bash-script-after-ec2-instance-boots)
   - [User Data Scripts](https://alestic.com/2009/06/ec2-user-data-scripts/)
   - Ruby AWS [user data example](https://github.com/aws/aws-sdk-ruby/issues/191)
+* Canvas video, instead of video element, use sprite -- https://github.com/gka/canvid
 
 ### SendGrid Setup
 
