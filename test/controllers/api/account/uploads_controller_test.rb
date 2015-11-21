@@ -223,7 +223,9 @@ class Api::Account::UploadsControllerTest < ActionController::TestCase
       assert_response :success
       assert_response_body_attributes_with "upload"
       assert_equal 7, response_body["upload"]["status"]
-      assert_equal ["remove", "process", "fail"], response_body["upload"]["events"]
+      assert_equal true, response_body["upload"]["events"].include?('remove')
+      assert_equal true, response_body["upload"]["events"].include?('process')
+      assert_equal true, response_body["upload"]["events"].include?('fail')
     end
   end
 

@@ -21,7 +21,7 @@ if @cpw_user.new_record?
   @cpw_user.password              = 'paloalto605:voyzescpw'
   @cpw_user.password_confirmation = 'paloalto605:voyzescpw'
   @cpw_user.roles                 = [:backend]
-  @cpw_user.confirmed_at          = Time.current
+  @cpw_user.confirmed_at          = Time.zone.now
   @cpw_user.save!
 end
 

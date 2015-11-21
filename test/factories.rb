@@ -146,7 +146,7 @@ FactoryGirl.define do
     password_confirmation "password"
     sequence(:first_name) {|n| "first-name-#{n}"}
     sequence(:last_name) {|n| "last-name-#{n}"}
-    confirmed_at Time.now.utc - 1.day
+    confirmed_at Time.zone.now - 1.day
     current_sign_in_ip "95.63.14.59"
   end
 
@@ -298,8 +298,8 @@ FactoryGirl.define do
     s.form_url "http://localhost/test_task/new"
     s.complete false
     s.expired false
-    s.created_at Time.now
-    s.updated_at Time.now
+    s.created_at Time.zone.now
+    s.updated_at Time.zone.now
   end
 
   factory :cpw_ingest_server, :class => Ingest::Server::CPWServer do
@@ -317,7 +317,7 @@ FactoryGirl.define do
     aasm_state "pending"
   end
 
-  factory :cpw_ingest_process, :class => ::Ingest::Process do
+  factory :cpw_ingest_process, :class => Ingest::Process do
     association :ingest, factory: :ingest_audio
     association :server, factory: :cpw_server
   end

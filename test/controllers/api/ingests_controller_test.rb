@@ -140,15 +140,17 @@ class Api::IngestsControllerTest < ActionController::TestCase
   end
 
   context "PUT /api/ingests/:id(.:format)" do
-    should "update ingest with backend user" do
+    should "update ingest to forward stage as backend user" do
       sign_in :user, @user2
+      assert_equal :starting, @ingest2.state
+      assert_equal :begin_stage, @ingest2.stage
       put :update, {:id => @ingest2.id, :ingest => {
-        stage: "transcribe", progress: 5
+        event: "forward_to_harvest_stage"
       }, format: :json}
       assert_response :success
       assert_response_body_attributes_with "ingest"
-      assert_equal "transcribe", @ingest2.reload.stage
-      assert_equal 5, @ingest2.reload.progress
+      assert_equal :harvest_stage, @ingest2.reload.stage
+      assert_equal 10, @ingest2.reload.progress
     end
 
     should "change ingest state to 'started' via #status=" do
@@ -167,7 +169,7 @@ class Api::IngestsControllerTest < ActionController::TestCase
       sign_in :user, @user2
       assert_equal :starting, @ingest2.state
       put :update, {:id => @ingest2.id, :ingest => {
-        stage: "start", progress: 1, event: "process"
+        progress: 1, event: "process"
       }, format: :json}
       assert_response :success
       assert_response_body_attributes_with "ingest"
@@ -175,11 +177,26 @@ class Api::IngestsControllerTest < ActionController::TestCase
       assert_equal :started, @ingest2.reload.state
     end
 
+    should "trigger next stage via #trigger_stage_with=" do
+      sign_in :user, @user2
+      @ingest2.update_attributes(aasm_state: "started", aasm_stage: "harvest_stage")
+      assert_equal :started, @ingest2.state
+      assert_equal :harvest_stage, @ingest2.stage
+      Ingest::MediaIngest::TranscodeWorker.expects(:perform_workflow).with(@ingest2.id).once
+
+      put :update, {:id => @ingest2.id, :ingest => {
+        trigger: "#{@ingest2.stage}"
+      }, format: :json}
+      assert_response :success
+      assert_response_body_attributes_with "ingest"
+      assert_equal :started, @ingest2.reload.state
+    end
+
     should "NOT change ingest state due to invalid transition via #status=" do
       sign_in :user, @user2
       assert_equal :starting, @ingest2.state
       put :update, {:id => @ingest2.id, :ingest => {
-        stage: "start", progress: 1, status: Ingest::STATE_RESET
+        progress: 1, status: Ingest::STATE_RESET
       }, format: :json}
       assert_response :unprocessable_entity
       assert_equal true, response_body.has_key?("errors")
@@ -228,7 +245,7 @@ class Api::IngestsControllerTest < ActionController::TestCase
     assert_equal false, params.blank?, "response should not be empty"
     (expected_attributes.keys + %w(id upload_id document_id type status
       updated_at created_at started_at stopped_at restarted_at reset_at removed_at finished_at
-      progress messages stage iteration busy terminate uid locale workflow_stage_names previous_stage_name next_stage_name)).each do |attribute|
+      progress messages stage stages iteration busy terminate uid locale events)).each do |attribute|
       assert params.has_key?(attribute), "should contain key '#{attribute}' in response '#{params}'"
     end
 

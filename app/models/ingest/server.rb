@@ -229,10 +229,10 @@ class Ingest::Server < ActiveRecord::Base
   end
 
   def enter_enabled
-    self.enabled_at = Time.current
+    self.enabled_at = Time.zone.now
   end
 
   def enter_disabled
-    self.disabled_at = Time.current
+    self.disabled_at = Time.zone.now
   end
 end

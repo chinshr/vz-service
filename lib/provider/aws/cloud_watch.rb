@@ -18,7 +18,7 @@ module Provider
 
         STATS["AWS/EC2"].each do |metric|
           cw_metric = ::AWS::CloudWatch::Metric.new("AWS/EC2", metric, dimensions: dimensions)
-          stats     = cw_metric.statistics(start_time: (Time.now - @start_time_seconds).iso8601, end_time: Time.now.iso8601, statistics: ["Average"])
+          stats     = cw_metric.statistics(start_time: (Time.zone.now - @start_time_seconds).iso8601, end_time: Time.zone.now.iso8601, statistics: ["Average"])
           if params[:all]
             statistics[metric] = stats.sort {|a,b| a[:timestamp] <=> b[:timestamp]}
           else

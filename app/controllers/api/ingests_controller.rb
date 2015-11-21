@@ -28,7 +28,7 @@ class Api::IngestsController < Api::ApplicationController
   # [PUT] /api/ingests/:id(.:format)
   def update
     authorize @ingest
-    @ingest = Ingest.update(params[:id], update_params)
+    @ingest.update_attributes(update_params)
     respond_with @ingest
   end
 

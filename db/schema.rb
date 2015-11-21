@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151018084755) do
+ActiveRecord::Schema.define(version: 20151113172122) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -242,7 +242,7 @@ ActiveRecord::Schema.define(version: 20151018084755) do
     t.datetime "finished_at"
     t.float    "progress",     default: 0.0,       null: false
     t.text     "messages"
-    t.string   "stage"
+    t.string   "aasm_stage"
     t.integer  "iteration",    default: 0,         null: false
     t.boolean  "busy",         default: false,     null: false
     t.datetime "restarted_at"
@@ -251,6 +251,7 @@ ActiveRecord::Schema.define(version: 20151018084755) do
     t.string   "uid"
   end
 
+  add_index "ingests", ["aasm_stage"], name: "index_ingests_on_aasm_stage", using: :btree
   add_index "ingests", ["aasm_state"], name: "index_ingests_on_aasm_state", using: :btree
   add_index "ingests", ["created_at"], name: "index_ingests_on_created_at", using: :btree
   add_index "ingests", ["document_id"], name: "index_ingests_on_document_id", using: :btree
@@ -258,7 +259,6 @@ ActiveRecord::Schema.define(version: 20151018084755) do
   add_index "ingests", ["iteration"], name: "index_ingests_on_iteration", using: :btree
   add_index "ingests", ["removed_at"], name: "index_ingests_on_removed_at", using: :btree
   add_index "ingests", ["reset_at"], name: "index_ingests_on_reset_at", using: :btree
-  add_index "ingests", ["stage"], name: "index_ingests_on_stage", using: :btree
   add_index "ingests", ["started_at"], name: "index_ingests_on_started_at", using: :btree
   add_index "ingests", ["stopped_at"], name: "index_ingests_on_stopped_at", using: :btree
   add_index "ingests", ["type"], name: "index_ingests_on_type", using: :btree

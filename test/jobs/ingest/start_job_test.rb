@@ -11,7 +11,7 @@ class Ingest::StartJobTest < ActiveSupport::TestCase
       aws_ec2_instance.expects(:vpc_id).returns("vpc1")
       aws_ec2_instance.expects(:public_ip_address).returns("57.12.54.12")
       aws_ec2_instance.expects(:private_ip_address).returns("10.1.1.123")
-      aws_ec2_instance.expects(:launch_time).returns(Time.current)
+      aws_ec2_instance.expects(:launch_time).returns(Time.zone.now)
       aws_ec2_instance.expects(:image_id).returns("ami-8fcbb0ea")
       aws_ec2_instance.expects(:instance_type).returns("t2.micro")
       Provider::AWS::EC2.any_instance.stubs(:launch).returns(aws_ec2_instance)

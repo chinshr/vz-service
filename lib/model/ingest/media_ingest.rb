@@ -1,7 +1,12 @@
 module Model::Ingest::MediaIngest
+  PROGRESS = {harvest_stage: 10, transcode_stage: 20,
+    split_stage: 30, archive_stage: 90}
+
   extend ActiveSupport::Concern
 
   included do
+    attr_writer :trigger
+
     delegate :title, to: :document
     delegate :title=, to: :document
 
@@ -23,54 +28,135 @@ module Model::Ingest::MediaIngest
     delegate :slug, to: :document
     delegate :slug_id, to: :document
 
-    after_commit :perform_async
+    # stage state machine
+    aasm :stage, column: 'aasm_stage', whiny_transitions: true do
+      state :begin_stage, initial: true
+      state :harvest_stage
+      state :transcode_stage
+      state :split_stage
+      state :archive_stage
+      state :end_stage, enter: :enter_end_stage, after_enter: :after_enter_end_stage
+
+      event :forward_to_harvest_stage, after: :after_event_forward_stage, after_commit: :after_commit_event_forward_stage do
+        transitions :from => :begin_stage, :to => :harvest_stage, :guard => :can_forward_stage?
+      end
+
+      event :forward_to_transcode_stage, after: :after_event_forward_stage, after_commit: :after_commit_event_forward_stage do
+        transitions :from => :harvest_stage, :to => :transcode_stage, :guard => :can_forward_stage?
+      end
+
+      event :forward_to_split_stage, after: :after_event_forward_stage, after_commit: :after_commit_event_forward_stage do
+        transitions :from => :transcode_stage, :to => :split_stage, :guard => :can_forward_stage?
+      end
+
+      event :forward_to_archive_stage, after: :after_event_forward_stage, after_commit: :after_commit_event_forward_stage do
+        transitions :from => :split_stage, :to => :archive_stage, :guard => :can_forward_stage?
+      end
+
+      event :reset_stage do
+        transitions :from => [:begin_stage, :harvest_stage, :transcode_stage, :split_stage, :archive_stage, :end_stage], :to => :begin_stage
+      end
+
+      event :fast_forward_stage do
+        transitions :from => [:begin_stage, :harvest_stage, :transcode_stage, :split_stage, :archive_stage, :end_stage], :to => :end_stage
+      end
+    end
+
+    after_commit :after_commit_set_busy
+    after_commit :after_commit_trigger_stage_async
   end
 
   module ClassMethods
-    # to be added
+
+    # E.g. [:begin_stage, :archive_stage, ..., :end_stage]
+    def stages
+      aasm(:stage).states.map(&:name)
+    end
+
+    # E.g. ['begin', 'archive', ..., 'end']
+    def stage_names
+      stages.map {|s| stage_trunk_name(s) }
+    end
+
+    def worker_class_from_stage(stage_or_stage_name)
+      trunk_name = stage_trunk_name(stage_or_stage_name)
+      constant_name = "#{trunk_name}_worker".classify
+      "Ingest::MediaIngest::#{constant_name}".constantize
+    rescue NameError => ex
+      nil
+    end
+
+    private
+
+    # E.g. :archive_stage -> 'archive'
+    def stage_trunk_name(name)
+      "#{name}".gsub(/_stage/i, '') if name
+    end
+  end
+
+  # E.g. [:begin_stage, :harvest_stage, ..., :end_stage]
+  def stages
+    self.class.stages
+  end
+
+  def stage
+    aasm(:stage).current_state
+  end
+
+  def events
+    super + aasm(:stage).events.map(&:name)
+  end
+
+  def busy=(value)
+    @recently_busy = value
   end
 
   protected
 
-  # is called by after_commit as we need to wait
-  # to do a specific background job until the record
-  # has been commited to the DB and not at the time
-  # the state is changed.
-  def perform_async
-    if perform_async_start_scheduled?
-      # allocate server
-      Ingest::StartJob.perform_later(self.id) unless Rails.env.development?
-      # start CPW workflow
-      Ingest::StartWorker.perform_workflow(self.id)
-    elsif perform_async_stop_scheduled?
-      Ingest::StopWorker.perform_async(self.id, {force: true})
-    elsif perform_async_reset_scheduled?
-      Ingest::ResetWorker.perform_async(self.id, {force: true})
-    elsif perform_async_remove_scheduled?
-      Ingest::RemoveWorker.perform_async(self.id, {force: true})
+  def can_forward_stage?
+    not_terminated? && not_busy?
+  end
+
+  def trigger_next_stage_with!(stage_or_stage_name)
+    result = false
+    if next_stage = stage_after(stage_or_stage_name)
+      if :end_stage == next_stage
+        Ingest::MediaIngest::EndJob.perform_later(self.id)
+      elsif worker_class = self.class.worker_class_from_stage(next_stage)
+        worker_class.perform_workflow(self.id)
+        result = true
+      end
     end
-
-    clear_all_perform_async!
+    result
   end
 
-  def after_enter_starting
-    super
-    schedule_perform_async_start!
+  def after_commit_set_busy
+    if @recently_busy == true || @recently_busy == false
+      update_column(:busy, !!@recently_busy)
+      @recently_busy = nil
+    end
   end
 
-  def after_enter_resetting
+  def after_commit_event_start
     super
-    schedule_perform_async_reset!
+    # allocate server
+    Ingest::StartJob.perform_later(self.id) unless Rails.env.development?
+    if begin_stage?
+      # start workflow from the beginning
+      trigger_next_stage_with!(stage)
+    elsif rewind_stage!
+      # or, restart from where it was stopped at
+      trigger_next_stage_with!(stage)
+    end
   end
 
-  def after_enter_stopping
-    super
-    schedule_perform_async_stop!
+  def after_commit_trigger_stage_async
+    trigger_next_stage_with!(@trigger)
   end
 
   def after_enter_restarting
     super
-    Ingest::StartWorker.perform_workflow(self.id)
+    after_commit_event_start
   end
 
   def enter_finished
@@ -78,48 +164,49 @@ module Model::Ingest::MediaIngest
     Ingest::AudioMailer.finished_processing(self).deliver if user
   end
 
-  def after_enter_removing
+  def enter_reset
     super
-    schedule_perform_async_remove!
+    reset_stage
   end
 
-  def perform_async_start_scheduled?
-    !!@schedule_perform_async_start
+  private
+
+  def enter_end_stage
+    self.progress = 100
   end
 
-  def schedule_perform_async_start!
-    @schedule_perform_async_start = true
+  def after_enter_end_stage
+    finish!
   end
 
-  def perform_async_stop_scheduled?
-    !!@schedule_perform_async_stop
+  # TODO: workaround, because after_commit does not fire for event=
+  def after_event_forward_stage
+    self.progress = PROGRESS[stage] if stage && PROGRESS[stage]
   end
 
-  def schedule_perform_async_stop!
-    @schedule_perform_async_stop = true
+  def after_commit_event_forward_stage
+    update_attribute(:progress, PROGRESS[stage]) if stage && PROGRESS[stage]
   end
 
-  def perform_async_reset_scheduled?
-    !!@schedule_perform_async_reset
+  def source_stage(stage_or_stage_name)
+    stages.find {|s| s.match(/#{stage_or_stage_name.to_s}/i) } if stage_or_stage_name
   end
 
-  def schedule_perform_async_reset!
-    @schedule_perform_async_reset = true
+  # aka next_stage_after
+  def stage_after(stage_or_stage_name)
+    source = source_stage(stage_or_stage_name)
+    stages[stages.index(source) + 1] if source && stages.index(source)
   end
 
-  def perform_async_remove_scheduled?
-    !!@schedule_perform_async_remove
+  # aka previous_stage_before
+  def stage_before(stage_or_stage_name)
+    source = source_stage(stage_or_stage_name)
+    stages[stages.index(source) - 1] if source && stages.index(source) && stages.index(source) > 0
   end
 
-  def schedule_perform_async_remove!
-    @schedule_perform_async_remove = true
+  def rewind_stage!
+    if previous_stage = stage_before(stage)
+      update_attributes(aasm_stage: previous_stage)
+    end
   end
-
-  def clear_all_perform_async!
-    @schedule_perform_async_start  = nil
-    @schedule_perform_async_stop   = nil
-    @schedule_perform_async_reset  = nil
-    @schedule_perform_async_remove = nil
-  end
-
 end

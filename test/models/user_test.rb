@@ -16,7 +16,7 @@ class UserTest < ActiveSupport::TestCase
 
   context "validations" do
     should "validate_presence_of :first_name, :last_name, :username if confirmed?" do
-      user = User.new(:confirmed_at => Time.now.utc)
+      user = User.new(:confirmed_at => Time.zone.now)
       assert_equal true, user.confirmed?
       assert_equal false, user.valid?
       assert_equal true, user.errors[:first_name].include?("can't be blank")
@@ -100,7 +100,7 @@ class UserTest < ActiveSupport::TestCase
 
   context "roles" do
     should "get and set roles" do
-      user = User.new(:confirmed_at => Time.now.utc)
+      user = User.new(:confirmed_at => Time.zone.now)
       assert_equal [], user.roles
       user.valid?
       assert_equal [:user], user.roles
