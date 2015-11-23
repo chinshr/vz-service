@@ -57,8 +57,8 @@ class Ingest < ActiveRecord::Base
     end
   }
   scope :reverse_sort, -> (param) {all.reverse_order if Model::Helper.booleanize(param)}
-  scope :any_of_status, -> (params) {where("ingests.aasm_state IN (?)", [params].flatten.map(&:to_s).
-    map {|s| s.match(/^([\-]{,1}[0-9]+)$/) ? s : nil}.reject(&:blank?).map {|s| Ingest::STATES.key(s.to_i)}.uniq)}
+  scope :any_of_status, -> (params) { where("ingests.aasm_state IN (?)", [params].flatten.map(&:to_s).
+    map {|s| s.match(/^([\-]{,1}[0-9]+)$/) ? s : nil}.reject(&:blank?).map {|s| Ingest::STATES.key(s.to_i)}.uniq) }
   scope :none_of_status, -> (params) {where("ingests.aasm_state NOT IN (?)", [params].flatten.map(&:to_s).
     map {|s| s.match(/^([\-]{,1}[0-9]+)$/) ? s : nil}.reject(&:blank?).map {|s| Ingest::STATES.key(s.to_i)}.uniq)}
   scope :document_id, -> (params) { where(document_id: params) }
