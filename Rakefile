@@ -25,3 +25,11 @@ namespace :test do
 end
 
 task default: :test
+
+desc "Deploy to heroku"
+task :deploy do
+  `git push heroku master`
+  `heroku ps:restart worker.1 --app voyzes`
+  `heroku ps:restart clock.1 --app voyzes`
+  `heroku run rake db:migrate --app voyzes`
+end
