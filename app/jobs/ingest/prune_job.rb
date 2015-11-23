@@ -28,7 +28,7 @@ class Ingest::PruneJob < ActiveJob::Base
 
     # stale servers should be terminated
     Ingest::Server.enabled.without_processes
-      .where("ingest_servers.enabled_at < ?", Time.zone.now - 1.hour)
+      .where("ingest_servers.enabled_at < ?", Time.zone.now - 24.hours)
       .find_each do |server|
         server.terminate
     end
