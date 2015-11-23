@@ -2,7 +2,7 @@ class Ingest::StartJob < ActiveJob::Base
   queue_as :default
 
   def perform(ingest_id)
-    if @ingest = Ingest.find_by(id: ingest_id)
+    if @ingest = Ingest.find(ingest_id)
       unless @server = Ingest::Server::CPWServer.available.first
         # create new instance from image and launch
         @instance = Provider::AWS::EC2.new.launch(type: "cpw")
