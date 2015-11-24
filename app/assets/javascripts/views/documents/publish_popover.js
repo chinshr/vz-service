@@ -32,7 +32,7 @@ App.Views.DocumentsPublishPopover = App.Views.DocumentsBasePopover.extend({
 
     $(document).on('click', (function(_this) {
       return function(e) {
-        if (!$(e.target).is(_this.holder) && $('#publish-popover').find($(e.target)).length === 0) {
+        if (!$(e.target).is(_this.holder) && _this.holder.find($(e.target)).length === 0 && $('#publish-popover').find($(e.target)).length === 0) {
           _this.hide();
         }
       }
