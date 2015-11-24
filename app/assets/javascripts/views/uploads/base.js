@@ -125,15 +125,19 @@ App.Views.UploadsBase = Backbone.View.extend({
 
     if (this.model.hasFinished()) {
       // action buttons
-      this.$('.action-edit').prop('disabled', false);
-      this.$('.action-preview').prop('disabled', false);
+      this.$('button.action-edit').prop('disabled', false);
+      this.$('a.action-edit').parent().removeClass('disabled');
+      this.$('button.action-preview').prop('disabled', false);
+      this.$('a.action-preview').parent().removeClass('disabled');
 
       // slug
       this.$('.slug i').html("<a href=\"" + window.location.origin + '/d/' + this.model.attributes.slug_id + "\" target=\"_blank\">voyz.es/d/" + this.model.attributes.slug_id + "</a>");
       this.$('.slug').show();
     } else {
-      this.$('.action-edit').prop('disabled', true);
-      this.$('.action-preview').prop('disabled', true);
+      this.$('button.action-edit').prop('disabled', true);
+      this.$('a.action-edit').parent().addClass('disabled');
+      this.$('button.action-preview').prop('disabled', true);
+      this.$('a.action-preview').parent().addClass('disabled');
     }
 
     // progress bar
