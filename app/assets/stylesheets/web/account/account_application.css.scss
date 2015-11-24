@@ -540,6 +540,20 @@ body.account {
       .panel-footer {
         .form-group {
           margin-bottom: 0;
+
+          .btn-sm {
+            font-weight: bold;
+          }
+
+          .btn-link {
+            font-weight: bold;
+            color: #999;
+
+            &:hover {
+              text-decoration: none;
+              color: #555;
+            }
+          }
         }
       }
 

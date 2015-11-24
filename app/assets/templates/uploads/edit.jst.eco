@@ -51,16 +51,8 @@
         </div><!-- panel-body -->
         <div class="panel-footer">
           <div class="form-group from-group-file-privacy clearfix">
-            <div class="btn-group group-file-privacy pull-left" data-toggle="buttons">
-              <label class="btn btn-primary btn-sm active">
-                <input type="radio" name="upload[privacy]" id="upload-privacy-public" value="public" checked=""><i class="fa fa-unlock icon-public"></i>&nbsp;Public
-              </label>
-              <label class="btn btn-primary btn-sm">
-                <input type="radio" name="upload[privacy]" id="upload-privacy-private" value="private"><i class="fa fa-lock icon-private"></i>&nbsp;Private
-              </label>
-            </div><!-- group-file-privacy -->
-
-            <button class="btn btn-sm btn-success pull-right" type="submit" disabled="true" data-loading-text="Updating...">Update</button>
+            <button class="btn btn-sm btn-success pull-right" type="submit" disabled data-loading-text="Updating...">Update</button>
+            <button class="btn btn-sm btn-link pull-right action-close">Cancel</button>
           </div><!-- .from-group-file-privacy -->
         </div><!-- .panel-footer -->
       </form>

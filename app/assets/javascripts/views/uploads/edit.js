@@ -80,11 +80,15 @@ App.Views.UploadsEdit = App.Views.UploadsBase.extend({
     return this;
   },
 
-  flipTile: function() {
+  flipTile: function(event) {
     var edit     = this;
     var editHTML = edit.$el;
     var show     = new App.Views.UploadsShow({model: this.model});
     var showHTML = show.render(this.model.attributes).$el;
+
+    if (event) {
+      event.originalEvent.preventDefault();
+    }
 
     if (Modernizr.csstransforms3d) {
       showHTML.find('.panel').css({
@@ -162,9 +166,10 @@ App.Views.UploadsEdit = App.Views.UploadsBase.extend({
         return data[key[1]] = n['value'];
       }
     });
+
     this.model.set(data, {validate: true});
     if (this.model.isValid()) {
-      this.$(":submit").button("loading");
+      this.$('button[type="submit"]').button("loading");
       return this.model.sync('update', this.model, {
         success: (function(_this) {
           return function() {

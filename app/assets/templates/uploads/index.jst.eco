@@ -32,23 +32,6 @@
           </select>
         </div><!-- .form-group-locale -->
       </div><!-- .panel-body -->
-      <div class="panel-footer">
-        <!-- privacy -->
-        <div class="form-group form-group-file-privacy">
-          <div class="btn-group group-file-privacy" data-toggle="buttons">
-            <label class="btn btn-primary btn-sm disabled">
-              <input type="radio" name="file-privacy" id="file-privacy-public" value="public" checked=""><i class="fa fa-unlock icon-public"></i>&nbsp;Public
-            </label>
-            <label class="btn btn-primary btn-sm active">
-              <input type="radio" name="file-privacy" id="file-privacy-unlisted" value="unlisted" checked=""><i class="fa fa-eye-slash icon-unlisted"></i>&nbsp;Limited
-            </label>
-            <label class="btn btn-primary btn-sm disabled">
-              <input type="radio" name="file-privacy" id="file-privacy-private" value="private"><i class="fa fa-lock icon-private"></i>&nbsp;Private
-            </label>
-          </div>
-        </div><!-- form-group-file-privacy -->
-
-      </div><!-- .panel-footer-->
     </div><!-- #drop-box .upload-panel -->
   </div><!-- #drop-box-tile .upload-tile -->
 
