@@ -20,7 +20,7 @@ class Ingest::PruneJobTest < ActiveSupport::TestCase
 
   context "stale servers" do
     should "terminate instance" do
-      server = FactoryGirl.create(:cpw_ingest_server, aasm_state: "enabled", enabled_at: Time.zone.now - 2.hours)
+      server = FactoryGirl.create(:cpw_ingest_server, aasm_state: "enabled", enabled_at: Time.zone.now - 24.hours)
       Ingest::Server.any_instance.expects(:terminate).returns(true)
       Ingest::PruneJob.new.perform
     end
