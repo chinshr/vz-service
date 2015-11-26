@@ -422,6 +422,68 @@ class DocumentTest < ActiveSupport::TestCase
     end
   end
 
+  context "meta helpers" do
+    setup do
+      @document = FactoryGirl.create(:document, title: "The Title", description: "The description.",
+        tag_list: ["one", "two", "three"])
+    end
+
+    should "#meta_title" do
+      assert_equal "The Title. Record your Life. Your conversations deserve a place to be found.",
+        @document.meta_title
+    end
+
+    context "#meta_description" do
+
+      should "not be longer than 200" do
+        @document.description = "x" * 300
+        assert_equal 200, @document.meta_description.length
+      end
+
+      should "be same as #meta_title if description is empty" do
+        @document.description = nil
+        assert_equal @document.meta_title, @document.meta_description
+      end
+
+    end
+
+    should "#meta_keywords" do
+      assert_equal "one,two,three", @document.meta_keywords
+    end
+
+    context "#published_url" do
+      should "unset privacy should return nil" do
+        assert_equal nil, @document.published_url
+      end
+
+      should "private unpublished should return nil" do
+        @document.update_attributes(privacy: "private")
+        assert_equal nil, @document.published_url
+      end
+
+      should "published should return published url" do
+        @document.update_attributes(privacy: "limited", event: "publish")
+        assert_equal "http://test/@#{@document.user.slug}/#{@document.slug}", @document.published_url
+      end
+    end
+
+    context "#canonical_url" do
+      should "unset privacy should return nil" do
+        assert_equal nil, @document.canonical_url
+      end
+
+      should "private unpublished should return document url" do
+        @document.update_attributes(privacy: "private")
+        assert_equal "http://test/d/#{@document.slug_id}", @document.canonical_url
+      end
+
+      should "published should return published url" do
+        @document.update_attributes(privacy: "limited", event: "publish")
+        assert_equal "http://test/@#{@document.user.slug}/#{@document.slug}", @document.canonical_url
+      end
+    end
+  end
+
   should "have versions" do
     document = FactoryGirl.create(:document, title: "Title", description: "Desc",
       html: "<p>The article.</p>", text: "The article.", rich_text: {"ops" => [{"insert" => "The article."}]})

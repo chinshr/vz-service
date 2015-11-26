@@ -7,6 +7,7 @@ class Document < ActiveRecord::Base
   include Model::AASM::Support
   include Model::Filter
   include Model::Uid
+  include ActionView::Helpers::TextHelper
 
   PRIVACY_SETTINGS  = {'public' => 0, 'private' => 1, 'unlisted' => 2}
   ACCESSIBILITY_SETTINGS  = {'view' => 0, 'comment' => 1, 'edit' => 2}
@@ -273,6 +274,40 @@ class Document < ActiveRecord::Base
   # override
   def score
     chunks.average(:score)
+  end
+
+  def meta_title
+    @meta_title ||= begin
+      default = "#{title}. Record your Life. Your conversations deserve a place to be found."
+      truncate(default, length: 200, separator: ' ', omission: '.')
+    end
+  end
+
+  def meta_description
+    @meta_description ||= begin
+      default = !self[:description].blank? ? self[:description] : meta_title
+      truncate(default, length: 200, separator: ' ', omission: '.') if default
+    end
+  end
+
+  def meta_keywords
+    @meta_keywords ||= begin
+      tag_list.map(&:downcase).join(",")
+    end
+  end
+
+  def canonical_url(options = {})
+    if privacy_private?
+      Rails.application.routes.url_helpers.web_document_url(slug_id, options)
+    elsif !privacy_private? && published? && slug.present? && user.slug.present?
+      Rails.application.routes.url_helpers.web_profile_document_url("@#{user.slug}", slug, options)
+    end
+  end
+
+  def published_url(options = {})
+    if !privacy_private? && published? && slug.present? && user.slug.present?
+      Rails.application.routes.url_helpers.web_profile_document_url("@#{user.slug}", slug, options)
+    end
   end
 
   protected

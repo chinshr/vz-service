@@ -1,0 +1,38 @@
+<% content_for :head_includes do %>
+  <%# https://codelit.com/blog/meta-tags-for-seo-in-ruby-on-rails %>
+  <meta name="description" content="<%= @document.meta_description %>" />
+  <meta name="keywords" content="<%= @document.meta_keywords %>" />
+  <link rel="canonical" href="<%= @document.canonical_url %>" />
+  <% if false %>
+  <link rel="image_src" href="<%= @collection.main_images.first.attachment.url(:square) %>" />
+  <% end %>
+
+  <meta property="og:locale" content="<%= I18n.web_locale(@document.locale) %>">
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="<%= @document.title.titleize %>. Record your Life. Your conversations deserve a place to be found." />
+  <meta name="og:description" content="<%= @document.meta_description %>" />
+  <meta property="og:url" content="<%= @document.canonical_url %>">
+  <meta property="og:site_name" content="VOYZ.ES">
+  <meta property="article:author" content="https://www.facebook.com/codelit">
+  <meta property="article:tag" content="<%= @document.meta_keywords %>">
+  <% if false %>
+  <meta property="article:section" content="Annoncements">
+  <% end %>
+  <% if @document.published_at %>
+  <meta property="article:published_time" content="<%= @document.published_at.to_s(:iso8601) %>">
+  <% end %>
+  <meta property="article:modified_time" content="<%= @document.updated_at.to_s(:iso8601) %>">
+  <meta property="og:updated_time" content="<%= @document.updated_at.to_s(:iso8601) %>">
+  <% if false %>
+  <meta property="og:image" content="<%= @document.main_images.first.attachment.url(:square) %>" />
+  <% end %>
+
+  <meta name="twitter:card" content="photo" />
+  <meta name="twitter:title" content="<%= @document.title.titleize %>. Record your Life. Your conversations deserve a place to be found." />
+  <meta name="twitter:site" content="@VOYZES" />
+  <meta name="twitter:description" content="<%= @document.meta_description %>" />
+  <meta name="twitter:url" content="<%= @document.canonical_url %>" />
+  <% if false %>
+  <meta name="twitter:image" content="<%= @document.main_images.first.attachment.url(:square) %>" />
+  <% end %>
+<% end %>

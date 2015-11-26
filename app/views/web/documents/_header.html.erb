@@ -104,11 +104,11 @@
 
           <!-- share -->
 
-          <li><button type="button" class="btn btn-md btn-tlb fa fa-facebook fa-fw" data-toggle="tooltip" data-placement="bottom"></button></li>
+          <li><button type="button" class="btn btn-md btn-tlb fa fa-facebook fa-fw" data-toggle="tooltip" data-placement="bottom" data-href="<%= @document.published_url %>"></button></li>
 
-          <li><button type="button" class="btn btn-md btn-tlb fa fa-twitter fa-fw" data-toggle="tooltip" data-placement="bottom"></button></li>
+          <li><button type="button" class="btn btn-md btn-tlb fa fa-twitter fa-fw" data-toggle="tooltip" data-placement="bottom" data-href="<%= @document.published_url %>" data-title="<%= @document.title %>"></button></li>
 
-          <li><button type="button" class="btn btn-md btn-tlb fa fa-linkedin fa-fw" data-toggle="tooltip" data-placement="bottom"></button></li>
+          <li><button type="button" class="btn btn-md btn-tlb fa fa-linkedin fa-fw" data-toggle="tooltip" data-placement="bottom" data-href="<%= @document.published_url %>" data-title="<%= @document.title %>"></button></li>
 
         </ul>
         <!-- /share-popover -->

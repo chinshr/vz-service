@@ -8,6 +8,8 @@
     <title><%= content_for?(:title) ? "#{yield(:title)} — VOYZ.ES" : "VOYZ.ES" %></title>
     <%= csrf_meta_tags %>
 
+    <%=h yield(:head_includes) %>
+
     <link rel="dns-prefetch" href="//fonts.googleapis.com">
     <link rel="dns-prefetch" href="//netdna.bootstrapcdn.com">
 
@@ -15,8 +17,6 @@
 
     <!-- Add modernizr -->
     <%= javascript_include_tag :modernizr %>
-
-    <%#= javascript_include_tag "application", "data-turbolinks-track" => true %>
 
     <!-- For third-generation iPad with high-resolution Retina display: -->
     <!-- Size should be 144 x 144 pixels -->
