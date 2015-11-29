@@ -186,7 +186,7 @@ VZ._social = (function() {
         tw_url += "?r=" + trackingCodes.twitter;
       }
       href = 'https://twitter.com/intent/tweet?related=' + 'voyzes' + '&url=' + encodeURIComponent(tw_url) + '&text=' + title + '&via=' + encodeURIComponent(VZ.config.twitter.hashtags);
-      window.open(href, '', 'height=500,width=450');
+      window.open(href, '', 'height=250,width=450');
       VZ.trackEvent("twitter-button-clicked", {url : tw_url});
     });
 
@@ -206,7 +206,7 @@ VZ._social = (function() {
         li_url += "?r=" + trackingCodes.linkedin;
       }
       href = 'https://www.linkedin.com/cws/share?url=' + encodeURIComponent(li_url) + '&summary=' + encodeURIComponent(title) + '&title=' + encodeURIComponent(title);
-      window.open(href, '', 'height=500,width=450');
+      window.open(href, '', 'height=400,width=450');
       VZ.trackEvent("linkedin-button-clicked", {url : li_url});
     });
 
