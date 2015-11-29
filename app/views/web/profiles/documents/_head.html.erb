@@ -1,5 +1,6 @@
 <% content_for :head_includes do %>
   <%# https://codelit.com/blog/meta-tags-for-seo-in-ruby-on-rails %>
+  <meta name="title" content="<%= @document.meta_title %>" />
   <meta name="description" content="<%= @document.meta_description %>" />
   <meta name="keywords" content="<%= @document.meta_keywords %>" />
   <link rel="canonical" href="<%= @document.canonical_url %>" />
