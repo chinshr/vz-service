@@ -1,8 +1,8 @@
 <div class="social-container">
   <ul class="nav navbar-nav toolbar-nav social-networks">
     <li class="facebook"><button class="btn btn-md btn-tlb fa fa-facebook fa-fw" href="#" data-href="<%= @published_url %>"></button></li>
-    <li class="twitter"><button class="btn btn-md btn-tlb fa fa-twitter fa-fw" href="#" data-href="<%= @published_url %>" ></button></li>
-    <li class="linkedin"><button class="btn btn-md btn-tlb fa fa-linkedin fa-fw" href="#" data-href="<%= @published_url %>"></button></li>
+    <li class="twitter"><button class="btn btn-md btn-tlb fa fa-twitter fa-fw" href="#" data-href="<%= @published_url %>" data-title="<%= @title %>"></button></li>
+    <li class="linkedin"><button class="btn btn-md btn-tlb fa fa-linkedin fa-fw" href="#" data-href="<%= @published_url %>" data-title="<%= @title %>"></button></li>
     <!--<li class="email"><button class="btn btn-md btn-tlb fa fa-envelope fa-fw" href="#" data-href=""></button></li>-->
   </ul><!-- .social-networks -->
 </div><!-- .social-container -->

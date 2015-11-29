@@ -96,6 +96,7 @@ Voyzes::Application.configure do
   config.log_formatter = ::Logger::Formatter.new
 
   config.action_mailer.default_url_options = {:host => 'voyz.es'}
+  routes.default_url_options[:host]        = 'voyz.es'
 
   config.action_mailer.smtp_settings = {
     :address        => 'smtp.sendgrid.net',

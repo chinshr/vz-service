@@ -14,10 +14,10 @@ module CoreExt
         #
         #     I18n.locale = :'en-US'
         #     I18n.switch_locale :'es-ES' do
-        #       product.name = 'esquis'
+        #       product.name = 'pan'
         #     end
         #
-        #     product.name #   --> skis
+        #     product.name #   --> bread
         #
         def switch_locale(code)
           current_locale = I18n.locale
@@ -42,8 +42,8 @@ module CoreExt
         #   :en        I18n.locale_language -> :en
         #   :"it-IT"   I18n.locale_language -> :it
         #
-        def locale_language(locale = nil)
-          (locale || ::I18n.locale).to_s.match(/^(\w{2})/) ? $1.to_sym : nil
+        def locale_language(in_locale = locale)
+          in_locale.to_s.match(/^(\w{2})/) ? $1.to_sym : nil
         end
 
         def humanized_locale_language(locale = nil)
@@ -59,8 +59,8 @@ module CoreExt
         #   :"it-IT"   I18n.locale_country_code -> :IT
         #   "de_DE"   I18n.locale_country_code -> :DE
         #
-        def locale_country(locale = nil)
-          (locale || I18n.locale).to_s.match(/[_-](\w{2})$/) ? $1.to_sym : nil
+        def locale_country(in_locale = locale)
+          in_locale.to_s.match(/[_-](\w{2})$/) ? $1.to_sym : nil
         end
 
         def active_locales
@@ -76,6 +76,13 @@ module CoreExt
         # Right-to-left language? E.g. Hebrew or Arabic
         def rtl?
           t("site.direction", :default => "ltr") == "rtl"
+        end
+
+        # "en_US" instead of "en-US"
+        def web_locale(in_locale = locale)
+          result = "#{locale_language(in_locale)}"
+          result += "_#{locale_country(in_locale)}" if locale_country(in_locale)
+          result
         end
 
       end

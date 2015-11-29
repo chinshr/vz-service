@@ -2,11 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="description" content="Record your life. Your conversations deserve a place to be found.">
-  <meta name="author" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title><%= content_for?(:title) ? "#{yield(:title)}" : "VOYZ.ES" %></title>
   <%= csrf_meta_tags %>
+
+  <%= render_recursive_partial("head") %>
+
+  <%=h yield(:head_includes) %>
 
   <link rel="dns-prefetch" href="//fonts.googleapis.com">
   <link rel="dns-prefetch" href="//netdna.bootstrapcdn.com">

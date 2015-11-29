@@ -127,7 +127,7 @@ VZ._social = (function() {
       hashtags = VZ.config.twitter.hashtags,
       tweetPrefix = VZ.config.twitter.prefix;
 
-    if (!('isTweetURLSet' in this)) {this.isTweetURLSet = false;}
+    if (!('isTweetURLSet' in this)) { this.isTweetURLSet = false; }
     if (!tweetURL && this.isTweetURLSet) {return;}
     var url = VZ.baseURL + (tweetURL ? tweetURL : document.location.pathname);
     var title = $('head meta[property="og:title"]').attr("content") || "";
@@ -157,10 +157,10 @@ VZ._social = (function() {
     // http://stackoverflow.com/questions/25619418/how-do-i-implement-basic-share-social-buttons-with-font-awesome-fonts
 
     // facebook
-    $('.social-networks .facebook a, .social-networks .facebook button').attr("href",'http://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(url))
+    $('.social-networks .facebook a, .social-networks .facebook button').attr("href", 'http://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(url))
     .on('click', function(e) {
       var href = $(this).attr("href"),
-        fburl = decodeURIComponent( href.substring(href.indexOf("u=")+2) );
+        fburl = decodeURIComponent( href.substring(href.indexOf("u=") > -1 ? href.indexOf("u=") + 2 : 0) );
 
       if (trackingCodes && ('facebook' in trackingCodes)) {
         href += "%3Fr%3D" + trackingCodes.facebook;
@@ -174,13 +174,18 @@ VZ._social = (function() {
     setupTwitter();
     $('.social-networks .twitter a, .social-networks .twitter button').on('click', function(e) {
       e.preventDefault();
-      var href = this.getAttribute('data-href');
-      var product_title = encodeURIComponent(href.substring( $(this).attr('data-product-title')));
-      var tw_url = decodeURIComponent(href.substring(href.lastIndexOf("url=") + 4));
+      var href   = this.getAttribute('data-href');
+      var title;
+      if ($(this).attr('data-title')) {
+        title = encodeURIComponent('"' + $(this).attr('data-title') + '"');
+      } else {
+        title = encodeURIComponent(VZ.config.twitter.prefix);
+      }
+      var tw_url = decodeURIComponent(href.substring(href.lastIndexOf("url=") > -1 ? href.lastIndexOf("url=") + 4 : 0));
       if (trackingCodes && ('twitter' in trackingCodes)) {
         tw_url += "?r=" + trackingCodes.twitter;
       }
-      href = 'https://twitter.com/intent/tweet?related=' + 'voyzes' + '&url=' + encodeURIComponent(tw_url) + '&text=' + encodeURIComponent(VZ.config.twitter.prefix) + '&hashtags=' + encodeURIComponent(VZ.config.twitter.hashtags);
+      href = 'https://twitter.com/intent/tweet?related=' + 'voyzes' + '&url=' + encodeURIComponent(tw_url) + '&text=' + title + '&via=' + encodeURIComponent(VZ.config.twitter.hashtags);
       window.open(href, '', 'height=500,width=450');
       VZ.trackEvent("twitter-button-clicked", {url : tw_url});
     });
@@ -189,12 +194,18 @@ VZ._social = (function() {
     setupLinkedIn();
     $('.social-networks .linkedin a, .social-networks .linkedin button').on('click', function(e) {
       e.preventDefault();
-      var href = this.getAttribute('data-href');
-      var li_url = decodeURIComponent(href.substring(href.lastIndexOf("url=") + 4));
+      var href   = this.getAttribute('data-href');
+      var title;
+      if ($(this).attr('data-title')) {
+        title = encodeURIComponent($(this).attr('data-title'));
+      } else {
+        title = encodeURIComponent(VZ.config.linkedin.prefix);
+      }
+      var li_url = decodeURIComponent(href.substring(href.lastIndexOf("url=") > -1 ? href.lastIndexOf("url=") + 4 : 0));
       if (trackingCodes && ('linkedin' in trackingCodes)) {
         li_url += "?r=" + trackingCodes.linkedin;
       }
-      href = 'https://www.linkedin.com/cws/share?url=' + encodeURIComponent(li_url) + '&text=' + encodeURIComponent(VZ.config.linkedin.prefix);
+      href = 'https://www.linkedin.com/cws/share?url=' + encodeURIComponent(li_url) + '&summary=' + encodeURIComponent(title) + '&title=' + encodeURIComponent(title);
       window.open(href, '', 'height=500,width=450');
       VZ.trackEvent("linkedin-button-clicked", {url : li_url});
     });
