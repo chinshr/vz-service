@@ -424,12 +424,12 @@ class DocumentTest < ActiveSupport::TestCase
 
   context "meta helpers" do
     setup do
-      @document = FactoryGirl.create(:document, title: "The Title", description: "The description.",
+      @document = FactoryGirl.create(:document, title: "the title", description: "The description.",
         tag_list: ["one", "two", "three"])
     end
 
     should "#meta_title" do
-      assert_equal "The Title. Record your Life. Your conversations deserve a place to be found.",
+      assert_equal "The Title",
         @document.meta_title
     end
 
@@ -438,11 +438,18 @@ class DocumentTest < ActiveSupport::TestCase
       should "not be longer than 200" do
         @document.description = "x" * 300
         assert_equal 200, @document.meta_description.length
+        assert_equal "X" + "x" * 196 + "...", @document.meta_description
+      end
+
+      should "take first 200 characters from content" do
+        @document.description = nil
+        @document.html = "<p>the content</p>"
+        assert_equal "The content", @document.meta_description
       end
 
       should "be same as #meta_title if description is empty" do
         @document.description = nil
-        assert_equal @document.meta_title, @document.meta_description
+        assert_equal nil, @document.meta_description
       end
 
     end

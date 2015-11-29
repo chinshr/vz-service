@@ -8,6 +8,7 @@ class Document < ActiveRecord::Base
   include Model::Filter
   include Model::Uid
   include ActionView::Helpers::TextHelper
+  include ActionView::Helpers::SanitizeHelper
 
   PRIVACY_SETTINGS  = {'public' => 0, 'private' => 1, 'unlisted' => 2}
   ACCESSIBILITY_SETTINGS  = {'view' => 0, 'comment' => 1, 'edit' => 2}
@@ -278,15 +279,18 @@ class Document < ActiveRecord::Base
 
   def meta_title
     @meta_title ||= begin
-      default = "#{title}. Record your Life. Your conversations deserve a place to be found."
+      default = "#{title.titleize}"
       truncate(default, length: 200, separator: ' ', omission: '.')
     end
   end
 
   def meta_description
     @meta_description ||= begin
-      default = !self[:description].blank? ? self[:description] : meta_title
-      truncate(default, length: 200, separator: ' ', omission: '.') if default
+      default = !self[:description].blank? ? self[:description] : strip_tags(html)
+      default = default.gsub("&nbsp;", " ") if default
+      default = default.gsub("&amp;", " ") if default
+      default = default.humanize if default
+      truncate(default, length: 200, separator: ' ', omission: '...') if default
     end
   end
 
