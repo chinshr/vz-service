@@ -567,8 +567,14 @@ body.documents {
     max-width: 450px;
     padding: 5px 5px;
     border: 0;
-    right: 0 !important;
+    right: 5px;
     position: fixed;
+
+    @media (max-width: 767px) {
+      max-width: 100%;
+      right: 5px !important;
+      left: 5px !important;
+    }
 
     .popover-content {
       padding: 0;
@@ -634,8 +640,14 @@ body.documents {
     max-width: 450px;
     padding: 5px 5px;
     border: 0;
-    right: 0 !important;
+    right: 45px;
     position: fixed;
+
+    @media (max-width: 767px) {
+      max-width: 100%;
+      right: 5px !important;
+      left: 5px !important;
+    }
 
     .popover-content {
       padding: 10px;
@@ -746,8 +758,14 @@ body.documents {
     max-width: 450px;
     padding: 5px 5px;
     border: 0;
-    right: 0 !important;
+    right: 85px !important;
     position: fixed;
+
+    @media (max-width: 767px) {
+      max-width: 100%;
+      right: 5px !important;
+      left: 5px !important;
+    }
 
     .popover-content {
       padding: 10px;
