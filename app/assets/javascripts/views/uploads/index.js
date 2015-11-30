@@ -23,12 +23,27 @@ App.Views.UploadsIndex = Backbone.View.extend({
     _.defer((function(_this) {
       return function() {
         _this.initDropTarget();
+        _this.initUnload();
         _this.updateMail();
       }
     })(this));
 
     this.addAll();
     return this;
+  },
+
+  views: function() {
+    return _(this.progressViews).pairs().filter(_.last).map(_.last);
+  },
+
+  initUnload: function() {
+    var _this = this;
+    var confirm = function(event) {
+      if (_.any(_this.views(), function(v) { return v.model.isUploading() })) {
+        return 'All uploads will be canceled if you leave this page.';
+      }
+    };
+    window.onbeforeunload = confirm;
   },
 
   initDropTarget: function() {

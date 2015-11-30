@@ -53,6 +53,10 @@ App.Models.Upload = Backbone.Model.extend({
     return this.attributes.status === 4 ? true : false
   },
 
+  isUploading: function() {
+    return typeof(this.attributes.id) === 'undefined';
+  },
+
   hasProgress: function() {
     switch (this.attributes.status) {
       case 0:
