@@ -5,8 +5,8 @@ App.Views.UploadsIndex = Backbone.View.extend({
     'drop #drop-box': 'dropFiles',
     'change input#files': 'addFiles',
     'click button#files-proxy': 'trigger',
-    'mouseenter #drop-box': 'hover',
-    'mouseleave #drop-box': 'hover',
+    'mouseenter #drop-box': 'addHover',
+    'mouseleave #drop-box': 'removeHover',
     'change #file-locale': 'updateMail',
   },
 
@@ -35,7 +35,8 @@ App.Views.UploadsIndex = Backbone.View.extend({
     var dropTarget = $('#drop-box'),
       body = $('body'),
       showDrag = false,
-      timeout = -1;
+      timeout = -1,
+      _this = this;
 
     body.on('dragenter', function (event) {
       event.originalEvent.preventDefault();
@@ -63,13 +64,18 @@ App.Views.UploadsIndex = Backbone.View.extend({
 
   },
 
-  hover: function(e) {
-    if (e.type === 'mouseenter') {
-      $(e.currentTarget).addClass('hover');
-    } else {
-      $('body').removeClass('hover');
-      $(e.currentTarget).removeClass('hover');
+  addHover: function(event) {
+    // if (event && event.type === 'mouseenter') {
+    if (event) {
+      $(event.currentTarget).addClass('hover');
     }
+  },
+
+  removeHover: function(event) {
+    if (event) {
+      $(event.currentTarget).removeClass('hover');
+    }
+    $('body').removeClass('hover');
   },
 
   trigger: function() {
@@ -108,22 +114,24 @@ App.Views.UploadsIndex = Backbone.View.extend({
     });
   },
 
-  dropFiles: function(e) {
-    e.originalEvent.preventDefault();
+  dropFiles: function(event) {
+    event.originalEvent.preventDefault();
 
-    if (e.dataTransfer === null) {
+    if (event.dataTransfer === null) {
       return;
     }
 
+    this.removeHover(event);
+
     return this.uploadToS3({
       files_dropped: true,
-      file_list: e.originalEvent.dataTransfer.files
+      file_list: event.originalEvent.dataTransfer.files
     });
   },
 
-  dropzone: function(e) {
-    e.originalEvent.preventDefault();
-    e.originalEvent.stopPropagation();
+  dropzone: function(event) {
+    event.originalEvent.preventDefault();
+    event.originalEvent.stopPropagation();
   },
 
   uploadToS3: function(options) {
