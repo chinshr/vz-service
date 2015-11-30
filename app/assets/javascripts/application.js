@@ -34,6 +34,7 @@
 //= require lib/bootstrap-slider.min
 //= require web/common
 //= require web/documents
+//= require web/account/account_application
 //= require app
 //= require_tree ../templates
 //= require_tree ./models

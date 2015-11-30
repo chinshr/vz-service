@@ -29,11 +29,14 @@
       for (option in options) {
         this[option] = options[option];
       }
+
       // normalize dom selector, e.g. '#files' to 'files'
-      if (typeof(this.file_dom_selector)) {
+      if (typeof(this.file_dom_selector) !== 'undefined') {
         this.file_dom_selector = this.file_dom_selector.replace(/#/, '')
+        this.handleFileSelect(document.getElementById(this.file_dom_selector));
+      } else if (options.files_dropped && options.file_list) {
+        this.handleFileSelect({files: options.file_list});
       }
-      this.handleFileSelect(document.getElementById(this.file_dom_selector));
     }
 
     S3Upload.prototype.handleFileSelect = function(file_element) {

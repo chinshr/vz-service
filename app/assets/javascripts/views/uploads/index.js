@@ -22,12 +22,45 @@ App.Views.UploadsIndex = Backbone.View.extend({
     this.$el.html(this.template);
     _.defer((function(_this) {
       return function() {
+        _this.initDropTarget();
         _this.updateMail();
       }
     })(this));
 
     this.addAll();
     return this;
+  },
+
+  initDropTarget: function() {
+    var dropTarget = $('#drop-box'),
+      body = $('body'),
+      showDrag = false,
+      timeout = -1;
+
+    body.on('dragenter', function (event) {
+      event.originalEvent.preventDefault();
+      event.originalEvent.stopPropagation();
+      console.log("=> dragenter");
+      body.addClass('hover');
+      dropTarget.addClass('hover');
+      showDrag = true;
+    }).on('dragover', function(event){
+      event.originalEvent.preventDefault()
+      event.originalEvent.stopPropagation()
+      showDrag = true;
+    }).on('dragleave', function (event) {
+      event.originalEvent.preventDefault()
+      event.originalEvent.stopPropagation()
+      showDrag = false;
+      clearTimeout( timeout );
+      timeout = setTimeout(function() {
+        if (!showDrag) {
+          dropTarget.removeClass('hover');
+          body.removeClass('hover');
+        }
+      }, 200 );
+    });
+
   },
 
   hover: function(e) {
