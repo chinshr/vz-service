@@ -134,7 +134,7 @@ class EmailProcessor
       fields.each do |hash|
         if (tri = hash[:email].split("+")).size > 1
           if (bi = tri.last.split("@")).size > 1
-            if bi.first.match(/^([a-z]{2}-[A-Z]{2}|[a-z]{2})$/i)
+            if bi.first.match(/^([a-z]{2}[-_]{1}[A-Z]{2}|[a-z]{2})$/i)
               return I18n.normalize_locale($1)
             end
           end
