@@ -1,6 +1,6 @@
 # Terms and Conditions ("Terms")
 
-Last updated: July 20, 2014
+Last updated: July 20, 2015
 
 Please read these Terms and Conditions ("Terms", "Terms and Conditions") carefully before using the [VOYZ.ES](http://voyz.es) website (the "Service") operated by VOYZES, Inc., Record Your Life<sup>&reg;</sup> ("us", "we", or "our").
 
