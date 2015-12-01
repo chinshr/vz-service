@@ -140,7 +140,7 @@
             <button title="More" id="more-edit-button" class="btn btn-md btn-tlb btn-circle btn-popover btn-more-edit" type="button" data-toggle="tooltip popover" data-placement="bottom" data-target="more-edit-popover-template" data-popover-id="more-edit-popover" data-popover-class="dropdown-popover more-edit-popover"><i class="fa fa-ellipsis-h"></i></button>
             <script type="text/html" id="more-edit-popover-template">
             <ul class="popdown-menu">
-              <li role="presentation"><a role="menuitem" href="<%= web_show_document_url %>"><i class="fa fa-eye"></i>Preview Document</a></li>
+              <li role="presentation"><a role="menuitem" href="<%= web_document_path(@document.slug_id) %>"><i class="fa fa-eye"></i>Preview Document</a></li>
               <% if !publish? && policy(@document).publish? && @document.published? %>
               <li role="presentation"><a role="menuitem" href="<%= web_published_document_url %>"><i class="fa fa-dot-circle-o"></i>Published Document</a></li>
               <% end %>
