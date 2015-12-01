@@ -312,7 +312,6 @@ header {
         &:hover { @include transition; }
         &.active { background-color: #373d44; }
 
-        /* TODO */
         padding: 0;
 
         button {
@@ -348,6 +347,25 @@ header {
           }
 
         } /* button */
+
+        .btn-login {
+          width: 55px;
+          font-size: 12px;
+          border: 1px solid #bbb;
+          border-radius: 300px;
+          line-height: 12px;
+          padding: 8px;
+          margin: 20px 0;
+          font-weight: bold;
+
+          &:hover {
+            border-color: #ccc;
+          }
+
+          p {
+            margin: 0;
+          }
+        }
 
         #profile-button {
           width: 30px;

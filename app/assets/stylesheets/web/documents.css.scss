@@ -9,6 +9,10 @@ body.documents {
       // border: #ddd solid 1px;
       color: #fff;
     }
+
+    .close {
+      display: none;
+    }
   }
 
   // Defined in application.css.scss
@@ -138,10 +142,11 @@ body.documents {
       border-radius: 300px;
       line-height: 12px;
       padding: 8px;
-      margin: 10px 0;
+      margin: 10px 0 !important;
       font-weight: bold;
 
       &:hover {
+        color: #fff;
         border-color: #ccc;
       }
 

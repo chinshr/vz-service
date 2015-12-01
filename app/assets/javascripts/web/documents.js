@@ -15,7 +15,6 @@
 
 /* simply-toast */
 $.extend(true, $.notify.defaultOptions, {
-  "align": "center",
   "offset": {
     "from": "top",
     "amount": 0
