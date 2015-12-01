@@ -130,7 +130,7 @@ class EmailProcessor
 
     # E.g. my+en-us@voyz.es or my+de@voyz.es
     def locale_from_email_address(field)
-      field.each do | a|
+      Array.wrap(field).each do | a|
         if (tri = a[:email].split("+")).size > 1
           if (bi = tri.last.split("@")).size > 1
             if bi.first.match(/^([a-z]{2}-[A-Z]{2}|[a-z]{2})$/i)
