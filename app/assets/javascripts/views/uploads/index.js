@@ -234,14 +234,17 @@ App.Views.UploadsIndex = Backbone.View.extend({
   },
 
   updateMail: function() {
-    return this.$('.btn-email-upload').attr('href', this._mailto);
+    var locale = $("#file-locale").val().toLowerCase();
+    this.$('.btn-email-upload').text("my+" + locale + "@voyz.es");
+    this.$('.btn-email-upload').attr('href', this.mailtoHref);
   },
 
-  _mailto: function() {
-    var locale = $("#file-locale option:selected").text() + " (" + $("#file-locale").val() + ")";
-    var href = "mailto:my@voyz.es"+
+  mailtoHref: function() {
+    var locale = $("#file-locale").val().toLowerCase(),
+      text = $("#file-locale option:selected").text() + " (" + $("#file-locale").val() + ")";
+    var href = "mailto:my+" + locale + "@voyz.es" +
       "?subject=Change%20title" +
-      "&body=—%0DAttach audio files to transcribe for " + locale + ". Change title and add description above the line.";
+      "&body=—%0DAttach audio files to transcribe for " + text + ". Change title and add description above the line.";
     return href
   },
 });
