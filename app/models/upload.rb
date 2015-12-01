@@ -64,7 +64,7 @@ class Upload < ActiveRecord::Base
 
   after_initialize :build_ingest_and_document
   before_validation :set_title, on: :create
-  after_save :save_ingest_and_document
+  after_commit :save_ingest_and_document
 
   class << self
 
@@ -154,11 +154,6 @@ class Upload < ActiveRecord::Base
     !s3_url.blank?
   end
 
-  def has_locale_recently_changed?
-    return !!ingest.document.changes[:locale] if ingest.document
-    false
-  end
-
   def recorded_at
     self[:recorded_at] || self.created_at
   end
@@ -183,9 +178,9 @@ class Upload < ActiveRecord::Base
     if ingest
       locale_changed = has_locale_recently_changed?
       ingest.document.save if ingest.document && ingest.document.changed?
-      ingest.save if ingest.changed?
+      ingest.save if ingest.new_record? || ingest.changed?
 
-      if !new_record? && has_s3_url?
+      if has_s3_url?
         if locale_changed
           ingest.restart! if ingest.may_restart?
         else
@@ -197,6 +192,11 @@ class Upload < ActiveRecord::Base
 
   def remove_ingest
     ingest.remove! if ingest.reload
+  end
+
+  def has_locale_recently_changed?
+    return !!ingest.document.changes[:locale] if ingest.document
+    false
   end
 
 end

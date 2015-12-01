@@ -165,9 +165,9 @@ class UploadTest < ActiveSupport::TestCase
 
   should "tell if locale has recently changed" do
     upload = FactoryGirl.create(:upload_audio, :s3_url => "http://s3.amazonaws.com/dropbox/61glI7mwmN")
-    assert_equal false, upload.has_locale_recently_changed?
+    assert_equal false, upload.send(:has_locale_recently_changed?)
     upload.locale = "de-DE"
-    assert_equal true, upload.has_locale_recently_changed?
+    assert_equal true, upload.send(:has_locale_recently_changed?)
   end
 
   should "destroy" do
