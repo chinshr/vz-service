@@ -129,9 +129,10 @@ class EmailProcessor
     end
 
     # E.g. my+en-us@voyz.es or my+de@voyz.es
-    def locale_from_email_address(field)
-      Array.wrap(field).each do | a|
-        if (tri = a[:email].split("+")).size > 1
+    # [{:token=>"my", :host=>"app.example.com", :email=>"my@app.example.com", :full=>"my@app.example.com", :name=>nil}]
+    def locale_from_email_address(fields)
+      fields.each do |hash|
+        if (tri = hash[:email].split("+")).size > 1
           if (bi = tri.last.split("@")).size > 1
             if bi.first.match(/^([a-z]{2}-[A-Z]{2}|[a-z]{2})$/i)
               return I18n.normalize_locale($1)
