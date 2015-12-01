@@ -151,7 +151,7 @@
           <li class="separator">&nbsp;</li>
           <% if current_user %>
           <li><!-- profile -->
-            <button title="Profile" id="profile-button" class="btn btn-md btn-tlb btn-popover btn-profile" type="button" data-toggle="tooltip" data-placement="bottom" data-target="profile-popover-template" data-popover-id="profile-popover" data-popover-class="dropdown-popover profile-popover">
+            <button title="<%= current_user.name_and_username %>" id="profile-button" class="btn btn-md btn-tlb btn-popover btn-profile" type="button" data-toggle="tooltip" data-placement="bottom" data-target="profile-popover-template" data-popover-id="profile-popover" data-popover-class="dropdown-popover profile-popover">
             <%= image_tag(avatar_url(current_user), class: "avatar", style: "background-color: #{current_user.css_hex_color}") %>
             </button>
             <script type="text/html" id="profile-popover-template">

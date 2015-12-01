@@ -76,6 +76,14 @@ class User < ActiveRecord::Base
     [first_name, last_name].reject(&:blank?).join(" ")
   end
 
+  def name_and_username
+    result = ""
+    result += name if name.present?
+    result += result.blank? ? "@#{username}" : " (@#{username})"
+    result.strip!
+    result
+  end
+
   def initials
     self[:initials] || begin
       [first_name.try(:[], 0), last_name.try(:[], 0)].reject(&:blank?).join.upcase

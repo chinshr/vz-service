@@ -45,6 +45,17 @@ class UserTest < ActiveSupport::TestCase
     assert_equal "", user.name
   end
 
+  should "have #name_and_username" do
+    user = FactoryGirl.create(:user, first_name: "Jürgen", last_name: "Feßlmeier", username: "jf")
+    assert_equal "Jürgen Feßlmeier (@jf)", user.name_and_username
+
+    user.attributes = {first_name: "Jürgen", last_name: nil}
+    assert_equal "Jürgen (@jf)", user.name_and_username
+
+    user.attributes = {first_name: nil, last_name: nil}
+    assert_equal "@jf", user.name_and_username
+  end
+
   should "have initials" do
     user = User.new(first_name: "jürgen", last_name: "feßlmeier")
     assert_equal "JF", user.initials
