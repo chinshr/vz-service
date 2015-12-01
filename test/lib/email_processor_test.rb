@@ -24,6 +24,13 @@ class EmailProcessorTest < ActiveSupport::TestCase
     }
   end
 
+  should "parse locale from email address" do
+    assert_equal "en", EmailProcessor.send(:locale_from_email_address, "my+en@voyz.es")
+    assert_equal "en-US", EmailProcessor.send(:locale_from_email_address, "my+en_US@voyz.es")
+    assert_equal "es", EmailProcessor.send(:locale_from_email_address, "my+es@voyz.es")
+    assert_equal nil, EmailProcessor.send(:locale_from_email_address, "my@voyz.es")
+  end
+
   unless ENV["CI_CODESHIP"]
     # does not run on CodeShip CI
 

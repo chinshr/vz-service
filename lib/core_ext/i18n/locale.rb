@@ -85,6 +85,12 @@ module CoreExt
           result
         end
 
+        def normalize_locale(in_locale)
+          result = []
+          result.push(locale_language(in_locale)) if locale_language(in_locale)
+          result.push(locale_country(in_locale)) if locale_country(in_locale)
+          result.join("-")
+        end
       end
     end
   end

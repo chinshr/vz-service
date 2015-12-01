@@ -96,8 +96,8 @@ gem 'client_side_validations', github: "DavyJonesLocker/client_side_validations"
 gem 'geocoder'
 gem 'gmaps4rails'
 gem 'nokogiri'
-gem 'whatlanguage'
-gem 'griddler', :git => "https://github.com/chinshr/griddler.git" # :path => "../griddler"
+gem 'whatlanguage', '~> 1.0.5'
+gem 'griddler', git: "https://github.com/chinshr/griddler.git" # :path => "../griddler"
 gem 'newrelic_rpm'
 gem 'amatch'
 gem 'fuzzy_match'

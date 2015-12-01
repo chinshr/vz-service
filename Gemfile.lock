@@ -470,7 +470,7 @@ DEPENDENCIES
   uglifier
   unicorn
   webmock
-  whatlanguage
+  whatlanguage (~> 1.0.5)
   yui-compressor
 
 BUNDLED WITH

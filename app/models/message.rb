@@ -27,8 +27,12 @@ class Message < ActiveRecord::Base
     end
   end
 
+  # Determines locale via text that needs more than 3 words
   def locale
-    LANGUAGE_LOCALES[WhatLanguage.new(:all).language([subject, text].join(" "))]
+    content = [subject, text].join(" ").strip
+    if content.split(" ").length > 3
+      LANGUAGE_LOCALES[WhatLanguage.new(:all).language(content)]
+    end
   end
 
   def valid_attachments?

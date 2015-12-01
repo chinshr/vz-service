@@ -10,18 +10,21 @@ class MessageTest < ActiveSupport::TestCase
     m = Message.create(html: "<i>I like pickles</i>")
     assert_equal "I like pickles", m.text
   end
-  
+
   should "infer locale from message text" do
     m = Message.new(subject: "New Recording")
+    assert_equal nil, m.locale
+
+    m = Message.new(subject: "This is a new recording")
     assert_equal "en", m.locale
 
-    m = Message.new(subject: "Das ist eine Audio", html: "<i>Aufzeichnung</i>")
+    m = Message.new(subject: "Das ist eine", html: "<i>gute Aufzeichnung</i>")
     assert_equal "de", m.locale
 
-    m = Message.new(subject: "Grabación de audio", text: "")
+    m = Message.new(subject: "Es una grabación de audio", text: "")
     assert_equal "es", m.locale
   end
-  
+
   should "attach upload as attachment" do
     message = FactoryGirl.create(:message)
     upload  = FactoryGirl.build(:upload_audio)
@@ -32,7 +35,7 @@ class MessageTest < ActiveSupport::TestCase
     end
     assert_equal upload, message.attachments.first
   end
-  
+
   should "have valid attachments" do
     message = FactoryGirl.create(:message)
     assert_difference "Upload.count", 1 do
@@ -43,7 +46,7 @@ class MessageTest < ActiveSupport::TestCase
       end
     end
   end
-  
+
   should "not have valid attachments" do
     message = FactoryGirl.create(:message)
     assert_difference "Upload.count", 1 do
@@ -58,7 +61,7 @@ class MessageTest < ActiveSupport::TestCase
       end
     end
   end
-  
+
   should "assign a sender as user" do
     user = FactoryGirl.create(:user)
     message = Message::Inbound.new(FactoryGirl.attributes_for(:message)) do |message|
