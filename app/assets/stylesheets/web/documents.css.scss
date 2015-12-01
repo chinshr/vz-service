@@ -11,36 +11,37 @@ body.documents {
     }
   }
 
-  /* Remove media query */
-  .navbar-header {
-    float: left;
-  }
+  // Defined in application.css.scss
+  // /* Remove media query */
+  // .navbar-header {
+  //   float: left;
+  // }
 
-  .navbar-nav {
-    float: left;
-    margin: 0;
+  // .navbar-nav {
+  //   float: left;
+  //   margin: 0;
 
-    &.navbar-right {
-      float: right;
-      margin-right: 0;
-    }
+  //   &.navbar-right {
+  //     float: right;
+  //     margin-right: 0;
+  //   }
 
-    li {
-      float: left;
+  //   li {
+  //     float: left;
 
-      @media (max-width: 479px) {
+  //     @media (max-width: 479px) {
 
-        button.btn-dispensable-xs {
-          display: none;
-        }
+  //       button.btn-dispensable-xs {
+  //         display: none;
+  //       }
 
-      }
-    }
+  //     }
+  //   }
 
-    .open .dropdown-menu {
-      position: absolute;
-    }
-  }
+  //   .open .dropdown-menu {
+  //     position: absolute;
+  //   }
+  // } /* .navbar-header */
 
   /* Used in toolbar and popover */
   .toolbar-nav {
@@ -173,12 +174,12 @@ body.documents {
           border-color: #ccc;
         }
       }
-    }
+    } /* .btn-circle */
 
     .avatar {
       border-radius: 300px;
-      width: 30px;
-      height: 30px;
+      width: 30px !important;
+      height: 30px !important;
       display: block;
       overflow: hidden;
       margin-bottom: 2px;
@@ -259,7 +260,7 @@ body.documents {
         &.left .tooltip-arrow {
           border-left-color: #292d33;
         }
-      }
+      } /* .tooltip */
 
       .dropdown {
         height: 50px;
@@ -479,18 +480,19 @@ body.documents {
     }
   }
 
-  .popover {
-    background-color: #292d33;
+  // Defined in application.css.scss
+  // .popover {
+  //   background-color: #292d33;
 
-    .arrow {
-      xdisplay: none;
+  //   .arrow {
+  //     xdisplay: none;
 
-      &:after {
-        border-bottom-color: #292d33;
-        border-top-color: #292d33;
-      }
-    }
-  } /* .popover */
+  //     &:after {
+  //       border-bottom-color: #292d33;
+  //       border-top-color: #292d33;
+  //     }
+  //   }
+  // } /* .popover */
 
   ul.content-toolbar-container {
     padding: 0;

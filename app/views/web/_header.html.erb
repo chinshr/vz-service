@@ -20,9 +20,36 @@
           <% end %>
         </div>
 
-        <div class="xnavbar-header" id="main-navbar">
+        <div id="main-navbar">
           <% if current_user %>
           <ul class="nav navbar-nav navbar-right">
+            <li><!-- profile -->
+              <button title="Profile" id="profile-button" class="btn btn-md btn-tlb btn-popover btn-profile" type="button" data-toggle="tooltip" data-placement="bottom" data-target="profile-popover-template" data-popover-id="profile-popover" data-popover-class="dropdown-popover profile-popover">
+              <%= image_tag(avatar_url(current_user), class: "avatar", style: "background-color: #{current_user.css_hex_color}") %>
+              </button>
+              <script type="text/html" id="profile-popover-template">
+              <ul class="popdown-menu">
+                <li role="presentation">
+                  <a role="menuitem" href="<%= request.path == web_dashboard_path ? '#' : web_dashboard_path %>">
+                  <% if current_user.ingests.started.count > 0 %><span class="badge badge-warning pull-right"><%= current_user.ingests.started.count %></span><% end %>
+                  Dashboard</a>
+                </li>
+                <li role="presentation"><a role="menuitem" href="<%= request.path == web_account_profile_path ? '#' : web_account_profile_path %>">User Profile</a></li>
+                <li role="presentation"><a role="menuitem" href="<%= request.path == web_account_settings_path ? '#' : web_account_settings_path %>">Account Settings</a></li>
+                <% if false %>
+                <li role="presentation"><a role="menuitem" href="<%= request.path == web_account_billing_path ? '#' : web_account_billing_path %>">Billing Information</a></li>
+                <% end %>
+                <% if current_user.developer_role? %>
+                <li role="presentation"><a role="menuitem" href="/documentation">Documentation</a></li>
+                <% end %>
+                <li role="presentation" class="divider"></li>
+                <li role="presentation" class="logout">
+                  <%= link_to "Logout", destroy_user_session_path, :method => :delete, :class => "btn btn-small btn-danger" %>
+                </li>
+              </ul>
+              </script>
+            </li><!-- /profile -->
+            <% if false %>
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                 <%= image_tag(avatar_url(current_user), class: "avatar", style: "background-color: #{current_user.css_hex_color}") %>
@@ -47,6 +74,7 @@
                 </li>
               </ul>
             </li><!-- dropdown -->
+            <% end %>
           </ul>
           <% else %>
           <div id="login-buttons" class="btn-group btn-group-horizontal pull-right">

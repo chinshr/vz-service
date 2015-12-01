@@ -70,6 +70,37 @@ header {
   }
 
   nav {
+    .tooltip {
+      font-weight: bold;
+
+      .tooltip-inner {
+        text-transform: uppercase;
+        background-color: #292d33;
+        padding: 6px 10px;
+        /* wrap spaces */
+        // white-space:pre-wrap;
+        /* don't break spaces */
+        white-space:pre;
+        max-width:none;
+      }
+
+      &.top .tooltip-arrow {
+        border-top-color: #292d33;
+      }
+
+      &.right .tooltip-arrow {
+        border-right-color: rgba(41, 45, 51, 0.9);
+      }
+
+      &.bottom .tooltip-arrow {
+        border-bottom-color: #292d33;
+      }
+
+      &.left .tooltip-arrow {
+        border-left-color: #292d33;
+      }
+    } /* .tooltip */
+
     &.navbar {
       border: 0;
     }
@@ -102,7 +133,7 @@ header {
       li {
         display: inline;
         padding: 25px 15px 25px 15px;
-        xheight: 70px;
+        height: 70px;
 
         &:last-child{
           margin-right:0;
@@ -173,8 +204,8 @@ header {
               border: transparent 2px solid;
             }
           }
-        }
-      }
+        } /* .dropdown */
+      } /* ul.nav li */
 
       .dropdown-menu {
         top: 70px;
@@ -221,7 +252,7 @@ header {
           background-color: #428bca;
           outline: 0;
         }
-      }
+      } /* .dropdown-menu */
     } /* ul.nav */
   } /* nav */
 
@@ -277,19 +308,53 @@ header {
 
     .navbar-nav {
       li {
-        &.active a {
-          color: $color-orange;
+        &.active a { color: $color-orange; }
+        &:hover { @include transition; }
+        &.active { background-color: #373d44; }
+
+        /* TODO */
+        padding: 0;
+
+        button {
+          outline: none !important;
+          height: inherit;
+          margin: auto 2px;
+          width: 22px;
+          padding: 10px 0;
+          border: 1px;
+
+          &.btn-tlb {
+            padding-left: 0;
+            padding-right: 0;
+            background-color: transparent;
+            color: #bbb;
+            xfont-size: 20px;
+            font-weight: normal;
+
+            &:active,
+            &:hover {
+              color: #fff;
+            }
+          }
+
+          .avatar {
+            border-radius: 300px;
+            width: 35px;
+            height: 35px;
+            display: block;
+            overflow: hidden;
+            margin-bottom: 2px;
+            border: transparent 1px solid;
+          }
+
+        } /* button */
+
+        #profile-button {
+          width: 30px;
         }
 
-        &:hover {
-          @include transition;
-        }
-
-        &.active {
-          background-color: #373d44;
-        }
-      }
-    }
+      } /* li */
+    } /* .navbar-nav */
 
     .navbar-nav > li > a {
       padding-top: 10px;
@@ -337,7 +402,7 @@ header {
     }
   } /* nav.navbar-default */
 
-}
+} /* header */
 
 /* for high resolution display */
 @media only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 2/1), only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min-device-pixel-ratio: 2) {
@@ -354,6 +419,131 @@ header {
     background: image-url('voyzes-logo.png') no-repeat 0 0;
   }
 }
+
+body {
+
+  /* Remove media query */
+  .navbar-header {
+    float: left;
+  }
+
+  .navbar-nav {
+    float: left;
+    margin: 0;
+
+    &.navbar-right {
+      float: right;
+      margin-right: 0;
+
+      &:last-child {
+        margin-right: 0;
+      }
+    }
+
+    li {
+      float: left;
+
+      @media (max-width: 479px) {
+
+        button.btn-dispensable-xs {
+          display: none;
+        }
+
+      }
+    }
+
+    .open .dropdown-menu {
+      position: absolute;
+    }
+  } /* .navbar-header */
+
+  .popover {
+    background-color: #292d33;
+
+    .arrow {
+      xdisplay: none;
+
+      &:after {
+        border-bottom-color: #292d33 !important;
+        border-top-color: #292d33 !important;
+      }
+    }
+  } /* .popover */
+
+  .popover.dropdown-popover {
+    max-width: 450px;
+    padding: 5px 5px;
+    border: 0;
+    right: 5px;
+    position: fixed;
+
+    @media (max-width: 767px) {
+      max-width: 100%;
+      right: 5px !important;
+      left: 5px !important;
+    }
+
+    .popover-content {
+      padding: 0;
+
+      ul.popdown-menu {
+        background-color: #292d33;
+        border: 0;
+        padding: 0;
+        margin: 0;
+        border-radius: 0px 0px 3px 3px;
+
+        .divider {
+          background-color: transparent;
+        }
+
+        li {
+          list-style: none;
+          text-align: left;
+          margin: 0;
+          padding: 0;
+          font-size: 16px;
+          border-radius: inherit;
+        }
+
+        & > li > a {
+          display: block;
+          padding: 15px 20px;
+          clear: both;
+          line-height: 1.4;
+          white-space: nowrap;
+          color: $color-white;
+          text-decoration: none;
+          text-transform: uppercase;
+          font-weight: bold;
+          border-radius: 2px;
+
+          i {
+            padding-right: 10px;
+          }
+        }
+
+        & > li > a:hover,
+        & > li > a:focus {
+          color: $color-white;
+          text-decoration: none;
+          // background-color: #292d33;
+          background-color: #3d444b;
+        }
+
+        & > .active > a,
+        & > .active > a:hover,
+        & > .active > a:focus {
+          color: #fff;
+          text-decoration: none;
+          background-color: #428bca;
+          outline: 0;
+        }
+      } /* .popdown-menu */
+    } /* .popover-content */
+  } /* .popover.dropdown-popover */
+
+} /* body */
 
 /* ====================== THEME ========================= */
 
