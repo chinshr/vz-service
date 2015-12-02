@@ -137,4 +137,7 @@ Voyzes::Application.configure do
     }
   }
   config.static_cache_control = "public, max-age=#{12.hours * 60.seconds}"
+
+  # http://kennethjiang.blogspot.com/2014/07/set-up-cors-in-cloudfront-for-custom.html
+  config.font_assets.origin = 'https://www.voyz.es'
 end
