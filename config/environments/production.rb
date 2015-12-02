@@ -139,5 +139,13 @@ Voyzes::Application.configure do
   config.static_cache_control = "public, max-age=#{12.hours * 60.seconds}"
 
   # http://kennethjiang.blogspot.com/2014/07/set-up-cors-in-cloudfront-for-custom.html
-  config.font_assets.origin = 'https://www.voyz.es'
+  config.font_assets.origin = '*'
+
+  # https://github.com/ericallam/font_assets/issues/40
+  config.middleware.insert_before ActionDispatch::Static, 'Rack::Cors', logger: (-> { Rails.logger }) do
+    allow do
+      origins '*'
+      resource '*', headers: :any, methods: [:get]
+    end
+  end
 end
