@@ -463,9 +463,28 @@ body.documents {
           canvas {
             left: 0;
           }
-        }
-      } /* .wavebar */
 
+          .wavesurfer-region {
+            border-radius: 2px;
+
+            &:hover {
+              border: 2px solid rgba(254,238,73,0.8); // #fed50c
+            }
+
+            .wavesurfer-handle {
+              width: 2px !important;
+            }
+
+            .wavesurfer-handle.wavesurfer-handle-start {
+              left: -2px !important;
+            }
+
+            .wavesurfer-handle.wavesurfer-handle-end {
+            }
+          }
+
+        } /* .waveform-container */
+      } /* .wavebar */
     } /* .topbar-secondary */
   } /* header */
 

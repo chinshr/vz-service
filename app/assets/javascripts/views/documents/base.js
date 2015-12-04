@@ -154,7 +154,7 @@ App.Views.DocumentsBase = Backbone.View.extend({
       backend       : 'MediaElement',
       // backend       : 'WebAudio',
       fillParent    : true,     // ???
-      hideScrollbar : false,    // audio to scroll
+      hideScrollbar : true,    // audio to scroll
       dragSelection : false,     // ???
       loopSelection : false,    // ???
       interact      : true,
