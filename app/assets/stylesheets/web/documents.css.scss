@@ -462,6 +462,7 @@ body.documents {
 
           canvas {
             left: 0;
+            overflow-x: hidden;
           }
 
           .wavesurfer-region {
