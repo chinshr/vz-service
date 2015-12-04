@@ -257,9 +257,12 @@ App.Views.DocumentsBase = Backbone.View.extend({
       e.shiftKey ? region.playLoop() : region.play();
     });
 
-    this.wavesurfer.on('region-click', _.bind(this.editAnnotation, this));
-    this.wavesurfer.on('region-updated', _.bind(this.updateRegion, this));
-    this.wavesurfer.on('region-removed', _.bind(this.removeRegion, this));
+    if (this.isEdit()) {
+      this.wavesurfer.on('region-click', _.bind(this.editAnnotation, this));
+      this.wavesurfer.on('region-updated', _.bind(this.updateRegion, this));
+      this.wavesurfer.on('region-removed', _.bind(this.removeRegion, this));
+    }
+
     this.wavesurfer.on('region-in', _.bind(this.highlightSegment, this));
     this.wavesurfer.on('region-out', _.bind(this.lowlightSegment, this));
 
@@ -313,6 +316,7 @@ App.Views.DocumentsBase = Backbone.View.extend({
     }, this));
 
     /* Old mark region */
+    /*
     this.wavesurfer.on('mark', function (marker) {
       if (marker.timer) { return; }
 
@@ -326,8 +330,10 @@ App.Views.DocumentsBase = Backbone.View.extend({
         }, 100);
       }, 100);
     });
+    */
 
     /* Not sure? */
+    /*
     this.wavesurfer.backend.on('audioprocess', _.bind(function onFinish(time) {
       if (time >= this.wavesurfer.getDuration() - 0.01) {
         $('.player-play-pause').addClass('fa-play').removeClass('fa-pause');
@@ -335,6 +341,7 @@ App.Views.DocumentsBase = Backbone.View.extend({
         this.wavesurfer.stop();
       }
     }, this));
+    */
   },
 
   initEditor: function() {
@@ -651,10 +658,12 @@ App.Views.DocumentsBase = Backbone.View.extend({
       if (op.attributes && op.attributes.segment) {
         var ts = this.parseSegmentTime(op.attributes.segment);
         var cs = this.parseSegmentColor(op.attributes.segment);
-        region.id    = op.attributes.segment;
-        region.start = ts ? ts[0] : null;
-        region.end   = ts ? ts[1] : null;
-        region.color = cs || this.randomColor(0.3);
+        region.id     = op.attributes.segment;
+        region.start  = ts ? ts[0] : null;
+        region.end    = ts ? ts[1] : null;
+        region.color  = cs || this.randomColor(0.3);
+        region.resize = this.isEdit();
+        region.drag   = this.isEdit();
       }
       return region;
     }, this));
