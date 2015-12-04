@@ -23,7 +23,7 @@ class Api::DocumentsController < Api::ApplicationController
   # [PUT] /api/documents/:id(.:format)
   def update
     authorize @document
-    @document = current_user.documents.update(params[:id], update_params)
+    @document.update_attributes(update_params)
     respond_with @document
   end
 

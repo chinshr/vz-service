@@ -191,6 +191,35 @@ class Api::DocumentsControllerTest < ActionController::TestCase
       # assert_equal rich_text_content, @document2.reload.rich_text
     end
 
+    should "update user 2's document when signed in as user 1 with accessibility editable" do
+      html_content = "<p>Es el contenido.</p>"
+      text_content = "Es el contenido."
+      rich_text_content = {"startLength"=>0, "endLength"=>15, "ops"=>[{"value"=>"Es el contenido.", "attributes"=>{"italic"=>true}}]}
+      sign_in :user, @user1
+      @document2.update_attributes(accessibility: ["edit"])
+      put :update, {:id => @document2.id, :document => {
+        title: "La fiesta!",
+        description: "Entrevista en la fiesta.",
+        tag_list: ["entrevista", "fiesta"],
+        locale: "es-AR",
+        privacy: "private",
+        accessibility: "edit",
+        html: html_content,
+        rich_text: rich_text_content,
+        text: text_content
+      }, format: :json}
+      assert_response :success
+      assert_response_body_attributes_with "document"
+      assert_equal "La fiesta!", @document2.reload.title
+      assert_equal "Entrevista en la fiesta.", @document2.reload.description
+      assert_equal ["entrevista", "fiesta"], @document2.reload.tag_list
+      assert_equal "es-AR", @document2.reload.locale
+      assert_equal ["private"], @document2.reload.privacy
+      assert_equal ["edit"], @document2.reload.accessibility
+      assert_equal html_content, @document2.reload.html
+      assert_equal text_content, @document2.reload.text
+    end
+
     should "NOT update when no user is signed in " do
       put :update, {:id => @document1.id, :document => {:title => "No autorizado!"}, format: :json}
       assert_response :unauthorized
