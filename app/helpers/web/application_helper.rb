@@ -27,6 +27,7 @@ module Web::ApplicationHelper
     ["Failure is the condiment that gives success its flavor.", "Truman Capote"],
     ["If you can dream it, you can achieve it.", "Zig Ziglar"],
     ["Pull the string, and it will follow you wherever. Push it, and it will go nowhere at all.", "Dwight Eisenhower"],
+    ["Folks, you cannot un-invent things.", "Karlheinz Brandenburg"],
     ["Never give up. You only get one life. Go for it!", "Richard E. Grant"]
   ]
 
