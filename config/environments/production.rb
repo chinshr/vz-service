@@ -37,14 +37,14 @@ Voyzes::Application.configure do
   config.assets.digest = true
 
   # Version of your assets, change this if you want to expire all your assets.
-  config.assets.version = '1.1'
+  config.assets.version = '1.1.1'
 
   config.static_cache_control = "public, max-age=31536000"
 
-  config.assets.debug = true
+  config.assets.debug = false
 
   # Compress JavaScripts and CSS
-  config.assets.compress = false
+  config.assets.compress = true
 
   # Setting compressor currently doesn't work (thx to @carhartl for the tip) https://github.com/rails/sass-rails/issues/104
   config.assets.css_compressor = :yui
