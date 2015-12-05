@@ -345,13 +345,16 @@ body.documents {
         } /* .dropdown-menu */
 
         #logo {
-          margin: 5px 0;
+          width: 40px;
+          height: 50px;
+          line-height: 50px;
+          margin: 0;
+          padding: 0;
           text-indent: -9999px;
           background: image-url('main-logo-v.png') no-repeat 0 0 !important;
-          width: 40px;
           @media only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 2/1), only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min-device-pixel-ratio: 2) {
             background: image-url('main-logo-v@2x.png') no-repeat 0 0 !important;
-            background-size: 40px 40px !important;
+            background-size: 40px 50px !important;
           }
         }
 

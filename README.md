@@ -288,6 +288,8 @@ Similar to:
   - [User Data Scripts](https://alestic.com/2009/06/ec2-user-data-scripts/)
   - Ruby AWS [user data example](https://github.com/aws/aws-sdk-ruby/issues/191)
 * Canvas video, instead of video element, use sprite -- https://github.com/gka/canvid
+* Backbone + PubNub
+  - [Tutorial](https://cdnjs.com/libraries/backbone.js/tutorials/real-time-backbone-with-pubnub/)
 
 ### SendGrid Setup
 
