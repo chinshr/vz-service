@@ -1037,6 +1037,7 @@ body.documents {
           .select2-container, .select2-container-multi {
             border: 0;
             drop-shadow: none !important;
+            box-shadow: 0;
 
             &.select2-dropdown-open {
             }
