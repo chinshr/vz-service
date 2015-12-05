@@ -95,7 +95,7 @@ $btn-default-radius: 2px;
 }
 
 @-webkit-keyframes fadeInDown {
-  0% {
+  0.00% {
     opacity:0;
     -webkit-transform:translateY(-20px);
   }
@@ -106,7 +106,7 @@ $btn-default-radius: 2px;
 }
 
 @-moz-keyframes fadeInDown {
-  0% {
+  0.00% {
     opacity:0;
     -moz-transform:translateY(-20px);
   }
@@ -118,7 +118,7 @@ $btn-default-radius: 2px;
 }
 
 @-o-keyframes fadeInDown{
-  0% {
+  0.00% {
     opacity:0;
     -o-transform: translateY(-20px);
   }
@@ -130,7 +130,7 @@ $btn-default-radius: 2px;
 }
 
 @keyframes fadeInDown{
-  0% {
+  0.00% {
     opacity:0;
     transform: translateY(-20px);
   }
@@ -144,7 +144,7 @@ $btn-default-radius: 2px;
 /* fade up */
 
 @-webkit-keyframes fadeInUp {
-  0% {
+  0.00% {
     opacity:0;
     -webkit-transform:translateY(20px);
   }
@@ -155,7 +155,7 @@ $btn-default-radius: 2px;
 }
 
 @-moz-keyframes fadeInUp {
-  0% {
+  0.00% {
     opacity:0;
     -moz-transform:translateY(20px);
   }
@@ -167,7 +167,7 @@ $btn-default-radius: 2px;
 }
 
 @-o-keyframes fadeInUp {
-  0% {
+  0.00% {
     opacity:0;
     -o-transform: translateY(20px);
   }
@@ -179,7 +179,7 @@ $btn-default-radius: 2px;
 }
 
 @keyframes fadeInUp {
-  0% {
+  0.00% {
     opacity:0;
     transform: translateY(20px);
   }
