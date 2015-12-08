@@ -66,11 +66,10 @@
   ================================================== -->
   <%= javascript_include_tag "application" %>
   <%= javascript_tag do %>
-    if (typeof(VZ) !== 'undefined' && VZ.config) {
-      VZ.config.user = {};
-      <% if defined?(current_user) && current_user %>
-      VZ.config.user.username = "<%= current_user.username %>";
-      <% end %>
+    if (typeof(App) !== 'undefined') {
+      <% if signed_in? -%>
+        App.currentUser = new App.Models.User(<%= render(:file => "api/account/users/show.rabl").html_safe -%>.user);
+      <% end -%>
     }
   <% end %>
   <%= yield :javascript_includes %>

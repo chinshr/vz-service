@@ -2,7 +2,7 @@ namespace :user do
   namespace :roles do
     desc "Set role 'user' as default for all users"
     task :set_default => :environment do
-      ::User.find_each do |user|
+      User.find_each do |user|
         if user.valid? && user.changes.include?(:roles_mask)
           user.update_column(:roles_mask, user.roles_mask)
         end
@@ -18,6 +18,14 @@ namespace :user do
           user.update_column(:username, un) unless user.username
         end
       end
+    end
+  end
+
+  desc "Set uid for all users"
+  task :set_uid => :environment do
+    User.where("users.uid IS NULL").find_each do |user|
+      user.generate_uid_unless_present
+      user.save!
     end
   end
 end

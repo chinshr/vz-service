@@ -119,4 +119,5 @@ gem 'turkee', git: 'https://github.com/chinshr/turkee.git', branch: 'master'
 gem 'activejob_backport'  # remove for Rails ~> 4.2
 gem 'paper_trail', '~> 4'
 gem 'friendly_id', '~> 5.1.0'
-gem 'clockwork'
+gem 'clockwork', '~> 1.2.0'
+gem 'pubnub', '~> 3.7.9'

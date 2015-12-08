@@ -9,3 +9,4 @@ public/assets/*
 logfile
 .DS_Store
 samples/
+pubnub.log

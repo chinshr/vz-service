@@ -345,11 +345,8 @@ App.Views.DocumentsBase = Backbone.View.extend({
   },
 
   initEditor: function() {
-    this.titleEditor = new Quill(this.isEdit() ? '#title-editor' : '#title-editor',
-      {
-      'modules': {
-      },
-      'styles': false // '/assets/web/quill-title-editor.css'
+    this.titleEditor = new Quill(this.isEdit() ? '#title-editor' : '#title-editor', {
+      'modules': {}, 'styles': false // '/assets/web/quill-title-editor.css'
     });
 
     if (this.isShow()) {
@@ -372,16 +369,24 @@ App.Views.DocumentsBase = Backbone.View.extend({
       this.titleEditor.setHTML(this.model.attributes.title);
     }
 
-    this.contentEditor = new Quill(this.isEdit() ? '#content-editor' : '#content-editor',
-      {
+    this.contentEditor = new Quill(this.isEdit() ? '#content-editor' : '#content-editor', {
       'modules': {
+        'authorship': {
+          authorId: App.currentUser.attributes.username,
+          enabled: this.isEdit()
+        },
+        'multi-cursor': this.isEdit(),
         'segmentation': { enabled: true },
         'toolbar': {
-          container: '#content-editor-toolbar-template' // '.content-editor-toolbar-container'
-        },
-      },
-      'styles': false
+          container: '#content-editor-toolbar-template'
+        }
+      }
     });
+
+    if (this.isEdit()) {
+      this.contentEditorAuthorship    = this.contentEditor.getModule('authorship');
+      this.contentEditorCursorManager = this.contentEditor.getModule('multi-cursor');
+    }
 
     if (this.isShow()) {
       this.contentEditor.editor.disable();
@@ -480,10 +485,10 @@ App.Views.DocumentsBase = Backbone.View.extend({
   },
 
   initUserInitials: function() {
-    var ui = $(".user-initials");
-    if (ui.length !== 0 && !ui.is(':visible')) {
-      ui.animate({top: 0, opacity: 1}, 'fast');
-    }
+    return this.userInitial = new App.Views.DocumentsUserInitial({
+      model: App.currentUser,
+      parent: this
+    });
   },
 
   initPlaybackSpeedSlider: function() {
@@ -522,10 +527,7 @@ App.Views.DocumentsBase = Backbone.View.extend({
       if (selrg) {
         var rects = selrg.getClientRects();
         if (rects.length > 0) {
-          var ui = $(".user-initials");
-          ui.stop().animate({
-            top: (-1 * margin) - (ui.height() / 2) + window.scrollY + rects[0].top
-          }, 0);
+          this.userInitial.moveY((-1 * margin) - (this.userInitial.height() / 2) + window.scrollY + rects[0].top);
         }
       }
     }

@@ -1345,6 +1345,9 @@ body.documents {
         }
 
         .user-initials {
+          position: absolute;
+          top: 0;
+          left: 15px;
           display: inline-block;
           color: transparent;
           line-height: 32px;

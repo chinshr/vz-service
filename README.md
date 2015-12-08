@@ -40,17 +40,17 @@ Set default username from email address:
   - Gridspace -- http://gridspace.com
   - Transcribe Wreally -- http://transcribe.wreally.com
   - ASU Oral History Project -- http://gaialab.asu.edu/OHP
-  - Hearing aid -- http://www.transcense.com
+  - Hearing Aid -- http://www.transcense.com
   - Not a competitor but a great conversion tool -- cloudconvert.org
 * HIPAA compliance (box notes is): http://en.wikipedia.org/wiki/Health_Insurance_Portability_and_Accountability_Act
 * Dictaphone ebay buying guide -- http://www.ebay.com/gds/Dictaphone-Buying-Guide-/10000000177630514/g.html
-* Transition browser compatibility -- http://www.sitepoint.com/css3-animation-javascript-event-handlers/
-* Open source transcrition helping tool -- otranscribe.com
-* Mobile Justice app -- https://www.mobilejusticeca.org
+* [OTranscribe](otranscribe.com), open source transcrition helping tool
+* [Mobile Justice](https://www.mobilejusticeca.org) app
   - Article: http://www.theatlantic.com/technology/archive/2015/05/film-the-police/392483/
-* Record your life with a camera: http://memini.com
-* ClibMine, video captions, table of contents -- https://clip.mn
-* Koemei, automatic video transcriptions and analysis, sentiment detection, etc. -- https://koemei.com/
+* [MeMini](http://memini.com) Record your life with a camera
+* [ClibMine](https://clip.mn), video captions, table of contents, annotations
+* [Koemei](https://koemei.com/), automatic video transcriptions and analysis, sentiment detection, etc.
+* [Speechmatics](speechmatics.com/about) licensing to VoiceBase, Tony Robinson, CTO, 30+ years in ASR experience
 
 ## Patentable Ideas
 
@@ -280,6 +280,7 @@ Similar to:
 * Avatar uploading, cropping, S3:
   - Carrierwave direct to S3 -- https://github.com/dwilkie/carrierwave_direct
   - Rails Demo app with Carrierwave, S3, [jCrop](https://github.com/n0ne/Rails-Carrierwave-jQuery-File-Upload)
+* Transition browser compatibility -- http://www.sitepoint.com/css3-animation-javascript-event-handlers/
 * Pinterest layout for Dashboard with Bootstrap
   - [Wookmark jQuery library](https://github.com/germanysbestkeptsecret/Wookmark-jQuery)
   - [Pinterest layout demo](http://bragthemes.com/demo/pinstrap/) based on [Wookmark jQuery library](https://github.com/germanysbestkeptsecret/Wookmark-jQuery)
@@ -290,6 +291,12 @@ Similar to:
 * Canvas video, instead of video element, use sprite -- https://github.com/gka/canvid
 * Backbone + PubNub
   - [Tutorial](https://cdnjs.com/libraries/backbone.js/tutorials/real-time-backbone-with-pubnub/)
+* Real-time editors and implementation
+  - [Real-time Text Editor using Pubnub+Modulus, Part 1](http://blog.modulus.io/distributed-real-time-text-editor)
+  - [Real-time Text Editor using Pubnub+Modulus, Part 2](http://blog.modulus.io/pub-nub-and-modulus-part-2)
+  -  [PubNub presence](https://www.pubnub.com/docs/web-javascript/presence)
+  - [Firebase Firepad on GitHub](https://github.com/firebase/firepad) and [Live Demo](https://demo.firepad.io/#sxz0Ct8eko)
+* Clammr - to get idea about index page tiles https://www.clammr.com/app/
 
 ### SendGrid Setup
 
