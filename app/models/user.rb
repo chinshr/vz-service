@@ -1,6 +1,7 @@
 class User < ActiveRecord::Base
   extend FriendlyId
   include Model::User::Roles
+  include Model::Uid
 
   attr_accessor :force_registration_validation
   attr_accessor :skip_registration_validation
@@ -43,6 +44,14 @@ class User < ActiveRecord::Base
 
   before_save :geocode, if: :has_ip_address?, unless: :geocoded?
   before_save :reverse_geocode, if: :geocoded?
+
+  class << self
+
+    def generate_uid
+      SecureRandom.uuid
+    end
+
+  end
 
   def password_required?
     # previous = !persisted? || !password.nil? || !password_confirmation.nil?
@@ -111,7 +120,18 @@ class User < ActiveRecord::Base
     !!(record.respond_to?(:user) && record.user && self == record.user)
   end
 
+  def avatar_url(options = {})
+    options.reverse_merge!({size: 96})
+    gravatar_id   = Digest::MD5::hexdigest(email).downcase
+    gravatar_root = https? ? "https://secure.gravatar.com/" : "http://gravatar.com/"
+    "#{gravatar_root}avatar/#{gravatar_id}.png?s=#{options[:size]}&d=identicon"
+  end
+
   protected
+
+  def https?
+    Rails.env.development? ? false : true
+  end
 
   def has_ip_address?
     ip_address.present?

@@ -6,7 +6,11 @@ var VZ = (function() {
     environment: "<%= Rails.env %>",
     twitter: {hashtag: "voyzes", hashtags: "voyzes", prefix: "See what I found on VOYZ.ES "},
     linkedin: {prefix: "See what I found on VOYZ.ES "},
-    google: {analyticsId: 'UA-48375934-1'}
+    google: {analyticsId: 'UA-48375934-1'},
+    pubnub: {
+      publish_key: "<%= PUBNUB.env[:publish_key] %>",
+      subscribe_key: "<%= PUBNUB.env[:subscribe_key] %>"
+    }
   };
 
   //var isProduction = document.location.href.indexOf("www." + config.domain) > 0;

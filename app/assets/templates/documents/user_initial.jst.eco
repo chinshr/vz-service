@@ -1,0 +1,1 @@
+<div class="note-head user-initials" id="<%= @username %>" title="<%= @name %>" data-bucket-number="0" style="opacity: 0; border-color: <%= @css_hex_color %>; background-color: <%= @css_hex_color %>; background-image: url(<%= @avatar_url %>);<%= @style %>"><%= @initials %></div>
