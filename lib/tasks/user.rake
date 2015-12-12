@@ -25,7 +25,7 @@ namespace :user do
   task :set_uid => :environment do
     User.where("users.uid IS NULL").find_each do |user|
       user.generate_uid_unless_present
-      user.save!
+      user.update_column(uid: user.uid) if user.uid
     end
   end
 end
