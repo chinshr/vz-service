@@ -4,7 +4,9 @@ App.Views.DocumentsEdit = App.Views.DocumentsBase.extend({
 
   initialize: function() {
     App.Views.DocumentsBase.prototype.initialize.call(this); // super
-    _.bindAll(this, "presenceCallback", "messageCallback", "hereNowCallback", "fetchUser", "fetchUserUnlessPresent", "isUserPresent");
+    _.bindAll(this, "presenceCallback", "messageCallback",
+      "hereNowCallback", "fetchUser", "fetchUserUnlessPresent",
+      "isUserPresent", "isUserSelf", "publish");
   },
 
   initPubnub: function() {
@@ -31,33 +33,38 @@ App.Views.DocumentsEdit = App.Views.DocumentsBase.extend({
       callback : this.hereNowCallback
     });
 
-    // Publish editors' content with ours
+    // Publish content editor's content
     this.contentEditor.on('text-change', function(delta, source) {
       if (source === 'user') {
         if (_.keys(_this.users).length > 0) {
-          _this.pubnub.publish({
-            channel: _this.channel(),
-            message: {'content-editor': {uuid: App.currentUser.attributes.username, 'text-change': {delta: delta}}},
-            callback: function(message) {
-              console.log("-> publish('content-editor->text-change') ", message)
-            }
-          });
+          var envelope = {'content-editor': {uuid: App.currentUser.attributes.username, 'text-change': {delta: delta}}};
+          _this.publish(envelope);
         }
       }
     });
 
-    /* Publish cursor selctions */
+    /* Publish content editor's cursor selections */
     this.contentEditor.on('selection-change', function(range) {
       if (range) {
         if (_.keys(_this.users).length > 0) {
-          _this.pubnub.publish({
-            channel: _this.channel(),
-            message: {'content-editor': {uuid: App.currentUser.attributes.username, 'selection-change': {range: range}}},
-            callback: function(message) {
-              console.log("-> publish('content-editor->selection-change') ", message)
-            }
-          });
+          var envelope = {'content-editor': {uuid: App.currentUser.attributes.username, 'selection-change': {range: range}}};
+          _this.publish(envelope);
         }
+      }
+    });
+  },
+
+  publish: function(envelope) {
+    var _this = this;
+    this.pubnub.publish({
+      channel: this.channel(),
+      message: envelope,
+      callback: function(status) {
+        console.log("-> publish('content-editor->text-change') ", status);
+      },
+      error: function(status) {
+        console.log(JSON.stringify(status));
+        _this.publish(envelope);
       }
     });
   },
@@ -74,7 +81,7 @@ App.Views.DocumentsEdit = App.Views.DocumentsBase.extend({
 
   presenceCallback: function(message) {
     var _this = this;
-    if (message.action === "join" && message.uuid !== App.currentUser.attributes.username) {
+    if (message.action === "join" && !_this.isUserSelf(message.uuid)) {
       this.fetchUserUnlessPresent(message.uuid);
     } else if(message.action === "leave" && message.uuid !== App.currentUser.attributes.username) {
       _this.users[message.uuid].destroy();
@@ -104,8 +111,14 @@ App.Views.DocumentsEdit = App.Views.DocumentsBase.extend({
   },
 
   hereNowCallback: function(message) {
-    // message.uuids -> ['a', 'b']
-    // console.log("-> here_now: ", message);
+    if (message.uuids.length > 0) {
+      for (var i = 0; i < message.uuids.length; i++) {
+        var uuid = message.uuids[i];
+        if (!this.isUserSelf(uuid)) {
+          this.fetchUserUnlessPresent(uuid);
+        }
+      }
+    }
   },
 
   render: function() {
@@ -142,11 +155,15 @@ App.Views.DocumentsEdit = App.Views.DocumentsBase.extend({
   isEdit: function() { return true; },
 
   channel: function() {
-    return this.model.attributes.slug_id;
+    return "vz-document-edit-" + this.model.attributes.slug_id;
   },
 
   isUserPresent: function(uuid) {
     return typeof(this.users[uuid]) === 'undefined' ? false : true;
+  },
+
+  isUserSelf: function(uuid) {
+    return typeof(uuid) !== "undefined" && uuid === App.currentUser.attributes.username;
   },
 
   fetchUserUnlessPresent: function(uuid) {
@@ -184,5 +201,4 @@ App.Views.DocumentsEdit = App.Views.DocumentsBase.extend({
       });
     }
   }
-
 });

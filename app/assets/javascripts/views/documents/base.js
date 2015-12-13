@@ -346,7 +346,13 @@ App.Views.DocumentsBase = Backbone.View.extend({
 
   initEditor: function() {
     this.titleEditor = new Quill(this.isEdit() ? '#title-editor' : '#title-editor', {
-      'modules': {}, 'styles': false // '/assets/web/quill-title-editor.css'
+      'modules': {
+        'authorship': {
+          authorId: App.currentUser.attributes.username,
+          enabled: this.isEdit()
+        },
+        'multi-cursor': this.isEdit()
+      }
     });
 
     if (this.isShow()) {
@@ -384,6 +390,8 @@ App.Views.DocumentsBase = Backbone.View.extend({
     });
 
     if (this.isEdit()) {
+      this.titleEditorAuthorship    = this.titleEditor.getModule('authorship');
+      this.titleEditorCursorManager = this.titleEditor.getModule('multi-cursor');
       this.contentEditorAuthorship    = this.contentEditor.getModule('authorship');
       this.contentEditorCursorManager = this.contentEditor.getModule('multi-cursor');
     }
