@@ -15,7 +15,8 @@ App.Views.DocumentsEdit = App.Views.DocumentsBase.extend({
       subscribe_key: VZ.config.pubnub.subscribe_key,
       uuid: App.currentUser.attributes.username,
       heartbeat: 120,
-      heartbeat_interval: 30
+      heartbeat_interval: 30,
+      ssl: VZ.isSSL()
     });
 
     this.pubnub.subscribe({

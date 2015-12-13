@@ -82,6 +82,10 @@ var VZ = (function() {
     return data;
   };
 
+  var isSSL = function() {
+    return window.location.protocol === 'https:' ? true : false
+  }
+
   return {
     config: config,
     baseURL: location.protocol + "//" + location.hostname + (location.port && ":" + location.port),
@@ -91,7 +95,8 @@ var VZ = (function() {
     MD5: MD5,
     cookies: cookies,
     getCookie: getCookie,
-    setCookie: setCookie
+    setCookie: setCookie,
+    isSSL: isSSL
   }
 })();
 
