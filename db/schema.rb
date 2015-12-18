@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151210005041) do
+ActiveRecord::Schema.define(version: 20160121221725) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -149,6 +149,7 @@ ActiveRecord::Schema.define(version: 20151210005041) do
     t.string   "aasm_state",                                            default: "unpublished", null: false
     t.datetime "published_at"
     t.integer  "accessibility_mask",                                    default: 0,             null: false
+    t.json     "words",                                                 default: []
   end
 
   add_index "documents", ["aasm_state"], name: "index_documents_on_aasm_state", using: :btree
@@ -232,7 +233,7 @@ ActiveRecord::Schema.define(version: 20151210005041) do
   create_table "ingests", force: true do |t|
     t.integer  "upload_id"
     t.string   "type"
-    t.string   "aasm_state",   default: "created", null: false
+    t.string   "aasm_state",                       default: "created", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.datetime "started_at"
@@ -240,22 +241,32 @@ ActiveRecord::Schema.define(version: 20151210005041) do
     t.datetime "reset_at"
     t.datetime "removed_at"
     t.datetime "finished_at"
-    t.float    "progress",     default: 0.0,       null: false
+    t.float    "progress",                         default: 0.0,       null: false
     t.text     "messages"
     t.string   "aasm_stage"
-    t.integer  "iteration",    default: 0,         null: false
-    t.boolean  "busy",         default: false,     null: false
+    t.integer  "iteration",                        default: 0,         null: false
+    t.boolean  "busy",                             default: false,     null: false
     t.datetime "restarted_at"
-    t.boolean  "terminate",    default: false,     null: false
+    t.boolean  "terminate",                        default: false,     null: false
     t.integer  "document_id"
     t.string   "uid"
+    t.boolean  "use_source_annotations",           default: false,     null: false
+    t.string   "file_name"
+    t.string   "file_type"
+    t.integer  "file_size",              limit: 8
+    t.text     "source_url"
+    t.json     "metadata",                         default: {},        null: false
+    t.string   "handle"
+    t.text     "origin_url"
   end
 
   add_index "ingests", ["aasm_stage"], name: "index_ingests_on_aasm_stage", using: :btree
   add_index "ingests", ["aasm_state"], name: "index_ingests_on_aasm_state", using: :btree
   add_index "ingests", ["created_at"], name: "index_ingests_on_created_at", using: :btree
   add_index "ingests", ["document_id"], name: "index_ingests_on_document_id", using: :btree
+  add_index "ingests", ["file_type"], name: "index_ingests_on_file_type", using: :btree
   add_index "ingests", ["finished_at"], name: "index_ingests_on_finished_at", using: :btree
+  add_index "ingests", ["handle"], name: "index_ingests_on_handle", using: :btree
   add_index "ingests", ["iteration"], name: "index_ingests_on_iteration", using: :btree
   add_index "ingests", ["removed_at"], name: "index_ingests_on_removed_at", using: :btree
   add_index "ingests", ["reset_at"], name: "index_ingests_on_reset_at", using: :btree
@@ -424,10 +435,6 @@ ActiveRecord::Schema.define(version: 20151210005041) do
   end
 
   create_table "uploads", force: true do |t|
-    t.string   "file_name"
-    t.string   "file_type"
-    t.integer  "file_size"
-    t.string   "s3_url"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "type"
@@ -436,9 +443,6 @@ ActiveRecord::Schema.define(version: 20151210005041) do
   end
 
   add_index "uploads", ["created_at"], name: "index_uploads_on_created_at", using: :btree
-  add_index "uploads", ["file_name"], name: "index_uploads_on_file_name", using: :btree
-  add_index "uploads", ["file_size"], name: "index_uploads_on_file_size", using: :btree
-  add_index "uploads", ["file_type"], name: "index_uploads_on_file_type", using: :btree
   add_index "uploads", ["type"], name: "index_uploads_on_type", using: :btree
   add_index "uploads", ["uid"], name: "index_uploads_on_uid", using: :btree
   add_index "uploads", ["updated_at"], name: "index_uploads_on_updated_at", using: :btree

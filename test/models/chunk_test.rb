@@ -34,7 +34,7 @@ class ChunkTest < ActiveSupport::TestCase
 
     should "create chunk with document via document_id" do
       Segment.destroy_all
-      @ingest   = FactoryGirl.create(:ingest_audio)
+      @ingest   = FactoryGirl.create(:media_ingest_as_audio)
       @document = @ingest.document
 
       @t1 = Track.create(FactoryGirl.attributes_for(:track, type: "chunk_track", s3_url: "http://t1", duration: 2))
@@ -58,7 +58,7 @@ class ChunkTest < ActiveSupport::TestCase
 
     should "captcha_chunk with source and reference chunks" do
       Segment.destroy_all
-      @ingest   = FactoryGirl.create(:ingest_audio)
+      @ingest   = FactoryGirl.create(:media_ingest_as_audio)
       @document = @ingest.document
 
       @sc_t1    = Track.create(FactoryGirl.attributes_for(:track, type: "chunk_track", s3_url: "http://sc_t1", duration: 2))
@@ -277,7 +277,7 @@ class ChunkTest < ActiveSupport::TestCase
     should "#none_of_ingest_ids" do
       Chunk.destroy_all
       ps1 = FactoryGirl.create(:chunk_pocketsphinx)
-      ps2 = FactoryGirl.create(:chunk_pocketsphinx, ingest: FactoryGirl.create(:ingest_audio))
+      ps2 = FactoryGirl.create(:chunk_pocketsphinx, ingest: FactoryGirl.create(:media_ingest_as_audio))
       assert_equal [ps1], Chunk.none_of_ingest_ids(ps2.ingest_id).order(created_at: :desc).limit(1)
       assert_equal [], Chunk.none_of_ingest_ids([ps1.ingest_id, ps2.ingest_id])
     end
@@ -290,13 +290,13 @@ class ChunkTest < ActiveSupport::TestCase
       ps4 = FactoryGirl.create(:chunk_pocketsphinx, locale: "de-DE")
       assert_equal [ps2], Chunk.any_of_locales("en-US")
       assert_equal [ps2], Chunk.any_of_locales("en-us")
-      assert_equal [ps1, ps2, ps3], Chunk.any_of_locales("en")
+      assert_equal [ps1, ps2, ps3], Chunk.any_of_locales("en").to_a
       assert_equal [ps4], Chunk.any_of_locales("de")
     end
 
     context "#best" do
       setup do
-        @ingest = FactoryGirl.create(:ingest_audio)
+        @ingest = FactoryGirl.create(:media_ingest_as_audio)
         @document = @ingest.document
         @c1 = Chunk::GoogleSpeechChunk.create(:position => 1, :offset => 0,  :duration => 0.72, :text => "I hate to say", :score => 0.80, :document => @ingest.document, :ingest => @ingest)
         @c2 = Chunk::GoogleSpeechChunk.create(:position => 2, :offset => 10, :duration => 0.89, :text => "cat maths are", :score => 0.65, :document => @ingest.document, :ingest => @ingest)
@@ -364,7 +364,7 @@ class ChunkTest < ActiveSupport::TestCase
 
   context "speech engines" do
     setup do
-      @ingest = FactoryGirl.create(:ingest_audio)
+      @ingest = FactoryGirl.create(:media_ingest_as_audio)
       @attributes = {
         :position          => 1,
         :offset            => 0,
@@ -430,5 +430,19 @@ class ChunkTest < ActiveSupport::TestCase
     chunk = FactoryGirl.create(:chunk)
     assert_equal false, chunk.is_root?
     assert_equal false, chunk.is_root
+  end
+
+  context "words" do
+    should "be initialized with empty array" do
+      chunk = Chunk::GoogleSpeechChunk.new
+      assert_equal [], chunk.words
+    end
+
+    should "set/get words as json" do
+      words = [{"p"=>1,"c"=>0.7,"s"=>1.610,"e"=>1.780,"w"=>"This"},{"p"=>2,"c"=>0.714,"s"=>1.780,"e"=>1.960,"w"=>"is"}]
+      chunk = FactoryGirl.create(:chunk, words: words)
+      assert_equal words, chunk.reload.words
+      assert_equal words.first, chunk.words.first
+    end
   end
 end

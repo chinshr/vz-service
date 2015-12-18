@@ -3,7 +3,9 @@ require 'test_helper'
 class MessageTest < ActiveSupport::TestCase
   context "associations" do
     should belong_to :sender
-    should have_many :attachments
+    should have_many(:attachings).dependent(:destroy)
+    should have_many(:attachments).through(:attachings)
+      .class_name("Upload::MediaUpload")
   end
 
   should "convert html to text" do
@@ -27,7 +29,7 @@ class MessageTest < ActiveSupport::TestCase
 
   should "attach upload as attachment" do
     message = FactoryGirl.create(:message)
-    upload  = FactoryGirl.build(:upload_audio)
+    upload  = FactoryGirl.build(:media_upload_as_audio)
     assert_difference "Upload.count", 1 do
       assert_difference "Attaching.count", 1 do
         message.attachments << upload
@@ -40,7 +42,7 @@ class MessageTest < ActiveSupport::TestCase
     message = FactoryGirl.create(:message)
     assert_difference "Upload.count", 1 do
       assert_difference "Attaching.count", 1 do
-        message.attachments.build FactoryGirl.attributes_for(:upload_audio).merge(type: "audio")
+        message.attachments.build FactoryGirl.attributes_for(:media_upload_as_audio)
         assert_equal true, message.valid_attachments?
         message.save!
       end
@@ -51,9 +53,9 @@ class MessageTest < ActiveSupport::TestCase
     message = FactoryGirl.create(:message)
     assert_difference "Upload.count", 1 do
       assert_difference "Attaching.count", 1 do
-        message.attachments.build FactoryGirl.attributes_for(:upload_audio).merge(type: "audio")
+        message.attachments.build FactoryGirl.attributes_for(:media_upload_as_audio)
         assert_equal true, message.save
-        message.attachments.build FactoryGirl.attributes_for(:upload_audio).merge(type: "audio").merge(file_type: "mux/pux")
+        message.attachments.build FactoryGirl.attributes_for(:media_upload_as_audio).merge(file_type: "mux/pux")
         assert_equal false, message.valid_attachments?
         assert_equal false, message.valid?
         assert_equal ["Attachments is invalid"], message.errors.full_messages

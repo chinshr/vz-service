@@ -1,4 +1,4 @@
-module Model::Ingest::MediaIngest
+module Model::Ingest::MediaStages
   PROGRESS = {harvest_stage: 10, transcode_stage: 20,
     split_stage: 30, archive_stage: 90}
 
@@ -6,27 +6,6 @@ module Model::Ingest::MediaIngest
 
   included do
     attr_writer :trigger
-
-    delegate :title, to: :document
-    delegate :title=, to: :document
-
-    delegate :description, to: :document
-    delegate :description=, to: :document
-
-    delegate :tag_list, to: :document
-    delegate :tag_list=, to: :document
-
-    delegate :locale, to: :document
-    delegate :locale=, to: :document
-
-    delegate :privacy, to: :document
-    delegate :privacy=, to: :document
-
-    delegate :user, to: :document
-    delegate :user=, to: :document
-
-    delegate :slug, to: :document
-    delegate :slug_id, to: :document
 
     # stage state machine
     aasm :stage, column: 'aasm_stage', whiny_transitions: true do

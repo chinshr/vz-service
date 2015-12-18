@@ -168,6 +168,8 @@ GEM
       thread_safe (~> 0.1)
       warden (~> 1.2.3)
     docile (1.1.5)
+    domain_name (0.5.25)
+      unf (>= 0.0.5, < 1.0.0)
     dotenv (0.11.1)
       dotenv-deployment (~> 0.0.2)
     dotenv-deployment (0.0.2)
@@ -188,6 +190,17 @@ GEM
     factory_girl_rails (4.5.0)
       factory_girl (~> 4.5.0)
       railties (>= 3.0.0)
+    faraday (0.9.2)
+      multipart-post (>= 1.2, < 3)
+    faraday-cookie_jar (0.0.6)
+      faraday (>= 0.7.4)
+      http-cookie (~> 1.0.0)
+    faraday-http-cache (1.2.2)
+      faraday (~> 0.8)
+    faraday_middleware (0.10.0)
+      faraday (>= 0.7.4, < 0.10)
+    fastimage (1.8.1)
+      addressable (~> 2.3, >= 2.3.5)
     font-awesome-rails (4.3.0.0)
       railties (>= 3.2, < 5.0)
     font_assets (0.1.11)
@@ -214,6 +227,8 @@ GEM
       railties (>= 3.1)
     hitimes (1.2.3)
     htmlentities (4.3.3)
+    http-cookie (1.0.2)
+      domain_name (~> 0.5)
     i18n (0.7.0)
     inherited_resources (1.5.1)
       actionpack (>= 3.2, < 4.2)
@@ -234,6 +249,14 @@ GEM
     mail (2.6.3)
       mime-types (>= 1.16, < 3)
     metaclass (0.0.4)
+    metainspector (4.7.2)
+      addressable (~> 2.3.5)
+      faraday (~> 0.9.0)
+      faraday-cookie_jar (~> 0.0.6)
+      faraday-http-cache (~> 1.2.2)
+      faraday_middleware (~> 0.10)
+      fastimage
+      nokogiri (~> 1.6)
     method_source (0.8.2)
     mime-types (1.25.1)
     mini_portile (0.6.2)
@@ -242,6 +265,7 @@ GEM
       metaclass (~> 0.0.1)
     modernizr-rails (2.7.1)
     multi_json (1.11.2)
+    multipart-post (2.0.0)
     net-http-persistent (2.9.4)
     netrc (0.10.2)
     newrelic_rpm (3.9.9.275)
@@ -367,6 +391,7 @@ GEM
       actionpack (>= 3.0)
       activesupport (>= 3.0)
       sprockets (>= 2.8, < 4.0)
+    srt (0.1.3)
     test_after_commit (0.4.0)
       activerecord (>= 3.2)
     thin (1.6.3)
@@ -387,6 +412,9 @@ GEM
     uglifier (2.7.1)
       execjs (>= 0.3.0)
       json (>= 1.8.0)
+    unf (0.1.4)
+      unf_ext
+    unf_ext (0.0.7.1)
     unicorn (4.8.3)
       kgio (~> 2.6)
       rack
@@ -436,6 +464,7 @@ DEPENDENCIES
   jquery-ui-rails
   json
   kgio
+  metainspector
   minitest
   mocha
   modernizr-rails
@@ -465,6 +494,7 @@ DEPENDENCIES
   sidekiq (~> 3.5.1)
   simplecov
   sinatra
+  srt
   test_after_commit
   thin
   timecop
@@ -476,4 +506,4 @@ DEPENDENCIES
   yui-compressor
 
 BUNDLED WITH
-   1.10.6
+   1.11.2

@@ -153,8 +153,6 @@ App.Views.UploadsEdit = App.Views.UploadsBase.extend({
   },
 
   onFormSubmit: function(e) {
-    console.log("=> submit");
-
     var data, form;
     e.originalEvent.preventDefault();
     form = $(e.target);
@@ -167,7 +165,7 @@ App.Views.UploadsEdit = App.Views.UploadsBase.extend({
       }
     });
 
-    this.model.set(data, {validate: true});
+    this.model.set(data, { validate: true });
     if (this.model.isValid()) {
       this.$('button[type="submit"]').button("loading");
       return this.model.sync('update', this.model, {

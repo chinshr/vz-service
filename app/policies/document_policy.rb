@@ -24,7 +24,7 @@ class DocumentPolicy < ApplicationPolicy
     owner_of?(record)
   end
 
-  def permitted_attributes(controller = nil)
+  def permitted_attributes(action_name = nil)
     [:title, :description, {:tag_list => []}, :locale, :privacy, :accessibility, :html, :rich_text, :text, :event]
   end
 end

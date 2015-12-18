@@ -1,24 +1,26 @@
 FactoryGirl.define do
 
-  factory :upload_audio, :class => "Upload::AudioUpload" do
+  # done :upload_audio
+  factory :media_upload_as_audio, :class => "Upload::MediaUpload" do
+    sequence(:source_url) {|n| "http://s3.amazonaws.com/vz-test-dropbox/sample-#{n}.m4a"}
     sequence(:file_name) {|n| "sample-#{n}.m4a"}
     file_type "audio/x-m4a"
     file_size 62676
     recorded_at Time.parse("26/2/1972 15:32 UTC")
-    sequence(:s3_url) {|n| "http://s3.amazonaws.com/dropbox/sample-#{n}.m4a"}
     before(:create) do |upload|
-      upload.build_ingest(type: "Ingest::AudioIngest", upload: upload, document: FactoryGirl.create(:document))
+      upload.ingest.document = FactoryGirl.build(:document)
     end
   end
 
-  factory :upload_video, :class => "Upload::VideoUpload" do
+  # done :upload_video
+  factory :media_upload_as_video, :class => "Upload::MediaUpload" do
+    sequence(:source_url) {|n| "http://s3.amazonaws.com/vz-test-dropbox/sample-video-#{n}.mp4"}
     sequence(:file_name) {|n| "sample-video-#{n}.mp4"}
     file_type "video/mp4"
     file_size 62676676
     recorded_at Time.parse("26/4/1974 15:32 UTC")
-    sequence(:s3_url) {|n| "http://s3.amazonaws.com/dropbox/sample-video-#{n}.mp4"}
     before(:create) do |upload|
-      upload.build_ingest(type: "Ingest::VideoIngest", upload: upload, document: FactoryGirl.create(:document))
+      upload.ingest.document = FactoryGirl.build(:document)
     end
   end
 
@@ -35,15 +37,19 @@ FactoryGirl.define do
   factory :document_with_ingest, parent: :document do
     association :track, factory: :master_track
     before(:create) do |document|
-      FactoryGirl.create(:ingest_audio, document: document)
+      FactoryGirl.create(:media_ingest_as_audio, document: document)
     end
   end
 
-  factory :ingest_audio, :class => "Ingest::AudioIngest" do
-    # association :upload, factory: :upload_audio
+  # done :ingest_audio
+  factory :media_ingest_as_audio, :class => "Ingest::MediaIngest" do
+    sequence(:source_url) {|n| "http://s3.amazonaws.com/vz-test-dropbox/sample-#{n}.m4a"}
+    sequence(:file_name) {|n| "sample-#{n}.m4a"}
+    file_type "audio/x-m4a"
+    file_size 62676
     association :document, factory: :document_with_track
     before(:create) do |ingest|
-      ingest.upload = FactoryGirl.build(:upload_audio, ingest: ingest)
+      ingest.upload = FactoryGirl.build(:media_upload_as_audio, ingest: ingest)
     end
     after(:create) do |ingest|
       ingest.document.master_segment.ingest_id = ingest.id
@@ -51,16 +57,21 @@ FactoryGirl.define do
     end
   end
 
-  factory :ingest_audio_without_track, :class => "Ingest::AudioIngest" do
-    association :upload, factory: :upload_audio
+  # done :ingest_audio_without_track
+  factory :media_ingest_as_audio_without_track, :class => "Ingest::MediaIngest" do
+    association :upload, factory: :media_upload_as_audio
     association :document, factory: :document
   end
 
-  factory :ingest_video, :class => "Ingest::VideoIngest" do |i|
-    # association :upload, factory: :upload_video
+  # done :ingest_video
+  factory :media_ingest_as_video, :class => "Ingest::MediaIngest" do |i|
+    sequence(:source_url) {|n| "http://s3.amazonaws.com/vz-test-dropbox/sample-video-#{n}.mp4"}
+    sequence(:file_name) {|n| "sample-video-#{n}.mp4"}
+    file_type "video/mp4"
+    file_size 62676676
     association :document, factory: :document_with_track
     before(:create) do |ingest|
-      ingest.upload = FactoryGirl.build(:upload_video, ingest: ingest)
+      ingest.upload = FactoryGirl.build(:media_upload_as_video, ingest: ingest)
     end
     after(:create) do |ingest|
       ingest.document.master_segment.ingest_id = ingest.id
@@ -68,8 +79,9 @@ FactoryGirl.define do
     end
   end
 
-  factory :ingest_video_without_track, :class => "Ingest::VideoIngest" do
-    association :upload, factory: :upload_video
+  # done :ingest_video_without_track
+  factory :media_ingest_as_video_without_track, :class => "Ingest::MediaIngest" do
+    association :upload, factory: :media_upload_as_video
     association :document, factory: :document
   end
 
@@ -318,7 +330,7 @@ FactoryGirl.define do
   end
 
   factory :cpw_ingest_process, :class => Ingest::Process do
-    association :ingest, factory: :ingest_audio
+    association :ingest, factory: :media_ingest_as_audio
     association :server, factory: :cpw_server
   end
 end

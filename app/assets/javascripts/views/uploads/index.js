@@ -7,15 +7,19 @@ App.Views.UploadsIndex = Backbone.View.extend({
     'click button#files-proxy': 'trigger',
     'mouseenter #drop-box': 'addHover',
     'mouseleave #drop-box': 'removeHover',
-    'change #file-locale': 'updateMail',
+    'change #file-locale': 'initMailTo',
+    'click button#upload-source': 'openSourceModal'
   },
 
   // Listen for newly added models and render a view for each
   initialize: function() {
     this.listenTo(this.collection, 'add', this.addUploadView);
     this.listenTo(this.collection, 'reset', this.addAll);
-
     this.progressViews = {};
+    _.bindAll(this, "initSourceModal", "initUnload",
+      "initDropTarget", "addHover", "removeHover", "trigger",
+      "addUploadView", "addAll", "addFiles", "dropFiles",
+      "dropzone", "uploadToS3", "statusMessage", "initMailTo");
   },
 
   render: function() {
@@ -24,7 +28,8 @@ App.Views.UploadsIndex = Backbone.View.extend({
       return function() {
         _this.initDropTarget();
         _this.initUnload();
-        _this.updateMail();
+        _this.initSourceModal();
+        _this.initMailTo();
       }
     })(this));
 
@@ -76,11 +81,15 @@ App.Views.UploadsIndex = Backbone.View.extend({
         }
       }, 200 );
     });
+  },
 
+  initSourceModal: function() {
+    return this.sourceModal = new App.Views.UploadsSourceModal({
+      parent: this
+    });
   },
 
   addHover: function(event) {
-    // if (event && event.type === 'mouseenter') {
     if (event) {
       $(event.currentTarget).addClass('hover');
     }
@@ -105,7 +114,7 @@ App.Views.UploadsIndex = Backbone.View.extend({
     if (!_.isEmpty(model.attributes)) {
       if (model.attributes.editable) {
         view = new App.Views.UploadsEdit({model: model});
-        this.$('#uploaded-files').before(view.render({name: 'edit-file-name.a'}).el);
+        this.$('#uploaded-files').append(view.render({name: 'edit-file-name.a'}).el);
       } else {
         view = new App.Views.UploadsShow({model: model});
         this.$('#uploaded-files').append(view.render({name: 'show-file-name.a'}).el);
@@ -165,12 +174,12 @@ App.Views.UploadsIndex = Backbone.View.extend({
           if (!xhr && percent === 0) {
             upload = new App.Models.Upload({
               file_name: file.name,
-              s3_url: '',
               file_type: file.type,
               file_size: parseFloat(file.size),
               locale: _this.$("#file-locale").val() || "en-US",
               privacy: _this.$('.group-file-privacy input[type=radio]:checked').val() || "unlisted",
-              editable: true
+              editable: true,
+              metadata: {"te_name": VZ.query.te}
             });
             newUploads[file.size] = upload;
             return _this.collection.add(upload);
@@ -201,7 +210,7 @@ App.Views.UploadsIndex = Backbone.View.extend({
         return function(publicUrl, file) {
           var upload = newUploads[file.size];
           if (upload) {
-            return upload.save({s3_url: publicUrl});
+            return upload.save({source_url: publicUrl});
           }
         };
       })(this),
@@ -233,7 +242,7 @@ App.Views.UploadsIndex = Backbone.View.extend({
     }
   },
 
-  updateMail: function() {
+  initMailTo: function() {
     var locale = $("#file-locale").val().toLowerCase();
     this.$('.btn-email-upload').text("my+" + locale + "@voyz.es");
     this.$('.btn-email-upload').attr('href', this.mailtoHref);
@@ -247,4 +256,9 @@ App.Views.UploadsIndex = Backbone.View.extend({
       "&body=—%0DAttach audio files to transcribe for " + text + ". Change title and add description above the line.";
     return href
   },
+
+  openSourceModal: function() {
+    this.sourceModal.render().show();
+  }
+
 });

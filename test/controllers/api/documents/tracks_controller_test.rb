@@ -5,7 +5,7 @@ class Api::Documents::TracksControllerTest < ActionController::TestCase
     @user1    = FactoryGirl.create(:user)
     @user2    = FactoryGirl.create(:backend_user)
 
-    @ingest   = FactoryGirl.create(:ingest_audio)
+    @ingest   = FactoryGirl.create(:media_ingest_as_audio)
     @document = @ingest.document
 
     @t0 = @ingest.document.create_track(s3_url: "http://s3.amazonaws.com/vz-test-origin/13dba008-7ba2-4804-a534-43d03c65260b/t0")

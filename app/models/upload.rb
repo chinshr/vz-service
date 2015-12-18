@@ -2,44 +2,34 @@ class Upload < ActiveRecord::Base
   include Model::Filter
   include Model::Uid
 
-  delegate :privacy, to: :ingest, allow_nil: true
-  delegate :privacy=, to: :ingest, allow_nil: true
+  delegate :source_url, to: :ingest_or_build_ingest_and_document, allow_nil: true
+  delegate :source_url=, to: :ingest_or_build_ingest_and_document, allow_nil: true
+  delegate :file_name, to: :ingest_or_build_ingest_and_document, allow_nil: true
+  delegate :file_name=, to: :ingest_or_build_ingest_and_document, allow_nil: true
+  delegate :file_type, to: :ingest_or_build_ingest_and_document, allow_nil: true
+  delegate :file_type=, to: :ingest_or_build_ingest_and_document, allow_nil: true
+  delegate :file_size, to: :ingest_or_build_ingest_and_document, allow_nil: true
+  delegate :file_size=, to: :ingest_or_build_ingest_and_document, allow_nil: true
+  delegate :user, to: :ingest_or_build_ingest_and_document, allow_nil: true
+  delegate :user=, to: :ingest_or_build_ingest_and_document, allow_nil: true
+  delegate :metadata, to: :ingest_or_build_ingest_and_document, allow_nil: true
+  delegate :metadata=, to: :ingest_or_build_ingest_and_document, allow_nil: true
+  delegate :events, to: :ingest_or_build_ingest_and_document, allow_nil: true
+  delegate :event=, to: :ingest_or_build_ingest_and_document, allow_nil: true
 
-  delegate :user, to: :ingest, allow_nil: true
-  delegate :user=, to: :ingest, allow_nil: true
-
-  delegate :title, to: :ingest, allow_nil: true
-  delegate :title=, to: :ingest, allow_nil: true
-
-  delegate :description, to: :ingest, allow_nil: true
-  delegate :description=, to: :ingest, allow_nil: true
-
-  delegate :tag_list, to: :ingest, allow_nil: true
-  delegate :tag_list=, to: :ingest, allow_nil: true
-
-  delegate :locale, to: :ingest, allow_nil: true
-  delegate :locale=, to: :ingest, allow_nil: true
-
-  delegate :events, to: :ingest, allow_nil: true
-  delegate :event=, to: :ingest, allow_nil: true
-
-  delegate :status, to: :ingest
-  delegate :state, to: :ingest
-  delegate :slug, to: :ingest
-  delegate :slug_id, to: :ingest
-  delegate :progress, to: :ingest
+  delegate :status, to: :ingest_or_build_ingest_and_document
+  delegate :state, to: :ingest_or_build_ingest_and_document
+  delegate :progress, to: :ingest_or_build_ingest_and_document
 
   has_one :ingest
 
+  validates_associated :ingest, on: :create
   validates :type, presence: true
-  validates :file_name, presence: true, length: { maximum: 255 }
-  validates :file_type, presence: true, length: { maximum: 255 }
-  validates :s3_url, presence: true, length: { maximum: 255 }
-  validates :title, presence: true, on: :update
+  validates :source_url, presence: true, length: { maximum: 2048 }
 
   # public scopes
   filtered_scopes :sort_order, :reverse_sort, :any_of_status, :none_of_status
-  scope :sort_order, lambda {|param|
+  scope :sort_order, -> (param) {
     case param.first[0]  # E.g. get first key of {"id"=>"asc"}
     when "id"
       order(self.arel_table[:id].send(param.first[1].to_sym).to_sql)
@@ -49,27 +39,27 @@ class Upload < ActiveRecord::Base
       raise ArgumentError, "Ignored unrecognized value 'sort_order[]=#{param}'."
     end
   }
-  scope :reverse_sort, lambda {|param| all.reverse_order if Model::Helper.booleanize(param)}
-  scope :any_of_status, lambda {|params| joins(:ingest).where("ingests.aasm_state IN (?)", [params].flatten.map(&:to_s).
-    map {|s| s.match(/^([\-]{,1}[0-9]+)$/) ? s : nil}.reject(&:blank?).map {|s| Ingest::STATES.key(s.to_i)}.uniq)}
-  scope :none_of_status, lambda {|params| joins(:ingest).where("ingests.aasm_state NOT IN (?)", [params].flatten.map(&:to_s).
-    map {|s| s.match(/^([\-]{,1}[0-9]+)$/) ? s : nil}.reject(&:blank?).map {|s| Ingest::STATES.key(s.to_i)}.uniq)}
-  # private scopes
-  scope :started, lambda {any_of_status(Ingest::STATES[:started])}
-  scope :stopped, lambda {any_of_status(Ingest::STATES[:stopped])}
-  scope :reset, lambda {any_of_status(Ingest::STATES[:reset])}
-  scope :removed, lambda {any_of_status(Ingest::STATES[:removed])}
-  scope :finished, lambda {any_of_status(Ingest::STATES[:finished])}
-  scope :most_recent, lambda {|n = 5| order("uploads.created_at DESC").limit(n)}
-
-  after_initialize :build_ingest_and_document
-  before_validation :set_title, on: :create
-  after_commit :save_ingest_and_document
+  scope :reverse_sort, -> (param) { all.reverse_order if Model::Helper.booleanize(param) }
+  scope :any_of_status, -> (params) {
+    joins(:ingest)
+    .where("ingests.aasm_state IN (?)", [params].flatten.map(&:to_s).
+      map {|s| s.match(/^([\-]{,1}[0-9]+)$/) ? s : nil}.reject(&:blank?).map {|s| Ingest::STATES.key(s.to_i)}.uniq) 
+  }
+  scope :none_of_status, -> (params) {
+    joins(:ingest)
+    .where("ingests.aasm_state NOT IN (?)", [params].flatten.map(&:to_s).
+      map {|s| s.match(/^([\-]{,1}[0-9]+)$/) ? s : nil}.reject(&:blank?).map {|s| Ingest::STATES.key(s.to_i)}.uniq)
+  }
 
   class << self
 
+    # E.g. Upload.descendants -> [Upload::AudioUpload, ..., Upload::MediaUpload]
+    def descendants
+      ObjectSpace.each_object(Class).select { |klass| klass < self }
+    end
+
     def class_name_from_content_type_for(file_type)
-      upload_class = self.subclasses.find {|uc| uc.respond_to?(:accepted_file_type?) && uc.send(:accepted_file_type?, file_type)}
+      upload_class = descendants.find {|uc| uc.respond_to?(:accepted_file_type?) && uc.send(:accepted_file_type?, file_type)}
       upload_class.name if upload_class
     end
 
@@ -94,15 +84,6 @@ class Upload < ActiveRecord::Base
 
     def generate_object_name
       Model::Uid.random_uid_string(10, "a-z, 0-9")
-    end
-
-    def humanized_file_name(file_name)
-      result = file_name
-      return if result.blank?
-      result = result.split(".").first unless result.blank?
-      result.gsub!(/[-+]+/, ' ') unless result.blank?
-      result = result.titleize unless result.blank?
-      result
     end
 
     def generate_uid
@@ -142,22 +123,6 @@ class Upload < ActiveRecord::Base
     end
   end
 
-  def humanized_file_name
-    Upload.humanized_file_name(file_name)
-  end
-
-  def s3_key
-    s3_url ? s3_url.split("/").last : nil
-  end
-
-  def has_s3_url?
-    !s3_url.blank?
-  end
-
-  def recorded_at
-    self[:recorded_at] || self.created_at
-  end
-
   # Override to delete assets in background job
   def destroy
     ::Upload::DeleteJob.perform_later(self.id)
@@ -166,37 +131,12 @@ class Upload < ActiveRecord::Base
 
   protected
 
-  def set_title
-    self.title = humanized_file_name if title.blank?
+  def ingest_or_build_ingest_and_document
+    ingest ? ingest : build_ingest_and_document
   end
 
   def build_ingest_and_document
-    # raise NameError, "Abstract class #{self.class.name} cannot be instantiated, use a subclass instead, e.g. #{Upload::Audio.name}." unless !!self.class.permit_abstract_instance
+    # raise ArgumentError, "implement in subclass"
+    build_ingest(upload: self, document: Document.new) unless ingest
   end
-
-  def save_ingest_and_document
-    if ingest
-      locale_changed = has_locale_recently_changed?
-      ingest.document.save if ingest.document && ingest.document.changed?
-      ingest.save if ingest.new_record? || ingest.changed?
-
-      if has_s3_url?
-        if locale_changed
-          ingest.restart! if ingest.may_restart?
-        else
-          ingest.start! if ingest.may_start?
-        end
-      end
-    end
-  end
-
-  def remove_ingest
-    ingest.remove! if ingest.reload
-  end
-
-  def has_locale_recently_changed?
-    return !!ingest.document.changes[:locale] if ingest.document
-    false
-  end
-
 end

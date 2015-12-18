@@ -27,7 +27,7 @@ class Chunk::MechanicalTurkChunkTest < ActiveSupport::TestCase
   context "approve Captcha based chunks" do
     setup do
       [Document, Segment, Track].each {|klass| klass.destroy_all}
-      @ingest   = FactoryGirl.create(:ingest_audio)
+      @ingest   = FactoryGirl.create(:media_ingest_as_audio)
       @document = @ingest.document
 
       @sc_t1    = Track.create(FactoryGirl.attributes_for(:track, type: "chunk_track", s3_url: "http://sc_t1", duration: 2))

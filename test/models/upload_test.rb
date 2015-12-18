@@ -2,8 +2,18 @@ require 'test_helper'
 
 class UploadTest < ActiveSupport::TestCase
   context "class" do
-    should "#class_name_from_content_type_for" do
-      assert_equal nil, Upload.class_name_from_content_type_for("foo/bar")
+    context "#class_name_from_content_type_for" do
+      should "unknown type" do
+        assert_equal nil, Upload.class_name_from_content_type_for("foo/bar")
+      end
+
+      should "Upload::MediaUpload from audio" do
+        assert_equal "Upload::MediaUpload", Upload.class_name_from_content_type_for("audio/mpeg")
+      end
+
+      should "Upload::MediaUpload from video" do
+        assert_equal "Upload::MediaUpload", Upload.class_name_from_content_type_for("video/mpeg")
+      end
     end
   end
 
@@ -12,37 +22,131 @@ class UploadTest < ActiveSupport::TestCase
   end
 
   context "validations" do
-    should validate_presence_of :file_name
-    should ensure_length_of(:file_name).is_at_most(255)
-    should validate_presence_of :file_type
-    should ensure_length_of(:file_type).is_at_most(255)
-    should validate_presence_of :s3_url
-    should ensure_length_of(:s3_url).is_at_most(255)
-
-    should "validate presence of title on update" do
-      upload = Upload.create(type: "audio", file_name: "audio-test.m4a", file_type: "audio/x-m4a",
-        file_size: 12345, s3_url: "http://s3.amazonaws.com/dropbox/audio-test.m4a")
-      assert_equal upload.humanized_file_name, upload.title
-      upload.title = ""
-      assert_equal false, upload.valid?
-      assert_equal ["can't be blank"], upload.errors[:title]
-    end
+    should validate_presence_of :type
+    should validate_presence_of :source_url
+    should ensure_length_of(:source_url).is_at_most(2048)
   end
 
-  context "callbacks" do
-    should "before_validation :set_title, on: :create" do
-      upload = Upload.new(type: "audio", file_name: "audio.m4a", file_type: "audio/x-m4a",
-        file_size: 12345, s3_url: "http://s3.amazonaws.com/dropbox/audio.m4a")
-      assert_equal upload.humanized_file_name, upload.title
-      assert_equal true, upload.save
-      upload.reload
-      assert_equal "Audio", upload.title
+  context "delegate" do
+    setup do
+      @upload = Upload::MediaUpload.create(file_name: "audio.m4a",
+        file_type: "audio/x-m4a", file_size: 12345,
+        source_url: "http://s3.amazonaws.com/vz-test-dropbox/audio.m4a")
     end
+
+    should delegate :source_url, to: :ingest
+    should delegate :source_url=, to: :ingest
+
+    should "delegate :source_url" do
+      assert_equal @upload.ingest.source_url, @upload.source_url
+    end
+
+    should "delegate :source_url=" do
+      @upload.source_url = "http://www.example.com"
+      assert_equal "http://www.example.com", @upload.source_url
+    end
+
+    should delegate :file_name, to: :ingest
+    should delegate :file_name=, to: :ingest
+
+    should "delegate :file_name" do
+      assert_equal @upload.ingest.file_name, @upload.file_name
+    end
+
+    should "delegate :file_name=" do
+      @upload.file_name = "file1.mp3"
+      assert_equal "file1.mp3", @upload.file_name
+    end
+
+    should delegate :file_type, to: :ingest
+    should delegate :file_type=, to: :ingest
+
+    should "delegate :file_type" do
+      assert_equal @upload.ingest.file_type, @upload.file_type
+    end
+
+    should "delegate :file_type=" do
+      @upload.file_type = "audio/mpeg"
+      assert_equal "audio/mpeg", @upload.file_type
+    end
+
+    should delegate :file_size, to: :ingest
+    should delegate :file_size=, to: :ingest
+
+    should "delegate :file_size" do
+      assert_equal @upload.ingest.file_size, @upload.file_size
+    end
+
+    should "delegate :file_size=" do
+      @upload.file_size = 888
+      assert_equal 888, @upload.file_size
+    end
+
+    should delegate :user, to: :ingest
+    should delegate :user=, to: :ingest
+
+    should "delegate :user" do
+      assert_equal @upload.ingest.user, @upload.user
+    end
+
+    should "delegate :user=" do
+      user = FactoryGirl.create(:user)
+      @upload.user = user
+      assert_equal true, @upload.save
+      @upload = Upload.find_by_id(@upload.id)
+      assert_equal user, @upload.user
+    end
+
+    should delegate :metadata, to: :ingest
+    should delegate :metadata=, to: :ingest
+
+    should "delegate :metadata" do
+      assert_equal @upload.ingest.metadata, @upload.metadata
+    end
+
+    should "delegate :metadata=" do
+      @upload.metadata = {"target" => {"key" => "value"}}
+      assert_equal({"target" => {"key" => "value"}}, @upload.metadata)
+    end
+
+    should delegate :events, to: :ingest
+    should delegate :event=, to: :ingest
+
+    should "delegate :events" do
+      assert_equal @upload.ingest.events, @upload.events
+    end
+
+    should "delegate :event=" do
+      assert_nothing_raised do
+        @upload.event = :fail
+      end
+    end
+
+    should delegate :slug, to: :ingest
+    should "delegate :slug" do
+      assert_equal @upload.ingest.slug, @upload.slug
+    end
+
+    should delegate :progress, to: :ingest
+    should "delegate :progress" do
+      assert_equal @upload.ingest.progress, @upload.progress
+    end
+
+    should delegate :status, to: :ingest
+    should "delegate :status" do
+      assert_equal @upload.ingest.status, @upload.status
+    end
+
+    should delegate :state, to: :ingest
+    should "delegate :state" do
+      assert_equal @upload.ingest.state, @upload.state
+    end
+
   end
 
   context "scopes" do
     setup do
-      @upload = FactoryGirl.create(:upload_audio)
+      @upload = FactoryGirl.create(:media_upload_as_audio)
     end
 
     should "have filtered scopes" do
@@ -61,148 +165,32 @@ class UploadTest < ActiveSupport::TestCase
     end
   end # context "scopes"
 
-  context "delegate" do
-    setup do
-      @upload = Upload.create(type: "audio", file_name: "audio.m4a", file_type: "audio/x-m4a",
-        file_size: 12345, s3_url: "http://s3.amazonaws.com/dropbox/audio.m4a")
-    end
-
-    should delegate :user, to: :ingest
-    should delegate :user=, to: :ingest
-    should delegate :privacy, to: :ingest, allow_nil: true
-    should delegate :privacy=, to: :ingest, allow_nil: true
-    should delegate :status, to: :ingest
-    should delegate :state, to: :ingest
-    should delegate :slug, to: :ingest
-    should delegate :progress, to: :ingest
-    should delegate :title, to: :ingest, allow_nil: true
-    should delegate :title=, to: :ingest, allow_nil: true
-    should delegate :description, to: :ingest, allow_nil: true
-    should delegate :description=, to: :ingest, allow_nil: true
-    should delegate :locale, to: :ingest, allow_nil: true
-    should delegate :locale=, to: :ingest, allow_nil: true
-    should delegate :tag_list, to: :ingest, allow_nil: true
-    should delegate :tag_list=, to: :ingest, allow_nil: true
-
-    should "delegate :user" do
-      assert_equal @upload.ingest.document.user, @upload.user
-    end
-
-    should "delegate :user=" do
-      user = FactoryGirl.create(:user)
-      @upload.user = user
-      assert_equal true, @upload.save
-      @upload = Upload.find_by_id(@upload.id)
-      assert_equal user, @upload.user
-    end
-
-    should "delegate :privacy" do
-      assert_equal ["public"], @upload.privacy
-      assert_equal @upload.ingest.document.privacy, @upload.privacy
-    end
-
-    should "delegate :status" do
-      assert_equal @upload.ingest.status, @upload.status
-    end
-
-    should "delegate :state" do
-      assert_equal @upload.ingest.state, @upload.state
-    end
-
-    should "delegate :slug" do
-      assert_equal @upload.ingest.document.slug, @upload.slug
-    end
-
-    should "delegate :title" do
-      assert_equal @upload.ingest.document.title, @upload.title
-    end
-
-    should "delegate :title=" do
-      @upload.title = "A new title"
-      assert_equal "A new title", @upload.ingest.document.title
-    end
-
-    should "delegate :description" do
-      assert_equal @upload.ingest.document.description, @upload.description
-    end
-
-    should "delegate :description=" do
-      @upload.description = "A new description"
-      assert_equal "A new description", @upload.ingest.document.description
-    end
-
-    should "delegate :tag_list" do
-      assert_equal @upload.ingest.document.tag_list, @upload.tag_list
-    end
-
-    should "delegate :tag_list=" do
-      @upload.tag_list = ["a", "new", "tag", "list"]
-      assert_equal ["a", "new", "tag", "list"], @upload.ingest.document.tag_list
-    end
-
-    should "delegate :locale" do
-      assert_equal @upload.ingest.document.locale, @upload.locale
-    end
-
-    should "delegate :locale=" do
-      @upload.locale = "it-IT"
-      assert_equal "it-IT", @upload.ingest.document.locale
-    end
-  end # context "delegate"
-
-  should "humanize file name" do
-    assert_equal "I Like Pickles", Upload::AudioUpload.new(file_name: "i_like_pickles.m4a").humanized_file_name
-  end
-
-  should "have s3_key" do
-    upload = FactoryGirl.create(:upload_audio, :s3_url => "http://s3.amazonaws.com/dropbox/61glI7mwmN")
-    assert_equal "61glI7mwmN", upload.s3_key
-  end
-
   should "generate object name" do
     assert_equal 10, Upload.generate_object_name.length
   end
 
-  should "tell if locale has recently changed" do
-    upload = FactoryGirl.create(:upload_audio, :s3_url => "http://s3.amazonaws.com/dropbox/61glI7mwmN")
-    assert_equal false, upload.send(:has_locale_recently_changed?)
-    upload.locale = "de-DE"
-    assert_equal true, upload.send(:has_locale_recently_changed?)
-  end
-
-  should "destroy" do
-    upload = FactoryGirl.create(:upload_audio, :s3_url => "http://s3.amazonaws.com/dropbox/61glI7mwmN")
-    assert upload.ingest, "should have an ingest"
-    ingest = upload.ingest
-    assert_difference "Upload.count", -1 do
-      assert_enqueued_with(job: Upload::DeleteJob) do
-        upload.destroy
-      end
-      ingest.reload
-      assert_equal :removing, ingest.state
-    end
-  end
-
   should "have uid" do
-    upload = FactoryGirl.create(:upload_audio)
+    upload = FactoryGirl.create(:media_upload_as_audio)
     assert_not_nil upload.uid
     assert_equal 36, upload.uid.length
   end
 
   should "have recorded_at timestamp" do
     recorded_time = Time.zone.now - 1.year
-    upload = FactoryGirl.create(:upload_audio, recorded_at: recorded_time)
+    upload = FactoryGirl.create(:media_upload_as_audio, recorded_at: recorded_time)
     assert_equal recorded_time, upload.recorded_at
 
-    upload = FactoryGirl.create(:upload_audio, recorded_at: nil)
+    upload = FactoryGirl.create(:media_upload_as_audio, recorded_at: nil)
     assert_equal upload.created_at, upload.recorded_at
   end
 
-  should "destroy" do
-    upload = FactoryGirl.create(:upload_audio)
-    assert_enqueued_with(job: Upload::DeleteJob) do
+  should "#destroy" do
+    upload = FactoryGirl.create(:media_upload_as_audio)
+    # assert_enqueued_with(job: Upload::MediaUpload::DeleteJob) do
+    assert_enqueued_with(job: Ingest::RemoveJob) do
       upload.destroy
     end
     assert_equal :removing, upload.ingest.reload.state
   end
+
 end

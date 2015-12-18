@@ -1,1 +1,1 @@
-attributes :id, :file_name, :file_type, :file_size, :s3_url, :locale, :slug, :slug_id, :title, :description, :tag_list, :privacy, :status, :type, :progress, :events, :updated_at, :created_at
+attributes :id, :uid, :file_name, :file_type, :file_size, :source_url, :use_source_annotations, :locale, :slug, :slug_id, :title, :description, :tag_list, :privacy, :status, :type, :progress, :events, :updated_at, :created_at

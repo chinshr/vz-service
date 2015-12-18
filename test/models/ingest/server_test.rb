@@ -8,14 +8,14 @@ class Ingest::ServerTest < ActiveSupport::TestCase
 
     context "delete ingests" do
       setup do
-        @ingest = FactoryGirl.create(:ingest_audio)
+        @ingest = FactoryGirl.create(:media_ingest_as_audio)
         @server = FactoryGirl.create(:cpw_ingest_server)
       end
 
       should "ingest process through server" do
         assert_difference "Ingest::Process.count", 2 do
           @server.ingests << @ingest
-          @server.ingests << FactoryGirl.create(:ingest_audio)
+          @server.ingests << FactoryGirl.create(:media_ingest_as_audio)
         end
         assert_equal 2, @server.processes.count
         assert_no_difference "Ingest.count" do
@@ -307,13 +307,13 @@ class Ingest::ServerTest < ActiveSupport::TestCase
 
       should "not find server without processes" do
         server = FactoryGirl.create(:cpw_ingest_server, max_processes: 1, aasm_state: "enabled")
-        server.ingests << FactoryGirl.create(:ingest_audio)
+        server.ingests << FactoryGirl.create(:media_ingest_as_audio)
         assert_equal nil, Ingest::Server.without_processes.first
       end
 
       should "find server with deleted processes" do
         server = FactoryGirl.create(:cpw_ingest_server, max_processes: 1, aasm_state: "enabled")
-        ingest = FactoryGirl.create(:ingest_audio)
+        ingest = FactoryGirl.create(:media_ingest_as_audio)
         server.ingests << ingest
         server.ingests.delete(ingest)
         assert_equal server, Ingest::Server.without_processes.first
@@ -343,15 +343,15 @@ class Ingest::ServerTest < ActiveSupport::TestCase
 
       should "be consumed for 1 ingest" do
         server = FactoryGirl.create(:cpw_ingest_server, max_processes: 1, aasm_state: "enabled")
-        ingest = FactoryGirl.create(:ingest_audio)
+        ingest = FactoryGirl.create(:media_ingest_as_audio)
         server.ingests << ingest
         assert_nil Ingest::Server.available.first
       end
 
       should "be consumed for 2 ingests" do
         server = FactoryGirl.create(:cpw_ingest_server, max_processes: 2, aasm_state: "enabled")
-        ingest1 = FactoryGirl.create(:ingest_audio)
-        ingest2 = FactoryGirl.create(:ingest_audio)
+        ingest1 = FactoryGirl.create(:media_ingest_as_audio)
+        ingest2 = FactoryGirl.create(:media_ingest_as_audio)
         server.ingests << ingest1
         assert_equal server, Ingest::Server.available.first
         server.ingests << ingest2
@@ -361,7 +361,7 @@ class Ingest::ServerTest < ActiveSupport::TestCase
   end
 
   should "stop server when last ingest is removed" do
-    @ingest = FactoryGirl.create(:ingest_audio)
+    @ingest = FactoryGirl.create(:media_ingest_as_audio)
     @server = FactoryGirl.create(:cpw_ingest_server)
     @server.ingests << @ingest
     assert_difference "Ingest::Process.count", -1 do

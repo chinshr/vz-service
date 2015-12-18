@@ -40,6 +40,7 @@ class Ingest < ActiveRecord::Base
   has_many :processes, class_name: "Ingest::Process", dependent: :destroy
   has_many :servers, through: :processes, after_remove: :async_server_update
 
+  validates :type, presence: true
   validates :upload, presence: true, on: :create
   validates :document, presence: true
 
@@ -79,7 +80,7 @@ class Ingest < ActiveRecord::Base
     state :restarting, :after_exit => :after_exit_restarting, :after_enter => :after_enter_restarting
 
     event :start, :after_commit => :after_commit_event_start do
-      transitions :from => [:created, :stopped, :reset], :to => :starting, :guard => :has_valid_upload?
+      transitions :from => [:created, :stopped, :reset], :to => :starting, :guard => :has_valid_source_url?
     end
 
     event :stop, :after_commit => :after_commit_event_stop do
@@ -430,8 +431,8 @@ class Ingest < ActiveRecord::Base
 
   private
 
-  def has_valid_upload?
-    !!(upload && upload.s3_url)
+  def has_valid_source_url?
+    Model::URI::Target.new(source_url).valid?
   end
 
   def async_server_update(server = nil)

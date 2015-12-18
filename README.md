@@ -51,6 +51,7 @@ Set default username from email address:
 * [ClibMine](https://clip.mn), video captions, table of contents, annotations
 * [Koemei](https://koemei.com/), automatic video transcriptions and analysis, sentiment detection, etc.
 * [Speechmatics](speechmatics.com/about) licensing to VoiceBase, Tony Robinson, CTO, 30+ years in ASR experience
+* [Loopcast](http://beta.loopcast.fm) Audio streaming service with the UI for tiles and players I really like.
 
 ## Patentable Ideas
 
@@ -262,6 +263,7 @@ Similar to:
   - Responders gem -- https://github.com/plataformatec/responders
   - Customize responder in Devise w/ FailureApp -- https://github.com/plataformatec/devise/wiki/How-To:-Redirect-to-a-specific-page-when-the-user-can-not-be-authenticated
 * Download Video/Audio from YouTube, DailyMotion, etc. -- https://github.com/rb2k/viddl-rb
+  - youtube-dl better python script, more than 100 of sites -- http://rg3.github.io/youtube-dl/
 * HTML5 rotation
   - Flip rotate HTML5 elements with JS plugin: http://lab.smashup.it/flip/
   - CSS3 rotation -- http://davidwalsh.name/css-flip
@@ -280,6 +282,7 @@ Similar to:
 * Avatar uploading, cropping, S3:
   - Carrierwave direct to S3 -- https://github.com/dwilkie/carrierwave_direct
   - Rails Demo app with Carrierwave, S3, [jCrop](https://github.com/n0ne/Rails-Carrierwave-jQuery-File-Upload)
+  - Working jQuery-file-upload with demo -- https://github.com/blueimp/jQuery-File-Upload
 * Transition browser compatibility -- http://www.sitepoint.com/css3-animation-javascript-event-handlers/
 * Pinterest layout for Dashboard with Bootstrap
   - [Wookmark jQuery library](https://github.com/germanysbestkeptsecret/Wookmark-jQuery)
@@ -297,6 +300,10 @@ Similar to:
   -  [PubNub presence](https://www.pubnub.com/docs/web-javascript/presence)
   - [Firebase Firepad on GitHub](https://github.com/firebase/firepad) and [Live Demo](https://demo.firepad.io/#sxz0Ct8eko)
 * Clammr - to get idea about index page tiles https://www.clammr.com/app/
+* Serving static file, e.g. from action/controller
+  - [Use redirect on Heroku](http://stackoverflow.com/questions/6307135/alternative-to-x-sendfile-on-heroku)
+  - [Rack:SendFile not supported on Heroku](https://devcenter.heroku.com/articles/rack-sendfile)
+  - [No workarounds on Heroku](https://groups.google.com/forum/#!topic/heroku/xr71eYDFgo4)
 
 ### SendGrid Setup
 

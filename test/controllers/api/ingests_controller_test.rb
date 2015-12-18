@@ -7,7 +7,7 @@ class Api::IngestsControllerTest < ActionController::TestCase
 
     @document1          = FactoryGirl.create(:document)
     @track1             = FactoryGirl.create(:track)
-    @ingest1            = FactoryGirl.create(:ingest_audio, :document => @document1, :track => @track1)
+    @ingest1            = FactoryGirl.create(:media_ingest_as_audio, :document => @document1, :track => @track1)
 
     @document1.privacy  = [:"public"]
     @document1.user     = @user1
@@ -16,7 +16,7 @@ class Api::IngestsControllerTest < ActionController::TestCase
 
     @document2          = FactoryGirl.create(:document)
     @track2             = FactoryGirl.create(:track)
-    @ingest2            = FactoryGirl.create(:ingest_audio, :document => @document2, :track => @track2)
+    @ingest2            = FactoryGirl.create(:media_ingest_as_audio, :document => @document2, :track => @track2)
     @document2.privacy  = [:"private"]
     @document2.user     = @user2
     @document2.tag_list = ["brown", "cats", "jump", "higher"]
@@ -134,7 +134,6 @@ class Api::IngestsControllerTest < ActionController::TestCase
       assert_not_nil response_body["ingest"]["upload"], "expect upload"
       assert_not_nil response_body["ingest"]["upload"]["recorded_at"], "expect recorded_at"
       assert_not_nil response_body["ingest"]["upload"]["uid"], "expect uid"
-      assert_not_nil response_body["ingest"]["upload"]["s3_key"], "expect s3_key"
       assert_not_nil response_body["ingest"]["document"], "expect document"
     end
   end
@@ -177,6 +176,18 @@ class Api::IngestsControllerTest < ActionController::TestCase
       assert_equal :started, @ingest2.reload.state
     end
 
+    should "update metadata attributes" do
+      sign_in :user, @user2
+      put :update, {:id => @ingest2.id, :ingest => {
+        file_type: "video/mp4",
+        file_size: 1234567
+      }, format: :json}
+      assert_response :success
+      assert_response_body_attributes_with "ingest"
+      assert_equal "video/mp4", response_body["ingest"]["file_type"]
+      assert_equal 1234567, response_body["ingest"]["file_size"]
+    end
+
     should "trigger next stage via #trigger_stage_with=" do
       sign_in :user, @user2
       @ingest2.update_attributes(aasm_state: "started", aasm_stage: "harvest_stage")
@@ -190,6 +201,18 @@ class Api::IngestsControllerTest < ActionController::TestCase
       assert_response :success
       assert_response_body_attributes_with "ingest"
       assert_equal :started, @ingest2.reload.state
+    end
+
+    should "change update ingest with origin_url" do
+      origin_url = "http://s3.amazonaws.com/vz-test-origin/z6bg6kevzy8f5shcnjjj"
+      sign_in :user, @user2
+      assert_equal :starting, @ingest2.state
+      put :update, {:id => @ingest2.id, :ingest => {
+        origin_url: origin_url
+      }, format: :json}
+      assert_response :success
+      assert_response_body_attributes_with "ingest"
+      assert_equal origin_url, @ingest2.reload.origin_url
     end
 
     should "NOT change ingest state due to invalid transition via #status=" do
@@ -245,7 +268,7 @@ class Api::IngestsControllerTest < ActionController::TestCase
     assert_equal false, params.blank?, "response should not be empty"
     (expected_attributes.keys + %w(id upload_id document_id type status
       updated_at created_at started_at stopped_at restarted_at reset_at removed_at finished_at
-      progress messages stage stages iteration busy terminate uid locale events)).each do |attribute|
+      progress messages stage stages iteration busy terminate uid locale events source_url file_name file_type file_size metadata use_source_annotations handle origin_url)).each do |attribute|
       assert params.has_key?(attribute), "should contain key '#{attribute}' in response '#{params}'"
     end
 

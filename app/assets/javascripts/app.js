@@ -4,6 +4,10 @@ window.App = {
   Views: {},
   Routers: {},
   initialize: function() {
+    Backbone.Validation.configure({
+      labelFormatter: 'label'
+    });
+
     if (window.location.pathname == "/dashboard") {
       new App.Routers.Dashboard();
       Backbone.history.start({pushState: !!(window.history && history.pushState), root: "/dashboard"});

@@ -1,5 +1,3 @@
 class Chunk::PocketsphinxChunk < ::Chunk
-  class << self
-    def engine_class_name; "Speech::Engines::PocketsphinxEngine"; end
-  end
+  def self.engine_class_name; "Speech::Engines::PocketsphinxEngine"; end
 end

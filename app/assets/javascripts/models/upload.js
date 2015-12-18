@@ -7,15 +7,42 @@ App.Models.Upload = Backbone.Model.extend({
 
   validation: {
     title: {
-      required: true
+      required: function(value, attr, computedState) {
+        // only on update
+        return typeof(this.attributes.id) === 'undefined' ? false : true;
+      }
+    },
+    source_url: {
+      required: function(value, attr, computedState) {
+        if (typeof(this.attributes.id) === 'undefined') {
+          // only on create
+          return _.isEmpty(this.attributes.s3_url) ? true : false;
+        } else {
+          // not on update
+          return false;
+        }
+      },
+      pattern: 'url'
     }
   },
 
-  validate: function(attrs, options) {
-    if (_.isEmpty(attrs.title)) {
-      return "can't be empty";
-    }
+  labels: {
+    source_url: "Source URL"
   },
+
+  // validate: function(attrs, options) {
+  //   if (typeof(this.attributes.id) === 'undefined') {
+  //     // on create
+  //     if (_.isEmpty(attrs.s3_url) || _.isEmpty(attrs.source_url)) {
+  //       return "can't be empty";
+  //     }
+  //   } else {
+  //     // on update
+  //     if (_.isEmpty(attrs.title)) {
+  //       return "can't be empty";
+  //     }
+  //   }
+  // },
 
   set: function(attributes, options) {
     if (attributes && attributes.tag_list && _.isString(attributes.tag_list)) {

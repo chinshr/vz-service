@@ -5,7 +5,7 @@ class Upload::DeleteJob < ActiveJob::Base
   def perform(upload_id)
     if @upload = Upload.find_by_id(upload_id)
       s3_delete_object_if_exists(APP_CONFIG['S3_INBOUND_BUCKET'],
-        @upload.s3_key)
+        @upload.handle)
       @upload.delete
     end
   end

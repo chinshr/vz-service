@@ -8,13 +8,13 @@ class Account::UploadPolicy < UploadPolicy
     !!user
   end
 
-  def permitted_attributes(action_name)
+  def permitted_attributes(action_name = nil)
     if create? && action_name == "create"
-      [:type, :file_name, :file_type, :file_size, :s3_url, :locale, :privacy]
+      [:file_name, :file_type, :file_size, :source_url, :locale, :privacy, :use_source_annotations]
     elsif update? && action_name == "update"
       [:title, :description, {:tag_list => []}, :locale, :privacy, :event]
     else
-      super
+      super(action_name)
     end
   end
 
