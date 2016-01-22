@@ -8,45 +8,44 @@ class Api::Account::UploadsController < Api::Account::ApplicationController
   # [POST] /api/account/uploads(.:format)
   def create
     authorize :"account/upload"
-    @upload = Upload.new({type: upload_class_name(create_params)})
-    @upload.attributes = create_params.except(:type)
-    @upload.user = current_user if current_user
-    @upload.save
+    @upload = Upload::MediaUpload.create(create_params) do |u|
+      u.user = current_user
+    end
     respond_with "api", "account", @upload
   end
 
-  # [GET] /api/account/uploads(.:format)
+  # [GET] /api/account/media_uploads(.:format)
   def index
     @uploads = current_user.uploads.filter(params)
     respond_with @uploads
   end
 
-  # [GET] /api/account/uploads/count(.:format)
+  # [GET] /api/account/media_uploads/count(.:format)
   def count
     render :json => {:count => current_user.uploads.filter(params).count}
   end
 
-  # [GET] /api/account/uploads/:id(.:format)
+  # [GET] /api/account/media_uploads/:id(.:format)
   def show
     @upload = current_user.uploads.find(params[:id])
     respond_with @upload
   end
 
-  # [PUT] /api/account/uploads/:id(.:format)
+  # [PUT] /api/account/media_uploads/:id(.:format)
   def update
     authorize :"account/upload"
     @upload = current_user.uploads.update(params[:id], update_params)
     respond_with @upload
   end
 
-  # [DELETE] /api/account/uploads/:id(.:format)
+  # [DELETE] /api/account/media_uploads/:id(.:format)
   def destroy
     @upload = current_user.uploads.find(params[:id])
     @upload.destroy
     respond_with @upload
   end
 
-  # [GET] /api/account/uploads/sign_s3(.:format)
+  # [GET] /api/account/media_uploads/sign_s3(.:format)
   def sign_s3
     object_name    = params[:s3_object_name]
     mime_type      = params[:s3_object_type]
@@ -66,7 +65,9 @@ class Api::Account::UploadsController < Api::Account::ApplicationController
   protected
 
   def create_params
-    params.require(:upload).permit(policy(:"account/upload").permitted_attributes(action_name))
+    params.require(:upload).permit(policy(:"account/upload").permitted_attributes(action_name)).tap do |whitelisted|
+      whitelisted[:metadata] = params[:upload][:metadata] if params[:upload][:metadata]
+    end
   end
 
   def update_params
@@ -84,9 +85,5 @@ class Api::Account::UploadsController < Api::Account::ApplicationController
     uri = URI(APP_CONFIG['S3_URL'])
     uri.scheme = request.ssl? ? 'https' : 'http'
     uri.to_s
-  end
-
-  def upload_class_name(attributes)
-    Upload.class_name_from_content_type_for(attributes[:file_type])
   end
 end

@@ -7,7 +7,7 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
 
     @document1          = FactoryGirl.create(:document)
     @track1             = FactoryGirl.create(:track)
-    @ingest1            = FactoryGirl.create(:ingest_audio, :document => @document1, :track => @track1)
+    @ingest1            = FactoryGirl.create(:media_ingest_as_audio, :document => @document1, :track => @track1)
 
     @document1.privacy  = [:"public"]
     @document1.user     = @user1
@@ -16,7 +16,7 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
 
     @document2          = FactoryGirl.create(:document)
     @track2             = FactoryGirl.create(:track)
-    @ingest2            = FactoryGirl.create(:ingest_audio, :document => @document2, :track => @track2)
+    @ingest2            = FactoryGirl.create(:media_ingest_as_audio, :document => @document2, :track => @track2)
     @document2.privacy  = [:"private"]
     @document2.user     = @user2
     @document2.tag_list = ["brown", "cats", "jump", "higher"]
@@ -25,6 +25,8 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
     @s3_url     = "http://s3.amazonaws.com/vz-test-origin/13dba008-7ba2-4804-a534-43d03c65260b/t4"
     @s3_mp3_url = "http://s3.amazonaws.com/vz-test-origin/13dba008-7ba2-4804-a534-43d03c65260b/t4.128.mp3"
     @s3_waveform_json_url = "http://s3.amazonaws.com/vz-test-origin/13dba008-7ba2-4804-a534-43d03c65260b/t4.128.waveform.json"
+
+    @words = [{"p"=>1,"c"=>0.7,"s"=>1.610,"e"=>1.780,"w"=>"This"},{"p"=>2,"c"=>0.714,"s"=>1.780,"e"=>1.960,"w"=>"is"}]
 
     sign_out :user
   end
@@ -39,7 +41,8 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
         :response          => {"status" => 3, "hypothesis" => "I like pickles"},
         :processing_errors => [{"stage" => "transcribe", "errors" => ["foo", "bar"]}],
         :processing_status => 3,
-        :ingest_iteration  => 1
+        :ingest_iteration  => 1,
+        :words             => @words
       }
     end
 
@@ -63,6 +66,7 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
         attributes[:type] = "Chunk::PocketsphinxChunk"
         assert_attributes response_body["chunk"], attributes
         assert_equal 1, Chunk::PocketsphinxChunk.last.ingest_iteration
+        assert_equal @words, Chunk::PocketsphinxChunk.last.words
       end
     end
 
@@ -347,7 +351,7 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
   def assert_attributes(params, expected_attributes = {})
     assert_equal false, params.blank?, "response should not be empty"
     (expected_attributes.stringify_keys.keys + %w(id document_id ingest_id type position offset duration start_at
-      end_at text score response processing_errors processing_status uid ingest_iteration locale)).uniq.each do |attribute|
+      end_at text score response processing_errors processing_status uid ingest_iteration locale words)).uniq.each do |attribute|
       assert params.has_key?(attribute), "should contain key '#{attribute}' in response '#{params}'"
     end
 

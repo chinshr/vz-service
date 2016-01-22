@@ -344,6 +344,14 @@ body.account {
           background-color: transparent;
         }
 
+        .upload-panel-separator {
+          font-size: 16px;
+          color: #999;
+          display: block;
+          margin: 10px auto;
+          text-align: center;
+        }
+
         &.hover {
           background-color: #fff;
           border-color: #d2d2d2;
@@ -376,28 +384,30 @@ body.account {
           border-bottom-color: transparent;
         }
 
-        .upload-panel-separator {
-          font-size: 16px;
-          color: #999;
-          display: block;
-          margin: 0 auto 25px auto;
-          text-align: center;
-        }
-
         .form-group-file-upload {
-          margin: 35px 0 40px 0;
+          margin: 0 0 40px 0;
 
           #files {
             position: absolute;
             top: -1000px;
           }
 
-          .btn-file-upload {
+          .btn-upload {
             outline: 0;
             display: block;
-            margin: 15px auto 15px auto;
-            width: 150px;
+            min-width: 200px;
             border-radius: 300px;
+            margin: 10px auto;
+            padding: 10px 0;
+          }
+
+          .btn-upload-file {
+          }
+
+          .btn-upload-source {
+          }
+
+          .btn-upload-source {
           }
 
           .email-file-upload-holder {
@@ -786,4 +796,17 @@ body.account {
 }
 
 .simply-toast.account {
+}
+
+#upload-source-modal {
+  .modal-footer {
+    .btn-link {
+      font-weight: bold;
+      color: #999;
+
+      &:hover {
+        text-decoration: none;
+      }
+    }
+  }
 }

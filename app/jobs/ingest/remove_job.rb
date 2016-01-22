@@ -1,4 +1,6 @@
 class Ingest::RemoveJob < ActiveJob::Base
+  include Job::Helper
+
   queue_as :default
 
   RETRIES      = 5
@@ -9,7 +11,13 @@ class Ingest::RemoveJob < ActiveJob::Base
     if @ingest = Ingest.find(ingest_id)
       if @ingest.not_busy?
         @ingest.with_lock do
-          # remove logic goes here
+          # remove uploaded file
+          s3_delete_object_if_exists(APP_CONFIG['S3_INBOUND_BUCKET'],
+            @ingest.handle)
+          # remove all origin files
+          s3_delete_objects_with_prefix(APP_CONFIG['S3_OUTBOUND_BUCKET'],
+            @ingest.uid)
+          # move state to 'removed'
           @ingest.process!
         end
       else

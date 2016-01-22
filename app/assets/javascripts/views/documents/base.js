@@ -854,7 +854,7 @@ App.Views.DocumentsBase = Backbone.View.extend({
     });
   },
 
-  publish: function() {
+  publishDocument: function() {
     this.stopSaving();
     NProgress.start();
     this.model.publish({ html: this.contentEditor.getHTML() }, {

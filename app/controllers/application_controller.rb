@@ -24,6 +24,12 @@ class ApplicationController < ActionController::Base
   end
 
   def load_document
-    @document = Document.where("documents.slug = ? OR documents.slug_id = ? OR documents.uid = ? OR documents.id = ?", params[:id], params[:id], params[:id], params[:id].to_i).first!
+    @document = Document.where("documents.slug = ? OR documents.slug_id = ? OR documents.uid = ? OR documents.id = ?", params[:id], params[:id], params[:id], param_document_id).first!
+  end
+
+  def param_document_id
+    if params[:id].present? && params[:id].to_i.to_s == params[:id]
+      params[:id]
+    end
   end
 end

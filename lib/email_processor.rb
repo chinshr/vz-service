@@ -27,9 +27,9 @@ class EmailProcessor
             upload = with message.attachments.build(:type => upload_class_name) do |upload|
               upload.user        = user
               upload.title       = if email.subject.blank?
-                Upload.humanized_file_name(attached_file.original_filename)
+                Upload::MediaUpload::humanize_path(attached_file.original_filename)
               else
-                email.subject
+                email.subject.titleize
               end
               upload.description = email.body
               upload.file_name   = attached_file.original_filename
@@ -44,7 +44,7 @@ class EmailProcessor
 
             key = Upload.generate_object_name
             upload_file_to_s3_bucket(attached_file.tempfile.path, key)
-            upload.s3_url = "#{APP_CONFIG['S3_URL']}#{APP_CONFIG['S3_INBOUND_BUCKET']}/#{key}"
+            upload.source_url = "#{APP_CONFIG['S3_URL']}#{APP_CONFIG['S3_INBOUND_BUCKET']}/#{key}"
 
             message.save
 

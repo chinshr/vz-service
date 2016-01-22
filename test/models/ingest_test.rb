@@ -2,9 +2,8 @@ require 'test_helper'
 
 class IngestTest < ActiveSupport::TestCase
   should "build subclass with type" do
-    assert_equal "Ingest::AudioIngest", Ingest.new(type: "audio").class.name
-    assert_equal "Ingest::AudioIngest", Ingest.new(type: "audio_ingest").class.name
-    assert_equal "Ingest::AudioIngest", Ingest.new(type: "Ingest::AudioIngest").class.name
+    assert_equal "Ingest::MediaIngest", Ingest.new(type: "media_ingest").class.name
+    assert_equal "Ingest::MediaIngest", Ingest.new(type: "Ingest::MediaIngest").class.name
   end
 
   context "associations" do
@@ -18,6 +17,7 @@ class IngestTest < ActiveSupport::TestCase
   end
 
   context "validations" do
+    should validate_presence_of(:type)
     should validate_presence_of(:upload).on(:create)
     should_not validate_presence_of(:upload).on(:update)
     should validate_presence_of :document
@@ -25,7 +25,7 @@ class IngestTest < ActiveSupport::TestCase
 
   context "delegate" do
     setup do
-      @ingest = FactoryGirl.create(:ingest_audio)
+      @ingest = FactoryGirl.create(:media_ingest_as_audio)
     end
 
     should "#track to document" do
@@ -35,7 +35,7 @@ class IngestTest < ActiveSupport::TestCase
 
   context "scopes" do
     setup do
-      @ingest = FactoryGirl.create(:ingest_audio)
+      @ingest = FactoryGirl.create(:media_ingest_as_audio)
     end
 
     should "have filtered scopes" do
@@ -76,20 +76,20 @@ class IngestTest < ActiveSupport::TestCase
 
   context "state machine" do
     should "have state and status" do
-      ingest = FactoryGirl.create(:ingest_audio)
+      ingest = FactoryGirl.create(:media_ingest_as_audio)
       assert_equal :starting, ingest.state
       assert_equal 1, ingest.status
     end
 
     should "remove" do
-      ingest = FactoryGirl.create(:ingest_audio)
+      ingest = FactoryGirl.create(:media_ingest_as_audio)
       # Ingest::RemoveWorker.jobs.clear
       assert_equal true, ingest.remove!, "should be able to event remove"
       # assert_equal 1, Ingest::RemoveWorker.jobs.size
     end
 
     should "remove when upload is destroyed" do
-      upload = FactoryGirl.create(:upload_audio)
+      upload = FactoryGirl.create(:media_upload_as_audio)
       ingest = upload.ingest
       assert_no_difference "Ingest.count" do
         assert_no_difference "Upload.count" do
@@ -105,7 +105,7 @@ class IngestTest < ActiveSupport::TestCase
 
     context "#status=" do
       should "transition to started from starting" do
-        ingest = FactoryGirl.create(:ingest_audio, :terminate => true, :busy => true)
+        ingest = FactoryGirl.create(:media_ingest_as_audio, :terminate => true, :busy => true)
         assert_equal :starting, ingest.state
         ingest.status = Ingest::STATE_STARTED
         assert_equal true, ingest.save
@@ -116,7 +116,7 @@ class IngestTest < ActiveSupport::TestCase
       end
 
       should "transition to finished from started" do
-        ingest = FactoryGirl.create(:ingest_audio, :terminate => true, :busy => true)
+        ingest = FactoryGirl.create(:media_ingest_as_audio, :terminate => true, :busy => true)
         ingest.expects(:remove_servers).once
         ingest.update_attributes(aasm_state: :started)
         ingest.status = Ingest::STATE_FINISHED
@@ -125,7 +125,7 @@ class IngestTest < ActiveSupport::TestCase
       end
 
       should "transition to stopped from stopping" do
-        ingest = FactoryGirl.create(:ingest_audio, :terminate => false, :busy => true)
+        ingest = FactoryGirl.create(:media_ingest_as_audio, :terminate => false, :busy => true)
         ingest.expects(:remove_servers).once
         ingest.update_attributes(aasm_state: :started)
         ingest.status = Ingest::STATE_STOPPING
@@ -139,7 +139,7 @@ class IngestTest < ActiveSupport::TestCase
       end
 
       should "transition to reset from resetting" do
-        ingest = FactoryGirl.create(:ingest_audio, :terminate => true, :busy => true)
+        ingest = FactoryGirl.create(:media_ingest_as_audio, :terminate => true, :busy => true)
         ingest.expects(:remove_servers).once
         ingest.update_attributes(aasm_state: :resetting)
         ingest.status = Ingest::STATE_RESET
@@ -150,7 +150,7 @@ class IngestTest < ActiveSupport::TestCase
       end
 
       should "transition to removed from removing" do
-        ingest = FactoryGirl.create(:ingest_audio, :busy => false)
+        ingest = FactoryGirl.create(:media_ingest_as_audio, :busy => false)
         ingest.expects(:remove_servers).once
         ingest.update_attributes(aasm_state: :removing)
         ingest.status = Ingest::STATE_REMOVED
@@ -160,7 +160,7 @@ class IngestTest < ActiveSupport::TestCase
     end
 
     should "events should transition states" do
-      ingest = FactoryGirl.create(:ingest_audio, :terminate => true, :busy => true)
+      ingest = FactoryGirl.create(:media_ingest_as_audio, :terminate => true, :busy => true)
       ingest.update_attributes(aasm_state: "created")
       assert_equal :created, ingest.state
       ingest.start!
@@ -240,7 +240,7 @@ class IngestTest < ActiveSupport::TestCase
     end
 
     should "event setter to force and events getter to receive permissible events" do
-      ingest = FactoryGirl.create(:ingest_audio, :terminate => true, :busy => true)
+      ingest = FactoryGirl.create(:media_ingest_as_audio, :terminate => true, :busy => true)
       assert_equal :starting, ingest.state
       ingest.event = "process"
       assert_equal :started, ingest.state
@@ -251,7 +251,7 @@ class IngestTest < ActiveSupport::TestCase
       assert_equal true, ingest.events.include?(:fail)
       assert_equal true, ingest.events.include?(:restart)
 
-      ingest = FactoryGirl.create(:ingest_audio, :terminate => true, :busy => true)
+      ingest = FactoryGirl.create(:media_ingest_as_audio, :terminate => true, :busy => true)
       assert_equal :starting, ingest.state
       ingest.event = :process
       assert_equal :started, ingest.state
@@ -263,7 +263,7 @@ class IngestTest < ActiveSupport::TestCase
   end
 
   should "log message" do
-    ingest = FactoryGirl.create(:ingest_audio)
+    ingest = FactoryGirl.create(:media_ingest_as_audio)
     ingest.log! :copy, "File not found."
     assert_equal ["File not found."], ingest.messages["copy"]
     ingest.log! :transcode, "Service unavailable."
@@ -273,7 +273,7 @@ class IngestTest < ActiveSupport::TestCase
   end
 
   should "set progress" do
-    ingest = FactoryGirl.create(:ingest_audio)
+    ingest = FactoryGirl.create(:media_ingest_as_audio)
     ingest.set_progress!(5) and ingest.reload
     assert_equal 5, ingest.progress
     ingest.set_progress!(75.5) and ingest.reload
@@ -335,7 +335,7 @@ class IngestTest < ActiveSupport::TestCase
   end
 
   should "increment progress" do
-    ingest = FactoryGirl.create(:ingest_audio)
+    ingest = FactoryGirl.create(:media_ingest_as_audio)
     ingest.set_progress!(10) and ingest.reload
     assert_equal 10, ingest.progress
     175.times do |index|
@@ -347,7 +347,7 @@ class IngestTest < ActiveSupport::TestCase
   end
 
   should "calculate average score and duration" do
-    ingest = FactoryGirl.create(:ingest_audio)
+    ingest = FactoryGirl.create(:media_ingest_as_audio)
     ch1 = ingest.chunks.create(FactoryGirl.attributes_for(:chunk_pocketsphinx, :offset => 0, :score => 0, :position => 1))
     ch2 = ingest.chunks.create(FactoryGirl.attributes_for(:chunk_pocketsphinx, :offset => 1, :score => 0.5, :position => 2))
     ch3 = ingest.chunks.create(FactoryGirl.attributes_for(:chunk_pocketsphinx, :offset => 2, :score => 1, :position => 3))
@@ -356,7 +356,7 @@ class IngestTest < ActiveSupport::TestCase
   end
 
   should "order chunks by offset" do
-    ingest = FactoryGirl.create(:ingest_audio)
+    ingest = FactoryGirl.create(:media_ingest_as_audio)
     ch3 = ingest.chunks.create(FactoryGirl.attributes_for(:chunk, :offset => 2, :score => 1, :position => 3))
     ch1 = ingest.chunks.create(FactoryGirl.attributes_for(:chunk, :offset => 0, :score => 0, :position => 1))
     ch2 = ingest.chunks.create(FactoryGirl.attributes_for(:chunk, :offset => 1, :score => 0.5, :position => 2))
@@ -370,7 +370,7 @@ class IngestTest < ActiveSupport::TestCase
   context "chunks and tracks" do
     setup do
       Segment.destroy_all
-      @ingest   = FactoryGirl.create(:ingest_audio)
+      @ingest   = FactoryGirl.create(:media_ingest_as_audio)
       @document = @ingest.document
 
       @t0  = Track.create(FactoryGirl.attributes_for(:track, type: :document, s3_url: "http://t0"))
@@ -430,12 +430,12 @@ class IngestTest < ActiveSupport::TestCase
   end
 
   should "have uid" do
-    @ingest = FactoryGirl.create(:ingest_audio)
+    @ingest = FactoryGirl.create(:media_ingest_as_audio)
     assert_not_nil @ingest.uid
   end
 
   should "create chunks through ingest" do
-    @ingest = FactoryGirl.create(:ingest_audio)
+    @ingest = FactoryGirl.create(:media_ingest_as_audio)
     @chunk1 = @ingest.chunks.create(FactoryGirl.attributes_for(:chunk_pocketsphinx).merge(position: 1))
     assert_equal @ingest, @chunk1.reload.ingest
     assert_equal @ingest.document, @chunk1.reload.document
@@ -443,7 +443,7 @@ class IngestTest < ActiveSupport::TestCase
   end
 
   should "stop server when server is removed" do
-    ingest = FactoryGirl.create(:ingest_audio)
+    ingest = FactoryGirl.create(:media_ingest_as_audio)
     server = FactoryGirl.create(:cpw_ingest_server)
     ingest.servers << server
     assert_difference "Ingest::Process.count", -1 do
@@ -455,7 +455,7 @@ class IngestTest < ActiveSupport::TestCase
 
   context "stop servers" do
     setup do
-      @ingest = FactoryGirl.create(:ingest_audio, aasm_state: "started")
+      @ingest = FactoryGirl.create(:media_ingest_as_audio, aasm_state: "started")
       @server = FactoryGirl.create(:cpw_ingest_server)
       @ingest.servers << @server
     end

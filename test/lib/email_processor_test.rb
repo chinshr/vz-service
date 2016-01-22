@@ -51,7 +51,7 @@ class EmailProcessorTest < ActiveSupport::TestCase
       normalized_params(@params).each do |p|
         Griddler::Email.new(p).process
       end
-      assert_equal "Sample recording 1", Upload.last.title
+      assert_equal "Sample Recording 1", Upload::MediaUpload.last.title
     end
 
     should "parse locale from email address" do
@@ -59,7 +59,7 @@ class EmailProcessorTest < ActiveSupport::TestCase
       normalized_params(@params).each do |p|
         Griddler::Email.new(p).process
       end
-      assert_equal "en-UK", Upload.last.locale
+      assert_equal "en-UK", Upload::MediaUpload.last.locale
     end
 
     should "process message with attachments, send notification" do

@@ -3,7 +3,7 @@ require 'test_helper'
 class TrackTest < ActiveSupport::TestCase
   context "build" do
     should "#create document track" do
-      @ingest = FactoryGirl.create(:ingest_audio)
+      @ingest = FactoryGirl.create(:media_ingest_as_audio)
       assert_no_difference "Segment::DocumentSegment.count" do
         track = Track::DocumentTrack.create({
           ingest: @ingest,
@@ -39,10 +39,6 @@ class TrackTest < ActiveSupport::TestCase
 
   context "associations" do
     should have_many(:segments).dependent(:nullify)
-  end
-
-  context "validations" do
-    should validate_presence_of :s3_url
   end
 
   context "scopes" do
@@ -98,7 +94,7 @@ class TrackTest < ActiveSupport::TestCase
     end
 
     should "#s3_origin_bucket_name" do
-      assert_equal "vz-dev-origin", @track.send(:s3_origin_bucket_name)
+      assert_equal "vz-test-origin", @track.send(:s3_origin_bucket_name)
     end
 
     should "#s3_waveform_json_key" do

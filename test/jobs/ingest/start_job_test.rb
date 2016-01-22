@@ -3,7 +3,7 @@ require 'test_helper'
 class Ingest::StartJobTest < ActiveSupport::TestCase
 
   should "start instance" do
-    ingest = FactoryGirl.create(:ingest_audio)
+    ingest = FactoryGirl.create(:media_ingest_as_audio)
 
     assert_difference "Ingest::Server::CPWServer.count" do
       aws_ec2_instance = mock("AWS::EC2::Instance")

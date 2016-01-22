@@ -4,14 +4,14 @@ class Ingest::PruneJobTest < ActiveSupport::TestCase
 
   context "stale ingests" do
     should "stop stale ingests" do
-      ingest = FactoryGirl.create(:ingest_audio, created_at: Time.zone.now - 2.hours)
+      ingest = FactoryGirl.create(:media_ingest_as_audio, created_at: Time.zone.now - 2.hours)
       Ingest::PruneJob.new.perform
       ingest.reload
       assert_equal :stopped, ingest.state
     end
 
     should "not stop ingests that are not quite stale yet" do
-      ingest = FactoryGirl.create(:ingest_audio, created_at: Time.zone.now - 10.minutes)
+      ingest = FactoryGirl.create(:media_ingest_as_audio, created_at: Time.zone.now - 10.minutes)
       Ingest::PruneJob.new.perform
       ingest.reload
       assert_equal :starting, ingest.state

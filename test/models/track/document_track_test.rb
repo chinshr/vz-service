@@ -16,7 +16,7 @@ class Track::DocumentTrackTest < ActiveSupport::TestCase
   end
 
   should "create document master track" do
-    ingest = FactoryGirl.create(:ingest_audio)
+    ingest = FactoryGirl.create(:media_ingest_as_audio)
     assert_equal 1, ingest.document.track.segments.count
     assert_no_difference "Track::DocumentTrack.count" do
       assert_no_difference "Segment::DocumentSegment.count" do

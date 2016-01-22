@@ -33,8 +33,16 @@ en:
     model:
       aasm_support:
         status: "cannot transition from state '%{current_state}'"
-
+      media_helper:
+        http_errors:
+          not_authorized: "not authorized"
+          access_forbidden: "access forbidden"
+          not_found: "not found"
+          request_timeout: "request timeout"
   api:
+    error:
+      boolean_argument_error: "Invalid boolean argument"
+      sort_order_argument_error: "Invalid sort order argument"
     error_code:
       authorization_error:
         generic: "Authorization error"
@@ -55,9 +63,15 @@ en:
       models:
         upload:
           attributes:
+            file_name:
+              presence: "can't be blank"
             file_type:
               audio_expected: "is not an accepted audio file"
               video_expected: "is not an accepted video file"
+              media_expected: "is not an accepted audio or video file"
+            source_url:
+              unresolved: "is not accessible %{error}"
+              unknown_content_type_or_video_service: "does not refer to a valid media or service"
         user:
           attributes:
             email:

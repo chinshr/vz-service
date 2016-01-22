@@ -14,9 +14,9 @@ module Model::Helper
   def booleanize(param)
     return case param.to_s.downcase
     when "true", "1" then true
-    when "false", "0"  then false
+    when "false", "0", "" then false
     else
-      raise ArgumentError.new(I18n.t("api.error.argument_error"))
+      raise ArgumentError.new(I18n.t("api.error.boolean_argument_error"))
     end
   end
 
@@ -25,7 +25,7 @@ module Model::Helper
     when "asc", "a" then "asc"
     when "desc", "d" then "desc"
     else
-      raise ArgumentError.new(I18n.t("api.error.argument_error"))
+      raise ArgumentError.new(I18n.t("api.error.sort_order_argument_error"))
     end
   end
 end

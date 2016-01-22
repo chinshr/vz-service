@@ -13,12 +13,11 @@ class Message < ActiveRecord::Base
 
   belongs_to :sender, foreign_key: :sender_id, class_name: "User"
   has_many :attachings, dependent: :destroy
-  has_many :attachments, through: :attachings, source: :upload
+  has_many :attachments, through: :attachings, source: :upload,
+    class_name: "Upload::MediaUpload"
 
   class << self
-    def generate_uid
-      SecureRandom.uuid
-    end
+    def generate_uid; SecureRandom.uuid; end
   end
 
   def text

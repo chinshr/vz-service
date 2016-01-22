@@ -10,7 +10,7 @@ class Ingest::Server::TerminateJobTest < ActiveSupport::TestCase
 
   should "not terminate instance" do
     server = FactoryGirl.create(:cpw_ingest_server)
-    server.ingests << FactoryGirl.create(:ingest_audio)
+    server.ingests << FactoryGirl.create(:media_ingest_as_audio)
     Ingest::Server.any_instance.expects(:_terminate).never
     Ingest::Server::TerminateJob.new.perform(server.id)
   end

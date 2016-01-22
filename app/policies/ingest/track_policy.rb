@@ -19,8 +19,8 @@ class Ingest::TrackPolicy < TrackPolicy
     backend_role?
   end
 
-  def permitted_attributes
-    keys = super + [:s3_url, :s3_mp3_url, :ingest_iteration,
+  def permitted_attributes(action_name = nil)
+    keys = super(action_name) + [:s3_url, :s3_mp3_url, :ingest_iteration,
       :s3_waveform_json_url, :duration, :start_at, :end_at]
     keys += [:type] if create?
     keys

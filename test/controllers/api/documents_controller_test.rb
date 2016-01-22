@@ -7,7 +7,7 @@ class Api::DocumentsControllerTest < ActionController::TestCase
 
     @track1             = FactoryGirl.create(:master_track)
     @document1          = FactoryGirl.create(:document, track: @track1)
-    @ingest1            = FactoryGirl.create(:ingest_audio, :document => @document1)
+    @ingest1            = FactoryGirl.create(:media_ingest_as_audio, :document => @document1)
 
     @document1.privacy  = [:"public"]
     @document1.accessibility = [:"view"]
@@ -17,7 +17,7 @@ class Api::DocumentsControllerTest < ActionController::TestCase
 
     @track2             = FactoryGirl.create(:master_track)
     @document2          = FactoryGirl.create(:document, track: @track2)
-    @ingest2            = FactoryGirl.create(:ingest_audio, :document => @document2)
+    @ingest2            = FactoryGirl.create(:media_ingest_as_audio, :document => @document2)
     @document2.privacy  = [:"private"]
     @document2.user     = @user2
     @document2.tag_list = ["brown", "cats", "jump", "higher"]

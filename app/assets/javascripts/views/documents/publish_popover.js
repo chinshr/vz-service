@@ -4,7 +4,7 @@ App.Views.DocumentsPublishPopover = App.Views.DocumentsBasePopover.extend({
   initialize: function(options) {
     App.Views.DocumentsBasePopover.prototype.initialize.call(this, options); // super
     this.pages = {};
-    _.bindAll(this, "publish", "rerender", "pushPage", "showPage", "showStartPage",
+    _.bindAll(this, "publishDocument", "rerender", "pushPage", "showPage", "showStartPage",
       "bindPage", "setup", "teardown");
   },
 
@@ -41,8 +41,8 @@ App.Views.DocumentsPublishPopover = App.Views.DocumentsBasePopover.extend({
     return this;
   },
 
-  publish: function() {
-    this.parent.publish();
+  publishDocument: function() {
+    this.parent.publishDocument();
   },
 
   rerender: function() {
@@ -205,7 +205,7 @@ App.Views.DocumentsPublishPopover = App.Views.DocumentsBasePopover.extend({
 
     this.publishButtonElement = this.$('.btn-publish-document');
     this.publishButtonElement.prop('disabled', this.model.attributes.privacy.indexOf('private') >= 0);
-    this.publishButtonElement.on('click', this.publish).on('click', function(e) {
+    this.publishButtonElement.on('click', this.publishDocument).on('click', function(e) {
       $(e.currentTarget).button("loading");
     });
 

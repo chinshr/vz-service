@@ -61,8 +61,9 @@ class Api::Ingests::ChunksController < Api::ApplicationController
   end
 
   def create_params
-    params.require(:chunk).permit(*policy(:"ingest/chunk").permitted_attributes).tap do |whitelisted|
+    params.require(:chunk).permit(*policy(:"ingest/chunk").permitted_attributes(action_name)).tap do |whitelisted|
       whitelisted[:response]          = params[:chunk][:response] if params[:chunk][:response]
+      whitelisted[:words]             = params[:chunk][:words] if params[:chunk][:words]
       whitelisted[:processing_errors] = params[:chunk][:processing_errors] if params[:chunk][:processing_errors]
       whitelisted[:ingest]            = @ingest
       whitelisted[:ingest_iteration]  = params[:chunk][:ingest_iteration] || @ingest.iteration

@@ -8,6 +8,13 @@ class Web::Profiles::DocumentsController < Web::ProfilesController
 
   def show
     authorize @document
+    respond_to do |format|
+      format.html
+      format.srt
+      format.mp3 {
+        redirect_to @document.track.mp3_stream_url
+      }
+    end
   end
 
   protected

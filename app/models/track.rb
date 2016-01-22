@@ -4,8 +4,6 @@ class Track < ActiveRecord::Base
 
   has_many :segments, foreign_key: :track_id, dependent: :nullify
 
-  validates :s3_url, presence: true
-
   # public scopes
   filtered_scopes :sort_order, :reverse_sort, :any_of_types, :none_of_types
   scope :sort_order, -> (param) {

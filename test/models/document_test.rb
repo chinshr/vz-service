@@ -282,7 +282,7 @@ class DocumentTest < ActiveSupport::TestCase
   context "document with ingests" do
     setup do
       @document = FactoryGirl.create(:document)
-      @ingest   = FactoryGirl.create(:ingest_audio, :document => @document)
+      @ingest   = FactoryGirl.create(:media_ingest_as_audio, :document => @document)
     end
 
     should "have finshed transcribing" do
@@ -296,7 +296,7 @@ class DocumentTest < ActiveSupport::TestCase
     end
 
     should "not have finshed transcribing with multiple ingests" do
-      @started = FactoryGirl.create(:ingest_audio, :document => @document, :aasm_state => "started")
+      @started = FactoryGirl.create(:media_ingest_as_audio, :document => @document, :aasm_state => "started")
       @ingest.update_attribute(:aasm_state, "finished")
       assert_equal false, @document.transcribed?
     end
@@ -627,4 +627,20 @@ class DocumentTest < ActiveSupport::TestCase
     document = FactoryGirl.create(:document)
     assert_equal "/@#{document.user.username}/#{document.slug}", document.published_path
   end
+
+  context "words" do
+
+    should "be initialized with empty array" do
+      document = Document.new
+      assert_equal [], document.words
+    end
+
+    should "set/get words as json" do
+      words = [{"p"=>1,"c"=>0.7,"s"=>1.610,"e"=>1.780,"w"=>"This"},{"p"=>2,"c"=>0.714,"s"=>1.780,"e"=>1.960,"w"=>"is"}]
+      document = FactoryGirl.create(:document, words: words)
+      assert_equal words, document.reload.words
+      assert_equal words.first, document.words.first
+    end
+  end
+
 end

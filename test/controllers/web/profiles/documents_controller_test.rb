@@ -27,7 +27,7 @@ class Web::Profiles::DocumentsControllerTest < ActionController::TestCase
     [:public, :unlisted].each do |privacy|
       context "when #{privacy} document" do
         setup do
-          @document = FactoryGirl.create(:document,
+          @document = FactoryGirl.create(:document_with_track,
             {privacy: [privacy], accessibility: [:view]})
           assert_equal ["#{privacy}"], @document.privacy
         end
@@ -53,6 +53,18 @@ class Web::Profiles::DocumentsControllerTest < ActionController::TestCase
             get :show, user_id: "@#{@document.user.username}", id: @document.slug
             assert_response :success
           end
+
+          should "load mp3 and redirect to S3 url" do
+            get :show, user_id: "@#{@document.user.username}", id: @document.slug, format: "mp3"
+            assert_response :redirect
+          end
+
+          should "load and render srt" do
+            get :show, user_id: "@#{@document.user.username}", id: @document.slug, format: "srt"
+            assert_response :success
+            assert_template "show"
+          end
+
         end
 
         context "is not published" do

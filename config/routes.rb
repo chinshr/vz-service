@@ -31,7 +31,7 @@ Voyzes::Application.routes.draw do
 
     # Web:Account::Application
     get "/account" => 'account/application#index'  # => redirects /dashboard
-    resource :dashboard, :only => :show, :controller => "account/dashboards"
+    resource :dashboard, only: :show, controller: "account/dashboards"
     namespace :account do
       resource :profile, only: [:show, :update]
       resource :billing, only: [:show]

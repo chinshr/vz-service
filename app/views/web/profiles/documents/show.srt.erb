@@ -1,0 +1,3 @@
+<% @document.chunks.order(id: :asc).each do |chunk| %>
+<%= SRT::Line.new({sequence: chunk.position, start_time: chunk.start_time, end_time: chunk.end_time, text: chunk.text}).to_s.html_safe %>
+<% end -%>
