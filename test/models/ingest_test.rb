@@ -83,9 +83,9 @@ class IngestTest < ActiveSupport::TestCase
 
     should "remove" do
       ingest = FactoryGirl.create(:media_ingest_as_audio)
-      # Ingest::RemoveWorker.jobs.clear
-      assert_equal true, ingest.remove!, "should be able to event remove"
-      # assert_equal 1, Ingest::RemoveWorker.jobs.size
+      assert_enqueued_with(job: Ingest::RemoveJob) do
+        assert_equal true, ingest.remove!, "should be able to event remove"
+      end
     end
 
     should "remove when upload is destroyed" do
@@ -193,7 +193,9 @@ class IngestTest < ActiveSupport::TestCase
 
       ingest.clear_terminate!
       assert_equal false, ingest.terminate?
-      ingest.stop!
+      assert_enqueued_with(job: Ingest::StopJob) do
+        ingest.stop!
+      end
       assert_equal :stopping, ingest.state
       assert_equal true, ingest.terminate?
       ingest.process!
@@ -214,7 +216,9 @@ class IngestTest < ActiveSupport::TestCase
 
       ingest.clear_terminate!
       assert_equal false, ingest.terminate?
-      ingest.reset!
+      assert_enqueued_with(job: Ingest::ResetJob) do
+        ingest.reset!
+      end
       assert_equal :resetting, ingest.state
       assert_equal true, ingest.terminate?
       ingest.process!

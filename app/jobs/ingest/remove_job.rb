@@ -8,6 +8,7 @@ class Ingest::RemoveJob < ActiveJob::Base
 
   def perform(ingest_id, options = {})
     options = options.reverse_merge({retries: RETRIES})
+
     if @ingest = Ingest.find(ingest_id)
       if @ingest.not_busy?
         @ingest.with_lock do
