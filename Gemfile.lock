@@ -67,7 +67,7 @@ GIT
 GEM
   remote: https://rubygems.org/
   specs:
-    aasm (4.4.1)
+    aasm (4.7.0)
     actionmailer (4.1.9)
       actionpack (= 4.1.9)
       actionview (= 4.1.9)
@@ -431,7 +431,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  aasm (~> 4.3)
+  aasm (~> 4.7)
   activeadmin!
   activejob_backport
   acts-as-taggable-on (~> 3.4)
