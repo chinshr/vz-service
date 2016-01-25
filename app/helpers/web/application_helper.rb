@@ -25,7 +25,7 @@ module Web::ApplicationHelper
     ["If you can dream it, you can achieve it.", "Zig Ziglar"],
     ["Pull the string, and it will follow you wherever. Push it, and it will go nowhere at all.", "Dwight Eisenhower"],
     ["Folks, you cannot un-invent things.", "Karlheinz Brandenburg"],
-    ["Never give up. You only get one life. Go for it!", "Richard E. Grant"]
+    ["Never give up. You only get one life. Go for it!", "Richard E. Grant"],
     ["At least once a day, allow yourself the freedom to think and dream for yourself.", "Albert Einstein"],
     ["Strive not to be a success, but rather to be of value.", "Albert Einstein"],
     ["Logic will get you from A to B. Imagination will take you everywhere.", "Albert Einstein"],
