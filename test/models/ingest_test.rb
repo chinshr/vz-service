@@ -128,8 +128,10 @@ class IngestTest < ActiveSupport::TestCase
         ingest = FactoryGirl.create(:media_ingest_as_audio, :terminate => false, :busy => true)
         ingest.expects(:remove_servers).once
         ingest.update_attributes(aasm_state: :started)
-        ingest.status = Ingest::STATE_STOPPING
-        assert_equal true, ingest.save
+        assert_enqueued_with(job: Ingest::StopJob) do
+          ingest.status = Ingest::STATE_STOPPING
+          assert_equal true, ingest.save
+        end
         assert_equal :stopping, ingest.reload.state
         assert_equal true, ingest.reload.terminate
         ingest.status = Ingest::STATE_STOPPED

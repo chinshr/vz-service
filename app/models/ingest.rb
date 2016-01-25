@@ -83,15 +83,15 @@ class Ingest < ActiveRecord::Base
       transitions :from => [:created, :stopped, :reset], :to => :starting, :guard => :has_valid_source_url?
     end
 
-    event :stop, :after_commit => :after_commit_event_stop do
+    event :stop, :after => :after_event_stop do
       transitions :from => :started, :to => :stopping
     end
 
-    event :reset, :after_commit => :after_commit_event_reset do
+    event :reset, :after => :after_event_reset do
       transitions :from => [:stopped, :finished], :to => :resetting
     end
 
-    event :remove, :after_commit => :after_commit_event_remove do
+    event :remove, :after => :after_event_remove do
       transitions :from => [:created, :starting, :started, :stopping, :stopped, :resetting, :reset, :removing, :finished], :to => :removing
     end
 
@@ -115,6 +115,9 @@ class Ingest < ActiveRecord::Base
       transitions :from => [:starting, :started], :to => :restarting
     end
   end
+
+  after_commit :after_commit_event_stop, :after_commit_event_reset,
+    :after_commit_event_remove
 
   class << self
 
@@ -408,16 +411,33 @@ class Ingest < ActiveRecord::Base
 
   def after_commit_event_start; end
 
+  def after_event_stop
+    # Note: Unexpected AASM behavior makes us
+    # do this hack:
+    # https://github.com/aasm/aasm/issues/313
+    @after_commit_event_stop = true
+  end
+
   def after_commit_event_stop
-    Ingest::StopJob.perform_later(self.id)
+    Ingest::StopJob.perform_later(self.id) if @after_commit_event_stop
+  end
+
+  def after_event_reset
+    # Note: dito.
+    @after_commit_event_reset = true
   end
 
   def after_commit_event_reset
-    Ingest::ResetJob.perform_later(self.id)
+    Ingest::ResetJob.perform_later(self.id) if @after_commit_event_reset
+  end
+
+  def after_event_remove
+    # Note: dito.
+    @after_commit_event_remove = true
   end
 
   def after_commit_event_remove
-    Ingest::RemoveJob.perform_later(self.id)
+    Ingest::RemoveJob.perform_later(self.id) if @after_commit_event_remove
   end
 
   def after_commit_event_process; end

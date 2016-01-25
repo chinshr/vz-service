@@ -52,6 +52,7 @@ Set default username from email address:
 * [Koemei](https://koemei.com/), automatic video transcriptions and analysis, sentiment detection, etc.
 * [Speechmatics](speechmatics.com/about) licensing to VoiceBase, Tony Robinson, CTO, 30+ years in ASR experience
 * [Loopcast](http://beta.loopcast.fm) Audio streaming service with the UI for tiles and players I really like.
+* [Clammr](https://www.clammr.com/app/) Audio podcast experience
 
 ## Patentable Ideas
 
@@ -299,7 +300,9 @@ Similar to:
   - [Real-time Text Editor using Pubnub+Modulus, Part 2](http://blog.modulus.io/pub-nub-and-modulus-part-2)
   -  [PubNub presence](https://www.pubnub.com/docs/web-javascript/presence)
   - [Firebase Firepad on GitHub](https://github.com/firebase/firepad) and [Live Demo](https://demo.firepad.io/#sxz0Ct8eko)
-* Clammr - to get idea about index page tiles https://www.clammr.com/app/
+* Layout of audio
+  - Clammr - to get idea about index page tiles https://www.clammr.com/app/
+  - http://beta.loopcast.fm
 * Serving static file, e.g. from action/controller
   - [Use redirect on Heroku](http://stackoverflow.com/questions/6307135/alternative-to-x-sendfile-on-heroku)
   - [Rack:SendFile not supported on Heroku](https://devcenter.heroku.com/articles/rack-sendfile)
