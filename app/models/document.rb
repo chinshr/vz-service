@@ -37,6 +37,9 @@ class Document < ActiveRecord::Base
   has_one :track, through: :master_document_segment, class_name: "Track::DocumentTrack"
   accepts_nested_attributes_for :track, allow_destroy: true
 
+  has_many :images, :through => :image_ingests, :source => :images
+  has_many :image_ingests, :as => :ingestable, :class_name => "Ingest::ImageIngest"
+
   friendly_id :title_and_slug_id, use: [:slugged, :history]
   acts_as_ordered_taggable_on :tags, :auto
   has_paper_trail :only => [:title, :description, :text, :html, :rich_text,
@@ -293,7 +296,7 @@ class Document < ActiveRecord::Base
   end
 
   def published_path
-    "/@#{user.username}/#{slug}"
+    "/@#{user.username}/#{slug}" if published?
   end
 
   # override

@@ -11,14 +11,14 @@ class Ingest::PruneJob < ActiveJob::Base
         ingest.fail!
     end
 
-    # process removing, resetting, stopping if terminated and not busy
+    # re-process 'in between' states, e.g. :starting, etc.
     Ingest.any_of_status([Ingest::STATE_REMOVING, Ingest::STATE_RESETTING, Ingest::STATE_STOPPING]).is_terminated(true).is_busy(false).find_each do |ingest|
       ingest.process!
     end
 
-    # removed: TODO: not necessary.
-    Ingest.removed.find_each do |ingest|
-      ingest.send(:after_enter_removed)
+    # delete removed ingests older than 30 days
+    Ingest.removed.where("ingests.removed_at < ?", Time.zone.now - 30.days).find_each do |ingest|
+      ingest.delete
     end
 
     # stale servers should be terminated

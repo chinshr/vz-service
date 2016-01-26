@@ -81,6 +81,11 @@ class UserTest < ActiveSupport::TestCase
     assert_equal "rgb(118, 242, 7)", user.css_rgb_color
   end
 
+  should "have pubsub_channel" do
+    user = FactoryGirl.create(:user)
+    assert_not_nil user.pubsub_channel
+  end
+
   context "user registration" do
     should "not be valid without previous registration" do
       user = FactoryGirl.build(:user, first_name: "Jürgen", last_name: "Feßlmeier", email: "juergen@example.com")

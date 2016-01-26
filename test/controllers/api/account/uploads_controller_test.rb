@@ -16,9 +16,9 @@ class Api::Account::UploadsControllerTest < ActionController::TestCase
               :source_url => "http://s3.amazonaws.com/vz-test-dropbox/8enYwMjB0B",
               :file_type => "audio/wav",
               :file_size => 225284,
-              :type => "audio",
               :locale => "en-UK",
               :privacy => "private",
+              :accessibility => "edit",
               :metadata => {"te_name" => "pocketsphinx"}
             }, format: :json
             assert_response :success
@@ -33,6 +33,7 @@ class Api::Account::UploadsControllerTest < ActionController::TestCase
             assert_equal "http://s3.amazonaws.com/vz-test-dropbox/8enYwMjB0B", upload.source_url
             assert_equal "en-UK", upload.locale
             assert_equal ["private"], upload.privacy
+            assert_equal ["edit"], upload.accessibility
             assert_equal({"te_name"=>"pocketsphinx"}, upload.metadata)
             assert_equal 0, upload.progress
             assert_equal :starting, upload.state
@@ -68,6 +69,41 @@ class Api::Account::UploadsControllerTest < ActionController::TestCase
             assert_equal 0, upload.progress
             assert_equal :starting, upload.state
           end
+        end
+      end
+    end
+
+    should "create s3 image upload when signed in" do
+      document = FactoryGirl.create(:document_with_track)
+      assert_difference 'Ingest::ImageIngest.count', 1 do
+        assert_difference 'Upload::ImageUpload.count', 1 do
+          post :create, :upload => {
+            :type => "Upload::ImageUpload",
+            :ingestable_id => document.id,
+            :ingestable_type => document.class.name,
+            :file_name => "test.jpg",
+            :source_url => "http://s3.amazonaws.com/vz-test-dropbox/7a9seXJ3Bx",
+            :file_type => "image/jpeg",
+            :file_size => 123456
+          }, format: :json
+          assert_response :success
+          assert_response_body_attributes_with "upload",
+            ["metadata", "id", "uid", "file_name",
+              "file_type", "file_size", "source_url",
+              "status", "type", "progress", "events",
+              "updated_at", "created_at",
+              "ingestable_id", "ingestable_type"]
+
+          upload = Upload.last
+          assert_equal "Upload::ImageUpload", upload.type
+          assert_equal "image/jpeg", upload.file_type
+          assert_equal "test.jpg", upload.file_name
+          assert_equal 123456, upload.file_size
+          assert_equal "http://s3.amazonaws.com/vz-test-dropbox/7a9seXJ3Bx", upload.source_url
+          assert_equal 0, upload.progress
+          assert_equal :starting, upload.state
+          assert_equal document.id, upload.ingestable_id
+          assert_equal document.class.name, upload.ingestable_type
         end
       end
     end
@@ -134,13 +170,13 @@ class Api::Account::UploadsControllerTest < ActionController::TestCase
     should "NOT create media upload when signed out" do
       sign_out :user
       post :create, :upload => {:file_name => "i-like-pickles.wav", :source_url => "http://s3.amazonaws.com/vz-test-dropbox/8enYwMjB0B",
-        :file_type => "audio/wav", :file_size => 225284, :type => "audio", :locale => "en-UK", :privacy => "private"},
+        :file_type => "audio/wav", :file_size => 225284, :locale => "en-UK", :privacy => "private"},
         format: :json
       assert_response :unauthorized
     end
 
     should "NOT create media upload without file_type audio" do
-      post :create, :upload => {type: "audio", file_type: "XXX", file_name: "xxx.xxx", file_size: 1,
+      post :create, :upload => {file_type: "XXX", file_name: "xxx.xxx", file_size: 1,
         source_url: "http://s3.amazonaws.com/vz-test-dropbox/xxx.xxx"},
         format: :json
       assert_response :unprocessable_entity
@@ -270,8 +306,15 @@ class Api::Account::UploadsControllerTest < ActionController::TestCase
     should "update upload" do
       upload = FactoryGirl.create(:media_upload_as_audio)
       upload.user = @user and upload.save
-      put :update, {:id => upload.id, :upload => {:title => "La fiesta!", :description => "Entrevista en la fiesta.",
-        :tag_list => ["entrevista", "fiesta"], locale: "es-AR", :privacy => "private"}, format: :json}
+      put :update, {:id => upload.id,
+        :upload => {
+          :title => "La fiesta!",
+          :description => "Entrevista en la fiesta.",
+          :tag_list => ["entrevista", "fiesta"],
+          :locale => "es-AR",
+          :privacy => "private",
+          :accessibility => "edit"
+        }, format: :json}
       assert_response :success
       assert_response_body_attributes_with "upload"
       assert_equal "La fiesta!", upload.reload.title
@@ -280,6 +323,7 @@ class Api::Account::UploadsControllerTest < ActionController::TestCase
       assert_equal ["entrevista", "fiesta"], upload.user.owned_tags.map(&:name).sort
       assert_equal "es-AR", upload.reload.locale
       assert_equal ["private"], upload.reload.privacy
+      assert_equal ["edit"], upload.reload.accessibility
     end
 
     should "NOT update upload when signed out" do
@@ -307,8 +351,8 @@ class Api::Account::UploadsControllerTest < ActionController::TestCase
       upload.user = @user and upload.save
       assert_no_difference 'Document.count' do
         assert_no_difference 'Ingest.count', -1 do
-          assert_enqueued_with(job: Upload::DeleteJob) do
-          #assert_difference 'Upload.count', -1 do
+          #assert_enqueued_with(job: Upload::DeleteJob) do
+          assert_difference 'Upload.count', -1 do
             delete :destroy, {id: upload.id, format: :json}
             assert_response :success
             assert_equal :removing, upload.ingest.reload.state
@@ -326,23 +370,40 @@ class Api::Account::UploadsControllerTest < ActionController::TestCase
 
   end
 
-  context "GET /api/account/upload/sign_s3" do
-    should "get sign_s3" do
-      get :sign_s3, :format => :json
+  context "GET /api/account/upload/signed_s3_put" do
+    should "get signed_s3_put" do
+      get :signed_s3_put, :format => :json, :object_key => "abcd1234", :object_content_type => "image/jpeg"
       assert_response :success
+      assert_equal 1, response_body['code']
+      assert_equal "http://s3.amazonaws.com/vz-test-dropbox/abcd1234", response_body['url']
+      assert_not_nil response_body['signed_request']
     end
 
-    should "NOT get sign_s3 when signed out" do
+    should "NOT get signed_s3_put without object_key parameter" do
+      get :signed_s3_put, :format => :json
+      assert_response :unprocessable_entity
+      assert_equal "Argument missing 'object_key'", response_body['errors']['base'].first
+    end
+
+    should "NOT get signed_s3_put without object_content_type parameter" do
+      get :signed_s3_put, :format => :json, :object_key => "abcd1234"
+      assert_response :unprocessable_entity
+      assert_equal "Argument missing 'object_content_type'", response_body['errors']['base'].first
+    end
+
+    should "NOT get signed_s3_put when signed out" do
       sign_out :user
-      get :sign_s3, :format => :json
+      get :signed_s3_put, :format => :json
       assert_response :unauthorized
     end
   end
 
   protected
 
-  def assert_attributes(response, expected_attributes = {})
-    %w(id uid file_name file_type file_size source_url locale slug slug_id title description tag_list privacy status type progress events updated_at created_at use_source_annotations metadata).each do |key|
+  def assert_attributes(response, expected_attributes = nil)
+    expected_attributes = expected_attributes || %w(id uid file_name file_type file_size source_url locale slug slug_id published_path title description tag_list privacy accessibility status type progress events updated_at created_at use_source_annotations metadata document_id images)
+    expected_attributes = expected_attributes.keys if expected_attributes.is_a?(Hash)
+    expected_attributes.each do |key|
       assert response.has_key?(key), "should containt key '#{key}' in response '#{response}'"
     end
   end

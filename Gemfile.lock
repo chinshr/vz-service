@@ -90,10 +90,7 @@ GEM
       activemodel (= 4.1.9)
       activesupport (= 4.1.9)
       arel (~> 5.0.0)
-    activeresource (4.0.0)
-      activemodel (~> 4.0)
-      activesupport (~> 4.0)
-      rails-observers (~> 0.1.1)
+    activerecord-deprecated_finders (1.0.4)
     activesupport (4.1.9)
       i18n (~> 0.6, >= 0.6.9)
       json (~> 1.7, >= 1.7.7)
@@ -109,14 +106,10 @@ GEM
       activesupport (>= 3.0.0)
     arel (5.0.1.20140414130214)
     awesome_print (1.6.1)
-    aws-sdk-v1 (1.64.0)
+    aws-sdk-v1 (1.66.0)
       json (~> 1.4)
       nokogiri (>= 1.4.4)
-    backbone-on-rails (1.1.2.0)
-      actionmailer
-      actionpack
-      activemodel
-      activeresource
+    backbone-on-rails (1.2.0.0)
       eco
       ejs
       jquery-rails
@@ -151,10 +144,10 @@ GEM
     coffee-rails (4.1.0)
       coffee-script (>= 2.2.0)
       railties (>= 4.0.0, < 5.0)
-    coffee-script (2.3.0)
+    coffee-script (2.4.1)
       coffee-script-source
       execjs
-    coffee-script-source (1.9.1)
+    coffee-script-source (1.10.0)
     connection_pool (2.2.0)
     crack (0.4.2)
       safe_yaml (~> 1.0.0)
@@ -184,10 +177,10 @@ GEM
     erubis (2.7.0)
     eventmachine (1.0.7)
     excon (0.45.4)
-    execjs (2.4.0)
+    execjs (2.6.0)
     factory_girl (4.5.0)
       activesupport (>= 3.0.0)
-    factory_girl_rails (4.5.0)
+    factory_girl_rails (4.6.0)
       factory_girl (~> 4.5.0)
       railties (>= 3.0.0)
     faraday (0.9.2)
@@ -201,7 +194,7 @@ GEM
       faraday (>= 0.7.4, < 0.10)
     fastimage (1.8.1)
       addressable (~> 2.3, >= 2.3.5)
-    font-awesome-rails (4.3.0.0)
+    font-awesome-rails (4.5.0.0)
       railties (>= 3.2, < 5.0)
     font_assets (0.1.11)
       rack
@@ -235,7 +228,7 @@ GEM
       has_scope (~> 0.6.0.rc)
       railties (>= 3.2, < 4.2)
       responders (~> 1.0)
-    jquery-rails (3.1.2)
+    jquery-rails (3.1.4)
       railties (>= 3.0, < 5.0)
       thor (>= 0.14, < 2.0)
     jquery-ui-rails (5.0.3)
@@ -258,9 +251,10 @@ GEM
       fastimage
       nokogiri (~> 1.6)
     method_source (0.8.2)
-    mime-types (1.25.1)
-    mini_portile (0.6.2)
-    minitest (5.8.3)
+    mime-types (2.99)
+    mini_magick (4.3.6)
+    mini_portile2 (2.0.0)
+    minitest (5.8.4)
     mocha (1.1.0)
       metaclass (~> 0.0.1)
     modernizr-rails (2.7.1)
@@ -269,8 +263,8 @@ GEM
     net-http-persistent (2.9.4)
     netrc (0.10.2)
     newrelic_rpm (3.9.9.275)
-    nokogiri (1.6.5)
-      mini_portile (~> 0.6.0)
+    nokogiri (1.6.7.2)
+      mini_portile2 (~> 2.0.0.rc2)
     oj (2.11.1)
     orm_adapter (0.5.0)
     paper_trail (4.0.0)
@@ -316,8 +310,6 @@ GEM
       bundler (>= 1.3.0, < 2.0)
       railties (= 4.1.9)
       sprockets-rails (~> 2.0)
-    rails-observers (0.1.2)
-      activemodel (~> 4.0)
     rails_12factor (0.0.3)
       rails_serve_static_assets
       rails_stdout_logging
@@ -329,7 +321,7 @@ GEM
       rake (>= 0.8.7)
       thor (>= 0.18.1, < 2.0)
     raindrops (0.13.0)
-    rake (10.4.2)
+    rake (10.5.0)
     ransack (1.5.1)
       actionpack (>= 3.0)
       activerecord (>= 3.0)
@@ -425,6 +417,8 @@ GEM
       addressable (>= 2.3.6)
       crack (>= 0.3.2)
     whatlanguage (1.0.5)
+    wisper (1.6.1)
+    wisper-minitest (0.0.1)
     yui-compressor (0.12.0)
 
 PLATFORMS
@@ -434,6 +428,7 @@ DEPENDENCIES
   aasm (~> 4.7)
   activeadmin!
   activejob_backport
+  activerecord-deprecated_finders
   acts-as-taggable-on (~> 3.4)
   amatch
   autoscaler!
@@ -465,6 +460,7 @@ DEPENDENCIES
   json
   kgio
   metainspector
+  mini_magick
   minitest
   mocha
   modernizr-rails
@@ -503,6 +499,8 @@ DEPENDENCIES
   unicorn
   webmock
   whatlanguage (~> 1.0.5)
+  wisper (~> 1.6.1)
+  wisper-minitest
   yui-compressor
 
 BUNDLED WITH

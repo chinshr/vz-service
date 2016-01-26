@@ -13,10 +13,12 @@ class Ingest::RemoveJob < ActiveJob::Base
       if @ingest.not_busy?
         @ingest.with_lock do
           # remove uploaded file
-          s3_delete_object_if_exists(APP_CONFIG['S3_INBOUND_BUCKET'],
+          s3_delete_object_if_exists(
+            @ingest.s3_upload_bucket_name,
             @ingest.handle)
           # remove all origin files
-          s3_delete_objects_with_prefix(APP_CONFIG['S3_OUTBOUND_BUCKET'],
+          s3_delete_objects_with_prefix(
+            @ingest.s3_origin_bucket_name,
             @ingest.uid)
           # move state to 'removed'
           @ingest.process!

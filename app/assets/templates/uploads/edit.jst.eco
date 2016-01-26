@@ -1,17 +1,48 @@
-<!-- div class="tile edit-tile col-lg-4 col-md-4 col-sm-4" -->
+<div class="tile edit-tile">
+  <p class="number"><%= @id || 0 %></p>
   <div class="flipper">
     <div class="panel edit-panel">
-      <form role="form" disabled="true">
-        <div class="progress progress-striped active">
-          <div class="progress-bar progress-bar-info" style="width: <%= @progress %>%"></div>
+      <a href="#" class="media-image media-image-thumb">
+        <!-- progress -->
+        <div class="progress <% if @progress && @progress < 100: %> progress-striped <% end %>  active">
+          <div class="progress-bar progress-bar-success" style="width: <%= @progress %>%"></div>
         </div>
-        <div class="panel-heading">
-          <button type="button" class="close action-close">×</button>
-          <h3><i class="fa icon-privacy <%= if @privacy == 'private': %> fa-lock icon-private <% else: %> fa-unlock icon-public <% end %> "></i><%= @title || @file_name %></h3>
 
-          <span class="label label-info label-status"><span class="message"><%= @message %></span></span>
-          <span class="slug" hidden><i class="fa fa-link"><a href="YdG3bj" target="_blank">http://localhost:3000/YdG3bj</a></i></span>
-        </div><!-- panel-heading -->
+        <span class="thumb thumb-video thumb-crop-top thumb-upload image">
+
+          <!-- image -->
+          <span class="thumb-sizer">
+            <span class="thumb-tugger">
+              <img src="<%= @thumb_aspect_ratio_1_url %>" style="background-color: <%= @thumb_bg_color %>" class="thumb-image thumb-image-square" />
+              <span class="thumb-aligner"></span>
+            </span>
+          </span>
+
+          <!-- status -->
+          <span class="upload-status running">Processing</span>
+
+          <!-- close -->
+          <button type="button" aria-hidden="true" class="btn-close btn-thumb action-close"><i class="fa fa-check"></i></button>
+
+          <!-- privacy -->
+          <button type="button" aria-hidden="true" data-toggle="popover" class="btn-privacy btn-thumb">
+          </button>
+
+          <!-- share -->
+          <button type="button" hidden aria-hidden="true" data-toggle="popover" class="btn-share btn-thumb">
+            <i class="fa fa-share"></i>
+          </button>
+
+          <!-- loading -->
+          <div class="loading xspinner"></div>
+
+        </span>  <!-- thumb -->
+      </a>  <!-- .media-image -->
+
+      <!-- upload image input -->
+      <input class="image-upload" type="file" name="files[]" />
+
+      <form role="form" disabled="true">
         <div class="panel-body">
           <div class="form-fields">
 
@@ -27,14 +58,14 @@
 
             <div class="form-group form-group-description">
               <label class="sr-only" for="">Description</label>
-              <textarea class="form-control input-sm" placeholder="Description" name="upload[description]"><%= @description %></textarea>
+              <textarea class="form-control input-sm" placeholder="Description" rows="4" name="upload[description]"><%= @description %></textarea>
             </div><!-- form-group-description -->
 
             <div class="form-group form-group-audio-language">
               <label class="sr-only" for="">Audio Language</label>
               <select class="form-control input-sm file-locale input-single-searchable" name="upload[locale]" value="<%= @locale %>">
                 <option value="en-US"<%= if @locale == "en-US": %> selected="selected"<% end %>>English United States</option>
-                <option value="es-ES" <%= if @locale == "es-ES": %> selected="selected"<% end %>>Spanish</option>
+                <option value="es-ES" <%= if @locale == "es-ES": %> selected="selected"<% end %>>Spanish International</option>
 <!--
                 <option value="en-UK" disabled <%= if @locale == "en-UK": %> selected="selected"<% end %>>English Great Britain</option>
                 <option value="de-DE" disabled <%= if @locale == "de-DE": %> selected="selected" <% end %>>German Germany</option>
@@ -51,11 +82,11 @@
         </div><!-- panel-body -->
         <div class="panel-footer">
           <div class="form-group from-group-file-privacy clearfix">
-            <button class="btn btn-sm btn-success pull-right" type="submit" disabled data-loading-text="Updating...">Update</button>
-            <button class="btn btn-sm btn-link action-close pull-right">Cancel</button>
+            <button class="btn btn-sm btn-primary pull-right" type="submit" disabled data-loading-text="Updating...">Update</button>
+            <button class="btn btn-sm btn-default action-close pull-right">Cancel</button>
           </div><!-- .from-group-file-privacy -->
         </div><!-- .panel-footer -->
       </form>
     </div><!-- .edit-panel -->
   </div><!-- .flipper -->
-<!-- /div --><!-- .edit-tile -->
+</div><!-- .edit-tile -->

@@ -1,25 +1,29 @@
 class Upload < ActiveRecord::Base
   include Model::Filter
   include Model::Uid
+  include Model::S3
+  include Wisper::Publisher
 
-  delegate :source_url, to: :ingest_or_build_ingest_and_document, allow_nil: true
-  delegate :source_url=, to: :ingest_or_build_ingest_and_document, allow_nil: true
-  delegate :file_name, to: :ingest_or_build_ingest_and_document, allow_nil: true
-  delegate :file_name=, to: :ingest_or_build_ingest_and_document, allow_nil: true
-  delegate :file_type, to: :ingest_or_build_ingest_and_document, allow_nil: true
-  delegate :file_type=, to: :ingest_or_build_ingest_and_document, allow_nil: true
-  delegate :file_size, to: :ingest_or_build_ingest_and_document, allow_nil: true
-  delegate :file_size=, to: :ingest_or_build_ingest_and_document, allow_nil: true
-  delegate :user, to: :ingest_or_build_ingest_and_document, allow_nil: true
-  delegate :user=, to: :ingest_or_build_ingest_and_document, allow_nil: true
-  delegate :metadata, to: :ingest_or_build_ingest_and_document, allow_nil: true
-  delegate :metadata=, to: :ingest_or_build_ingest_and_document, allow_nil: true
-  delegate :events, to: :ingest_or_build_ingest_and_document, allow_nil: true
-  delegate :event=, to: :ingest_or_build_ingest_and_document, allow_nil: true
+  delegate :source_url, to: :ingest_or_build_ingest_and_associations, allow_nil: true
+  delegate :source_url=, to: :ingest_or_build_ingest_and_associations, allow_nil: true
+  delegate :origin_url, to: :ingest_or_build_ingest_and_associations, allow_nil: true
+  delegate :handle, to: :ingest_or_build_ingest_and_associations, allow_nil: true
+  delegate :file_name, to: :ingest_or_build_ingest_and_associations, allow_nil: true
+  delegate :file_name=, to: :ingest_or_build_ingest_and_associations, allow_nil: true
+  delegate :file_type, to: :ingest_or_build_ingest_and_associations, allow_nil: true
+  delegate :file_type=, to: :ingest_or_build_ingest_and_associations, allow_nil: true
+  delegate :file_size, to: :ingest_or_build_ingest_and_associations, allow_nil: true
+  delegate :file_size=, to: :ingest_or_build_ingest_and_associations, allow_nil: true
+  delegate :user, to: :ingest_or_build_ingest_and_associations, allow_nil: true
+  delegate :user=, to: :ingest_or_build_ingest_and_associations, allow_nil: true
+  delegate :metadata, to: :ingest_or_build_ingest_and_associations, allow_nil: true
+  delegate :metadata=, to: :ingest_or_build_ingest_and_associations, allow_nil: true
+  delegate :events, to: :ingest_or_build_ingest_and_associations, allow_nil: true
+  delegate :event=, to: :ingest_or_build_ingest_and_associations, allow_nil: true
 
-  delegate :status, to: :ingest_or_build_ingest_and_document
-  delegate :state, to: :ingest_or_build_ingest_and_document
-  delegate :progress, to: :ingest_or_build_ingest_and_document
+  delegate :status, to: :ingest_or_build_ingest_and_associations
+  delegate :state, to: :ingest_or_build_ingest_and_associations
+  delegate :progress, to: :ingest_or_build_ingest_and_associations
 
   has_one :ingest
 
@@ -70,9 +74,8 @@ class Upload < ActiveRecord::Base
     #
     # E.g.
     #
-    #   Upload.new(:type => :audio, ...) -> Upload::AudioUpload
-    #   Upload.new(:type => "audio_upload", ...) -> Upload::AudioUpload
-    #   Upload.create(:type => "Upload::AudioUpload", ...) -> Upload::AudioUpload
+    #   Upload.new(:type => "media_upload", ...) -> Upload::MediaUpload
+    #   Upload.create(:type => "Upload::MediaUpload", ...) -> Upload::MediaUpload
     #
     def new_with_cast(*a, &b)
       if (h = a.first).is_a? Hash and (type = h[:type] || h['type']) and
@@ -130,19 +133,25 @@ class Upload < ActiveRecord::Base
     end
   end
 
-  # Override to delete assets in background job
-  def destroy
-    ::Upload::DeleteJob.perform_later(self.id)
-    remove_ingest
+  def destroy_with_ingest_remove
+    # Override to remove ingest and assets in job
+    ingest.remove! if ingest.reload
+    destroy_without_ingest_remove
   end
+  alias_method_chain :destroy, :ingest_remove
+
+  def delete_with_job
+    Upload::DeleteJob.perform_later(self.id)
+  end
+  alias_method_chain :delete, :job
 
   protected
 
-  def ingest_or_build_ingest_and_document
-    ingest ? ingest : build_ingest_and_document
+  def ingest_or_build_ingest_and_associations
+    ingest ? ingest : build_ingest_and_associations
   end
 
-  def build_ingest_and_document
+  def build_ingest_and_associations
     # raise ArgumentError, "implement in subclass"
     build_ingest(upload: self, document: Document.new) unless ingest
   end

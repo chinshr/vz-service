@@ -1,22 +1,23 @@
 defaults: &defaults
   S3_KEY: <%= ENV.fetch('S3_KEY', "AKIAJB7Z3FGKOUXPZ7ZQ") %>
   S3_SECRET: <%= ENV.fetch('S3_SECRET', "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") %>
-  S3_INBOUND_BUCKET: <%= ENV.fetch('S3_INBOUND_BUCKET', "/vz-dropbox") %> # vz-dropbox
-  S3_OUTBOUND_BUCKET: <%= ENV.fetch('S3_OUTBOUND_BUCKET', "/vz-origin") %>  # vz-vault
-  # S3_KEY: <%= ENV.fetch('S3_KEY', "AKIAJD2UYCYLZ3WKESBA") %>
-  # S3_SECRET: <%= ENV.fetch('S3_SECRET', "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") %>
-  # S3_INBOUND_BUCKET: <%= ENV.fetch('S3_INBOUND_BUCKET', "/drivethrough") %>
+  S3_INBOUND_BUCKET: <%= ENV.fetch('S3_INBOUND_BUCKET', "vz-dropbox") %> # vz-dropbox
+  S3_OUTBOUND_BUCKET: <%= ENV.fetch('S3_OUTBOUND_BUCKET', "vz-origin") %>  # vz-vault
+  S3_ASSETS_BUCKET: <%= ENV.fetch('S3_ASSETS_BUCKET', "vz-assets-origin") %>
+
   EXPIRE_TIME: 300 # 5 minutes
   S3_URL: 'http://s3.amazonaws.com'
   ASSET_HOST: '//d3s2wzxhm1gdg3.cloudfront.net'
+  INGEST_IMAGE_ASSET_HOST: '//s3.amazonaws.com/'
   ADMIN_EMAIL_ADDRESSES:
     - juergen@voyz.es
     - anamaria@voyz.es
 
 development:
   <<: *defaults
-  S3_INBOUND_BUCKET: <%= ENV.fetch('S3_INBOUND_BUCKET', "/vz-dev-dropbox") %>
-  S3_OUTBOUND_BUCKET: <%= ENV.fetch('S3_OUTBOUND_BUCKET', "/vz-dev-origin") %>
+  S3_INBOUND_BUCKET: <%= ENV.fetch('S3_INBOUND_BUCKET', "vz-dev-dropbox") %>
+  S3_OUTBOUND_BUCKET: <%= ENV.fetch('S3_OUTBOUND_BUCKET', "vz-dev-origin") %>
+  S3_ASSETS_BUCKET: <%= ENV.fetch('S3_ASSETS_BUCKET', "vz-dev-assets-origin") %>
 
   GOOGLE_SPEECH_API_KEY: <%= ENV.fetch('GOOGLE_SPEECH_API_KEY', "AIzaSyAqcAyKz-aQq-LWSrAYkajCbqRQflTLCKY") %>
   ATT_SPEECH_API_KEY: <%= ENV.fetch('ATT_SPEECH_API_KEY', "tgcqoeaecj4ff052a9ee8g0mzt9xti7p") %>
@@ -26,8 +27,9 @@ development:
 
 test:
   <<: *defaults
-  S3_INBOUND_BUCKET: <%= ENV.fetch('S3_INBOUND_BUCKET', "/vz-test-dropbox") %>
-  S3_OUTBOUND_BUCKET: <%= ENV.fetch('S3_OUTBOUND_BUCKET', "/vz-test-origin") %>
+  S3_INBOUND_BUCKET: <%= ENV.fetch('S3_INBOUND_BUCKET', "vz-test-dropbox") %>
+  S3_OUTBOUND_BUCKET: <%= ENV.fetch('S3_OUTBOUND_BUCKET', "vz-test-origin") %>
+  S3_ASSETS_BUCKET: <%= ENV.fetch('S3_ASSETS_BUCKET', "vz-test-assets-origin") %>
   GOOGLE_SPEECH_API_KEY: <%= ENV.fetch('GOOGLE_SPEECH_API_KEY', "AIzaSyAqcAyKz-aQq-LWSrAYkajCbqRQflTLCKY") %>
   ATT_SPEECH_API_KEY: <%= ENV.fetch('ATT_SPEECH_API_KEY', "tgcqoeaecj4ff052a9ee8g0mzt9xti7p") %>
   ATT_SPEECH_SECRET_KEY: <%= ENV.fetch('ATT_SPEECH_SECRET_KEY', "j7caqnrtvtiiqhtl1nhlmyp5li0dclxg") %>
@@ -41,3 +43,5 @@ production:
   ATT_SPEECH_SECRET_KEY: <%= ENV.fetch('ATT_SPEECH_SECRET_KEY', "j7caqnrtvtiiqhtl1nhlmyp5li0dclxg") %>
   NUANCE_DRAGON_APP_ID: <%= ENV.fetch('NUANCE_DRAGON_APP_ID', "NMDPTRIAL_chinshr20140326185635") %>
   NUANCE_DRAGON_APP_KEY: <%= ENV.fetch('NUANCE_DRAGON_APP_KEY', "edb1acb2e50d02417b643e6dce510ea9dd565c4ad4725dcb8d807c96fe6304eb14b09ef9bea03a390578a6d3cab57ca70bd8f1df4b4eabd8cf276ecd8a72b99f") %>
+
+  # INGEST_IMAGE_ASSET_HOST: '//xyz.cloudfront.net'

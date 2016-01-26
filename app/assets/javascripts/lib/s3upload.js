@@ -1,12 +1,9 @@
 (function() {
   window.S3Upload = (function() {
-    S3Upload.prototype.s3_object_name = 'default_name';
-
-    S3Upload.prototype.s3_sign_put_url = '/signS3put';
-
-    S3Upload.prototype.file_dom_selector = 'file_upload';
-
-    S3Upload.prototype.with_credentials = false;
+    S3Upload.prototype.object_key       = 'default_name';
+    S3Upload.prototype.s3SignURL        = '/signS3put';
+    S3Upload.prototype.selector         = '#file_upload';
+    S3Upload.prototype.withCredentials  = false;
 
     S3Upload.prototype.onFinishS3Put = function(publicUrl, file) {
       return console.log('base.onFinishS3Put()', publicUrl, file);
@@ -20,22 +17,32 @@
       return console.log('base.onError()', status);
     };
 
+    S3Upload.prototype.onAbort = function(file, status) {
+      return console.log('base.onAbort()', status);
+    };
+
     function S3Upload(options) {
       var option;
+
       if (options == null) {
         options = {};
       }
+
       // instance variables
       for (option in options) {
         this[option] = options[option];
       }
 
-      // normalize dom selector, e.g. '#files' to 'files'
-      if (typeof(this.file_dom_selector) !== 'undefined') {
-        this.file_dom_selector = this.file_dom_selector.replace(/#/, '')
-        this.handleFileSelect(document.getElementById(this.file_dom_selector));
-      } else if (options.files_dropped && options.file_list) {
-        this.handleFileSelect({files: options.file_list});
+      // Select from dom id, dom element, or dropped files
+      if (typeof(this.selector) === 'string') {
+        // E.g. "#files"
+        this.handleFileSelect($(this.selector)[0]);
+      } else if(this.selector instanceof jQuery) {
+        this.handleFileSelect(this.selector[0]);
+      } else if(typeof(this.selector) === 'object') {
+        this.handleFileSelect(this.selector);
+      } else if (options.dropped && options.files) {
+        this.handleFileSelect({files: options.files});
       }
     }
 
@@ -74,8 +81,8 @@
     S3Upload.prototype.executeOnSignedUrl = function(file, callback) {
       var _this = this,
         xhr = new XMLHttpRequest();
-      xhr.withCredentials = this.with_credentials;
-      xhr.open('GET', this.s3_sign_put_url + '?s3_object_type=' + file.type + '&s3_object_name=' + this.randomObjectName(), true);
+      xhr.withCredentials = this.withCredentials;
+      xhr.open('GET', this.s3SignURL + '?object_content_type=' + file.type + '&object_key=' + this.randomObjectName(), true);
       xhr.overrideMimeType('text/plain; charset=x-user-defined');
       xhr.onreadystatechange = function(e) {
         var error, result;
@@ -122,6 +129,10 @@
             percent = Math.round((e.loaded / e.total) * 100);
             return _this.onProgress(xhr, file, percent, state);
           }
+        };
+
+        xhr.abort = function(e) {
+          return _this.onAbort(file, 'aborting');
         };
       }
       xhr.setRequestHeader('Content-Type', file.type);

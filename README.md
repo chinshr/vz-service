@@ -226,6 +226,7 @@ Similar to:
   - Image upload and crop -- http://www.jqueryrain.com/demo/jquery-crop-image-plugin/
   - Chosen, better select/combo -- http://harvesthq.github.io/chosen/
   - Yet another combo, select, tag input: http://brianreavis.github.io/selectize.js/
+  - S3 direct image upload with jquery.fileupload -- http://pjambet.github.io/blog/direct-upload-to-s3/
 * typeahead.js provides search suggestions -- http://twitter.github.io/typeahead.js
 * JS injecting extra info to copy-pasted text -- http://www.jitbit.com/alexblog/230-javascript-injecting-extra-info-to-copy-pasted-text/
 * Adapting to retina display -- http://www.sitepoint.com/css-techniques-for-retina-displays/
@@ -284,6 +285,7 @@ Similar to:
   - Carrierwave direct to S3 -- https://github.com/dwilkie/carrierwave_direct
   - Rails Demo app with Carrierwave, S3, [jCrop](https://github.com/n0ne/Rails-Carrierwave-jQuery-File-Upload)
   - Working jQuery-file-upload with demo -- https://github.com/blueimp/jQuery-File-Upload
+  - Fancy image viewer: http://fengyuanchen.github.io/viewerjs/
 * Transition browser compatibility -- http://www.sitepoint.com/css3-animation-javascript-event-handlers/
 * Pinterest layout for Dashboard with Bootstrap
   - [Wookmark jQuery library](https://github.com/germanysbestkeptsecret/Wookmark-jQuery)

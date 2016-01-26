@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160121221725) do
+ActiveRecord::Schema.define(version: 20160204020728) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -184,6 +184,41 @@ ActiveRecord::Schema.define(version: 20160121221725) do
   add_index "friendly_id_slugs", ["sluggable_id"], name: "index_friendly_id_slugs_on_sluggable_id", using: :btree
   add_index "friendly_id_slugs", ["sluggable_type"], name: "index_friendly_id_slugs_on_sluggable_type", using: :btree
 
+  create_table "image_formats", force: true do |t|
+    t.string   "uid"
+    t.string   "format"
+    t.integer  "width"
+    t.integer  "height"
+    t.boolean  "is_source",                            default: false, null: false
+    t.decimal  "aspect_ratio", precision: 8, scale: 3
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "image_formats", ["aspect_ratio"], name: "index_image_formats_on_aspect_ratio", using: :btree
+  add_index "image_formats", ["format"], name: "index_image_formats_on_format", using: :btree
+  add_index "image_formats", ["height"], name: "index_image_formats_on_height", using: :btree
+  add_index "image_formats", ["uid"], name: "index_image_formats_on_uid", using: :btree
+  add_index "image_formats", ["width"], name: "index_image_formats_on_width", using: :btree
+
+  create_table "images", force: true do |t|
+    t.string   "uid"
+    t.text     "path"
+    t.integer  "image_format_id"
+    t.integer  "size"
+    t.integer  "ingest_id"
+    t.integer  "iteration",       default: 0, null: false
+    t.datetime "removed_at"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "images", ["image_format_id"], name: "index_images_on_image_format_id", using: :btree
+  add_index "images", ["ingest_id"], name: "index_images_on_ingest_id", using: :btree
+  add_index "images", ["iteration"], name: "index_images_on_iteration", using: :btree
+  add_index "images", ["removed_at"], name: "index_images_on_removed_at", using: :btree
+  add_index "images", ["uid"], name: "index_images_on_uid", using: :btree
+
   create_table "ingest_processes", force: true do |t|
     t.integer  "ingest_id"
     t.integer  "server_id"
@@ -258,6 +293,8 @@ ActiveRecord::Schema.define(version: 20160121221725) do
     t.json     "metadata",                         default: {},        null: false
     t.string   "handle"
     t.text     "origin_url"
+    t.integer  "ingestable_id"
+    t.string   "ingestable_type"
   end
 
   add_index "ingests", ["aasm_stage"], name: "index_ingests_on_aasm_stage", using: :btree
@@ -267,6 +304,7 @@ ActiveRecord::Schema.define(version: 20160121221725) do
   add_index "ingests", ["file_type"], name: "index_ingests_on_file_type", using: :btree
   add_index "ingests", ["finished_at"], name: "index_ingests_on_finished_at", using: :btree
   add_index "ingests", ["handle"], name: "index_ingests_on_handle", using: :btree
+  add_index "ingests", ["ingestable_id", "ingestable_type"], name: "index_ingests_on_ingestable_id_and_ingestable_type", using: :btree
   add_index "ingests", ["iteration"], name: "index_ingests_on_iteration", using: :btree
   add_index "ingests", ["removed_at"], name: "index_ingests_on_removed_at", using: :btree
   add_index "ingests", ["reset_at"], name: "index_ingests_on_reset_at", using: :btree

@@ -120,7 +120,6 @@ module Model::Ingest::MediaStages
     super
     # allocate server
     Ingest::StartJob.perform_later(self.id) unless Rails.env.development?
-
     if begin_stage?
       # start workflow from the beginning
       trigger_next_stage_with!(stage)

@@ -3,6 +3,8 @@ class Ingest < ActiveRecord::Base
   include Model::AASM::Support
   include Model::Filter
   include Model::Uid
+  include Model::S3
+  include Wisper::Publisher
 
   STATE_CREATED     = 0
   STATE_STARTING    = 1
@@ -41,8 +43,6 @@ class Ingest < ActiveRecord::Base
   has_many :servers, through: :processes, after_remove: :async_server_update
 
   validates :type, presence: true
-  validates :upload, presence: true, on: :create
-  validates :document, presence: true
 
   # public scopes
   filtered_scopes :sort_order, :reverse_sort, :any_of_status, :none_of_status,
@@ -116,8 +116,11 @@ class Ingest < ActiveRecord::Base
     end
   end
 
-  after_commit :after_commit_event_stop, :after_commit_event_reset,
-    :after_commit_event_remove
+  before_validation :set_handle, on: :create
+  after_commit :after_commit_event_stop,
+    :after_commit_event_reset,
+    :after_commit_event_remove,
+    :refresh_upload
 
   class << self
 
@@ -251,7 +254,11 @@ class Ingest < ActiveRecord::Base
   def not_restarting?; !restarting?; end
 
   def progress
-    self[:progress].round if self[:progress]
+    self[:progress].to_f
+  end
+
+  def progress=(value)
+    self[:progress] = value.round(2) if value
   end
 
   # TODO: obsolete, refactor
@@ -264,20 +271,8 @@ class Ingest < ActiveRecord::Base
     "http://voyz.es/#{document.slug}/edit"
   end
 
-  def signal_terminate!
-    update_attribute(:terminate, true)
-  end
-
   def clear_terminate!
     update_attribute(:terminate, false)
-  end
-
-  def signal_busy!
-    update_attribute(:busy, true)
-  end
-
-  def clear_busy!
-    update_attribute(:busy, false)
   end
 
   def normalize_chunk_scores!
@@ -323,6 +318,16 @@ class Ingest < ActiveRecord::Base
     update_attribute(:aasm_stage, nil)
   end
 
+  # def destroy
+  #   # override to call 'remove' event instead delete
+  #   remove!
+  # end
+
+  def delete_with_job
+    Ingest::DeleteJob.perform_later(self.id)
+  end
+  alias_method_chain :delete, :job
+
   protected
 
   #--- enter
@@ -356,6 +361,7 @@ class Ingest < ActiveRecord::Base
 
   def enter_finished
     self.finished_at = Time.zone.now
+    self.progress    = 100
   end
 
   def enter_removing
@@ -368,6 +374,7 @@ class Ingest < ActiveRecord::Base
   end
 
   #--- after_enter
+
   def after_enter_starting; end
   def after_enter_stopping; end
 
@@ -449,6 +456,19 @@ class Ingest < ActiveRecord::Base
 
   def after_commit_event_restart; end
 
+  def set_handle
+    self[:handle] ||= begin
+      if has_s3_source_url?
+        # derive handle from original s3 url
+        source_url.split("/").last
+      else
+        # otherwise, generate a random handle
+        chars = [('a'..'z'), ('0'..'9')].map {|i| i.to_a}.flatten
+        String.new.tap {|s| 1.upto(20) {|i| s << chars[rand(chars.size - 1)]}}
+      end
+    end
+  end
+
   private
 
   def has_valid_source_url?
@@ -466,6 +486,15 @@ class Ingest < ActiveRecord::Base
     # and starting Ingest::Server::StopJob job.
     servers.each do |server|
       server.ingests.delete(self)
+    end
+  end
+
+  def refresh_upload
+    if transaction_include_any_action?([:create]) ||
+      previous_changes[:progress] ||
+      previous_changes[:aasm_state]
+
+      publish :refresh_upload, self.upload if upload
     end
   end
 end

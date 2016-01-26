@@ -62,24 +62,6 @@ module Model::MediaHelper
     def humanize_url(url)
       self.class.humanize_url(url)
     end
-
-    protected
-
-    def has_source_url?
-      source_url.present?
-    end
-
-    # E.g. true for "http://s3.amazonaws.com/vz-dropbox/3o6njggbog03s5odak5y"
-    def has_s3_source_url?
-      result = false
-      if source_url.present?
-        uri = URI.parse(URI.encode(source_url))
-        result = !!(uri.host.try(:match, /^s3.amazonaws.com$/i) &&
-          uri.path.try(:match, /#{APP_CONFIG['S3_INBOUND_BUCKET']}/i))
-      end
-      result
-    end
-
   end
 
 end

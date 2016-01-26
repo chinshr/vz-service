@@ -95,73 +95,50 @@ class Upload::MediaUploadTest < ActiveSupport::TestCase
     end
   end
 
-  context "scopes" do
-    setup do
-      @upload = FactoryGirl.create(:media_upload_as_audio)
-    end
-
-    should "#started" do
-      assert_equal [], Upload::MediaUpload.started
-      @upload.ingest.update_attribute(:aasm_state, "started")
-      assert_equal [@upload], Upload::MediaUpload.started
-    end
-
-    should "#stopped" do
-      assert_equal [], Upload::MediaUpload.stopped
-      @upload.ingest.update_attribute(:aasm_state, "stopped")
-      assert_equal [@upload], Upload::MediaUpload.stopped
-    end
-
-    should "#reset" do
-      assert_equal [], Upload::MediaUpload.reset
-      @upload.ingest.update_attribute(:aasm_state, "reset")
-      assert_equal [@upload], Upload::MediaUpload.reset
-    end
-
-    should "#removed" do
-      assert_equal [], Upload::MediaUpload.removed
-      @upload.ingest.update_attribute(:aasm_state, "removed")
-      assert_equal [@upload], Upload::MediaUpload.removed
-    end
-
-    should "#finished" do
-      assert_equal [], Upload::MediaUpload.finished
-      @upload.ingest.update_attribute(:aasm_state, "finished")
-      assert_equal [@upload], Upload::MediaUpload.finished
-    end
-
-    should "#most_recent" do
-      assert_equal [@upload], Upload::MediaUpload.most_recent
-      assert_equal [@upload], Upload::MediaUpload.most_recent(1)
-      assert_equal [], Upload::MediaUpload.most_recent(0)
-    end
-  end
-
   context "delegate" do
     setup do
       @upload = Upload::MediaUpload.create(file_name: "audio.m4a", file_type: "audio/x-m4a",
         file_size: 12345, source_url: "http://s3.amazonaws.com/vz-test-dropbox/audio.m4a")
     end
 
-    should delegate :privacy, to: :ingest, allow_nil: true
-    should delegate :privacy=, to: :ingest, allow_nil: true
+    should delegate :document, to: :ingest, allow_nil: true
+    should "delegate :document" do
+      assert_equal @upload.ingest.document, @upload.document
+    end
+
+    should delegate :document_id, to: :ingest, allow_nil: true
+    should "delegate :document_id" do
+      assert_equal @upload.ingest.document_id, @upload.document_id
+    end
+
+    should delegate :privacy, to: :document, allow_nil: true
+    should delegate :privacy=, to: :document, allow_nil: true
     should "delegate :privacy" do
-      @upload.privacy = "public"
-      assert_equal ["public"], @upload.privacy
       assert_equal @upload.ingest.document.privacy, @upload.privacy
     end
 
-    should "delegate :slug" do
-      assert_equal @upload.ingest.document.slug, @upload.slug
+    should "delegate :privacy=" do
+      @upload.privacy = "public"
+      @upload.save
+      @upload = Upload.find_by_id(@upload.id)
+      assert_equal ["public"], @upload.privacy
     end
 
-    should "delegate :slug_id" do
-      assert_equal @upload.ingest.document.slug_id, @upload.slug_id
+    should delegate :accessibility, to: :document, allow_nil: true
+    should delegate :accessibility=, to: :ingest, allow_nil: true
+    should "delegate :accessibility" do
+      assert_equal @upload.ingest.document.accessibility, @upload.accessibility
+    end
+
+    should "delegate :accessibility=" do
+      @upload.accessibility = :edit
+      @upload.save
+      @upload = Upload.find_by_id(@upload.id)
+      assert_equal ["edit"], @upload.accessibility
     end
 
     should delegate :title, to: :ingest, allow_nil: true
     should delegate :title=, to: :ingest, allow_nil: true
-
     should "delegate :title" do
       assert_equal @upload.ingest.document.title, @upload.title
     end
@@ -222,14 +199,35 @@ class Upload::MediaUploadTest < ActiveSupport::TestCase
     should delegate :handle, to: :ingest, allow_nil: true
     should delegate :handle=, to: :ingest, allow_nil: true
 
-    should "delegate :handle" do
+    should "delegate :handle, to: :ingest" do
       assert_equal @upload.ingest.handle, @upload.handle
     end
 
-    should "delegate :handle=" do
+    should "delegate :handle=, to: :ingest" do
       @upload.handle = "abcd1234"
       assert_equal "abcd1234", @upload.ingest.handle
     end
+
+    should delegate :slug, to: :document
+    should "delegate :slug, to: :document" do
+      assert_equal @upload.ingest.document.slug, @upload.slug
+    end
+
+    should delegate :slug_id, to: :document
+    should "delegate :slug_id, to: :document" do
+      assert_equal @upload.ingest.document.slug_id, @upload.slug_id
+    end
+
+    should delegate :published_path, to: :document
+    should "delegate :published_path, to: :document" do
+      assert_equal @upload.ingest.document.published_path, @upload.published_path
+    end
+
+    should delegate :images, to: :document
+    should "delegate :images, to: :document" do
+      assert_equal @upload.ingest.document.images, @upload.images
+    end
+
   end # context "delegate"
 
   should "humanize file name" do

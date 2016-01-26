@@ -51,20 +51,62 @@ $color-dark-blue: #3D505F;
 $font-family: 'Lato', sans-serif;
 $btn-default-radius: 2px;
 
+/* ====================== MEDIA QUERIES HELPERs ========================= */
+// # from https://gist.github.com/bobbygrace/9e961e8982f42eb91b80?utm_source=html5weekly&utm_medium=email
+
+@highdensity:  ~"only screen and (-webkit-min-device-pixel-ratio: 1.5)",
+               ~"only screen and (min--moz-device-pixel-ratio: 1.5)",
+               ~"only screen and (-o-min-device-pixel-ratio: 3/2)",
+               ~"only screen and (min-device-pixel-ratio: 1.5)";
+
+@small:        ~"only screen and (max-width: 750px)";
+@medium:       ~"only screen and (min-width: 751px) and (max-width: 900px)";
+@large:        ~"only screen and (min-width: 901px) and (max-width: 1280px)";
+@extra-large:  ~"only screen and (min-width: 1281px)";
+
+@print:        ~"print";
+
+/*
+@media @large {
+  .component-nav { … }
+}
+*/
 /* ====================== MIXINS ========================= */
 
-@mixin transition($trans:background .5s ease){
-  -webkit-transition:$trans;
-  -moz-transition:$trans;
-  -o-transition:$trans;
-  transition:$trans;
+@mixin transition($trans: background .5s ease){
+  -webkit-transition: $trans;
+  -moz-transition: $trans;
+  -o-transition: $trans;
+  transition: $trans;
+}
+
+@mixin xtransform($trans){
+  -webkit-transform: $trans;
+  -moz-transform: $trans;
+  -o-transform: $trans;
+  -ms-transform: $trans;
+  transform: $trans;
 }
 
 @mixin slideIn($trans: translateX(-480px)){
-  -webkit-transform:$trans;
-  -moz-transform:$trans;
-  -o-transform:$trans;
-  transform:$trans;
+  -webkit-transform: $trans;
+  -moz-transform: $trans;
+  -o-transform: $trans;
+  transform: $trans;
+}
+
+@mixin opacity($val){
+  filter: alpha(opacity=$val * 100);
+  -ms-filter: "alpha(Opacity=" + $val * 100 + ")";
+  opacity: $val;
+}
+
+@mixin scale($val) {
+  -webkit-transform: scale($val);
+  -moz-transform: scale($val);
+  -o-transform: scale($val);
+  -ms-transform: scale($val);
+  transform: scale($val);
 }
 
 /* ====================== ANIMATIONS ========================= */
@@ -188,4 +230,26 @@ $btn-default-radius: 2px;
     opacity:1;
     transform: translateY(0);
   }
+}
+
+/* rotate */
+
+@-webkit-keyframes rotate {
+  from { -webkit-transform: scale(1) rotate(0deg); }
+  to   { -webkit-transform: scale(1) rotate(360deg); }
+}
+
+@-moz-keyframes rotate {
+  from { -moz-transform: scale(1) rotate(0deg); }
+  to   { -moz-transform: scale(1) rotate(360deg); }
+}
+
+@-o-keyframes rotate {
+  from { -o-transform: scale(1) rotate(0deg); }
+  to   { -o-transform: scale(1) rotate(360deg); }
+}
+
+@keyframes rotate {
+  from { transform: scale(1) rotate(0deg); }
+  to   { transform: scale(1) rotate(360deg); }
 }
