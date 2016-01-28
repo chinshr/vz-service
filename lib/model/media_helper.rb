@@ -21,15 +21,17 @@ module Model::MediaHelper
 
     def humanize_path(path)
       return if path.blank?
-      result = path.split(/[\\\/]/).last
+      result = URI.decode(path)
+      result = result.mb_chars
+      result = result.split(/[\\\/]/).last
       result = result.split(".").first unless result.blank?
       result.gsub!(/[-+]+/, ' ') unless result.blank?
-      result = result.strip.titleize unless result.blank?
-      result
+      result = result.strip.humanize.titleize unless result.blank?
+      result.to_s
     end
 
     def humanize_url(url)
-      uri = URI.parse(url)
+      uri = URI.parse(URI.encode(url))
       humanize_path(uri.path) unless uri.path.blank?
     rescue URI::InvalidURIError
       nil
@@ -71,7 +73,7 @@ module Model::MediaHelper
     def has_s3_source_url?
       result = false
       if source_url.present?
-        uri = URI.parse(source_url)
+        uri = URI.parse(URI.encode(source_url))
         result = !!(uri.host.try(:match, /^s3.amazonaws.com$/i) &&
           uri.path.try(:match, /#{APP_CONFIG['S3_INBOUND_BUCKET']}/i))
       end

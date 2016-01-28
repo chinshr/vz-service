@@ -30,7 +30,7 @@ module Model::URI
     end
 
     def valid?
-      !!(url =~ URI::DEFAULT_PARSER.regexp[:ABS_URI])
+      url.present? && !!(URI.encode(url) =~ URI::DEFAULT_PARSER.regexp[:ABS_URI])
     end
 
     def resolves?
@@ -46,7 +46,7 @@ module Model::URI
     end
 
     def uri
-      @uri ||= URI.parse(url) if url.present?
+      @uri ||= URI.parse(URI.encode(url)) if url.present?
     end
 
     def media_service
@@ -67,7 +67,7 @@ module Model::URI
 
       if valid_media_content_type?
         # E.g. on 'video/mpeg' or 'audio/wav'
-        result['title'] = uri.path.try(:split, "/").try(:last)
+        result['title'] = uri_decoded_path.try(:split, "/").try(:last)
       elsif valid_media_service?
         # E.g. YouTube video
         page = MetaInspector.new(url, document: response.body)
@@ -128,6 +128,10 @@ module Model::URI
           response.error!
         end
       end
+    end
+
+    def uri_decoded_path
+      URI.decode(uri.path) if uri.path.present?
     end
   end
 end

@@ -14,7 +14,7 @@ class Upload::MediaUploadTest < ActiveSupport::TestCase
     end
 
     context "source upload" do
-      should "validate mp3 source" do
+      should "validate valid audio source_url" do
         stub_request(:get, "https://www.voyz.es/samples/genesis-1-1-en-us.m4a").
           with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Mozilla/5.0 (Macintosh; Intel Mac OS X x.y; rv:10.0) Gecko/20100101 Firefox/10.0'}).
           to_return(:status => 200, :body => "", :headers => {'Content-Type' => 'audio/mpeg'})
@@ -22,6 +22,16 @@ class Upload::MediaUploadTest < ActiveSupport::TestCase
         upload = Upload::MediaUpload.new(source_url: "https://www.voyz.es/samples/genesis-1-1-en-us.m4a")
         assert_equal true, upload.valid?
         assert_equal "Genesis 1 1 En Us", upload.title
+      end
+
+      should "validate valid accented source_url" do
+        stub_request(:get, "http://www.radioagricultura.cl/wp-content/uploads/2016/01/FARO-ECON%C3%93MICO-JUEVES-28-ENERO-2016.mp3").
+          with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Mozilla/5.0 (Macintosh; Intel Mac OS X x.y; rv:10.0) Gecko/20100101 Firefox/10.0'}).
+          to_return(:status => 200, :body => "", :headers => {'Content-Type' => 'audio/mpeg'})
+
+        upload = Upload::MediaUpload.new(source_url: "http://www.radioagricultura.cl/wp-content/uploads/2016/01/FARO-ECONÓMICO-JUEVES-28-ENERO-2016.mp3")
+        assert_equal true, upload.valid?
+        assert_equal "Faro Económico Jueves 28 Enero 2016", upload.title
       end
 
       should "validate YouTube source" do
