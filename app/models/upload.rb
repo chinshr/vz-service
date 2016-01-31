@@ -28,7 +28,8 @@ class Upload < ActiveRecord::Base
   validates :source_url, presence: true, length: { maximum: 2048 }
 
   # public scopes
-  filtered_scopes :sort_order, :reverse_sort, :any_of_status, :none_of_status
+  filtered_scopes :sort_order, :reverse_sort, :any_of_status,
+    :none_of_status, :any_of_types, :none_of_types
   scope :sort_order, -> (param) {
     case param.first[0]  # E.g. get first key of {"id"=>"asc"}
     when "id"
@@ -50,6 +51,8 @@ class Upload < ActiveRecord::Base
     .where("ingests.aasm_state NOT IN (?)", [params].flatten.map(&:to_s).
       map {|s| s.match(/^([\-]{,1}[0-9]+)$/) ? s : nil}.reject(&:blank?).map {|s| Ingest::STATES.key(s.to_i)}.uniq)
   }
+  scope :any_of_types, -> (params) { where("uploads.type IN (?)", class_names_for(params)) }
+  scope :none_of_types, -> (params) { where("uploads.type NOT IN (?)", class_names_for(params)) }
 
   class << self
 
@@ -88,6 +91,10 @@ class Upload < ActiveRecord::Base
 
     def generate_uid
       SecureRandom.uuid
+    end
+
+    def class_names_for(params)
+      Array.wrap(params).map {|p| class_name_for(p)}.reject(&:blank?)
     end
 
     private

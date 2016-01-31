@@ -150,7 +150,9 @@ class UploadTest < ActiveSupport::TestCase
     end
 
     should "have filtered scopes" do
-      assert_equal [:any_of_status, :none_of_status, :sort_order, :reverse_sort, :offset, :limit].to_set,
+      assert_equal [:any_of_status, :none_of_status,
+        :sort_order, :reverse_sort, :offset, :limit,
+        :any_of_types, :none_of_types].to_set,
         Upload.scopes.to_set
     end
 
@@ -162,6 +164,16 @@ class UploadTest < ActiveSupport::TestCase
     should "have none_of_status" do
       @upload.ingest.update_attribute(:aasm_state, "started")  # :started = 2
       assert_equal [@upload], Upload.none_of_status([0, 1, 3, 4, 5, 6, 7, 8, 9, 10])
+    end
+
+    should "#any_of_types" do
+      assert_equal @upload, Upload.any_of_types("media_upload").first
+      assert_equal @upload, Upload.any_of_types("Upload::MediaUpload").first
+    end
+
+    should "#none_of_types" do
+      assert_equal nil, Upload.none_of_types("media_upload").first
+      assert_equal nil, Upload.none_of_types("Upload::MediaUpload").first
     end
   end # context "scopes"
 
