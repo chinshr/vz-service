@@ -219,7 +219,10 @@ class DocumentTest < ActiveSupport::TestCase
     should "have filtered scopes" do
       assert_equal [:sort_order, :reverse_sort, :is_root, :offset, :limit,
         :any_of_locales, :duration_lt, :duration_gt, :duration_lteq, :duration_gteq,
-        :any_of_status, :none_of_status, :any_of_tags, :none_of_tags].to_set,
+        :any_of_status, :none_of_status, :any_of_tags, :none_of_tags,
+        :created_at_gt, :created_at_gteq, :created_at_lt, :created_at_lteq,
+        :updated_at_gt, :updated_at_gteq, :updated_at_lt, :updated_at_lteq,
+        :published_at_gt, :published_at_gteq, :published_at_lt, :published_at_lteq].to_set,
         Document.scopes.to_set
     end
 
@@ -302,6 +305,43 @@ class DocumentTest < ActiveSupport::TestCase
 
       should "#published_at" do
         assert_equal @document2, Document.is_root(true).sort_order("published_at" => "desc").first
+      end
+    end
+
+    context "date scopes" do
+      setup do
+        @document1 = FactoryGirl.create(:document, created_at: Time.zone.now - 2.day, updated_at: Time.zone.now - 2.day, published_at: Time.zone.now - 2.day)
+        @document2 = FactoryGirl.create(:document, created_at: Time.zone.now - 1.day, updated_at: Time.zone.now - 1.day, published_at: Time.zone.now - 1.day)
+      end
+
+      should "#created_at_gt_and_gteq" do
+        assert_equal @document2, Document.created_at_gt((Time.zone.now - 1.day).to_date.to_s).first
+        assert_equal @document2, Document.created_at_gteq((Time.zone.now - 1.day).to_date.to_s).first
+      end
+
+      should "#created_at_lt_and_lteq" do
+        assert_equal @document1, Document.created_at_lt((Time.zone.now - 1.day).to_date.to_s).first
+        assert_equal @document1, Document.created_at_lteq((Time.zone.now - 1.day).to_date.to_s).first
+      end
+
+      should "#updated_at_gt_and_gteq" do
+        assert_equal @document2, Document.updated_at_gt((Time.zone.now - 1.day).to_date.to_s).first
+        assert_equal @document2, Document.updated_at_gteq((Time.zone.now - 1.day).to_date.to_s).first
+      end
+
+      should "#updated_at_lt_and_lteq" do
+        assert_equal @document1, Document.updated_at_lt((Time.zone.now - 1.day).to_date.to_s).first
+        assert_equal @document1, Document.updated_at_lteq((Time.zone.now - 1.day).to_date.to_s).first
+      end
+
+      should "#published_at_gt_and_gteq" do
+        assert_equal @document2, Document.published_at_gt((Time.zone.now - 1.day).to_date.to_s).first
+        assert_equal @document2, Document.published_at_gteq((Time.zone.now - 1.day).to_date.to_s).first
+      end
+
+      should "#published_at_lt_and_lteq" do
+        assert_equal @document1, Document.published_at_lt((Time.zone.now - 1.day).to_date.to_s).first
+        assert_equal @document1, Document.published_at_lteq((Time.zone.now - 1.day).to_date.to_s).first
       end
     end
 

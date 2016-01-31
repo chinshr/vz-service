@@ -48,8 +48,12 @@ class Document < ActiveRecord::Base
   # public scopes
   filtered_scopes :sort_order, :reverse_sort, :is_root, :any_of_locales,
     :duration_lt, :duration_gt, :duration_lteq, :duration_gteq,
-    :any_of_status, :none_of_status, :any_of_tags, :none_of_tags
-  scope :sort_order, lambda {|param|
+    :any_of_status, :none_of_status, :any_of_tags, :none_of_tags,
+    :created_at_gt, :created_at_gteq, :created_at_lt, :created_at_lteq,
+    :updated_at_gt, :updated_at_gteq, :updated_at_lt, :updated_at_lteq,
+    :published_at_gt, :published_at_gteq, :published_at_lt, :published_at_lteq
+
+  scope :sort_order, -> (param) {
     case param.first[0]  # E.g. get first key of {"id"=>"asc"}
     when "id"
       order(self.arel_table[:id].send(param.first[1].to_sym).to_sql)
@@ -63,7 +67,7 @@ class Document < ActiveRecord::Base
       raise ArgumentError, "Ignored unrecognized value 'sort_order[]=#{param}'."
     end
   }
-  scope :reverse_sort, lambda {|param| all.reverse_order if Model::Helper.booleanize(param)}
+  scope :reverse_sort, -> (param) { all.reverse_order if Model::Helper.booleanize(param) }
   scope :is_root, -> (param) { Model::Helper.booleanize(param) ? where("documents.type IS NULL") : where("documents.type IS NOT NULL") }
   scope :any_of_locales, -> (params) {
     where("documents.locale ~* ?", "^(#{Array.wrap(params).join("|")})")
@@ -82,6 +86,18 @@ class Document < ActiveRecord::Base
   scope :none_of_tags, -> (params) {
     tagged_with(params, on: :tags, exclude: true)
   }
+  scope :created_at_gt, -> (date) { where(self.arel_table[:created_at].gt(Model::Helper.date_parse(date))) }
+  scope :created_at_gteq, -> (date) { where(self.arel_table[:created_at].gteq(Model::Helper.date_parse(date))) }
+  scope :created_at_lt, -> (date) { where(self.arel_table[:created_at].lt(Model::Helper.date_parse(date))) }
+  scope :created_at_lteq, -> (date) { where(self.arel_table[:created_at].lteq(Model::Helper.date_parse(date))) }
+  scope :updated_at_gt, -> (date) { where(self.arel_table[:updated_at].gt(Model::Helper.date_parse(date))) }
+  scope :updated_at_gteq, -> (date) { where(self.arel_table[:updated_at].gteq(Model::Helper.date_parse(date))) }
+  scope :updated_at_lt, -> (date) { where(self.arel_table[:updated_at].lt(Model::Helper.date_parse(date))) }
+  scope :updated_at_lteq, -> (date) { where(self.arel_table[:updated_at].lteq(Model::Helper.date_parse(date))) }
+  scope :published_at_gt, -> (date) { where(self.arel_table[:published_at].gt(Model::Helper.date_parse(date))) }
+  scope :published_at_gteq, -> (date) { where(self.arel_table[:published_at].gteq(Model::Helper.date_parse(date))) }
+  scope :published_at_lt, -> (date) { where(self.arel_table[:published_at].lt(Model::Helper.date_parse(date))) }
+  scope :published_at_lteq, -> (date) { where(self.arel_table[:published_at].lteq(Model::Helper.date_parse(date))) }
 
   # private scopes
   scope :recent, lambda {|n = 5| order("documents.created_at DESC").limit(n)}
