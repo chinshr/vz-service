@@ -219,7 +219,7 @@ class DocumentTest < ActiveSupport::TestCase
     should "have filtered scopes" do
       assert_equal [:sort_order, :reverse_sort, :is_root, :offset, :limit,
         :any_of_locales, :duration_lt, :duration_gt, :duration_lteq, :duration_gteq,
-        :any_of_status, :none_of_status].to_set,
+        :any_of_status, :none_of_status, :any_of_tags, :none_of_tags].to_set,
         Document.scopes.to_set
     end
 
@@ -275,6 +275,19 @@ class DocumentTest < ActiveSupport::TestCase
       d1 = FactoryGirl.create(:document, aasm_state: "published")
       d2 = FactoryGirl.create(:document, aasm_state: "unpublished")
       assert_equal [d2], Document.none_of_status([Document::STATE_PUBLISHED])
+    end
+
+    should "#any_of_tags" do
+      d1 = FactoryGirl.create(:document, tag_list: ["one", "two", "three"])
+      d2 = FactoryGirl.create(:document, tag_list: ["four", "five", "six"])
+      assert_equal d1, Document.any_of_tags("one").first
+      assert_equal d2, Document.any_of_tags(["four", "five"]).first
+    end
+
+    should "#none_of_tags" do
+      d1 = FactoryGirl.create(:document, tag_list: ["one", "two", "three"])
+      d2 = FactoryGirl.create(:document, tag_list: ["four", "five", "six"])
+      assert_equal d2, Document.none_of_tags(["one", "two", "three"]).first
     end
 
     context "#sort_order" do

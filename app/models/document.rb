@@ -48,7 +48,7 @@ class Document < ActiveRecord::Base
   # public scopes
   filtered_scopes :sort_order, :reverse_sort, :is_root, :any_of_locales,
     :duration_lt, :duration_gt, :duration_lteq, :duration_gteq,
-    :any_of_status, :none_of_status
+    :any_of_status, :none_of_status, :any_of_tags, :none_of_tags
   scope :sort_order, lambda {|param|
     case param.first[0]  # E.g. get first key of {"id"=>"asc"}
     when "id"
@@ -76,6 +76,12 @@ class Document < ActiveRecord::Base
     map {|s| s.match(/^([\-]{,1}[0-9]+)$/) ? s : nil}.reject(&:blank?).map {|s| Document::STATES.key(s.to_i)}.uniq)}
   scope :none_of_status, -> (params) {where("documents.aasm_state NOT IN (?)", [params].flatten.map(&:to_s).
     map {|s| s.match(/^([\-]{,1}[0-9]+)$/) ? s : nil}.reject(&:blank?).map {|s| Document::STATES.key(s.to_i)}.uniq)}
+  scope :any_of_tags, -> (params) {
+    tagged_with(params, on: :tags, any: true)
+  }
+  scope :none_of_tags, -> (params) {
+    tagged_with(params, on: :tags, exclude: true)
+  }
 
   # private scopes
   scope :recent, lambda {|n = 5| order("documents.created_at DESC").limit(n)}
