@@ -57,6 +57,8 @@ class Document < ActiveRecord::Base
       order(self.arel_table[:title].send(param.first[1].to_sym).to_sql)
     when "created_at"
       order(self.arel_table[:created_at].send(param.first[1].to_sym).to_sql)
+    when "published_at"
+      order(self.arel_table[:published_at].send(param.first[1].to_sym).to_sql)
     else
       raise ArgumentError, "Ignored unrecognized value 'sort_order[]=#{param}'."
     end

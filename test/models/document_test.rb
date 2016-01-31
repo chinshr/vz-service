@@ -277,6 +277,21 @@ class DocumentTest < ActiveSupport::TestCase
       assert_equal [d2], Document.none_of_status([Document::STATE_PUBLISHED])
     end
 
+    context "#sort_order" do
+      setup do
+        @document1 = FactoryGirl.create(:document, published_at: Time.zone.now - 2.day)
+        @document2 = FactoryGirl.create(:document, published_at: Time.zone.now - 1.day)
+      end
+
+      should "#id" do
+        assert_equal @document2, Document.sort_order("id" => "desc").first
+      end
+
+      should "#published_at" do
+        assert_equal @document2, Document.is_root(true).sort_order("published_at" => "desc").first
+      end
+    end
+
   end
 
   context "document with ingests" do
