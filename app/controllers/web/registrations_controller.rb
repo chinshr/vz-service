@@ -1,4 +1,5 @@
 class Web::RegistrationsController < Web::ApplicationController
+  skip_before_action :verify_authenticity_token
 
   def create
     @registration = Registration.instance_for(params[:registration],
