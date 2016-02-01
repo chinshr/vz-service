@@ -4,6 +4,12 @@ ActiveAdmin.register Document do
   scope :all
   scope :recent
 
+  controller do
+    def find_resource
+      scoped_collection.friendly.find(params[:id])
+    end
+  end
+
   index do
     column :id
     column :title

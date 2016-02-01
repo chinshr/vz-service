@@ -1,7 +1,13 @@
 ActiveAdmin.register User do
   scope :all
   scope :confirmed
-  
+
+  controller do
+    def find_resource
+      scoped_collection.friendly.find(params[:id])
+    end
+  end
+
   index do
     column :id
     column :email
