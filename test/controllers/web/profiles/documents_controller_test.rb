@@ -65,6 +65,12 @@ class Web::Profiles::DocumentsControllerTest < ActionController::TestCase
             assert_template "show"
           end
 
+          should "load and render txt" do
+            get :show, user_id: "@#{@document.user.username}", id: @document.slug, format: "txt"
+            assert_response :success
+            assert_template "show"
+          end
+
         end
 
         context "is not published" do

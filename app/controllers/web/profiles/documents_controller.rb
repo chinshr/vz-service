@@ -11,6 +11,7 @@ class Web::Profiles::DocumentsController < Web::ProfilesController
     respond_to do |format|
       format.html
       format.srt
+      format.txt
       format.mp3 {
         redirect_to @document.track.mp3_stream_url
       }

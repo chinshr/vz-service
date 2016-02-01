@@ -1,0 +1,3 @@
+<% @document.chunks.order(id: :asc).each do |chunk| %>
+<%= chunk.text.to_s.html_safe %>
+<% end -%>

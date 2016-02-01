@@ -5,7 +5,7 @@ class Web::DocumentsControllerTest < ActionController::TestCase
   context "GET /documents/:id" do
     context "when document is public" do
       setup do
-        @document = FactoryGirl.create(:document, {:privacy => [:"public"]})
+        @document = FactoryGirl.create(:document_with_track, {:privacy => [:"public"]})
         assert_equal ["public"], @document.privacy
       end
 
@@ -33,6 +33,19 @@ class Web::DocumentsControllerTest < ActionController::TestCase
           get :show, :id => @document.slug
           assert_response :redirect
           assert_match Regexp.new("http://test.host/@#{@document.user.username}/#{@document.slug}"), @response.redirect_url
+        end
+
+        should "load mp3 and redirect to S3 url" do
+          sign_in @document.user
+          get :show, id: @document.slug, format: "mp3"
+          assert_response :redirect
+        end
+
+        should "load and render srt" do
+          sign_in @document.user
+          get :show, id: @document.slug, format: "srt"
+          assert_response :success
+          assert_template "show"
         end
       end
     end

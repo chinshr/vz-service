@@ -8,7 +8,16 @@ class Web::DocumentsController < Web::ApplicationController
 
   def show
     authorize @document
-    redirect_to_published_unless_previewable
+    redirect_to_published_unless_previewable and return
+
+    respond_to do |format|
+      format.html
+      format.srt
+      format.txt
+      format.mp3 {
+        redirect_to @document.track.mp3_stream_url and return
+      }
+    end
   end
 
   def edit
@@ -47,9 +56,10 @@ class Web::DocumentsController < Web::ApplicationController
     # it does not make sense to show the preview, since the
     # document is not editable anyway, so redirect to
     # the published link.
-    if (!current_user|| (current_user && !current_user.owner_of?(@document))) && !@document.privacy_private? && !@document.accessibility_editable?
+    if (!current_user || (current_user && !current_user.owner_of?(@document))) && !@document.privacy_private? && !@document.accessibility_editable?
       redirect_to web_profile_document_path("@#{@document.user.username}", @document.slug), status: :moved_permanently
-      return
+      return true
     end
+    false
   end
 end

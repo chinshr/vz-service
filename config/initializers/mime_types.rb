@@ -3,5 +3,6 @@
 # Add new mime types for use in respond_to blocks:
 Mime::Type.register "audio/mpeg3", :mp3
 Mime::Type.register "application/x-subrip", :srt
+Mime::Type.register "text/plain", :txt
 # Mime::Type.register "text/richtext", :rtf
 # Mime::Type.register_alias "text/html", :iphone
