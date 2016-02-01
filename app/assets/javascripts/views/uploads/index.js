@@ -177,7 +177,7 @@ App.Views.UploadsIndex = Backbone.View.extend({
               file_type: file.type,
               file_size: parseFloat(file.size),
               locale: _this.$("#file-locale").val() || "en-US",
-              privacy: _this.$('.group-file-privacy input[type=radio]:checked').val() || "unlisted",
+              privacy: "private",
               editable: true,
               metadata: {"te_name": VZ.query.te}
             });
