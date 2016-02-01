@@ -81,7 +81,7 @@ class DocumentTest < ActiveSupport::TestCase
     end
 
     should "generate with title and slug_id when re-publishing with event=" do
-      document = Document.create(title: "start-title", aasm_state: "published")
+      document = Document.create(title: "start-title", aasm_state: "published", privacy: "public")
       assert_equal "start-title-#{document.slug_id}", document.slug
       document.event = :publish
       document.title  = "document-published-with-event"
@@ -106,7 +106,7 @@ class DocumentTest < ActiveSupport::TestCase
     end
 
     should "generate new slug only when published and title has changed" do
-      document = Document.create(title: "This is a Title", aasm_state: "published")
+      document = Document.create(title: "This is a Title", privacy: "public", aasm_state: "published")
       stored_slug_id = document.slug_id
       assert_equal "this-is-a-title-#{document.slug_id}", document.slug
       document.attributes = {title: "When a man loves a woman!"}
@@ -115,7 +115,7 @@ class DocumentTest < ActiveSupport::TestCase
     end
 
     should "not generate new slug when title is changed but not recently published" do
-      document = Document.create(title: "This is a Title", aasm_state: "published")
+      document = Document.create(title: "This is a Title", aasm_state: "published", privacy: "unlisted")
       stored_slug_id = document.slug_id
       assert_equal "this-is-a-title-#{document.slug_id}", document.slug
       document.update_attributes({title: "When a man loves a woman!"})
@@ -164,6 +164,13 @@ class DocumentTest < ActiveSupport::TestCase
       assert_equal true, @document.privacy_private?
       assert_equal :unpublished, @document.state
     end
+
+    should "set 'private' by default" do
+      document = Document.new
+      document.valid?
+      assert_equal ["private"], document.privacy
+    end
+
   end
 
   context "accessibility" do
@@ -257,7 +264,7 @@ class DocumentTest < ActiveSupport::TestCase
     end
 
     should "#any_of_locales" do
-      Document.destroy_all
+      # Document.destroy_all
       d1 = FactoryGirl.create(:document, locale: "en-GB")
       d2 = FactoryGirl.create(:document, locale: "en-US")
       d3 = FactoryGirl.create(:document, locale: "en-AU")
@@ -269,14 +276,14 @@ class DocumentTest < ActiveSupport::TestCase
     end
 
     should "#any_of_status" do
-      d1 = FactoryGirl.create(:document, aasm_state: "published")
-      d2 = FactoryGirl.create(:document, aasm_state: "unpublished")
+      d1 = FactoryGirl.create(:document, privacy: "unlisted", aasm_state: "published")
+      d2 = FactoryGirl.create(:document, privacy: "unlisted", aasm_state: "unpublished")
       assert_equal [d1], Document.any_of_status([Document::STATE_PUBLISHED])
     end
 
     should "#none_of_status" do
-      d1 = FactoryGirl.create(:document, aasm_state: "published")
-      d2 = FactoryGirl.create(:document, aasm_state: "unpublished")
+      d1 = FactoryGirl.create(:document, privacy: "unlisted", aasm_state: "published")
+      d2 = FactoryGirl.create(:document, privacy: "unlisted", aasm_state: "unpublished")
       assert_equal [d2], Document.none_of_status([Document::STATE_PUBLISHED])
     end
 
@@ -544,6 +551,7 @@ class DocumentTest < ActiveSupport::TestCase
 
     context "#canonical_url" do
       should "unset privacy should return nil" do
+        @document.privacy = []
         assert_equal nil, @document.canonical_url
       end
 
@@ -672,7 +680,7 @@ class DocumentTest < ActiveSupport::TestCase
     end
 
     should "#publish! when already published" do
-      document = FactoryGirl.create(:document, aasm_state: "published", published_at: (ot = Time.zone.now - 1.day))
+      document = FactoryGirl.create(:document, aasm_state: "published", privacy: "unlisted", published_at: (ot = Time.zone.now - 1.day))
       assert_equal true, document.publish!
       assert_equal :published, document.state
       assert_not_equal ot, document.published_at

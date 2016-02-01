@@ -117,7 +117,7 @@ class Document < ActiveRecord::Base
     end
   end
 
-  # before_validation :generate_slug_id, :on => :create
+  before_validation :set_default_privacy, :on => :create
   before_save :set_tag_owner
   after_save :update_chunks_from_segments
 
@@ -436,4 +436,9 @@ class Document < ActiveRecord::Base
     !privacy_private?
   end
 
+  private
+
+  def set_default_privacy
+    self.privacy = :private if privacy.empty?
+  end
 end
