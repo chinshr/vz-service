@@ -15,6 +15,8 @@ class UserTest < ActiveSupport::TestCase
   end
 
   context "validations" do
+    subject { User.new(:confirmed_at => Time.zone.now) }
+
     should "validate_presence_of :first_name, :last_name, :username if confirmed?" do
       user = User.new(:confirmed_at => Time.zone.now)
       assert_equal true, user.confirmed?
@@ -24,6 +26,13 @@ class UserTest < ActiveSupport::TestCase
       assert_equal true, user.errors[:username].include?("invalid format")
       assert_equal true, user.errors[:username].include?("is too short (minimum is 2 characters)")
     end
+
+    should validate_presence_of :username
+    should ensure_length_of(:username).is_at_least(2).is_at_most(40)
+    should validate_presence_of :first_name
+    should ensure_length_of(:first_name).is_at_least(1).is_at_most(125)
+    should validate_presence_of :last_name
+    should ensure_length_of(:last_name).is_at_least(1).is_at_most(125)
   end
 
   should "geocode and reverse geocode" do
@@ -145,6 +154,33 @@ class UserTest < ActiveSupport::TestCase
     should "generate valid slug with username" do
       user = FactoryGirl.create(:user, username: "hellotest")
       assert_equal "hellotest", user.slug
+      assert_equal "hellotest", user.friendly_id
+    end
+
+    should "not generate duplicate slug" do
+      FactoryGirl.create(:user, username: "hellotest")
+      assert_raises ActiveRecord::RecordInvalid do
+        FactoryGirl.create(:user, username: "hellotest")
+      end
+    end
+
+    should "change slug when changing username" do
+      user = FactoryGirl.create(:user, username: "hellotest")
+      assert_equal "hellotest", user.slug
+      assert_equal "hellotest", user.friendly_id
+      user.update_attributes({username: "hellokitty"})
+      assert_equal "hellokitty", user.friendly_id
+      assert_equal "hellokitty", user.slug
+    end
+
+    should "not change to historic slug name" do
+      u1 = FactoryGirl.create(:user, username: "chinshr")
+      assert_equal "chinshr", u1.friendly_id
+      u1.update_attributes({username: "juergen"})
+      assert_equal "juergen", u1.friendly_id
+      # assert_raises ActiveRecord::RecordInvalid do
+      #   u2 = FactoryGirl.create(:user, username: "chinshr")
+      # end
     end
   end
 end
