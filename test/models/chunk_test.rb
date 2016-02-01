@@ -143,7 +143,10 @@ class ChunkTest < ActiveSupport::TestCase
         :sort_order, :reverse_sort, :offset, :limit, :any_of_ingest_iterations,
         :any_of_positions, :is_root, :score_lt, :score_gt, :score_lteq, :score_gteq,
         :duration_lt, :duration_gt, :duration_lteq, :duration_gteq, :ingest_id, :none_of_ingest_ids,
-        :any_of_locales, :any_of_status, :none_of_status].to_set, Chunk.scopes.to_set
+        :any_of_locales, :any_of_status, :none_of_status, :any_of_tags, :none_of_tags,
+        :created_at_gt, :created_at_gteq, :created_at_lt, :created_at_lteq,
+        :updated_at_gt, :updated_at_gteq, :updated_at_lt, :updated_at_lteq,
+        :published_at_gt, :published_at_gteq, :published_at_lt, :published_at_lteq].to_set, Chunk.scopes.to_set
     end
 
     should "have any_of_processing_status" do
