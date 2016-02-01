@@ -209,6 +209,9 @@ class Ingest::Server < ActiveRecord::Base
       instance.terminate unless test?
       true
     end
+  rescue AWS::EC2::Errors::InvalidInstanceID::NotFound => ex
+    Rails.logger.info("Instance #{instance.id} not found, possibly manually removed.")
+    true
   end
 
   def wait_until(status)
