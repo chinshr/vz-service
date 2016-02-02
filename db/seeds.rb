@@ -46,23 +46,23 @@ end
 
 #--- API clients
 # CPW client
-@cpw_client = Api::Client.find_or_initialize_by(key: "dOgP7wlYPtra19IeFzOMmI0nxfYekuCkI2sXrLNzSgcc")
+@cpw_client = Api::Client.find_or_initialize_by(name: "CPW")
 if @cpw_client.new_record?
-  @cpw_client.name = "CPW"
+  @cpw_client.key = "dOgP7wlYPtra19IeFzOMmI0nxfYekuCkI2sXrLNzSgcc"
   @cpw_client.save!
 end
 
 # iPhone client
-@iphone_client = Api::Client.find_or_initialize_by(key: "J1K58YcsAKf9QXDxVi5yn8yqzqEtNkzstz7xqx2AZYgr")
+@iphone_client = Api::Client.find_or_initialize_by(name: "iPhone")
 if @iphone_client.new_record?
-  @iphone_client.name     = "iPhone"
+  @iphone_client.key      = "J1K58YcsAKf9QXDxVi5yn8yqzqEtNkzstz7xqx2AZYgr"
   @iphone_client.platform = @iphone_platform
   @iphone_client.save!
 end
 
 # Model Trainer (MT) client
-@mt_client = Api::Client.find_or_initialize_by(key: "Srur1MOdW71ONKK5IY4b88KLTEjzyCYv4Fay2GYWpnM4")
+@mt_client = Api::Client.find_or_initialize_by(name: "MT")
 if @mt_client.new_record?
-  @mt_client.name = "MT"
+  @mt_client.key = "Srur1MOdW71ONKK5IY4b88KLTEjzyCYv4Fay2GYWpnM4"
   @mt_client.save!
 end
