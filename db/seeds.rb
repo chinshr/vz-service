@@ -59,3 +59,10 @@ if @iphone_client.new_record?
   @iphone_client.platform = @iphone_platform
   @iphone_client.save!
 end
+
+# Model Trainer (MT) client
+@mt_client = Api::Client.find_or_initialize_by(key: "Srur1MOdW71ONKK5IY4b88KLTEjzyCYv4Fay2GYWpnM4")
+if @mt_client.new_record?
+  @mt_client.name = "MT"
+  @mt_client.save!
+end
