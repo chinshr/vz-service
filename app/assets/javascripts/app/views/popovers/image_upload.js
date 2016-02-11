@@ -258,9 +258,6 @@ App.Views.PopoversImageUpload = App.Views.PopoverBase.extend({
     this.pubnub = PUBNUB.init({
       publish_key: VZ.config.pubnub.publish_key,
       subscribe_key: VZ.config.pubnub.subscribe_key,
-      uuid: App.currentUser.attributes.username,
-      heartbeat: 120,
-      heartbeat_interval: 30,
       ssl: VZ.isSSL()
     });
 
