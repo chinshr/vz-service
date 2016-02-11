@@ -180,31 +180,26 @@ App.Views.UploadsEdit = App.Views.UploadsBase.extend({
     }
   },
 
-  imageUploadFinished: function(data) {
+  imageUploadFinished: function(model) {
     this.model.fetch();
     this.updateImages();
     this.imageUpload.destroy();
     this.initImageUploadInput();
-    delete this.imageUpload;
   },
 
-  imageUploadStopped: function(data) {
-    console.log(data);
+  imageUploadStopped: function(model) {
     this.imageUpload.destroy();
     this.initImageUploadInput();
-    delete this.imageUpload;
   },
 
   imageUploadCanceled: function() {
     this.imageUpload.destroy();
     this.initImageUploadInput();
-    delete this.imageUpload;
   },
 
   updateImages: function(data) {
     var squareImageSrc = this.model.imageSource(1);
     if (!!squareImageSrc) {
-      debugger;
       this.$('.thumb-image.thumb-image-square').attr('src', squareImageSrc);
     }
   },

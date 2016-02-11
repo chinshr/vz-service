@@ -7,7 +7,7 @@ App.Views.PopoversImageUpload = App.Views.PopoverBase.extend({
 
   initialize: function(options) {
     App.Views.PopoverBase.prototype.initialize.call(this, options); // super
-    _.bindAll(this, "setup", "teardown", "progress", "refreshUploadCallback", "cancel");
+    _.bindAll(this, "update", "refreshUploadCallback", "cancel", "initListeners");
 
     this.model     = null;
     this.xhr       = null;
@@ -41,10 +41,10 @@ App.Views.PopoversImageUpload = App.Views.PopoverBase.extend({
     }
   },
 
-  progress: function(data) {
-    this.updateStatus(data);
-    this.updateProgress(data);
-    this.handleNextStep(data);
+  update: function() {
+    this.updateStatus();
+    this.updateProgress();
+    this.handleNextStep();
   },
 
   render: function() {
@@ -62,36 +62,7 @@ App.Views.PopoversImageUpload = App.Views.PopoverBase.extend({
       .on('hidden.bs.popover', this.teardown)
       .data("bs.popover");
 
-    // close popover when another one is opened
-    this.holder.on('click', (function(_this) {
-      return function(e) {
-        e.stopPropagation();
-        _this.holder.tooltip('hide');
-        /* close all other popovers except this */
-        _this.holder.not(this).popover('hide');
-        $('.btn-more, .btn-popover, [data-rel="popover"], .popover').not(_this.holder).popover('hide');
-        _this.popover.toggle();
-      };
-    })(this));
-
-    // ???
-    $(document).on('click', (function(_this) {
-      return function(e) {
-        if (!$(e.target).is(_this.holder) && _this.holder.find($(e.target)).length === 0 && $(".btn-more").find($(e.target)).length === 0) {
-          _this.hide();
-        }
-      }
-    })(this));
-
     return this;
-  },
-
-  setup: function() {
-    this.holder.tooltip('disable');
-  },
-
-  teardown: function() {
-    this.holder.tooltip('enable');
   },
 
   uploadToS3: function(options) {
@@ -114,12 +85,12 @@ App.Views.PopoversImageUpload = App.Views.PopoverBase.extend({
               file_size: parseFloat(file.size),
               locale: _this.parent.model.locale
             });
-            _this.listenTo(_this.model, 'upload:image:progress', _this.progress);
+            _this.initListeners();
             return _this.model;
           } else {
             if (_this.model) {
               _this.xhr = xhr;
-              return _this.model.trigger('upload:image:progress', {
+              return _this.model.set({
                 progress: percent,
                 state: status
               });
@@ -158,13 +129,17 @@ App.Views.PopoversImageUpload = App.Views.PopoverBase.extend({
       onError: (function(_this) {
         return function(file, status) {
           if (_this.model) {
-            return _this.model.trigger('upload:image:progress', {
-              state: status
-            });
+            return _this.model.set({state: status});
           }
         };
       })(this)
     });
+  },
+
+  initListeners: function() {
+    if (this.model) {
+      this.listenTo(this.model, 'change', this.update);
+    }
   },
 
   translateStatus: function(state) {
@@ -185,6 +160,7 @@ App.Views.PopoversImageUpload = App.Views.PopoverBase.extend({
       // processing
       switch (state) {
         // ingest states
+        case 'completed':  // spillover from uploading
         case 'starting':
         case 'started':
         return "Processing..."
@@ -204,16 +180,16 @@ App.Views.PopoversImageUpload = App.Views.PopoverBase.extend({
     }
   },
 
-  updateProgress: function(data) {
+  updateProgress: function() {
     var percent = 0,
       progressBarEl = this.$('.progress .progress-bar');
       progressEl = this.$('.progress');
 
-    if (data && data.progress) {
+    if (this.model.attributes.progress) {
       if (this.hasProgress() && !this.hasUploadProgress()) {
         percent = 50;
       }
-      percent += (data.progress / 2);
+      percent += (this.model.attributes.progress / 2);
       progressBarEl.css('width', "" + percent + "%");
     }
 
@@ -224,9 +200,9 @@ App.Views.PopoversImageUpload = App.Views.PopoverBase.extend({
       .removeClass('progress-bar-danger');
 
     // colors depending on status
-    if ((this.model && this.model.hasFinished()) || (data && data.status === 'completed')) {
+    if ((this.model && this.model.hasFinished()) || (this.model.attributes.status === 'completed')) {
       progressBarEl.addClass('progress-bar-success');
-    } else if ((this.model && this.model.hasStopped()) || (data && data.status === 'error')) {
+    } else if ((this.model && this.model.hasStopped()) || (this.model.attributes.status === 'error')) {
       progressBarEl.addClass('progress-bar-danger');
     } else {
       progressBarEl.addClass('progress-bar-warning');
@@ -240,7 +216,7 @@ App.Views.PopoversImageUpload = App.Views.PopoverBase.extend({
     }
   },
 
-  updateStatus: function(data) {
+  updateStatus: function() {
     var uploadStatusEl = this.$('.upload-status');
 
     uploadStatusEl
@@ -249,19 +225,19 @@ App.Views.PopoversImageUpload = App.Views.PopoverBase.extend({
       .removeClass('info')
       .removeClass('success');
 
-    if (data.state === 'error') {
+    if (this.model.attributes.state === 'error') {
       uploadStatusEl.addClass('danger');
     }
 
-    uploadStatusEl.html(this.translateStatus(data.state));
+    uploadStatusEl.html(this.translateStatus(this.model.attributes.state));
     return uploadStatusEl;
   },
 
-  handleNextStep: function(data) {
-    if (data && data.state === "finished" && this.callbacks.finished) {
-      return this.callbacks.finished(data);
-    } else if(data && data.state === "stopped" && this.callbacks.stopped) {
-      return this.callbacks.stopped(data);
+  handleNextStep: function() {
+    if (this.model.attributes.state === "finished" && this.callbacks.finished) {
+      return this.callbacks.finished(this.model);
+    } else if(this.model.attributes.state === "stopped" && this.callbacks.stopped) {
+      return this.callbacks.stopped(this.model);
     }
   },
 
@@ -298,7 +274,7 @@ App.Views.PopoversImageUpload = App.Views.PopoverBase.extend({
       var data = _this.refreshUploadQueue.pop();
       if (data && (!currentRefreshUploadSequence || data.sequence > currentRefreshUploadSequence)) {
         currentRefreshUploadSequence = data.sequence;
-        _this.progress(data);
+        _this.model.set(data);
       }
     }, 100);
   },
