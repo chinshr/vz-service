@@ -24,7 +24,7 @@
 //= require lib/beachstrap/jquery.scrollTo
 //= require lib/beachstrap/holder
 //= require lib/beachstrap/bootstrap.youtubepopup
-//= require web/common
+//= require helpers/common
 
 /*
 VZ._registration = (function() {
