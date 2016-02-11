@@ -44,4 +44,4 @@ production:
   NUANCE_DRAGON_APP_ID: <%= ENV.fetch('NUANCE_DRAGON_APP_ID', "NMDPTRIAL_chinshr20140326185635") %>
   NUANCE_DRAGON_APP_KEY: <%= ENV.fetch('NUANCE_DRAGON_APP_KEY', "edb1acb2e50d02417b643e6dce510ea9dd565c4ad4725dcb8d807c96fe6304eb14b09ef9bea03a390578a6d3cab57ca70bd8f1df4b4eabd8cf276ecd8a72b99f") %>
 
-  # INGEST_IMAGE_ASSET_HOST: '//xyz.cloudfront.net'
+  INGEST_IMAGE_ASSET_HOST: '//d34ciqe3flkza6.cloudfront.net'

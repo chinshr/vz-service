@@ -39,9 +39,19 @@ App.Views.UploadsIndex = Backbone.View.extend({
       _this.initMailTo();
       _this.grid.imagesLoaded(function() {
         _this.refreshLayout();
+        _this.show();
       });
     });
     return this;
+  },
+
+  show: function() {
+    $('#content-loading').hide();
+  },
+
+  showPageError: function() {
+    $('#loading').hide();
+    $('#load-error').show();
   },
 
   // Instantiate and render new views for models added to the collection
