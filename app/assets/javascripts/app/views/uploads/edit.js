@@ -181,10 +181,18 @@ App.Views.UploadsEdit = App.Views.UploadsBase.extend({
   },
 
   imageUploadFinished: function(model) {
-    this.model.fetch();
-    this.updateImages();
-    this.imageUpload.destroy();
-    this.initImageUploadInput();
+    var _this = this;
+    this.model.fetch({
+      success: function() {
+        this.updateImages();
+        this.imageUpload.destroy();
+        this.initImageUploadInput();
+      },
+      error: function() {
+        this.imageUpload.destroy();
+        this.initImageUploadInput();
+      }
+    });
   },
 
   imageUploadStopped: function(model) {
