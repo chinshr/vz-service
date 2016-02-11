@@ -8,7 +8,7 @@ defaults: &defaults
   EXPIRE_TIME: 300 # 5 minutes
   S3_URL: 'http://s3.amazonaws.com'
   ASSET_HOST: '//d3s2wzxhm1gdg3.cloudfront.net'
-  INGEST_IMAGE_ASSET_HOST: '//s3.amazonaws.com/'
+  INGEST_IMAGE_ASSET_HOST: '//vz-assets-origin.s3.amazonaws.com/'
   ADMIN_EMAIL_ADDRESSES:
     - juergen@voyz.es
     - anamaria@voyz.es
@@ -24,6 +24,8 @@ development:
   ATT_SPEECH_SECRET_KEY: <%= ENV.fetch('ATT_SPEECH_SECRET_KEY', "j7caqnrtvtiiqhtl1nhlmyp5li0dclxg") %>
   NUANCE_DRAGON_APP_ID: <%= ENV.fetch('NUANCE_DRAGON_APP_ID', "NMDPTRIAL_chinshr20140326185635") %>
   NUANCE_DRAGON_APP_KEY: <%= ENV.fetch('NUANCE_DRAGON_APP_KEY', "edb1acb2e50d02417b643e6dce510ea9dd565c4ad4725dcb8d807c96fe6304eb14b09ef9bea03a390578a6d3cab57ca70bd8f1df4b4eabd8cf276ecd8a72b99f") %>
+
+  INGEST_IMAGE_ASSET_HOST: '//vz-dev-assets-origin.s3.amazonaws.com/'
 
 test:
   <<: *defaults

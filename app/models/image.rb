@@ -31,7 +31,7 @@ class Image < ActiveRecord::Base
   end
 
   def assets_base_url
-    File.join(APP_CONFIG['INGEST_IMAGE_ASSET_HOST'], ingest.s3_origin_bucket_name)
+    File.join(APP_CONFIG['INGEST_IMAGE_ASSET_HOST'])
   end
 
   # This is used to invalidate the media cache key.
