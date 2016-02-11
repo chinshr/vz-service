@@ -5,6 +5,9 @@ defaults: &defaults
   S3_OUTBOUND_BUCKET: <%= ENV.fetch('S3_OUTBOUND_BUCKET', "vz-origin") %>  # vz-vault
   S3_ASSETS_BUCKET: <%= ENV.fetch('S3_ASSETS_BUCKET', "vz-assets-origin") %>
 
+  PUBNUB_PUBLISH_KEY: <%= ENV.fetch('PUBNUB_PUBLISH_KEY', "demo") %>
+  PUBNUB_SUBSCRIBE_KEY: <%= ENV.fetch('PUBNUB_SUBSCRIBE_KEY', "demo") %>
+
   EXPIRE_TIME: 300 # 5 minutes
   S3_URL: 'http://s3.amazonaws.com'
   ASSET_HOST: '//d3s2wzxhm1gdg3.cloudfront.net'
