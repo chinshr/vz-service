@@ -8,8 +8,8 @@ var VZ = (function() {
     linkedin: {prefix: "See what I found on VOYZ.ES "},
     google: {analyticsId: 'UA-48375934-1'},
     pubnub: {
-      publish_key: "<%= PUBNUB.env[:publish_key] %>",
-      subscribe_key: "<%= PUBNUB.env[:subscribe_key] %>"
+      publish_key: "<%= APP_CONFIG['PUBNUB_PUBLISH_KEY'] || 'demo' %>",
+      subscribe_key: "<%= APP_CONFIG['PUBNUB_SUBSCRIBE_KEY'] || 'demo' %>"
     }
   };
 
