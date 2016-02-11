@@ -25,6 +25,7 @@ App.Views.PopoversPublish = App.Views.PopoverBase.extend({
     this.holder.on('click', (function(_this) {
       return function(e) {
         e.stopPropagation();
+        e.preventDefault();
         _this.holder.tooltip('hide');
         /* close all other popovers except this */
         _this.holder.not(this).popover('hide');
