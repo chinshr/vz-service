@@ -491,7 +491,6 @@ class Ingest < ActiveRecord::Base
 
   def refresh_upload
     if transaction_include_any_action?([:create]) ||
-      transaction_include_any_action?([:destroy]) ||
       previous_changes[:progress] ||
       previous_changes[:aasm_state] ||
       previous_changes[:aasm_stage]
