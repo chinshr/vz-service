@@ -74,7 +74,7 @@ class ImageTest < ActiveSupport::TestCase
     end
 
     should "should return a url that ends with path" do
-      assert_equal "#{File.join(APP_CONFIG['INGEST_IMAGE_ASSET_HOST'], @image.ingest.s3_origin_bucket_name, @image.path)}", @image.url
+      assert_equal "#{File.join(APP_CONFIG['INGEST_IMAGE_ASSET_HOST'], @image.path)}", @image.url
     end
   end
 
