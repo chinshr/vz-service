@@ -3,30 +3,38 @@ class Upload::MediaUpload < Upload
 
   TARGET_MAX_NUMBER_OF_KEYWORDS = 100
 
-  delegate :title, to: :ingest_or_build_ingest_and_document, allow_nil: true
-  delegate :title=, to: :ingest_or_build_ingest_and_document, allow_nil: true
+  delegate :document, to: :ingest_or_build_ingest_and_associations, allow_nil: true
+  delegate :document_id, to: :ingest_or_build_ingest_and_associations, allow_nil: true
 
-  delegate :description, to: :ingest_or_build_ingest_and_document, allow_nil: true
-  delegate :description=, to: :ingest_or_build_ingest_and_document, allow_nil: true
+  delegate :title, to: :ingest_or_build_ingest_and_associations, allow_nil: true
+  delegate :title=, to: :ingest_or_build_ingest_and_associations, allow_nil: true
 
-  delegate :privacy, to: :ingest_or_build_ingest_and_document, allow_nil: true
-  delegate :privacy=, to: :ingest_or_build_ingest_and_document, allow_nil: true
+  delegate :description, to: :ingest_or_build_ingest_and_associations, allow_nil: true
+  delegate :description=, to: :ingest_or_build_ingest_and_associations, allow_nil: true
 
-  delegate :tag_list, to: :ingest_or_build_ingest_and_document, allow_nil: true
-  delegate :tag_list=, to: :ingest_or_build_ingest_and_document, allow_nil: true
+  delegate :tag_list, to: :ingest_or_build_ingest_and_associations, allow_nil: true
+  delegate :tag_list=, to: :ingest_or_build_ingest_and_associations, allow_nil: true
 
-  delegate :locale, to: :ingest_or_build_ingest_and_document, allow_nil: true
-  delegate :locale=, to: :ingest_or_build_ingest_and_document, allow_nil: true
+  delegate :locale, to: :ingest_or_build_ingest_and_associations, allow_nil: true
+  delegate :locale=, to: :ingest_or_build_ingest_and_associations, allow_nil: true
 
-  delegate :slug, to: :ingest_or_build_ingest_and_document
+  delegate :use_source_annotations, to: :ingest_or_build_ingest_and_associations, allow_nil: true
+  delegate :use_source_annotations=, to: :ingest_or_build_ingest_and_associations, allow_nil: true
 
-  delegate :slug_id, to: :ingest_or_build_ingest_and_document
+  delegate :handle, to: :ingest_or_build_ingest_and_associations, allow_nil: true
+  delegate :handle=, to: :ingest_or_build_ingest_and_associations, allow_nil: true
 
-  delegate :use_source_annotations, to: :ingest_or_build_ingest_and_document, allow_nil: true
-  delegate :use_source_annotations=, to: :ingest_or_build_ingest_and_document, allow_nil: true
+  delegate :slug, to: :document, allow_nil: true
+  delegate :slug_id, to: :document, allow_nil: true
+  delegate :published_path, to: :document, allow_nil: true
 
-  delegate :handle, to: :ingest_or_build_ingest_and_document, allow_nil: true
-  delegate :handle=, to: :ingest_or_build_ingest_and_document, allow_nil: true
+  delegate :privacy, to: :document, allow_nil: true
+  delegate :privacy=, to: :document, allow_nil: true
+
+  delegate :accessibility, to: :document, allow_nil: true
+  delegate :accessibility=, to: :document, allow_nil: true
+
+  delegate :images, to: :document, allow_nil: true
 
   validates :title, presence: true, on: :update
   validate :valid_source_url, on: :create
@@ -39,7 +47,7 @@ class Upload::MediaUpload < Upload
   scope :finished, -> { any_of_status(Ingest::STATES[:finished]) }
   scope :most_recent, -> (n = 5) { order("uploads.created_at DESC").limit(n) }
 
-  after_initialize :build_ingest_and_document
+  after_initialize :build_ingest_and_associations
   before_validation :set_attributes, on: :create
   after_commit :save_ingest_and_document
 
@@ -66,7 +74,7 @@ class Upload::MediaUpload < Upload
 
   protected
 
-  def build_ingest_and_document
+  def build_ingest_and_associations
     build_ingest(type: "Ingest::MediaIngest", upload: self,
       document: Document.new) unless ingest
   end
@@ -143,7 +151,6 @@ class Upload::MediaUpload < Upload
 
   def valid_source_url
     errors.add(:source_url, :invalid) unless target.valid?
-
     if has_s3_source_url?
       errors.add(:file_name, :presence) unless file_name.present?
       errors.add(:file_type, :media_expected) unless valid_media_file_type?

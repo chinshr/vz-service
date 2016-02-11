@@ -18,9 +18,7 @@ class IngestTest < ActiveSupport::TestCase
 
   context "validations" do
     should validate_presence_of(:type)
-    should validate_presence_of(:upload).on(:create)
     should_not validate_presence_of(:upload).on(:update)
-    should validate_presence_of :document
   end
 
   context "delegate" do
@@ -81,25 +79,10 @@ class IngestTest < ActiveSupport::TestCase
       assert_equal 1, ingest.status
     end
 
-    should "remove" do
+    should "#remove!" do
       ingest = FactoryGirl.create(:media_ingest_as_audio)
       assert_enqueued_with(job: Ingest::RemoveJob) do
         assert_equal true, ingest.remove!, "should be able to event remove"
-      end
-    end
-
-    should "remove when upload is destroyed" do
-      upload = FactoryGirl.create(:media_upload_as_audio)
-      ingest = upload.ingest
-      assert_no_difference "Ingest.count" do
-        assert_no_difference "Upload.count" do
-          assert_enqueued_with(job: Upload::DeleteJob) do
-            upload.destroy
-          end
-          assert_equal :removing, ingest.state
-          assert_equal true, ingest.process!, "should be able to process"
-          assert_equal :removed, ingest.state
-        end
       end
     end
 
@@ -237,6 +220,7 @@ class IngestTest < ActiveSupport::TestCase
       ingest.finish!
       assert_equal :finished, ingest.state
       assert_not_nil ingest.finished_at
+      assert_equal 100, ingest.progress
 
       ingest.remove!
       assert_equal :removing, ingest.state
@@ -283,7 +267,7 @@ class IngestTest < ActiveSupport::TestCase
     ingest.set_progress!(5) and ingest.reload
     assert_equal 5, ingest.progress
     ingest.set_progress!(75.5) and ingest.reload
-    assert_equal 76, ingest.progress
+    assert_in_delta 75.5, ingest.progress, 0.01
     ingest.set_progress!(101) and ingest.reload
     assert_equal 100, ingest.progress
   end
@@ -347,9 +331,9 @@ class IngestTest < ActiveSupport::TestCase
     175.times do |index|
       ingest.increment_progress! 1, 175, 80
     end
-    assert_equal 90, ingest.progress
+    assert_in_delta 90.5, ingest.progress, 0.001
     ingest.increment_progress! 1, 175, 80
-    assert_equal 90, ingest.progress
+    assert_in_delta 91, ingest.progress, 0.5
   end
 
   should "calculate average score and duration" do
@@ -486,6 +470,86 @@ class IngestTest < ActiveSupport::TestCase
       end
       assert_equal :stopped, @ingest.state
       assert_equal [], @ingest.reload.servers
+    end
+  end
+
+  context "#handle" do
+    should "set handle if not S3 and not present" do
+      ingest = Ingest.new
+      ingest.valid?
+      assert_equal 20, ingest.handle.length
+    end
+
+    should "derive handle from S3 upload URL" do
+      ingest = Ingest.new(source_url: "http://s3.amazonaws.com/vz-test-dropbox/61glI7mwmN")
+      ingest.valid?
+      assert_equal "61glI7mwmN", ingest.handle
+    end
+
+    should "use assigned handle" do
+      ingest = Ingest.new(handle: "abcd1234")
+      ingest.valid?
+      assert_equal "abcd1234", ingest.handle
+    end
+  end
+
+  context "broadcast" do
+    should "#refresh_upload on create" do
+      ingest = FactoryGirl.build(:media_ingest_as_audio, aasm_state: "started",
+        upload: FactoryGirl.build(:media_upload_as_audio))
+      assert_broadcast :refresh_upload do
+        ingest.save
+      end
+    end
+
+    should "#refresh_upload on state change" do
+      ingest = FactoryGirl.create(:media_ingest_as_audio, aasm_state: "started")
+      assert_broadcast :refresh_upload do
+        ingest.finish!
+      end
+    end
+
+    should "#refresh_upload on progress change" do
+      ingest = FactoryGirl.create(:media_ingest_as_audio, aasm_state: "started")
+      assert_broadcast :refresh_upload do
+        ingest.update_attribute(:progress, 99)
+      end
+    end
+
+    # should "NOT #refresh_upload on touch" do
+    #   ingest = FactoryGirl.create(:media_ingest_as_audio, aasm_state: "started")
+    #   assert_broadcast :refresh_upload do
+    #     ingest.touch
+    #   end
+    # end
+  end
+
+  context "#delete" do
+    setup do
+      @ingest = FactoryGirl.create(:media_ingest_as_audio)
+    end
+
+    should "schedule ingest delete job" do
+      assert_enqueued_with(job: Ingest::DeleteJob) do
+        @ingest.delete
+      end
+    end
+
+    should "delete record" do
+      assert_difference("Ingest.count", -1) do
+        @ingest.delete_without_job
+      end
+    end
+  end
+
+  context "#destroy" do
+    should "delete record" do
+      ingest = FactoryGirl.create(:media_ingest_as_audio)
+      assert_difference "Ingest.count", -1 do
+        assert_difference "Upload.count", -1 do
+          ingest.destroy
+        end
+      end
     end
   end
 end

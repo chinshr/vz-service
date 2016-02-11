@@ -35,24 +35,32 @@ class UploadTest < ActiveSupport::TestCase
     end
 
     should delegate :source_url, to: :ingest
-    should delegate :source_url=, to: :ingest
-
-    should "delegate :source_url" do
+    should "delegate :source_url, to: :ingest" do
       assert_equal @upload.ingest.source_url, @upload.source_url
     end
 
-    should "delegate :source_url=" do
+    should delegate :source_url=, to: :ingest
+    should "delegate :source_url=, to: :ingest" do
       @upload.source_url = "http://www.example.com"
       assert_equal "http://www.example.com", @upload.source_url
     end
 
-    should delegate :file_name, to: :ingest
-    should delegate :file_name=, to: :ingest
+    should delegate :origin_url, to: :ingest
+    should "delegate :origin_url, to: :ingest" do
+      assert_equal @upload.ingest.origin_url, @upload.origin_url
+    end
 
+    should delegate :handle, to: :ingest
+    should "delegate :handle, to: :ingest" do
+      assert_equal @upload.ingest.handle, @upload.handle
+    end
+
+    should delegate :file_name, to: :ingest
     should "delegate :file_name" do
       assert_equal @upload.ingest.file_name, @upload.file_name
     end
 
+    should delegate :file_name=, to: :ingest
     should "delegate :file_name=" do
       @upload.file_name = "file1.mp3"
       assert_equal "file1.mp3", @upload.file_name
@@ -122,11 +130,6 @@ class UploadTest < ActiveSupport::TestCase
       end
     end
 
-    should delegate :slug, to: :ingest
-    should "delegate :slug" do
-      assert_equal @upload.ingest.slug, @upload.slug
-    end
-
     should delegate :progress, to: :ingest
     should "delegate :progress" do
       assert_equal @upload.ingest.progress, @upload.progress
@@ -175,6 +178,44 @@ class UploadTest < ActiveSupport::TestCase
       assert_equal nil, Upload.none_of_types("media_upload").first
       assert_equal nil, Upload.none_of_types("Upload::MediaUpload").first
     end
+
+    context "aasm scopes" do
+      should "#started" do
+        assert_equal [], Upload::MediaUpload.started
+        @upload.ingest.update_attribute(:aasm_state, "started")
+        assert_equal [@upload], Upload::MediaUpload.started
+      end
+
+      should "#stopped" do
+        assert_equal [], Upload::MediaUpload.stopped
+        @upload.ingest.update_attribute(:aasm_state, "stopped")
+        assert_equal [@upload], Upload::MediaUpload.stopped
+      end
+
+      should "#reset" do
+        assert_equal [], Upload::MediaUpload.reset
+        @upload.ingest.update_attribute(:aasm_state, "reset")
+        assert_equal [@upload], Upload::MediaUpload.reset
+      end
+
+      should "#removed" do
+        assert_equal [], Upload::MediaUpload.removed
+        @upload.ingest.update_attribute(:aasm_state, "removed")
+        assert_equal [@upload], Upload::MediaUpload.removed
+      end
+
+      should "#finished" do
+        assert_equal [], Upload::MediaUpload.finished
+        @upload.ingest.update_attribute(:aasm_state, "finished")
+        assert_equal [@upload], Upload::MediaUpload.finished
+      end
+
+      should "#most_recent" do
+        assert_equal [@upload], Upload::MediaUpload.most_recent
+        assert_equal [@upload], Upload::MediaUpload.most_recent(1)
+        assert_equal [], Upload::MediaUpload.most_recent(0)
+      end
+    end # context "aasm scopes"
   end # context "scopes"
 
   should "generate object name" do
@@ -198,11 +239,18 @@ class UploadTest < ActiveSupport::TestCase
 
   should "#destroy" do
     upload = FactoryGirl.create(:media_upload_as_audio)
-    # assert_enqueued_with(job: Upload::MediaUpload::DeleteJob) do
+
     assert_enqueued_with(job: Ingest::RemoveJob) do
       upload.destroy
     end
     assert_equal :removing, upload.ingest.reload.state
   end
 
+  should "#delete" do
+    upload = FactoryGirl.create(:media_upload_as_audio)
+
+    assert_enqueued_with(job: Upload::DeleteJob) do
+      upload.delete
+    end
+  end
 end

@@ -1,0 +1,29 @@
+<% if @published_url: %>
+<div class="social-container">
+  <ul class="nav navbar-nav toolbar-nav social-networks">
+    <li class="facebook"><button class="btn btn-md btn-tlb fa fa-facebook fa-fw" href="#" data-href="<%= @published_url %>"></button></li>
+    <li class="twitter"><button class="btn btn-md btn-tlb fa fa-twitter fa-fw" href="#" data-href="<%= @published_url %>" data-title="<%= @title %>"></button></li>
+    <li class="linkedin"><button class="btn btn-md btn-tlb fa fa-linkedin fa-fw" href="#" data-href="<%= @published_url %>" data-title="<%= @title %>"></button></li>
+    <!--<li class="email"><button class="btn btn-md btn-tlb fa fa-envelope fa-fw" href="#" data-href=""></button></li>-->
+  </ul><!-- .social-networks -->
+</div><!-- .social-container -->
+<% end %>
+<div class="share-link-container">
+  <% if @privacy.indexOf('private') > -1: %>
+  <p><i class="fa fa-lock"></i>This document is private and may only be viewed by the owner.</p>
+  <% else: %>
+    <% if @published_url: %>
+      <p>Copy the link below to share this published document with anyone on the Internet.</p>
+      <input type="url" class="width-full" notreadonly value="<%= @published_url %>">
+    <% else: %>
+      <% if @accessibility.indexOf('edit') > -1: %>
+        <p>Copy the link below to share the document for others to edit. Collaborators must be signed in.</p>
+        <input type="url" class="width-full" notreadonly value="<%= @edit_url %>">
+      <% end %>
+      <% if @accessibility.indexOf('view') > -1: %>
+        <p>Copy the link below to share the document for others to preview. Collaborators must be signed in.</p>
+        <input type="url" class="width-full" notreadonly value="<%= @preview_url %>">
+      <% end %>
+    <% end %>
+  <% end %>
+</div>

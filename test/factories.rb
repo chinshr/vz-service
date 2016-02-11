@@ -1,6 +1,5 @@
 FactoryGirl.define do
 
-  # done :upload_audio
   factory :media_upload_as_audio, :class => "Upload::MediaUpload" do
     sequence(:source_url) {|n| "http://s3.amazonaws.com/vz-test-dropbox/sample-#{n}.m4a"}
     sequence(:file_name) {|n| "sample-#{n}.m4a"}
@@ -12,7 +11,6 @@ FactoryGirl.define do
     end
   end
 
-  # done :upload_video
   factory :media_upload_as_video, :class => "Upload::MediaUpload" do
     sequence(:source_url) {|n| "http://s3.amazonaws.com/vz-test-dropbox/sample-video-#{n}.mp4"}
     sequence(:file_name) {|n| "sample-video-#{n}.mp4"}
@@ -21,6 +19,19 @@ FactoryGirl.define do
     recorded_at Time.parse("26/4/1974 15:32 UTC")
     before(:create) do |upload|
       upload.ingest.document = FactoryGirl.build(:document)
+    end
+  end
+
+  factory :image_upload, :class => "Upload::ImageUpload" do
+    sequence(:source_url) {|n| "http://s3.amazonaws.com/vz-test-dropbox/sample-#{n}.jpg"}
+    sequence(:file_name) {|n| "sample-#{n}.jpg"}
+    file_type "image/jpeg"
+    file_size 45983
+
+    trait :ingestable do
+      before(:create) do |upload|
+        upload.ingest.ingestable = FactoryGirl.build(:document)
+      end
     end
   end
 
@@ -41,7 +52,6 @@ FactoryGirl.define do
     end
   end
 
-  # done :ingest_audio
   factory :media_ingest_as_audio, :class => "Ingest::MediaIngest" do
     sequence(:source_url) {|n| "http://s3.amazonaws.com/vz-test-dropbox/sample-#{n}.m4a"}
     sequence(:file_name) {|n| "sample-#{n}.m4a"}
@@ -57,13 +67,11 @@ FactoryGirl.define do
     end
   end
 
-  # done :ingest_audio_without_track
   factory :media_ingest_as_audio_without_track, :class => "Ingest::MediaIngest" do
     association :upload, factory: :media_upload_as_audio
     association :document, factory: :document
   end
 
-  # done :ingest_video
   factory :media_ingest_as_video, :class => "Ingest::MediaIngest" do |i|
     sequence(:source_url) {|n| "http://s3.amazonaws.com/vz-test-dropbox/sample-video-#{n}.mp4"}
     sequence(:file_name) {|n| "sample-video-#{n}.mp4"}
@@ -79,10 +87,20 @@ FactoryGirl.define do
     end
   end
 
-  # done :ingest_video_without_track
   factory :media_ingest_as_video_without_track, :class => "Ingest::MediaIngest" do
     association :upload, factory: :media_upload_as_video
     association :document, factory: :document
+  end
+
+  factory :image_ingest, :class => "Ingest::ImageIngest" do |i|
+    sequence(:source_url) {|n| "http://s3.amazonaws.com/vz-test-dropbox/sample-image-#{n}.jpg"}
+    sequence(:file_name) {|n| "sample-image-#{n}.jpg"}
+    file_type "image/jpeg"
+    file_size 49142
+
+    trait :ingestable_document do
+      association :ingestable, factory: :document_with_track
+    end
   end
 
   factory :chunk do
@@ -333,4 +351,22 @@ FactoryGirl.define do
     association :ingest, factory: :media_ingest_as_audio
     association :server, factory: :cpw_server
   end
+
+  factory :image, :class => Image do
+    sequence(:path) { |n| "path-#{n}" }
+    sequence(:size) { |n| (1000 + n) }
+    association :image_format
+
+    trait :document_ingest do
+      association :ingest, factory: [:image_ingest, :ingestable_document]
+    end
+  end
+
+  factory :image_format, :class => Image::ImageFormat do
+    format "jpg"
+    width 1024
+    height 768
+    aspect_ratio (1024 / 768.to_f)
+  end
+
 end

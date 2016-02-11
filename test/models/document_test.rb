@@ -11,6 +11,8 @@ class DocumentTest < ActiveSupport::TestCase
     should have_many(:tracks_including_master_track).through(:segments)
     should have_one :master_document_segment
     should have_one(:track).through(:master_document_segment)
+    should have_many(:image_ingests)
+    should have_many(:images).through(:image_ingests)
 
     should "have tracks_including_master_track" do
       assert_difference "Segment::DocumentSegment.count", 1 do
@@ -699,9 +701,18 @@ class DocumentTest < ActiveSupport::TestCase
     end
   end
 
-  should "#published_path" do
-    document = FactoryGirl.create(:document)
-    assert_equal "/@#{document.user.username}/#{document.slug}", document.published_path
+  context "#published_path" do
+
+    should "return #published_path when published" do
+      document = FactoryGirl.create(:document, privacy: "unlisted", aasm_state: "published")
+      assert_equal "/@#{document.user.username}/#{document.slug}", document.published_path
+    end
+
+    should "be nil when unpublished" do
+      document = FactoryGirl.create(:document, aasm_state: "unpublished")
+      assert_equal nil, document.published_path
+    end
+
   end
 
   context "words" do

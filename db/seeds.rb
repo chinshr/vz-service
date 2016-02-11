@@ -25,6 +25,8 @@ if @cpw_user.new_record?
   @cpw_user.save!
 end
 
+require_relative "seeds/image_formats"
+
 #--- API platforms
 # generic web
 @web_platform = Api::Platform.find_or_initialize_by(uid: "qqiSCNKn")

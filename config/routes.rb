@@ -88,7 +88,7 @@ Voyzes::Application.routes.draw do
     namespace :account do
       resources :uploads do
         collection do
-          get "sign_s3"
+          get "signed_s3_put"
           get "count"
         end
       end

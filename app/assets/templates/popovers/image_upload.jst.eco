@@ -1,0 +1,12 @@
+<div class="image-upload-container">
+  <div class="popover-header">
+    <!-- progress -->
+    <div class="progress <% if @progress && @progress < 100: %> progress-striped <% end %>  active">
+      <div class="progress-bar progress-bar-success" style="width: <%= @progress %>%"></div>
+    </div>
+  </div><!-- .popover-body -->
+  <div class="popover-footer">
+    <span class="upload-status"><%= @status %></span>
+    <button class="btn btn-xs btn-default btn-cancel pull-right" type="button">Cancel</button>
+  </div><!-- .popover-footer -->
+</div>

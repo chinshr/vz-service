@@ -1,47 +1,46 @@
 <div id="hover-overlay"></div>
-<div id="file-upload-grid" class="upload-grid">
-  <div id="drop-box-tile" class="tile upload-tile col-lg-4 col-md-4 col-sm-4">
-    <div id="drop-box" class="panel upload-panel">
-      <div class="panel-heading">
-        <h3>Drop files here...</h3>
-        <div class="upload-panel-separator">&mdash; or &mdash;</div>
-      </div><!-- panel-heading -->
-      <div class="panel-body">
-        <div class="form-group form-group-file-upload">
-          <!-- File upload -->
-          <button id="files-proxy" class="btn btn-primary btn-lg btn-upload btn-upload-file"><i class="fa fa-cloud-upload"></i>&nbsp;Upload...</button>
-          <label for="files" class="control-label hidden">Upload</label>
-          <input type="file" id="files" name="files[]" multiple />
-          <!-- Source URL -->
-          <button id="upload-source" class="btn btn-primary btn-lg btn-upload btn-upload-source" xdata-target="#upload-source-modal" data-toggle="modal"><i class="fa fa-external-link-square"></i>&nbsp;Source...</button>
-          <!-- Email link -->
-          <button id="email-proxy" class="btn btn-primary btn-lg btn-upload btn-upload-email"><i class="fa fa-envelope"></i>&nbsp;my@voyz.es</button>
-          <% if false: %>
-          <div class="email-file-upload-holder">mail to <a href="mailto:my@voyz.es?subject=Document title&body=—%0DAttach all your audio files you want transcribed for English United States (en-US)." class="xbtn btn-link btn-upload-email">my@voyz.es</a></div>
-          <% end %>
-        </div><!-- .form-group-file-upload -->
+<div class="browser-grid upload-grid">
+  <div id="upload-grid-item" data-type="zdropbox" class="grid-item col-lg-2 col-md-3 col-sm-6 col-xs-12">
+    <div id="upload-tile" class="tile upload-tile">
+      <p class="number">-999</p>
+      <div id="drop-box" class="panel upload-panel">
+        <div class="panel-heading">
+          <h3>Drop files here...</h3>
+          <div class="upload-panel-separator">&mdash; or &mdash;</div>
+        </div><!-- panel-heading -->
+        <div class="panel-body">
+          <div class="form-group form-group-file-upload">
+            <!-- File upload -->
+            <button id="files-proxy" class="btn btn-primary btn-lg btn-upload btn-upload-file"><i class="fa fa-cloud-upload"></i>&nbsp;Upload...</button>
+            <label for="files" class="control-label hidden">Upload</label>
+            <input type="file" id="files" name="files[]" multiple />
+            <!-- Source URL -->
+            <button id="upload-source" class="btn btn-primary btn-lg btn-upload btn-upload-source" xdata-target="#upload-source-modal" data-toggle="modal"><i class="fa fa-external-link-square"></i>&nbsp;Source...</button>
+            <!-- Email link -->
+            <button id="email-proxy" class="btn btn-primary btn-lg btn-upload btn-upload-email"><i class="fa fa-envelope"></i>&nbsp;my@voyz.es</button>
+            <% if false: %>
+            <div class="email-file-upload-holder">mail to <a href="mailto:my@voyz.es?subject=Document title&body=—%0DAttach all your audio files you want transcribed for English United States (en-US)." class="xbtn btn-link btn-upload-email">my@voyz.es</a></div>
+            <% end %>
+          </div><!-- .form-group-file-upload -->
 
-        <div class="form-group form-group-locale">
-          <label class="hidden" for="disabledSelect">Audio language</label>
-          <select data-placeholder="Choose a Language..." id="file-locale" class="form-control input-sm input-single-searchable">
-            <option value="en-US">English United States</option>
-            <option value="es-ES">Spanish</option>
-<!--
-            <option value="en-UK" disabled>English Great Britain</option>
-            <option value="de-DE" disabled>German Germany</option>
-            <option value="fr-FR" disabled>French France</option>
-            <option value="it-IT" disabled>Italian Italy</option>
-            <option value="es-MX" disabled>Spanish Mexico</option>
-            <option value="es-AR" disabled>Spanish Argentina</option>
-            <option value="es-VE" disabled>Spanish Venezuela</option>
--->
-          </select>
-        </div><!-- .form-group-locale -->
-      </div><!-- .panel-body -->
-    </div><!-- #drop-box .upload-panel -->
-  </div><!-- #drop-box-tile .upload-tile -->
-
-  <div id="uploaded-files">
-    <!-- upload tiles go here-->
-  </div><!-- #uploaded-files -->
-</div><!-- #file-uploads .upload-grid -->
+          <div class="form-group form-group-locale">
+            <label class="hidden" for="disabledSelect">Audio language</label>
+            <select data-placeholder="Choose a Language..." id="file-locale" class="form-control input-sm input-single-searchable">
+              <option value="en-US">English United States</option>
+              <option value="es-ES">Spanish International</option>
+  <!--
+              <option value="en-UK" disabled>English Great Britain</option>
+              <option value="de-DE" disabled>German Germany</option>
+              <option value="fr-FR" disabled>French France</option>
+              <option value="it-IT" disabled>Italian Italy</option>
+              <option value="es-MX" disabled>Spanish Mexico</option>
+              <option value="es-AR" disabled>Spanish Argentina</option>
+              <option value="es-VE" disabled>Spanish Venezuela</option>
+  -->
+            </select>
+          </div><!-- .form-group-locale -->
+        </div><!-- .panel-body -->
+      </div><!-- .upload-panel -->
+    </div><!-- #upload-tile .upload-tile -->
+  </div><!-- .grid-item -->
+</div><!-- #file-upload-grid .browser-grid .upload-grid -->

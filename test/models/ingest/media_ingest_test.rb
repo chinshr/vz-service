@@ -5,6 +5,11 @@ class Ingest::MediaIngestTest < ActiveSupport::TestCase
     ActionMailer::Base.deliveries.clear
   end
 
+  context "validations" do
+    should validate_presence_of :document
+    should validate_presence_of(:upload).on(:create)
+  end
+
   context "delegates" do
     should "delegate to document getters" do
       document = FactoryGirl.create(:document)
@@ -154,26 +159,6 @@ class Ingest::MediaIngestTest < ActiveSupport::TestCase
 
     assert_equal 1, ActionMailer::Base.deliveries.size
     assert_equal "Finished, '#{ingest.upload.file_name}' has been transcribed.", ActionMailer::Base.deliveries[0].subject
-  end
-
-  context "#handle" do
-    should "set handle if not S3 and not present" do
-      ingest = Ingest::MediaIngest.new
-      ingest.valid?
-      assert_equal 20, ingest.handle.length
-    end
-
-    should "derive handle from S3 upload URL" do
-      ingest = Ingest::MediaIngest.new(source_url: "http://s3.amazonaws.com/vz-test-dropbox/61glI7mwmN")
-      ingest.valid?
-      assert_equal "61glI7mwmN", ingest.handle
-    end
-
-    should "use assigned handle" do
-      ingest = Ingest::MediaIngest.new(handle: "abcd1234")
-      ingest.valid?
-      assert_equal "abcd1234", ingest.handle
-    end
   end
 
   context "stage related" do

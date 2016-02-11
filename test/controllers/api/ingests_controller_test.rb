@@ -254,7 +254,7 @@ class Api::IngestsControllerTest < ActionController::TestCase
 
     should "destroy with backend user" do
       sign_in :user, @user2
-      assert_difference 'Ingest.count', -1 do
+      assert_enqueued_with(job: Ingest::RemoveJob) do
         delete :destroy, {id: @ingest1, format: :json}
         assert_response :success
         assert_attributes response_body["ingest"]

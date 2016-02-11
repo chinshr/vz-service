@@ -1,0 +1,90 @@
+require 'test_helper'
+
+class ImageTest < ActiveSupport::TestCase
+
+  context "associations" do
+    # should belong_to(:image_format)
+    should belong_to(:ingest)
+  end
+
+  context "validations" do
+    subject { FactoryGirl.create(:image) }
+
+    should validate_presence_of(:image_format_id)
+    should validate_presence_of(:path)
+    should validate_numericality_of(:size)
+  end
+
+  context "delegate" do
+    setup do
+      @image = FactoryGirl.create(:image)
+    end
+
+    should delegate :width, to: :image_format
+    should "delegate :width, to: :image_format" do
+      assert_equal @image.image_format.width, @image.width
+    end
+
+    should delegate :height, to: :image_format
+    should "delegate :height, to: :image_format" do
+      assert_equal @image.image_format.height, @image.height
+    end
+
+    should delegate :format, to: :image_format
+    should "delegate :format, to: :image_format" do
+      assert_equal @image.image_format.format, @image.format
+    end
+
+    should delegate :aspect_ratio, to: :image_format
+    should "delegate :aspect_ratio, to: :image_format" do
+      assert_equal @image.image_format.aspect_ratio, @image.aspect_ratio
+    end
+  end
+
+  should "#create" do
+    assert_difference "Image.count" do
+      FactoryGirl.create(:image, :document_ingest)
+    end
+  end
+
+  context "Model::Iteration" do
+    should "#iteration" do
+      image = FactoryGirl.build(:image, :document_ingest)
+      image.ingest.iteration = 5
+      assert_equal true, image.valid?
+      assert_equal 5, image.iteration
+    end
+
+    context "scopes" do
+      setup do
+        @image = FactoryGirl.create(:image,
+          ingest: FactoryGirl.create(:image_ingest, iteration: 1,
+            ingestable: FactoryGirl.create(:document)))
+      end
+
+      should "#iteration" do
+        assert_equal @image, Image.iteration_eq(1).first
+      end
+    end
+  end
+
+  context "#url" do
+    setup do
+      @image = FactoryGirl.create(:image, :document_ingest)
+    end
+
+    should "should return a url that ends with path" do
+      assert_equal "#{File.join(APP_CONFIG['INGEST_IMAGE_ASSET_HOST'], @image.ingest.s3_origin_bucket_name, @image.path)}", @image.url
+    end
+  end
+
+  should "#destroy" do
+    image = FactoryGirl.create(:image, :document_ingest)
+    assert_no_difference "Image.count" do
+      assert_enqueued_with(job: Image::RemoveJob) do
+        image.destroy
+        assert_not_nil image.removed_at
+      end
+    end
+  end
+end

@@ -2,7 +2,8 @@ source 'https://rubygems.org'
 ruby '2.2.3'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '4.1.9' # '4.0.5'
+gem 'rails', '4.1.9'
+gem 'activerecord-deprecated_finders', require: 'active_record/deprecated_finders'
 
 # Use postgresql as the database for Active Record
 gem 'pg'
@@ -51,18 +52,17 @@ group :development, :test do
 end
 
 group :test do
-  gem 'mocha', :require => false
+  gem 'mocha', require: false
   gem 'shoulda'
   gem 'shoulda-context'
   gem 'shoulda-matchers'
   gem 'factory_girl_rails'
   gem 'minitest'
-  gem 'simplecov', :require => false
-  # gem 'turn'
+  gem 'simplecov', require: false
   gem 'test_after_commit'
   gem 'webmock'
   gem 'timecop'
-  # gem 'fake_sqs'
+  gem 'wisper-minitest', require: false
 end
 
 group :production do
@@ -73,7 +73,7 @@ gem 'modernizr-rails'
 gem 'aws-sdk-v1'
 gem 'backbone-on-rails'
 gem 'backbone-support'
-#gem 'backbone-validation-rails'
+# gem 'backbone-validation-rails'
 gem 'eco'
 gem 'ejs'
 gem 'rabl'
@@ -123,3 +123,5 @@ gem 'clockwork', '~> 1.2.0'
 gem 'pubnub', '~> 3.7.9'
 gem 'metainspector'
 gem 'srt'
+gem 'mini_magick'
+gem 'wisper', '~> 1.6.1'

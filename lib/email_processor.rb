@@ -37,14 +37,14 @@ class EmailProcessor
               upload.file_type   = content_type
               # upload.locale      = locale_from_email_address(email.to) || message.locale || "en-US"
               upload.locale      = locale_from_email_address(email.to) || "en-US"
-              upload.privacy     = [:unlisted]
+              upload.privacy     = [:private]
             end
 
             Rails.logger.info "* mime_type: #{mime_type(attached_file.tempfile.path)}"
 
             key = Upload.generate_object_name
             upload_file_to_s3_bucket(attached_file.tempfile.path, key)
-            upload.source_url = "#{APP_CONFIG['S3_URL']}#{APP_CONFIG['S3_INBOUND_BUCKET']}/#{key}"
+            upload.source_url = "#{APP_CONFIG['S3_URL']}/#{APP_CONFIG['S3_INBOUND_BUCKET']}/#{key}"
 
             message.save
 

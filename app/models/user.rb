@@ -127,6 +127,10 @@ class User < ActiveRecord::Base
     "#{gravatar_root}avatar/#{gravatar_id}.png?s=#{options[:size]}&d=identicon"
   end
 
+  def pubsub_channel
+    "vz-user-#{self.uid}"
+  end
+
   protected
 
   def https?

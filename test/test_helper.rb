@@ -1,4 +1,6 @@
 ENV["RAILS_ENV"] ||= "test"
+ENV["PUBNUB_DISABLED"] ||= "true"
+
 require 'simplecov'
 SimpleCov.start
 require File.expand_path('../../config/environment', __FILE__)
@@ -8,6 +10,7 @@ require 'sidekiq/testing'
 require 'geocoder'
 require 'webmock/minitest'
 require 'active_job/test_helper.rb'
+require 'wisper/minitest/assertions'
 
 Sidekiq::Testing.fake!
 AWS.stub!
@@ -70,8 +73,16 @@ class ActiveSupport::TestCase
       with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Ruby'}).
       to_return(:status => 200, :body => "{}", :headers => {})
 
+    # pubnub, currently not working
+    stub_request(:any, /.*pubnub.com.*/)
+
     # stub sqs
     Worker::Base.stubs(:queue).returns(SQSTestQueue.new)
+  end
+
+  teardown do
+    # Ingest.all.each {|i| i.delete_without_job}
+    # Upload.all.each {|u| u.delete_without_job}
   end
 end
 
@@ -89,8 +100,7 @@ class ActionController::TestCase
   def assert_response_body_attributes_with(envelope, expected_attributes = {})
     body = response_body
     assert body.has_key?(envelope.to_s), "should have envelope '#{envelope}'"
-    expected_attributes = Array.wrap(expected_attributes)
-      .inject({}) {|r,i| r[i] = nil; r} unless expected_attributes.is_a?(Hash)
+    expected_attributes = Array.wrap(expected_attributes).inject({}) {|r,i| r[i] = nil; r} unless expected_attributes.is_a?(Hash)
     expected_attributes.stringify_keys!
     assert_attributes body[envelope.to_s], expected_attributes
   end

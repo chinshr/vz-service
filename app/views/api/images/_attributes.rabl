@@ -1,0 +1,1 @@
+attributes :uid, :url, :width, :height, :format, :aspect_ratio, :iteration

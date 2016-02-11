@@ -1,0 +1,34 @@
+<div class="settings-container">
+  <ul class="popdown-menu" role="menu">
+    <li role="presentation">
+      <a class="action action-update" role="menuitem" tabindex="-1" href="#"><i class="fa fa-cog"></i>Settings</a>
+    </li>
+    <li role="presentation" class="disabled">
+      <a class="action action-edit edit-slug" role="menuitem" tabindex="-1" href="#"><i class="fa fa-pencil"></i>Edit</a>
+    </li>
+    <li role="presentation" class="disabled">
+      <a class="action action-preview preview-slug" role="menuitem" tabindex="-1" href="#"><i class="fa fa-eye"></i>Preview</a>
+    </li>
+    <li role="presentation" class="disabled">
+      <a class="action action-published published-slug" role="menuitem" tabindex="-1" href="#"><i class="fa fa-dot-circle-o"></i>Published</a>
+    </li>
+<!--
+    <li role="presentation" class="divider"></li>
+
+    <li role="presentation" class="disabled">
+      <a class="action action-start" role="menuitem" tabindex="-1" href="#"><i class="fa fa-hourglass-start"></i>Start</a>
+    </li>
+    <li role="presentation" class="disabled">
+      <a class="action action-stop" role="menuitem" tabindex="-1" href="#"><i class="fa fa-hand-stop-o"></i>Stop</a>
+    </li>
+    <li role="presentation" class="disabled">
+      <a class="action action-reset" role="menuitem" tabindex="-1" href="#"><i class="fa fa-rotate-left"></i>Reset</a>
+    </li>
+-->
+    <li role="presentation" class="divider"></li>
+
+    <li role="presentation">
+      <a class="action action-delete" role="menuitem" tabindex="-1" href="#"><i class="glyphicon glyphicon-trash"></i>Archive</a>
+    </li>
+  </ul>
+</div>

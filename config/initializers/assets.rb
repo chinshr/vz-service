@@ -1,0 +1,1 @@
+Rails.application.config.assets.precompile += %w( lib/html5shiv.js lib/respond.min.js )

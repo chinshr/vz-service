@@ -61,6 +61,10 @@ module Model::URI
       !!content_type && !!(content_type.match(/^(video)\/?.*$/i) || content_type.match(/^(audio)\/?.*$/i))
     end
 
+    def valid_image_content_type?
+      !!content_type && !!content_type.match(/^(image)\/?.*$/i)
+    end
+
     def metadata
       result = {}
       result['content_type'] = content_type if content_type
