@@ -9,9 +9,9 @@ class UserTest < ActiveSupport::TestCase
   end
 
   context "associations" do
-    should have_many :documents
-    should have_many :ingests
-    should have_many :uploads
+    should have_many(:documents).dependent(:nullify)
+    should have_many(:uploads).dependent(:nullify)
+    should have_many(:ingests).through(:uploads)
   end
 
   context "validations" do

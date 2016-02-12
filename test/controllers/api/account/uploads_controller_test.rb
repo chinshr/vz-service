@@ -26,6 +26,7 @@ class Api::Account::UploadsControllerTest < ActionController::TestCase
 
             upload = Upload.last
             assert_equal @user.id, upload.user.id
+            assert_equal @user.id, upload.ingest.user.id
             assert_equal "Upload::MediaUpload", upload.type
             assert_equal "audio/wav", upload.file_type
             assert_equal "i-like-pickles.wav", upload.file_name

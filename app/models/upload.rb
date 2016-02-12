@@ -14,8 +14,6 @@ class Upload < ActiveRecord::Base
   delegate :file_type=, to: :ingest_or_build_ingest_and_associations, allow_nil: true
   delegate :file_size, to: :ingest_or_build_ingest_and_associations, allow_nil: true
   delegate :file_size=, to: :ingest_or_build_ingest_and_associations, allow_nil: true
-  delegate :user, to: :ingest_or_build_ingest_and_associations, allow_nil: true
-  delegate :user=, to: :ingest_or_build_ingest_and_associations, allow_nil: true
   delegate :metadata, to: :ingest_or_build_ingest_and_associations, allow_nil: true
   delegate :metadata=, to: :ingest_or_build_ingest_and_associations, allow_nil: true
   delegate :events, to: :ingest_or_build_ingest_and_associations, allow_nil: true
@@ -25,6 +23,7 @@ class Upload < ActiveRecord::Base
   delegate :state, to: :ingest_or_build_ingest_and_associations
   delegate :progress, to: :ingest_or_build_ingest_and_associations
 
+  belongs_to :user
   has_one :ingest
 
   validates_associated :ingest, on: :create
@@ -144,6 +143,12 @@ class Upload < ActiveRecord::Base
     Upload::DeleteJob.perform_later(self.id)
   end
   alias_method_chain :delete, :job
+
+  def user_with_ingest=(value)
+    ingest.try(:user=, value)
+    self.user_without_ingest = value
+  end
+  alias_method_chain :user=, :ingest
 
   protected
 
