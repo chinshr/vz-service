@@ -62,6 +62,17 @@ App.Views.PopoversImageUpload = App.Views.PopoverBase.extend({
       .on('hidden.bs.popover', this.teardown)
       .data("bs.popover");
 
+    this.holder.on('click', (function(_this) {
+      return function(e) {
+        e.stopPropagation();
+        e.preventDefault();
+        _this.holder.tooltip('hide');
+        /* close all other popovers except this */
+        _this.holder.not(this).popover('hide');
+        // _this.popover.toggle();
+      };
+    })(this));
+
     return this;
   },
 

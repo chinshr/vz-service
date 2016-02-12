@@ -142,6 +142,7 @@ App.Views.UploadsEdit = App.Views.UploadsBase.extend({
         .append(input)
         .on('click', function(e) {
           e.stopPropagation();
+          e.preventDefault();
           input.click();
         });
     });
