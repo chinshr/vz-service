@@ -154,6 +154,7 @@ App.Views.UploadsEdit = App.Views.UploadsBase.extend({
         holder: this.$('.thumb-upload.image'),
         selector: this.$('.image-upload'),
         dropped: false,
+        placement: "bottom",
         callbacks: {
           finished: this.imageUploadFinished,
           stopped: this.imageUploadStopped,
@@ -184,13 +185,13 @@ App.Views.UploadsEdit = App.Views.UploadsBase.extend({
     var _this = this;
     this.model.fetch({
       success: function() {
-        this.updateImages();
-        this.imageUpload.destroy();
-        this.initImageUploadInput();
+        _this.updateImages();
+        _this.imageUpload.destroy();
+        _this.initImageUploadInput();
       },
       error: function() {
-        this.imageUpload.destroy();
-        this.initImageUploadInput();
+        _this.imageUpload.destroy();
+        _this.initImageUploadInput();
       }
     });
   },
