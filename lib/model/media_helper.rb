@@ -21,14 +21,21 @@ module Model::MediaHelper
       !!(content_type && content_type.match(/^(audio)\/?.*$/))
     end
 
-    def humanize_path(path)
-      return if path.blank?
-      result = URI.decode(path)
+    def humanize(string)
+      return if string.blank?
+      result = URI.decode(string)
       result = result.mb_chars
-      result = result.split(/[\\\/]/).last
       result = result.split(".").first unless result.blank?
       result.gsub!(/[-+]+/, ' ') unless result.blank?
+      result.gsub!(/\s+/, ' ') unless result.blank?
       result = result.strip.humanize.titleize unless result.blank?
+      result.to_s
+    end
+
+    def humanize_path(path)
+      return if path.blank?
+      result = humanize(path)
+      result = result.split(/[\\\/]/).last unless result.blank?
       result.to_s
     end
 
@@ -56,6 +63,10 @@ module Model::MediaHelper
       self.class.valid_video_content_type?(file_type)
     end
     alias_method :valid_video_content_type?, :valid_video_file_type?
+
+    def humanize(string)
+      self.class.humanize(string)
+    end
 
     def humanize_path(path)
       self.class.humanize_path(path)
@@ -99,7 +110,7 @@ module Model::MediaHelper
       # title
       if title.blank?
         if metadata['target'] && metadata['target']['title']
-          self.title = humanize_path(metadata['target']['title'])
+          self.title = humanize(metadata['target']['title'])
         elsif file_name.present?
           self.title = humanize_path(file_name)
         elsif source_url.present?
