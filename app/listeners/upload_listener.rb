@@ -13,7 +13,7 @@ class UploadListener
       }
     }
   rescue FailureResponseError => ex
-    Rails.logger.info "PubNub exception: #{ex.message}"
+    Rails.logger.error "PubNub exception: #{ex.message}"
   end
 
 end
