@@ -47,6 +47,7 @@ App.Views.UploadsIndex = Backbone.View.extend({
 
   show: function() {
     $('#content-loading').hide();
+    NProgress.done();
   },
 
   showPageError: function() {
