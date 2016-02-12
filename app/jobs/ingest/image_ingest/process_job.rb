@@ -117,8 +117,7 @@ class Ingest::ImageIngest::ProcessJob < ActiveJob::Base
       end
     end
 
-    # determine file_type and update ingest
-    inspector = CPW::Speech::AudioInspector.new(original_file_fullpath)
+    # determine file_type/size and update ingest
     ingest.update_attributes({
       file_type: file_type(original_file_fullpath),
       file_size: File.size(original_file_fullpath)
@@ -127,7 +126,7 @@ class Ingest::ImageIngest::ProcessJob < ActiveJob::Base
   end
 
   def upload_raw_file_to_s3_outbound_bucket
-    s3_upload_object(media_file_fullpath_name,
+    s3_upload_object(original_file_fullpath,
       ingest.s3_origin_bucket_name, ingest.s3_origin_key)
   end
 

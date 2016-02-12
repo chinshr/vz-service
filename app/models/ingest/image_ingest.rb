@@ -1,4 +1,6 @@
 class Ingest::ImageIngest < Ingest
+  include Model::ImageHelper
+
   delegate :user, to: :ingestable, allow_nil: true
 
   belongs_to :ingestable, polymorphic: true, touch: true
@@ -8,6 +10,7 @@ class Ingest::ImageIngest < Ingest
     :class_name => "::Image", :foreign_key => :ingest_id, :dependent => :destroy
 
   validates :ingestable, presence: true
+  validate :valid_image_source_url, on: :create, unless: :has_upload?
 
   after_validation :set_iteration, on: :create
 

@@ -33,9 +33,26 @@ class Ingest::ImageIngestTest < ActiveSupport::TestCase
     end
   end
 
-  should "#create" do
-    assert_difference "Ingest::ImageIngest.count" do
-      @ingest = FactoryGirl.create(:image_ingest, :ingestable_document)
+  context "#create" do
+    should "with factory" do
+      assert_difference "Ingest::ImageIngest.count" do
+        @ingest = FactoryGirl.create(:image_ingest, :ingestable_document)
+      end
+    end
+
+    should "from media source" do
+      stub_request(:get, "http://www.example.com/the/best/image.jpg").
+        with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Mozilla/5.0 (Macintosh; Intel Mac OS X x.y; rv:10.0) Gecko/20100101 Firefox/10.0'}).
+        to_return(:status => 200, :body => "", :headers => {'Content-Type' => 'image/jpeg'})
+      media_ingest = FactoryGirl.create(:media_ingest_as_audio)
+
+      assert_difference "Ingest::ImageIngest.count" do
+        ingest = Ingest::ImageIngest.create({
+          type: "Ingest::ImageIngest",
+          ingestable: media_ingest.document,
+          source_url: "http://www.example.com/the/best/image.jpg"
+        })
+      end
     end
   end
 
