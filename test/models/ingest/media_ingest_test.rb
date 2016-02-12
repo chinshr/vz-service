@@ -10,6 +10,20 @@ class Ingest::MediaIngestTest < ActiveSupport::TestCase
     should validate_presence_of(:upload).on(:create)
   end
 
+  should "#create image ingest from target image" do
+    stub_request(:get, "https://www.example.com/best/image.jpg").
+      with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Mozilla/5.0 (Macintosh; Intel Mac OS X x.y; rv:10.0) Gecko/20100101 Firefox/10.0'}).
+      to_return(:status => 200, :body => "", :headers => {'Content-Type' => 'image/jpeg'})
+
+    assert_difference "Ingest::MediaIngest.count" do
+      assert_difference "Ingest::ImageIngest.count" do
+        ingest = FactoryGirl.create(:media_ingest_as_audio,
+          metadata: {'target' => {'image' => "https://www.example.com/best/image.jpg"}})
+      end
+    end
+    assert_equal :starting, Ingest::ImageIngest.last.state
+  end
+
   context "delegates" do
     should "delegate to document getters" do
       document = FactoryGirl.create(:document)

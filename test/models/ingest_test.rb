@@ -552,4 +552,10 @@ class IngestTest < ActiveSupport::TestCase
       end
     end
   end
+
+  should "have upload" do
+    media_ingest = FactoryGirl.create(:media_ingest_as_audio)
+    assert_equal true, media_ingest.send(:has_upload?)
+    assert_equal false, Ingest::ImageIngest.new.send(:has_upload?)
+  end
 end

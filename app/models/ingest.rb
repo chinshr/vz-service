@@ -498,4 +498,8 @@ class Ingest < ActiveRecord::Base
       publish :refresh_upload, self.upload if upload
     end
   end
+
+  def has_upload?
+    upload.present?
+  end
 end

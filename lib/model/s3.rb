@@ -50,14 +50,6 @@ module Model::S3
       end
     end
 
-    def has_source_url?
-      source_url.present?
-    end
-
-    def has_origin_url?
-      origin_url.present?
-    end
-
     # E.g. true for "http://s3.amazonaws.com/vz-dropbox/3o6njggbog03s5odak5y"
     def has_s3_source_url?
       result = false
@@ -69,6 +61,14 @@ module Model::S3
       result
     end
 
-  end
+    private
 
+    def has_source_url?
+      source_url.present?
+    end
+
+    def has_origin_url?
+      origin_url.present?
+    end
+  end
 end
