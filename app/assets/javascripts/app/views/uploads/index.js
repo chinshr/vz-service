@@ -361,7 +361,7 @@ App.Views.UploadsIndex = Backbone.View.extend({
             success: function() {
               _this.collection.add(_model);
             },
-            error: function() {
+            error: function(model, xhr, options) {
               // may have been deleted, so refresh
               _this.refreshLayout();
             }
