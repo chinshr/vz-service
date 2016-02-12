@@ -360,6 +360,10 @@ App.Views.UploadsIndex = Backbone.View.extend({
           _model.fetch({
             success: function() {
               _this.collection.add(_model);
+            },
+            error: function() {
+              // may have been deleted, so refresh
+              _this.refreshLayout();
             }
           });
         }
