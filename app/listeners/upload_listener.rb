@@ -12,6 +12,8 @@ class UploadListener
         sequence: Time.zone.now.to_i
       }
     }
+  rescue FailureResponseError => ex
+    Rails.logger.info "PubNub exception: #{ex.message}"
   end
 
 end

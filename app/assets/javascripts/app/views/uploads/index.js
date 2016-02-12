@@ -77,8 +77,8 @@ App.Views.UploadsIndex = Backbone.View.extend({
       // Isotope add items:
       // http://isotope.metafizzy.co/v1/docs/adding-items.html
       grid.imagesLoaded(function() {
-        grid.isotope('reveal', grid.data('isotope').items);
         grid.isotope('insert', item);
+        grid.isotope('reveal', grid.data('isotope').items);
       });
 
       return this.progressViews[model.cid] = view;

@@ -495,7 +495,7 @@ class Ingest < ActiveRecord::Base
       previous_changes[:aasm_state] ||
       previous_changes[:aasm_stage]
 
-      publish :refresh_upload, self.upload if upload
+      publish(:refresh_upload, upload) if upload
     end
   end
 

@@ -96,6 +96,7 @@ class Api::Account::UploadsControllerTest < ActionController::TestCase
               "ingestable_id", "ingestable_type"]
 
           upload = Upload.last
+          assert_equal @user.id, upload.user_id
           assert_equal "Upload::ImageUpload", upload.type
           assert_equal "image/jpeg", upload.file_type
           assert_equal "test.jpg", upload.file_name

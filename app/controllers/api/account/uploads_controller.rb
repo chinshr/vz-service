@@ -9,7 +9,7 @@ class Api::Account::UploadsController < Api::Account::ApplicationController
   def create
     authorize :"account/upload"
     @upload = Upload.create(create_params) do |u|
-      u.user = current_user if u.ingest.respond_to?(:user=)
+      u.user = current_user
     end
     respond_with "api", "account", @upload
   end
