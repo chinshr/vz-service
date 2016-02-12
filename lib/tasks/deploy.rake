@@ -1,6 +1,17 @@
 namespace :deploy do
   namespace :after do
 
+    namespace :users do
+      desc 'Upgrade when user_id was added to uploads'
+      task :set_uploads_user_id => :environment do
+        Upload.find_each do |upload|
+          if upload.ingest.user.present?
+            upload.update_attributes(user_id: upload.ingest.user.id)
+          end
+        end
+      end
+    end
+
     namespace :ingest do
       desc 'Upgrade ingest stage machine'
       task :rename_ingest_stages => :environment do

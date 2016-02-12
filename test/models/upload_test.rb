@@ -18,6 +18,7 @@ class UploadTest < ActiveSupport::TestCase
   end
 
   context "associations" do
+    should belong_to(:user)
     should have_one(:ingest)
   end
 
@@ -100,6 +101,7 @@ class UploadTest < ActiveSupport::TestCase
     should "delegate :user=" do
       user = FactoryGirl.create(:user)
       @upload.user = user
+      assert_equal @upload.user, @upload.ingest.user
       assert_equal true, @upload.save
       @upload = Upload.find_by_id(@upload.id)
       assert_equal user, @upload.user

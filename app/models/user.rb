@@ -27,8 +27,8 @@ class User < ActiveRecord::Base
   end
 
   has_many :documents, dependent: :nullify
-  has_many :ingests, through: :documents, source: :ingests
-  has_many :uploads, through: :ingests
+  has_many :uploads, dependent: :nullify
+  has_many :ingests, through: :uploads, source: :ingest
   has_many :client_accesses, dependent: :destroy, class_name: "Api::ClientAccess"
 
   acts_as_tagger
