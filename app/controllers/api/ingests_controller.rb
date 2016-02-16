@@ -42,7 +42,7 @@ class Api::IngestsController < Api::ApplicationController
   protected
 
   def load_ingest
-    @ingest = Ingest.find(params[:id])
+    @ingest = Ingest.eager_load(:upload, :document => :track).find(params[:id])
   end
 
   def update_params
