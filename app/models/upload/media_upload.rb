@@ -81,12 +81,12 @@ class Upload::MediaUpload < Upload
       locale_changed = has_locale_recently_changed?
       ingest.document.save if ingest.document && ingest.document.changed?
       ingest.save if ingest.new_record? || ingest.changed?
-
-      if locale_changed
-        ingest.restart! if ingest.may_restart?
-      else
-        ingest.start! if ingest.may_start?
-      end
+    end
+  ensure
+    if locale_changed
+      ingest.restart! if ingest.may_restart?
+    else
+      ingest.start! if ingest.may_start?
     end
   end
 
