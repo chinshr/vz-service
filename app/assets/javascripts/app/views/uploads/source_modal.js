@@ -7,11 +7,13 @@ App.Views.UploadsSourceModal = Backbone.View.extend({
   },
 
   initialize: function(options) {
-    this.parent = options.parent;
-    this.model  = new App.Models.Upload({
+    this.parent    = options.parent;
+    this.model     = new App.Models.Upload({
       locale: this.$("#file-locale").val() || "en-US",
       type: "media_upload"
     });
+    this.callbacks = options.callbacks || {};
+
     Backbone.Validation.bind(this, {
       // labelFormatter: 'labels'
     });
@@ -52,9 +54,13 @@ App.Views.UploadsSourceModal = Backbone.View.extend({
             _this.$(":submit").button("reset");
             _this.model.set(_this.model.parse(data));
             _this.hide();
-            return _.defer(function() {
+            if (_this.callbacks.success) {
+              _this.callbacks.success(data);
+            }
+            _.defer(function() {
               _this.parent.collection.add(_this.model);
             });
+            return _this;
           };
         })(this),
         error: (function(_this) {
@@ -74,6 +80,9 @@ App.Views.UploadsSourceModal = Backbone.View.extend({
             });
             _this.model.trigger('validated', false, _this.model, errors);
             _this.model.trigger('validated:invalid', self.model, errors);
+            if (_this.callbacks.error) {
+              _this.callbacks.error(response);
+            }
             return _this;
           };
         })(this)
@@ -107,10 +116,21 @@ App.Views.UploadsSourceModal = Backbone.View.extend({
   },
 
   destroy: function() {
-    this.hide();
-    this.remove();
-    this.unbind();
-    return this;
+    // this.hide();
+    // this.remove();
+    // this.unbind();
+    // return this;
+
+    this.holder.popover("hide");
+    this.holder.popover("destroy");
+    // this.holder.remove();
+    // this.holder = null;
+
+    this.undelegateEvents();
+    this.$el.removeData().unbind();
+    Backbone.View.prototype.remove.call(this);
+
+    delete this;
   }
 
 });

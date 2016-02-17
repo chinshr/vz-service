@@ -17,7 +17,7 @@ App.Views.UploadsIndex = Backbone.View.extend({
       "initDropTarget", "addHover", "removeHover", "trigger",
       "addUploadView", "addAll", "addFiles", "dropFiles",
       "dropzone", "uploadToS3", "statusMessage", "initMailTo",
-      "refreshUploadCallback", "refreshLayout");
+      "refreshUploadCallback", "refreshLayout", "sourceModalSuccess");
 
     this.listenTo(this.collection, 'add', this.addUploadView);
     this.listenTo(this.collection, 'reset', this.addAll);
@@ -134,8 +134,23 @@ App.Views.UploadsIndex = Backbone.View.extend({
 
   initSourceModal: function() {
     return this.sourceModal = new App.Views.UploadsSourceModal({
-      parent: this
+      parent: this,
+      callbacks: {
+        success: this.sourceModalSuccess
+      }
     });
+  },
+
+  sourceModalSuccess: function() {
+    var _this = this;
+    _.defer(function() {
+      // this.sourceModal.destroy();
+      _this.initSourceModal();
+    });
+  },
+
+  sourceModalError: function(response) {
+    console.log(response);
   },
 
   addHover: function(event) {
