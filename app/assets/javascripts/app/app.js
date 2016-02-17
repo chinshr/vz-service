@@ -1,17 +1,18 @@
 //= require_self
+//= require ./models
+//= require ./router
 //= require_tree ../../templates
 //= require_tree ./helpers
 //= require_tree ./models
 //= require_tree ./collections
 //= require ./views/popover_base
+//= require_tree ./views/tiles
 //= require_tree ./views
-//= require_tree ./routers
 
 window.App = {
   Models: {},
   Collections: {},
   Views: {},
-  Routers: {},
   Helpers: {},
 
   initialize: function() {
@@ -19,16 +20,11 @@ window.App = {
       labelFormatter: 'label'
     });
 
-    if (window.location.pathname == "/dashboard") {
-      new App.Routers.Dashboard();
-      Backbone.history.start({pushState: !!(window.history && history.pushState), root: "/dashboard"});
-    } else {
-      new App.Routers.Documents();
-      Backbone.history.start({pushState: !!(window.history && history.pushState), root: "/documents"});
-    }
+    this.router = new App.Router();
+    Backbone.history.start({pushState: true});
   }
 }
 
-$(document).ready(function() {
+$(function() {
   App.initialize();
 });

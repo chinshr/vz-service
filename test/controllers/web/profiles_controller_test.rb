@@ -2,11 +2,13 @@ require 'test_helper'
 
 class Web::ProfilesControllerTest < ActionController::TestCase
   context "GET /@:id" do
+    setup do
+      @user = FactoryGirl.create(:user)
+    end
 
-    should "not be found" do
-      assert_raises ActionController::RoutingError do
-        get :show, :id => "@chinshr"
-      end
+    should "be found" do
+      get :show, :id => "@#{@user.username}"
+      assert_response :success
     end
 
   end

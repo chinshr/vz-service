@@ -52,25 +52,16 @@ $font-family: 'Lato', sans-serif;
 $btn-default-radius: 2px;
 
 /* ====================== MEDIA QUERIES HELPERs ========================= */
-// # from https://gist.github.com/bobbygrace/9e961e8982f42eb91b80?utm_source=html5weekly&utm_medium=email
+// see: http://include-media.com/documentation/
 
-@highdensity:  ~"only screen and (-webkit-min-device-pixel-ratio: 1.5)",
-               ~"only screen and (min--moz-device-pixel-ratio: 1.5)",
-               ~"only screen and (-o-min-device-pixel-ratio: 3/2)",
-               ~"only screen and (min-device-pixel-ratio: 1.5)";
+@import "include-media";
 
-@small:        ~"only screen and (max-width: 750px)";
-@medium:       ~"only screen and (min-width: 751px) and (max-width: 900px)";
-@large:        ~"only screen and (min-width: 901px) and (max-width: 1280px)";
-@extra-large:  ~"only screen and (min-width: 1281px)";
+/* Example:
 
-@print:        ~"print";
-
-/*
-@media @large {
-  .component-nav { … }
-}
+  @include media('>=tablet', '<=desktop') { ... }
+  @include media('retina2x') { ... }
 */
+
 /* ====================== MIXINS ========================= */
 
 @mixin transition($trans: background .5s ease){

@@ -271,6 +271,8 @@ GEM
       activerecord (>= 3.0, < 6.0)
       activesupport (>= 3.0, < 6.0)
       request_store (~> 1.1)
+    paranoia (2.1.5)
+      activerecord (~> 4.0)
     pg (0.18.1)
     polyglot (0.3.5)
     pry (0.10.1)
@@ -468,6 +470,7 @@ DEPENDENCIES
   nokogiri
   oj
   paper_trail (~> 4)
+  paranoia (~> 2.0)
   pg
   polyamorous!
   pry-nav

@@ -1,8 +1,5 @@
 <div class="settings-container">
   <ul class="popdown-menu" role="menu">
-    <li role="presentation">
-      <a class="action action-update" role="menuitem" tabindex="-1" href="#"><i class="fa fa-cog"></i>Settings</a>
-    </li>
     <li role="presentation" class="disabled">
       <a class="action action-edit edit-slug" role="menuitem" tabindex="-1" href="#"><i class="fa fa-pencil"></i>Edit</a>
     </li>
@@ -12,6 +9,11 @@
     <li role="presentation" class="disabled">
       <a class="action action-published published-slug" role="menuitem" tabindex="-1" href="#"><i class="fa fa-dot-circle-o"></i>Published</a>
     </li>
+
+    <li role="presentation">
+      <a class="action action-delete" role="menuitem" tabindex="-1" href="#"><i class="glyphicon glyphicon-trash"></i>Archive</a>
+    </li>
+
 <!--
     <li role="presentation" class="divider"></li>
 
@@ -28,7 +30,7 @@
     <li role="presentation" class="divider"></li>
 
     <li role="presentation">
-      <a class="action action-delete" role="menuitem" tabindex="-1" href="#"><i class="glyphicon glyphicon-trash"></i>Archive</a>
+      <a class="action action-update" role="menuitem" tabindex="-1" href="#"><i class="fa fa-cog"></i>Settings</a>
     </li>
   </ul>
 </div>

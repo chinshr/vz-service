@@ -239,20 +239,29 @@ class UploadTest < ActiveSupport::TestCase
     assert_equal upload.created_at, upload.recorded_at
   end
 
-  should "#destroy" do
-    upload = FactoryGirl.create(:media_upload_as_audio)
-
-    assert_enqueued_with(job: Ingest::RemoveJob) do
-      upload.destroy
+  context "#destroy" do
+    setup do
+      @upload = FactoryGirl.create(:media_upload_as_audio)
     end
-    assert_equal :removing, upload.ingest.reload.state
-  end
 
-  should "#delete" do
-    upload = FactoryGirl.create(:media_upload_as_audio)
+    should "act paranoid" do
+      assert_difference "Upload.count", -1 do
+        @upload.destroy
+        assert_not_nil @upload.deleted_at
+      end
+    end
 
-    assert_enqueued_with(job: Upload::DeleteJob) do
-      upload.delete
+    should "remove ingest" do
+      assert_enqueued_with(job: Ingest::RemoveJob) do
+        @upload.destroy
+      end
+      assert_equal :removing, @upload.ingest.reload.state
+    end
+
+    should "perform delete job" do
+      assert_enqueued_with(job: Upload::DeleteJob) do
+        @upload.destroy
+      end
     end
   end
 end

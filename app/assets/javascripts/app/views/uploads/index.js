@@ -66,10 +66,10 @@ App.Views.UploadsIndex = Backbone.View.extend({
 
     if (!_.isEmpty(model.attributes)) {
       if (model.attributes.editable) {
-        view = new App.Views.UploadsEdit({model: model, parent: this});
+        view = new App.Views.UploadsEditTile({model: model, parent: this});
         item.append(view.render({name: 'edit-file-name.a'}).el);
       } else {
-        view = new App.Views.UploadsShow({model: model, parent: this});
+        view = new App.Views.UploadsShowTile({model: model, parent: this});
         item.append(view.render({name: 'show-file-name.a'}).el);
       }
 

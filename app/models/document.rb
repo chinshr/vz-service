@@ -14,7 +14,8 @@ class Document < ActiveRecord::Base
   ACCESSIBILITY_SETTINGS  = {'view' => 0, 'comment' => 1, 'edit' => 2}
   STATE_UNPUBLISHED = 0
   STATE_PUBLISHED   = 1
-  STATES            = {unpublished: STATE_UNPUBLISHED, published: STATE_PUBLISHED}
+  STATE_REMOVED     = 2
+  STATES            = {unpublished: STATE_UNPUBLISHED, published: STATE_PUBLISHED, removed: STATE_REMOVED}
 
   delegate :duration, to: :track, allow_nil: true
   delegate :duration=, to: :track, allow_nil: true
@@ -38,12 +39,14 @@ class Document < ActiveRecord::Base
   accepts_nested_attributes_for :track, allow_destroy: true
 
   has_many :images, :through => :image_ingests, :source => :images
-  has_many :image_ingests, :as => :ingestable, :class_name => "Ingest::ImageIngest"
+  has_many :image_ingests, :as => :ingestable,
+    :class_name => "Ingest::ImageIngest", dependent: :destroy
 
   friendly_id :title_and_slug_id, use: [:slugged, :history]
   acts_as_ordered_taggable_on :tags, :auto
   has_paper_trail :only => [:title, :description, :text, :html, :rich_text,
     :offset, :score]
+  acts_as_paranoid
 
   validates :slug_id, presence: true, uniqueness: {case_sensitive: false}
   validates :title, presence: true, length: {maximum: 255}, if: :is_root?
@@ -71,7 +74,7 @@ class Document < ActiveRecord::Base
     end
   }
   scope :reverse_sort, -> (param) { all.reverse_order if Model::Helper.booleanize(param) }
-  scope :is_root, -> (param) { Model::Helper.booleanize(param) ? where("documents.type IS NULL") : where("documents.type IS NOT NULL") }
+  scope :is_root, -> (param = true) { Model::Helper.booleanize(param) ? where("documents.type IS NULL") : where("documents.type IS NOT NULL") }
   scope :any_of_locales, -> (params) {
     where("documents.locale ~* ?", "^(#{Array.wrap(params).join("|")})")
   }
@@ -103,13 +106,20 @@ class Document < ActiveRecord::Base
   scope :published_at_lteq, -> (date) { where(self.arel_table[:published_at].lteq(Model::Helper.date_parse(date))) }
 
   # private scopes
-  scope :recent, lambda {|n = 5| order("documents.created_at DESC").limit(n)}
-  scope :with_privacy, lambda {|privacy| where("privacy_mask & #{privacy_mask(privacy)} > 0") }
-  scope :with_user_privacy, lambda {|user| user && user.id ? where("documents.privacy_mask & #{privacy_mask("public")} > 0 OR documents.user_id = ?", user) : with_privacy("public") }
+  scope :recent, -> (n = 5) { order("documents.created_at DESC").limit(n) }
+  scope :with_privacy, -> (privacy) { where("privacy_mask & #{privacy_mask(privacy)} > 0") }
+  scope :with_user_privacy, -> (user) { user && user.id ? where("documents.privacy_mask & #{privacy_mask("public")} > 0 OR documents.user_id = ?", user) : with_privacy("public") }
+  scope :params_id, -> (params) {
+    param_document_id = if params[:id].present? && params[:id].to_i.to_s == params[:id]
+      params[:id]
+    end
+    where("documents.slug = ? OR documents.slug_id = ? OR documents.uid = ? OR documents.id = ?", params[:id], params[:id], params[:id], param_document_id)
+  }
 
   aasm column: 'aasm_state' do
     state :unpublished, initial: true
     state :published, :enter => :enter_published
+    state :removed, :enter => :enter_removed
 
     event :publish do
       transitions :from => [:unpublished, :published], :to => :published, :guard => :can_be_published?
@@ -118,11 +128,16 @@ class Document < ActiveRecord::Base
     event :unpublish do
       transitions :from => [:published, :unpublished], :to => :unpublished
     end
+
+    event :remove do
+      transitions :from => [:unpublished, :published, :removed], :to => :removed
+    end
   end
 
   before_validation :set_default_privacy, :on => :create
   before_save :set_tag_owner
   after_save :update_chunks_from_segments
+  after_destroy :remove_ingests
 
   class << self
     # E.g. random_slug_string(5) => "12345"
@@ -439,9 +454,17 @@ class Document < ActiveRecord::Base
     !privacy_private?
   end
 
+  def enter_removed
+    self.removed_at = Time.zone.now
+  end
+
   private
 
   def set_default_privacy
     self.privacy = :private if privacy.empty?
+  end
+
+  def remove_ingests
+    ingests.each {|ingest| ingest.remove!} if self.is_a?(Document)
   end
 end

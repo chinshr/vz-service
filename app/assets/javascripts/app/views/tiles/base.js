@@ -1,4 +1,4 @@
-App.Views.UploadsBase = Backbone.View.extend({
+App.Views.TilesBase = Backbone.View.extend({
   events: {
     'mouseenter .show-panel': 'hover',
     'mouseleave .show-panel': 'hover'
@@ -12,11 +12,18 @@ App.Views.UploadsBase = Backbone.View.extend({
     this.listenTo(this.model, 'change', this.update);
   },
 
+  showTileClass: function() {
+    return App.Views.TilesShow;
+  },
+
+  editTileClass: function() {
+    return App.Views.TilesEdit;
+  },
+
   render: function(attributes) {
     var template = this.template(_.extend(this.model.attributes, {
       status_message: this.model.statusMessage(),
       events: this.permissibleEvents(),
-      // model: this.model,
       thumb_aspect_ratio_1_url: this.model.imageSource(1),
       thumb_bg_color: this.model.rgbaColor()
     }));
@@ -123,56 +130,28 @@ App.Views.UploadsBase = Backbone.View.extend({
   },
 
   update: function() {
-    this.updateStatus();
     this.updateShare();
-    this.updateProgress();
-    this.updatePrivacy();
     this.updateSlugs();
   },
 
-  updateSlugs: function() {
-    this.$('a.edit-slug').attr('href', this.model.editURL());
-    this.$('a.preview-slug').attr('href', this.model.previewURL());
-    if (!!this.model.publishedURL()) {
-      this.$('a.published-slug').attr('href', this.model.publishedURL());
-    }
-  },
-
-  updatePrivacy: function() {
-    var privacyEl = this.$('.btn-privacy');
-
-    if (this.model.hasFinished()) {
-      privacyEl
-        .removeClass('private')
-        .removeClass('public')
-        .removeClass('unlisted');
-
-      if (this.model.attributes.privacy === "unlisted") {
-        privacyEl.addClass('unlisted');
-      } else if (this.model.attributes.privacy === "public") {
-        privacyEl.addClass('public');
-      } else {
-        privacyEl.addClass('private');
-      }
-      privacyEl.show();
-    } else {
-      privacyEl.hide();
-    }
-  },
-
   updateStatus: function() {
-    this.$('.upload-status').html(this.model.statusMessage());
-    this.$('.upload-status')
-      .removeClass("running")
-      .removeClass("error")
-      .removeClass("success");
+    var statusEl = this.$('.upload-status');
 
-    if (this.model.hasFinished()) {
-      this.$('.upload-status').addClass("success");
-    } else if (this.model.hasStopped()) {
-      this.$('.upload-status').addClass("danger");
-    } else {
-      this.$('.upload-status').addClass("warning");
+    if (!!this.model.attributes.status) {
+      statusEl.html(this.model.statusMessage());
+      statusEl
+        .removeClass("running")
+        .removeClass("error")
+        .removeClass("success");
+
+      if (this.model.hasFinished()) {
+        statusEl.addClass("success");
+      } else if (this.model.hasStopped()) {
+        statusEl.addClass("danger");
+      } else {
+        statusEl.addClass("warning");
+      }
+      statusEl.show();
     }
   },
 
@@ -204,6 +183,36 @@ App.Views.UploadsBase = Backbone.View.extend({
       progressEl.addClass('active').addClass('progress-striped');
     } else {
       progressEl.removeClass('active').removeClass('progress-striped');
+    }
+  },
+
+  updatePrivacy: function() {
+    var privacyEl = this.$('.btn-privacy');
+
+    if (this.model.hasFinished()) {
+      privacyEl
+        .removeClass('private')
+        .removeClass('public')
+        .removeClass('unlisted');
+
+      if (this.model.attributes.privacy === "unlisted") {
+        privacyEl.addClass('unlisted');
+      } else if (this.model.attributes.privacy === "public") {
+        privacyEl.addClass('public');
+      } else {
+        privacyEl.addClass('private');
+      }
+      privacyEl.show();
+    } else {
+      privacyEl.hide();
+    }
+  },
+
+  updateSlugs: function() {
+    this.$('a.edit-slug').attr('href', this.model.editURL());
+    this.$('a.preview-slug').attr('href', this.model.previewURL());
+    if (!!this.model.publishedURL()) {
+      this.$('a.published-slug').attr('href', this.model.publishedURL());
     }
   },
 
@@ -277,5 +286,4 @@ App.Views.UploadsBase = Backbone.View.extend({
   hasUploadProgress: function() {
     return !!this._xhr;
   }
-
 });

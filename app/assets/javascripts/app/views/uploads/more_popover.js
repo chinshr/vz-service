@@ -56,6 +56,8 @@ App.Views.UploadsMorePopover = App.Views.PopoverBase.extend({
       }
     })(this));
 
+    this.holder.show();
+
     return this;
   },
 

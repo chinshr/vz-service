@@ -18,7 +18,7 @@ class Ingest::PruneJob < ActiveJob::Base
 
     # delete removed ingests older than 30 days
     Ingest.removed.where("ingests.removed_at < ?", Time.zone.now - 30.days).find_each do |ingest|
-      # ingest.delete
+      ingest.destroy
     end
 
     # stale servers should be terminated

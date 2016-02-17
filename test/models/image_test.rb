@@ -78,12 +78,21 @@ class ImageTest < ActiveSupport::TestCase
     end
   end
 
-  should "#destroy" do
-    image = FactoryGirl.create(:image, :document_ingest)
-    assert_no_difference "Image.count" do
-      assert_enqueued_with(job: Image::RemoveJob) do
-        image.destroy
-        assert_not_nil image.removed_at
+  context "#destroy" do
+    setup do
+      @image = FactoryGirl.create(:image, :document_ingest)
+    end
+
+    should "act paranoid" do
+      assert_difference "Image.count", -1 do
+        @image.destroy
+        assert_not_nil @image.deleted_at
+      end
+    end
+
+    should "enqueue delete job" do
+      assert_enqueued_with(job: Image::DeleteJob) do
+        @image.destroy
       end
     end
   end

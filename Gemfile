@@ -125,3 +125,4 @@ gem 'metainspector'
 gem 'srt'
 gem 'mini_magick'
 gem 'wisper', '~> 1.6.1'
+gem "paranoia", "~> 2.0"

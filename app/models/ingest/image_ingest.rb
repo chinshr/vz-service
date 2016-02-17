@@ -4,10 +4,7 @@ class Ingest::ImageIngest < Ingest
   delegate :user, to: :ingestable, allow_nil: true
 
   belongs_to :ingestable, polymorphic: true, touch: true
-  has_many :images, -> { where("images.removed_at IS NULL") },
-    :class_name => "::Image", :foreign_key => :ingest_id, :dependent => :destroy
-  has_many :images_with_removed,
-    :class_name => "::Image", :foreign_key => :ingest_id, :dependent => :destroy
+  has_many :images, :class_name => "::Image", :foreign_key => :ingest_id, :dependent => :destroy
 
   validates :ingestable, presence: true
   validate :valid_image_source_url, on: :create, unless: :has_upload?

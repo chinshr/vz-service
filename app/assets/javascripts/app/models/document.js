@@ -1,4 +1,4 @@
-App.Models.Document = Backbone.Model.extend({
+App.Models.Document = Backbone.Model.extend(_.extend({}, App.Models.MediaHelpers, {
   urlRoot: '/api/documents',
 
   parse: function(response, options) {
@@ -6,7 +6,9 @@ App.Models.Document = Backbone.Model.extend({
     // wrapped as 'document', 'document':{'id':1, ...} vs. 'documents':[{'id':1,...}, {'id':2, ...}, ...]
     if (response && response.document) {
       return response.document
-    };
+    } else {
+      return response;
+    }
   },
 
   toJSON: function() {
@@ -56,4 +58,4 @@ App.Models.Document = Backbone.Model.extend({
     return window.location.origin + '/d/' + this.attributes.slug_id;
   }
 
-}, {className: 'Document'});
+}, {className: 'Document'}));

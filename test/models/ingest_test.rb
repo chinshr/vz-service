@@ -524,30 +524,28 @@ class IngestTest < ActiveSupport::TestCase
     # end
   end
 
-  context "#delete" do
+  context "#destroy" do
     setup do
       @ingest = FactoryGirl.create(:media_ingest_as_audio)
     end
 
+    should "be paranoid" do
+      assert_difference "Ingest.count", -1 do
+        @ingest.destroy
+        assert_not_nil @ingest.deleted_at
+      end
+    end
+
     should "schedule ingest delete job" do
       assert_enqueued_with(job: Ingest::DeleteJob) do
-        @ingest.delete
+        @ingest.destroy
       end
     end
 
-    should "delete record" do
-      assert_difference("Ingest.count", -1) do
-        @ingest.delete_without_job
-      end
-    end
-  end
-
-  context "#destroy" do
-    should "delete record" do
-      ingest = FactoryGirl.create(:media_ingest_as_audio)
+    should "delete dependent records" do
       assert_difference "Ingest.count", -1 do
         assert_difference "Upload.count", -1 do
-          ingest.destroy
+          @ingest.destroy
         end
       end
     end

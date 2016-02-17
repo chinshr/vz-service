@@ -15,10 +15,10 @@ class Track::DocumentTrackTest < ActiveSupport::TestCase
     end
   end
 
-  should "create document master track" do
+  should "keep only one master track" do
     ingest = FactoryGirl.create(:media_ingest_as_audio)
     assert_equal 1, ingest.document.track.segments.count
-    assert_no_difference "Track::DocumentTrack.count" do
+    assert_difference "Track::DocumentTrack.count", -1 do
       assert_no_difference "Segment::DocumentSegment.count" do
         track = nil
         assert_enqueued_with(job: Track::DeleteJob) do

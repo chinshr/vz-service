@@ -1,6 +1,34 @@
 namespace :deploy do
   namespace :after do
 
+    namespace :document do
+
+      desc 'Destroy only deleted documents and chunks permanently'
+      task :really_destroy_only_deleted => :environment do
+        Document.only_deleted.find_each do |document|
+          document.really_destroy!
+        end
+      end
+
+      desc 'Prune documents with removed uploads/ingests'
+      task :prune => :environment do
+        Document.is_root.find_each do |document|
+          if document.ingests.empty?
+            document.destroy
+            puts "Document id=#{document.id} empty, thus, destroy."
+          else
+            if document.ingests.any? {|i| i.upload.nil? }
+              document.destroy
+              puts "Document id=#{document.id} ingest removed, thus, destroy."
+            else
+              puts "Document id=#{document.id} keep."
+            end
+          end
+        end
+      end
+
+    end
+
     namespace :users do
       desc 'Upgrade when user_id was added to uploads'
       task :set_uploads_user_id => :environment do
@@ -13,6 +41,15 @@ namespace :deploy do
     end
 
     namespace :ingest do
+
+      desc 'Prune ingests that are removed'
+      task :prune => :environment do
+        Ingest.removed.find_each do |ingest|
+          ingest.destroy
+          puts "Ingest id=#{ingest.id} removed, thus, destroy."
+        end
+      end
+
       desc 'Upgrade ingest stage machine'
       task :rename_ingest_stages => :environment do
         def execute(sql); ActiveRecord::Base.connection.execute(sql); end

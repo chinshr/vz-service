@@ -399,4 +399,16 @@ class Upload::MediaUploadTest < ActiveSupport::TestCase
       assert_equal upload.ingest.document.locale, upload.locale
     end
   end  # video upload
+
+  context "#destroy" do
+    setup do
+      @upload = FactoryGirl.create(:media_upload_as_audio)
+    end
+
+    should "destroy document" do
+      assert_difference "Document.count", -1 do
+        @upload.destroy
+      end
+    end
+  end
 end

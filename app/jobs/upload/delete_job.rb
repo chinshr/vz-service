@@ -3,11 +3,10 @@ class Upload::DeleteJob < ActiveJob::Base
   queue_as :default
 
   def perform(upload_id)
-    if @upload = Upload.find(upload_id)
+    if @upload = Upload.with_deleted.find_by_id(upload_id)
       s3_delete_object_if_exists(@upload.s3_upload_bucket_name,
         @upload.handle)
-
-      @upload.delete_without_job
+      @upload.really_destroy!
     end
   end
 end
