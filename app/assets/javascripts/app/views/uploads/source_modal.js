@@ -7,6 +7,8 @@ App.Views.UploadsSourceModal = Backbone.View.extend({
   },
 
   initialize: function(options) {
+    _.bindAll(this, "submit", "inputChange", "show", "hide", "destroy");
+
     this.parent    = options.parent;
     this.model     = new App.Models.Upload({
       locale: this.$("#file-locale").val() || "en-US",
@@ -17,7 +19,6 @@ App.Views.UploadsSourceModal = Backbone.View.extend({
     Backbone.Validation.bind(this, {
       // labelFormatter: 'labels'
     });
-    _.bindAll(this, "submit", "inputChange", "show", "hide", "destroy");
   },
 
   render: function(params) {

@@ -109,6 +109,7 @@ App.Views.DocumentsBase = Backbone.View.extend({
   ],
 
   initialize: function() {
+    _.bindAll(this, "publishDocument");
     $(document).on('click', _.bind(this.playerToolbarHandler, this));
     $(document).on('keydown', _.bind(this.playerKeyboardHandler, this));
     // $(window).on('resize', _.bind(this.redrawWaveform, this))
@@ -849,7 +850,12 @@ App.Views.DocumentsBase = Backbone.View.extend({
 
   initPublishPopover: function() {
     return this.publishPopoverView = new App.Views.PopoversPublish({
-      parent: this
+      parent: this,
+      callbacks: {
+        publish: {
+          success: this.publishDocument
+        }
+      }
     });
   },
 

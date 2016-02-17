@@ -1,11 +1,11 @@
 App.Views.PopoverBase = Backbone.View.extend({
 
   initialize: function(options) {
+    _.bindAll(this, "render", "show", "hide", "toggle", "destroy", "remove");
     this.parent    = options.parent;
     this.model     = options.model || this.parent.model;
     this.holder    = options.holder;
     this.placement = options.placement || 'auto bottom';
-    _.bindAll(this, "render", "show", "hide", "toggle", "destroy", "remove");
   },
 
   render: function() {
@@ -31,7 +31,6 @@ App.Views.PopoverBase = Backbone.View.extend({
     this.holder.popover("hide");
     this.holder.popover("destroy");
     // this.holder.remove();
-    // this.holder = null;
 
     this.undelegateEvents();
     this.$el.removeData().unbind();

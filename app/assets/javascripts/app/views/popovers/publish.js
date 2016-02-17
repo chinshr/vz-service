@@ -3,10 +3,11 @@ App.Views.PopoversPublish = App.Views.PopoverBase.extend({
 
   initialize: function(options) {
     App.Views.PopoverBase.prototype.initialize.call(this, options); // super
+    _.bindAll(this, "publishDocument", "rerender", "pushPage", "showPage", "showStartPage",
+      "bindPage", "setup", "teardown", "reset");
+
     this.callbacks = options.callbacks || {};
     this.pages = {};
-    _.bindAll(this, "publishDocument", "rerender", "pushPage", "showPage", "showStartPage",
-      "bindPage", "setup", "teardown");
   },
 
   render: function() {
@@ -55,7 +56,14 @@ App.Views.PopoversPublish = App.Views.PopoverBase.extend({
   },
 
   publishDocument: function() {
-    this.parent.publishDocument();
+    if (this.callbacks && this.callbacks.publish && this.callbacks.publish.success) {
+      this.callbacks.publish.success();
+    }
+  },
+
+  reset: function() {
+    this.rerender();
+    this.$('.btn-publish-document').button("reset");
   },
 
   rerender: function() {
@@ -241,6 +249,7 @@ App.Views.PopoversPublish = App.Views.PopoverBase.extend({
 
   teardown: function() {
     this.$('.btn-publish-document').off('click');
+    this.$('.btn-publish-document').button('reset');
     this.$('.privacy-options .btn-options').each(function(ix, btn) {
       $(btn).off('click');
     });

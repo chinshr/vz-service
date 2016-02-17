@@ -5,7 +5,7 @@ App.Views.UploadsBase = Backbone.View.extend({
   },
 
   initialize: function(options) {
-    _.bindAll(this, "render", "remove", "hover", "trigger", "update", "updatePrivacy");
+    _.bindAll(this, "render", "remove", "hover", "trigger", "update", "updatePrivacy", "publishDocument");
     this.parent = options.parent;
     this.listenTo(this.model, 'upload:progress', this.onUploadProgress);
     this.listenTo(this.model, 'destroy', this.remove);
@@ -235,7 +235,16 @@ App.Views.UploadsBase = Backbone.View.extend({
       placement: "auto top",
       callbacks: {
         privacy: {
-          success: this.updatePrivacy
+          success: (function(_this) {
+            return function() {
+              _this.sharePopoverView.destroy();
+              delete _this.sharePopoverView;
+              _this.initSharePopover();
+            }
+          })(this)
+        },
+        publish: {
+          success: this.publishDocument
         }
       }
     });
@@ -243,11 +252,13 @@ App.Views.UploadsBase = Backbone.View.extend({
 
   publishDocument: function() {
     NProgress.start();
-    this.model.publish({ html: this.contentEditor.getHTML() }, {
+    this.model.publish({}, {
       success: (function(_this) {
         return function(model) {
-          NProgress.done();
-          return window.location = window.location.origin + model.attributes.published_path;
+          _.defer(function() {
+            _this.publishPopoverView.hide();
+            NProgress.done();
+          });
         };
       })(this),
       error: (function(_this) {
