@@ -9,6 +9,7 @@ class UploadListener
         upload_type: upload.type,
         progress: upload.progress,
         state: upload.state,
+        status: upload.status,
         sequence: Time.zone.now.to_i
       }
     }
