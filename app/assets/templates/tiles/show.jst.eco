@@ -45,9 +45,9 @@
 
       <div class="panel-heading">
         <h3 class="document-title">
-          <a href="#" class="document-title-link edit-slug"><%= @title || @file_name %></a>
+          <a href="#" class="document-title-link edit-slug published-slug"><%= @title || @file_name %></a>
         </h3>
-        <span class="slug edit-slug" hidden><i class="fa fa-link"><a href="#" target="_blank">http://foo.bar</a></i></span>
+        <span class="slug edit-slug published-slug" hidden><i class="fa fa-link"><a href="#" target="_blank">http://foo.bar</a></i></span>
       </div><!-- .panel-heading -->
 
       <div class="panel-body">
