@@ -465,6 +465,8 @@ class Document < ActiveRecord::Base
   end
 
   def remove_ingests
-    ingests.each {|ingest| ingest.remove!} if self.is_a?(Document)
+    ingests.each do |ingest|
+      ingest.remove! if ingest.may_remove?
+    end if is_root?
   end
 end
