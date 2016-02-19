@@ -226,13 +226,19 @@ class DocumentTest < ActiveSupport::TestCase
     end
 
     should "have filtered scopes" do
-      assert_equal [:sort_order, :reverse_sort, :is_root, :offset, :limit,
+      assert_equal [:sort_order, :reverse_sort, :user_id, :is_root, :offset, :limit,
         :any_of_locales, :duration_lt, :duration_gt, :duration_lteq, :duration_gteq,
         :any_of_status, :none_of_status, :any_of_tags, :none_of_tags,
         :created_at_gt, :created_at_gteq, :created_at_lt, :created_at_lteq,
         :updated_at_gt, :updated_at_gteq, :updated_at_lt, :updated_at_lteq,
         :published_at_gt, :published_at_gteq, :published_at_lt, :published_at_lteq].to_set,
         Document.scopes.to_set
+    end
+
+    should "#user_id accepts id and uid" do
+      @document = FactoryGirl.create(:document)
+      assert_equal @document, Document.user_id(@document.user.id).first
+      assert_equal @document, Document.user_id(@document.user.uid).first
     end
 
     should "#is_root" do

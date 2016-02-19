@@ -56,11 +56,13 @@ App.Router = Backbone.Router.extend({
   profileShow: function(user_id) {
     var _this           = this,
       collection        = new App.Collections.Documents(),
-      collectionFetched = new $.Deferred;
+      collectionFetched = new $.Deferred,
+      userUid           = $('#documents').data('user-uid');
 
     collection.fetch({
       reset: true,
       data: $.param({'sort_order': {
+        'user_id': userUid,
         'published_at': 'desc'},
         'any_of_status': [1]
       }),
