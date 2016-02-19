@@ -31,6 +31,32 @@ App.Models.MediaHelpers = {
     return false;
   },
 
+  canEdit: function() {
+    if (!this.hasFinished()) {
+      return false;
+    }
+    if (this.attributes.privacy === 'private') {
+      return false;
+    }
+    if (this.attributes.accessibility.indexOf('edit') > -1) {
+      return true;
+    }
+    return false;
+  },
+
+  canShow: function() {
+    if (!this.hasFinished()) {
+      return false;
+    }
+    if (this.attributes.privacy === 'private') {
+      return false;
+    }
+    if (this.attributes.accessibility.indexOf('view') > -1 || this.attributes.accessibility.indexOf('edit') > -1) {
+      return true;
+    }
+    return false;
+  },
+
   // E.g. "/@chinshr/un-cuento-de-hadas-sin-final-feliz-mmdqvdhihdct"
   publishedPath: function() {
     if (this.attributes.published_path) {
@@ -63,6 +89,25 @@ App.Models.MediaHelpers = {
   // E.g. "https://voyz.es/d/abcd1234"
   previewURL: function() {
     return window.location.origin + '/d/' + this.attributes.slug_id;
+  },
+
+  showPath: function() {
+    if (this.publishedPath()) {
+      return this.publishedPath();
+    } else {
+      if (this.canEdit()) {
+        return this.editPath();
+      } else {
+        return this.previewPath();
+      }
+    }
+  },
+
+  showURL: function() {
+    var path = this.showPath();
+    if (path) {
+      return window.location.origin + path;
+    }
   },
 
   statusMessage: function () {

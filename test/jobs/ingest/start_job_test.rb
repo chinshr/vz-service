@@ -14,6 +14,7 @@ class Ingest::StartJobTest < ActiveSupport::TestCase
       aws_ec2_instance.expects(:launch_time).returns(Time.zone.now)
       aws_ec2_instance.expects(:image_id).returns("ami-8fcbb0ea")
       aws_ec2_instance.expects(:instance_type).returns("t2.micro")
+      aws_ec2_instance.expects(:status).returns(:pending)
       Provider::AWS::EC2.any_instance.stubs(:launch).returns(aws_ec2_instance)
 
       Ingest::StartJob.new.perform(ingest.id)

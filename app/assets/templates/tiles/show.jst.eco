@@ -7,7 +7,7 @@
         <div class="progress <% if @progress && @progress < 100: %> progress-striped <% end %>  active" hidden>
           <div class="progress-bar progress-bar-success" style="width: <%= @progress %>%"></div>
         </div>
-        <span class="thumb thumb-video thumb-crop-top thumb-play xplay">
+        <span class="thumb thumb-video thumb-crop-top thumb-play-pause xplay xsticky">
           <!-- image -->
           <span class="thumb-sizer">
             <span class="thumb-tugger">
@@ -36,6 +36,17 @@
           <!-- loading -->
           <div class="loading xspinner"></div>
 
+          <!-- scrolling animations -->
+          <div class="animated-container">
+            <!--
+            <p class="animated-description scroll-up"><%= @description %></p>
+            -->
+            <div class="animated-segments">
+              <div class="animated-segments-content xstart">
+                <!-- this is where the content goes -->
+              </div><!-- .animated-segments-content -->
+            </div><!-- .animated-titles -->
+          </div><!-- .animated-container -->
         </span>  <!-- thumb -->
       </a>  <!-- .media-image -->
 

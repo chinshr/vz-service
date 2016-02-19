@@ -2,7 +2,7 @@ App.Views.DocumentsIndex = Backbone.View.extend({
   template: JST['documents/index'],
 
   initialize: function() {
-    _.bindAll(this, "addView", "addAll");
+    _.bindAll(this, "addView", "addAll", "initPlayer");
 
     this.listenTo(this.collection, 'add', this.addView);
     this.listenTo(this.collection, 'reset', this.addAll);
@@ -96,6 +96,10 @@ App.Views.DocumentsIndex = Backbone.View.extend({
     if (this.grid.data('isotope')) {
       this.grid.isotope('layout');
     }
+  },
+
+  initPlayer: function(options) {
+    this.player = new App.Views.Player(_.extend({parent: this}, options)).render();
   }
 
 });

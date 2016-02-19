@@ -6,6 +6,10 @@ App.Views.UploadsBaseTile = {
 
   editTileClass: function() {
     return App.Views.UploadsEditTile;
+  },
+
+  documentId: function() {
+    return this.model.attributes.document_id;
   }
 
 };

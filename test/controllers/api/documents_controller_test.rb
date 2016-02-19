@@ -292,7 +292,7 @@ class Api::DocumentsControllerTest < ActionController::TestCase
   protected
 
   def assert_attributes(params, expected_attributes = {})
-    (expected_attributes.keys + %w(id title description uid tag_list locale privacy accessibility slug slug_id published_path published_at status)).each do |attribute|
+    (expected_attributes.keys + %w(id title description uid tag_list locale privacy accessibility slug slug_id published_path published_at status images)).each do |attribute|
       assert params.has_key?(attribute), "should contain key '#{attribute}' in response '#{params}'"
     end
 
