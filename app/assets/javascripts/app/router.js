@@ -61,9 +61,9 @@ App.Router = Backbone.Router.extend({
 
     collection.fetch({
       reset: true,
-      data: $.param({'sort_order': {
+      data: $.param({
+        'sort_order': {'published_at': 'desc'},
         'user_id': userUid,
-        'published_at': 'desc'},
         'any_of_status': [1]
       }),
       success: function() {
