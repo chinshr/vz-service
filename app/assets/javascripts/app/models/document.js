@@ -1,4 +1,4 @@
-App.Models.Document = Backbone.Model.extend(_.extend({}, App.Models.MediaHelpers, {
+App.Models.Document = Backbone.Model.extend(_.extend(Backbone.Model, App.Models.MediaHelpers, {
   urlRoot: '/api/documents',
 
   parse: function(response, options) {
