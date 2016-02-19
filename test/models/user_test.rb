@@ -33,6 +33,7 @@ class UserTest < ActiveSupport::TestCase
     should ensure_length_of(:first_name).is_at_least(1).is_at_most(125)
     should validate_presence_of :last_name
     should ensure_length_of(:last_name).is_at_least(1).is_at_most(125)
+    should ensure_length_of(:description).is_at_most(240)
   end
 
   should "geocode and reverse geocode" do

@@ -39,6 +39,7 @@ class User < ActiveRecord::Base
   validates :username, presence: true, uniqueness: true, length: { minimum: 2, maximum: 40 }, username_format: true, if: :confirmed_or_confirmation_validation?
   validates :first_name, presence: true, length: { minimum: 1, maximum: 125 }, if: :confirmed_or_confirmation_validation?
   validates :last_name, presence: true, length: { minimum: 1, maximum: 125 }, if: :confirmed_or_confirmation_validation?
+  validates :description, length: { maximum: 240 }
 
   scope :confirmed, lambda {where("users.confirmed_at IS NOT NULL")}
 

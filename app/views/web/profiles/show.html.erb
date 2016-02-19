@@ -21,9 +21,9 @@
           <h1 class="hero-title">
             <a class="link link-darker" href="<%= web_profile_url("@#{@user.username}") %>" title="Go to the profile of <%= @user.name %>" aria-label="Go to the profile of <%= @user.name %>" data-user-uid="<%= @user.uid %>" dir="auto"><%= @user.name %></a>
           </h1>
-          <% if false %>
-          <p class="hero-description is-empty"><%= @profile.bio %></p>
-          <% end %>
+          <p class="hero-description <%= @user.description.blank? ? 'is-empty' : '' %>">
+          <%= auto_link(@user.description, html: {target: '_blank'}, link: :urls) %>
+          </p>
         </header>
 
         <% if false %>
