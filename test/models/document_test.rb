@@ -11,7 +11,7 @@ class DocumentTest < ActiveSupport::TestCase
     should have_many(:tracks_including_master_track).through(:segments)
     should have_one :master_document_segment
     should have_one(:track).through(:master_document_segment)
-    should have_many(:image_ingests)
+    should have_many(:image_ingests).dependent(:destroy)
     should have_many(:images).through(:image_ingests)
 
     should "have tracks_including_master_track" do
@@ -222,7 +222,7 @@ class DocumentTest < ActiveSupport::TestCase
 
   context "scopes" do
     setup do
-      Document.destroy_all
+      Document.delete_all
     end
 
     should "have filtered scopes" do
@@ -238,6 +238,7 @@ class DocumentTest < ActiveSupport::TestCase
     should "#is_root" do
       @document1 = FactoryGirl.create(:document)
       @chunk1 = FactoryGirl.create(:chunk)
+      assert_equal @document1, Document.is_root.sort_order("id" => "desc").last
       assert_equal @document1, Document.is_root(true).sort_order("id" => "desc").last
       assert_equal @chunk1, Document.is_root(false).sort_order("id" => "desc").first
     end
@@ -261,8 +262,8 @@ class DocumentTest < ActiveSupport::TestCase
       @user = FactoryGirl.create(:user)
       @document1 = FactoryGirl.create(:document, :privacy => [:private], :user => @user)
       @document2 = FactoryGirl.create(:document, :privacy => [:public])
-      assert_equal [@document1, @document2], Document.with_user_privacy(@user).to_a
-      assert_equal [@document2], Document.with_user_privacy(nil).to_a
+      assert_equal [@document1, @document2].to_set, Document.with_user_privacy(@user).to_set
+      assert_equal [@document2].to_set, Document.with_user_privacy(nil).to_set
     end
 
     should "#any_of_locales" do
@@ -271,10 +272,10 @@ class DocumentTest < ActiveSupport::TestCase
       d2 = FactoryGirl.create(:document, locale: "en-US")
       d3 = FactoryGirl.create(:document, locale: "en-AU")
       d4 = FactoryGirl.create(:document, locale: "de-DE")
-      assert_equal [d2], Document.any_of_locales("en-US")
-      assert_equal [d2], Document.any_of_locales("en-us")
-      assert_equal [d1, d2, d3], Document.any_of_locales("en")
-      assert_equal [d4], Document.any_of_locales("de")
+      assert_equal [d2].to_set, Document.any_of_locales("en-US").to_set
+      assert_equal [d2].to_set, Document.any_of_locales("en-us").to_set
+      assert_equal [d1, d2, d3].to_set, Document.any_of_locales("en").to_set
+      assert_equal [d4].to_set, Document.any_of_locales("de").to_set
     end
 
     should "#any_of_status" do
@@ -354,6 +355,15 @@ class DocumentTest < ActiveSupport::TestCase
       end
     end
 
+    context "private scopes" do
+      should "#params_id" do
+        @document = FactoryGirl.create(:document)
+        assert_equal @document, Document.params_id({id: @document.id.to_s}).first
+        assert_equal @document, Document.params_id({id: @document.uid}).first
+        assert_equal @document, Document.params_id({id: @document.slug_id}).first
+        assert_equal @document, Document.params_id({id: @document.slug}).first
+      end
+    end
   end
 
   context "document with ingests" do
@@ -681,10 +691,11 @@ class DocumentTest < ActiveSupport::TestCase
       assert_equal :unpublished, document.state
     end
 
-    should "#publish! when already published" do
+    should "#publish! when published" do
       document = FactoryGirl.create(:document, aasm_state: "published", privacy: "unlisted", published_at: (ot = Time.zone.now - 1.day))
       assert_equal true, document.publish!
       assert_equal :published, document.state
+      assert_equal Document::STATE_PUBLISHED, document.status
       assert_not_equal ot, document.published_at
     end
 
@@ -694,10 +705,35 @@ class DocumentTest < ActiveSupport::TestCase
       assert_equal :unpublished, document.state
     end
 
-    should "#unpublish! when already unpublished" do
+    should "#unpublish! when unpublished" do
       document = FactoryGirl.create(:document, aasm_state: "unpublished")
       assert_equal true, document.unpublish!
       assert_equal :unpublished, document.state
+      assert_equal Document::STATE_UNPUBLISHED, document.status
+    end
+
+    should "#remove! when unpublished" do
+      document = FactoryGirl.create(:document)
+      assert_equal :unpublished, document.state
+      assert_equal true, document.remove!
+      assert_equal :removed, document.state
+      assert_equal Document::STATE_REMOVED, document.status
+    end
+
+    should "#remove! when published" do
+      document = FactoryGirl.create(:document, privacy: "public")
+      assert_equal true, document.publish!
+      assert_equal :published, document.state
+      assert_equal true, document.remove!
+      assert_equal :removed, document.state
+    end
+
+    should "#remove! when removed" do
+      document = FactoryGirl.create(:document, privacy: "public")
+      assert_equal :unpublished, document.state
+      assert_equal true, document.remove!
+      assert_equal true, document.remove!
+      assert_equal :removed, document.state
     end
   end
 
@@ -730,4 +766,79 @@ class DocumentTest < ActiveSupport::TestCase
     end
   end
 
+  context "#destroy" do
+    setup do
+      @document = FactoryGirl.create(:document)
+    end
+
+    should "with paranoid" do
+      assert_difference "Document.count", -1 do
+        assert_equal @document, @document.destroy
+        assert_not_nil @document.deleted_at
+      end
+    end
+
+    context "destroy dependents" do
+      setup do
+        @media_ingest = FactoryGirl.create(:media_ingest_as_audio_without_track, document: @document)
+        @image_ingest = FactoryGirl.create(:image_ingest, ingestable: @document)
+
+        @t0 = @document.create_track(s3_url: "http://t0")
+        @s0 = @document.master_segment
+        @c1 = Chunk::GoogleSpeechChunk.create(:position => 1, :offset => 0,  :text => "I hate to say", :score => 0.80, :document => @document)
+        @t1 = @c1.create_track(s3_url: "http://t1")
+        @s1 = @c1.master_segment
+        @i1 = FactoryGirl.create(:image, ingest: @image_ingest)
+      end
+
+      should "not destroy ingests" do
+        assert_no_difference "Ingest::MediaIngest.count", -1 do
+          @document.destroy
+          assert_equal :removing, @media_ingest.reload.state
+        end
+      end
+
+      should "destroy master segment" do
+        assert_difference "Segment::DocumentSegment.count", -1 do
+          @document.destroy
+          assert_not_nil @s0.reload.deleted_at
+        end
+      end
+
+      should "destroy master track" do
+        assert_difference "Track::DocumentTrack.count", -1 do
+          @document.destroy
+          assert_not_nil @t0.reload.deleted_at
+        end
+      end
+
+      should "destroy chunk segment" do
+        assert_difference "Segment::ChunkSegment.count", -1 do
+          @document.destroy
+          assert_not_nil @s1.reload.deleted_at
+        end
+      end
+
+      should "destroy chunk track" do
+        assert_difference "Track::ChunkTrack.count", -1 do
+          @document.destroy
+          assert_not_nil @t1.reload.deleted_at
+        end
+      end
+
+      should "destroy image ingests" do
+        assert_difference "Ingest::ImageIngest.count", -1 do
+          @document.destroy
+          assert_not_nil @image_ingest.reload.deleted_at
+        end
+      end
+
+      should "destroy images" do
+        assert_difference "Image.count", -1 do
+          @document.destroy
+          assert_not_nil @i1.reload.deleted_at
+        end
+      end
+    end
+  end
 end

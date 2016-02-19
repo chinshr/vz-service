@@ -12,6 +12,8 @@ class Image < ActiveRecord::Base
   belongs_to :image_format, class_name: "Image::ImageFormat"
   belongs_to :ingest
 
+  acts_as_paranoid
+
   validates :image_format_id, presence: true
   validates :path, presence: true
   validates :size, numericality: { integer_only: true, greater_than: 0 }
@@ -21,6 +23,7 @@ class Image < ActiveRecord::Base
   scope :ingest_image_id, -> (param) { joins(:ingest).where(:ingest => {:id => param}) }
 
   after_save :touch_ingestable
+  after_destroy :perform_delete_job
 
   class << self
 
@@ -34,14 +37,14 @@ class Image < ActiveRecord::Base
     File.join(APP_CONFIG['INGEST_IMAGE_ASSET_HOST'])
   end
 
+  protected
+
   # This is used to invalidate the media cache key.
   def touch_ingestable
     ingest.try(:ingestable).try(:touch)
   end
 
-  def destroy_with_job
-    update_attribute(:removed_at, Time.zone.now)
-    Image::RemoveJob.perform_later(self.id)
+  def perform_delete_job
+    Image::DeleteJob.perform_later(self.id)
   end
-  alias_method_chain :destroy, :job
 end

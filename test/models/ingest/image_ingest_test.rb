@@ -6,16 +6,6 @@ class Ingest::ImageIngestTest < ActiveSupport::TestCase
 
     should belong_to(:ingestable)
     should have_many(:images).dependent(:destroy)
-    should have_many(:images_with_removed).dependent(:destroy)
-
-    should "have_many :images without removed" do
-      ingest = FactoryGirl.create(:image_ingest, :ingestable_document)
-      image = FactoryGirl.create(:image, ingest: ingest)
-      assert_equal image, ingest.images.reload.first
-      image.update_attribute(:removed_at, Time.zone.now)
-      assert_equal nil, ingest.images.reload.first
-      assert_equal image, ingest.images_with_removed.reload.first
-    end
   end
 
   context "validations" do

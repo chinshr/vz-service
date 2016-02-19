@@ -4,6 +4,10 @@ class Track < ActiveRecord::Base
 
   has_many :segments, foreign_key: :track_id, dependent: :nullify
 
+  acts_as_paranoid
+
+  after_destroy :perform_delete_job
+
   # public scopes
   filtered_scopes :sort_order, :reverse_sort, :any_of_types, :none_of_types
   scope :sort_order, -> (param) {
@@ -139,11 +143,11 @@ class Track < ActiveRecord::Base
       response_content_type: "application/json"}).to_s
   end
 
-  def destroy
-    ::Track::DeleteJob.perform_later(self.id)
-  end
-
   protected
+
+  def perform_delete_job
+    Track::DeleteJob.perform_later(self.id)
+  end
 
   def s3_origin_bucket_name
     bucket = APP_CONFIG['S3_OUTBOUND_BUCKET']

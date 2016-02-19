@@ -17,7 +17,7 @@ class Ingest::MediaIngest < Ingest
   delegate :user, to: :document, allow_nil: true
   delegate :user=, to: :document, allow_nil: true
 
-  validates :document, presence: true
+  validates :document, presence: true, on: :create
   validates :upload, presence: true, on: :create
   validate :valid_media_source_url, on: :create, unless: :has_upload?
 

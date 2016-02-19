@@ -5,7 +5,7 @@ class Api::DocumentsController < Api::ApplicationController
 
   # [GET] /api/documents(.:format)
   def index
-    @documents = Document.with_user_privacy(current_user).filter(params)
+    @documents = Document.is_root.with_user_privacy(current_user).filter(params)
     respond_with @documents
   end
 

@@ -47,6 +47,7 @@ class Upload::MediaUpload < Upload
 
   after_initialize :build_ingest_and_associations
   after_commit :save_ingest_and_document
+  after_destroy :destroy_document
 
   class << self
     alias_method :accepted_file_type?, :valid_media_content_type?
@@ -90,13 +91,14 @@ class Upload::MediaUpload < Upload
     end
   end
 
-  def remove_ingest
-    ingest.remove! if ingest.reload
-  end
-
   def has_locale_recently_changed?
     return !!ingest.document.changes[:locale] if ingest.document
     false
   end
 
+  private
+
+  def destroy_document
+    document.destroy if document && document.reload
+  end
 end

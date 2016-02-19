@@ -1,26 +1,19 @@
-App.Views.UploadsShow = App.Views.UploadsBase.extend({
-  template: JST['uploads/show'],
+App.Views.TilesShow = App.Views.TilesBase.extend({
+  template: JST['tiles/show'],
   className: 'tile show-tile col-lg-4 col-md-4 col-sm-4',
 
   events: _.extend({
     'click .action-update' : 'flipTile',
-    // 'dblclick .action-more' : 'flipTile',
     'click .action-edit' : 'onOpenEdit',
     'click .action-preview' : 'onOpenPreview',
     'click .action-delete': 'onDelete',
     'click .action-stop' : 'onStop',
     'click .action-start' : 'onStart'
-  }, App.Views.UploadsBase.prototype.events),
+  }, App.Views.TilesBase.prototype.events),
 
   initialize: function(options) {
     _.bindAll(this, "flipTile");
-    App.Views.UploadsBase.prototype.initialize.call(this, options); // super
-  },
-
-  render: function() {
-    App.Views.UploadsBase.prototype.render.call(this, {}); // super
-    this.initMorePopover().render();
-    return this;
+    App.Views.TilesBase.prototype.initialize.call(this, options); // super
   },
 
   trigger: function(view, event) {
@@ -42,7 +35,8 @@ App.Views.UploadsShow = App.Views.UploadsBase.extend({
   flipTile: function(event) {
     var show     = this,
       showHTML   = show.$el,
-      edit       = new App.Views.UploadsEdit({model: this.model}).render(),
+      // edit       = new App.Views.TilesEdit({model: this.model}).render(),
+      edit       = new (this.editTileClass())({model: this.model}).render(),
       editHTML   = edit.template(edit.model.attributes);
 
     if (event) {
@@ -144,16 +138,10 @@ App.Views.UploadsShow = App.Views.UploadsBase.extend({
     })(this));
   },
 
-  update: function() {
-    App.Views.UploadsBase.prototype.update.call(this); // super
-    this.morePopoverView.update();
-  },
-
   initMorePopover: function() {
     return this.morePopoverView = new App.Views.UploadsMorePopover({
       parent: this,
       placement: "auto top"
     });
   }
-
 });

@@ -1,0 +1,63 @@
+<% page_title @user.name, true %>
+<% content_for :navbar_tag do %>
+<a class="navbar-tag" href="/dashboard"><%= "@#{@user.username}" %></a>
+<% end %>
+<%= render "web/shared/content_loading" %>
+<div class="hero-background">
+  <div class="container is-under-metabar">
+    <div class="row">
+      <div class="col col-lg-8 col-lg-offset-2 col-md-6 col-md-offset-3 col-sm-6 col-sm-offset-3 col-xs-12">
+        <header class="hero hero-profile">
+          <div class="hero-avatar pull-right">
+            <div class="cover-picker-controls">
+              <button class="button button-chromeless button-replace-image button-light image-ontrols" data-action="pick-image">
+                <i class="fa fa-photo"></i>
+              </button>
+            </div>
+            <div class="avatar">
+              <%= image_tag(avatar_url(@user), class: "avatar-image image-picker-target sm-size xs-size", style: "background-color: #{@user.css_hex_color}", alt: "#{@user.name}") %>
+            </div>
+          </div>
+          <h1 class="hero-title">
+            <a class="link link-darker" href="<%= web_profile_url("@#{@user.username}") %>" title="Go to the profile of <%= @user.name %>" aria-label="Go to the profile of <%= @user.name %>" data-user-uid="<%= @user.uid %>" dir="auto"><%= @user.name %></a>
+          </h1>
+          <% if false %>
+          <p class="hero-description is-empty"><%= @profile.bio %></p>
+          <% end %>
+        </header>
+
+        <% if false %>
+        <div class="button-set button-set-profile">
+          <button class="button button-chromeless" title="Show 12 people following" aria-label="Show 12 people following" data-action="show-follow-list" data-action-value="following"><b>12</b> Following</button>
+          <button class="button button-chromeless" title="Show 12 followers" aria-label="Show 12 followers" data-action="show-follow-list" data-action-value="followers"><b>12</b> Followers</button>
+
+          <span class="middot-divider"></span>
+
+          <div class="button-set-inner">
+            <!-- facebook -->
+            <a class="button button-chromeless button-with-icon" href="https://facebook.com/10153297888399085" title="Facebook" aria-label="Facebook" target="_blank">
+              <i class="fa fa-facebook-square"></i>
+            </a>
+          </div>
+        </div><!-- button-set -->
+
+        <div class="button-set button-set-profile">
+          <span class="follow-state button-set-inner" data-user-id="f38884f72329">
+            <button class="button button-with-chrome button-with-hover button-unblock" data-action="sign-in-prompt" data-sign-in-action="toggle-block-user" data-requires-token="true">
+              <span class="button-label  button-defaultState">Blocked</span>
+              <span class="button-label button-hoverState">Unblock</span>
+            </button>
+            <button class="button button-primary button-with-chrome button-follow" data-action="sign-in-prompt" data-sign-in-action="toggle-subscribe-user" data-requires-token="true" data-redirect="https://medium.com/_/subscribe/user/f38884f72329" data-action-source="undefined_follow">
+              <span class="button-label button-default-state">Follow</span>
+              <span class="button-label button-active-state">Following</span>
+            </button>
+          </span><!-- follow state -->
+        </div><!-- .button-set -->
+        <% end %>
+      </div><!-- .col -->
+    </div><!-- .row -->
+  </div><!-- .container -->
+</div><!-- .background -->
+
+<div id="documents" class="documents">
+</div><!-- #documents -->

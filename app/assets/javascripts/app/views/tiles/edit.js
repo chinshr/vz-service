@@ -1,22 +1,22 @@
-App.Views.UploadsEdit = App.Views.UploadsBase.extend({
-  template: JST['uploads/edit'],
+App.Views.TilesEdit = App.Views.TilesBase.extend({
+  template: JST['tiles/edit'],
   className: 'tile edit-tile col-lg-4 col-md-4 col-sm-4',
 
   events: _.extend({
     'focusout input': 'onFieldChange',
     'change select': 'onSelectionChange',
     'submit': 'onFormSubmit',
-  }, App.Views.UploadsBase.prototype.events),
+  }, App.Views.TilesBase.prototype.events),
 
   initialize: function(options) {
     _.bindAll(this, "selectImage", "dropImage", "imageUploadFinished", "imageUploadStopped", "imageUploadCanceled", "flipTile");
-    App.Views.UploadsBase.prototype.initialize.call(this, options); // super
+    App.Views.TilesBase.prototype.initialize.call(this, options); // super
     Backbone.Validation.bind(this);
     this.listenTo(this.model, 'change:privacy', this.update);
   },
 
   render: function(attributes) {
-    App.Views.UploadsBase.prototype.render.call(this, attributes); // super
+    App.Views.TilesBase.prototype.render.call(this, attributes); // super
 
     _.defer((function(_this) {
       return function() {
@@ -32,7 +32,8 @@ App.Views.UploadsEdit = App.Views.UploadsBase.extend({
   flipTile: function(event) {
     var edit   = this,
       editHTML = edit.$el,
-      show     = new App.Views.UploadsShow({model: this.model}).render(),
+      // show     = new App.Views.TilesShow({model: this.model}).render(),
+      show     = new (this.showTileClass())({model: this.model}).render(),
       showHTML = show.template(show.model.attributes);
 
     if (event) {
@@ -60,7 +61,7 @@ App.Views.UploadsEdit = App.Views.UploadsBase.extend({
   },
 
   update: function(hasProgress) {
-    App.Views.UploadsBase.prototype.update.call(this, hasProgress); // super
+    App.Views.TilesBase.prototype.update.call(this, hasProgress); // super
 
     this.$("input[name='upload[title]']").val(this.model.attributes.title);
     this.$("input[name='upload[tag_list]']").val(this.model.attributes.tag_list);
@@ -260,5 +261,4 @@ App.Views.UploadsEdit = App.Views.UploadsBase.extend({
     });
 
   }
-
 });

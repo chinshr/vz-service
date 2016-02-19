@@ -42,6 +42,8 @@ class Ingest < ActiveRecord::Base
   has_many :processes, class_name: "Ingest::Process", dependent: :destroy
   has_many :servers, through: :processes, after_remove: :async_server_update
 
+  acts_as_paranoid
+
   validates :type, presence: true
 
   # public scopes
@@ -121,6 +123,7 @@ class Ingest < ActiveRecord::Base
     :after_commit_event_reset,
     :after_commit_event_remove,
     :refresh_upload
+  after_destroy :perform_delete_job
 
   class << self
 
@@ -318,15 +321,9 @@ class Ingest < ActiveRecord::Base
     update_attribute(:aasm_stage, nil)
   end
 
-  # def destroy
-  #   # override to call 'remove' event instead delete
-  #   remove!
-  # end
-
-  def delete_with_job
+  def perform_delete_job
     Ingest::DeleteJob.perform_later(self.id)
   end
-  alias_method_chain :delete, :job
 
   protected
 

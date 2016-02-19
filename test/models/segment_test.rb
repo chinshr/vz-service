@@ -8,14 +8,21 @@ class SegmentTest < ActiveSupport::TestCase
     should belong_to :chunk
   end
 
-  context "destroy" do
-    should "if last track" do
-      segment = FactoryGirl.create(:segment)
+  context "#destroy" do
+    setup do
+      @segment = FactoryGirl.create(:segment)
+    end
+
+    should "be paranoid" do
       assert_difference "Segment.count", -1 do
-        assert_enqueued_with(job: Track::DeleteJob) do
-        # assert_difference "Track.count", -1 do
-          segment.destroy
-        end
+        @segment.destroy
+        assert_not_nil @segment.deleted_at
+      end
+    end
+
+    should "if last track" do
+      assert_enqueued_with(job: Track::DeleteJob) do
+        @segment.destroy
       end
     end
 

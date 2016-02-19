@@ -291,10 +291,10 @@ class ChunkTest < ActiveSupport::TestCase
       ps2 = FactoryGirl.create(:chunk_pocketsphinx, locale: "en-US")
       ps3 = FactoryGirl.create(:chunk_pocketsphinx, locale: "en-AU")
       ps4 = FactoryGirl.create(:chunk_pocketsphinx, locale: "de-DE")
-      assert_equal [ps2], Chunk.any_of_locales("en-US")
-      assert_equal [ps2], Chunk.any_of_locales("en-us")
-      assert_equal [ps1, ps2, ps3], Chunk.any_of_locales("en").to_a
-      assert_equal [ps4], Chunk.any_of_locales("de")
+      assert_equal [ps2].to_set, Chunk.any_of_locales("en-US").to_set
+      assert_equal [ps2].to_set, Chunk.any_of_locales("en-us").to_set
+      assert_equal [ps1, ps2, ps3].to_set, Chunk.any_of_locales("en").to_set
+      assert_equal [ps4].to_set, Chunk.any_of_locales("de").to_set
     end
 
     context "#best" do

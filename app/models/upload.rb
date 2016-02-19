@@ -26,6 +26,8 @@ class Upload < ActiveRecord::Base
   belongs_to :user
   has_one :ingest
 
+  acts_as_paranoid
+
   validates_associated :ingest, on: :create
   validates :type, presence: true
   validates :source_url, presence: true, length: { maximum: 2048 }
@@ -56,6 +58,8 @@ class Upload < ActiveRecord::Base
   }
   scope :any_of_types, -> (params) { where("uploads.type IN (?)", class_names_for(params)) }
   scope :none_of_types, -> (params) { where("uploads.type NOT IN (?)", class_names_for(params)) }
+
+  after_destroy :remove_ingest, :perform_delete_job
 
   class << self
 
@@ -132,17 +136,13 @@ class Upload < ActiveRecord::Base
     end
   end
 
-  def destroy_with_ingest_remove
-    # Override to remove ingest and assets in job
-    ingest.remove! if ingest.reload
-    destroy_without_ingest_remove
+  def remove_ingest
+    ingest.remove! if ingest && ingest.reload
   end
-  alias_method_chain :destroy, :ingest_remove
 
-  def delete_with_job
+  def perform_delete_job
     Upload::DeleteJob.perform_later(self.id)
   end
-  alias_method_chain :delete, :job
 
   def user_with_ingest=(value)
     ingest.try(:user=, value)

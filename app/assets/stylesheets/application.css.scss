@@ -18,6 +18,7 @@
  *= require nprogress
  *= require bootstrap-colorpicker
  *= require bootstrap-slider
+ *= require include-media
  *= require application-custom
  *= require_self
  *= require_tree ./devise
@@ -38,9 +39,9 @@
   width: 100px;
 }
 
-/* ====================== HEADER ========================= */
+/* ====================== PAGE HEADER ========================= */
 
-header {
+header.page-header {
   /* background-color: rgba(21.255, 26.255, 40.255, 0.8); */
   background-color: #292d33;
   height: 70px;
@@ -49,6 +50,8 @@ header {
   z-index: 200;
   width:100%;
   top: 0;
+  margin: 0;
+  border: 0;
 
   #logo {
     margin: 15px 0;
@@ -281,7 +284,7 @@ header {
     .navbar-tag {
       margin: 16px 0;
       text-transform: uppercase;
-      font-weight: 200;
+      font-weight: 300;
       font-size: 26px;
       float: left;
       width: 250px;
@@ -368,7 +371,7 @@ header {
         }
 
         #profile-button {
-          width: 30px;
+          width: 35px;
         }
 
       } /* li */
@@ -419,12 +422,11 @@ header {
 
     }
   } /* nav.navbar-default */
-
-} /* header */
+} /* header.page-header */
 
 /* for high resolution display */
 @media only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 2/1), only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min-device-pixel-ratio: 2) {
- header {
+ header.page-header {
    #logo {
      background: image-url('voyzes-logo@2x.png') no-repeat 0 0 !important;
      background-size: 110px 40px !important;
@@ -432,14 +434,13 @@ header {
  }
 }
 
-header {
+header.page-header {
   #logo {
     background: image-url('voyzes-logo.png') no-repeat 0 0;
   }
 }
 
 body {
-
   /* Remove media query */
   .navbar-header {
     float: left;

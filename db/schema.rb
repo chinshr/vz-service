@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160212003152) do
+ActiveRecord::Schema.define(version: 20160218210828) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -150,17 +150,21 @@ ActiveRecord::Schema.define(version: 20160212003152) do
     t.datetime "published_at"
     t.integer  "accessibility_mask",                                    default: 0,             null: false
     t.json     "words",                                                 default: []
+    t.datetime "removed_at"
+    t.datetime "deleted_at"
   end
 
   add_index "documents", ["aasm_state"], name: "index_documents_on_aasm_state", using: :btree
   add_index "documents", ["accessibility_mask"], name: "index_documents_on_accessibility_mask", using: :btree
   add_index "documents", ["created_at"], name: "index_documents_on_created_at", using: :btree
+  add_index "documents", ["deleted_at"], name: "index_documents_on_deleted_at", using: :btree
   add_index "documents", ["ingest_iteration"], name: "index_documents_on_ingest_iteration", using: :btree
   add_index "documents", ["locale"], name: "documents_locale_with_text_pattern_ops", using: :btree
   add_index "documents", ["offset"], name: "index_documents_on_offset", using: :btree
   add_index "documents", ["privacy_mask"], name: "index_documents_on_privacy_mask", using: :btree
   add_index "documents", ["processing_status"], name: "index_documents_on_processing_status", using: :btree
   add_index "documents", ["published_at"], name: "index_documents_on_published_at", using: :btree
+  add_index "documents", ["removed_at"], name: "index_documents_on_removed_at", using: :btree
   add_index "documents", ["score"], name: "index_documents_on_score", using: :btree
   add_index "documents", ["slug"], name: "index_documents_on_slug", unique: true, using: :btree
   add_index "documents", ["slug_id"], name: "index_documents_on_slug_id", unique: true, using: :btree
@@ -208,15 +212,15 @@ ActiveRecord::Schema.define(version: 20160212003152) do
     t.integer  "size"
     t.integer  "ingest_id"
     t.integer  "iteration",       default: 0, null: false
-    t.datetime "removed_at"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.datetime "deleted_at"
   end
 
+  add_index "images", ["deleted_at"], name: "index_images_on_deleted_at", using: :btree
   add_index "images", ["image_format_id"], name: "index_images_on_image_format_id", using: :btree
   add_index "images", ["ingest_id"], name: "index_images_on_ingest_id", using: :btree
   add_index "images", ["iteration"], name: "index_images_on_iteration", using: :btree
-  add_index "images", ["removed_at"], name: "index_images_on_removed_at", using: :btree
   add_index "images", ["uid"], name: "index_images_on_uid", using: :btree
 
   create_table "ingest_processes", force: true do |t|
@@ -295,11 +299,13 @@ ActiveRecord::Schema.define(version: 20160212003152) do
     t.text     "origin_url"
     t.integer  "ingestable_id"
     t.string   "ingestable_type"
+    t.datetime "deleted_at"
   end
 
   add_index "ingests", ["aasm_stage"], name: "index_ingests_on_aasm_stage", using: :btree
   add_index "ingests", ["aasm_state"], name: "index_ingests_on_aasm_state", using: :btree
   add_index "ingests", ["created_at"], name: "index_ingests_on_created_at", using: :btree
+  add_index "ingests", ["deleted_at"], name: "index_ingests_on_deleted_at", using: :btree
   add_index "ingests", ["document_id"], name: "index_ingests_on_document_id", using: :btree
   add_index "ingests", ["file_type"], name: "index_ingests_on_file_type", using: :btree
   add_index "ingests", ["finished_at"], name: "index_ingests_on_finished_at", using: :btree
@@ -379,10 +385,12 @@ ActiveRecord::Schema.define(version: 20160212003152) do
     t.datetime "updated_at"
     t.datetime "created_at"
     t.boolean  "is_master",   default: false, null: false
+    t.datetime "deleted_at"
   end
 
   add_index "segments", ["chunk_id"], name: "index_segments_on_chunk_id", using: :btree
   add_index "segments", ["created_at"], name: "index_segments_on_created_at", using: :btree
+  add_index "segments", ["deleted_at"], name: "index_segments_on_deleted_at", using: :btree
   add_index "segments", ["document_id"], name: "index_segments_on_document_id", using: :btree
   add_index "segments", ["ingest_id"], name: "index_segments_on_ingest_id", using: :btree
   add_index "segments", ["is_master"], name: "index_segments_on_is_master", using: :btree
@@ -422,8 +430,10 @@ ActiveRecord::Schema.define(version: 20160212003152) do
     t.decimal  "duration",             precision: 15, scale: 3
     t.datetime "start_at"
     t.datetime "end_at"
+    t.datetime "deleted_at"
   end
 
+  add_index "tracks", ["deleted_at"], name: "index_tracks_on_deleted_at", using: :btree
   add_index "tracks", ["duration"], name: "index_tracks_on_duration", using: :btree
   add_index "tracks", ["end_at"], name: "index_tracks_on_end_at", using: :btree
   add_index "tracks", ["ingest_iteration"], name: "index_tracks_on_ingest_iteration", using: :btree
@@ -479,9 +489,11 @@ ActiveRecord::Schema.define(version: 20160212003152) do
     t.string   "uid"
     t.datetime "recorded_at"
     t.integer  "user_id"
+    t.datetime "deleted_at"
   end
 
   add_index "uploads", ["created_at"], name: "index_uploads_on_created_at", using: :btree
+  add_index "uploads", ["deleted_at"], name: "index_uploads_on_deleted_at", using: :btree
   add_index "uploads", ["type"], name: "index_uploads_on_type", using: :btree
   add_index "uploads", ["uid"], name: "index_uploads_on_uid", using: :btree
   add_index "uploads", ["updated_at"], name: "index_uploads_on_updated_at", using: :btree

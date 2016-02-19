@@ -12,20 +12,6 @@ class Ingest::RemoveJob < ActiveJob::Base
     if @ingest = Ingest.find(ingest_id)
       if @ingest.not_busy?
         @ingest.with_lock do
-          # remove uploaded file
-          s3_delete_object_if_exists(
-            @ingest.s3_upload_bucket_name,
-            @ingest.handle)
-          # remove all origin files
-          s3_delete_objects_with_prefix(
-            @ingest.s3_origin_bucket_name,
-            @ingest.uid)
-          # remove images
-          if @ingest.is_a?(Ingest::MediaIngest)
-            @ingest.document.image_ingests.find_each do |image_ingest|
-              image_ingest.remove!
-            end
-          end
           # move state to 'removed'
           @ingest.process!
         end
