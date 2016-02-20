@@ -37,5 +37,6 @@ class Ingest::MediaIngest < Ingest
         source_url: metadata['target']['image']
       }).start!
     end
+    true # in case start! return false still continue
   end
 end
