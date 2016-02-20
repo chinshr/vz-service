@@ -114,6 +114,7 @@ module Model::Ingest::MediaStages
       update_column(:busy, !!@recently_busy)
       @recently_busy = nil
     end
+    true # make sure we don't stop here
   end
 
   def after_commit_event_start
@@ -127,10 +128,12 @@ module Model::Ingest::MediaStages
       # or, restart from where it was stopped at
       trigger_next_stage_with!(stage)
     end
+    true # make sure we don't stop here
   end
 
   def after_commit_trigger_stage_async
     trigger_next_stage_with!(@trigger)
+    true # make sure we don't stop here
   end
 
   def after_enter_restarting
