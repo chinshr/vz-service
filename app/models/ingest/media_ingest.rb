@@ -32,10 +32,11 @@ class Ingest::MediaIngest < Ingest
 
   def create_image_ingest_from_target
     if metadata['target'] && metadata['target']['image']
-      Ingest::ImageIngest.create({
+      image_ingest = Ingest::ImageIngest.create({
         ingestable: document,
         source_url: metadata['target']['image']
-      }).start!
+      })
+      image_ingest.start!
     end
     true # in case start! return false still continue
   end
