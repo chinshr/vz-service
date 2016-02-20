@@ -4,11 +4,9 @@
     <div class="panel show-panel">
       <a href="#" class="media-image media-image-thumb">
         <!-- progress -->
-        <% if @progress: %>
-        <div class="progress <% if @progress && @progress < 100: %> progress-striped <% end %>  active">
+        <div class="progress <% if @progress && @progress < 100: %> progress-striped <% end %>  active" hidden>
           <div class="progress-bar progress-bar-success" style="width: <%= @progress %>%"></div>
         </div>
-        <% end %>
         <span class="thumb thumb-video thumb-crop-top thumb-play xplay">
           <!-- image -->
           <span class="thumb-sizer">
@@ -19,9 +17,7 @@
           </span>
 
           <!-- status -->
-          <% if @status: %>
-          <span class="upload-status running" hidden>Processing</span>
-          <% end %>
+          <span class="upload-status running" hidden></span>
 
           <!-- more... -->
           <button type="button" aria-hidden="true" data-toggle="popover" class="btn-more btn-thumb action-more" hidden>

@@ -137,7 +137,7 @@ App.Views.TilesBase = Backbone.View.extend({
   updateStatus: function() {
     var statusEl = this.$('.upload-status');
 
-    if (!!this.model.attributes.status) {
+    if (this.model.attributes.status !== undefined) {
       statusEl.html(this.model.statusMessage());
       statusEl
         .removeClass("running")
@@ -151,38 +151,45 @@ App.Views.TilesBase = Backbone.View.extend({
       } else {
         statusEl.addClass("warning");
       }
+
+      statusEl.html(this.model.statusMessage());
       statusEl.show();
+    } else {
+      statusEl.hide();
     }
   },
 
   updateProgress: function() {
-    var hasProgress = hasProgress || this.hasProgress();
-    var progressBarEl = this.$('.progress .progress-bar');
-      progressEl = this.$('.progress');
+    var hasProgress = this.hasProgress(),
+      progressEl = this.$('.progress'),
+      progressBarEl = this.$('.progress .progress-bar');
 
-    progressBarEl.css('width', "" + this.model.attributes.progress + "%");
+    if (this.model.attributes.progress !== undefined) {
+      progressBarEl.css('width', "" + this.model.attributes.progress + "%");
+      progressBarEl
+        .removeClass('progress-bar-info')
+        .removeClass('progress-bar-success')
+        .removeClass('progress-bar-warning')
+        .removeClass('progress-bar-danger');
 
-    progressBarEl
-      .removeClass('progress-bar-info')
-      .removeClass('progress-bar-success')
-      .removeClass('progress-bar-warning')
-      .removeClass('progress-bar-danger');
+      // colors
+      if (this.model.hasFinished()) {
+        progressBarEl.addClass('progress-bar-success');
+      } else if (this.model.hasStopped()) {
+        progressBarEl.addClass('progress-bar-danger');
+      } else {
+        progressBarEl.addClass('progress-bar-warning');
+      }
 
-    // colors
-    if (this.model.hasFinished()) {
-      progressBarEl.addClass('progress-bar-success');
-    } else if (this.model.hasStopped()) {
-      progressBarEl.addClass('progress-bar-danger');
+      // to be 'striped' or not to be...
+      if (hasProgress) {
+        progressEl.addClass('active').addClass('progress-striped');
+      } else {
+        progressEl.removeClass('active').removeClass('progress-striped');
+      }
+      progressEl.show();
     } else {
-      progressBarEl.addClass('progress-bar-warning');
-    }
-
-    // percentage progress
-    // console.log("progress (" + this.model.attributes.progress + "%)");
-    if (hasProgress) {
-      progressEl.addClass('active').addClass('progress-striped');
-    } else {
-      progressEl.removeClass('active').removeClass('progress-striped');
+      progressEl.hide();
     }
   },
 
