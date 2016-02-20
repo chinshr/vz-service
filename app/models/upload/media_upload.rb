@@ -84,10 +84,12 @@ class Upload::MediaUpload < Upload
       ingest.save if ingest.new_record? || ingest.changed?
     end
   ensure
-    if locale_changed
-      ingest.restart! if ingest.may_restart?
-    else
+    if transaction_include_any_action?([:create])
       ingest.start! if ingest.may_start?
+    elsif transaction_include_any_action?([:update])
+      if locale_changed
+        ingest.restart! if ingest.may_restart?
+      end
     end
   end
 
