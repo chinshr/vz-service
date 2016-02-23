@@ -110,12 +110,13 @@ class Document < ActiveRecord::Base
   scope :with_privacy, -> (privacy) { where(privacy_sql_condition(privacy)) }
   scope :with_accessibility, -> (access) { where(accessibility_sql_condition(access)) }
   scope :viewable_by_user, -> (user) {
-    privacy_sql       = privacy_sql_condition('public', 'unlisted')
-    accessibility_sql = accessibility_sql_condition('view', 'comment', 'edit')
     if user && user.id
+      privacy_sql       = privacy_sql_condition('public', 'unlisted')
+      accessibility_sql = accessibility_sql_condition('view', 'comment', 'edit')
       where("(#{privacy_sql} AND #{accessibility_sql}) OR documents.user_id = ?", user)
     else
-      where("(#{privacy_sql} AND #{accessibility_sql})")
+      accessibility_sql = accessibility_sql_condition('view', 'comment', 'edit')
+      where("#{accessibility_sql} OR (documents.aasm_state = ? AND (NOT #{privacy_sql_condition('private')}))", 'published')
     end
   }
   scope :params_id, -> (params) {
