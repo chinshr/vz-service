@@ -58,7 +58,7 @@ class Upload < ActiveRecord::Base
   }
   scope :any_of_types, -> (params) { where("uploads.type IN (?)", class_names_for(params)) }
   scope :none_of_types, -> (params) { where("uploads.type NOT IN (?)", class_names_for(params)) }
-
+  scope :eager_load_associations, -> { eager_load({:ingest => {:document => {:images => :image_format}, :images => :image_format}}) }
   after_destroy :remove_ingest, :perform_delete_job
 
   class << self

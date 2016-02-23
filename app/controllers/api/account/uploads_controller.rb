@@ -12,7 +12,7 @@ class Api::Account::UploadsController < Api::Account::ApplicationController
 
   # [GET] /api/account/uploads(.:format)
   def index
-    @uploads = current_user.uploads.filter(params)
+    @uploads = current_user.uploads.eager_load_associations.filter(params)
     respond_with @uploads
   end
 

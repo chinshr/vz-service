@@ -5,7 +5,7 @@ class Api::DocumentsController < Api::ApplicationController
 
   # [GET] /api/documents(.:format)
   def index
-    @documents = Document.is_root.viewable_by_user(current_user).filter(params)
+    @documents = Document.eager_load_associations.is_root.viewable_by_user(current_user).filter(params)
     respond_with @documents
   end
 

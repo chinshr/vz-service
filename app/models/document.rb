@@ -123,6 +123,7 @@ class Document < ActiveRecord::Base
     end
     where("documents.slug = ? OR documents.slug_id = ? OR documents.uid = ? OR documents.id = ?", params[:id], params[:id], params[:id], param_document_id)
   }
+  scope :eager_load_associations, -> { eager_load({:images => :image_format}) }
 
   aasm column: 'aasm_state' do
     state :unpublished, initial: true
