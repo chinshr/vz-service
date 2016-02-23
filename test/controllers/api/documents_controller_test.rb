@@ -269,7 +269,7 @@ class Api::DocumentsControllerTest < ActionController::TestCase
       assert_difference 'Document.count', -1 do
         delete :destroy, {id: @document2, format: :json}
         assert_response :success
-        assert_response_body_attributes_with "document"
+        assert_response_body_attributes_with "document", nil, :assert_entity_attributes
       end
     end
 
@@ -292,6 +292,16 @@ class Api::DocumentsControllerTest < ActionController::TestCase
   protected
 
   def assert_attributes(params, expected_attributes = {})
+    (expected_attributes.keys + %w(id title description uid tag_list locale privacy accessibility slug slug_id published_path published_at status)).each do |attribute|
+      assert params.has_key?(attribute), "should contain key '#{attribute}' in response '#{params}'"
+    end
+
+    expected_attributes.each do |key, value|
+      assert_equal value, params[key], "'#{key}' should contain '#{value}', but was '#{params[key]}'"
+    end
+  end
+
+  def assert_entity_attributes(params, expected_attributes = {})
     (expected_attributes.keys + %w(id title description html rich_text text uid tag_list locale privacy accessibility slug slug_id published_path published_at status images)).each do |attribute|
       assert params.has_key?(attribute), "should contain key '#{attribute}' in response '#{params}'"
     end
