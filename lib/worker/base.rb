@@ -28,8 +28,7 @@ class Worker::Base
 
   def perform(params = {})
     self.params = params
-    # TODO: find a better way to stub SQS call
-    queue.send_message(params.to_json) # unless Rails.env.test?
+    queue.send_message(params.to_json)
   end
 
   protected

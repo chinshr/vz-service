@@ -236,4 +236,9 @@ class Chunk < ::Document
     slug_id
   end
 
+  def update_chunks_from_segments
+    # overwrite, NOOP, and return
+    true
+  end
+
 end

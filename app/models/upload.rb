@@ -137,7 +137,7 @@ class Upload < ActiveRecord::Base
   end
 
   def remove_ingest
-    ingest.remove! if ingest && ingest.reload
+    ingest.remove! if ingest && ingest.reload.may_remove?
   end
 
   def perform_delete_job
