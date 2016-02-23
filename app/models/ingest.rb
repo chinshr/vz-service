@@ -42,6 +42,8 @@ class Ingest < ActiveRecord::Base
   has_many :processes, class_name: "Ingest::Process", dependent: :destroy
   has_many :servers, through: :processes, after_remove: :async_server_update
 
+  has_many :images, :class_name => "::Image", :foreign_key => :ingest_id, :dependent => :destroy
+
   acts_as_paranoid
 
   validates :type, presence: true
