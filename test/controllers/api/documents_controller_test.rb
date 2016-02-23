@@ -58,7 +58,7 @@ class Api::DocumentsControllerTest < ActionController::TestCase
       get :count, format: :json
       assert_response :success
       assert response_body.has_key?("count"), "should have root"
-      assert_equal Document.with_user_privacy(@user2).count, response_body["count"], "should have count"
+      assert_equal Document.viewable_by_user(@user2).count, response_body["count"], "should have count"
     end
   end
 

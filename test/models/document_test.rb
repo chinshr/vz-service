@@ -71,6 +71,34 @@ class DocumentTest < ActiveSupport::TestCase
     end
   end
 
+  context "class methods" do
+    should "#privacy_mask" do
+      assert_equal 1, Document.privacy_mask('public')
+      assert_equal 2, Document.privacy_mask('private')
+      assert_equal 4, Document.privacy_mask('unlisted')
+    end
+
+    should "#privacy_sql_condition" do
+      assert_equal "((documents.privacy_mask & 1 > 0))", Document.privacy_sql_condition('public')
+      assert_equal "((documents.privacy_mask & 1 > 0) OR (documents.privacy_mask & 4 > 0))", Document.privacy_sql_condition('public', 'unlisted')
+      assert_equal "((documents.privacy_mask & 1 > 0) OR (documents.privacy_mask & 4 > 0))", Document.privacy_sql_condition(['public', 'unlisted'])
+      assert_equal "(1 = 1)", Document.privacy_sql_condition
+    end
+
+    should "#accessibility_mask" do
+      assert_equal 1, Document.accessibility_mask('view')
+      assert_equal 2, Document.accessibility_mask('comment')
+      assert_equal 4, Document.accessibility_mask('edit')
+    end
+
+    should "#accessibility_sql_condition" do
+      assert_equal "((documents.accessibility_mask & 1 > 0))", Document.accessibility_sql_condition('view')
+      assert_equal "((documents.accessibility_mask & 1 > 0) OR (documents.accessibility_mask & 2 > 0))", Document.accessibility_sql_condition('view', 'comment')
+      assert_equal "(1 = 1)", Document.accessibility_sql_condition
+    end
+
+  end
+
   context "slug" do
     should "slug_id length" do
       document = FactoryGirl.create(:document)
@@ -264,12 +292,12 @@ class DocumentTest < ActiveSupport::TestCase
       assert_equal [@document2], Document.with_privacy(:public).to_a
     end
 
-    should "#with_user_privacy" do
+    should "#viewable_by_user" do
       @user = FactoryGirl.create(:user)
-      @document1 = FactoryGirl.create(:document, :privacy => [:private], :user => @user)
-      @document2 = FactoryGirl.create(:document, :privacy => [:public])
-      assert_equal [@document1, @document2].to_set, Document.with_user_privacy(@user).to_set
-      assert_equal [@document2].to_set, Document.with_user_privacy(nil).to_set
+      @document1 = FactoryGirl.create(:document, privacy: ['private'], :user => @user)
+      @document2 = FactoryGirl.create(:document, privacy: [:public], accessibility: ['view'])
+      assert_equal [@document1, @document2].to_set, Document.viewable_by_user(@user).to_set
+      assert_equal [@document2].to_set, Document.viewable_by_user(nil).to_set
     end
 
     should "#any_of_locales" do

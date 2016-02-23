@@ -10,12 +10,12 @@ class Document < ActiveRecord::Base
   include ActionView::Helpers::TextHelper
   include ActionView::Helpers::SanitizeHelper
 
-  PRIVACY_SETTINGS  = {'public' => 0, 'private' => 1, 'unlisted' => 2}
-  ACCESSIBILITY_SETTINGS  = {'view' => 0, 'comment' => 1, 'edit' => 2}
-  STATE_UNPUBLISHED = 0
-  STATE_PUBLISHED   = 1
-  STATE_REMOVED     = 2
-  STATES            = {unpublished: STATE_UNPUBLISHED, published: STATE_PUBLISHED, removed: STATE_REMOVED}
+  PRIVACY_SETTINGS       = {'public' => 0, 'private' => 1, 'unlisted' => 2}
+  ACCESSIBILITY_SETTINGS = {'view' => 0, 'comment' => 1, 'edit' => 2}
+  STATE_UNPUBLISHED      = 0
+  STATE_PUBLISHED        = 1
+  STATE_REMOVED          = 2
+  STATES                 = {unpublished: STATE_UNPUBLISHED, published: STATE_PUBLISHED, removed: STATE_REMOVED}
 
   delegate :duration, to: :track, allow_nil: true
   delegate :duration=, to: :track, allow_nil: true
@@ -107,8 +107,16 @@ class Document < ActiveRecord::Base
   scope :published_at_lteq, -> (date) { where(self.arel_table[:published_at].lteq(Model::Helper.date_parse(date))) }
   # private scopes
   scope :recent, -> (n = 5) { order("documents.created_at DESC").limit(n) }
-  scope :with_privacy, -> (privacy) { where("privacy_mask & #{privacy_mask(privacy)} > 0") }
-  scope :with_user_privacy, -> (user) { user && user.id ? where("documents.privacy_mask & #{privacy_mask("public")} > 0 OR documents.user_id = ?", user) : with_privacy("public") }
+  scope :with_privacy, -> (privacy) { where(privacy_sql_condition(privacy)) }
+  scope :viewable_by_user, -> (user) {
+    if user && user.id
+      privacy_sql       = privacy_sql_condition('public', 'unlisted')
+      accessibility_sql = accessibility_sql_condition('view', 'comment', 'edit')
+      where("(#{privacy_sql} AND #{accessibility_sql}) OR documents.user_id = ?", user)
+    else
+      with_privacy(['public', 'unlisted'])
+    end
+  }
   scope :params_id, -> (params) {
     param_document_id = if params[:id].present? && params[:id].to_i.to_s == params[:id]
       params[:id]
@@ -140,6 +148,7 @@ class Document < ActiveRecord::Base
   after_destroy :remove_ingests
 
   class << self
+
     # E.g. random_slug_string(5) => "12345"
     def random_slug_string(len)
       chars = [('a'..'z'), ('0'..'9')].map {|i| i.to_a}.flatten
@@ -152,10 +161,26 @@ class Document < ActiveRecord::Base
       index ? 2**index : 0
     end
 
+    def privacy_sql_condition(*args)
+      result = []
+      Array.wrap(args).flatten.each do |privacy|
+        result << "(documents.privacy_mask & #{privacy_mask(privacy)} > 0)"
+      end
+      result.length > 0 ? "(#{ result.join(" OR ") })" : "(1 = 1)"
+    end
+
     def accessibility_mask(number)
       numbers = ACCESSIBILITY_SETTINGS.map {|k,v| number.is_a?(Fixnum) ? v : k}
       index   = numbers.index(number.is_a?(Fixnum) ? number : number.to_s)
       index ? 2**index : 0
+    end
+
+    def accessibility_sql_condition(*args)
+      result = []
+      Array.wrap(args).flatten.each do |accessibility|
+        result << "(documents.accessibility_mask & #{accessibility_mask(accessibility)} > 0)"
+      end
+      result.length > 0 ? "(#{ result.join(" OR ") })" : "(1 = 1)"
     end
 
     def slug_id_length; 12; end

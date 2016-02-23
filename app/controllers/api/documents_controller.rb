@@ -5,13 +5,13 @@ class Api::DocumentsController < Api::ApplicationController
 
   # [GET] /api/documents(.:format)
   def index
-    @documents = Document.is_root.with_user_privacy(current_user).filter(params)
+    @documents = Document.is_root.viewable_by_user(current_user).filter(params)
     respond_with @documents
   end
 
   # [GET] /api/documents/count(.:format)
   def count
-    render :json => {:count => Document.with_user_privacy(current_user).filter(params).count}
+    render :json => {:count => Document.viewable_by_user(current_user).filter(params).count}
   end
 
   # [GET] /api/documents/:id(.:format)
