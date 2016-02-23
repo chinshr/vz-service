@@ -140,7 +140,7 @@ class ChunkTest < ActiveSupport::TestCase
 
     should "have filtered scopes" do
       assert_equal [:any_of_types, :none_of_types, :any_of_processing_status, :none_of_processing_status,
-        :sort_order, :reverse_sort, :offset, :limit, :any_of_ingest_iterations,
+        :sort_order, :reverse_sort, :offset, :limit, :user_id, :any_of_ingest_iterations,
         :any_of_positions, :is_root, :score_lt, :score_gt, :score_lteq, :score_gteq,
         :duration_lt, :duration_gt, :duration_lteq, :duration_gteq, :ingest_id, :none_of_ingest_ids,
         :any_of_locales, :any_of_status, :none_of_status, :any_of_tags, :none_of_tags,
