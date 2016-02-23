@@ -108,13 +108,14 @@ class Document < ActiveRecord::Base
   # private scopes
   scope :recent, -> (n = 5) { order("documents.created_at DESC").limit(n) }
   scope :with_privacy, -> (privacy) { where(privacy_sql_condition(privacy)) }
+  scope :with_accessibility, -> (access) { where(accessibility_sql_condition(access)) }
   scope :viewable_by_user, -> (user) {
+    privacy_sql       = privacy_sql_condition('public', 'unlisted')
+    accessibility_sql = accessibility_sql_condition('view', 'comment', 'edit')
     if user && user.id
-      privacy_sql       = privacy_sql_condition('public', 'unlisted')
-      accessibility_sql = accessibility_sql_condition('view', 'comment', 'edit')
       where("(#{privacy_sql} AND #{accessibility_sql}) OR documents.user_id = ?", user)
     else
-      with_privacy(['public', 'unlisted'])
+      where("(#{privacy_sql} AND #{accessibility_sql})")
     end
   }
   scope :params_id, -> (params) {
