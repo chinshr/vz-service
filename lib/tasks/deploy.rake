@@ -4,6 +4,15 @@ namespace :deploy do
     namespace :document do
 
       desc 'Destroy only deleted documents and chunks permanently'
+      task :create_rich_text_from_segments => :environment do
+        count = Document.is_root.where("documents.rich_text IS NULL").count
+        puts "#{count} documents with empty rich_text found."
+        Document.is_root.where("documents.rich_text IS NULL").find_each do |document|
+          Document::CreateRichTextJob.perform_later(document.id)
+        end
+      end
+
+      desc 'Destroy only deleted documents and chunks permanently'
       task :really_destroy_only_deleted => :environment do
         Document.only_deleted.find_each do |document|
           document.really_destroy!
