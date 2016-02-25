@@ -88,7 +88,7 @@ class Ingest::Server < ActiveRecord::Base
       type, size = instance_type.split('.')
       base = case type
       when 't2' then 2
-      when 'm4', 'm3' then 8
+      when 'm4', 'm3' then 4
       when 'c3', 'c4' then 4
       else
         1
@@ -96,13 +96,13 @@ class Ingest::Server < ActiveRecord::Base
 
       multiplier = case size
       when 'micro' then 1
-      when 'small' then 2
-      when 'medium' then 4
-      when 'large' then 8
-      when 'xlarge' then 16
-      when '2xlarge' then 32
-      when '4xlarge' then 64
-      when '10xlarge' then 128
+      when 'small' then 1
+      when 'medium' then 2
+      when 'large' then 3
+      when 'xlarge' then 5
+      when '2xlarge' then 8
+      when '4xlarge' then 13
+      when '10xlarge' then 21
       else
         1
       end
