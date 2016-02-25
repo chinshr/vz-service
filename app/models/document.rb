@@ -226,10 +226,14 @@ class Document < ActiveRecord::Base
   end  # class
 
   def best_chunks
-    chunk_ids = chunks.pluck(:id)
-    Chunk.where("documents.id IN (?)", chunk_ids).
+    chunk_ids   = chunks.pluck(:id)
+    segment_ids = child_segments.pluck(:id)
+    Chunk.
       joins("INNER JOIN segments ys ON ys.chunk_id = documents.id AND ys.type IN ('Segment::ChunkSegment')").
       joins(self.class.send(:sanitize_sql, ["INNER JOIN (SELECT ps.position AS position, MAX(score) AS max_score FROM documents p INNER JOIN segments ps ON ps.chunk_id = p.id AND ps.document_id = #{self.id} AND ps.type IN ('Segment::ChunkSegment') WHERE p.id IN (?) GROUP BY ps.position) y ON y.position = ys.position AND y.max_score = documents.score", chunk_ids])).
+      # joins("INNER JOIN (SELECT ps.position AS position, MAX(score) AS max_score FROM documents p INNER JOIN segments ps ON ps.chunk_id = p.id AND ps.document_id = #{self.id} AND ps.type IN ('Segment::ChunkSegment') GROUP BY ps.position) y ON y.position = ys.position AND y.max_score = documents.score").
+      where("documents.id IN (?)", chunk_ids).
+      where("ys.id IN (?)", segment_ids).
       order("ys.position")
   end
 
