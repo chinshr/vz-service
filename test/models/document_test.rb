@@ -479,10 +479,10 @@ class DocumentTest < ActiveSupport::TestCase
     document = Document.find(document.id)
     assert_equal rt, document[:rich_text]
     assert_equal rt, document.rich_text
-    assert_equal 0.32, c1.reload.start_time.to_f
-    assert_equal 1.41, c1.reload.end_time.to_f
-    assert_equal 1.0, c1.reload.score.to_f
-    assert_equal "Das ist das", c1.reload.text
+    # assert_equal 0.32, c1.reload.start_time.to_f
+    # assert_equal 1.41, c1.reload.end_time.to_f
+    # assert_equal 1.0, c1.reload.score.to_f
+    # assert_equal "Das ist das", c1.reload.text
   end
 
   should "set/get content as html" do
@@ -656,14 +656,13 @@ class DocumentTest < ActiveSupport::TestCase
       assert_equal 0.85, Document.parse_segment_score(@document.rich_text['ops'][4]['attributes']['segment'])
     end
 
-    should "set rich_text, text and score" do
+    should "update rich_text, text and score" do
       rt = @document.rich_text
 
       rt['ops'][2]['insert'] = "that cats make"
       rt['ops'][4]['insert'] = "the best food in the world."
 
-      @document.rich_text = rt
-      assert_equal true, @document.save
+      @document.send(:update_chunks_from, rt)
       @document = Document.find @document.id
 
       assert_equal "that cats make", @c2.reload.text
@@ -672,7 +671,7 @@ class DocumentTest < ActiveSupport::TestCase
       assert_equal true, @c3.reload.score > 0.9
     end
 
-    should "set rich_text, offset and duration" do
+    should "update rich_text, offset and duration" do
       c2_offset   = @c2.offset
       c2_duration = @c2.duration
       c3_offset   = @c3.offset
@@ -682,8 +681,7 @@ class DocumentTest < ActiveSupport::TestCase
       rt['ops'][2]['attributes']['segment'] = @c2.uid + "+t2_30-7_30+s0_650"
       rt['ops'][4]['attributes']['segment'] = @c3.uid + "+t23_56-28_76+s0_850"
 
-      @document.rich_text = rt
-      assert_equal true, @document.save
+      @document.send(:update_chunks_from, rt)
       @document = Document.find @document.id
 
       assert_equal 2.3, @c2.reload.start_time

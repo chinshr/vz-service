@@ -422,7 +422,11 @@ class Document < ActiveRecord::Base
   end
 
   def update_chunks_from_segments
-    update_chunks_from(@rich_text) if @rich_text && changes[:rich_text]
+    if @rich_text && changes[:rich_text]
+      Document::UpdateRichTextJob.perform_later(self.id, @rich_text)
+    }
+    end
+  ensure
     @rich_text = nil
   end
 
