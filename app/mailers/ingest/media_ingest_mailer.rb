@@ -3,7 +3,7 @@ class Ingest::MediaIngestMailer < ActionMailer::Base
 
   def finished_processing(ingest)
     @ingest = ingest
-    mail(to: @ingest.user.email, subject: "Finished, '#{@ingest.title}' has been transcribed.")
+    mail(to: @ingest.user.email, subject: "Finished, '#{@ingest.title}' has been processed.")
   end
 
 end

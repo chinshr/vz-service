@@ -40,4 +40,9 @@ class Ingest::MediaIngest < Ingest
     end
     true # in case start! return false still continue
   end
+
+  def after_commit_event_finish
+    super
+    Document::CreateRichTextJob.perform_later(self.id)
+  end
 end

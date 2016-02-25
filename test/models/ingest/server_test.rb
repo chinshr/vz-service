@@ -62,11 +62,11 @@ class Ingest::ServerTest < ActiveSupport::TestCase
       assert_equal 1, Ingest::Server.max_processes_from('foobar')
       # t2
       assert_equal 2, Ingest::Server.max_processes_from('t2.micro')
-      assert_equal 4, Ingest::Server.max_processes_from('t2.small')
-      assert_equal 8, Ingest::Server.max_processes_from('t2.medium')
-      assert_equal 16, Ingest::Server.max_processes_from('t2.large')
+      assert_equal 2, Ingest::Server.max_processes_from('t2.small')
+      assert_equal 4, Ingest::Server.max_processes_from('t2.medium')
+      assert_equal 6, Ingest::Server.max_processes_from('t2.large')
       # m3
-      assert_equal 128, Ingest::Server.max_processes_from('m3.xlarge')
+      assert_equal 20, Ingest::Server.max_processes_from('m3.xlarge')
     end
 
     context "create_from" do
@@ -89,7 +89,7 @@ class Ingest::ServerTest < ActiveSupport::TestCase
           assert_equal "ami-8fcbb0ea", server.image_id
           assert_equal "m3.medium", server.instance_type
           assert_equal 1, server.number
-          assert_equal 32, server.max_processes
+          assert_equal 8, server.max_processes
         end
       end
     end

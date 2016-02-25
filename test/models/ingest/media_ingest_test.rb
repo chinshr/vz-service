@@ -168,11 +168,13 @@ class Ingest::MediaIngestTest < ActiveSupport::TestCase
     ingest.process!  # inside worker!
     assert_equal :started, ingest.state
 
-    ingest.finish!  # inside worker!
-    assert_equal :finished, ingest.state
+    assert_enqueued_with(job: Document::CreateRichTextJob) do
+      ingest.finish!  # inside worker!
+      assert_equal :finished, ingest.state
+    end
 
     assert_equal 1, ActionMailer::Base.deliveries.size
-    assert_equal "Finished, '#{ingest.upload.file_name}' has been transcribed.", ActionMailer::Base.deliveries[0].subject
+    assert_equal "Finished, '#{ingest.title}' has been processed.", ActionMailer::Base.deliveries[0].subject
   end
 
   context "stage related" do
