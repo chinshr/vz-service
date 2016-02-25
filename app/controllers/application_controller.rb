@@ -24,6 +24,6 @@ class ApplicationController < ActionController::Base
   end
 
   def load_document
-    @document = Document.params_id(params).first!
+    @document = Document.eager_load_associations.params_id(params).first!
   end
 end
