@@ -1,4 +1,4 @@
-class Ingest::AudioMailer < ActionMailer::Base
+class Ingest::MediaIngestMailer < ActionMailer::Base
   default from: "no-reply@voyz.es"
 
   def finished_processing(ingest)
