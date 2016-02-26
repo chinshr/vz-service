@@ -76,6 +76,7 @@ class Ingest::Server < ActiveRecord::Base
         attributes.each do |k, v|
           server.send("#{k}=", v)
         end
+        server.enable if instance.status == :running
       end
     end
 
@@ -182,8 +183,8 @@ class Ingest::Server < ActiveRecord::Base
       instance.stop unless test?
       true
     when :pending
-      wait_until(:running)
-      _stop
+      instance.stop unless test?
+      true
     when :terminated, :shutting_down
       false
     when :stopping, :stopped
@@ -198,7 +199,7 @@ class Ingest::Server < ActiveRecord::Base
       instance.terminate unless test?
       true
     when :pending
-      wait_until(:running)
+      wait_until(:terminated)
       _terminate
     when :terminated, :shutting_down
       true

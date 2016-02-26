@@ -79,6 +79,7 @@ class Ingest::ServerTest < ActiveSupport::TestCase
         aws_ec2_instance.expects(:launch_time).returns(Time.zone.now)
         aws_ec2_instance.expects(:image_id).returns("ami-8fcbb0ea")
         aws_ec2_instance.expects(:instance_type).returns("m3.medium")
+        aws_ec2_instance.expects(:status).returns(:running)
 
         assert_difference "Ingest::Server::CPWServer.count" do
           server = Ingest::Server::CPWServer.create_from(aws_ec2_instance)
@@ -90,6 +91,7 @@ class Ingest::ServerTest < ActiveSupport::TestCase
           assert_equal "m3.medium", server.instance_type
           assert_equal 1, server.number
           assert_equal 8, server.max_processes
+          assert_equal :enabled, server.state
         end
       end
     end
@@ -176,7 +178,7 @@ class Ingest::ServerTest < ActiveSupport::TestCase
       instance_class.expects(:stop)
       Provider::AWS::EC2.any_instance.stubs(:instance).returns(instance_class)
       server = FactoryGirl.create(:cpw_ingest_server)
-      server.expects(:wait_until).with(:running)
+      #server.expects(:wait_until).with(:running)
       assert_equal true, server.send(:_stop)
     end
 
@@ -236,7 +238,7 @@ class Ingest::ServerTest < ActiveSupport::TestCase
       instance_class.expects(:terminate)
       Provider::AWS::EC2.any_instance.stubs(:instance).returns(instance_class)
       server = FactoryGirl.create(:cpw_ingest_server)
-      server.expects(:wait_until).with(:running)
+      server.expects(:wait_until).with(:terminated)
       assert_equal true, server.send(:_terminate)
     end
 

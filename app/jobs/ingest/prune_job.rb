@@ -49,5 +49,9 @@ class Ingest::PruneJob < ActiveJob::Base
       .find_each do |server|
         server.terminate
     end
+
+    Ingest::Server.pending.without_processes.find_each do |server|
+      server.terminate
+    end
   end
 end
