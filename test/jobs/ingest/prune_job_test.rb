@@ -19,7 +19,7 @@ class Ingest::PruneJobTest < ActiveSupport::TestCase
       assert_equal :starting, ingest.state
     end
   end
-=begin
+
   context "delete removed ingests" do
     should "delete removed older than X" do
       ingest = FactoryGirl.create(:media_ingest_as_audio,
@@ -37,7 +37,7 @@ class Ingest::PruneJobTest < ActiveSupport::TestCase
       end
     end
   end
-=end
+
   context "terminate 'stale' servers" do
     should "terminate instance" do
       server = FactoryGirl.create(:cpw_ingest_server, aasm_state: "enabled", enabled_at: Time.zone.now - 24.hours)
@@ -51,4 +51,17 @@ class Ingest::PruneJobTest < ActiveSupport::TestCase
       Ingest::PruneJob.new.perform
     end
   end
+
+  context "stop stale running ingests" do
+
+    should "stop" do
+      ingest = FactoryGirl.create(:media_ingest_as_audio,
+        aasm_state: "started", created_at: Time.zone.now - 2.hours - 1.second,
+        busy: false, terminate: false)
+      Ingest::PruneJob.new.perform
+      assert_equal :stopping, ingest.reload.state
+    end
+
+  end
+
 end
