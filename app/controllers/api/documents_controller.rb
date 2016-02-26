@@ -11,7 +11,7 @@ class Api::DocumentsController < Api::ApplicationController
 
   # [GET] /api/documents/count(.:format)
   def count
-    render :json => {:count => Document.viewable_by_user(current_user).filter(params).count}
+    render :json => {:count => Document.viewable_by_user(current_user).filter(count_params).count}
   end
 
   # [GET] /api/documents/:id(.:format)

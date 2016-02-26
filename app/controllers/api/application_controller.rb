@@ -51,7 +51,6 @@ class Api::ApplicationController < ::ApplicationController
     headers['version'] = Api::Version.to_s
   end
 
-
   # Passing version header or parameter returning date object.
   #
   #     curl \
@@ -73,4 +72,9 @@ class Api::ApplicationController < ::ApplicationController
   rescue ArgumentError
     Date.parse(default_version)
   end
+
+  def count_params
+    params.except(:limit, :offset, :sort_order, :reverse_sort)
+  end
+
 end
