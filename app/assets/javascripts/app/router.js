@@ -17,7 +17,7 @@ App.Router = Backbone.Router.extend({
 
     collection.fetch({
       reset: true,
-      data: $.param({'sort_order': {'created_at': 'desc'}, 'any_of_types': ['media_upload']}),
+      data: $.param({'limit': 40, 'sort_order': {'created_at': 'desc'}, 'any_of_types': ['media_upload']}),
       success: function() {
         collectionFetched.resolve();
       }
