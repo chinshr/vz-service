@@ -1,12 +1,21 @@
 # config/initializers/rabl_init.rb
 require 'rabl'
 
+dalli_client = Dalli::Client.new((ENV["MEMCACHIER_SERVERS"] || "").split(","), {
+  :username => ENV["MEMCACHIER_USERNAME"],
+  :password => ENV["MEMCACHIER_PASSWORD"],
+  :failover => true,
+  :socket_timeout => 1.5,
+  :socket_failure_delay => 0.2,
+  :value_max_bytes => 10485760
+})
+
 Rabl.configure do |config|
   # Commented as these are defaults
   # config.cache_all_output = false
   # config.cache_sources = Rails.env != 'development' # Defaults to false
-  # config.cache_engine = Rabl::CacheEngine.new # Defaults to Rails cache
-  # config.perform_caching = false
+  config.cache_engine = Rails.env.production? ? dalli_client : Rabl::CacheEngine.new # Defaults to Rails cache
+  config.perform_caching = Rails.env.production? ? true : false
   # config.escape_all_output = false
   # config.json_engine = nil # Class with #dump class method (defaults JSON)
   # config.msgpack_engine = nil # Defaults to ::MessagePack
