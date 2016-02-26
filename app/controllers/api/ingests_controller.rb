@@ -16,7 +16,7 @@ class Api::IngestsController < Api::ApplicationController
   # [GET] /api/ingests/count(.:format)
   def count
     authorize :ingest
-    render :json => {:count => Ingest.filter(params).count}
+    render :json => {:count => Ingest.filter(count_params).count}
   end
 
   # [GET] /api/ingests/:id(.:format)

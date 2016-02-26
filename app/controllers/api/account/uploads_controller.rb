@@ -18,7 +18,7 @@ class Api::Account::UploadsController < Api::Account::ApplicationController
 
   # [GET] /api/account/uploads/count(.:format)
   def count
-    render :json => {:count => current_user.uploads.filter(params).count}
+    render :json => {:count => current_user.uploads.filter(count_params).count}
   end
 
   # [GET] /api/account/uploads/:id(.:format)
