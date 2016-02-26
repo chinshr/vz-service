@@ -112,7 +112,7 @@ class Ingest < ActiveRecord::Base
     end
 
     event :fail, :after_commit => :after_commit_event_fail do
-      transitions :from => [:created, :starting, :started, :stopping, :stopped, :resetting, :reset, :removing], :to => :stopped
+      transitions :from => [:created, :starting, :started, :restarting, :stopping, :stopped, :resetting, :reset, :removing], :to => :stopped
     end
 
     event :restart, :after_commit => :after_commit_event_restart do
