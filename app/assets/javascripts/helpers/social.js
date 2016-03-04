@@ -64,17 +64,27 @@ VZ._social = (function() {
     // http://stackoverflow.com/questions/25619418/how-do-i-implement-basic-share-social-buttons-with-font-awesome-fonts
 
     // facebook
-    $('.social-networks .facebook a, .social-networks .facebook button').attr("href", 'http://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(url))
-    .on('click', function(e) {
-      var href = $(this).attr("href"),
-        fburl = decodeURIComponent( href.substring(href.indexOf("u=") > -1 ? href.indexOf("u=") + 2 : 0) );
-
-      if (trackingCodes && ('facebook' in trackingCodes)) {
-        href += "%3Fr%3D" + trackingCodes.facebook;
+    $(".social-networks .facebook a, .social-networks .facebook button").each(function(index, element) {
+      var href;
+      if ($(this).data("href")) {
+        href = $(this).data("href");
+      } else {
+        href = url;
       }
-      window.open(href, 'sharer', "toolbar=no,menubar=no,scrollbars=no,location=no,directories=no,width=626,height=300");
-      VZ.trackEvent("facebook-button-clicked", {url : fburl});
-      return false;
+      $(this)
+        .attr("href", 'http://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(href))
+        .on('click', function(e) {
+          var href = $(this).attr("href"),
+            fburl = decodeURIComponent( href.substring(href.indexOf("u=") > -1 ? href.indexOf("u=") + 2 : 0) );
+
+          if (trackingCodes && ('facebook' in trackingCodes)) {
+            href += "%3Fr%3D" + trackingCodes.facebook;
+          }
+
+          window.open(href, 'sharer', "toolbar=no,menubar=no,scrollbars=no,location=no,directories=no,width=626,height=300");
+          VZ.trackEvent("facebook-button-clicked", {url : fburl});
+          return false;
+        });
     });
 
     // twitter
