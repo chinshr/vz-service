@@ -12,8 +12,117 @@ App.Views.TilesShow = App.Views.TilesBase.extend({
   }, App.Views.TilesBase.prototype.events),
 
   initialize: function(options) {
-    _.bindAll(this, "flipTile");
+    _.bindAll(this, "flipTile", "playerOptions", "initPlayerButton",
+      "playerLoading", "playerReady", "playerDestroy",
+      "playerError", "playerPlay", "playerPause", "playerStop", "playerFinish");
     App.Views.TilesBase.prototype.initialize.call(this, options); // super
+  },
+
+  render: function(attributes) {
+    App.Views.TilesBase.prototype.render.call(this, attributes); // super
+
+    _.defer((function(_this) {
+      return function() {
+        _this.initPlayerButton();
+      }
+    })(this));
+
+    return this;
+  },
+
+  update: function() {
+    App.Views.TilesBase.prototype.update.call(this); // super
+    if (this.model.hasFinished()) {
+      if (!this.$(".thumb-play-pause").hasClass("play") || !this.$(".thumb-play-pause").hasClass("pause")) {
+        this.$(".thumb-play-pause").addClass("play");
+      }
+    }
+  },
+
+  playerOptions: function(options) {
+    return _.extend({
+      document_id: this.documentId(),
+      holder: this,
+      callbacks: {
+        loading: this.playerLoading,
+        ready: this.playerReady,
+        destroy: this.playerDestroy,
+        error: this.playerError,
+        play: this.playerPlay,
+        pause: this.playerPause,
+        stop: this.playerStop,
+        finish: this.playerFinish
+      }
+    }, options);
+  },
+
+  initPlayerButton: function() {
+    var _this = this,
+      options = this.playerOptions();
+
+    this.$(".thumb-play-pause").on('click', function(e) {
+      e.stopPropagation();
+      e.preventDefault();
+
+      if (!_this.model.hasFinished()) {
+        return;
+      }
+
+      if (_this.parent && !_this.parent.player) {
+        _this.parent.initPlayer(options);
+      } else if (_this.parent && _this.parent.player && _this.parent.player.document_id !== _this.model.attributes.document_id) {
+        _this.parent.player.destroy();
+        _this.parent.initPlayer(options);
+      } else if (_this.parent && _this.parent.player && _this.parent.player.document_id === _this.model.attributes.document_id && _this.parent.player.isReady()) {
+        _this.parent.player.togglePlay();
+      }
+    });
+  },
+
+  playerLoading: function() {
+    var playPauseEl = this.$(".thumb-play-pause");
+    this.$(".loading").addClass("spinner");
+    playPauseEl.addClass("sticky");
+  },
+
+  playerReady: function(player) {
+    this.$(".loading").removeClass("spinner");
+    if (player.model && player.model.attributes.html) {
+      this.$(".animated-segments-content").html(player.model.attributes.html);
+      this.$(".animated-segments-content").addClass("start").addClass("pause");
+    }
+    this.parent.player.play();
+  },
+
+  playerDestroy: function() {
+    var playPauseEl = this.$(".thumb-play-pause");
+    playPauseEl.removeClass("sticky");
+    this.$(".loading").removeClass("spinner");
+  },
+
+  playerError: function() {
+    console.log("Player error");
+  },
+
+  playerPlay: function() {
+    var playPauseEl = this.$(".thumb-play-pause");
+    playPauseEl.addClass("pause").addClass("sticky").removeClass("play");
+    this.$(".animated-segments-content").addClass("play").removeClass("pause");
+  },
+
+  playerPause: function() {
+    var playPauseEl = this.$(".thumb-play-pause");
+    playPauseEl.addClass("play").addClass("sticky").removeClass("pause");
+    this.$(".animated-segments-content").addClass("pause").removeClass("play");
+  },
+
+  playerStop: function() {
+    var playPauseEl = this.$(".thumb-play-pause");
+    playPauseEl.addClass("play").removeClass("pause");
+  },
+
+  playerFinish: function() {
+    this.parent.player.stop();
   },
 
   trigger: function(view, event) {

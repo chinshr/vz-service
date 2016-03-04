@@ -1,4 +1,4 @@
-App.Views.UploadsShowTile = App.Views.TilesShow.extend(_.extend({}, App.Views.UploadsBaseTile, {
+App.Views.UploadsShowTile = App.Views.TilesShow.extend(_.extend(Backbone.View, App.Views.UploadsBaseTile, {
 
   render: function() {
     var _this = this;

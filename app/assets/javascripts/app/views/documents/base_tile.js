@@ -9,5 +9,10 @@ App.Views.DocumentsBaseTile = {
 
   xupdate: function() {
     App.Views.TilesBase.prototype.update.call(this);
+  },
+
+  documentId: function() {
+    return this.model.attributes.id;
   }
+
 };

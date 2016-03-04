@@ -17,7 +17,8 @@ App.Views.UploadsIndex = Backbone.View.extend({
       "initDropTarget", "addHover", "removeHover", "trigger",
       "addUploadView", "addAll", "addFiles", "dropFiles",
       "dropzone", "uploadToS3", "statusMessage", "initMailTo",
-      "refreshUploadCallback", "refreshLayout", "sourceModalSuccess");
+      "refreshUploadCallback", "refreshLayout", "sourceModalSuccess",
+      "initPlayer");
 
     this.listenTo(this.collection, 'add', this.addUploadView);
     this.listenTo(this.collection, 'reset', this.addAll);
@@ -41,6 +42,7 @@ App.Views.UploadsIndex = Backbone.View.extend({
         _this.refreshLayout();
         _this.show();
       });
+
     });
     return this;
   },
@@ -402,6 +404,10 @@ App.Views.UploadsIndex = Backbone.View.extend({
       console.log("-> message: ", message);
       this.refreshUploadQueue.push(message.data);
     }
+  },
+
+  initPlayer: function(options) {
+    this.player = new App.Views.Player(_.extend({parent: this}, options)).render();
   }
 
 });

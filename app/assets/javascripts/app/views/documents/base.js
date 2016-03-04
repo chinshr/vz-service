@@ -201,10 +201,9 @@ App.Views.DocumentsBase = Backbone.View.extend({
 
     var loadingProgress = 0;
     var loadingInterval = window.setInterval(function() {
-      loadingProgress += 3;
-      showProgress(Math.min(loadingProgress, 100));
-      // console.log(loadingProgress);
-    }, 100);
+      loadingProgress += 1;
+      showProgress(Math.min(loadingProgress, 98));
+    }, 250);
 
     this.wavesurfer.on('loading', showProgress);
     this.wavesurfer.on('destroy', hideProgress);

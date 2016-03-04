@@ -5,7 +5,7 @@ App.Views.TilesBase = Backbone.View.extend({
   },
 
   initialize: function(options) {
-    _.bindAll(this, "render", "remove", "hover", "trigger", "update", "updatePrivacy", "publishDocument");
+    _.bindAll(this, "render", "remove", "hover", "trigger", "update", "updatePrivacy", "publishDocument", "documentId");
     this.parent = options.parent;
     this.listenTo(this.model, 'upload:progress', this.onUploadProgress);
     this.listenTo(this.model, 'destroy', this.remove);
@@ -292,5 +292,10 @@ App.Views.TilesBase = Backbone.View.extend({
 
   hasUploadProgress: function() {
     return !!this._xhr;
+  },
+
+  documentId: function() {
+    // override in subclass, returning the document_id for player
+    return null;
   }
 });

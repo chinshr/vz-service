@@ -1,0 +1,77 @@
+<div id="player" data-uid="" class="xvisible">
+  <div class="centered">
+
+    <a href="#" title="Fullscreen player" class="close-fullscreen for-mobile">
+      <i class="fa fa-chevron-down"></i>
+    </a>
+
+    <a href="" title="" class="player-thumb">
+      <img src="" />
+    </a><!-- player-thumb -->
+
+    <div class="player-button no-fullscreen">
+      <button href="#" title="Play" class="btn btn-icon btn-play-pause play"></button>
+      <div class="loading xspinner"></div>
+    </div>
+
+    <div class="player-text no-fullscreen">
+      <a href="#" title="<%= @title %>" class="player-title"><%= @title %></a>
+      <a href="#" title="<%= @author %>" class="player-author"><%= @author %></a>
+    </div>
+
+    <p class="player-time for-desktop">00:00:00</p>
+
+    <div class="player-progress no-fullscreen">
+      <p class="player-time fullscreen-elements">00:00:00</p>
+      <p class="player-total-time fullscreen-elements">00:00:00</p>
+
+<!--
+      <span style="display: block; width: 6.92592%;"></span>
+      <p class="hitarea"></p>
+ -->
+      <div id="wavebar" class="wavebar">
+        <div id="waveform-timeline" class="waveform-timeline-container"></div>
+        <div id="waveform" class="waveform-container">
+          <div class="progress progress-striped active" id="player-progress-bar">
+            <div class="progress-bar progress-bar-info"></div>
+          </div>
+          <!-- here goes the waveform -->
+        </div>
+      </div><!-- .wavebar -->
+    </div><!-- .player-progress -->
+    <p class="player-total-time for-desktop">-00:00:00</p>
+
+    <div class="player-buttons">
+      <button href="#" class="btn btn-icon btn-heart">
+        <i class="fa fa-heart"></i>
+      </button>
+      <button href="#" class="btn btn-icon btn-share">
+        <i class="fa fa-share"></i>
+      </button>
+    </div>
+
+    <a href="#" title="Fullscreen player" class="open-fullscreen for-mobile no-fullscreen">
+      <i class="fa fa-ellipsis-h"></i>
+    </a>
+
+    <div class="fullscreen-elements">
+      <div class="player-text">
+        <a href="#" title="<%= @title %>" class="player-title"><%= @title %></a>
+        <a href="#" title="<%= @author %>" class="player-author"><%= @author %></a>
+      </div>
+      <div class="progress-wrapper">
+        <p class="player-time">00:00:00</p>
+        <div class="player-progress">
+          <span style="display: block; width: 6.92592%;"></span>
+          <p class="hitarea"></p>
+        </div>
+        <p class="player-total-time">-00:00:00</p>
+      </div><!-- progress-wrapper -->
+      <div class="player-button">
+        <button href="#" title="Play" class="btn btn-icon btn-play-pause play"></button>
+        <div class="loading xspinner"></div>
+      </div><!-- player-button -->
+    </div><!-- fullscreen-elements -->
+  </div><!-- centered -->
+  <audio autoplay="true" data-uid="121" src=""></audio>
+</div>
