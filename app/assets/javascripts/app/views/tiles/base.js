@@ -253,9 +253,9 @@ App.Views.TilesBase = Backbone.View.extend({
         privacy: {
           success: (function(_this) {
             return function() {
-              _this.sharePopoverView.destroy();
-              delete _this.sharePopoverView;
-              _this.initSharePopover();
+              _this.sharePopoverView.destroy(function() {
+                _this.initSharePopover();
+              });
             }
           })(this)
         },

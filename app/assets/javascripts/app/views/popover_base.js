@@ -27,16 +27,18 @@ App.Views.PopoverBase = Backbone.View.extend({
     return this;
   },
 
-  destroy: function() {
-    this.holder.popover("hide");
-    this.holder.popover("destroy");
-    // this.holder.remove();
+  destroy: function(callback) {
+    //this.holder.popover("disable");
 
     this.undelegateEvents();
     this.$el.removeData().unbind();
     Backbone.View.prototype.remove.call(this);
 
+    if (callback) {
+      callback(this);
+    }
     delete this;
+    return this;
   },
 
   remove: function() {
