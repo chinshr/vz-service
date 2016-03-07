@@ -138,6 +138,7 @@ App.Views.DocumentsIndex = Backbone.View.extend({
     document.addEventListener('scroll', function (event) {
       if (document.body.scrollHeight === document.body.scrollTop + window.innerHeight) {
         if (!_this.blockFetchCollection) {
+          _this.blockFetchCollection = true;
           _this.fetchCollection(this);
         }
       }
@@ -164,6 +165,7 @@ App.Views.DocumentsIndex = Backbone.View.extend({
         if (collection.length > 0) {
           _this.offset += _this.limit;
           collectionFetched.resolve();
+          _this.blockFetchCollection = false;
         } else if (scroll) {
           _this.blockFetchCollection = true;
           setTimeout(function() {
