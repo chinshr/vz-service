@@ -54,7 +54,7 @@ var VZ = (function() {
 
   // Google tracker
   var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', config.google.analyticsID]);
+  _gaq.push(['_setAccount', config.google.analyticsId]);
   _gaq.push(['_trackPageview']);
 
   (function() {
@@ -68,7 +68,7 @@ var VZ = (function() {
     if (_gat) {
       // Google track event
       // https://developers.google.com/analytics/devguides/collection/gajs/eventTrackerGuide
-      var tracker  = _gat._getTracker(config.google.analyticsID);
+      var tracker  = _gat._getTracker(config.google.analyticsId);
       var category = name;
       var action   = data['action'] || "unknown-action";
       var label    = data['name'];
