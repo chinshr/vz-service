@@ -56,6 +56,10 @@ App.Models.Document = Backbone.Model.extend(_.extend(Backbone.Model, App.Models.
   // E.g. "https://voyz.es/d/abcd1234"
   previewURL: function() {
     return window.location.origin + '/d/' + this.attributes.slug_id;
+  },
+
+  hasProgress: function() {
+    return false;
   }
 
 }, {className: 'Document'}));

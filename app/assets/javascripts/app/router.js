@@ -11,25 +11,7 @@ App.Router = Backbone.Router.extend({
   },
 
   dashboard: function() {
-    var _this           = this,
-      collection        = new App.Collections.AccountUploads(),
-      collectionFetched = new $.Deferred;
-
-    collection.fetch({
-      reset: true,
-      data: $.param({'limit': 40, 'sort_order': {'created_at': 'desc'}, 'any_of_types': ['media_upload']}),
-      success: function() {
-        collectionFetched.resolve();
-      }
-    });
-
-    collectionFetched.done(function() {
-      var view;
-      view = new App.Views.UploadsIndex({
-        collection: collection
-      });
-      return $('#uploads').html(view.render().el);
-    });
+    var view = new App.Views.UploadsIndex();
   },
 
   documentEdit: function(id) {
@@ -54,30 +36,7 @@ App.Router = Backbone.Router.extend({
   },
 
   profileShow: function(user_id) {
-    var _this           = this,
-      collection        = new App.Collections.Documents(),
-      collectionFetched = new $.Deferred,
-      userUid           = $('#documents').data('user-uid');
-
-    collection.fetch({
-      reset: true,
-      data: $.param({
-        'sort_order': {'published_at': 'desc'},
-        'user_id': userUid,
-        'any_of_status': [1]
-      }),
-      success: function() {
-        collectionFetched.resolve();
-      }
-    });
-
-    collectionFetched.done(function() {
-      var view;
-      view = new App.Views.DocumentsIndex({
-        collection: collection
-      });
-      return $('#documents').html(view.render().el);
-    });
+    var view = new App.Views.DocumentsIndex();
   }
 
 });
