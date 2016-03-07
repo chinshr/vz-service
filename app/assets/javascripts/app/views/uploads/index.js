@@ -11,39 +11,46 @@ App.Views.UploadsIndex = Backbone.View.extend({
     'click button#upload-source': 'openSourceModal'
   },
 
-  // Listen for newly added models and render a view for each
+  // Infinite scroll: http://stackoverflow.com/questions/20653489/backbone-fetch-collection-on-infinite-scroll
+  offset: 0,
+  limit: 25,
+
   initialize: function() {
     _.bindAll(this, "initSourceModal", "initUnload",
       "initDropTarget", "addHover", "removeHover", "trigger",
-      "addUploadView", "addAll", "addFiles", "dropFiles",
+      "addOne", "addAll", "renderCollection", "addFiles", "dropFiles",
       "dropzone", "uploadToS3", "statusMessage", "initMailTo",
       "refreshUploadCallback", "refreshLayout", "sourceModalSuccess",
-      "initPlayer");
+      "initPlayer", "initScroll", "fetchCollection");
 
-    this.listenTo(this.collection, 'add', this.addUploadView);
-    this.listenTo(this.collection, 'reset', this.addAll);
     this.progressViews = {};
+
     this.initPubnub();
+    this.fetchCollection();
   },
 
   render: function() {
     var _this = this;
     this.$el.html(this.template);
 
-    this.addAll();
 
     _.defer(function() {
       _this.initIsotope();
+      _this.renderCollection();
+      _this.initScroll();
       _this.initDropTarget();
       _this.initUnload();
       _this.initSourceModal();
       _this.initMailTo();
-      _this.grid.imagesLoaded(function() {
-        _this.refreshLayout();
-        _this.show();
-      });
 
+      _this.grid.imagesLoaded(function() {
+        setTimeout(function() {
+          _this.refreshLayout();
+          _this.show();
+        }, 10);
+      });
     });
+
     return this;
   },
 
@@ -60,32 +67,64 @@ App.Views.UploadsIndex = Backbone.View.extend({
   // Instantiate and render new views for models added to the collection
   // This is the view that will be listening to the 'upload:progress' event,
   // and can also allow the user to cancel the upload
-  addUploadView: function(model, response) {
-    var _this = this,
-      view,
-      grid = this.$('.browser-grid'),
-      item = $('<div class="grid-item col-lg-2 col-md-3 col-sm-6 col-xs-12" data-type="' + (model.attributes.id ? 'instance' : 'new-instance') + '"></div>');
+  addOne: function(model, response) {
+    var view,
+      gridEl  = this.$('.browser-grid'),
+      element = $('<div class="grid-item col-lg-2 col-md-3 col-sm-6 col-xs-12" data-type="' + (model.attributes.id ? 'instance' : 'new-instance') + '"></div>');
 
     if (!_.isEmpty(model.attributes)) {
       if (model.attributes.editable) {
         view = new App.Views.UploadsEditTile({model: model, parent: this});
-        item.append(view.render({name: 'edit-file-name.a'}).el);
       } else {
         view = new App.Views.UploadsShowTile({model: model, parent: this});
-        item.append(view.render({name: 'show-file-name.a'}).el);
       }
-
-      _this.initIsotope();
+      element.append(view.render().el);
 
       // Isotope add items:
       // http://isotope.metafizzy.co/v1/docs/adding-items.html
       grid.imagesLoaded(function() {
-        grid.isotope('insert', item);
+        grid.isotope('insert', element);
         grid.isotope('reveal', grid.data('isotope').items);
       });
 
-      return this.progressViews[model.cid] = view;
+      this.progressViews[model.cid] = view;
     }
+    return view;
+  },
+
+  addAll: function() {
+    this.collection.each(this.addOne, this);
+  },
+
+  renderCollection: function(scroll) {
+    var _this = this,
+      elements = [];
+
+    this.collection.each(function(model) {
+      var view,
+        element = $('<div class="grid-item col-lg-2 col-md-3 col-sm-6 col-xs-12" data-type="instance"></div>');
+
+      if (model.attributes.editable) {
+        view = new App.Views.UploadsEditTile({model: model, parent: this});
+      } else {
+        view = new App.Views.UploadsShowTile({model: model, parent: this});
+      }
+      element = element.append(view.render().el);
+      elements.push(element[0]);
+    }, this);
+
+    // Isotope add items:
+    // http://isotope.metafizzy.co/v1/docs/adding-items.html
+    this.grid.imagesLoaded(function() {
+      if (!scroll) {
+        _this.grid.isotope('insert', elements);
+        _this.grid.isotope('reveal', _this.grid.data('isotope').items);
+      } else {
+        _this.grid.isotope('insert', elements);
+      }
+    });
+
+    return this;
   },
 
   views: function() {
@@ -170,10 +209,6 @@ App.Views.UploadsIndex = Backbone.View.extend({
 
   trigger: function() {
     $('#files').trigger('click');
-  },
-
-  addAll: function() {
-    this.collection.each(this.addUploadView, this);
   },
 
   addFiles: function(e) {
@@ -312,7 +347,6 @@ App.Views.UploadsIndex = Backbone.View.extend({
 
   initIsotope: function() {
     this.grid = this.$('.browser-grid');
-
     this.grid.isotope({
       itemSelector: '.grid-item',
       layoutMode: 'masonry',
@@ -408,6 +442,58 @@ App.Views.UploadsIndex = Backbone.View.extend({
 
   initPlayer: function(options) {
     this.player = new App.Views.Player(_.extend({parent: this}, options)).render();
-  }
+  },
 
+  initScroll: function() {
+    var _this = this;
+
+    document.addEventListener('scroll', function (event) {
+      if (document.body.scrollHeight === document.body.scrollTop + window.innerHeight) {
+        if (!_this.blockFetchCollection) {
+          _this.fetchCollection(this);
+        }
+      }
+    });
+  },
+
+  fetchCollection: function(scroll) {
+    var _this           = this,
+      collection        = new App.Collections.AccountUploads(),
+      collectionFetched = new $.Deferred;
+
+    collection.fetch({
+      reset: true,
+      data: $.param({
+        'limit': this.limit,
+        'offset': this.offset,
+        'sort_order': {'created_at': 'desc'},
+        'any_of_types': ['media_upload']
+      }),
+      success: function(collection, response, xhr) {
+        _this.collection = collection;
+        if (collection.length > 0) {
+          _this.offset += _this.limit;
+          collectionFetched.resolve();
+        } else if (scroll) {
+          _this.blockFetchCollection = true;
+          setTimeout(function() {
+            _this.blockFetchCollection = false;
+          }, 5000);
+        }
+      }
+    });
+
+    collectionFetched.done(function() {
+      _this.listenTo(_this.collection, 'add', _this.addOne);
+      _this.listenTo(_this.collection, 'reset', _this.addAll);
+
+      if (!scroll) {
+        $('#uploads').html(_this.render().el);
+      } else {
+        _this.renderCollection(scroll);
+      }
+    });
+
+    return this;
+  }
 });
