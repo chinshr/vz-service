@@ -7,11 +7,14 @@ App.Views.Player = Backbone.View.extend({
     'click .btn-play-pause': 'togglePlay'
   },
 
+  waveHeight: 40,
+  mapHeight: 15,
+
   initialize: function(options) {
     _.bindAll(this, "render", "update", "show", "hide",
       "play", "stop", "pause", "togglePlay",
       "maximize", "minimize", "destroy", "fetchModel", "isReady",
-      "initWavesurfer", "initSharePopover", "startPlayTimer", "updatePlayTime",
+      "initWavesurfer", "calcMinPixelsPerSec", "initSharePopover", "startPlayTimer", "updatePlayTime",
       "stopPlayTimer", "loadRegions",
       "highlightSegment", "lowlightSegment");
     this.parent      = options.parent;
@@ -166,7 +169,7 @@ App.Views.Player = Backbone.View.extend({
     var _this = this,
       options = {
       container     : '#waveform',  // document.querySelector('#waveform'),
-      height        : 40,
+      height        : this.waveHeight,
       waveColor     : '#ddd', // 'violet',
       progressColor : '#fff', // '#3f6169', // '#fff',
       loaderColor   : '#555',
@@ -176,8 +179,8 @@ App.Views.Player = Backbone.View.extend({
       scrollParent  : true,
       normalize     : true,
       minimap       : true,
-      minPxPerSec   : 10,        // Minimum number of pixels per second of audio
-      pixelRatio    : 2, // window.devicePixelRatio,
+      minPxPerSec   : this.calcMinPixelsPerSec(this.getDevicePixelRatio()),        // 10, Minimum number of pixels per second of audio
+      pixelRatio    : this.getDevicePixelRatio(), // window.devicePixelRatio,
       // backend       : 'AudioElement',
       backend       : 'MediaElement',
       // backend       : 'WebAudio',
@@ -338,7 +341,7 @@ App.Views.Player = Backbone.View.extend({
 
     /* Minimap plugin */
     this.wavesurfer.initMinimap({
-      height: 15,
+      height: this.mapHeight,
       waveColor: '#ddd',
       progressColor: '#999',
       cursorColor: '#5492ce',
@@ -375,6 +378,32 @@ App.Views.Player = Backbone.View.extend({
       this.stopPlayTimer();
       this.updatePlayTime();
     }, this));
+  },
+
+  calcMinPixelsPerSec: function(pixelRatio) {
+    var availablePixels,
+      pixelsPerSec,
+      maxCanvasWidth = 32767,  // depends on Browser
+      maxCanvasArea  = 16384 * 16384,
+      height = this.waveHeight + this.mapHeight,
+      duration = this.model.attributes.track.duration; // in secs
+
+      availablePixels = Math.min(maxCanvasWidth, maxCanvasArea / height);
+      pixelsPerSec = availablePixels / duration / pixelRatio;
+
+      return Math.min(50, Math.max(1, Math.floor(pixelsPerSec)));
+  },
+
+  getDevicePixelRatio: function() {
+    var ratio = 1;
+    // To account for zoom, change to use deviceXDPI instead of systemXDPI
+    if (window.screen.systemXDPI !== undefined && window.screen.logicalXDPI       !== undefined && window.screen.systemXDPI > window.screen.logicalXDPI) {
+      // Only allow for values > 1
+      ratio = window.screen.systemXDPI / window.screen.logicalXDPI;
+    } else if (window.devicePixelRatio !== undefined) {
+      ratio = window.devicePixelRatio;
+    }
+    return ratio;
   },
 
   initPlaybackSpeedSlider: function() {
