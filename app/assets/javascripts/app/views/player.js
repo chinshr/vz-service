@@ -180,20 +180,21 @@ App.Views.Player = Backbone.View.extend({
       normalize     : true,
       minimap       : true,
       minPxPerSec   : this.calcMinPixelsPerSec(this.getDevicePixelRatio()),        // 10, Minimum number of pixels per second of audio
-      pixelRatio    : this.getDevicePixelRatio(), // window.devicePixelRatio,
+      pixelRatio    : this.getDevicePixelRatio(),
       // backend       : 'AudioElement',
       backend       : 'MediaElement',
       // backend       : 'WebAudio',
-      fillParent    : true,     // ???
+      fillParent    : false,     // ???
       hideScrollbar : false,    // audio to scroll
       dragSelection : false,     // ???
       loopSelection : false,    // ???
-      interact      : true,
+      interact      : false,
       splitChannels : false,    // display waveform per channel
       skipLength    : 2,        // Number of seconds to skip forward/backward
       mediaType     : 'audio',  // html element to create
       mediaControls : false,
       barWidth      : 0,        // bar width
+      autoCenter    : true,
       autoplay      : true
     };
 

@@ -305,6 +305,23 @@
           overflow-x: hidden;
         }
 
+        ::-webkit-scrollbar {
+          width: 2px;
+          height: 2px;
+        }
+
+        ::-webkit-scrollbar-button {
+          background: rgba(200, 200, 200, 0.7);
+        }
+
+        ::-webkit-scrollbar-track-piece {
+          background: rgba(100, 100, 100, 0.2);
+        }
+
+        ::-webkit-scrollbar-thumb {
+          background: rgba(200, 200, 200, 0.7);
+        }
+
         .wavesurfer-region {
           border-radius: 2px;
 
