@@ -188,7 +188,7 @@ App.Views.Player = Backbone.View.extend({
       hideScrollbar : false,    // audio to scroll
       dragSelection : false,     // ???
       loopSelection : false,    // ???
-      interact      : false,
+      interact      : true,
       splitChannels : false,    // display waveform per channel
       skipLength    : 2,        // Number of seconds to skip forward/backward
       mediaType     : 'audio',  // html element to create
