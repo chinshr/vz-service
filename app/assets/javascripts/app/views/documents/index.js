@@ -18,10 +18,9 @@ App.Views.DocumentsIndex = Backbone.View.extend({
       _this.renderCollection();
       _this.initScroll();
       _this.grid.imagesLoaded(function() {
-        setTimeout(function() {
-          _this.refreshLayout();
+        _this.refreshLayout(50, function(view) {
           _this.show();
-        }, 10);
+        });
       });
     });
     return this;
@@ -95,9 +94,15 @@ App.Views.DocumentsIndex = Backbone.View.extend({
     return this.grid;
   },
 
-  refreshLayout: function() {
+  refreshLayout: function(delay, callback) {
+    var _this = this;
     if (this.grid.data('isotope')) {
-      this.grid.isotope('layout');
+      setTimeout(function() {
+        _this.grid.isotope('layout');
+        if (callback) {
+          callback(_this);
+        }
+      }, delay || 50);
     }
   },
 
