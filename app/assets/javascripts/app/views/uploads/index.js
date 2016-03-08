@@ -44,10 +44,9 @@ App.Views.UploadsIndex = Backbone.View.extend({
       _this.initMailTo();
 
       _this.grid.imagesLoaded(function() {
-        setTimeout(function() {
-          _this.refreshLayout();
+        _this.refreshLayout(50, function(view) {
           _this.show();
-        }, 10);
+        });
       });
     });
 
@@ -68,8 +67,8 @@ App.Views.UploadsIndex = Backbone.View.extend({
   // This is the view that will be listening to the 'upload:progress' event,
   // and can also allow the user to cancel the upload
   addOne: function(model, response) {
-    var view,
-      gridEl  = this.$('.browser-grid'),
+    var _this = this,
+      view,
       element = $('<div class="grid-item col-lg-2 col-md-3 col-sm-6 col-xs-12" data-type="' + (model.attributes.id ? 'instance' : 'new-instance') + '"></div>');
 
     if (!_.isEmpty(model.attributes)) {
@@ -82,9 +81,9 @@ App.Views.UploadsIndex = Backbone.View.extend({
 
       // Isotope add items:
       // http://isotope.metafizzy.co/v1/docs/adding-items.html
-      grid.imagesLoaded(function() {
-        grid.isotope('insert', element);
-        grid.isotope('reveal', grid.data('isotope').items);
+      this.grid.imagesLoaded(function() {
+        _this.grid.isotope('insert', element);
+        _this.refreshLayout();
       });
 
       this.progressViews[model.cid] = view;
@@ -370,9 +369,15 @@ App.Views.UploadsIndex = Backbone.View.extend({
     return this.grid;
   },
 
-  refreshLayout: function() {
+  refreshLayout: function(delay, callback) {
+    var _this = this;
     if (this.grid.data('isotope')) {
-      this.grid.isotope('layout');
+      setTimeout(function() {
+        _this.grid.isotope('layout');
+        if (callback) {
+          callback(_this);
+        }
+      }, delay || 50);
     }
   },
 

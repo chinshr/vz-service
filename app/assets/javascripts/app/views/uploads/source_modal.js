@@ -33,7 +33,7 @@ App.Views.UploadsSourceModal = Backbone.View.extend({
   submit: function(event) {
     var data, form;
 
-    console.log("=> submit", event);
+    // console.log("=> submit", event);
 
     event.originalEvent.preventDefault();
     form = $(event.target);
@@ -70,7 +70,7 @@ App.Views.UploadsSourceModal = Backbone.View.extend({
             var errors = (response.responseJSON || {}).errors || [];
 
             _this.$(":submit").button("reset");
-            console.log("=> response", response)
+            // console.log("=> response", response)
 
             _.each(errors, function(error, attr) {
               var label = Backbone.Validation.labelFormatters.label(attr, _this.model);
