@@ -142,6 +142,7 @@ App.Views.TilesBase = Backbone.View.extend({
       statusEl
         .removeClass("running")
         .removeClass("error")
+        .removeClass("warning")
         .removeClass("success");
 
       if (this.model.hasFinished()) {
