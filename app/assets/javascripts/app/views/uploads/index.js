@@ -48,6 +48,13 @@ App.Views.UploadsIndex = Backbone.View.extend({
           _this.show();
         });
       });
+
+      $(document).ready(function(){
+        $(window).load(function() {
+          _this.grid.isotope('reLayout');
+        });
+      });
+
     });
 
     return this;
