@@ -33,8 +33,7 @@ App.Views.UploadsIndex = Backbone.View.extend({
     var _this = this;
     this.$el.html(this.template);
 
-    _this.initIsotope();
-    _this.grid.imagesLoaded()
+    _this.$('.browser-grid').imagesLoaded()
       .progress(function(instance, image) {
         var result = image.isLoaded ? 'loaded' : 'broken';
         if (result === 'broken') {
@@ -42,6 +41,7 @@ App.Views.UploadsIndex = Backbone.View.extend({
         }
         // _this.refreshLayout();
       }).always(function(instance) {
+        _this.initIsotope();
         setTimeout(function() {
           _this.refreshLayout();
         }, 100);
