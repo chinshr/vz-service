@@ -40,9 +40,11 @@ App.Views.UploadsIndex = Backbone.View.extend({
         if (result === 'broken') {
           console.log( 'image is ' + result + ' for ' + image.img.src );
         }
-        _this.refreshLayout();
+        // _this.refreshLayout();
       }).always(function(instance) {
-        _this.refreshLayout();
+        setTimeout(function() {
+          _this.refreshLayout();
+        }, 100);
         _this.show();
       });
 
