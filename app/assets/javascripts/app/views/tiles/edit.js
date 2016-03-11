@@ -32,8 +32,7 @@ App.Views.TilesEdit = App.Views.TilesBase.extend({
   flipTile: function(event) {
     var edit   = this,
       editHTML = edit.$el,
-      // show     = new App.Views.TilesShow({model: this.model}).render(),
-      show     = new (this.showTileClass())({model: this.model}).render(),
+      show     = new (this.showTileClass())({model: this.model, parent: this.parent}).render(),
       showHTML = show.template(show.model.attributes);
 
     if (event) {
@@ -52,6 +51,9 @@ App.Views.TilesEdit = App.Views.TilesBase.extend({
       editHTML.bind('transitionend -moz-transitionend -webkit-transitionend -o-transitionend', function(e) {
         edit.$el.parent().append(show.$el);
         edit.remove();
+        if (show.parent) {
+          show.parent.refreshLayout();
+        }
       });
       editHTML.addClass('flip');
     } else {
