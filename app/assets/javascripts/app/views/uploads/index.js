@@ -121,13 +121,13 @@ App.Views.UploadsIndex = Backbone.View.extend({
 
     // Isotope add items:
     // http://isotope.metafizzy.co/v1/docs/adding-items.html
-    this.grid.imagesLoaded(function() {
+    this.grid.imagesLoaded().always(function() {
       if (!scroll) {
         _this.grid.isotope('insert', elements);
         _this.grid.isotope('reveal', _this.grid.data('isotope').items);
       } else {
         _this.grid.isotope('insert', elements);
-        _this.grid.isotope('layoutItems', elements, false);
+        _this.grid.isotope('layoutItems', elements, true);
       }
     });
 
