@@ -45,3 +45,9 @@
 //= require web/documents
 //= require web/account/account_application
 //= require app/app
+
+$(document).ready(function(){
+  $(window).load(function() {
+    $(".browser-grid").isotope('reLayout');
+  });
+});
