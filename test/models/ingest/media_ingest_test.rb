@@ -168,10 +168,8 @@ class Ingest::MediaIngestTest < ActiveSupport::TestCase
     ingest.process!  # inside worker!
     assert_equal :started, ingest.state
 
-    assert_enqueued_with(job: Document::CreateRichTextJob) do
-      ingest.finish!  # inside worker!
-      assert_equal :finished, ingest.state
-    end
+    ingest.finish!  # inside worker!
+    assert_equal :finished, ingest.state
 
     assert_equal 1, ActionMailer::Base.deliveries.size
     assert_equal "Finished, '#{ingest.title}' has been processed.", ActionMailer::Base.deliveries[0].subject
@@ -296,7 +294,9 @@ class Ingest::MediaIngestTest < ActiveSupport::TestCase
       should "forward 'split' to 'archive' stage" do
         @ingest = FactoryGirl.create(:media_ingest_as_audio, aasm_state: "started", aasm_stage: "split_stage")
         assert_equal :split_stage, @ingest.stage
-        assert_equal true, @ingest.forward_to_archive_stage!
+        assert_enqueued_with(job: Document::CreateRichTextJob) do
+          assert_equal true, @ingest.forward_to_archive_stage!
+        end
         assert_equal :archive_stage, @ingest.stage
         assert_equal 90, @ingest.progress
       end

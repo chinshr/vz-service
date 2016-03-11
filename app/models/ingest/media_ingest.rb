@@ -28,6 +28,11 @@ class Ingest::MediaIngest < Ingest
     self[:use_source_annotations] = Model::Helper.booleanize(value)
   end
 
+  def after_exit_split_stage
+    super
+    Document::CreateRichTextJob.perform_later(self.document.id) if document && document.id
+  end
+
   private
 
   def create_image_ingest_from_target
@@ -41,8 +46,4 @@ class Ingest::MediaIngest < Ingest
     true # in case start! return false still continue
   end
 
-  def after_commit_event_finish
-    super
-    Document::CreateRichTextJob.perform_later(self.id)
-  end
 end

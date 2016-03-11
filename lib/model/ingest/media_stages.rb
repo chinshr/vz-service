@@ -10,10 +10,10 @@ module Model::Ingest::MediaStages
     # stage state machine
     aasm :stage, column: 'aasm_stage', whiny_transitions: true do
       state :begin_stage, initial: true
-      state :harvest_stage
-      state :transcode_stage
-      state :split_stage
-      state :archive_stage
+      state :harvest_stage, enter: :enter_harvest_stage, after_enter: :after_enter_harvest_stage, after_exit: :after_exit_harvest_stage
+      state :transcode_stage, enter: :enter_transcode_stage, after_enter: :after_enter_transcode_stage, after_exit: :after_exit_transcode_stage
+      state :split_stage, enter: :enter_split_stage, after_enter: :after_enter_split_stage, after_exit: :after_exit_split_stage
+      state :archive_stage, enter: :enter_archive_stage, after_enter: :after_enter_archive_stage, after_exit: :after_exit_archive_stage
       state :end_stage, enter: :enter_end_stage, after_enter: :after_enter_end_stage
 
       event :forward_to_harvest_stage, after: :after_event_forward_stage, after_commit: :after_commit_event_forward_stage do
@@ -151,7 +151,21 @@ module Model::Ingest::MediaStages
     reset_stage
   end
 
-  private
+  def enter_harvest_stage; end
+  def after_enter_harvest_stage; end
+  def after_exit_harvest_stage; end
+
+  def enter_transcode_stage; end
+  def after_enter_transcode_stage; end
+  def after_exit_transcode_stage; end
+
+  def enter_split_stage; end
+  def after_enter_split_stage; end
+  def after_exit_split_stage; end
+
+  def enter_archive_stage; end
+  def after_enter_archive_stage; end
+  def after_exit_archive_stage; end
 
   def enter_end_stage
     self.progress = 100
@@ -160,6 +174,8 @@ module Model::Ingest::MediaStages
   def after_enter_end_stage
     finish!
   end
+
+  private
 
   # TODO: workaround, because after_commit does not fire for event=
   def after_event_forward_stage
