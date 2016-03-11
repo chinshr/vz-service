@@ -48,6 +48,6 @@
 
 $(document).ready(function(){
   $(window).load(function() {
-    $(".browser-grid").isotope('reLayout');
+    $(".browser-grid").isotope('layout');
   });
 });
