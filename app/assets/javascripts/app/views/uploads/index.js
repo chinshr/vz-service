@@ -34,10 +34,12 @@ App.Views.UploadsIndex = Backbone.View.extend({
     this.$el.html(this.template);
 
     _this.initIsotope();
+    _this.grid.imagesLoaded().progress(function() {
+      _this.refreshLayout();
+    });
+
     _this.grid.imagesLoaded(function() {
-      _this.refreshLayout(100, function(view) {
-        _this.show();
-      });
+      _this.show();
     });
 
     _.defer(function() {
