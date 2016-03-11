@@ -44,7 +44,7 @@ App.Views.UploadsIndex = Backbone.View.extend({
       _this.initMailTo();
 
       _this.grid.imagesLoaded(function() {
-        _this.refreshLayout(0, function(view) {
+        _this.refreshLayout(100, function(view) {
           _this.show();
         });
       });
