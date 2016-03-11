@@ -127,8 +127,8 @@ App.Views.UploadsIndex = Backbone.View.extend({
         _this.grid.isotope('reveal', _this.grid.data('isotope').items);
       } else {
         _this.grid.isotope('insert', elements);
+        _this.grid.isotope('layoutItems', elements, false);
       }
-      _this.refreshLayout();
     });
 
     return this;
