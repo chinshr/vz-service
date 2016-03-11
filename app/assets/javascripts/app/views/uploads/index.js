@@ -128,6 +128,7 @@ App.Views.UploadsIndex = Backbone.View.extend({
       } else {
         _this.grid.isotope('insert', elements);
       }
+      _this.refreshLayout();
     });
 
     return this;
