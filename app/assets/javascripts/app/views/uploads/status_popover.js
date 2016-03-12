@@ -29,6 +29,11 @@ App.Views.UploadsStatusPopover = App.Views.PopoverBase.extend({
       return function(e) {
         e.stopPropagation();
         e.preventDefault();
+
+        if (_this.model.hasFinished()) {
+          return;
+        }
+
         if (e.shiftKey) {
           _this.holder.tooltip('hide');
           // close all other popovers except this
