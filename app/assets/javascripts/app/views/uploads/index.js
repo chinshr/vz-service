@@ -13,7 +13,7 @@ App.Views.UploadsIndex = Backbone.View.extend({
 
   // Infinite scroll: http://stackoverflow.com/questions/20653489/backbone-fetch-collection-on-infinite-scroll
   offset: 0,
-  limit: 25,
+  limit: 2,
 
   initialize: function() {
     _.bindAll(this, "initSourceModal", "initUnload",
@@ -482,11 +482,13 @@ App.Views.UploadsIndex = Backbone.View.extend({
       }),
       success: function(collection, response, xhr) {
         _this.collection = collection;
-        if (collection.length > 0) {
-          _this.offset += _this.limit;
+        if (!scroll || collection.length > 0) {
+          // either initial render or endless scroll with results
+          _this.offset += (collection.length > 0 ? Math.min(_this.limit, collection.length) : 0);
           collectionFetched.resolve();
           _this.blockFetchCollection = false;
-        } else if (scroll) {
+        } else if (scroll && collection.length === 0) {
+          // block for N secs when endless scroll without items
           _this.blockFetchCollection = true;
           setTimeout(function() {
             _this.blockFetchCollection = false;
