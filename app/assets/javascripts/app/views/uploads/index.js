@@ -1,5 +1,7 @@
 App.Views.UploadsIndex = Backbone.View.extend({
   template: JST['uploads/index'],
+  offset: 0,
+  limit: 25,
 
   events: {
     'drop #drop-box': 'dropFiles',
@@ -10,10 +12,6 @@ App.Views.UploadsIndex = Backbone.View.extend({
     'change #file-locale': 'initMailTo',
     'click button#upload-source': 'openSourceModal'
   },
-
-  // Infinite scroll: http://stackoverflow.com/questions/20653489/backbone-fetch-collection-on-infinite-scroll
-  offset: 0,
-  limit: 25,
 
   initialize: function() {
     _.bindAll(this, "initSourceModal", "initUnload",
