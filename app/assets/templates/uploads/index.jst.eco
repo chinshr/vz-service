@@ -17,8 +17,11 @@
             <!-- Source URL -->
             <button id="upload-source" class="btn btn-primary btn-lg btn-upload btn-upload-source" xdata-target="#upload-source-modal" data-toggle="modal"><i class="fa fa-external-link-square"></i>&nbsp;Source...</button>
             <!-- Email link -->
-            <button id="email-proxy" class="btn btn-primary btn-lg btn-upload btn-upload-email"><i class="fa fa-envelope"></i>&nbsp;my@voyz.es</button>
+            <div class="upload-panel-separator">&mdash; or &mdash;</div>
             <% if false: %>
+            <button id="email-proxy" class="btn btn-primary btn-lg btn-upload btn-upload-email"><i class="fa fa-envelope"></i>&nbsp;my@voyz.es</button>
+            <% end %>
+            <% if true: %>
             <div class="email-file-upload-holder">mail to <a href="mailto:my@voyz.es?subject=Document title&body=—%0DAttach all your audio files you want transcribed for English United States (en-US)." class="xbtn btn-link btn-upload-email">my@voyz.es</a></div>
             <% end %>
           </div><!-- .form-group-file-upload -->
