@@ -837,8 +837,17 @@ body.documents {
 
           select {
             background-color: transparent;
+            //-webkit-appearance: none;
+            //-moz-appearance: none;
             color: #fff;
-            font-size: 16px
+            font-size: 16px;
+            height: 35px;
+            padding: 0 5px;
+
+            option {
+              color: #dbdbdb;
+              background-color: #292d33;
+            }
           }
         }
 
