@@ -980,9 +980,14 @@
         .email-file-upload-holder {
           display: block;
           text-align: center;
+          font-size: 16px;
+          font-weight: 400;
+
+          a {
+            font-weight: 600;
+          }
         }
       }
-
     } /* upload-panel */
 
     .panel-background {

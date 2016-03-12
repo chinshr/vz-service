@@ -337,17 +337,44 @@ App.Views.UploadsIndex = Backbone.View.extend({
   },
 
   initMailTo: function() {
-    var locale = $("#file-locale").val().toLowerCase();
-    this.$('.btn-email-upload').text("my+" + locale + "@voyz.es");
-    this.$('.btn-email-upload').attr('href', this.mailtoHref);
+    var emailAddress = "my@voyz.es",
+      locale = $("#file-locale").val().toLowerCase();
+    // locale
+    if (locale === "en" || locale === "en-us") {
+      locale = "";
+    } else if (locale.indexOf("-") !== -1) {
+      locale = locale.split("-")[0];
+    }
+    // email address
+    if (locale && locale.length >= 0) {
+      emailAddress = "my+" + locale + "@voyz.es";
+    }
+    this.$('.email-file-link').text(emailAddress);
+    this.$('.email-file-link').attr('href', this.mailtoHref(locale, emailAddress));
   },
 
-  mailtoHref: function() {
-    var locale = $("#file-locale").val().toLowerCase(),
+  mailtoHref: function(locale, emailAddress) {
+    var href,
       text = $("#file-locale option:selected").text() + " (" + $("#file-locale").val() + ")";
-    var href = "mailto:my+" + locale + "@voyz.es" +
-      "?subject=Change%20title" +
-      "&body=—%0DAttach audio files to transcribe for " + text + ". Change title and add description above the line.";
+    // locale
+    if (!locale) {
+      locale = $("#file-locale").val().toLowerCase()
+      if (locale === "en" || locale === "en-us") {
+        locale = "";
+      } else if (locale.indexOf("-") !== -1) {
+        locale = locale.split("-")[0];
+      }
+    }
+    // email address
+    if (!emailAddress) {
+      emailAddress = "my@voyz.es";
+      if (locale && locale.length >= 0) {
+        emailAddress = "my+" + locale + "@voyz.es";
+      }
+    }
+    href = "mailto:" + emailAddress +
+      "?subject=Your%20title" +
+      "&body=—%0DAttach media files to process for " + text + ". Change title and add description above the line.";
     return href
   },
 
