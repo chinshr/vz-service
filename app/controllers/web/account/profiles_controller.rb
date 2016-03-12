@@ -6,6 +6,7 @@ class Web::Account::ProfilesController < Web::Account::ApplicationController
       flash[:success] = "Sucessfully updated."
       respond_with @user, :location => web_account_profile_path
     else
+      set_flash_message :error, :not_updated
       respond_with @user
     end
   end
