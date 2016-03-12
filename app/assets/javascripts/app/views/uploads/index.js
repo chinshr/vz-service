@@ -492,6 +492,9 @@ App.Views.UploadsIndex = Backbone.View.extend({
             _this.blockFetchCollection = false;
           }, 5000);
         }
+      },
+      error: function(collection, response, xhr) {
+        console.log("Error fetchCollection", response);
       }
     });
 
