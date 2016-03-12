@@ -17,7 +17,7 @@
           </span>
 
           <!-- status -->
-          <span class="upload-status running" hidden></span>
+          <span class="upload-status running"></span>
 
           <!-- more... -->
           <button type="button" aria-hidden="true" data-toggle="popover" class="btn-more btn-thumb action-more" hidden>

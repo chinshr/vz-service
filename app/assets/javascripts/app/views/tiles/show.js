@@ -8,13 +8,15 @@ App.Views.TilesShow = App.Views.TilesBase.extend({
     'click .action-preview' : 'onOpenPreview',
     'click .action-delete': 'onDelete',
     'click .action-stop' : 'onStop',
-    'click .action-start' : 'onStart'
+    'click .action-start' : 'onStart',
+    'click .action-reset' : 'onReset'
   }, App.Views.TilesBase.prototype.events),
 
   initialize: function(options) {
     _.bindAll(this, "flipTile", "playerOptions", "initPlayerButton",
       "playerLoading", "playerReady", "playerDestroy",
-      "playerError", "playerPlay", "playerPause", "playerStop", "playerFinish");
+      "playerError", "playerPlay", "playerPause", "playerStop", "playerFinish",
+      "onStart", "onStop", "onReset", "syncEvent");
     App.Views.TilesBase.prototype.initialize.call(this, options); // super
   },
 
@@ -183,48 +185,35 @@ App.Views.TilesShow = App.Views.TilesBase.extend({
     window.location = '/d/' + this.model.attributes.slug_id;
   },
 
-  onOpenPublished: function() {
-    console.log("-->> go to published document");
-  },
-
   onStop: function(e) {
+    var _this = this;
     if (this._xhr) {
       this._xhr.abort();
     } else {
-      this.model.set({event: 'stop'});
-
-      return this.model.sync('update', this.model, {
-        success: (function(_this) {
-          return function() {
-            _this.stop();
-            return _this.update();
-          };
-        })(this),
-        error: (function(_this) {
-          console.log("upload could not be stopped.");
-        })(this)
-      });
+      this.syncEvent('stop');
     }
   },
 
   onStart: function(e) {
-    this.model.set({event: 'start'});
-
-    return this.model.sync('update', this.model, {
-      success: (function(_this) {
-        return function() {
-          _this.stop();
-          return _this.update();
-        };
-      })(this),
-      error: (function(_this) {
-        console.log("upload could not be started.");
-      })(this)
-    });
+    this.syncEvent('start');
   },
 
   onReset: function(e) {
-    console.log("-->> onReset ");
+    this.syncEvent('reset');
+  },
+
+  syncEvent: function(event) {
+    var _this = this;
+    this.model.set({event: event});
+    return this.model.sync('update', this.model, {
+      success: function() {
+        _this.stop();
+        return _this.update();
+      },
+      error: function() {
+        $.alert("Could not '" + event + "'.");
+      }
+    });
   },
 
   onDelete: function(e) {
@@ -255,5 +244,13 @@ App.Views.TilesShow = App.Views.TilesBase.extend({
       parent: this,
       placement: "auto top"
     });
+  },
+
+  initStatusPopover: function() {
+    return this.statusPopoverView = new App.Views.UploadsStatusPopover({
+      parent: this,
+      placement: "auto bottom"
+    });
   }
+
 });
