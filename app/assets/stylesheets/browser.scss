@@ -636,25 +636,27 @@
         }
 
         &:hover:after {
-          text-shadow: 1px 1px 4px #555;
-          background: rgba(200,200,200,.6);
-          color: rgba(255,255,255,.9);
+          // text-shadow: 1px 1px 4px #555;
+          background: rgba(200,200,200,.8);
+          color: rgba(0,0,0,.8);
         }
 
         &.sticky:after {
           background: rgba(200,200,200,.6);
-          color: rgba(255,255,255,.9);
+          // color: rgba(255,255,255,.9);
+          color: rgba(0,0,0,.6);
         }
 
         &:after {
-          @include transition(text-shadow .5s ease);
+          // @include transition(text-shadow .5s ease);
           @include transition(background-color .1s ease);
 
           display: inline-block;
           position: absolute;
           left: 50%;
           top: 50%;
-          color: rgba(255,255,255,0);
+          // color: rgba(255,255,255,0);
+          color: rgba(0,0,0,0);
           background: rgba(200,200,200,0);
           width: 60px;
           height: 60px;
