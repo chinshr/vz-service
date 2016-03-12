@@ -1,7 +1,7 @@
 App.Views.UploadsIndex = Backbone.View.extend({
   template: JST['uploads/index'],
   offset: 0,
-  limit: 25,
+  limit: 2,
 
   events: {
     'drop #drop-box': 'dropFiles',
@@ -119,16 +119,18 @@ App.Views.UploadsIndex = Backbone.View.extend({
 
     // Isotope add items:
     // http://isotope.metafizzy.co/v1/docs/adding-items.html
-    this.grid.imagesLoaded().always(function() {
-      if (!scroll) {
-        _this.grid.isotope('insert', elements);
-        _this.grid.isotope('reveal', _this.grid.data('isotope').items);
-      } else {
-        _this.grid.isotope('insert', elements);
-        // _this.grid.isotope('layoutItems', elements, true);
-        _this.refreshLayout();
-      }
-    });
+    this.grid.imagesLoaded()
+      .always(function() {
+        if (!scroll) {
+          _this.grid.isotope('insert', elements);
+          _this.grid.isotope('reveal', _this.grid.data('isotope').items);
+          _this.refreshLayout();
+        } else {
+          _this.grid.isotope('insert', elements);
+          // _this.grid.isotope('layoutItems', elements, true);
+          _this.refreshLayout();
+        }
+      });
     return this;
   },
 
@@ -383,7 +385,7 @@ App.Views.UploadsIndex = Backbone.View.extend({
         if (callback) {
           callback(_this);
         }
-      }, delay || 50);
+      }, delay || 100);
     }
   },
 
@@ -483,8 +485,8 @@ App.Views.UploadsIndex = Backbone.View.extend({
         if (!scroll || collection.length > 0) {
           // either initial render or endless scroll with results
           _this.offset += (collection.length > 0 ? Math.min(_this.limit, collection.length) : 0);
-          collectionFetched.resolve();
           _this.blockFetchCollection = false;
+          collectionFetched.resolve();
         } else if (scroll && collection.length === 0) {
           // block for N secs when endless scroll without items
           _this.blockFetchCollection = true;
