@@ -35,6 +35,8 @@ App.Views.UploadsStatusPopover = App.Views.PopoverBase.extend({
           _this.holder.not(this).popover('hide');
           $('.upload-status, .btn-popover, [data-rel="popover"], .popover').not(_this.holder).popover('hide');
           _this.popover.toggle();
+        } else {
+          _this.hide();
         }
       };
     })(this));
