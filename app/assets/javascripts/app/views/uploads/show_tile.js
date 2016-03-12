@@ -5,6 +5,7 @@ App.Views.UploadsShowTile = App.Views.TilesShow.extend(_.extend(Backbone.View, A
     App.Views.TilesShow.prototype.render.call(this, {}); // super
     //_.defer(function() {
       _this.initMorePopover().render();
+      _this.initStatusPopover().render();
     //});
     return this;
   },
@@ -15,6 +16,7 @@ App.Views.UploadsShowTile = App.Views.TilesShow.extend(_.extend(Backbone.View, A
     this.updateProgress();
     this.updatePrivacy();
     this.morePopoverView.update();
-  },
+    this.statusPopoverView.update();
+  }
 
 }));

@@ -1,0 +1,13 @@
+<div class="settings-container">
+  <ul class="popdown-menu" role="menu">
+    <li role="presentation" class="disabled">
+      <a class="action action-start" role="menuitem" tabindex="-1" href="#"><i class="fa fa-send"></i>Start</a>
+    </li>
+    <li role="presentation" class="disabled">
+      <a class="action action-stop" role="menuitem" tabindex="-1" href="#"><i class="fa fa-hand-stop-o"></i>Stop</a>
+    </li>
+    <li role="presentation" class="disabled">
+      <a class="action action-reset" role="menuitem" tabindex="-1" href="#"><i class="fa fa-rotate-left"></i>Reset</a>
+    </li>
+  </ul>
+</div>

@@ -44,10 +44,12 @@ App.Models.Upload = Backbone.Model.extend(_.extend(Backbone.Model, App.Models.Me
     // wrapped as 'upload', 'upload':{'id':1, ...} vs. 'uploads':[{'id':1,...}, {'id':2, ...}, ...]
     var res = response && response.upload ? response.upload : response;
     // we want to modify some attributes
-    for(var key in res) {
+    for (var key in res) {
       if (res.hasOwnProperty(key)) {
         if (key === 'privacy' && _.isArray(res[key])) {
           res[key] = res[key].toString();
+        } else if(key === 'events') {
+          res['_events'] = res[key];
         }
       }
     }
