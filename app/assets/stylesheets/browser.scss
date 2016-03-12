@@ -75,6 +75,10 @@
   min-height: 300px;
   padding: 25px 0;
 
+  .initially-hidden {
+    // display: none;
+  }
+
   input, select, .select2-drop, .select2-result-label {
     xfont-family: "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
   }

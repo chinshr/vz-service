@@ -30,21 +30,22 @@ App.Views.UploadsIndex = Backbone.View.extend({
   render: function() {
     var _this = this;
     this.$el.html(this.template);
+    this.grid = this.$('.browser-grid');
 
-    _this.$('.browser-grid').imagesLoaded()
-      .progress(function(instance, image) {
-        var result = image.isLoaded ? 'loaded' : 'broken';
-        if (result === 'broken') {
-          console.log( 'image is ' + result + ' for ' + image.img.src );
-        }
-        // _this.refreshLayout();
-      }).always(function(instance) {
-        _this.initIsotope();
-        setTimeout(function() {
-          _this.refreshLayout();
-        }, 100);
-        _this.show();
-      });
+    this.grid
+      .on("arrangeComplete", function(event, filteredItems) {
+        _this.refreshLayout();
+      })
+      .imagesLoaded()
+        .progress(function(instance, image) {
+          var result = image.isLoaded ? 'loaded' : 'broken';
+          if (result === 'broken') {
+            console.log( 'image is ' + result + ' for ' + image.img.src );
+          }
+        }).always(function(instance) {
+          _this.initIsotope();
+          _this.show();
+        });
 
     _.defer(function() {
       _this.renderCollection();
@@ -106,7 +107,7 @@ App.Views.UploadsIndex = Backbone.View.extend({
 
     this.collection.each(function(model) {
       var view,
-        element = $('<div class="grid-item col-lg-2 col-md-3 col-sm-6 col-xs-12" data-type="instance"></div>');
+        element = $('<div class="grid-item initially-hidden col-lg-2 col-md-3 col-sm-6 col-xs-12" data-type="instance"></div>');
 
       if (model.attributes.editable) {
         view = new App.Views.UploadsEditTile({model: model, parent: this});
@@ -119,12 +120,14 @@ App.Views.UploadsIndex = Backbone.View.extend({
 
     // Isotope add items:
     // http://isotope.metafizzy.co/v1/docs/adding-items.html
+
     this.grid.imagesLoaded()
       .always(function() {
         if (!scroll) {
           _this.grid.isotope('insert', elements);
-          _this.grid.isotope('reveal', _this.grid.data('isotope').items);
-          _this.refreshLayout();
+          // _this.grid.isotope('reveal', _this.grid.data('isotope').items);
+          _this.grid.isotope({filter: "*"});
+          // _this.refreshLayout();
         } else {
           _this.grid.isotope('insert', elements);
           // _this.grid.isotope('layoutItems', elements, true);
@@ -371,7 +374,12 @@ App.Views.UploadsIndex = Backbone.View.extend({
         'number': function (elem) {
           return parseInt($(elem).find('.number').text(), 10);
         }
-      }
+      },
+      // filter: function () {
+      //   var isHidden = $(this).hasClass("initially-hidden");
+      //   console.log(isHidden);
+      //   return !isHidden;
+      // }
     });
 
     return this.grid;

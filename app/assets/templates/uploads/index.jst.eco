@@ -1,6 +1,6 @@
 <div id="hover-overlay"></div>
 <div class="browser-grid upload-grid">
-  <div id="upload-grid-item" data-type="zdropbox" class="grid-item col-lg-2 col-md-3 col-sm-6 col-xs-12" style="display:none;">
+  <div id="upload-grid-item" data-type="zdropbox" class="grid-item initially-hidden col-lg-2 col-md-3 col-sm-6 col-xs-12">
     <div id="upload-tile" class="tile upload-tile">
       <p class="number">-999</p>
       <div id="drop-box" class="panel upload-panel">
