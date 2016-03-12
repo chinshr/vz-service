@@ -71,6 +71,7 @@ App.Views.UploadsStatusPopover = App.Views.PopoverBase.extend({
   },
 
   trigger: function(event) {
+    event.preventDefault();
     this.hide();
     this.parent.trigger(this, event);
   },
