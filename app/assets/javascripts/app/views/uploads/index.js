@@ -13,7 +13,7 @@ App.Views.UploadsIndex = Backbone.View.extend({
 
   // Infinite scroll: http://stackoverflow.com/questions/20653489/backbone-fetch-collection-on-infinite-scroll
   offset: 0,
-  limit: 2,
+  limit: 25,
 
   initialize: function() {
     _.bindAll(this, "initSourceModal", "initUnload",
