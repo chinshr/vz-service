@@ -190,7 +190,7 @@ App.Views.TilesShow = App.Views.TilesBase.extend({
     if (this._xhr) {
       this._xhr.abort();
     } else {
-      this.syncEvent('stop');
+      this.syncEvent('fail');
     }
   },
 

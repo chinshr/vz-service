@@ -93,7 +93,7 @@ App.Views.UploadsStatusPopover = App.Views.PopoverBase.extend({
     }
 
     // .action-stop
-    if (this.parent.model.attributes._events.indexOf('stop') !== -1) {
+    if (this.parent.model.attributes._events.indexOf('fail') !== -1) {
       this.$('.action-stop').parent().removeClass('disabled');
     } else {
       this.$('.action-stop').parent().addClass('disabled');
