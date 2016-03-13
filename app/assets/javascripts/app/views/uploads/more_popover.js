@@ -70,6 +70,8 @@ App.Views.UploadsMorePopover = App.Views.PopoverBase.extend({
   },
 
   trigger: function(event) {
+    event.stopPropagation();
+    event.preventDefault();
     this.hide();
     this.parent.trigger(this, event);
   },
