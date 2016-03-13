@@ -16,14 +16,23 @@ window.App = {
   Helpers: {},
 
   initialize: function() {
+    var _this = this;
     Backbone.Validation.configure({
       labelFormatter: 'label'
     });
 
     this.router = new App.Router();
-    Backbone.history.start({pushState: true});
+    if (!Backbone.history.start({ pushState: true })) {
+      $(window).load(function() {
+        _this.hidePageProgress();
+      });
+    }
+  },
+
+  hidePageProgress: function() {
+    NProgress.done();
   }
-}
+};
 
 $(function() {
   App.initialize();
