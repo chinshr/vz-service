@@ -882,7 +882,7 @@ App.Views.DocumentsBase = Backbone.View.extend({
       minimumInputLength: 3,
       multiple: true,
       maximumInputLength: 15,
-      tokenSeparators: [",", " ", ".", "|"],
+      tokenSeparators: [",", ".", "|"],
       ajax: {
         url: window.location.protocol + "//" + window.location.host + "/api/tags.json",
         dataType: 'json',
