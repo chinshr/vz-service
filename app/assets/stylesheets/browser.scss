@@ -647,7 +647,7 @@
 
         &:after {
           // @include transition(text-shadow .5s ease);
-          @include transition(background-color .1s ease);
+          // @include transition(background-color .1s ease);
 
           display: inline-block;
           position: absolute;
