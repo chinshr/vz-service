@@ -72,7 +72,7 @@ end
 gem 'modernizr-rails'
 gem 'aws-sdk-v1'
 gem 'backbone-on-rails'
-gem 'backbone-support'
+# gem 'backbone-support'
 # gem 'backbone-validation-rails'
 gem 'eco'
 gem 'ejs'
