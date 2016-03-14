@@ -316,7 +316,7 @@ class ChunkTest < ActiveSupport::TestCase
 
       should "scope best scores" do
         assert_equal 9, @ingest.document.chunks.count
-        assert_equal 3, @ingest.document.best_chunks.count
+        assert_equal 3, @ingest.document.best_chunks.count(:id)
         assert_equal [@c1, @c5, @c9], @ingest.document.best_chunks
       end
 
