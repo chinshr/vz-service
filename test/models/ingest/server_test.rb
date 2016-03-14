@@ -431,6 +431,13 @@ class Ingest::ServerTest < ActiveSupport::TestCase
       assert_not_nil @server.disabled_at
     end
 
+    should "update enabled_at when already enabled" do
+      @server = FactoryGirl.create(:cpw_ingest_server, :enabled, enabled_at: Time.zone.now - 1.day)
+      assert_equal true, @server.enable!
+      assert_in_delta Time.zone.now, @server.enabled_at, 1.second
+    end
+
+
     should "not transition" do
       @server = FactoryGirl.create(:cpw_ingest_server, aasm_state: "disabled")
       assert_equal :disabled, @server.state

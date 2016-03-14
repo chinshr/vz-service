@@ -157,6 +157,14 @@ class Ingest::Server < ActiveRecord::Base
     ::Ingest::Server::TerminateJob.perform_later(self.id)
   end
 
+  def with_running_processes?
+    processes.count > 0 && ingests.any? {|i| i.started? || i.starting?}
+  end
+
+  def without_running_processes?
+    processes.count == 0 || ingests.none? {|i| i.started? || i.starting?}
+  end
+
   protected
 
   def test?

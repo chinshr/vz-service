@@ -6,7 +6,6 @@ class Ingest::PruneJob < ActiveJob::Base
     process_stale_ingests_in_between_states
     stop_stale_running_ingests
     delete_removed_ingests
-    termiante_stale_ingest_servers
   end
 
   protected
@@ -39,19 +38,6 @@ class Ingest::PruneJob < ActiveJob::Base
     # delete removed ingests older than 30 days
     Ingest.removed.where("ingests.removed_at < ?", Time.zone.now - 30.days).find_each do |ingest|
       ingest.destroy
-    end
-  end
-
-  def termiante_stale_ingest_servers
-    # stale servers should be terminated
-    Ingest::Server.enabled.without_processes
-      .where("ingest_servers.enabled_at < ?", Time.zone.now - 24.hours)
-      .find_each do |server|
-        server.terminate
-    end
-
-    Ingest::Server.pending.without_processes.find_each do |server|
-      server.terminate
     end
   end
 end

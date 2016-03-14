@@ -349,6 +349,10 @@ FactoryGirl.define do
     trait :enabled do
       aasm_state "enabled"
     end
+
+    trait :disabled do
+      aasm_state "disabled"
+    end
   end
 
   factory :cpw_ingest_process, :class => Ingest::Process do

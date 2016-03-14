@@ -476,7 +476,7 @@ class Ingest < ActiveRecord::Base
 
   def async_server_update(server = nil)
     # TODO: should this be moved into prune chron job
-    server.stop if server && server.ingests.count == 0
+    # server.stop if server && server.ingests.count == 0
   end
 
   def remove_servers

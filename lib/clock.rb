@@ -15,4 +15,9 @@ module Clockwork
   every(15.minutes, 'ingest.prune.job') {
     Ingest::PruneJob.perform_later
   }
+
+  every(20.minutes, 'ingest.server.prune.job') {
+    Ingest::Server::PruneJob.perform_later
+  }
+
 end
