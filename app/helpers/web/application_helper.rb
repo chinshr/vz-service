@@ -88,7 +88,7 @@ module Web::ApplicationHelper
   def render_recursive_partial(file)
     path = params[:controller].split("/")
     while !path.empty? do
-      if File.exists?(Rails.root.join("app", "views", path.join("/"), "_#{file}.html.erb"))
+      if File.exist?(Rails.root.join("app", "views", path.join("/"), "_#{file}.html.erb"))
         return render "#{path.join("/")}/#{file}"
       else
         path.pop
