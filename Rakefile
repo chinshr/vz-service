@@ -10,16 +10,19 @@ namespace :test do
 
   Rake::TestTask.new(lib: "test:prepare") do |t|
     t.libs << "test"
+    t.warning = false
     t.pattern = 'test/lib/**/*_test.rb'
   end
 
   Rake::TestTask.new(jobs: "test:prepare") do |t|
     t.libs << "test"
+    t.warning = false
     t.pattern = 'test/jobs/**/*_test.rb'
   end
 
   Rake::TestTask.new(workers: "test:prepare") do |t|
     t.libs << "test"
+    t.warning = false
     t.pattern = 'test/workers/**/*_test.rb'
   end
 end
