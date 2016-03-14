@@ -9,7 +9,7 @@ class Ingest::ServerTest < ActiveSupport::TestCase
     context "delete ingests" do
       setup do
         @ingest = FactoryGirl.create(:media_ingest_as_audio)
-        @server = FactoryGirl.create(:cpw_ingest_server)
+        @server = FactoryGirl.create(:cpw_ingest_server, :enabled)
       end
 
       should "ingest process through server" do
@@ -22,6 +22,49 @@ class Ingest::ServerTest < ActiveSupport::TestCase
           assert_difference "Ingest::Process.count", -1 do
             @server.ingests.delete(@ingest)
             assert_equal 1, @server.processes.count
+          end
+        end
+      end
+
+      should "remove process on ingest.remove!" do
+        assert_difference "Ingest::Process.count", 1 do
+          @server.ingests << @ingest
+        end
+        assert_equal 1, @server.processes.count
+        assert_no_difference "Ingest.count" do
+          assert_difference "Ingest::Process.count", -1 do
+            @ingest.remove!
+            assert_equal :removing, @ingest.state
+            @ingest.process!
+            assert_equal :removed, @ingest.state
+            assert_equal 0, @server.processes.count
+          end
+        end
+      end
+
+      should "remove process on ingest.fail!" do
+        assert_difference "Ingest::Process.count", 1 do
+          @server.ingests << @ingest
+        end
+        assert_equal 1, @server.processes.count
+        assert_no_difference "Ingest.count" do
+          assert_difference "Ingest::Process.count", -1 do
+            @ingest.fail!
+            assert_equal :stopped, @ingest.state
+            assert_equal 0, @server.processes.count
+          end
+        end
+      end
+
+      should "remove process on ingest.destroy" do
+        assert_difference "Ingest::Process.count", 1 do
+          @server.ingests << @ingest
+        end
+        assert_equal 1, @server.processes.count
+        assert_difference "Ingest.count", -1 do
+          assert_difference "Ingest::Process.count", -1 do
+            @ingest.destroy
+            assert_equal 0, @server.processes.count
           end
         end
       end

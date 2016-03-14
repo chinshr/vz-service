@@ -345,6 +345,10 @@ FactoryGirl.define do
     sequence(:instance_id) {|n| "xyz-#{n}"}
     tenancy :shared
     aasm_state "pending"
+
+    trait :enabled do
+      aasm_state "enabled"
+    end
   end
 
   factory :cpw_ingest_process, :class => Ingest::Process do
