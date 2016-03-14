@@ -217,7 +217,7 @@ App.Views.TilesShow = App.Views.TilesBase.extend({
   },
 
   onDelete: function(e) {
-    $.confirm("Do you really want to delete '" + _.escape(this.model.attributes.title) + "'?", (function(_this) {
+    $.confirm("Do you really want to remove \"" + _.escape(this.model.attributes.title) + "\"?", (function(_this) {
       return function(result) {
         if (!!result) {
           if (_this._xhr) {
