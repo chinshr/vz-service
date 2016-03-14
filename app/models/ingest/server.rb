@@ -153,6 +153,7 @@ class Ingest::Server < ActiveRecord::Base
   end
 
   def terminate
+    disable!
     ::Ingest::Server::TerminateJob.perform_later(self.id)
   end
 

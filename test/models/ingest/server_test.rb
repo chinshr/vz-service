@@ -218,8 +218,10 @@ class Ingest::ServerTest < ActiveSupport::TestCase
   context "terminate" do
     should "enqueue _terminate" do
       server = FactoryGirl.create(:cpw_ingest_server)
+      assert_equal :pending, server.state
       assert_enqueued_with(job: Ingest::Server::TerminateJob) do
         server.terminate
+        assert_equal :disabled, server.state
       end
     end
 
