@@ -1,6 +1,5 @@
 App.Views.TilesEdit = App.Views.TilesBase.extend({
   template: JST['tiles/edit'],
-  className: 'tile edit-tile col-lg-4 col-md-4 col-sm-4',
 
   events: _.extend({
     'focusout input': 'onFieldChange',
@@ -66,7 +65,7 @@ App.Views.TilesEdit = App.Views.TilesBase.extend({
     App.Views.TilesBase.prototype.update.call(this, hasProgress); // super
 
     this.$("input[name='upload[title]']").val(this.model.attributes.title);
-    this.$("input[name='upload[tag_list]']").val(this.model.attributes.tag_list);
+    this.$("input[name='upload[tag_list]']").val(_.map(this.model.attributes.tags, function(tag) { return tag.name }));
     this.$("textarea[name='upload[description]']").val(this.model.attributes.description);
     this.$("select[name='upload[locale]']").val(this.model.attributes.locale);
     this.$("form, form input, form textarea, form button").removeAttr('disabled');

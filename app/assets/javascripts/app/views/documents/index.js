@@ -1,22 +1,41 @@
 App.Views.DocumentsIndex = Backbone.View.extend({
   template: JST['documents/index'],
-
+  layout: 'grid-item col-lg-2 col-md-3 col-sm-6 col-xs-12',
   offset: 0,
   limit: 25,
 
-  initialize: function() {
-    _.bindAll(this, "addOne", "addAll", "initPlayer", "renderCollection", "initScroll", "fetchCollection");
+  initialize: function(options) {
+    _.bindAll(this, "addOne", "addAll", "initPlayer", "renderCollection", "initInfiniteScroll", "fetchCollection");
+    options = options || {};
+    this.holder = options.holder || "#documents";
+    this.query = options.query || {};
+    this.layout = options.layout || this.layout;
     this.fetchCollection();
   },
 
   render: function() {
     var _this = this;
     this.$el.html(this.template);
+    this.grid = this.$('.browser-grid');
+
+    this.grid
+      .on("arrangeComplete", function(event, filteredItems) {
+        _this.refreshLayout();
+      })
+      .imagesLoaded()
+        .progress(function(instance, image) {
+          var result = image.isLoaded ? 'loaded' : 'broken';
+          if (result === 'broken') {
+            console.log( 'image is ' + result + ' for ' + image.img.src );
+          }
+        }).always(function(instance) {
+          _this.initIsotope();
+          _this.show();
+        });
 
     _.defer(function() {
-      _this.initIsotope();
       _this.renderCollection();
-      _this.initScroll();
+      _this.initInfiniteScroll();
       _this.grid.imagesLoaded(function() {
         _this.refreshLayout(50, function(view) {
           _this.show();
@@ -39,33 +58,52 @@ App.Views.DocumentsIndex = Backbone.View.extend({
   addOne: function(model, response) {
     var _this = this,
       view,
-      grid = this.$('.browser-grid'),
-      item = $('<div class="grid-item col-lg-2 col-md-3 col-sm-6 col-xs-12" data-type="' + (model.attributes.id ? 'instance' : 'new-instance') + '"></div>');
-
+      element = $('<div data-type="' + (model.attributes.id ? 'instance' : 'new-instance') + '"></div>').addClass(this.layout);
     if (!_.isEmpty(model.attributes)) {
-      if (model.attributes.editable) {
-        view = new App.Views.DocumentsEditTile({model: model, parent: this});
-        item.append(view.render({name: 'edit-file-name.a'}).el);
-      } else {
-        view = new App.Views.DocumentsShowTile({model: model, parent: this});
-        item.append(view.render({name: 'show-file-name.a'}).el);
-      }
+      view = new App.Views.DocumentsShowTile({model: model, parent: this});
+      element.append(view.render({name: 'show-file-name.a'}).el);
 
-      _this.initIsotope();
-
-      // Isotope add items:
-      // http://isotope.metafizzy.co/v1/docs/adding-items.html
-      grid.imagesLoaded(function() {
-        grid.isotope('insert', item);
-        grid.isotope('reveal', grid.data('isotope').items);
+      this.grid.imagesLoaded(function() {
+        _this.grid.isotope('insert', element);
+        _this.refreshLayout();
       });
-
-      return view;
     }
+    return view;
   },
 
   addAll: function() {
     this.collection.each(this.addOne, this);
+  },
+
+  renderCollection: function(scroll) {
+    var _this = this,
+      gridEl = this.$('.browser-grid'),
+      elements = [];
+
+    this.collection.each(function(model) {
+      var view,
+        element = $('<div data-type="instance"></div>').addClass(this.layout);
+
+      view = new App.Views.DocumentsShowTile({parent: this, model: model});
+      element = element.append(view.render().el);
+      elements.push(element[0]);
+    }, this);
+
+    this.grid.imagesLoaded()
+      .always(function() {
+        if (!scroll) {
+          _this.grid.isotope('insert', elements);
+          // _this.grid.isotope('reveal', _this.grid.data('isotope').items);
+          _this.grid.isotope({filter: "*"});
+          // _this.refreshLayout();
+        } else {
+          _this.grid.isotope('insert', elements);
+          // _this.grid.isotope('layoutItems', elements, true);
+          _this.refreshLayout();
+        }
+      });
+
+    return this;
   },
 
   initIsotope: function() {
@@ -110,34 +148,7 @@ App.Views.DocumentsIndex = Backbone.View.extend({
     this.player = new App.Views.Player(_.extend({parent: this}, options)).render();
   },
 
-  renderCollection: function(scroll) {
-    var gridEl = this.$('.browser-grid'),
-      elements = [];
-
-    this.collection.each(function(model) {
-      var view,
-        element = $('<div class="grid-item col-lg-2 col-md-3 col-sm-6 col-xs-12" data-type="instance"></div>');
-
-      view = new App.Views.DocumentsShowTile({parent: this, model: model});
-      element = element.append(view.render().el);
-      elements.push(element[0]);
-    }, this);
-
-    // Isotope add items:
-    // http://isotope.metafizzy.co/v1/docs/adding-items.html
-    gridEl.imagesLoaded(function() {
-      if (!scroll) {
-        gridEl.isotope('insert', elements);
-        gridEl.isotope('reveal', gridEl.data('isotope').items);
-      } else {
-        gridEl.isotope('insert', elements);
-      }
-    });
-
-    return this;
-  },
-
-  initScroll: function() {
+  initInfiniteScroll: function() {
     var _this = this;
 
     document.addEventListener('scroll', function (event) {
@@ -152,45 +163,50 @@ App.Views.DocumentsIndex = Backbone.View.extend({
 
   fetchCollection: function(scroll) {
     var _this           = this,
-      collection        = new App.Collections.Documents(),
-      collectionFetched = new $.Deferred,
-      userUid           = $('#documents').data('user-uid');
+      collectionFetched = new $.Deferred;
 
-    collection.fetch({
+    this.holder = $(this.holder);
+    this.query  = _.extend(this.query, {
+      'limit': this.limit,
+      'offset': this.offset,
+    });
+
+    _this.collection = _this.collection || new App.Collections.Documents();
+    _this.collection.fetch({
       reset: true,
-      data: $.param({
-        'limit': this.limit,
-        'offset': this.offset,
-        'sort_order': {'published_at': 'desc'},
-        'user_id': userUid,
-        'any_of_status': [1]
-      }),
+      add: true,
+      data: $.param(this.query),
       success: function(collection, response, xhr) {
         _this.collection = collection;
-        if (collection.length > 0) {
-          _this.offset += _this.limit;
-          collectionFetched.resolve();
+        if (!scroll || collection.length > 0) {
+          // either initial render or endless scroll with results
+          _this.offset += (collection.length > 0 ? Math.min(_this.limit, collection.length) : 0);
           _this.blockFetchCollection = false;
-        } else if (scroll) {
+          collectionFetched.resolve();
+        } else if (scroll && collection.length === 0) {
+          // block for N secs when endless scroll without items
           _this.blockFetchCollection = true;
           setTimeout(function() {
             _this.blockFetchCollection = false;
           }, 5000);
         }
+      },
+      error: function(collection, response, xhr) {
+        console.log("Error fetchCollection", collection, response, xhr);
       }
     });
 
     collectionFetched.done(function() {
-      _this.listenTo(_this.collection, 'add', _this.addOne);
-      _this.listenTo(_this.collection, 'reset', _this.addAll);
+      _this.listenToOnce(_this.collection, 'add', _this.addOne);
+      _this.listenToOnce(_this.collection, 'reset', _this.addAll);
 
       if (!scroll) {
-        $('#documents').html(_this.render().el);
+        _this.holder.html(_this.render().el);
       } else {
-        _this.renderCollection(scroll);
+        // take care of by listeners
+        // _this.renderCollection(scroll);
       }
     });
-
     return this;
   }
 

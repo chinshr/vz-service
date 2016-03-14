@@ -1,0 +1,32 @@
+<% page_title "Explore", true %>
+<% content_for :navbar_tag do %>
+<a class="navbar-tag" href="/explore"><%= "Explore" %></a>
+<% end %>
+
+<div class="explorer-container">
+  <div class="foreground explorer-container-content margin-auto size-920 navbar-spacer">
+    <div class="foreground single-column single-column-with-sidebar size-with-height-min-100">
+
+      <div class="sub-container size-640">
+        <div class="heading clearfix heading-bordered-bottom heading-all-caps heading-extra-space sm-hide">
+          <div class="clearfix">
+            <div class="heading-content float-left">
+              <div class="heading-title">Stories</div>
+            </div>
+          </div><!-- .clearfix -->
+        </div><!-- .heading -->
+      </div><!-- .sub-container -->
+
+      <div id="documents" class="documents size-640">
+        <%= render "web/shared/content_loading" %>
+      </div>
+    </div><!-- single-column -->
+
+    <% content_for :sidebar_content do %>
+      <%= render "featured_tags" %>
+      <%= render "followed_tags" %>
+      <%= render "corporate_footer" %>
+    <% end %>
+    <%= render "sidebar" %>
+  </div><!-- .explorer-container-content -->
+</div><!-- .explorer-container -->

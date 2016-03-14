@@ -1,6 +1,28 @@
 namespace :deploy do
   namespace :after do
 
+    namespace :image do
+      desc 'Set image_format attributes for denorm'
+      task :set_image_format_attributes => :environment do
+        Image.where("images.width IS NULL AND images.height IS NULL AND images.format IS NULL AND images.aspect_ratio IS NULL").find_each do |image|
+          image.width        = image.image_format.width
+          image.height       = image.image_format.height
+          image.format       = image.image_format.format
+          image.aspect_ratio = image.image_format.aspect_ratio
+          image.save!
+        end
+      end
+    end
+
+    namespace :tag do
+      desc 'Set slug for existing tags when slug is empty'
+      task :set_slug_when_empty => :environment do
+        ActsAsTaggableOn::Tag.where("tags.slug IS NULL").find_each do |tag|
+          tag.save
+        end
+      end
+    end
+
     namespace :document do
 
       desc 'Destroy only deleted documents and chunks permanently'

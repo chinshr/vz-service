@@ -4,7 +4,9 @@ App.Router = Backbone.Router.extend({
     'd/:id/edit' : 'documentEdit',
     'd/:id' : 'documentShow',
     '@:user_id/:id' : 'documentPublish',
-    '@:user_id' : 'profileShow'
+    '@:user_id' : 'profileShow',
+    'explore' : 'explorer',
+    'explore/tag/:id' : 'tagExplorer'
   },
 
   initialize: function() {
@@ -36,7 +38,36 @@ App.Router = Backbone.Router.extend({
   },
 
   profileShow: function(user_id) {
-    var view = new App.Views.DocumentsIndex();
+    var userId = $('#documents').data('user-id');
+    var view = new App.Views.DocumentsIndex({query : {
+      'sort_order': {'published_at': 'desc'},
+      'user_id': userId,
+      'any_of_status': [1]
+    }});
+  },
+
+  explorer: function() {
+    var view = new App.Views.DocumentsIndex({
+      layout: 'grid-item col-lg-6 col-md-6 col-sm-6 col-xs-12',
+      query : {
+        'sort_order': {'published_at': 'desc'},
+        'any_of_status': [1],
+      }
+    });
+  },
+
+  tagExplorer: function() {
+    var tagName = $('#documents').data('tag-name'),
+      tagSlug = $('#documents').data('tag-slug');
+
+    var view = new App.Views.DocumentsIndex({
+      layout: 'grid-item col-lg-6 col-md-6 col-sm-12 col-xs-12',
+      query : {
+        'sort_order': {'published_at': 'desc'},
+        'any_of_status': [1],
+        'any_of_tags': [tagName],
+      }
+    });
   }
 
 });

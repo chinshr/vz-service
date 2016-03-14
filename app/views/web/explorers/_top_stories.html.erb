@@ -1,0 +1,29 @@
+<!-- top stories list -->
+<div class="top-stories-list">
+  <div class="heading clearfix heading-bordered-bottom heading-all-caps heading-simple">
+    <div class="clearfix">
+      <div class="heading-content float-left">
+        <span class="heading-title">Top stories</span>
+      </div>
+      <div class="heading-content float-right">
+        <a class="link link-darken accent-color-text-darken" href="#">See more</a>
+      </div>
+    </div>
+  </div><!-- .heading -->
+
+  <ul class="list list-with-icon list-with-title-subtitle">
+    <% Document.is_root.recent(5).published.each_with_index do |document, index| %>
+    <li class="list-item">
+      <button class="button button-circle disable-pointer-events"><span class="list-index"><%= index + 1 %></span></button>
+      <div class="list-item-info">
+        <h4 class="list-item-title">
+          <a class="link link-primary" href="<%= web_document_path(document) %>" data-action-source="sidebar_top_stories"><%= document.title %></a>
+        </h4>
+        <p class="list-item-description">
+          <a class="link link-darken accent-color-text-darken" href="<%= web_profile_path("@#{document.user.slug}") %>" data-action="show-user-card" data-action-type="hover" data-user-id="<%= document.user.uid %>" dir="auto"><%= document.user.name %></a>
+        </p>
+      </div><!-- .list-item-info -->
+    </li><!-- .list-item -->
+    <% end %>
+  </ul><!-- .list -->
+</div><!-- .top-stories-list -->

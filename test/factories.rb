@@ -363,6 +363,10 @@ FactoryGirl.define do
   factory :image, :class => Image do
     sequence(:path) { |n| "path-#{n}" }
     sequence(:size) { |n| (1000 + n) }
+    # width 500
+    # height 500
+    # format 'jpg'
+    # aspect_ratio 1.0
     association :image_format
 
     trait :document_ingest do

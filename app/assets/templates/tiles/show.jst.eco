@@ -3,10 +3,12 @@
   <div class="flipper">
     <div class="panel show-panel">
       <a href="#" class="media-image media-image-thumb">
+        <% if @className == "Upload": %>
         <!-- progress -->
         <div class="progress <% if @progress && @progress < 100: %> progress-striped <% end %>  active" hidden>
           <div class="progress-bar progress-bar-success" style="width: <%= @progress %>%"></div>
         </div>
+        <% end %>
         <span class="thumb thumb-video thumb-crop-top thumb-play-pause xplay xsticky">
           <!-- image -->
           <span class="thumb-sizer">
@@ -16,6 +18,7 @@
             </span>
           </span>
 
+          <% if @className == "Upload": %>
           <!-- status -->
           <span class="upload-status running"></span>
 
@@ -27,6 +30,7 @@
           <!-- privacy -->
           <button type="button" aria-hidden="true" data-toggle="popover" class="btn-privacy private btn-thumb" hidden>
           </button>
+          <% end %>
 
           <!-- share -->
           <button type="button" aria-hidden="true" data-toggle="popover" class="btn-share btn-thumb">
@@ -60,11 +64,11 @@
       <div class="panel-body">
         <div class="tags-title">Tagged in</div>
         <ul class="tag-list">
-          <% if @tag_list.length == 0: %>
-          <li class="empty-tag">Add up to 3 optional tags.</li>
+          <% if @tags.length == 0: %>
+          <li class="empty-tag">Add optional tags.</li>
           <% else: %>
-            <% for tag in @tag_list: %>
-            <li class="tag"><a href="#"><%= tag %></a></li>
+            <% for tag in @tags: %>
+            <li class="tag" data-tag-slug="<%= tag.slug %>"><a href="<%= '/explore/tag/' + tag.slug + '?source=tile' %>"><%= tag.name %></a></li>
             <% end %>
           <% end %>
         </ul>

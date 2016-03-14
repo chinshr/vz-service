@@ -1,0 +1,17 @@
+<% if current_user %>
+<!-- followed tags -->
+<div class="followed-tags">
+  <div class="heading clearfix heading-bordered-bottom heading-all-caps heading-simple">
+    <div class="clearfix">
+      <div class="heading-content float-left">
+        <span class="heading-title">Followed tags</span>
+      </div>
+    </div>
+  </div><!-- .heading -->
+  <div class="tags tags-post-tags tags-light">
+    <% current_user.owned_tags.most_used.each do |tag| %>
+    <a class="link" href="<%= web_explore_tag_path(tag.to_param, {source: "followed"}) %>" data-action-source="featured" data-tag-slug="<%= tag.slug %>"><%= tag.name %></a>
+    <% end %>
+  </div><!-- .tags .tags-post-tags -->
+</div><!-- .followed-tags -->
+<% end %>

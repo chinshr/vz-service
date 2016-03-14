@@ -1,6 +1,5 @@
 App.Views.TilesShow = App.Views.TilesBase.extend({
   template: JST['tiles/show'],
-  className: 'tile show-tile col-lg-4 col-md-4 col-sm-4',
 
   events: _.extend({
     'click .action-update' : 'flipTile',
@@ -72,10 +71,10 @@ App.Views.TilesShow = App.Views.TilesBase.extend({
 
       if (_this.parent && !_this.parent.player) {
         _this.parent.initPlayer(options);
-      } else if (_this.parent && _this.parent.player && _this.parent.player.document_id !== _this.model.attributes.document_id) {
+      } else if (_this.parent && _this.parent.player && _this.parent.player.document_id !== _this.documentId()) {
         _this.parent.player.destroy();
         _this.parent.initPlayer(options);
-      } else if (_this.parent && _this.parent.player && _this.parent.player.document_id === _this.model.attributes.document_id && _this.parent.player.isReady()) {
+      } else if (_this.parent && _this.parent.player && _this.parent.player.document_id === _this.documentId() && _this.parent.player.isReady()) {
         _this.parent.player.togglePlay();
       }
     });
