@@ -25,7 +25,8 @@ App.Views.TilesBase = Backbone.View.extend({
       // status_message: this.model.statusMessage(),
       events: this.permissibleEvents(),
       thumb_aspect_ratio_1_url: this.model.imageSource(1),
-      thumb_bg_color: this.model.rgbaColor()
+      thumb_bg_color: this.model.rgbaColor(),
+      className: this.model.className
     }));
 
     this.setElement(template);

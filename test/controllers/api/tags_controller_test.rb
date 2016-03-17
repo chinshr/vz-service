@@ -107,7 +107,7 @@ class Api::TagsControllerTest < ActionController::TestCase
   end
 
   def assert_attributes(attributes)
-    %w(id name taggings_count).each do |attribute|
+    %w(id name taggings_count slug featured).each do |attribute|
       assert attributes.has_key?(attribute), "should containt attribute '#{attribute}' in '#{attributes}'"
     end
   end

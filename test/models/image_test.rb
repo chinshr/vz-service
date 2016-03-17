@@ -15,35 +15,33 @@ class ImageTest < ActiveSupport::TestCase
     should validate_numericality_of(:size)
   end
 
-  context "delegate" do
-    setup do
-      @image = FactoryGirl.create(:image)
+  context "#create" do
+    should "be valid" do
+      assert_difference "Image.count" do
+        FactoryGirl.create(:image, :document_ingest)
+      end
     end
 
-    should delegate :width, to: :image_format
-    should "delegate :width, to: :image_format" do
-      assert_equal @image.image_format.width, @image.width
+    should "copy attributes from image_format on create" do
+      image = FactoryGirl.create(:image, :document_ingest)
+      assert_equal image.image_format.width, image.width
+      assert_equal image.image_format.height, image.height
+      assert_equal image.image_format.format, image.format
+      assert_equal image.image_format.aspect_ratio, image.aspect_ratio
     end
 
-    should delegate :height, to: :image_format
-    should "delegate :height, to: :image_format" do
-      assert_equal @image.image_format.height, @image.height
-    end
-
-    should delegate :format, to: :image_format
-    should "delegate :format, to: :image_format" do
-      assert_equal @image.image_format.format, @image.format
-    end
-
-    should delegate :aspect_ratio, to: :image_format
-    should "delegate :aspect_ratio, to: :image_format" do
-      assert_equal @image.image_format.aspect_ratio, @image.aspect_ratio
-    end
-  end
-
-  should "#create" do
-    assert_difference "Image.count" do
-      FactoryGirl.create(:image, :document_ingest)
+    should "not copy attributes when image_formats have changed" do
+      image = FactoryGirl.create(:image, :document_ingest)
+      image.image_format.width  = 1
+      image.image_format.height = 1
+      image.image_format.format = 'foo'
+      image.image_format.aspect_ratio = 2.2
+      image.image_format.save!
+      image.save
+      assert_not_equal image.image_format.width, image.width
+      assert_not_equal image.image_format.height, image.height
+      assert_not_equal image.image_format.format, image.format
+      assert_not_equal image.image_format.aspect_ratio, image.aspect_ratio
     end
   end
 

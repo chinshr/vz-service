@@ -1,0 +1,55 @@
+<% page_title @tag.name.titleize, true %>
+<% content_for :navbar_tag do %>
+<a class="navbar-tag" href="<%= web_explore_path %>"><%= "Explore" %></a>
+<% end %>
+
+<% content_for :javascript_includes do %>
+  <%= javascript_tag do %>
+    $(function() {
+      // window.location.href = VZ.urlWithoutParam('source');
+    });
+  <% end %>
+<% end %>
+
+<div class="explorer-container">
+  <div class="explorer-container-content">
+    <div class="single-column single-column-with-sidebar size-with-height-min-100">
+      <div class="sub-container size-640">
+        <div class="heading clearfix heading-page">
+          <div class="clearfix">
+            <div class="heading-content float-left">
+              <div class="heading-prefix">Tagged in</div>
+              <span class="heading-title heading-title-bold"><%= @tag.name.titleize %></span>
+            </div>
+            <% if false %>
+            <div class="heading-content float-right">
+              <button class="button button-primary no-user-select button-with-chrome accent-color-border-normal accent-color-text-normal follow-button" data-action="toggle-subscribe-tag" data-action-value="<%= "ted-x" %>" data-action-source="tag_page" data-subscribe-source="tag_page">
+                <span class="button-label  button-default-state js-button-label">Follow</span>
+                <span class="button-label button-active-state">Following</span>
+              </button>
+            </div><!-- .heading-content -->
+            <% end %>
+          </div><!-- .clearfix -->
+        </div><!-- .heading -->
+        <nav class="nav-tabs-nav">
+          <ul class="nav nav-tabs">
+            <li role="presentation" class="nav-tabs-item active"><a class="nav-tabs-anchor" href="#">Top</a></li>
+            <li role="presentation" class="nav-tabs-item"><a class="nav-tabs-anchor" href="#">Latest</a></li>
+          </ul>
+        </nav>
+      </div><!-- .sub-container -->
+
+      <div id="documents" class="documents size-640" data-tag-name="<%= @tag.name %>" data-tag-slug="<%= @tag.to_param %>">
+        <%= render "web/shared/content_loading" %>
+      </div>
+
+    </div><!-- single-column -->
+
+    <% content_for :sidebar_content do %>
+      <%= render "featured_tags" %>
+      <%= render "followed_tags" %>
+    <% end %>
+    <%= render "sidebar" %>
+
+  </div><!-- explorer-container-content -->
+</div><!-- explorer-container -->

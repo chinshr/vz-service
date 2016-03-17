@@ -54,6 +54,10 @@ Set default username from email address:
 * [Loopcast](http://beta.loopcast.fm) Audio streaming service with the UI for tiles and players I really like.
 * [Clammr](https://www.clammr.com/app/) Audio podcast experience
 
+## Related Articles
+
+* [Voice: The Next UI Layer](http://www.techstars.com/content/trends/voice-the-next-ui-layer/) Providing insights into the next trends meshing with Medium and the like.
+
 ## Patentable Ideas
 
 Should file a "Provisional Patent" i.e. a [Provisional Patent Application](http://www.ipwatchdog.com/2013/09/14/the-benefits-of-a-provisional-patent-application/id=45156/) with the USPTO, ~$130 fees. Protected as "Patent Pending" for up to 12 months after filing.

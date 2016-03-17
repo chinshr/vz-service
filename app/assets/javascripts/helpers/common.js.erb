@@ -86,7 +86,7 @@ var VZ = (function() {
     return window.location.protocol === 'https:' ? true : false
   }
 
-  var query = function () {
+  var query = function() {
     // This function is anonymous, is executed immediately and
     // the return value is assigned to QueryString!
     var query_string = {};
@@ -109,6 +109,28 @@ var VZ = (function() {
     return query_string;
   }();
 
+  var urlWithoutParam = function(key, source) {
+    var sourceURL = source || window.location.href,
+      rtn = sourceURL.split("?")[0],
+      param,
+      params_arr = [],
+      queryString = (sourceURL.indexOf("?") !== -1) ? sourceURL.split("?")[1] : "";
+
+    if (queryString !== "") {
+      params_arr = queryString.split("&");
+      for (var i = params_arr.length - 1; i >= 0; i -= 1) {
+        param = params_arr[i].split("=")[0];
+        if (param === key) {
+          params_arr.splice(i, 1);
+        }
+      }
+      if (params_arr.length > 0) {
+        rtn = rtn + "?" + params_arr.join("&");
+      }
+    }
+    return rtn;
+  }
+
   return {
     config: config,
     baseURL: location.protocol + "//" + location.hostname + (location.port && ":" + location.port),
@@ -120,6 +142,7 @@ var VZ = (function() {
     getCookie: getCookie,
     setCookie: setCookie,
     isSSL: isSSL,
-    query: query
+    query: query,
+    urlWithoutParam: urlWithoutParam
   }
 })();

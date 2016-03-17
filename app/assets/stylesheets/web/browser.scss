@@ -1149,9 +1149,9 @@
 
     .tags-title {
       font-size: 12px;
-      font-weight: normal;
+      font-weight: 400;
       text-transform: uppercase;
-      color: #999;
+      color: rgba(0,0,0,.8);
     }
 
     ul.tag-list {
@@ -1166,7 +1166,7 @@
         list-style: none;
         padding: 3px 6px;
         font-size: 12px;
-        font-weight: 600;
+        font-weight: 400;
         text-transform: uppercase;
       }
 
@@ -1180,12 +1180,12 @@
       }
 
       li.tag {
-        @include transition(all .2s ease-in-out);
+        @include transition(all .1s ease-in-out);
         border: 1px solid #f0f0f0;
         border-radius: $btn-default-radius;
         position: relative;
         max-width: 96%;
-        background-color: #fafafa;
+        background-color: #fcfcfc;
         cursor: default;
         display: list-item;
         text-align: -webkit-match-parent;
@@ -1206,7 +1206,7 @@
           color: rgba(0,0,0,0.5);
 
           &:hover {
-            text-decoration: underline;
+            text-decoration: none;
             color: #468c54;
           };
         }

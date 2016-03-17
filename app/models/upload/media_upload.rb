@@ -33,6 +33,7 @@ class Upload::MediaUpload < Upload
   delegate :accessibility=, to: :document, allow_nil: true
 
   delegate :images, to: :document, allow_nil: true
+  delegate :tags, to: :document, allow_nil: true
 
   validates :title, presence: true, on: :update
   validate :valid_media_source_url, on: :create

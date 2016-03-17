@@ -402,7 +402,7 @@ class Api::Account::UploadsControllerTest < ActionController::TestCase
   protected
 
   def assert_attributes(response, expected_attributes = nil)
-    expected_attributes = expected_attributes || %w(id uid file_name file_type file_size source_url locale slug slug_id published_path title description tag_list privacy accessibility status type progress events updated_at created_at use_source_annotations metadata document_id images)
+    expected_attributes = expected_attributes || %w(id uid file_name file_type file_size source_url locale slug slug_id published_path title description privacy accessibility status type progress events updated_at created_at use_source_annotations metadata document_id images)
     expected_attributes = expected_attributes.keys if expected_attributes.is_a?(Hash)
     expected_attributes.each do |key|
       assert response.has_key?(key), "should containt key '#{key}' in response '#{response}'"

@@ -1,5 +1,5 @@
 App.Collections.Documents = Backbone.Collection.extend({
-  url: 'api/documents',
+  url: '/api/documents',
   model: App.Models.Document,
 
   parse: function(response, options) {

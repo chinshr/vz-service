@@ -38,9 +38,9 @@ class Document < ActiveRecord::Base
   has_one :track, through: :master_document_segment, class_name: "Track::DocumentTrack"
   accepts_nested_attributes_for :track, allow_destroy: true
 
-  has_many :images, :through => :image_ingests, :source => :images
   has_many :image_ingests, :as => :ingestable,
     :class_name => "Ingest::ImageIngest", dependent: :destroy
+  has_many :images, :through => :image_ingests, :source => :images
 
   friendly_id :title_and_slug_id, use: [:slugged, :history]
   acts_as_ordered_taggable_on :tags, :auto
@@ -125,7 +125,7 @@ class Document < ActiveRecord::Base
     end
     where("documents.slug = ? OR documents.slug_id = ? OR documents.uid = ? OR documents.id = ?", params[:id], params[:id], params[:id], param_document_id)
   }
-  scope :eager_load_associations, -> { eager_load([:track, {:images => :image_format}]) }
+  scope :eager_load_associations, -> { eager_load([:track, :tags]).preload(:images) }
 
   aasm column: 'aasm_state' do
     state :unpublished, initial: true

@@ -1,5 +1,6 @@
 App.Views.UploadsIndex = Backbone.View.extend({
   template: JST['uploads/index'],
+  layout: 'grid-item col-lg-2 col-md-3 col-sm-6 col-xs-12',
   offset: 0,
   limit: 25,
 
@@ -13,16 +14,17 @@ App.Views.UploadsIndex = Backbone.View.extend({
     'click button#upload-source': 'openSourceModal'
   },
 
-  initialize: function() {
+  initialize: function(options) {
     _.bindAll(this, "initSourceModal", "initUnload",
       "initDropTarget", "addHover", "removeHover", "trigger",
       "addOne", "addAll", "renderCollection", "addFiles", "dropFiles",
       "dropzone", "uploadToS3", "statusMessage", "initMailTo",
       "refreshUploadCallback", "refreshLayout", "sourceModalSuccess",
-      "initPlayer", "initScroll", "fetchCollection");
+      "initPlayer", "initInfiniteScroll", "fetchCollection");
 
+    options = options || {};
     this.progressViews = {};
-
+    this.layout = options.layout || this.layout;
     this.initPubnub();
     this.fetchCollection();
   },
@@ -49,7 +51,7 @@ App.Views.UploadsIndex = Backbone.View.extend({
 
     _.defer(function() {
       _this.renderCollection();
-      _this.initScroll();
+      _this.initInfiniteScroll();
       _this.initDropTarget();
       _this.initUnload();
       _this.initSourceModal();
@@ -75,7 +77,7 @@ App.Views.UploadsIndex = Backbone.View.extend({
   addOne: function(model, response) {
     var _this = this,
       view,
-      element = $('<div class="grid-item col-lg-2 col-md-3 col-sm-6 col-xs-12" data-type="' + (model.attributes.id ? 'instance' : 'new-instance') + '"></div>');
+      element = $('<div data-type="' + (model.attributes.id ? 'instance' : 'new-instance') + '"></div>').addClass(this.layout);
 
     if (!_.isEmpty(model.attributes)) {
       if (model.attributes.editable) {
@@ -85,8 +87,6 @@ App.Views.UploadsIndex = Backbone.View.extend({
       }
       element.append(view.render().el);
 
-      // Isotope add items:
-      // http://isotope.metafizzy.co/v1/docs/adding-items.html
       this.grid.imagesLoaded(function() {
         _this.grid.isotope('insert', element);
         _this.refreshLayout();
@@ -107,7 +107,7 @@ App.Views.UploadsIndex = Backbone.View.extend({
 
     this.collection.each(function(model) {
       var view,
-        element = $('<div class="grid-item initially-hidden col-lg-2 col-md-3 col-sm-6 col-xs-12" data-type="instance"></div>');
+        element = $('<div data-type="instance"></div>').addClass(this.layout);
 
       if (model.attributes.editable) {
         view = new App.Views.UploadsEditTile({model: model, parent: this});
@@ -489,7 +489,7 @@ App.Views.UploadsIndex = Backbone.View.extend({
     this.player = new App.Views.Player(_.extend({parent: this}, options)).render();
   },
 
-  initScroll: function() {
+  initInfiniteScroll: function() {
     var _this = this;
 
     document.addEventListener('scroll', function (event) {
@@ -504,11 +504,12 @@ App.Views.UploadsIndex = Backbone.View.extend({
 
   fetchCollection: function(scroll) {
     var _this           = this,
-      collection        = new App.Collections.AccountUploads(),
       collectionFetched = new $.Deferred;
 
-    collection.fetch({
+    _this.collection = _this.collection || new App.Collections.AccountUploads();
+    _this.collection.fetch({
       reset: true,
+      add: true,
       data: $.param({
         'limit': this.limit,
         'offset': this.offset,
@@ -516,7 +517,6 @@ App.Views.UploadsIndex = Backbone.View.extend({
         'any_of_types': ['media_upload']
       }),
       success: function(collection, response, xhr) {
-        _this.collection = collection;
         if (!scroll || collection.length > 0) {
           // either initial render or endless scroll with results
           _this.offset += (collection.length > 0 ? Math.min(_this.limit, collection.length) : 0);
@@ -536,16 +536,16 @@ App.Views.UploadsIndex = Backbone.View.extend({
     });
 
     collectionFetched.done(function() {
-      _this.listenTo(_this.collection, 'add', _this.addOne);
-      _this.listenTo(_this.collection, 'reset', _this.addAll);
+      _this.listenToOnce(_this.collection, 'add', _this.addOne);
+      _this.listenToOnce(_this.collection, 'reset', _this.addAll);
 
       if (!scroll) {
         $('#uploads').html(_this.render().el);
       } else {
-        _this.renderCollection(scroll);
+        // taken care of by listerns
+        //_this.renderCollection(scroll);
       }
     });
-
     return this;
   }
 });

@@ -23,7 +23,10 @@ Voyzes::Application.routes.draw do
 
   # Web::Application
   scope :module => "web", :as => "web" do
-    # get '/upload' => "uploads#index"
+    get '/explore' => "explorers#index", as: "explore"
+    get '/explore/tag/:id' => "explorers#show", as: "explore_tag"
+    get '/explore/tag/:id/latest' => "explorers#show", params: {recent: true}
+
     get '/terms/privacy-policy' => "terms#privacy_policy"
     get '/terms/terms-of-service' => "terms#terms_of_service"
 
