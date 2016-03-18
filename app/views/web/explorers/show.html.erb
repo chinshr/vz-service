@@ -46,10 +46,10 @@
     </div><!-- single-column -->
 
     <% content_for :sidebar_content do %>
-      <%= render "featured_tags" %>
-      <%= render "followed_tags" %>
+      <%= render "web/shared/featured_tags" %>
+      <%= render "web/shared/followed_tags" %>
     <% end %>
-    <%= render "sidebar" %>
+    <%= render "web/shared/sidebar", class_name: "sidebar-wide" %>
 
   </div><!-- explorer-container-content -->
 </div><!-- explorer-container -->

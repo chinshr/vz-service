@@ -41,7 +41,7 @@ class User < ActiveRecord::Base
   validates :last_name, presence: true, length: { minimum: 1, maximum: 125 }, if: :confirmed_or_confirmation_validation?
   validates :description, length: { maximum: 240 }
 
-  scope :confirmed, lambda {where("users.confirmed_at IS NOT NULL")}
+  scope :confirmed, lambda { where("users.confirmed_at IS NOT NULL") }
 
   before_save :geocode, if: :has_ip_address?, unless: :geocoded?
   before_save :reverse_geocode, if: :geocoded?

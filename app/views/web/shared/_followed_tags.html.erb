@@ -1,7 +1,10 @@
+<%
+  heading_class_name ||= "heading-bordered-top"
+%>
 <% if current_user %>
 <!-- followed tags -->
 <div class="followed-tags">
-  <div class="heading clearfix heading-bordered-bottom heading-all-caps heading-simple">
+  <div class="heading clearfix <%= heading_class_name %> heading-all-caps heading-simple">
     <div class="clearfix">
       <div class="heading-content float-left">
         <span class="heading-title">Followed tags</span>

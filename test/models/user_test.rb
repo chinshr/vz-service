@@ -189,4 +189,22 @@ class UserTest < ActiveSupport::TestCase
       # end
     end
   end
+
+  context "scopes" do
+    setup do
+      @backend   = FactoryGirl.create(:user, roles: :backend, confirmed_at: nil)
+      @user      = FactoryGirl.create(:user, roles: :user)
+      @developer = FactoryGirl.create(:user, roles: :developer, confirmed_at: nil)
+    end
+
+    should "#any_of_roles" do
+      assert_equal [@backend].to_set, User.any_of_roles(:backend).to_set
+      assert_equal [@user].to_set, User.any_of_roles(:user).to_set
+      assert_equal [@developer].to_set, User.any_of_roles(:developer).to_set
+    end
+
+    should "#confirmed" do
+      assert_equal [@user].to_set, User.confirmed.to_set
+    end
+  end
 end

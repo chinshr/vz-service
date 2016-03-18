@@ -1,0 +1,93 @@
+<%
+  placeholder ||= if search_all?
+    "Search for something"
+  elsif search_users?
+    "Search for people"
+  else
+    "Search"
+  end
+%>
+<% page_title "Search", true %>
+<% content_for :navbar_tag do %>
+<a class="navbar-tag" href="/search"><%= "Search" %></a>
+<% end %>
+<% content_for :javascript_includes do %>
+  <%= javascript_tag do %>
+    $(function() {
+      $(".search-input").focus();
+    });
+  <% end %>
+<% end %>
+
+<div class="searches-container size-1140">
+  <header class="layout-multi-column-header">
+    <form action="/search" onsubmit="return false;">
+      <input class="search-input text-input text-input-borderless text-input-jumbo" value="<%= params[:q] %>" type="search" placeholder="<%= placeholder %>">
+    </form>
+  </header>
+
+  <div class="search-results">
+    <% if params[:q].present? %>
+    <div class="row">
+      <div class="col col-lg-2 col-md-2 col-sm-2 col-xs-2 hidden-xs">
+        <nav class="nav-tabs-nav nav-tabs-nav-column nav-tabs-nav-borderless nav-tabs-nav-dark">
+          <ul class="nav nav-tabs nav-stacked">
+            <li class="nav-tabs-item <%= search_all? ? 'active' : '' %>">
+              <a class="nav-tabs-anchor" href="<%= web_search_path({q: params[:q]}) %>">All<span class="icon icon-arrow-right float-right"></span></a>
+            </li>
+            <li class="nav-tabs-item <%= search_users? ? 'active' : '' %>">
+              <a class="nav-tabs-anchor" href="<%= web_search_users_path({q: params[:q]}) %>">People</a>
+            </li>
+          </ul>
+        </nav>
+      </div><!-- .col -->
+
+      <div class="col col-lg-7 col-md-7 col-sm-7 col-xs-7">
+        <div class="sub-container xsize-640">
+          <div class="heading clearfix heading-bordered-top heading-all-caps hidden-xs">
+            <div class="clearfix">
+              <div class="heading-content float-left">
+                <% if search_all? %>
+                <div class="heading-title">Stories</div>
+                <% elsif search_users? %>
+                <div class="heading-title">People</div>
+                <% end %>
+              </div>
+            </div><!-- .clearfix -->
+          </div><!-- .heading -->
+        </div><!-- .sub-container -->
+
+        <% if search_all? %>
+        <div id="documents" class="documents xsize-640">
+          <%= render "web/shared/content_loading" %>
+        </div>
+        <% elsif search_users? %>
+        <ul class="cards cards-bordered">
+          <% @users.each_with_index do |user, index| %>
+          <li class="card card-user xcard-small">
+            <div class="card-image-wrapper">
+              <a class="link avatar" href="<%= web_profile_path("@#{user.username}", source: "search_user") %>" title="Go to the profile of <%= user.name %>" aria-label="Go to the profile of <%= user.name %>" data-action-source="search_user" data-action-index="<%= index + 1 %>" data-user-id="<%= user.uid %>" dir="auto"><img src="<%= avatar_url(user) %>" class="avatar-image avatar-image-small" alt="Go to the profile of <%= user.name %>"></a>
+            </div><!-- .card-image-wrapper -->
+            <div class="card-content">
+              <h3 class="card-name"><a class="link link-primary accent-color-text-normal" href="<%= web_profile_path("@#{user.username}", source: "search_user") %>" property="cc:attributionName" title="Go to the profile of <%= user.name %>" aria-label="Go to the profile of <%= user.name %>" rel="author cc:attributionUrl" data-action-index="<%= index + 1 %>" data-user-id="<%= user.uid %>" dir="auto"><%= user.name %></a></h3>
+              <p class="card-description"><%= user.description %></p>
+            </div><!-- .card-content -->
+          </li><!-- .card .card-user .card-small -->
+          <% end %>
+        </ul><!-- .cards .user-results-list -->
+        <% end %>
+      </div><!-- .col -->
+
+      <div class="col col-lg-3 col-md-3 col-sm-3 col-xs-3">
+        <% content_for :sidebar_content do %>
+          <%= render "web/shared/featured_tags" %>
+          <% if search_all? %>
+            <%= render "web/shared/user_results" %>
+          <% end %>
+        <% end %>
+        <%= render "web/shared/sidebar", class_name: "sidebar-inside-col" %>
+      </div>
+    </div><!-- .row -->
+    <% end %>
+  </div><!-- .search-results -->
+</div><!-- .searches-container -->

@@ -9,13 +9,24 @@ module Model::User::Roles
 
     base.class_eval do
       validate  :validate_roles_assignment
+
+      scope :any_of_roles, -> (roles) { where(roles_sql_condition(roles)) }
     end
   end
 
   module ClassMethods
+
     def get_role_mask(role)
       index = ROLES.index(role.to_sym)
       index ? 2**index : 0
+    end
+
+    def roles_sql_condition(*args)
+      result = []
+      Array.wrap(args).flatten.each do |role|
+        result << "(users.roles_mask & #{get_role_mask(role)} > 0)"
+      end
+      result.length > 0 ? "(#{ result.join(" OR ") })" : "(1 = 1)"
     end
   end
 
@@ -68,5 +79,6 @@ module Model::User::Roles
         end
       end
     end
+
   end
 end
