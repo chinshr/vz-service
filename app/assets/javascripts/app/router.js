@@ -6,7 +6,8 @@ App.Router = Backbone.Router.extend({
     '@:user_id/:id' : 'documentPublish',
     '@:user_id' : 'profileShow',
     'explore' : 'explorer',
-    'explore/tag/:id' : 'tagExplorer'
+    'explore/tag/:id' : 'tagExplorer',
+    'search' : 'search'
   },
 
   initialize: function() {
@@ -66,6 +67,16 @@ App.Router = Backbone.Router.extend({
         'sort_order': {'published_at': 'desc'},
         'any_of_status': [1],
         'any_of_tags': [tagName],
+      }
+    });
+  },
+
+  search: function() {
+    var view = new App.Views.DocumentsIndex({
+      layout: 'grid-item col-lg-4 col-md-6 col-sm-6 col-xs-12',
+      query : {
+        'sort_order': {'published_at': 'desc'},
+        'any_of_status': [1],
       }
     });
   }

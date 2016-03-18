@@ -1,0 +1,28 @@
+<%
+  heading_class_name ||= "heading-bordered-top"
+%>
+<% if @users.present? %>
+<!-- user results-->
+<div class="user-results">
+  <div class="heading clearfix <%= heading_class_name %> heading-all-caps heading-simple">
+    <div class="clearfix">
+      <div class="heading-content float-left">
+        <span class="heading-title">People</span>
+      </div>
+    </div>
+  </div><!-- .heading -->
+  <ul class="cards user-results-list">
+    <% @users.each_with_index do |user, index| %>
+    <li class="card card-user card-small">
+      <div class="card-image-wrapper">
+        <a class="link avatar" href="<%= web_profile_path("@#{user.username}", source: "search_user") %>" title="Go to the profile of <%= user.name %>" aria-label="Go to the profile of <%= user.name %>" data-action-source="search_user" data-action-index="<%= index + 1 %>" data-user-id="<%= user.uid %>" dir="auto"><img src="<%= avatar_url(user) %>" class="avatar-image avatar-image-small" alt="Go to the profile of <%= user.name %>"></a>
+      </div><!-- .card-image-wrapper -->
+      <div class="card-content">
+        <h3 class="card-name"><a class="link link-primary accent-color-text-normal" href="<%= web_profile_path("@#{user.username}", source: "search_user") %>" property="cc:attributionName" title="Go to the profile of <%= user.name %>" aria-label="Go to the profile of <%= user.name %>" rel="author cc:attributionUrl" data-action-index="<%= index + 1 %>" data-user-id="<%= user.uid %>" dir="auto"><%= user.name %></a></h3>
+        <p class="card-description"><%= user.description %></p>
+      </div><!-- .card-content -->
+    </li><!-- .card .card-user .card-small -->
+    <% end %>
+  </ul><!-- .cards .user-results-list -->
+</div><!-- .user-results -->
+<% end %>

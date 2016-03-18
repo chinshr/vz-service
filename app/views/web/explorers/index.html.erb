@@ -23,10 +23,11 @@
     </div><!-- single-column -->
 
     <% content_for :sidebar_content do %>
-      <%= render "featured_tags" %>
-      <%= render "followed_tags" %>
-      <%= render "corporate_footer" %>
+      <%= render "web/shared/featured_tags", heading_class_name: "heading-bordered-bottom" %>
+      <%= render "web/shared/followed_tags", heading_class_name: "heading-bordered-bottom" %>
+      <%= render "web/shared/top_stories", heading_class_name: "heading-bordered-bottom" %>
+      <%= render "web/shared/corporate_footer" %>
     <% end %>
-    <%= render "sidebar" %>
+    <%= render "web/shared/sidebar", class_name: "sidebar-wide" %>
   </div><!-- .explorer-container-content -->
 </div><!-- .explorer-container -->

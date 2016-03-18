@@ -1,4 +1,7 @@
-<div class="sidebar sidebar-wide sidebar-desktop-only" data-scroll="native">
+<%
+  class_name ||= ""
+%>
+<div class="sidebar sidebar-desktop-only <%= class_name %>" data-scroll="native">
   <div class="sidebar-content-wrapper" data-scroll="dock">
     <%= yield :sidebar_content %>
   </div><!-- sidebar-content-wrapper -->
