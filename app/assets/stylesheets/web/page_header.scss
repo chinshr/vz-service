@@ -1,0 +1,524 @@
+@import 'application-custom';
+
+header.page-header {
+  /* background-color: rgba(21.255, 26.255, 40.255, 0.8); */
+  background-color: #292d33;
+  height: 70px;
+  padding: 0;
+  position: fixed;
+  z-index: 200;
+  width:100%;
+  top: 0;
+  margin: 0;
+  border: 0;
+
+  #logo {
+    margin: 15px 0;
+    padding: 1px 0;
+    text-indent: -9999px;
+    background: image-url('voyzes-logo.png') no-repeat 0 0;
+  }
+
+  @media (max-width: 480px) {
+    #logo {
+      margin-left: 15px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    #logo {
+      margin-left: 15px;
+    }
+  }
+
+  nav {
+    .tooltip {
+      font-weight: bold;
+
+      .tooltip-inner {
+        text-transform: uppercase;
+        background-color: #292d33;
+        padding: 6px 10px;
+        /* wrap spaces */
+        // white-space:pre-wrap;
+        /* don't break spaces */
+        white-space:pre;
+        max-width:none;
+      }
+
+      &.top .tooltip-arrow {
+        border-top-color: #292d33;
+      }
+
+      &.right .tooltip-arrow {
+        border-right-color: rgba(41, 45, 51, 0.9);
+      }
+
+      &.bottom .tooltip-arrow {
+        border-bottom-color: #292d33;
+      }
+
+      &.left .tooltip-arrow {
+        border-left-color: #292d33;
+      }
+    } /* .tooltip */
+
+    &.navbar {
+      border: 0;
+    }
+
+    &.navbar-collapse {
+      border: 0;
+    }
+
+    .navbar-header {
+      height: 70px;
+    }
+
+    a {
+      color: $color-white;
+      font-weight: 700;
+      @include transition;
+
+      &:hover, &.active{
+        color: $color-orange;
+        text-decoration: none;
+      }
+    }
+
+    ul.nav {
+      text-transform: uppercase;
+      text-align: right;
+      padding-top: 0;
+      font-size: 16px;
+
+      li {
+        display: inline;
+        padding: 25px 15px 25px 15px;
+        height: 70px;
+
+        &:last-child{
+          margin-right:0;
+        }
+
+        a {
+          text-decoration: none;
+
+          &:hover {
+            color: $color-orange;
+          }
+
+          &:focus {
+            color: $color-white;
+          }
+        }
+
+        &.active a {
+          color: $color-orange;
+          background-color: #292d33;
+        }
+
+        &.dropdown {
+          padding: 15px 15px 15px 5px;
+          height: 70px;
+
+          &:hover {
+            background-color: #373d44;
+            border: 0 solid #4285f4;
+            border-bottom-width: 1px;
+            @include transition;
+          }
+
+          &.open {
+            background-color: #373d44;
+            border: 0 solid #4285f4;
+            border-bottom-width: 1px;
+          }
+
+          &.open > a {
+            background-color: transparent !important;
+          }
+
+          span {
+            margin-left: 10px;
+          }
+
+          .caret {
+            margin-left: 5px;
+            border-left-width: 5px;
+            border-right-width: 5px;
+            border-top-width: 7px;
+          }
+
+          a.dropdown-toggle {
+            padding-left: 45px;
+            padding-right: 0;
+
+            .avatar {
+              position: absolute;
+              top: 3px;
+              left: 10px;
+              border-radius: 300px;
+              width: 35px;
+              height: 35px;
+              display: block;
+              overflow: hidden;
+              border: transparent 2px solid;
+            }
+          }
+        } /* .dropdown */
+      } /* ul.nav li */
+
+      .dropdown-menu {
+        top: 70px;
+        border: none;
+        background-color: #3d444b;
+        padding: 0;
+        width: 100%;
+
+        .divider {
+          background-color: transparent;
+        }
+
+        li {
+          text-align: left;
+          margin: 0;
+          padding: 0;
+          font-size: 16px;
+
+          &.logout a {
+            margin: 10px;
+          }
+        }
+
+        & > li > a {
+          padding-top: 15px;
+          padding-bottom: 15px;
+          color: $color-white;
+          text-decoration: none;
+          font-weight: bold;
+        }
+
+        & > li > a:hover,
+        & > li > a:focus {
+          color: $color-white;
+          text-decoration: none;
+          background-color: #292d33;
+        }
+
+        & > .active > a,
+        & > .active > a:hover,
+        & > .active > a:focus {
+          color: #fff;
+          text-decoration: none;
+          background-color: #428bca;
+          outline: 0;
+        }
+      } /* .dropdown-menu */
+    } /* ul.nav */
+  } /* nav */
+
+  nav.navbar-default {
+    background-color: transparent;
+    margin-top: 0;
+
+    .navbar-toggle {
+      margin-top: 18px;
+    }
+    .navbar-toggle:hover,
+    .navbar-toggle:focus {
+      xbackground-color: rgba(55, 61, 68, 0.8);
+    }
+
+    .navbar-brand {
+      width: 115px;
+    }
+
+    .navbar-brand:hover,
+    .navbar-brand:focus {
+      color: #5e5e5e;
+      background-color: transparent;
+    }
+
+    .navbar-tag {
+      margin: 16px 0;
+      text-transform: uppercase;
+      font-weight: 300;
+      font-size: 26px;
+      float: left;
+      width: 250px;
+      color: #777;
+      @include transition(color .2s ease);
+    }
+
+    .navbar-tag:hover,
+    .navbar-tag:focus {
+      color: $color-white;
+      background-color: transparent;
+      @include transition(color .2s ease);
+    }
+
+    @media (max-width: 480px) {
+      .navbar-tag {
+        display: none;
+      }
+    }
+
+    .navbar-text {
+      color: #777;
+    }
+
+    .navbar-nav {
+      li {
+        &.active a { color: $color-orange; }
+        &:hover { @include transition; }
+        &.active { background-color: #373d44; }
+
+        padding: 0;
+
+        button {
+          outline: none !important;
+          height: inherit;
+          margin: auto 2px;
+          width: 22px;
+          padding: 10px 0;
+          border: 1px;
+
+          &.btn-tlb {
+            padding-left: 0;
+            padding-right: 0;
+            background-color: transparent;
+            color: #bbb;
+            xfont-size: 20px;
+            font-weight: normal;
+
+            &:active,
+            &:hover {
+              color: #fff;
+            }
+          }
+
+          .avatar {
+            border-radius: 300px;
+            width: 35px;
+            height: 35px;
+            display: block;
+            overflow: hidden;
+            margin-bottom: 2px;
+            border: transparent 1px solid;
+          }
+
+        } /* button */
+
+        .btn-login {
+          width: 55px;
+          font-size: 12px;
+          border: 1px solid #bbb;
+          border-radius: 300px;
+          line-height: 12px;
+          padding: 8px;
+          margin: 20px 0;
+          font-weight: bold;
+
+          &:hover {
+            border-color: #ccc;
+          }
+
+          p {
+            margin: 0;
+          }
+        }
+
+        #profile-button {
+          width: 35px;
+        }
+
+      } /* li */
+    } /* .navbar-nav */
+
+    .navbar-nav > li > a {
+      padding-top: 10px;
+      padding-bottom: 10px;
+      color: $color-white;
+      font-weight: bold;
+    }
+
+    .navbar-nav > li > a:hover,
+    .navbar-nav > li > a:focus {
+      color: $color-orange;
+      background-color: transparent;
+      @include transition(color .2s ease);
+    }
+
+    .navbar-nav > .active > a,
+    .navbar-nav > .active > a:hover,
+    .navbar-nav > .active > a:focus {
+      color: $color-orange;
+      background-color: transparent;
+    }
+
+    .navbar-nav > .disabled > a,
+    .navbar-nav > .disabled > a:hover,
+    .navbar-nav > .disabled > a:focus {
+      color: #ccc;
+      background-color: transparent;
+    }
+
+    .btn-group {
+      text-transform: uppercase;
+      margin: 20px;
+
+      a {
+        font-weight: bold;
+      }
+
+      a:hover,
+      a:focus {
+        color: $color-white;
+        background-color: transparent;
+        @include transition;
+      }
+
+    }
+  } /* nav.navbar-default */
+} /* header.page-header */
+
+/* for high resolution display */
+@media only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 2/1), only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min-device-pixel-ratio: 2) {
+ header.page-header {
+   #logo {
+     background: image-url('voyzes-logo@2x.png') no-repeat 0 0 !important;
+     background-size: 110px 40px !important;
+   }
+ }
+}
+
+header.page-header {
+  #logo {
+    background: image-url('voyzes-logo.png') no-repeat 0 0;
+  }
+}
+
+body {
+  /* Remove media query */
+  .navbar-header {
+    float: left;
+  }
+
+  .navbar-nav {
+    float: left;
+    margin: 0;
+
+    &.navbar-right {
+      float: right;
+      margin-right: 0;
+
+      &:last-child {
+        margin-right: 0;
+      }
+    }
+
+    li {
+      float: left;
+
+      @media (max-width: 479px) {
+
+        button.btn-dispensable-xs {
+          display: none;
+        }
+
+      }
+    }
+
+    .open .dropdown-menu {
+      position: absolute;
+    }
+  } /* .navbar-header */
+
+  .popover {
+    background-color: #292d33;
+
+    .arrow {
+      xdisplay: none;
+
+      &:after {
+        border-bottom-color: #292d33 !important;
+        border-top-color: #292d33 !important;
+      }
+    }
+  } /* .popover */
+
+  .popover.dropdown-popover {
+    max-width: 450px;
+    padding: 5px 5px;
+    border: 0;
+    right: 5px;
+    position: fixed;
+
+    @media (max-width: 767px) {
+      max-width: 100%;
+      right: 5px !important;
+      left: 5px !important;
+    }
+
+    .popover-content {
+      padding: 0;
+
+      ul.popdown-menu {
+        background-color: #292d33;
+        border: 0;
+        padding: 0;
+        margin: 0;
+        border-radius: 0px 0px 3px 3px;
+
+        .divider {
+          background-color: transparent;
+        }
+
+        li {
+          list-style: none;
+          text-align: left;
+          margin: 0;
+          padding: 0;
+          font-size: 16px;
+          border-radius: inherit;
+        }
+
+        & > li > a {
+          display: block;
+          padding: 15px 20px;
+          clear: both;
+          line-height: 1.4;
+          white-space: nowrap;
+          color: $color-white;
+          text-decoration: none;
+          text-transform: uppercase;
+          font-weight: bold;
+          border-radius: 2px;
+
+          i {
+            padding-right: 10px;
+          }
+        }
+
+        & > li > a:hover,
+        & > li > a:focus {
+          color: $color-white;
+          text-decoration: none;
+          // background-color: #292d33;
+          background-color: #3d444b;
+        }
+
+        & > .active > a,
+        & > .active > a:hover,
+        & > .active > a:focus {
+          color: #fff;
+          text-decoration: none;
+          background-color: #428bca;
+          outline: 0;
+        }
+      } /* .popdown-menu */
+    } /* .popover-content */
+  } /* .popover.dropdown-popover */
+
+} /* body .navbar-header */
