@@ -1,12 +1,4 @@
-@import 'application-custom';
-
-/* ====================== THEME ========================= */
-
-/* to optimize performance load fonts from LINK in HEAD */
-/*
-@import url(http://fonts.googleapis.com/css?family=Roboto:400);
-@import url(//fonts.googleapis.com/css?family=Open+Sans:300,400,600,700);
-*/
+@import 'web/setup';
 
 body {
   background-color: rgb(250, 250, 250);

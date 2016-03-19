@@ -14,7 +14,7 @@
  *= require_self
  */
 
-@import 'application-custom';
+@import 'web/setup';
 
 body.pages {
   &.load-header-contrast {

@@ -19,12 +19,12 @@
  *= require bootstrap-colorpicker
  *= require bootstrap-slider
  *= require include-media
- *= require application-custom
+ *= require web/setup
  *= require_self
  *= require_tree ./devise
  *= require_tree ./web
  */
-@import 'application-custom';
+@import 'web/setup';
 
 .navbar-toggle {
   font-family: 'Glyphicons Halflings' !important;

@@ -42,7 +42,7 @@ $color-dark-blue:#3D505F;
   transform:$trans;
 }
 
-@import 'application-custom';
+@import 'web/setup';
 
 body {
   font-family: $font-family;

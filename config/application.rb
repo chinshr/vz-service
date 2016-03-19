@@ -27,6 +27,6 @@ module Voyzes
     # Filter passwords
     config.filter_parameters += [:password]
 
-    config.assets.precompile += ['application-custom.css.scss']
+    # config.assets.precompile += ['web/setup.scss']
   end
 end
