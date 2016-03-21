@@ -14,7 +14,16 @@
 <% content_for :javascript_includes do %>
   <%= javascript_tag do %>
     $(function() {
-      $(".search-input").focus();
+      $(".search-input").each(function() {
+        $(this).focus();
+
+        if (this.setSelectionRange) {
+          var len = $(this).val().length * 2;
+          this.setSelectionRange(len, len);
+        } else {
+          $(this).val($(this).val());
+        }
+      });
     });
   <% end %>
 <% end %>

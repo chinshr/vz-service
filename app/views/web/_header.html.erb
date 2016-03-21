@@ -2,25 +2,17 @@
   <div class="container">
     <nav class="navbar navbar-default navbar-fixed-top" id="navigation" role="navigation">
       <div class="container-fluid">
-        <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
-<!--
-          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
- -->
           <a id="logo" class="navbar-brand" href="/">VOYZ.ES</a>
           <% if content_for?(:navbar_tag) %>
             <%= content_for(:navbar_tag) %>
           <% else %>
           <a class="navbar-tag" href="/">Record your Life</a>
           <% end %>
-        </div>
+        </div><!-- .navbar-header -->
 
-        <div id="main-navbar">
+        <div id="main-navbar" class="navbar-block navbar-block-right">
+          <% if false %>
           <ul class="nav navbar-nav navbar-right">
             <% if current_user %>
             <li><!-- profile -->
@@ -49,19 +41,24 @@
               </ul>
               </script>
             </li><!-- /profile -->
-            <% else %>
-            <!-- login -->
-            <li><a title="Login" href="<%= new_user_session_path %>" type="button" class="btn btn-lg btn-tlb btn-login"><p>Login</p></a></li>
-            <!-- /login -->
-            <% if false %>
-            <div id="login-buttons" class="btn-group btn-group-horizontal pull-right">
-              <a href="<%= new_user_session_path %>" class="btn btn-small btn-flat-plain">Login</a>
-            </div>
             <% end %>
-            <% end %>
-          </ul>
-        </div><!-- collapse navbar-collapse -->
+          </ul><!-- nav navbar-nav -->
+          <% end %>
+          <div class="input-group hidden-xs predictive-search">
+            <button class="button button-chromeless button-inline button-with-icon is-in-site-nav-bar button-with-svg-icon" title="Click to start typing a search term" aria-label="Click to start typing a search term" data-action="focus-search-input">
+              <span class="icon icon-search icon-size-25px fa fa-search">
+              </span>
+            </button>
+            <input class="predictive-search-input text-input text-input-rounded text-input-transparent text-input-light-text" type="search" placeholder="Search">
+          </div><!-- .input-group -->
+          <div class="button-set">
+            <a class="button button-with-chrome is-in-site-nav-bar" href="/dashboard" data-action-source="nav_upload_story">Upload a story</a>
+
+            <a class="button button-primary button-with-chrome accent-color-border-normal accent-color-text-normal is-in-site-nav-bar" href="<%= new_user_session_path %>" data-action="sign-in-prompt" data-redirect="" data-action-source="nav_signup">Sign in</a>
+          </div><!-- .button-set -->
+
+        </div><!-- #main-navbar -->
       </div><!-- container-fluid -->
-    </nav>
-  </div><!-- end container -->
-</header>
+    </nav><!-- .navbar .navbar-default .navbar-fixed-top -->
+  </div><!-- container -->
+</header><!-- .page-header -->
