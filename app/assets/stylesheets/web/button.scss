@@ -86,6 +86,11 @@
    margin-left: 8px;
 }
 
+.button-set > .button:last-child,
+.button-set > .button-set-inner:last-child > .button:last-child {
+  margin-right: 0;
+}
+
 .button > .button-active-state {
   display: none;
 }

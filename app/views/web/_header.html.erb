@@ -44,6 +44,7 @@
             <% end %>
           </ul><!-- nav navbar-nav -->
           <% end %>
+          <% if false %>
           <div class="input-group hidden-xs predictive-search">
             <button class="button button-chromeless button-inline button-with-icon is-in-site-nav-bar button-with-svg-icon" title="Click to start typing a search term" aria-label="Click to start typing a search term" data-action="focus-search-input">
               <span class="icon icon-search icon-size-25px fa fa-search">
@@ -51,8 +52,9 @@
             </button>
             <input class="predictive-search-input text-input text-input-rounded text-input-transparent text-input-light-text" type="search" placeholder="Search">
           </div><!-- .input-group -->
+          <% end %>
           <div class="button-set">
-            <a class="button button-with-chrome is-in-site-nav-bar" href="/dashboard" data-action-source="nav_upload_story">Upload a story</a>
+            <a class="button button-with-chrome is-in-site-nav-bar" href="/dashboard" data-action-source="nav_upload_story">Upload</a>
 
             <a class="button button-primary button-with-chrome accent-color-border-normal accent-color-text-normal is-in-site-nav-bar" href="<%= new_user_session_path %>" data-action="sign-in-prompt" data-redirect="" data-action-source="nav_signup">Sign in</a>
           </div><!-- .button-set -->
