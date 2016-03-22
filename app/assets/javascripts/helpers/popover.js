@@ -1,7 +1,7 @@
 /* Popovers */
 $(document).ready(function() {
 
-  $(".btn-popover").each(function (index, btn) {
+  $(".btn-popover, .button-popover").each(function (index, btn) {
     var target;
     if (target = $(btn).data('target')) {
       target = $('#' + $(btn).data('target'));
