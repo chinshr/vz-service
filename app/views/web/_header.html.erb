@@ -1,26 +1,3 @@
-<% if current_user %>
-<script type="text/html" id="profile-popover-template">
-<ul class="popdown-menu">
-  <li role="presentation">
-    <a role="menuitem" href="<%= request.path == web_dashboard_path ? '#' : web_dashboard_path %>">
-    <% if current_user.ingests.started.count > 0 %><span class="badge badge-warning pull-right"><%= current_user.ingests.started.count %></span><% end %>
-    Dashboard</a>
-  </li>
-  <li role="presentation"><a role="menuitem" href="<%= request.path == web_account_profile_path ? '#' : web_account_profile_path %>">Profile</a></li>
-  <li role="presentation"><a role="menuitem" href="<%= request.path == web_account_settings_path ? '#' : web_account_settings_path %>">Settings</a></li>
-  <% if false %>
-  <li role="presentation"><a role="menuitem" href="<%= request.path == web_account_billing_path ? '#' : web_account_billing_path %>">Billing Information</a></li>
-  <% end %>
-  <% if current_user.developer_role? %>
-  <li role="presentation"><a role="menuitem" href="/documentation">Documentation</a></li>
-  <% end %>
-  <li role="presentation" class="divider"></li>
-  <li role="presentation" class="logout">
-    <%= link_to "Logout", destroy_user_session_path, :method => :delete, :class => "btn btn-small btn-danger" %>
-  </li>
-</ul>
-</script>
-<% end %>
 <header class="page-header">
   <div class="container">
     <nav class="navbar navbar-default navbar-fixed-top" id="navigation" role="navigation">
@@ -36,17 +13,6 @@
 
         <div id="main-navbar" class="navbar-block navbar-block-right">
           <% if false %>
-          <ul class="nav navbar-nav navbar-right">
-            <% if current_user %>
-            <li><!-- profile -->
-              <button title="<%= current_user.name_and_username %>" id="profile-button" class="btn btn-md btn-tlb btn-popover btn-profile" type="button" data-toggle="tooltip" data-placement="bottom" data-target="profile-popover-template" data-popover-id="profile-popover" data-popover-class="dropdown-popover profile-popover">
-              <%= image_tag(avatar_url(current_user), class: "avatar", style: "background-color: #{current_user.css_hex_color}") %>
-              </button>
-            </li><!-- /profile -->
-            <% end %>
-          </ul><!-- nav navbar-nav -->
-          <% end %>
-          <% if false %>
           <div class="input-group hidden-xs predictive-search">
             <button class="button button-chromeless button-inline button-with-icon is-in-site-nav-bar button-with-svg-icon" title="Click to start typing a search term" aria-label="Click to start typing a search term" data-action="focus-search-input">
               <span class="icon icon-search icon-size-25px fa fa-search">
@@ -57,11 +23,12 @@
           <% end %>
           <div class="button-set">
           <% if current_user %>
-            <button class="button button-circle button-borderless button-box-shadow-border button-with-chrome button-popover is-in-site-nav-bar user-actions" data-toggle="tooltip" data-placement="bottom" data-target="profile-popover-template" data-popover-id="profile-popover" data-popover-class="dropdown-popover profile-popover">
+            <button class="button button-circle button-borderless button-box-shadow-border button-with-chrome button-popover is-in-site-nav-bar user-actions" data-placement="bottom" data-target="profile-popover-template" data-popover-id="profile-popover" data-popover-class="dropdown-popover profile-popover">
               <div class="avatar">
                 <img src="https://cdn-images-1.medium.com/fit/c/80/80/0*cfl3oGOUG-wxdwCr.jpg" class="avatar-image avatar-image-smaller" style="background-color: <%= current_user.css_hex_color %>;" alt="Juergen Fesslmeier">
               </div>
             </button>
+            <%= render "web/shared/templates/profile_popover" %>
           <% else %>
             <a class="button button-with-chrome is-in-site-nav-bar" href="<%= new_user_registration_path %>" data-action-source="sign-up-prompt" data-action-source="nav_signup">Sign Up</a>
             <a class="button button-primary button-with-chrome accent-color-border-normal accent-color-text-normal is-in-site-nav-bar" href="<%= new_user_session_path %>" data-action="sign-in-prompt" data-redirect="" data-action-source="nav_signin">Sign In</a>

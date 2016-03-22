@@ -1,0 +1,21 @@
+<script type="text/html" id="profile-popover-template">
+<ul class="popdown-menu">
+  <li role="presentation">
+    <a role="menuitem" href="<%= request.path == web_dashboard_path ? '#' : web_dashboard_path %>">
+    <% if current_user.ingests.started.count > 0 %><span class="badge badge-warning pull-right"><%= current_user.ingests.started.count %></span><% end %>
+    Dashboard</a>
+  </li>
+  <li role="presentation"><a role="menuitem" href="<%= request.path == web_account_profile_path ? '#' : web_account_profile_path %>">Profile</a></li>
+  <li role="presentation"><a role="menuitem" href="<%= request.path == web_account_settings_path ? '#' : web_account_settings_path %>">Settings</a></li>
+  <% if false %>
+  <li role="presentation"><a role="menuitem" href="<%= request.path == web_account_billing_path ? '#' : web_account_billing_path %>">Billing Information</a></li>
+  <% end %>
+  <% if current_user.developer_role? %>
+  <li role="presentation"><a role="menuitem" href="/documentation">Documentation</a></li>
+  <% end %>
+  <li role="presentation" class="divider"></li>
+  <li role="presentation" class="logout">
+    <%= link_to "Logout", destroy_user_session_path, :method => :delete, :class => "btn btn-small btn-danger" %>
+  </li>
+</ul>
+</script>

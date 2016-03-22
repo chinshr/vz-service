@@ -154,17 +154,7 @@
             <button title="<%= current_user.name_and_username %>" id="profile-button" class="btn btn-md btn-tlb btn-popover btn-profile" type="button" data-toggle="tooltip" data-placement="bottom" data-target="profile-popover-template" data-popover-id="profile-popover" data-popover-class="dropdown-popover profile-popover">
             <%= image_tag(avatar_url(current_user), class: "avatar", style: "background-color: #{current_user.css_hex_color}") %>
             </button>
-            <script type="text/html" id="profile-popover-template">
-            <ul class="popdown-menu">
-              <li role="presentation"><a role="menuitem" href="/dashboard">Dashboard</a></li>
-              <li class="divider"></li>
-              <li role="presentation"><a role="menuitem" href="<%= web_account_profile_path %>">Profile</a></li>
-              <li role="presentation"><a role="menuitem" href="<%= web_account_settings_path %>">Settings</a></li>
-              <li role="presentation">
-                <%= link_to "Logout", destroy_user_session_path, :method => :delete, :class => "btn btn-small btn-danger" %>
-              </li>
-            </ul>
-            </script>
+            <%= render "web/shared/templates/profile_popover" %>
           </li><!-- /profile -->
           <% else %>
           <!-- login -->
