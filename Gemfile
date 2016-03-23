@@ -112,6 +112,7 @@ gem 'rack-reverse-proxy', require: "rack/reverse_proxy"
 gem 'rack-cors', require: 'rack/cors'
 gem 'font_assets'
 gem 'font-awesome-rails'
+gem 'lato-rails'
 gem 'dalli'
 gem 'rack-cache'
 gem 'kgio'
