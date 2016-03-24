@@ -1,11 +1,11 @@
 /* ====================== FONTS ========================= */
 
 /* PT Serif */
-@import url('//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic');
+// @import url('//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic');
 
 /* ====================== VARIABLES ========================= */
 
-$color-white:#fff;
+$color-white: #fff;
 $color-orange: #3f6169; /* #F1784D; */
 $color-light-blue: #4285f4;
 $color-blue: #5492ce;
@@ -17,12 +17,6 @@ $btn-default-radius: 2px;
 // see: http://include-media.com/documentation/
 
 @import "include-media";
-
-/* Example:
-
-  @include media('>=tablet', '<=desktop') { ... }
-  @include media('retina2x') { ... }
-*/
 
 /* ====================== MIXINS ========================= */
 

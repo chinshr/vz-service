@@ -112,8 +112,8 @@ gem 'rack-reverse-proxy', require: "rack/reverse_proxy"
 gem 'rack-cors', require: 'rack/cors'
 gem 'font_assets'
 gem 'font-awesome-rails'
-gem 'lato-rails', path: "/Users/juergen/work/rails/lato-rails"
-gem 'pt-serif-rails', path: "/Users/juergen/work/rails/pt-serif-rails"
+gem 'lato-rails'
+gem 'pt-serif-rails'
 gem 'dalli'
 gem 'rack-cache'
 gem 'kgio'
