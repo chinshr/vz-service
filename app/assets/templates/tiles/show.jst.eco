@@ -55,23 +55,35 @@
       </a>  <!-- .media-image -->
 
       <div class="panel-heading">
-        <h3 class="document-title">
-          <a href="#" class="document-title-link edit-slug published-slug"><%= @title || @file_name %></a>
-        </h3>
+        <a href="#" class="document-title-link edit-slug published-slug">
+          <h3 class="document-title"><%= @title || @file_name %></h3>
+        </a>
         <span class="slug edit-slug published-slug" hidden><i class="fa fa-link"><a href="#" target="_blank">http://foo.bar</a></i></span>
       </div><!-- .panel-heading -->
 
       <div class="panel-body">
+        <% unless _.isEmpty(@description): %>
+        <p class="description minimize"><%= @description %></p>
+        <% end %>
+
+        <% if @className == 'Upload' || (@className == 'Document' && @tags.length > 0): %>
         <div class="tags-title">Tagged in</div>
-        <ul class="tag-list">
-          <% if @tags.length == 0: %>
-          <li class="empty-tag">Add optional tags.</li>
+        <ul class="tag-list tags-light">
+          <% if @tags.length == 0 && @className == 'Upload': %>
+          <li class="empty-tag"><a class="add-tags-link" href="#">Add tags...</a></li>
           <% else: %>
-            <% for tag in @tags: %>
-            <li class="tag" data-tag-slug="<%= tag.slug %>"><a href="<%= '/explore/tag/' + tag.slug + '?source=tile' %>"><%= tag.name %></a></li>
+            <% @max_tags = 3 %>
+            <% @index    = 0 %>
+            <% for @tag in @tags: %>
+            <li class="tag <%= 'show-less' if @index > @max_tags - 1 %>" data-tag-slug="<%= @tag.slug %>"><a href="<%= '/explore/tag/' + @tag.slug + '?source=tile' %>"><%= @tag.name %></a></li>
+            <% if @index == @max_tags - 1: %>
+            <li class="show-more-tags"><a class="show-more-tags-link" href="#">more...</a></li>
+            <% end %>
+            <% @index = @index + 1 %>
             <% end %>
           <% end %>
         </ul>
+        <% end %>
       </div><!-- .panel-body -->
 
     </div><!-- .panel -->

@@ -2,20 +2,22 @@ App.Views.TilesShow = App.Views.TilesBase.extend({
   template: JST['tiles/show'],
 
   events: _.extend({
-    'click .action-update' : 'flipTile',
-    'click .action-edit' : 'onOpenEdit',
-    'click .action-preview' : 'onOpenPreview',
+    'click .action-update': 'flipTile',
+    'click .add-tags-link': 'flipTile',
+    'click .action-edit': 'onOpenEdit',
+    'click .action-preview': 'onOpenPreview',
     'click .action-delete': 'onDelete',
-    'click .action-stop' : 'onStop',
-    'click .action-start' : 'onStart',
-    'click .action-reset' : 'onReset'
+    'click .action-stop': 'onStop',
+    'click .action-start': 'onStart',
+    'click .action-reset': 'onReset',
+    'click .show-more-tags-link': 'showMoreTags'
   }, App.Views.TilesBase.prototype.events),
 
   initialize: function(options) {
     _.bindAll(this, "flipTile", "playerOptions", "initPlayerButton",
       "playerLoading", "playerReady", "playerDestroy",
       "playerError", "playerPlay", "playerPause", "playerStop", "playerFinish",
-      "onStart", "onStop", "onReset", "syncEvent");
+      "onStart", "onStop", "onReset", "syncEvent", "showMoreTags", "shortenDescription");
     App.Views.TilesBase.prototype.initialize.call(this, options); // super
   },
 
@@ -25,6 +27,7 @@ App.Views.TilesShow = App.Views.TilesBase.extend({
     _.defer((function(_this) {
       return function() {
         _this.initPlayerButton();
+        _this.shortenDescription();
       }
     })(this));
 
@@ -248,6 +251,37 @@ App.Views.TilesShow = App.Views.TilesBase.extend({
     return this.statusPopoverView = new App.Views.UploadsStatusPopover({
       parent: this,
       placement: "auto bottom"
+    });
+  },
+
+  showMoreTags: function(e) {
+    e.stopPropagation();
+    e.preventDefault();
+    $(e.target).parent().hide();
+    $(e.target).closest('ul').find('.show-less').removeClass('show-less');
+    this.parent.refreshLayout();
+  },
+
+  shortenDescription: function() {
+    var _this = this,
+      elements = this.$('p.minimize'),
+      shortLength = 50;
+
+    elements.each(function(){
+      var t = $(this).text();
+      if(t.length < shortLength) return;
+
+      $(this).html(
+        t.slice(0, shortLength) + '<span>... </span><a href="#" class="more-link">more</a>' +
+        '<span style="display:none;">' + t.slice(shortLength, t.length)
+      );
+    });
+
+    $('.more-link', elements).click(function(event) {
+      event.preventDefault();
+      $(this).hide().prev().hide();
+      $(this).next().show();
+      _this.parent.refreshLayout();
     });
   }
 
