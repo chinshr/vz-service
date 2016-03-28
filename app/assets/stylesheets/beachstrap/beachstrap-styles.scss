@@ -138,10 +138,10 @@ header {
   top: 0;
 
   #logo {
-    margin: 15px 0;
-    padding: 1px 0;
+    margin: 0;
+    padding: 0;
     text-indent: -9999px;
-    background: image-url('voyzes-logo.png') no-repeat 0 0;
+    background: image-url('voyzes-logo-110x70.png') no-repeat 0 0;
   }
 
   @media (max-width: 480px) {
@@ -158,8 +158,8 @@ header {
 
   @media only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 2/1), only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min-device-pixel-ratio: 2) {
     #logo {
-      background: image-url('voyzes-logo@2x.png') no-repeat 0 0 !important;
-      background-size: 110px 40px !important;
+      background: image-url('voyzes-logo-110x70@2x.png') no-repeat 0 0 !important;
+      background-size: 110px 70px !important;
     }
   }
 
