@@ -774,6 +774,10 @@
       // min-height: 70px;
     }
 
+    .panel-heading+.panel-body {
+      padding-top: 0;
+    }
+
     &.show-panel {
       z-index: 2;
       /* for firefox 31 */
@@ -844,7 +848,7 @@
 
     .panel-heading {
       border-radius: 0;
-      background-color: #f5f5f5;
+      //background-color: #f5f5f5;
       color: rgba(0,0,0,.95);
 
       $panel-heading-font-size: 16px;
