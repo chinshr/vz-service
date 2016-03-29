@@ -61,7 +61,7 @@
   }
 
   .player-thumb {
-    width: 70px;
+    // min-width: 70px;
     height: 70px;
     position: relative;
     outline: 0;
@@ -71,9 +71,9 @@
     }
 
     img {
+      height: 70px;
       display: block;
-      width: 100%;
-
+      // width: 100%;
     }
   }
 

@@ -57,6 +57,7 @@ App.Views.Player = Backbone.View.extend({
 
     // update image + link
     this.$(".player-thumb img").attr("src", this.model.imageSource(1));
+    this.$(".player-thumb img").attr("style", "background-color: " + this.model.rgbaColor() + ";");
     this.$(".player-thumb").attr("href", url);
 
     // update share

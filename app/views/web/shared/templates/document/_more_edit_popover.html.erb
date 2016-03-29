@@ -1,0 +1,8 @@
+<script type="text/html" id="more-edit-popover-template">
+<ul class="popdown-menu">
+  <li role="presentation"><a role="menuitem" href="<%= web_document_path(@document.slug_id) %>"><i class="fa fa-eye"></i>Preview Document</a></li>
+  <% if !publish? && policy(@document).publish? && @document.published? %>
+  <li role="presentation"><a role="menuitem" href="<%= web_published_document_url %>"><i class="fa fa-dot-circle-o"></i>Published Document</a></li>
+  <% end %>
+</ul>
+</script>

@@ -1,0 +1,26 @@
+<script type="text/html" id="content-editor-toolbar-template">
+<ul class="nav navbar-nav toolbar-nav content-toolbar-container content-editor-toolbar-container">
+  <!-- font-style -->
+  <li><button title="<%= key_cmd(:bold, 'B', :meta_key) %>" type="button" class="btn btn-md btn-tlb ql-bold fa fa-bold fa-fw" data-toggle="tooltip" data-placement="bottom"></button></li>
+  <li><button title="<%= key_cmd(:italic, 'I', :meta_key) %>" type="button" class="btn btn-md btn-tlb ql-italic fa fa-italic fa-fw" data-toggle="tooltip" data-placement="bottom"></button></li>
+  <li><button title="<%= key_cmd(:underline, 'U', :meta_key) %>" type="button" class="btn btn-md btn-tlb ql-underline fa fa-underline fa-fw" data-toggle="tooltip" data-placement="bottom"></button></li>
+  <li><button title="<%= key_cmd(:strikethrough, 'S', :meta_key) %>" type="button" class="btn btn-md btn-tlb ql-strike fa fa-strikethrough fa-fw" data-toggle="tooltip" data-placement="bottom"></button></li>
+
+  <% if false %>
+  <!-- alignment tools -->
+  <li class="separator">&nbsp;</li>
+
+  <!-- text-align -->
+  <li><button title="<%= key_cmd(:align_left) %>" type="button" data-value="left" class="btn btn-md btn-tlb ql-align fa fa-align-left fa-fw" data-toggle="tooltip" data-placement="bottom"></button></li>
+  <li><button title="<%= key_cmd(:align_center) %>" type="button" data-value="center" class="btn btn-md btn-tlb ql-align-center fa fa-align-center fa-fw" data-toggle="tooltip" data-placement="bottom"></button></li>
+  <li><button title="<%= key_cmd(:align_right) %>" type="button" data-value="right" class="btn btn-md btn-tlb ql-align-right fa fa-align-right fa-fw" data-toggle="tooltip" data-placement="bottom"></button></li>
+  <li><button title="<%= key_cmd(:align_justify) %>" type="button" data-value="right" class="btn btn-md btn-tlb ql-align-justify fa fa-align-justify fa-fw" data-toggle="tooltip" data-placement="bottom"></button></li>
+  <% end %>
+
+  <li class="separator">&nbsp;</li>
+
+  <!-- lists -->
+  <li><button title="<%= key_cmd(:numbered_list) %>" type="button" class="btn btn-md btn-tlb ql-list fa fa-list-ol fa-fw" data-toggle="tooltip" data-placement="bottom"></button></li>
+  <li><button title="<%= key_cmd(:bulleted_list) %>" type="button" class="btn btn-md btn-tlb ql-bullet fa fa-list-ul fa-fw" data-toggle="tooltip" data-placement="bottom"></button></li>
+</ul>
+</script>

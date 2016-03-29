@@ -1,0 +1,19 @@
+<script type="text/html" id="content-editor-toolbar-template">
+<!-- share-popover -->
+<ul class="nav navbar-nav toolbar-nav content-toolbar-container content-editor-toolbar-container content-viewer-toolbar-container">
+  <!-- highlight -->
+  <li><button title="<%= key_cmd(:highlight, 'H', :ctrl_key) %>" type="button" class="btn btn-md btn-tlb ql-bold fa fa-bookmark fa-fw" data-toggle="tooltip" data-placement="bottom"></button></li>
+
+  <li class="separator">&nbsp;</li>
+
+  <!-- share -->
+
+  <li><button type="button" class="btn btn-md btn-tlb fa fa-facebook fa-fw" data-toggle="tooltip" data-placement="bottom" data-href="<%= @document.published_url %>"></button></li>
+
+  <li><button type="button" class="btn btn-md btn-tlb fa fa-twitter fa-fw" data-toggle="tooltip" data-placement="bottom" data-href="<%= @document.published_url %>" data-title="<%= @document.title %>"></button></li>
+
+  <li><button type="button" class="btn btn-md btn-tlb fa fa-linkedin fa-fw" data-toggle="tooltip" data-placement="bottom" data-href="<%= @document.published_url %>" data-title="<%= @document.title %>"></button></li>
+
+</ul>
+<!-- /share-popover -->
+</script>

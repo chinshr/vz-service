@@ -1,6 +1,7 @@
 <footer class="meta-footer">
   <div class="document-footer-container container">
     <div class="row">
+      <% if edit? || ((show? || publish?) && @document.tag_list.size > 0) %>
       <div class="col-lg-10 col-lg-offset-1 col-md-10 col-md-offset-1 col-sm-9 col-sm-offset-2 col-xs-12 document-tags-container">
         <div class="tags-title">Tagged in</div>
         <% if show? || publish? %>
@@ -20,6 +21,7 @@
         </div><!-- form-group-tags -->
         <% end %>
       </div><!-- document-tags-container -->
+      <% end %>
     </div><!-- .row -->
   </div><!-- document-footer-container -->
 </footer><!-- .meta-footer -->

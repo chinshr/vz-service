@@ -394,6 +394,10 @@ header.page-header {
       float: right;
     }
 
+    .navbar-block-left {
+      float: left;
+    }
+
   } /* nav.navbar-default */
 } /* header.page-header */
 
@@ -467,7 +471,7 @@ body {
     padding: 5px 5px;
     border: 0;
     right: 5px;
-    // top: 70px !important;
+    top: 70px !important;
     position: fixed;
 
     @media (max-width: 767px) {

@@ -122,4 +122,12 @@ module Web::DocumentsHelper
   def dom_controller_action_class
     "#{action_name.dasherize} waveform-#{waveform_visible? ? 'visible' : 'hidden'}"
   end
+
+  def document_image_url(aspect = 1.33)
+    url = image_url("bg/wf-icon-white-500x500.png")
+    if @document && (image = @document.images.where(aspect_ratio: aspect).order(created_at: :desc).first)
+      url = image.url
+    end
+    url
+  end
 end

@@ -129,6 +129,10 @@ var VZ = (function() {
       }
     }
     return rtn;
+  };
+
+  var assets = {
+    thumb500x500: "<%= image_url("bg/wf-icon-white-500x500.png") %>"
   }
 
   return {
@@ -143,6 +147,7 @@ var VZ = (function() {
     setCookie: setCookie,
     isSSL: isSSL,
     query: query,
-    urlWithoutParam: urlWithoutParam
+    urlWithoutParam: urlWithoutParam,
+    assets: assets
   }
 })();
