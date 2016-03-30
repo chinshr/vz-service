@@ -48,6 +48,12 @@ body.explorers, body.searches {
         padding: 10px 0 40px;
       }
 
+      @include media('>=phone', '<tablet') {
+        .single-column-with-sidebar {
+          margin-right: 0;
+        }
+      }
+
       .size-with-height-min-100 {
         min-height: 100vh!important;
         box-sizing: border-box;
