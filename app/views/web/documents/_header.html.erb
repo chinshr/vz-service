@@ -1,21 +1,23 @@
+<% content_for :javascript_includes do %>
+  <% if current_user %>
+    <%= render "web/shared/templates/profile_popover" %>
+    <%= render "web/shared/templates/document/more_edit_popover" %>
+  <% end %>
+<% end %>
 <header class="page-header page-document-header">
   <div class="container-fluid topbar-primary">
     <nav class="navbar navbar-default" id="navigation" role="navigation">
       <div id="brand-navbar" class="navbar-header">
-<!--
-        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
- -->
         <div class="dropdown">
           <button id="dropdown-brand-button" class="dropdown-toggle" type="button" data-toggle="dropdown">
-            <a id="logo" class="navbar-brand">VOYZ.ES</a>
+            <a href="#" class="player-thumb">
+              <img src="<%= document_image_url %>" style="background-color: <%= @document.image_background_rgba_color %>">
+            </a>
             <span class="caret"></span>
           </button>
           <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+            <li role="presentation"><a role="menuitem" href="/">VOYZ.ES</a></li>
+
             <% if current_user %>
             <li role="presentation"><a role="menuitem" href="/dashboard"><i class="fa fa-level-up"></i>Dashboard</a></li>
             <% if policy(@document).edit? || policy(@document).show? %>
@@ -31,138 +33,83 @@
             <li role="presentation"><a role="menuitem" href="<%= web_published_document_url %>"><i class="fa fa-dot-circle-o"></i>Published</a></li>
             <% end %>
             <% else %>
-              <li role="presentation"><a role="menuitem" href="<%= new_user_session_path %>"><i class="fa fa-sign-in"></i>Login</a></li>
+              <li role="presentation"><a role="menuitem" href="<%= new_user_session_path %>"><i class="fa fa-sign-in"></i>Sign in</a></li>
             <% end %>
           </ul>
         </div>
-      </div><!-- #brand-navbar.navbar-header -->
+      </div><!-- #brand-navbar .navbar-header -->
 
-      <div id="main-navbar" class="xnavbar-header">
+      <div id="player-navbar" class="navbar-block navbar-block-left">
         <!-- player controls -->
         <ul id="media-player-toolbar-container" class="nav navbar-nav toolbar-nav audio-player-nav">
-          <li><button title="<%= key_cmd(:play, 'Esc') %>" type="button" class="btn btn-lg btn-tlb fa fa-play fa-fw player player-play-pause" data-action="toggle-play-pause" data-toggle="tooltip" data-placement="bottom"></button></li>
-          <li><button title="<%= key_cmd(:step_backward, "F1") %>" type="button" class="btn btn-md btn-tlb btn-dispensable-xs fa fa-backward fa-fw player player-step-backward" data-action="step-backward" data-toggle="tooltip" data-placement="bottom"></button></li>
-          <li><button title="<%= key_cmd(:step_forward, "F2") %>" type="button" class="btn btn-md btn-tlb btn-dispensable-xs fa fa-forward fa-fw player player-step-forward" data-action="step-forward" data-toggle="tooltip" data-placement="bottom"></button></li>
+          <li><button title="<%= key_cmd(:play, 'Esc') %>" type="button" class="btn btn-tlb fa fa-play fa-fw player player-play-pause" data-action="toggle-play-pause" data-toggle="tooltip" data-placement="bottom"></button></li>
+          <li><button title="<%= key_cmd(:step_backward, "F1") %>" type="button" class="btn btn-tlb hidden-xs fa fa-backward fa-fw player player-step-backward" data-action="step-backward" data-toggle="tooltip" data-placement="bottom"></button></li>
+          <li><button title="<%= key_cmd(:step_forward, "F2") %>" type="button" class="btn btn-tlb hidden-xs fa fa-forward fa-fw player player-step-forward" data-action="step-forward" data-toggle="tooltip" data-placement="bottom"></button></li>
           <li>
-            <button title="<%= key_cmd(:playback_speed) %>" type="button" id="playback-speed-btn" class="btn btn-lg btn-tlb btn-speed player dropdown-toggle" data-toggle="dropdown"><p>1×</p></button>
+            <button title="<%= key_cmd(:playback_speed) %>" type="button" id="playback-speed-btn" class="btn btn-tlb btn-speed player dropdown-toggle" data-toggle="dropdown"><p>1×</p></button>
             <ul id="playback-speed-menu" class="dropdown-menu">
               <li>
                 <ul class="toolbar-nav sub-toolbar-nav speed-slider-nav">
-                  <li><button title="<%= key_cmd(:slower, "F3") %>" type="button" class="btn btn-md btn-tlb fa fa-angle-down fa-fw player player-step-backward" data-action="playback-rate-down" data-toggle="tooltip" data-placement="left"></button></li>
+                  <li><button title="<%= key_cmd(:slower, "F3") %>" type="button" class="btn btn-tlb fa fa-minus fa-fw player player-step-backward" data-action="playback-rate-down" data-toggle="tooltip" data-placement="left"></button></li>
                   <li class="slider-container"><input id="playback-speed-slider" class="playback-speed-slider"/></li>
-                  <li><button title="<%= key_cmd(:faster, "F4") %>" type="button" class="btn btn-md btn-tlb fa fa-angle-up fa-fw player player-step-backward" data-action="playback-rate-up" data-toggle="tooltip" data-placement="right"></button></li>
+                  <li><button title="<%= key_cmd(:faster, "F4") %>" type="button" class="btn btn-tlb fa fa-plus fa-fw player player-step-backward" data-action="playback-rate-up" data-toggle="tooltip" data-placement="right"></button></li>
                 </ul>
               </li>
             </ul>
           </li>
-          <li><button title="<%= key_cmd(:mute) %>" type="button" class="btn btn-md btn-tlb btn-dispensable-xs fa fa-volume-up fa-fw player player-mute-toggle" data-action="toggle-mute" data-toggle="tooltip" data-placement="bottom"></button></li>
-          <li><button type="button" class="btn btn-lg btn-tlb btn-elt"><p id="elt">00:00.0</p></button></li>
-          <li><button type="button" class="btn btn-lg btn-tlb btn-dispensable-xs btn-ttp"><p id="ttp">-00:00.0</p></button></li>
-          <li><button title="<%= key_cmd(:reset, 'Esc', [:shift_key]) %>" type="button" class="btn btn-md btn-tlb btn-dispensable-xs fa fa-stop fa-fw player player-reset" data-action="reset" data-toggle="tooltip" data-placement="bottom"></button></li>
+          <li><button title="<%= key_cmd(:mute) %>" type="button" class="btn btn-tlb hidden-xs fa fa-volume-up fa-fw player player-mute-toggle" data-action="toggle-mute" data-toggle="tooltip" data-placement="bottom"></button></li>
+          <li><button type="button" class="btn btn-tlb hidden-xs btn-elt"><p id="elt">00:00.0</p></button></li>
+          <li><button type="button" class="btn btn-tlb hidden-xs btn-ttp"><p id="ttp">-00:00.0</p></button></li>
+          <li><button title="<%= key_cmd(:reset, 'Esc', [:shift_key]) %>" type="button" class="btn btn-tlb hidden-xs fa fa-stop fa-fw player player-reset" data-action="reset" data-toggle="tooltip" data-placement="bottom"></button></li>
           <li class="separator">&nbsp;</li>
-          <li><button title="<%= key_cmd(:resize) %>" type="button" class="btn btn-md btn-tlb btn-dispensable-xs fa <%= waveform_visible? ? 'fa-compress' : 'fa-expand' %> fa-fw player player-resize-toggle" data-action="toggle-resize" data-toggle="tooltip" data-placement="bottom"></button></li>
+          <li><button title="<%= key_cmd(:resize) %>" type="button" class="btn btn-tlb hidden-xs fa <%= waveform_visible? ? 'fa-compress' : 'fa-expand' %> fa-fw player player-resize-toggle" data-action="toggle-resize" data-toggle="tooltip" data-placement="bottom"></button></li>
         </ul>
         <!-- /player -->
+      </div> <!-- #player-navbar .navbar-block -->
 
-        <% if edit? %>
-        <script type="text/html" id="content-editor-toolbar-template">
-        <ul class="nav navbar-nav toolbar-nav content-toolbar-container content-editor-toolbar-container">
-          <!-- font-style -->
-          <li><button title="<%= key_cmd(:bold, 'B', :meta_key) %>" type="button" class="btn btn-md btn-tlb ql-bold fa fa-bold fa-fw" data-toggle="tooltip" data-placement="bottom"></button></li>
-          <li><button title="<%= key_cmd(:italic, 'I', :meta_key) %>" type="button" class="btn btn-md btn-tlb ql-italic fa fa-italic fa-fw" data-toggle="tooltip" data-placement="bottom"></button></li>
-          <li><button title="<%= key_cmd(:underline, 'U', :meta_key) %>" type="button" class="btn btn-md btn-tlb ql-underline fa fa-underline fa-fw" data-toggle="tooltip" data-placement="bottom"></button></li>
-          <li><button title="<%= key_cmd(:strikethrough, 'S', :meta_key) %>" type="button" class="btn btn-md btn-tlb ql-strike fa fa-strikethrough fa-fw" data-toggle="tooltip" data-placement="bottom"></button></li>
+      <div id="main-navbar" class="navbar-block navbar-block-right">
+        <% if current_user %>
+        <div class="button-set">
 
-          <% if false %>
-          <!-- alignment tools -->
-          <li class="separator">&nbsp;</li>
-
-          <!-- text-align -->
-          <li><button title="<%= key_cmd(:align_left) %>" type="button" data-value="left" class="btn btn-md btn-tlb ql-align fa fa-align-left fa-fw" data-toggle="tooltip" data-placement="bottom"></button></li>
-          <li><button title="<%= key_cmd(:align_center) %>" type="button" data-value="center" class="btn btn-md btn-tlb ql-align-center fa fa-align-center fa-fw" data-toggle="tooltip" data-placement="bottom"></button></li>
-          <li><button title="<%= key_cmd(:align_right) %>" type="button" data-value="right" class="btn btn-md btn-tlb ql-align-right fa fa-align-right fa-fw" data-toggle="tooltip" data-placement="bottom"></button></li>
-          <li><button title="<%= key_cmd(:align_justify) %>" type="button" data-value="right" class="btn btn-md btn-tlb ql-align-justify fa fa-align-justify fa-fw" data-toggle="tooltip" data-placement="bottom"></button></li>
-          <% end %>
-
-          <li class="separator">&nbsp;</li>
-
-          <!-- lists -->
-          <li><button title="<%= key_cmd(:numbered_list) %>" type="button" class="btn btn-md btn-tlb ql-list fa fa-list-ol fa-fw" data-toggle="tooltip" data-placement="bottom"></button></li>
-          <li><button title="<%= key_cmd(:bulleted_list) %>" type="button" class="btn btn-md btn-tlb ql-bullet fa fa-list-ul fa-fw" data-toggle="tooltip" data-placement="bottom"></button></li>
-        </ul>
-        </script>
-        <% end %>
-
-        <% if show? || publish? %>
-        <script type="text/html" id="content-editor-toolbar-template">
-        <!-- share-popover -->
-        <ul class="nav navbar-nav toolbar-nav content-toolbar-container content-editor-toolbar-container content-viewer-toolbar-container">
-          <!-- highlight -->
-          <li><button title="<%= key_cmd(:highlight, 'H', :ctrl_key) %>" type="button" class="btn btn-md btn-tlb ql-bold fa fa-bookmark fa-fw" data-toggle="tooltip" data-placement="bottom"></button></li>
-
-          <li class="separator">&nbsp;</li>
-
-          <!-- share -->
-
-          <li><button type="button" class="btn btn-md btn-tlb fa fa-facebook fa-fw" data-toggle="tooltip" data-placement="bottom" data-href="<%= @document.published_url %>"></button></li>
-
-          <li><button type="button" class="btn btn-md btn-tlb fa fa-twitter fa-fw" data-toggle="tooltip" data-placement="bottom" data-href="<%= @document.published_url %>" data-title="<%= @document.title %>"></button></li>
-
-          <li><button type="button" class="btn btn-md btn-tlb fa fa-linkedin fa-fw" data-toggle="tooltip" data-placement="bottom" data-href="<%= @document.published_url %>" data-title="<%= @document.title %>"></button></li>
-
-        </ul>
-        <!-- /share-popover -->
-        </script>
-        <% end %>
-
-        <!-- context menu -->
-        <ul class="nav navbar-nav navbar-right toolbar-nav">
           <% if current_user && (publish? || show?) && policy(@document).edit? %>
-          <li><!-- edit button -->
-            <a href="<%= edit_web_document_path(@document.slug_id) %>" title="Edit" id="edit-button" class="btn btn-md btn-tlb btn-circle btn-edit" type="button" data-toggle="tooltip" data-placement="bottom"><i class="fa fa-pencil"></i></a>
-          </li><!-- /edit button -->
+          <!-- edit -->
+          <a href="<%= edit_web_document_path(@document.slug_id) %>" title="Edit" id="edit-button" class="button button-with-chrome btn-edit" type="button" data-toggle="xtooltip" data-placement="bottom">Edit</a>
           <% end %>
 
           <% if edit? && policy(@document).publish? %>
-          <li><!-- publish-->
-            <button title="Publish" id="publish-button" class="btn btn-md btn-tlb btn-circle btn-popover btn-publish" type="button" data-toggle="tooltip popover" data-placement="bottom"><i class="fa <%= publish_icon_class -%>"></i></button>
-          </li><!-- /publish -->
+          <!-- publish-->
+          <button title="Publish" id="publish-button" class="button button-circle button-with-chrome button-normal button-with-icon button-publish-action" type="button" data-toggle="tooltip popover" data-placement="bottom"><i class="fa <%= publish_icon_class -%>"></i></button>
           <% end %>
 
           <% if publish? && !@document.privacy_private? && @document.published? %>
-          <li><!-- share -->
-            <button title="Share" id="share-button" class="btn btn-md btn-tlb btn-circle btn-popover btn-share" type="button" data-toggle="popover tooltip" data-placement="bottom"><i class="fa fa-share"></i></button>
-          </li><!-- /share -->
+          <!-- share -->
+          <button title="Share" id="share-button" class="button button-circle button-with-chrome button-normal button-with-icon btn-share" type="button" data-toggle="popover tooltip" data-placement="bottom"><i class="fa fa-share"></i></button>
           <% end %>
 
           <% if edit? && policy(@document).edit? %>
-          <li><!-- more-edit -->
-            <button title="More" id="more-edit-button" class="btn btn-md btn-tlb btn-circle btn-popover btn-more-edit" type="button" data-toggle="tooltip popover" data-placement="bottom" data-target="more-edit-popover-template" data-popover-id="more-edit-popover" data-popover-class="dropdown-popover more-edit-popover"><i class="fa fa-ellipsis-h"></i></button>
-            <script type="text/html" id="more-edit-popover-template">
-            <ul class="popdown-menu">
-              <li role="presentation"><a role="menuitem" href="<%= web_document_path(@document.slug_id) %>"><i class="fa fa-eye"></i>Preview Document</a></li>
-              <% if !publish? && policy(@document).publish? && @document.published? %>
-              <li role="presentation"><a role="menuitem" href="<%= web_published_document_url %>"><i class="fa fa-dot-circle-o"></i>Published Document</a></li>
-              <% end %>
-            </ul>
-            </script>
-          </li><!-- /more-edit -->
+          <!-- more... -->
+          <button title="More" id="more-edit-button" class="button button-circle button-with-chrome button-normal button-with-icon button-popover button-edit-more-action" data-toggle="tooltip popover" data-placement="bottom" data-target="more-edit-popover-template" data-popover-id="more-edit-popover" data-popover-class="dropdown-popover more-edit-popover">
+            <i class="fa fa-ellipsis-h"></i>
+          </button>
           <% end %>
-          <li class="separator">&nbsp;</li>
-          <% if current_user %>
-          <li><!-- profile -->
-            <button title="<%= current_user.name_and_username %>" id="profile-button" class="btn btn-md btn-tlb btn-popover btn-profile" type="button" data-toggle="tooltip" data-placement="bottom" data-target="profile-popover-template" data-popover-id="profile-popover" data-popover-class="dropdown-popover profile-popover">
-            <%= image_tag(avatar_url(current_user), class: "avatar", style: "background-color: #{current_user.css_hex_color}") %>
-            </button>
-            <%= render "web/shared/templates/profile_popover" %>
-          </li><!-- /profile -->
-          <% else %>
-          <!-- login -->
-          <li><a title="Login" href="<%= new_user_session_path %>" type="button" class="btn btn-lg btn-tlb btn-login"><p>Login</p></a></li>
-          <!-- /login -->
-          <% end %>
-        </ul>
-        <!-- /context menu -->
+          <span class="button-set-divider">
+        </div><!-- .button-set -->
+
+        <div class="button-set">
+          <!-- profile -->
+          <button class="button button-circle button-borderless button-box-shadow-border button-with-chrome button-popover is-in-site-nav-bar user-actions" data-placement="bottom" data-target="profile-popover-template" data-popover-id="profile-popover" data-popover-class="dropdown-popover profile-popover">
+            <div class="avatar">
+              <img src="<%= avatar_url(current_user) %>" class="avatar-image avatar-image-smaller" style="background-color: <%= current_user.css_hex_color %>;" alt="<%= current_user.name %>">
+            </div>
+          </button>
+        </div><!-- .button-set -->
+        <% else %>
+        <div class="button-set">
+          <!-- sign in -->
+          <a class="button button-primary button-with-chrome accent-color-border-normal accent-color-text-normal is-in-site-nav-bar" href="<%= new_user_session_path %>" data-action="sign-in-prompt" data-redirect="" data-action-source="nav_signin">Sign in</a>
+        </div><!-- .button-set -->
+        <% end %>
+
       </div>
     </nav>
   </div><!-- .container-fluid -->

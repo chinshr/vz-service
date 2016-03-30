@@ -1187,7 +1187,7 @@
       a.more-link {
         white-space: nowrap;
         color: rgba(0,0,0,.5) !important;
-        //font-weight: 400;
+        font-weight: 400;
         padding: 0;
 
         &:hover,
@@ -1252,20 +1252,18 @@
       }
 
       li.show-more-tags {
-        font-size: 10px;
         white-space: nowrap;
-        color: #999;
         font-weight: 400;
         padding: 0;
 
         a {
-          padding: 5px 3px;
-          color: rgba(0,0,0,.3) !important;
+          padding: 4px 0;
+          color: rgba(0,0,0,.5) !important;
 
           &:hover,
           &:focus,
           &:active {
-            color: rgba(0,0,0,.6) !important;
+            color: rgba(0,0,0,.7) !important;
           }
         }
       }

@@ -24,16 +24,11 @@ $.extend(true, $.notify.defaultOptions, {
   "type": "warning"
 });
 
-/* Dropdowns */
-// $(document).ready(function() {
-//   $('.dropdown-toggle').dropdown();
-// });
-
 /* Tooltips */
 $(document).ready(function() {
   // $('.btn-tlb[data-toggle="tooltip"]').tooltip({});
   $('.btn-tlb').tooltip({});
-  $('[data-toggle=tooltip]').tooltip({});
+  $('[data-toggle^=tooltip]').tooltip({});
 });
 
 /* Progress bar start */

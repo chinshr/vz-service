@@ -385,6 +385,15 @@ class Document < ActiveRecord::Base
     end
   end
 
+  def image_background_rgba_color
+    if slug_id.present?
+      "rgba(" +
+        slug_id[0].ord.to_s + "," +
+        slug_id[1].ord.to_s + "," +
+        slug_id[2].ord.to_s + ",.7)"
+    end
+  end
+
   protected
 
   def set_slug_with_slug_id(normalized_slug = nil)

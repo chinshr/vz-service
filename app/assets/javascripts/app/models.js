@@ -147,7 +147,7 @@ App.Models.MediaHelpers = {
     if (sorted.length > 0) {
       return sorted[0].url;
     } else {
-      return "/assets/bg/wf-icon-white-500x500.png";
+      return VZ.assets.thumb500x500;
     }
   },
 
