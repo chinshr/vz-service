@@ -61,7 +61,7 @@
   }
 
   .player-thumb {
-    // min-width: 70px;
+    width: 70px;
     height: 70px;
     position: relative;
     outline: 0;
@@ -71,9 +71,9 @@
     }
 
     img {
-      height: 70px;
+      // height: 70px;
       display: block;
-      // width: 100%;
+      width: 100%;
     }
   }
 
@@ -115,6 +115,10 @@
 
     .btn-play-pause {
       width: 45px;
+    }
+
+    &.no-fullscreen {
+      margin: 0 15px;
     }
   }
 
