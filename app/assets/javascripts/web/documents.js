@@ -26,9 +26,17 @@ $.extend(true, $.notify.defaultOptions, {
 
 /* Tooltips */
 $(document).ready(function() {
-  // $('.btn-tlb[data-toggle="tooltip"]').tooltip({});
-  $('.btn-tlb').tooltip({});
-  $('[data-toggle^=tooltip]').tooltip({});
+  var options = {
+    animation: true,
+    placement: "bottom"
+  };
+
+  if (VZ.isOS()) {
+    // tooltips not working on iOS
+    // https://github.com/twbs/bootstrap/issues/16028
+  } else {
+    $('.btn-tlb, [data-toggle^=tooltip]').tooltip(options);
+  }
 });
 
 /* Progress bar start */

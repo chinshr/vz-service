@@ -135,6 +135,14 @@ var VZ = (function() {
     thumb500x500: "<%= image_url("bg/wf-icon-white-500x500.png") %>"
   }
 
+  var isOS = function() {
+    return /iPad|iPhone|iPod/.test(navigator.platform);
+  };
+
+  var isAndroid = function() {
+    return /(android)/i.test(navigator.userAgent);
+  };
+
   return {
     config: config,
     baseURL: location.protocol + "//" + location.hostname + (location.port && ":" + location.port),
@@ -148,6 +156,8 @@ var VZ = (function() {
     isSSL: isSSL,
     query: query,
     urlWithoutParam: urlWithoutParam,
-    assets: assets
+    assets: assets,
+    isOS: isOS,
+    isAndroid: isAndroid
   }
 })();
