@@ -1264,12 +1264,6 @@ body.documents {
     .document-overlay {
       .document-container {
         height: auto;
-        /* TODO: "box.com" style
-        padding: 25px 45px;
-        border: 1px solid #dbdbdb;
-        border-radius: 2px;
-        */
-        xpadding: 0;
 
         .title-container {
           border-bottom: 1px solid #ededed;
@@ -1278,21 +1272,20 @@ body.documents {
           h1 {
             font: inherit;
             font-weight: bold;
-            font-size: 66px;
+            font-size: 36px;
+            line-height: 1.15em;
             color: #444;
             cursor: text;
             text-overflow: ellipsis;
             overflow: hidden;
             margin: 0;
-            line-height: 66px;
-            padding-bottom: 10px;
+            margin-bottom: 25px;
           }
 
-          // @media (max-width: 479px) {
-          @media (max-width: 767px) {
+          @include media('>=phone', '<tablet') {
             h1 {
-              font-size: 46px !important;
-              line-height: 46px;
+              font-size: 28px !important;
+              line-height: 1.12em;
               margin-bottom: 10px;
             }
           }
@@ -1306,20 +1299,22 @@ body.documents {
           #title-editor .ql-editor {
             font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
             font-weight: bold;
-            font-size: 66px;
+            font-size: 36px;
+            line-height: 1.15em;
             color: #444;
             -webkit-font-smoothing: antialiased;
             overflow: hidden;
             text-overflow: ellipsis;
           }
 
-          @media (max-width: 767px) {
+          @include media('>=phone', '<tablet') {
             #title-editor .ql-editor {
-              font-size: 46px;
+              font-size: 36px;
+              line-height: 1.12em;
+              margin-bottom: 15px;
             }
           }
-
-        }
+        } /* .title-container */
 
         .content-container {
           padding-top: 20px;

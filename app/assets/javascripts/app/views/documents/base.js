@@ -442,7 +442,7 @@ App.Views.DocumentsBase = Backbone.View.extend({
         if (range) {
           if (range.start == range.end) {
             // console.log('User cursor is on', range.start);
-            _this.moveUserInitials(this, $('header').height() - 20);
+            _this.moveUserInitials(this, $('header').height() - 3);
           } else {
             // var text = editor.getText(range.start, range.end);
             // console.log('User has highlighted', text);
