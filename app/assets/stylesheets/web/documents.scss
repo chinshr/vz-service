@@ -673,6 +673,7 @@ body.documents {
     border: 0;
     right: 45px;
     position: fixed;
+    top: 70px !important;
 
     @media (max-width: 767px) {
       max-width: 100%;
