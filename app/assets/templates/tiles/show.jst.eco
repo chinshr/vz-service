@@ -61,6 +61,7 @@
         <span class="slug edit-slug published-slug" hidden><i class="fa fa-link"><a href="#" target="_blank">http://foo.bar</a></i></span>
       </div><!-- .panel-heading -->
 
+      <% if !_.isEmpty(@description) || @tags.length > 0: %>
       <div class="panel-body">
         <% unless _.isEmpty(@description): %>
         <p class="description minimize"><%= @description %></p>
@@ -77,7 +78,7 @@
             <% for @tag in @tags: %>
             <li class="tag <%= 'show-less' if @index > @max_tags - 1 %>" data-tag-slug="<%= @tag.slug %>"><a href="<%= '/explore/tag/' + @tag.slug + '?source=tile' %>"><%= @tag.name %></a></li>
             <% if @index == @max_tags - 1: %>
-            <li class="show-more-tags"><a class="show-more-tags-link" href="#">...more</a></li>
+            <li class="show-more-tags"><a class="show-more-tags-link" href="#">more...</a></li>
             <% end %>
             <% @index = @index + 1 %>
             <% end %>
@@ -85,7 +86,7 @@
         </ul>
         <% end %>
       </div><!-- .panel-body -->
-
+      <% end %>
     </div><!-- .panel -->
   </div><!-- .flipper -->
 </div><!-- show-tile -->

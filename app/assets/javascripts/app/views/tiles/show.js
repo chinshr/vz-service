@@ -272,7 +272,7 @@ App.Views.TilesShow = App.Views.TilesBase.extend({
       if(t.length < shortLength) return;
 
       $(this).html(
-        t.slice(0, shortLength) + '<span> </span><a href="#" class="more-link">...more</a>' +
+        t.slice(0, shortLength) + '<span> </span><a href="#" class="more-link">more...</a>' +
         '<span style="display:none;">' + t.slice(shortLength, t.length)
       );
     });

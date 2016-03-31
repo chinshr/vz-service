@@ -1253,11 +1253,12 @@
 
       li.show-more-tags {
         white-space: nowrap;
+        font-size: 10px;
         font-weight: 400;
         padding: 0;
 
         a {
-          padding: 4px 0;
+          padding: 5px 1px;
           color: rgba(0,0,0,.5) !important;
 
           &:hover,
