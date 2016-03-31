@@ -427,16 +427,12 @@ App.Views.DocumentsBase = Backbone.View.extend({
 
     this.titleEditor.on('text-change', (function(_this) {
       return function(delta, source) {
-        // expand window
-        // $('#title-editor').height(_this.titleEditor.root.ownerDocument.body.scrollHeight);
-        _this.moveUserInitials(this, $('header').height());
+        _this.moveUserInitials(this);
       }
     })(this));
 
     this.contentEditor.on('text-change', (function(_this) {
       return function(delta, source) {
-        // expand window
-        // $('#content-editor').height(_this.contentEditor.root.ownerDocument.body.scrollHeight);
         _this.moveUserInitials(this);
       }
     })(this));
@@ -446,7 +442,7 @@ App.Views.DocumentsBase = Backbone.View.extend({
         if (range) {
           if (range.start == range.end) {
             // console.log('User cursor is on', range.start);
-            _this.moveUserInitials(this, $('header').height());
+            _this.moveUserInitials(this, $('header').height() - 20);
           } else {
             // var text = editor.getText(range.start, range.end);
             // console.log('User has highlighted', text);
@@ -528,7 +524,7 @@ App.Views.DocumentsBase = Backbone.View.extend({
   },
 
   moveUserInitials: function(editor, margin) {
-    margin = margin || ($('header').height() + 25);
+    margin = margin || ($('header').height() + 5);
     var sel = editor.root.ownerDocument.getSelection();
     if (sel && sel.rangeCount > 0) {
       var selrg = sel.getRangeAt(0);
