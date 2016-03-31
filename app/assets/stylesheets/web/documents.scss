@@ -180,20 +180,20 @@ body.documents {
 
           a {
             text-decoration: none;
+            color: rgba(200,200,200,.25);
+
+            &:hover,
+            &:active,
+            &:focus {
+              color: rgba(200,200,200,.9);
+            }
           }
 
           .caret {
             @include transition(color .1s ease-in-out);
-            color: rgba(200,200,200,.25);
+            border: 0;
+            height: inherit;
             margin-left: 5px;
-          }
-
-          &:hover,
-          &:active,
-          &:focus {
-            &>.caret {
-              color: rgba(200,200,200,.9);
-            }
           }
         }
       } /* .dropdown */

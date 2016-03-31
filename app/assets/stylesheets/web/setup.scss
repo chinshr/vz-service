@@ -18,6 +18,14 @@ $btn-default-radius: 2px;
 
 @import "include-media";
 
+/* ====================== SPECIAL ========================= */
+
+@include media('>=phone', '<tablet', 'portrait') {
+  .hidden-xs-portrait {
+    display: none;
+  }
+}
+
 /* ====================== MIXINS ========================= */
 
 @mixin transition($trans: background .5s ease){
