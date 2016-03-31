@@ -26,6 +26,11 @@
           <% end %>
           <% if current_user %>
           <div class="button-set">
+            <% unless request.env['PATH_INFO'].match(/dashboard/) %>
+            <!-- upload button -->
+            <a href="/dashboard" title="Upload" id="upload-button" class="button button-with-chrome button-upload" type="button">Upload</a>
+            <% end %>
+            <!-- profile -->
             <button class="button button-circle button-borderless button-box-shadow-border button-with-chrome button-popover is-in-site-nav-bar user-actions" data-placement="bottom" data-target="profile-popover-template" data-popover-id="profile-popover" data-popover-class="dropdown-popover profile-popover">
               <div class="avatar">
                 <img src="<%= avatar_url(current_user) %>" class="avatar-image avatar-image-smaller" style="background-color: <%= current_user.css_hex_color %>;" alt="<%= current_user.name %>">

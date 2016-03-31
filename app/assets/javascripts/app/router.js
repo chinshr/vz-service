@@ -40,11 +40,14 @@ App.Router = Backbone.Router.extend({
 
   profileShow: function(user_id) {
     var userId = $('#documents').data('user-id');
-    var view = new App.Views.DocumentsIndex({query : {
-      'sort_order': {'published_at': 'desc'},
-      'user_id': userId,
-      'any_of_status': [1]
-    }});
+    var view = new App.Views.DocumentsIndex({
+      layout: 'grid-item col-lg-6 col-md-6 col-sm-12 col-xs-12',
+      query : {
+        'sort_order': {'published_at': 'desc'},
+        'user_id': userId,
+        'any_of_status': [1]
+      }
+    });
   },
 
   explorer: function() {

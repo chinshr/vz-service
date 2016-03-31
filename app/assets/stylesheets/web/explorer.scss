@@ -1,6 +1,8 @@
 @import 'web/setup';
 
-body.explorers, body.searches {
+body.explorers,
+body.searches,
+body.profiles {
   .content-loading-overlay {
     position: relative !important;
     margin-top: 70px !important;
@@ -19,7 +21,9 @@ body.explorers, body.searches {
       max-width: 640px !important;
     }
 
-    .explorer-container, .searches-container {
+    .explorer-container,
+    .searches-container,
+    .profiles-container {
       display: block;
       margin: 0 auto;
       margin-top: 70px;
