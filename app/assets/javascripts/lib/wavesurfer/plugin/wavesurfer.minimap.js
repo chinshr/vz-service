@@ -1,7 +1,8 @@
 'use strict';
 
 /* Minimap */
-WaveSurfer.Minimap = WaveSurfer.util.extend({}, WaveSurfer.Drawer, WaveSurfer.Drawer.Canvas, {
+// WaveSurfer.Minimap = WaveSurfer.util.extend({}, WaveSurfer.Drawer, WaveSurfer.Drawer.Canvas, {
+WaveSurfer.Minimap = WaveSurfer.util.extend({}, WaveSurfer.Drawer, WaveSurfer.Drawer.MultiCanvas, {
     init: function (wavesurfer, params) {
         this.wavesurfer = wavesurfer;
         this.container = this.wavesurfer.drawer.container;
@@ -17,6 +18,11 @@ WaveSurfer.Minimap = WaveSurfer.util.extend({}, WaveSurfer.Drawer, WaveSurfer.Dr
                 fillParent: true
             }
         );
+
+        this.maxCanvasWidth = params.maxCanvasWidth != null ? params.maxCanvasWidth : 4000;
+        this.maxCanvasElementWidth = Math.round(this.maxCanvasWidth / this.params.pixelRatio);
+        this.halfPixel = 0.5 / this.params.pixelRatio;
+        this.canvases = [];
 
         this.width = 0;
         this.height = this.params.height * this.params.pixelRatio;
@@ -74,7 +80,8 @@ WaveSurfer.Minimap = WaveSurfer.util.extend({}, WaveSurfer.Drawer, WaveSurfer.Dr
         });
     },
     createElements: function() {
-        WaveSurfer.Drawer.Canvas.createElements.call(this);
+        // WaveSurfer.Drawer.Canvas.createElements.call(this);
+        WaveSurfer.Drawer.MultiCanvas.createElements.call(this);
 
         if (this.params.showOverview) {
             this.overviewRegion =  this.style(document.createElement('overview'), {

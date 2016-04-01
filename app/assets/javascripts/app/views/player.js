@@ -175,28 +175,30 @@ App.Views.Player = Backbone.View.extend({
       progressColor : '#fff', // '#3f6169', // '#fff',
       loaderColor   : '#555',
       cursorColor   : '#5492ce',
-      cursorWidth   : 1,
+      cursorWidth   : 2,
       audioRate     : 1,
       scrollParent  : true,
       normalize     : true,
       minimap       : true,
-      minPxPerSec   : this.calcMinPixelsPerSec(this.getDevicePixelRatio()),        // 10, Minimum number of pixels per second of audio
+      // minPxPerSec   : this.calcMinPixelsPerSec(this.getDevicePixelRatio()),        // 10, Minimum number of pixels per second of audio
       pixelRatio    : this.getDevicePixelRatio(),
       // backend       : 'AudioElement',
       backend       : 'MediaElement',
       // backend       : 'WebAudio',
-      fillParent    : false,     // ???
-      hideScrollbar : false,    // audio to scroll
-      dragSelection : false,     // ???
-      loopSelection : false,    // ???
+      fillParent    : false,
+      hideScrollbar : false,
+      dragSelection : false,
+      loopSelection : false,
       interact      : true,
-      splitChannels : false,    // display waveform per channel
-      skipLength    : 2,        // Number of seconds to skip forward/backward
-      mediaType     : 'audio',  // html element to create
+      splitChannels : false,
+      skipLength    : 2,
+      mediaType     : 'audio',
       mediaControls : false,
-      barWidth      : 0,        // bar width
+      barWidth      : 0,
+      autoplay      : true,
+      renderer      : 'MultiCanvas',
       autoCenter    : true,
-      autoplay      : true
+      maxCanvasWidth: 1000
     };
 
     /* Init playback speed slider */
@@ -224,13 +226,30 @@ App.Views.Player = Backbone.View.extend({
       _this.$(".loading").removeClass("spinner");
     };
 
-    var zipData = function(data) {
+    var zipPeaks = function(data) {
       if ((data.left && data.left.length > 0) && (data.right && data.right.length > 0)) {
+        // left + right channel filled
         return _.flatten(_.zip(data.left, _.map(data.right, function(n) { return -n; })));
-      } else if ((data.left && data.left.length > 0) && (data.right && data.right.length === 0)) {
+      } else if ((data.left && data.left.length > 0) && ((!data.right) || (data.right && data.right.length === 0))) {
+        // left filled + right empty
         return _.flatten(_.zip(data.left, _.map(data.left, function(n) { return -n; })));
-      } else if ((data.left && data.left.length === 0) && (data.right && data.right.length > 0)) {
+      } else if (((!data.left) || (data.left && data.left.length === 0)) && (data.right && data.right.length > 0)) {
+        // left empty + right filled
         return _.flatten(_.zip(data.right, _.map(data.right, function(n) { return -n; })));
+      }
+      return [];
+    };
+
+    var wrapPeaks = function(data) {
+      if ((data.left && data.left.length > 0) && (data.right && data.right.length > 0)) {
+        // left + right channel filled
+        return [data.left, data.right];
+      } else if ((data.left && data.left.length > 0) && ((!data.right) || (data.right && data.right.length === 0))) {
+        // left filled + right empty
+        return [data.left, data.left]
+      } else if (((!data.left) || (data.left && data.left.length === 0)) && (data.right && data.right.length > 0)) {
+        // left empty + right filled
+        return [data.right, data.right];
       }
       return [];
     };
@@ -294,7 +313,7 @@ App.Views.Player = Backbone.View.extend({
     }).on('success', _.bind(function (data) {
       this.wavesurfer.load(
         this.adjustProtocol(this.model.attributes.track.mp3_stream_url),
-        zipData(data)
+        wrapPeaks(data)
       );
     }, this));
 

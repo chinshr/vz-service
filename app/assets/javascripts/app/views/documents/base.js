@@ -136,35 +136,67 @@ App.Views.DocumentsBase = Backbone.View.extend({
     this.wavesurfer = Object.create(WaveSurfer);
   },
 
+  waveHeight: 40,
+  mapHeight: 15,
+
+  calcMinPixelsPerSec: function(pixelRatio) {
+    var availablePixels,
+      pixelsPerSec,
+      maxCanvasWidth = 32767,  // depends on Browser
+      maxCanvasArea  = 16384 * 16384,
+      height = this.waveHeight + this.mapHeight,
+      duration = this.model.attributes.track.duration; // in secs
+
+      availablePixels = Math.min(maxCanvasWidth, maxCanvasArea / height);
+      pixelsPerSec = availablePixels / duration / pixelRatio;
+
+      return Math.min(50, Math.max(1, Math.floor(pixelsPerSec)));
+  },
+
+  getDevicePixelRatio: function() {
+    var ratio = 1;
+    // To account for zoom, change to use deviceXDPI instead of systemXDPI
+    if (window.screen.systemXDPI !== undefined && window.screen.logicalXDPI       !== undefined && window.screen.systemXDPI > window.screen.logicalXDPI) {
+      // Only allow for values > 1
+      ratio = window.screen.systemXDPI / window.screen.logicalXDPI;
+    } else if (window.devicePixelRatio !== undefined) {
+      ratio = window.devicePixelRatio;
+    }
+    return ratio;
+  },
+
   initPlayer: function() {
     var options = {
       container     : '#waveform',  // document.querySelector('#waveform'),
-      height        : 40,
+      height        : this.waveHeight,
       waveColor     : '#ddd', // 'violet',
       progressColor : '#fff', // '#3f6169', // '#fff',
       loaderColor   : '#555',
       cursorColor   : '#5492ce',
-      cursorWidth   : 1,
+      cursorWidth   : 2,
       audioRate     : 1,
       scrollParent  : true,
       normalize     : true,
       minimap       : true,
-      minPxPerSec   : 10,        // Minimum number of pixels per second of audio
-      pixelRatio    : 2, // window.devicePixelRatio,
+      // minPxPerSec   : this.calcMinPixelsPerSec(this.getDevicePixelRatio()),
+      pixelRatio    : this.getDevicePixelRatio(),
       // backend       : 'AudioElement',
       backend       : 'MediaElement',
       // backend       : 'WebAudio',
-      fillParent    : true,     // ???
-      hideScrollbar : false,    // audio to scroll
-      dragSelection : false,     // ???
-      loopSelection : false,    // ???
+      fillParent    : true,
+      hideScrollbar : false,
+      dragSelection : false,
+      loopSelection : false,
       interact      : true,
-      splitChannels : false,    // display waveform per channel
-      skipLength    : 2,        // Number of seconds to skip forward/backward
-      mediaType     : 'audio',  // html element to create
+      splitChannels : false,
+      skipLength    : 2,
+      mediaType     : 'audio',
       mediaControls : false,
-      barWidth      : 0,        // bar width
-      autoplay      : true
+      barWidth      : 0,
+      autoplay      : true,
+      renderer      : 'MultiCanvas',
+      maxCanvasWidth: 1000,
+      autoCenter    : true
     };
 
     /* Init playback speed slider */
@@ -188,13 +220,30 @@ App.Views.DocumentsBase = Backbone.View.extend({
       NProgress.done();
     };
 
-    var zipData = function(data) {
+    var zipPeaks = function(data) {
       if ((data.left && data.left.length > 0) && (data.right && data.right.length > 0)) {
+        // left + right channel filled
         return _.flatten(_.zip(data.left, _.map(data.right, function(n) { return -n; })));
-      } else if ((data.left && data.left.length > 0) && (data.right && data.right.length === 0)) {
+      } else if ((data.left && data.left.length > 0) && ((!data.right) || (data.right && data.right.length === 0))) {
+        // left filled + right empty
         return _.flatten(_.zip(data.left, _.map(data.left, function(n) { return -n; })));
-      } else if ((data.left && data.left.length === 0) && (data.right && data.right.length > 0)) {
+      } else if (((!data.left) || (data.left && data.left.length === 0)) && (data.right && data.right.length > 0)) {
+        // left empty + right filled
         return _.flatten(_.zip(data.right, _.map(data.right, function(n) { return -n; })));
+      }
+      return [];
+    };
+
+    var wrapPeaks = function(data) {
+      if ((data.left && data.left.length > 0) && (data.right && data.right.length > 0)) {
+        // left + right channel filled
+        return [data.left, data.right];
+      } else if ((data.left && data.left.length > 0) && ((!data.right) || (data.right && data.right.length === 0))) {
+        // left filled + right empty
+        return [data.left, data.left]
+      } else if (((!data.left) || (data.left && data.left.length === 0)) && (data.right && data.right.length > 0)) {
+        // left empty + right filled
+        return [data.right, data.right];
       }
       return [];
     };
@@ -217,7 +266,8 @@ App.Views.DocumentsBase = Backbone.View.extend({
     }).on('success', _.bind(function (data) {
       this.wavesurfer.load(
         this.adjustProtocol(this.model.attributes.track.mp3_stream_url),
-        zipData(data)
+        // wrapPeaks(data)
+        zipPeaks(data)
       );
     }, this));
 
@@ -275,10 +325,15 @@ App.Views.DocumentsBase = Backbone.View.extend({
 
     /* Minimap plugin */
     this.wavesurfer.initMinimap({
-      height: 15,
+      height: this.mapHeight,
       waveColor: '#ddd',
       progressColor: '#999',
       cursorColor: '#5492ce',
+      showRegions: false,
+      showOverview: false,
+      overviewBorderColor: '#aaa',
+      overviewBorderSize: 1,
+      scrollParent: true
     });
 
     /* Timeline plugin */
