@@ -9,8 +9,8 @@
           <% if @document.tag_list.empty? %>
           <li class="empty-tag">Add up to 3 optional tags.</li>
           <% else %>
-            <% @document.tag_list.each do |tag_string| %>
-            <li class="tag"><a href="#"><%= tag_string %></a></li>
+            <% @document.tags.uniq.each do |tag| %>
+            <li class="tag"><a href="<%= '/explore/tag/' + tag.slug + '?source=tile' %>"><%= tag.name %></a></li>
             <% end %>
           <% end %>
         </ul>
