@@ -17,7 +17,8 @@ module Model::URI
       youtube: /^(?:https?:\/\/)?(?:www\.)?youtu(?:\.be|be\.com)\/(?:watch\?v=)?([\w-]{10,})/,
       google_drive: /^(?:https?:\/\/)?drive\.google\.com\/file\/d\/(.*?)/,
       dropbox: /^(?:https?:\/\/)?(?:www\.)?dropbox\.com\/s\/(.*?)/,
-      facebook: /^(https?:\/\/www\.facebook\.com\/(?:video\.php\?v=\d+|.*?\/videos\/\d+))$/
+      facebook: /^(https?:\/\/www\.facebook\.com\/(?:video\.php\?v=\d+|.*?\/videos\/\d+))$/,
+      vimeo: /https?:\/\/(?:www\.|player\.)?vimeo.com\/(?:channels\/(?:\w+\/)?|groups\/([^\/]*)\/videos\/|album\/(\d+)\/video\/|video\/|)(\d+)(?:$|\/|\?)/,
     }
 
     attr_accessor :url, :header, :options

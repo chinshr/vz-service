@@ -49,6 +49,21 @@ class Upload::MediaUploadTest < ActiveSupport::TestCase
         assert_equal ["foo", "bar"], upload.tag_list
       end
 
+      should "validate Vimeo source" do
+        stub_request(:get, "https://www.vimeo.com/161138879").
+          with(:headers => {'Accept'=>'*/*'}).
+          to_return(:status => 200, :body => '<html><head><title>Foo title</title><meta name="description" content="Bar description"><meta name="keywords" content="foo, bar, baz..., ..."></head></html>', :headers => {})
+        upload = Upload::MediaUpload.new(source_url: "https://www.vimeo.com/161138879")
+        assert_equal true, upload.valid?
+        assert_equal true, upload.metadata.present?
+        assert_equal true, upload.ingest.changes[:metadata].present?
+        assert_equal true, upload.metadata['target'].present?
+        assert_equal "vimeo", upload.metadata['target']['ms_name']
+        assert_equal "Foo Title", upload.title
+        assert_equal "Bar description", upload.description
+        assert_equal ["foo", "bar"], upload.tag_list
+      end
+
       should "not validate invalid file source" do
         stub_request(:get, "https://www.voyz.es/samples/xyz.abc").
           with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Mozilla/5.0 (Macintosh; Intel Mac OS X x.y; rv:10.0) Gecko/20100101 Firefox/10.0'}).
