@@ -10,7 +10,7 @@
           <li class="empty-tag">Add up to 3 optional tags.</li>
           <% else %>
             <% @document.tags.uniq.each do |tag| %>
-            <li class="tag"><a href="<%= '/explore/tag/' + tag.slug + '?source=tile' %>"><%= tag.name %></a></li>
+            <li class="tag"><a href="<%= '/explore/tag/' + tag.slug + '?source=document' %>"><%= tag.name %></a></li>
             <% end %>
           <% end %>
         </ul>
