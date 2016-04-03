@@ -10,6 +10,7 @@ WaveSurfer.Drawer = {
 
         this.lastPos = 0;
 
+        this.initDrawer(params);
         this.createWrapper();
         this.createElements();
     },
@@ -40,8 +41,25 @@ WaveSurfer.Drawer = {
 
     handleEvent: function (e) {
         e.preventDefault();
+
         var bbox = this.wrapper.getBoundingClientRect();
-        return ((e.clientX - bbox.left + this.wrapper.scrollLeft) / this.wrapper.scrollWidth) || 0;
+
+        var nominalWidth = this.width;
+        var parentWidth = this.getWidth();
+
+        var progress;
+
+        if (!this.params.fillParent && nominalWidth < parentWidth) {
+            progress = ((e.clientX - bbox.left) * this.params.pixelRatio / nominalWidth) || 0;
+
+            if (progress > 1) {
+                progress = 1;
+            }
+        } else {
+            progress = ((e.clientX - bbox.left + this.wrapper.scrollLeft) / this.wrapper.scrollWidth) || 0;
+        }
+
+        return progress;
     },
 
     setupWrapperEvents: function () {
@@ -164,7 +182,7 @@ WaveSurfer.Drawer = {
         if (pos < this.lastPos || pos - this.lastPos >= minPxDelta) {
             this.lastPos = pos;
 
-            if (this.params.scrollParent) {
+            if (this.params.scrollParent && this.params.autoCenter) {
                 var newPos = ~~(this.wrapper.scrollWidth * progress);
                 this.recenterOnPosition(newPos);
             }
@@ -182,6 +200,8 @@ WaveSurfer.Drawer = {
     },
 
     /* Renderer-specific methods */
+    initDrawer: function () {},
+
     createElements: function () {},
 
     updateSize: function () {},

@@ -5,10 +5,12 @@
 //= require lib/wavesurfer/mediaelement
 //= require lib/wavesurfer/drawer
 //= require lib/wavesurfer/drawer.canvas
+//= require lib/wavesurfer/drawer.multicanvas
 //= require lib/wavesurfer/html-init
 //= require lib/wavesurfer/plugin/wavesurfer.timeline
 //= require lib/wavesurfer/plugin/wavesurfer.minimap
 //= require lib/wavesurfer/plugin/wavesurfer.regions
+//= require lib/wavesurfer/plugin/wavesurfer.cursor
 //= require lib/quill/quill
 //= require lib/quill/modules/segmentation
 //= require lib/quill/modules/toolbar
