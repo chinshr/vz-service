@@ -178,7 +178,7 @@ App.Views.DocumentsBase = Backbone.View.extend({
       scrollParent  : true,
       normalize     : true,
       minimap       : true,
-      // minPxPerSec   : this.calcMinPixelsPerSec(this.getDevicePixelRatio()),
+      minPxPerSec   : this.calcMinPixelsPerSec(this.getDevicePixelRatio()),
       pixelRatio    : this.getDevicePixelRatio(),
       // backend       : 'AudioElement',
       backend       : 'MediaElement',
@@ -194,7 +194,7 @@ App.Views.DocumentsBase = Backbone.View.extend({
       mediaControls : false,
       barWidth      : 0,
       autoplay      : true,
-      renderer      : 'MultiCanvas',
+      renderer      : 'Canvas',
       maxCanvasWidth: 1000,
       autoCenter    : true
     };

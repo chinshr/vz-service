@@ -180,7 +180,7 @@ App.Views.Player = Backbone.View.extend({
       scrollParent  : true,
       normalize     : true,
       minimap       : true,
-      // minPxPerSec   : this.calcMinPixelsPerSec(this.getDevicePixelRatio()),        // 10, Minimum number of pixels per second of audio
+      minPxPerSec   : this.calcMinPixelsPerSec(this.getDevicePixelRatio()),
       pixelRatio    : this.getDevicePixelRatio(),
       // backend       : 'AudioElement',
       backend       : 'MediaElement',
