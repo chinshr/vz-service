@@ -139,32 +139,6 @@ App.Views.DocumentsBase = Backbone.View.extend({
   waveHeight: 40,
   mapHeight: 15,
 
-  calcMinPixelsPerSec: function(pixelRatio) {
-    var availablePixels,
-      pixelsPerSec,
-      maxCanvasWidth = 32767,  // depends on Browser
-      maxCanvasArea  = 16384 * 16384,
-      height = this.waveHeight + this.mapHeight,
-      duration = this.model.attributes.track.duration; // in secs
-
-      availablePixels = Math.min(maxCanvasWidth, maxCanvasArea / height);
-      pixelsPerSec = availablePixels / duration / pixelRatio;
-
-      return Math.min(50, Math.max(1, Math.floor(pixelsPerSec)));
-  },
-
-  getDevicePixelRatio: function() {
-    var ratio = 1;
-    // To account for zoom, change to use deviceXDPI instead of systemXDPI
-    if (window.screen.systemXDPI !== undefined && window.screen.logicalXDPI       !== undefined && window.screen.systemXDPI > window.screen.logicalXDPI) {
-      // Only allow for values > 1
-      ratio = window.screen.systemXDPI / window.screen.logicalXDPI;
-    } else if (window.devicePixelRatio !== undefined) {
-      ratio = window.devicePixelRatio;
-    }
-    return ratio;
-  },
-
   initPlayer: function() {
     var options = {
       container     : '#waveform',  // document.querySelector('#waveform'),
@@ -176,9 +150,9 @@ App.Views.DocumentsBase = Backbone.View.extend({
       cursorWidth   : 2,
       audioRate     : 1,
       scrollParent  : true,
-      normalize     : true,
+      normalize     : false,
       minimap       : true,
-      minPxPerSec   : this.calcMinPixelsPerSec(this.getDevicePixelRatio()),
+      minPxPerSec   : this.calcMinPixelsPerSec(this.waveHeight, this.mapHeight, this.getDevicePixelRatio()),
       pixelRatio    : this.getDevicePixelRatio(),
       // backend       : 'AudioElement',
       backend       : 'MediaElement',
@@ -990,3 +964,4 @@ App.Views.DocumentsBase = Backbone.View.extend({
   isPublish: function() { return false; }
 
 });
+_.extend(App.Views.DocumentsBase.prototype, App.Helpers.PlayerHelpers);

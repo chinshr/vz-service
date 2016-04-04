@@ -178,9 +178,9 @@ App.Views.Player = Backbone.View.extend({
       cursorWidth   : 2,
       audioRate     : 1,
       scrollParent  : true,
-      normalize     : true,
+      normalize     : false,
       minimap       : true,
-      minPxPerSec   : this.calcMinPixelsPerSec(this.getDevicePixelRatio()),
+      minPxPerSec   : this.calcMinPixelsPerSec(this.waveHeight, this.mapHeight, this.getDevicePixelRatio()),
       pixelRatio    : this.getDevicePixelRatio(),
       // backend       : 'AudioElement',
       backend       : 'MediaElement',
@@ -401,32 +401,6 @@ App.Views.Player = Backbone.View.extend({
     }, this));
   },
 
-  calcMinPixelsPerSec: function(pixelRatio) {
-    var availablePixels,
-      pixelsPerSec,
-      maxCanvasWidth = 32767,  // depends on Browser
-      maxCanvasArea  = 16384 * 16384,
-      height = this.waveHeight + this.mapHeight,
-      duration = this.model.attributes.track.duration; // in secs
-
-      availablePixels = Math.min(maxCanvasWidth, maxCanvasArea / height);
-      pixelsPerSec = availablePixels / duration / pixelRatio;
-
-      return Math.min(50, Math.max(1, Math.floor(pixelsPerSec)));
-  },
-
-  getDevicePixelRatio: function() {
-    var ratio = 1;
-    // To account for zoom, change to use deviceXDPI instead of systemXDPI
-    if (window.screen.systemXDPI !== undefined && window.screen.logicalXDPI       !== undefined && window.screen.systemXDPI > window.screen.logicalXDPI) {
-      // Only allow for values > 1
-      ratio = window.screen.systemXDPI / window.screen.logicalXDPI;
-    } else if (window.devicePixelRatio !== undefined) {
-      ratio = window.devicePixelRatio;
-    }
-    return ratio;
-  },
-
   initPlaybackSpeedSlider: function() {
   },
 
@@ -563,6 +537,55 @@ App.Views.Player = Backbone.View.extend({
   parseSegmentScore: function(segment) {
     var sm = segment.match(/\+s([0-9_]+?(?=(\+|$)))/);
     return sm ? parseFloat(sm[1].replace(/_/g, '.')) : null;
-  }
+  },
+
+      calcMinPixelsPerSec: function(waveHeight, mapHeight, pixelRatio) {
+      var availablePixels, height, duration,
+        pixelsPerSec, maxCanvasWidth, maxCanvasArea;
+
+        if (!pixelRatio) {
+          pixelRatio = this.getDevicePixelRatio();
+        }
+
+        if (VZ.browser.chrome) {
+          maxCanvasWidth = 32767;
+          maxCanvasArea  = 16384 * 16384;
+        } else if (VZ.browser.safari && !VZ.os.ios) {
+          maxCanvasWidth = 32767;
+          maxCanvasArea  = 16384 * 16384;
+        } else if (VZ.browser.safari && VZ.os.ios) {
+          maxCanvasWidth = 8192;
+          maxCanvasArea  = 8192 * 8192;
+        } else if (VZ.browser.gecko) {
+          maxCanvasWidth = 32767;
+          maxCanvasArea  = 22528 * 22528;
+        } else if (VZ.browser.ie) {
+          maxCanvasWidth = 8192;
+          maxCanvasArea  = 8192 * 8192;
+        } else {
+          maxCanvasWidth = 4096;
+          maxCanvasArea  = 4096 * 4096;
+        }
+        height          = this.waveHeight + this.mapHeight,
+        duration        = this.model.attributes.track.duration; // in secs
+        availablePixels = Math.min(maxCanvasWidth, maxCanvasArea / height);
+        pixelsPerSec    = availablePixels / duration / pixelRatio;
+        pixelsPerSec    = Math.min(50, Math.max(1, Math.floor(pixelsPerSec)));
+        return pixelsPerSec;
+    },
+
+    getDevicePixelRatio: function() {
+      var ratio = 1;
+      // To account for zoom, change to use deviceXDPI instead of systemXDPI
+      if (window.screen.systemXDPI !== undefined && window.screen.logicalXDPI       !== undefined && window.screen.systemXDPI > window.screen.logicalXDPI) {
+        // Only allow for values > 1
+        ratio = window.screen.systemXDPI / window.screen.logicalXDPI;
+      } else if (window.devicePixelRatio !== undefined) {
+        ratio = window.devicePixelRatio;
+      }
+      return ratio;
+    }
+
 
 });
+_.extend(App.Views.Player.prototype, App.Helpers.PlayerHelpers);

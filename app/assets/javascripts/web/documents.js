@@ -33,7 +33,7 @@ $(document).ready(function() {
     placement: "bottom"
   };
 
-  if (VZ.isOS()) {
+  if (VZ.os.ios) {
     // tooltips not working on iOS
     // https://github.com/twbs/bootstrap/issues/16028
   } else {
