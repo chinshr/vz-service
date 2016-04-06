@@ -8,45 +8,32 @@
   <div class="container-fluid topbar-primary">
     <nav class="navbar navbar-default" id="navigation" role="navigation">
       <div id="brand-navbar" class="navbar-header">
-        <div class="dropdown">
-          <button id="dropdown-brand-button" class="dropdown-toggle" type="button" data-toggle="dropdown">
-            <a href="#" class="player-thumb">
-              <img src="<%= document_image_url %>" style="background-color: <%= @document.image_background_rgba_color %>">
-              <span class="caret fa fa-angle-down"></span>
-            </a>
-          </button>
-          <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
-            <li role="presentation"><a role="menuitem" href="/">VOYZ.ES</a></li>
+        <a href="#" class="media-image media-image-thumb">
+          <span class="thumb thumb-video thumb-crop-top play-pause thumb-play-pause xthumb-autoplay xplay sticky" data-action="toggle-play-pause">
+            <!-- image -->
+            <span class="thumb-sizer">
+              <span class="thumb-tugger">
+                <img src="<%= document_image_url %>" style="background-color: <%= @document.image_background_rgba_color %>" class="thumb-image thumb-image-square" />
+                <span class="thumb-aligner"></span>
+              </span>
+            </span>
 
-            <% if current_user %>
-            <li role="presentation"><a role="menuitem" href="/dashboard"><i class="fa fa-level-up"></i>Dashboard</a></li>
-            <% if policy(@document).edit? || policy(@document).show? %>
-            <li class="divider"></li>
-            <% end %>
-            <% if !edit? && policy(@document).edit? %>
-            <li role="presentation"><a role="menuitem" href="<%= edit_web_document_path(@document.slug_id) %>"><i class="fa fa-pencil"></i>Edit</a></li>
-            <% end %>
-            <% if !show? && policy(@document).show? %>
-            <li role="presentation"><a role="menuitem" href="<%= web_document_path(@document.slug_id) %>"><i class="fa fa-eye"></i>Preview</a></li>
-            <% end %>
-            <% if !publish? && policy(@document).publish? && @document.published? %>
-            <li role="presentation"><a role="menuitem" href="<%= web_published_document_url %>"><i class="fa fa-dot-circle-o"></i>Published</a></li>
-            <% end %>
-            <% else %>
-              <li role="presentation"><a role="menuitem" href="<%= new_user_session_path %>"><i class="fa fa-sign-in"></i>Sign in</a></li>
-            <% end %>
-          </ul>
-        </div>
+            <!-- loading -->
+            <div class="loading spinner"></div>
+          </span>  <!-- thumb -->
+        </a>  <!-- .media-image -->
       </div><!-- #brand-navbar .navbar-header -->
 
       <div id="player-navbar" class="navbar-block navbar-block-left">
         <!-- player controls -->
         <ul id="media-player-toolbar-container" class="nav navbar-nav toolbar-nav audio-player-nav">
+          <% if false %>
           <li><button title="<%= key_cmd(:play, 'Esc') %>" type="button" class="btn btn-tlb fa fa-play fa-fw player player-play-pause" data-action="toggle-play-pause" data-toggle="tooltip" data-placement="bottom"></button></li>
+          <% end %>
           <li><button title="<%= key_cmd(:step_backward, "F1") %>" type="button" class="btn btn-tlb hidden-xs fa fa-backward fa-fw player player-step-backward" data-action="step-backward" data-toggle="tooltip" data-placement="bottom"></button></li>
           <li><button title="<%= key_cmd(:step_forward, "F2") %>" type="button" class="btn btn-tlb hidden-xs fa fa-forward fa-fw player player-step-forward" data-action="step-forward" data-toggle="tooltip" data-placement="bottom"></button></li>
           <li>
-            <button title="<%= key_cmd(:playback_speed) %>" type="button" id="playback-speed-btn" class="btn btn-tlb btn-speed player dropdown-toggle hidden-xs-portrait" data-toggle="dropdown"><p>1×</p></button>
+            <button title="<%= key_cmd(:playback_speed) %>" type="button" id="playback-speed-btn" class="btn btn-tlb btn-speed player dropdown-toggle" data-toggle="dropdown"><p>1×</p></button>
             <ul id="playback-speed-menu" class="dropdown-menu">
               <li>
                 <ul class="toolbar-nav sub-toolbar-nav speed-slider-nav">

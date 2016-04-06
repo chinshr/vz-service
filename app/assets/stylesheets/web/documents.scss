@@ -207,11 +207,206 @@ body.documents {
           height: 70px;
           margin-left: 0;
 
-          img {
-            height: 70px;
-            min-width: 70px;
-          }
-        }
+          a.media-image {
+            float: none;
+            margin-bottom: 10px;
+            margin-right: 0;
+            width: 100%;
+
+            .thumb {
+              display: block;
+              overflow: hidden;
+              position: relative;
+              width: 100%;
+
+              &:hover .btn-thumb {
+                @include opacity(0.6);
+              }
+
+              .thumb-sizer {
+                display: block;
+                // padding-bottom: 56.25%;
+
+                .thumb-tugger {
+                  top: 0;
+
+                  img.thumb-image {
+                    display: inline-block;
+                    margin: 0;
+                    height: 70px;
+                    min-width: 93px;
+                  }
+
+                  img.thumb-image-square {
+                    vertical-align: middle;
+                  }
+
+                  .thumb-aligner {
+                    display: none;
+                    height: 100%;
+                  }
+                }
+              } /* .thumb-sizer */
+            } /* .thumb */
+
+            .thumb-autoplay {
+              &.play {
+                &:after {
+                  // play: http://www.flaticon.com/free-icon/play-button_24142#term=play-button&page=1&position=15
+                  background-image: url("
+                    data:image/svg+xml; \a
+                    utf8, \a
+                    <svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' viewBox='0 0 533.333 533.333'> \a
+                      <defs> \a
+                        <filter id='blur'> \a
+                          <feGaussianBlur in='SourceGraphic' stdDeviation='0'/> \a
+                        </filter> \a
+                        <g id='play'> \a
+                          <path d='M266.667,0C119.391,0,0,119.391,0,266.667c0,147.275,119.391,266.666,266.667,266.666 c147.275,0,266.667-119.391,266.667-266.666C533.333,119.391,413.942,0,266.667,0z M266.667,483.333 C147.005,483.333,50,386.328,50,266.667C50,147.005,147.005,50,266.667,50c119.661,0,216.667,97.005,216.667,216.667 C483.333,386.328,386.328,483.333,266.667,483.333z M200,150l200,116.667L200,383.333V150z'/> \a
+                        </g> \a
+                      </defs> \a
+                      <use x='0' y='0' xlink:href='#play' fill='black' fill-opacity='0.4' filter='url(#blur)'/> \a
+                      <use x='0' y='0' xlink:href='#play' fill='white'/> \a
+                    </svg> \a
+                  ");
+                }
+              }
+
+              &:hover:after {
+                @include opacity(0.99);
+                @include scale(1);
+              }
+
+              &.pause {
+                &:after {
+                  // pause: http://www.flaticon.com/free-icon/pause_24041#term=pause-button&page=1&position=18
+                  background-image: url("
+                    data:image/svg+xml; \a
+                    utf8, \a
+                    <svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' viewBox='0 0 533.333 533.333'> \a
+                      <defs> \a
+                        <filter id='blur'> \a
+                          <feGaussianBlur in='SourceGraphic' stdDeviation='0'/> \a
+                        </filter> \a
+                        <g id='play'> \a
+                          <path d='M266.667,0C119.391,0,0,119.391,0,266.667c0,147.275,119.391,266.666,266.667,266.666 c147.275,0,266.667-119.391,266.667-266.666C533.333,119.391,413.942,0,266.667,0z M266.667,483.333 C147.005,483.333,50,386.328,50,266.667C50,147.005,147.005,50,266.667,50c119.661,0,216.667,97.005,216.667,216.667 C483.333,386.328,386.328,483.333,266.667,483.333z M166.667,166.667h66.667v200h-66.667V166.667z M300,166.667h66.667v200H300 V166.667z'/> \a
+                        </g> \a
+                      </defs> \a
+                      <use x='0' y='0' xlink:href='#play' fill='black' fill-opacity='0.4' filter='url(#blur)'/> \a
+                      <use x='0' y='0' xlink:href='#play' fill='white'/> \a
+                    </svg> \a
+                  ");
+                }
+              }
+
+              &:after {
+                -webkit-transition: opacity .3s, -webkit-transform .4s;
+                -moz-transition: opacity .3s, -moz-transform .4s;
+                -ms-transition: opacity .3s, -ms-transform .4s;
+                -o-transition: opacity .3s, -o-transform .4s;
+                transition: opacity .3s, transform .4s;
+                @include opacity(0.8);
+                @include scale(0.8);
+                content: " ";
+                display: block;
+                width: 50px;
+                height: 50px;
+                top: 50%;
+                left: 50%;
+                margin-top: -27.5%;
+                margin-left: -25%;
+                position: absolute;
+              }
+            } /* .thumb-autoplay */
+
+            .thumb-play-pause {
+              // alternative play/pause wo/ SVG
+              &.play {
+                &:after {
+                  padding-top: 5px;
+                  padding-left: 7px;
+                  content: "\f04b"; // '▶';
+                }
+              }
+
+              &.pause {
+                &:after {
+                  padding-top: 5px;
+                  padding-left: 0;
+                  content: "\f04c"; // '||'
+                }
+              }
+
+              &:hover:after {
+                // text-shadow: 1px 1px 4px #555;
+                background: rgba(255,255,255,.8);
+                color: rgba(0,0,0,.8);
+              }
+
+              &.sticky:after {
+                background: rgba(255,255,255,.4);
+                // color: rgba(255,255,255,.9);
+                color: rgba(0,0,0,.6);
+              }
+
+              &.sticky:hover:after {
+                background: rgba(255,255,255,.8);
+              }
+
+              &:after {
+                @include transition(background-color .1s ease);
+
+                display: inline-block;
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                // color: rgba(255,255,255,0);
+                color: rgba(0,0,0,0);
+                background: rgba(200,200,200,0);
+                width: 50px;
+                height: 50px;
+                text-align: center;
+                border-radius: 50%;
+                -webkit-transform: translateX(-50%) translateY(-50%);
+                -ms-transform: translateX(-50%) translateY(-50%);
+                transform: translateX(-50%) translateY(-50%);
+
+                font-family: FontAwesome;
+                font-size: 30px;
+              }
+
+            } /* .thumb-play-pause */
+
+            .loading {
+              position: absolute;
+              top: 50%;
+              left: 50%;
+              @include opacity(0);
+              @include xtransform(translateX(-50%) translateY(-50%));
+
+              &.spinner {
+                @include opacity(1);
+              }
+
+              &:after {
+                content: '';
+                display: block;
+                position: relative;
+                width: 60px;
+                height: 60px;
+                -webkit-animation: rotate .6s linear infinite;
+                -ms-animation: rotate .6s linear infinite;
+                animation: rotate .6s linear infinite;
+                border-radius: 100%;
+                border-top: 3px solid #545a6a;
+                border-bottom: 3px solid #d4d4db;
+                border-left: 3px solid #545a6a;
+                border-right: 3px solid #d4d4db;
+                @include opacity(0.5);
+              }
+            } /* .loading */
+          } /* .media-image */
+        } /* .navbar-header */
 
         ul.dropdown-menu {
           top: 70px;
