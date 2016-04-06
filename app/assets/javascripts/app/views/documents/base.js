@@ -4,13 +4,8 @@ App.Views.DocumentsBase = Backbone.View.extend({
 
   handlers: {
     'toggle-play-pause': function (event) {
-      var target = $('.player-play-pause');
-      if ($(target).hasClass('fa-play')) {
-        $(target).addClass('fa-pause').removeClass('fa-play');
-      } else {
-        $(target).addClass('fa-play').removeClass('fa-pause');
-      }
-      this.wavesurfer.playPause();
+      event.preventDefault();
+      this.playPause();
     },
 
     'step-backward': function () {
@@ -46,8 +41,7 @@ App.Views.DocumentsBase = Backbone.View.extend({
     },
 
     'reset': function () {
-      $('.player-play-pause').addClass('fa-play').removeClass('fa-pause');
-      this.wavesurfer.stop();
+      this.stopPlaying();
       this.clearSegmentHighlights();
     },
 
@@ -109,7 +103,7 @@ App.Views.DocumentsBase = Backbone.View.extend({
   ],
 
   initialize: function() {
-    _.bindAll(this, "publishDocument");
+    _.bindAll(this, "publishDocument", "playPause", "stopPlaying");
     $(document).on('click', _.bind(this.playerToolbarHandler, this));
     $(document).on('keydown', _.bind(this.playerKeyboardHandler, this));
     // $(window).on('resize', _.bind(this.redrawWaveform, this))
@@ -192,6 +186,8 @@ App.Views.DocumentsBase = Backbone.View.extend({
       progressDiv.style.display = 'none';
       window.clearInterval(loadingInterval);
       NProgress.done();
+      $(".loading").removeClass("spinner");
+      $(".play-pause").addClass("play");
     };
 
     var zipPeaks = function(data) {
@@ -252,9 +248,9 @@ App.Views.DocumentsBase = Backbone.View.extend({
 
     /* On finish */
     this.wavesurfer.on('finish', _.bind(function () {
-      $(event.target).addClass('fa-play').removeClass('fa-pause');
       this.updatePlayTime();
       this.clearSegmentHighlights();
+      this.stopPlaying();
     }, this));
 
     /* On error */
@@ -957,6 +953,20 @@ App.Views.DocumentsBase = Backbone.View.extend({
         // _this.saving();
       }
     })(this));
+  },
+
+  playPause: function() {
+    if (this.wavesurfer.isPlaying()) {
+      $(".play-pause").addClass("play").removeClass("pause");
+    } else {
+      $(".play-pause").addClass("pause").removeClass("play");
+    }
+    this.wavesurfer.playPause();
+  },
+
+  stopPlaying: function() {
+    $(".play-pause").addClass("play").removeClass("pause");
+    this.wavesurfer.stop();
   },
 
   isShow: function() { return false; },
