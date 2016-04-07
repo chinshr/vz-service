@@ -146,11 +146,6 @@ App.Views.DocumentsEdit = App.Views.DocumentsBase.extend({
     $('#document-edit').show();
   },
 
-  showPageError: function() {
-    $('#loading').hide();
-    $('#document-load-error').show();
-  },
-
   isEdit: function() { return true; },
 
   channel: function() {

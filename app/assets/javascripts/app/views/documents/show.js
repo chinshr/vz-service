@@ -19,8 +19,7 @@ App.Views.DocumentsShow = App.Views.DocumentsBase.extend({
       $('#document-loading').hide();
       $('#document-show').show();
     } else if (this.model.errors) {
-      $('#loading').hide();
-      $('#document-load-error').show();
+      this.showPageError();
     }
 
     return this;

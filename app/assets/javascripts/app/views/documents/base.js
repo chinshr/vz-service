@@ -969,6 +969,12 @@ App.Views.DocumentsBase = Backbone.View.extend({
     this.wavesurfer.stop();
   },
 
+  showPageError: function() {
+    $('#loading').hide();
+    $('#document-load-error').show();
+    $('.loading').removeClass('spinner');
+  },
+
   isShow: function() { return false; },
   isEdit: function() { return false; },
   isPublish: function() { return false; }
