@@ -2,7 +2,7 @@ App.Views.UploadsIndex = Backbone.View.extend({
   template: JST['uploads/index'],
   layout: 'grid-item col-lg-2 col-md-3 col-sm-6 col-xs-12',
   offset: 0,
-  limit: 25,
+  limit: 15,
 
   events: {
     'drop #drop-box': 'dropFiles',
