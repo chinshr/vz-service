@@ -19,6 +19,7 @@ module Model::URI
       dropbox: /^(?:https?:\/\/)?(?:www\.)?dropbox\.com\/s\/(.*?)/,
       facebook: /^(https?:\/\/www\.facebook\.com\/(?:video\.php\?v=\d+|.*?\/videos\/\d+))$/,
       vimeo: /https?:\/\/(?:www\.|player\.)?vimeo.com\/(?:channels\/(?:\w+\/)?|groups\/([^\/]*)\/videos\/|album\/(\d+)\/video\/|video\/|)(\d+)(?:$|\/|\?)/,
+      soundcloud: /((https:\/\/)|(http:\/\/)|(www.)|(\s))+(soundcloud.com\/)+[a-zA-Z0-9\-\.]+(\/)+[a-zA-Z0-9\-\.]+/
     }
 
     attr_accessor :url, :header, :options
