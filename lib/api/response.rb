@@ -2,9 +2,13 @@ class Api::Response
   attr_accessor :code, :options, :data, :http_status, :deprecated
   attr_reader   :errors
 
-  # To satisfy rails serialization
-  def self.model_name
-    @model_name ||= ::ActiveModel::Name.new(self, nil)
+  class << self
+    # To satisfy rails serialization
+    def model_name
+      @model_name ||= ::ActiveModel::Name.new(self, nil)
+    end
+
+    def persisted?; false; end
   end
 
   def initialize(data = nil)
@@ -18,6 +22,10 @@ class Api::Response
     @errors      = {}
     self.data    = {}
     self.options = {root: nil, skip_types: true, indent: 0, dasherize: false}
+  end
+
+  def to_model
+    self.class
   end
 
   def to_json(options = {})

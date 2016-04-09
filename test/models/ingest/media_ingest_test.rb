@@ -168,11 +168,10 @@ class Ingest::MediaIngestTest < ActiveSupport::TestCase
     ingest.process!  # inside worker!
     assert_equal :started, ingest.state
 
-    ingest.finish!  # inside worker!
+    assert_enqueued_with(job: ActionMailer::DeliveryJob) do
+      ingest.finish!  # inside worker!
+    end
     assert_equal :finished, ingest.state
-
-    assert_equal 1, ActionMailer::Base.deliveries.size
-    assert_equal "Finished, '#{ingest.title}' has been processed.", ActionMailer::Base.deliveries[0].subject
   end
 
   context "stage related" do

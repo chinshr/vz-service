@@ -103,6 +103,9 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
 
     should "create captcha chunk with source and reference chunks" do
       sign_in :user, @user2
+
+      Chunk::MechanicalTurkChunk.stubs(:create_hit).returns(true)
+
       assert_difference 'Chunk::CaptchaChunk.count', 1 do
         sc_t1 = Track.create(FactoryGirl.attributes_for(:track, type: "chunk_track", s3_url: "http://sc_t1", duration: 2))
         sc1   = Chunk::PocketsphinxChunk.create({

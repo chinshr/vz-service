@@ -89,9 +89,9 @@ class FilterTest < ActiveSupport::TestCase
 
     should "sort by :title and :id reverse sort order" do
       m1 = TempModel.create(:title=>"B") #1
-      m2 = TempModel.create(:title=>"A") #2
+      m2 = TempModel.create(:title=>"D") #2
       m3 = TempModel.create(:title=>"A") #3
-      assert_equal TempModel.filter({"sort_order" => ["title", "id"], "reverse_sort" => "1"}).to_a, [m1, m3, m2].to_a
+      assert_equal [m3, m2, m1].map(&:id), TempModel.filter({"sort_order" => ["title", "id"], "reverse_sort" => "1"}).pluck(:id)
     end
 
     should "negative offset should be 0" do

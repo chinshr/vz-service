@@ -7,26 +7,6 @@ module CoreExt
       end
 
       module ClassMethods
-        # Allows you to switch the current locale while within the block.
-        # The previously current locale is reset after the block is finished.
-        #
-        # E.g
-        #
-        #     I18n.locale = :'en-US'
-        #     I18n.switch_locale :'es-ES' do
-        #       product.name = 'pan'
-        #     end
-        #
-        #     product.name #   --> bread
-        #
-        def switch_locale(code)
-          current_locale = I18n.locale
-          I18n.locale = code
-          result = yield
-          I18n.locale = current_locale
-          result
-        end
-        alias_method :with_locale, :switch_locale   # make it more Globalize2 like
 
         # Returns true if the currently set locale is the default_locale
         # this is analogous to Globalize Locale.base?

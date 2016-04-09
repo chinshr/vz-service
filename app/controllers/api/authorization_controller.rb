@@ -15,7 +15,7 @@ class Api::AuthorizationController < Api::ApplicationController
     client_access.kill_clones
 
     respond_with Api::Response.new(access_token: client_access.uid,
-      access_secret: client_access.access_secret)
+      access_secret: client_access.access_secret), location: api_authorization_client_authorize_url
   end
 
   # [POST] /api/authorize/user(.:format)?email=<user-email>&password=<user-password>&access_token=<access_token>
@@ -29,19 +29,20 @@ class Api::AuthorizationController < Api::ApplicationController
     sign_in user, store: false
     current_access.kill_clones
 
-    respond_with(Api::Response.new)
+    respond_with(Api::Response.new, location: api_authorization_user_authorize_url)
   end
 
   # [GET] /api/authorize/status(.:format)?access_token=<access-token>
   def status
     api_response = Api::Response.new(:access_status => current_access.access_status, :updated_at => current_access.updated_at)
-    respond_with(api_response)
+    respond_with(api_response, location: api_authorization_status_url)
   end
 
   # [DELETE] /api/authorize/user(.:format)?access_token=<access_token>
   def user_deauthorize
     current_access.update_attributes(user_id: nil, access_status: Api::ClientAccess::ACCESS_STATUS_CLIENT)
-    respond_with(Api::Response.new(:access_status => current_access.access_status, :updated_at => current_access.updated_at))
+    respond_with(Api::Response.new(:access_status => current_access.access_status, :updated_at => current_access.updated_at),
+      location: api_authorization_user_deauthorize_url)
   end
 
 end

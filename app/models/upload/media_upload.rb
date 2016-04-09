@@ -79,18 +79,14 @@ class Upload::MediaUpload < Upload
   end
 
   def save_ingest_and_document
-    if ingest
+    if transaction_include_any_action?([:create])
+      ingest.document.save and ingest.save
+      ingest.start! if ingest.may_start?
+    elsif transaction_include_any_action?([:update])
       locale_changed = has_locale_recently_changed?
       ingest.document.save if ingest.document && ingest.document.changed?
       ingest.save if ingest.new_record? || ingest.changed?
-    end
-  ensure
-    if transaction_include_any_action?([:create])
-      ingest.start! if ingest.may_start?
-    elsif transaction_include_any_action?([:update])
-      if locale_changed
-        ingest.restart! if ingest.may_restart?
-      end
+      ingest.restart! if ingest.may_restart?
     end
   end
 

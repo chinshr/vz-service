@@ -123,7 +123,7 @@ class Registration < ActiveRecord::Base
   end
 
   def after_enter_accepted
-    RegistrationMailer.accepted(self).deliver
+    RegistrationMailer.accepted(self).deliver_later
   end
 
   def enter_declined
@@ -132,7 +132,7 @@ class Registration < ActiveRecord::Base
   end
 
   def after_enter_pending
-    RegistrationMailer.confirmation(self).deliver
+    RegistrationMailer.confirmation(self).deliver_later
   end
 
 end

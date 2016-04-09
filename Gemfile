@@ -2,8 +2,9 @@ source 'https://rubygems.org'
 ruby '2.2.3'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '4.1.9'
+gem 'rails', '4.2.5'
 gem 'activerecord-deprecated_finders', require: 'active_record/deprecated_finders'
+gem 'responders', '~> 2.0'
 
 # Use postgresql as the database for Active Record
 gem 'pg'
@@ -17,9 +18,6 @@ gem 'uglifier'#, '>= 1.3.0'
 # Use CoffeeScript for .js.coffee assets and views
 gem 'coffee-rails'#, '~> 4.0.0'
 
-# See https://github.com/sstephenson/execjs#readme for more supported runtimes
-# gem 'therubyracer', platforms: :ruby
-
 group :assets do
   # Use jquery as the JavaScript library
   gem 'jquery-rails'
@@ -27,12 +25,6 @@ group :assets do
   gem 'yui-compressor'
   # gem 'compass-rails'
 end
-
-# Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
-# gem 'turbolinks'
-
-# Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
-# gem 'jbuilder', '~> 1.2'
 
 group :doc do
   # bundle exec rake doc:rails generates the API under doc/api.
@@ -49,6 +41,10 @@ group :development, :test do
   gem 'pry-nav'
   gem 'foreman', '~> 0.73.0'
   gem 'thin'
+end
+
+group :development do
+  gem 'web-console', '~> 2.0'
 end
 
 group :test do
@@ -85,11 +81,18 @@ gem 'sinatra', require: false
 gem 'unicorn'
 gem 'json'
 gem 'devise'
-gem 'activeadmin', github: 'activeadmin'
+
+# Active Admin
+
+gem 'activeadmin', git: 'https://github.com/activeadmin/activeadmin' # '~> 1.0.0.pre2'
+gem 'ransack',    github: 'activerecord-hackery/ransack'
+gem 'kaminari',   github: 'amatsuda/kaminari', branch: '0-17-stable'
+gem 'formtastic', github: 'justinfrench/formtastic'
+gem 'draper'#,     github: 'audionerd/draper', branch: 'rails5', ref: 'e816e0e587'
 # <active_admin hack> for Rails 4.1
-gem 'formtastic', github: "justinfrench/formtastic"
-gem 'polyamorous', :github => "activerecord-hackery/polyamorous"
-#gem "ransack", github: "activerecord-hackery/ransack", branch: "rails-4.1"
+# gem 'formtastic', github: "justinfrench/formtastic"
+# gem 'polyamorous', :github => "activerecord-hackery/polyamorous"
+# gem "ransack", github: "activerecord-hackery/ransack", branch: "rails-4.1"
 # </hack> for Rails 4.1
 
 gem 'client_side_validations', github: "DavyJonesLocker/client_side_validations"
@@ -118,7 +121,6 @@ gem 'dalli'
 gem 'rack-cache'
 gem 'kgio'
 gem 'turkee', git: 'https://github.com/chinshr/turkee.git', branch: 'master'
-gem 'activejob_backport'  # remove for Rails ~> 4.2
 gem 'paper_trail', '~> 4'
 gem 'friendly_id', '~> 5.1.0'
 gem 'clockwork', '~> 1.2.0'

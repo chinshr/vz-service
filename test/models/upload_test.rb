@@ -25,7 +25,7 @@ class UploadTest < ActiveSupport::TestCase
   context "validations" do
     should validate_presence_of :type
     should validate_presence_of :source_url
-    should ensure_length_of(:source_url).is_at_most(2048)
+    should validate_length_of(:source_url).is_at_most(2048)
   end
 
   context "delegate" do

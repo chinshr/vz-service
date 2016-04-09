@@ -11,11 +11,7 @@ class Api::ClientTest < ActiveSupport::TestCase
 
     should validate_presence_of(:name)
     should validate_uniqueness_of(:name)
-    should ensure_length_of(:name).is_at_least(1).is_at_most(250)
-
-    #should validate_presence_of(:key)
-    #should validate_uniqueness_of(:key)
-    #should ensure_length_of(:key).is_at_least(40)
+    should validate_length_of(:name).is_at_least(1).is_at_most(250)
   end
 
   should "generate key" do
