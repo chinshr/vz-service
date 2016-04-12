@@ -4,7 +4,17 @@
 
 The service runs the Website and API.
 
-# Installation
+## Dashboards
+
+* [NewRelic](https://rpm.newrelic.com/accounts/628692/applications)
+
+* [Admin Dashboard](https://www.voyz.es/admin/dashboard)
+
+* [Sidekiq Jobs](https://www.voyz.es/admin/sidekiq)
+
+* [Heroku](https://dashboard.heroku.com/apps/voyzes/resources)
+
+## Installation
 
 * Install bundles `bundle install`
 
