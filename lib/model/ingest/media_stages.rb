@@ -143,7 +143,7 @@ module Model::Ingest::MediaStages
 
   def enter_finished
     super
-    Ingest::MediaIngestMailer.finished_processing(self).deliver if user
+    Ingest::MediaIngestMailer.finished_processing(self).deliver_later if user
   end
 
   def enter_reset

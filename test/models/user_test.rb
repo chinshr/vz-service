@@ -28,12 +28,12 @@ class UserTest < ActiveSupport::TestCase
     end
 
     should validate_presence_of :username
-    should ensure_length_of(:username).is_at_least(2).is_at_most(40)
+    should validate_length_of(:username).is_at_least(2).is_at_most(40)
     should validate_presence_of :first_name
-    should ensure_length_of(:first_name).is_at_least(1).is_at_most(125)
+    should validate_length_of(:first_name).is_at_least(1).is_at_most(125)
     should validate_presence_of :last_name
-    should ensure_length_of(:last_name).is_at_least(1).is_at_most(125)
-    should ensure_length_of(:description).is_at_most(240)
+    should validate_length_of(:last_name).is_at_least(1).is_at_most(125)
+    should validate_length_of(:description).is_at_most(240)
   end
 
   should "geocode and reverse geocode" do

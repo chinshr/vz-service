@@ -247,16 +247,16 @@ class Document < ActiveRecord::Base
           master_document_segment.save
           tr.reload
         else
-          Track.destroy(master_document_segment.track) if master_document_segment && master_document_segment.track
-          tr = Track.create(track_attributes)
-          master_document_segment.update_attributes(track: tr)
-          tr
+          Track.destroy(master_document_segment.track_id) if master_document_segment && master_document_segment.track_id
+          new_track = Track.create(track_attributes)
+          master_document_segment.update_attributes(track: new_track)
+          new_track
         end
       else
         # Chunks always have a master segment and need to update the track
-        tr = Track.create(track_attributes)
-        master_chunk_segment.update_attributes(track: tr)
-        tr
+        new_track = Track.create(track_attributes)
+        master_chunk_segment.update_attributes(track: new_track)
+        new_track
       end
     end
   end

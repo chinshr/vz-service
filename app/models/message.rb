@@ -2,6 +2,7 @@ require 'nokogiri'
 require 'whatlanguage'
 
 class Message < ActiveRecord::Base
+  self.table_name = "messages"
   include ::Model::Uid
 
   LANGUAGE_LOCALES = {

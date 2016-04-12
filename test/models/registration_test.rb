@@ -1,7 +1,7 @@
 require 'test_helper'
 
 class RegistrationTest < ActiveSupport::TestCase
-  setup do 
+  setup do
     ActionMailer::Base.deliveries.clear
   end
 
@@ -42,9 +42,9 @@ class RegistrationTest < ActiveSupport::TestCase
 
   context "state machine" do
     setup do
-      @registration = FactoryGirl.create(:registration)
-      assert_equal 1, ActionMailer::Base.deliveries.size
-      ActionMailer::Base.deliveries.clear
+      assert_enqueued_with(job: ActionMailer::DeliveryJob) do
+        @registration = FactoryGirl.create(:registration)
+      end
     end
 
     should "be pending" do
@@ -52,10 +52,11 @@ class RegistrationTest < ActiveSupport::TestCase
     end
 
     should "accept! and be accepted" do
-      assert_equal true, @registration.accept!
+      assert_enqueued_with(job: ActionMailer::DeliveryJob) do
+        assert_equal true, @registration.accept!
+      end
       assert_equal "accepted", @registration.aasm_state
       assert_not_nil @registration.accepted_at
-      assert_equal 1, ActionMailer::Base.deliveries.size
     end
 
     should "decline! and be declined" do
@@ -68,11 +69,12 @@ class RegistrationTest < ActiveSupport::TestCase
     should "decline! then accept! and be accepted" do
       assert_equal true, @registration.decline!
       assert_equal "declined", @registration.aasm_state
-      assert_equal true, @registration.accept!
+      assert_enqueued_with(job: ActionMailer::DeliveryJob) do
+        assert_equal true, @registration.accept!
+      end
       assert_equal "accepted", @registration.aasm_state
       assert_nil @registration.declined_at
       assert_not_nil @registration.accepted_at
-      assert_equal 1, ActionMailer::Base.deliveries.size
     end
   end
 end

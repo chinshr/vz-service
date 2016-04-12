@@ -6,7 +6,7 @@ class Chunk::CaptchaChunk < ::Chunk
   protected
 
   def create_hit
-    MechanicalTurk.create_hit(self)
+    Chunk::MechanicalTurkChunk.create_hit(self)
   end
 
   # Override superclass

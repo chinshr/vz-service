@@ -42,6 +42,8 @@ class Chunk::MechanicalTurkChunkTest < ActiveSupport::TestCase
       @rc1 = FactoryGirl.create(:chunk_google_speech, score: 0.99,
         text: "I like pickles")
 
+      Chunk::MechanicalTurkChunk.stubs(:create_hit).returns(true)
+
       @cc1 = @ingest.chunks.create({
         type: "captcha_chunk", position: 1, offset: 0.28, score: 0.45,
         text: "now the earth was formed this and empty|I like pickles",

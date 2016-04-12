@@ -326,7 +326,7 @@ ActiveRecord::Schema.define(version: 20160317153505) do
   add_index "ingests", ["upload_id"], name: "index_ingests_on_upload_id", using: :btree
 
   create_table "messages", force: true do |t|
-    t.string   "uid",        null: false
+    t.string   "uid"#,        null: false
     t.string   "from"
     t.text     "to"
     t.text     "cc"
