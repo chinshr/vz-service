@@ -144,18 +144,6 @@ header {
     background: image-url('voyzes-logo-110x70.png') no-repeat 0 0;
   }
 
-  @media (max-width: 480px) {
-    #logo {
-      margin-left: 15px;
-    }
-  }
-
-  @media (max-width: 768px) {
-    #logo {
-      margin-left: 15px;
-    }
-  }
-
   @media only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 2/1), only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min-device-pixel-ratio: 2) {
     #logo {
       background: image-url('voyzes-logo-110x70@2x.png') no-repeat 0 0 !important;
