@@ -16,7 +16,7 @@ App.Views.Player = Backbone.View.extend({
       "maximize", "minimize", "destroy", "fetchModel", "isReady",
       "initWavesurfer", "calcMinPixelsPerSec", "initSharePopover", "startPlayTimer", "updatePlayTime",
       "stopPlayTimer", "loadRegions",
-      "highlightSegment", "lowlightSegment");
+      "highlightSegment", "lowlightSegment", "setMediaElementTitle");
     this.parent      = options.parent;
     this.holder      = options.holder;
     this.document_id = options.document_id;
@@ -192,7 +192,7 @@ App.Views.Player = Backbone.View.extend({
       interact      : true,
       splitChannels : false,
       skipLength    : 2,
-      mediaType     : 'audio',
+      mediaType     : 'video',
       mediaControls : false,
       barWidth      : 0,
       autoplay      : true,
@@ -339,9 +339,11 @@ App.Views.Player = Backbone.View.extend({
     });
 
     this.wavesurfer.on('ready', _.bind(function onReady() {
-      // this.wavesurfer.pause();
+      this.wavesurfer.pause();
       this.loadRegions();
       this.updatePlayTime();
+      this.setMediaElementTitle();
+      this.wavesurfer.play();
     }, this));
 
     this.wavesurfer.on('region-click', function (region, e) {
@@ -584,8 +586,13 @@ App.Views.Player = Backbone.View.extend({
         ratio = window.devicePixelRatio;
       }
       return ratio;
-    }
+    },
 
+    setMediaElementTitle: function () {
+      if (this.model) {
+        $('video').attr('title', this.model.attributes.title);
+      }
+    }
 
 });
 _.extend(App.Views.Player.prototype, App.Helpers.PlayerHelpers);

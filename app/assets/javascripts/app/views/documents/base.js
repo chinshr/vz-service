@@ -103,7 +103,8 @@ App.Views.DocumentsBase = Backbone.View.extend({
   ],
 
   initialize: function() {
-    _.bindAll(this, "publishDocument", "playPause", "stopPlaying");
+    _.bindAll(this, "publishDocument", "playPause", "stopPlaying",
+      "setMediaElementTitle");
     $(document).on('click', _.bind(this.playerToolbarHandler, this));
     $(document).on('keydown', _.bind(this.playerKeyboardHandler, this));
     // $(window).on('resize', _.bind(this.redrawWaveform, this))
@@ -158,11 +159,11 @@ App.Views.DocumentsBase = Backbone.View.extend({
       interact      : true,
       splitChannels : false,
       skipLength    : 2,
-      mediaType     : 'audio',
+      mediaType     : 'video',
       mediaControls : false,
       barWidth      : 0,
       autoplay      : true,
-      renderer      : 'Canvas',
+      renderer      : 'MultiCanvas',
       maxCanvasWidth: 1000,
       autoCenter    : true
     };
@@ -269,6 +270,7 @@ App.Views.DocumentsBase = Backbone.View.extend({
       this.saveRegions();
       this.clearSegmentHighlights();
       this.updatePlayTime();
+      this.setMediaElementTitle();
     }, this));
 
     this.wavesurfer.on('region-click', function (region, e) {
@@ -973,6 +975,12 @@ App.Views.DocumentsBase = Backbone.View.extend({
     $('#loading').hide();
     $('#document-load-error').show();
     $('.loading').removeClass('spinner');
+  },
+
+  setMediaElementTitle: function () {
+    if (this.model) {
+      $('video').attr('title', this.model.attributes.title);
+    }
   },
 
   isShow: function() { return false; },
