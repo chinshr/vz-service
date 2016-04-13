@@ -339,11 +339,18 @@ App.Views.Player = Backbone.View.extend({
     });
 
     this.wavesurfer.on('ready', _.bind(function onReady() {
+      var _this = this;
       this.wavesurfer.pause();
       this.loadRegions();
       this.updatePlayTime();
       this.setMediaElementTitle();
-      this.wavesurfer.play();
+      setTimeout(function() {
+        if (VZ.os.ios) {
+          _this.pause();
+        } else {
+          _this.play();
+        }
+      }, 0);
     }, this));
 
     this.wavesurfer.on('region-click', function (region, e) {
