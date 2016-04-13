@@ -6,4 +6,5 @@
 :queues:
   - [critical, 7]
   - [default, 5]
-  - [low, 3]
+  - [low, 1]
+  - [mailers, 3]
