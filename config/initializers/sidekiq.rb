@@ -20,7 +20,8 @@ Sidekiq.configure_client do |config|
 end
 
 Sidekiq.configure_server do |config|
-  config.redis = {url: ENV["REDISTOGO_URL"] || "redis://localhost:6379/", namespace: 'sidekiq'}
+  config.redis = {url: ENV["REDISTOGO_URL"] || "redis://localhost:6379/",
+    namespace: 'sidekiq', size: 3}
 
   # config.server_middleware do |chain|
   #   if Rails.env.production?
