@@ -19,6 +19,8 @@ class Ingest::Server < ActiveRecord::Base
   has_many :processes, class_name: "Ingest::Process", dependent: :destroy
   has_many :ingests, through: :processes, after_remove: :async_server_update
 
+  acts_as_paranoid
+
   validates :max_processes, numericality: true
 
   scope :available, -> (tenancy = :shared) {

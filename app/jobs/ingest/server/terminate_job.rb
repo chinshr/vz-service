@@ -3,7 +3,7 @@ class Ingest::Server::TerminateJob < ActiveJob::Base
   queue_as :default
 
   def perform(server_id)
-    if @server = Ingest::Server.find_by(id: server_id)
+    if @server = Ingest::Server.with_deleted.find_by_id(server_id)
       @server.with_lock do
         if @server.without_running_processes?
           @server.send(:_terminate)
