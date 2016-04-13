@@ -6,7 +6,7 @@ The service runs the Website and API.
 
 ## Dashboards
 
-* [NewRelic](https://rpm.newrelic.com/accounts/628692/applications)
+* [NewRelic Production](https://rpm.newrelic.com/accounts/628692/applications/3328933)
 
 * [Admin Dashboard](https://www.voyz.es/admin/dashboard)
 
