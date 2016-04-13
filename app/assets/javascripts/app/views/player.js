@@ -192,7 +192,7 @@ App.Views.Player = Backbone.View.extend({
       interact      : true,
       splitChannels : false,
       skipLength    : 2,
-      mediaType     : 'video',
+      mediaType     : 'audio',
       mediaControls : false,
       barWidth      : 0,
       autoplay      : true,
@@ -590,7 +590,7 @@ App.Views.Player = Backbone.View.extend({
 
     setMediaElementTitle: function () {
       if (this.model) {
-        $('video').attr('title', this.model.attributes.title);
+        $('audio').attr('title', this.model.attributes.title);
       }
     }
 
