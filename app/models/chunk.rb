@@ -3,7 +3,7 @@ class Chunk < ::Document
     transcribed: 3, build_error: -1, encoding_error: -2,
     transcription_error: -3}
 
-  delegate :title, to: :document
+  delegate :title, to: :document, allow_nil: true
   delegate :document_id, to: :master_chunk_segment, allow_nil: true
   delegate :document_id=, to: :master_chunk_segment, allow_nil: true
   delegate :ingest_id, to: :master_chunk_segment, allow_nil: true
