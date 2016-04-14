@@ -2,11 +2,14 @@ ActiveAdmin.register Upload do
   permit_params
 
   scope :all
-  scope :started
-  scope :stopped
-  scope :reset
-  scope :removed
-  scope :finished
+  scope("Media", default: true) {|scope| scope.where("uploads.type = ?", "Upload::MediaUpload")}
+  scope("Images") {|scope| scope.where("uploads.type = ?", "Upload::ImageUpload")}
+
+  # scope :started
+  # scope :stopped
+  # scope :reset
+  # scope :removed
+  # scope :finished
 
   batch_action :delete do |ids|
     Upload.removed.find(ids).each do |upload|
@@ -15,13 +18,16 @@ ActiveAdmin.register Upload do
     redirect_to collection_path, alert: "The uploads have been deleted."
   end
 
+  filter :created_at
+
   index do
     selectable_column
     column :id
     column :title do |resource|
-      link_to resource.title, admin_document_path(resource)
+      if resource.respond_to? :title
+        link_to resource.title, admin_document_path(resource)
+      end
     end
-    column :s3_url
     column :locale
     column :created_at
     column :progress do |resource|

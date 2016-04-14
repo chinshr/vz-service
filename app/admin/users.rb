@@ -10,6 +10,13 @@ ActiveAdmin.register User do
     end
   end
 
+  filter :email
+  filter :confirmed_at
+  filter :first_name
+  filter :last_name
+  filter :username
+  filter :uid
+
   index do
     column :id
     column :email
