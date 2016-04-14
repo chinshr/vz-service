@@ -103,7 +103,8 @@ App.Views.UploadsIndex = Backbone.View.extend({
 
   renderCollection: function(scroll) {
     var _this = this,
-      elements = [];
+      elements = [],
+      elementSelector = _this.grid.data("isotope").options.itemSelector;
 
     this.collection.each(function(model) {
       var view,
@@ -118,21 +119,20 @@ App.Views.UploadsIndex = Backbone.View.extend({
       elements.push(element[0]);
     }, this);
 
-    // Isotope add items:
-    // http://isotope.metafizzy.co/v1/docs/adding-items.html
+    elements = $(elements).hide();
 
-    this.grid.imagesLoaded()
-      .always(function() {
+    elements.imagesLoaded()
+      .progress(function(imgLoad, image) {
+        var element = $(image.img).parents(elementSelector);
+        element.show();
         if (!scroll) {
-          _this.grid.isotope('insert', elements);
-          // _this.grid.isotope('reveal', _this.grid.data('isotope').items);
+          _this.grid.isotope('insert', element);
           _this.grid.isotope({filter: "*"});
-          // _this.refreshLayout();
         } else {
-          _this.grid.isotope('insert', elements);
-          // _this.grid.isotope('layoutItems', elements, true);
-          _this.refreshLayout();
+          _this.grid.isotope('insert', element);
         }
+      }).always(function() {
+        _this.refreshLayout();
       });
     return this;
   },

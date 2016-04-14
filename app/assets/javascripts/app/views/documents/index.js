@@ -77,8 +77,8 @@ App.Views.DocumentsIndex = Backbone.View.extend({
 
   renderCollection: function(scroll) {
     var _this = this,
-      gridEl = this.$('.browser-grid'),
-      elements = [];
+      elements = [],
+      elementSelector = _this.grid.data("isotope").options.itemSelector;
 
     this.collection.each(function(model) {
       var view,
@@ -89,20 +89,21 @@ App.Views.DocumentsIndex = Backbone.View.extend({
       elements.push(element[0]);
     }, this);
 
-    this.grid.imagesLoaded()
-      .always(function() {
-        if (!scroll) {
-          _this.grid.isotope('insert', elements);
-          // _this.grid.isotope('reveal', _this.grid.data('isotope').items);
-          _this.grid.isotope({filter: "*"});
-          // _this.refreshLayout();
-        } else {
-          _this.grid.isotope('insert', elements);
-          // _this.grid.isotope('layoutItems', elements, true);
-          _this.refreshLayout();
-        }
-      });
+    elements = $(elements).hide();
 
+    elements.imagesLoaded()
+      .progress(function(imgLoad, image) {
+        var element = $(image.img).parents(elementSelector);
+        element.show();
+        if (!scroll) {
+          _this.grid.isotope('insert', element);
+          _this.grid.isotope({filter: "*"});
+        } else {
+          _this.grid.isotope('insert', element);
+        }
+      }).always(function() {
+        _this.refreshLayout();
+      });
     return this;
   },
 
