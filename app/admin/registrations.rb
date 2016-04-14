@@ -4,6 +4,11 @@ ActiveAdmin.register Registration do
   scope :accepted
   scope :declined
 
+  filter :email
+  filter :locale
+  filter :created_at
+  filter :city
+
   index do
     column :email
     column :name
