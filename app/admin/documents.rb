@@ -1,14 +1,19 @@
 ActiveAdmin.register Document do
   permit_params :title, :description, :privacy_mask, :locale
 
-  scope :all
-  scope :recent
+  scope("All", default: true) {|scope| scope.is_root }
+  scope("Chunks") {|scope| scope.is_root(false) }
+  scope("Recent") {|scope| scope.is_root.recent(1000) }
 
   controller do
     def find_resource
       scoped_collection.friendly.find(params[:id])
     end
   end
+
+  filter :title
+  filter :description
+  filter :published_at
 
   index do
     column :id
