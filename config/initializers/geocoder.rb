@@ -14,6 +14,10 @@ if Rails.env.production?
     :use_https => true,
     :google    => {
       :api_key => "AIzaSyBFNbBpOsfzZ2-60jchxzgkwa9YkEK5z8E"
+    },
+    :ip_lookup => :maxmind_local,
+    :maxmind_local => {
+      file: File.join(Rails.root, 'lib', 'assets', 'GeoIP.dat')
     }
   })
 else
