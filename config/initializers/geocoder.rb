@@ -8,12 +8,16 @@ REDIS ||= begin
 end
 
 if Rails.env.production?
-  Geocoder.configure(
-    :timeout => 2,
-    :cache   => REDIS
-  )
+  Geocoder.configure({
+    :timeout   => 2,
+    :cache     => REDIS,
+    :use_https => true,
+    :google    => {
+      :api_key => "AIzaSyBFNbBpOsfzZ2-60jchxzgkwa9YkEK5z8E"
+    }
+  })
 else
-  Geocoder.configure(
-    :timeout => 2
-  )
+  Geocoder.configure({
+    :timeout => 2,
+  })
 end
