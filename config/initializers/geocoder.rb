@@ -15,9 +15,10 @@ if Rails.env.production?
     :google    => {
       :api_key => "AIzaSyBFNbBpOsfzZ2-60jchxzgkwa9YkEK5z8E"
     },
-    :ip_lookup => :maxmind_local,
-    :maxmind_local => {
-      file: File.join(Rails.root, 'lib', 'assets', 'GeoIP.dat')
+    :ip_lookup => :geoip2,
+    :geoip2 => {
+      lib: 'maxminddb',
+      file: File.join(Rails.root, 'lib', 'assets', 'GeoLite2-Country.mmdb')
     }
   })
 else

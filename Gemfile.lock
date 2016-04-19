@@ -238,7 +238,6 @@ GEM
       activerecord (>= 4.0.0)
     fuzzy_match (2.1.0)
     geocoder (1.3.3)
-    geoip (1.6.1)
     gingerice (1.2.2)
       addressable
       awesome_print
@@ -281,6 +280,7 @@ GEM
       nokogiri (>= 1.5.9)
     mail (2.6.4)
       mime-types (>= 1.16, < 4)
+    maxminddb (0.1.11)
     metaclass (0.0.4)
     metainspector (5.1.2)
       addressable (~> 2.4)
@@ -514,7 +514,6 @@ DEPENDENCIES
   friendly_id (~> 5.1.0)
   fuzzy_match
   geocoder
-  geoip
   gingerice
   gmaps4rails
   griddler!
@@ -525,6 +524,7 @@ DEPENDENCIES
   kaminari!
   kgio
   lato-rails
+  maxminddb
   metainspector
   mini_magick
   minitest
