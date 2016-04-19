@@ -26,7 +26,7 @@ else
     :timeout => 2,
     :ip_lookup => :geoip2,
     :geoip2 => {
-      lib: 'hive_geoip2',
+      lib: 'maxminddb',
       file: File.join(Rails.root, 'lib', 'assets', 'GeoLite2-Country.mmdb')
     }
   })
