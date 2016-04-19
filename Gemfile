@@ -97,7 +97,7 @@ gem 'draper'#,     github: 'audionerd/draper', branch: 'rails5', ref: 'e816e0e58
 
 gem 'client_side_validations', github: "DavyJonesLocker/client_side_validations"
 gem 'geocoder'
-gem 'maxminddb'
+gem 'hive_geoip2'
 gem 'gmaps4rails'
 gem 'nokogiri'
 gem 'whatlanguage', '~> 1.0.5'

@@ -27,8 +27,6 @@ module Voyzes
     # Filter passwords
     config.filter_parameters += [:password]
 
-    # config.assets.precompile += ['web/setup.scss']
-
     config.active_record.raise_in_transactional_callbacks = true
   end
 end

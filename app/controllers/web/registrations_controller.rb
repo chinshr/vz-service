@@ -3,7 +3,7 @@ class Web::RegistrationsController < Web::ApplicationController
 
   def create
     @registration = Registration.instance_for(params[:registration],
-      request.location.data,
+      request.try(:location).try(:data),
       {
         :locale     => I18n.locale,
         :ip_address => request.remote_ip
