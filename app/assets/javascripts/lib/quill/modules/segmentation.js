@@ -1,7 +1,5 @@
 var Segmentation, Delta, Quill, _, dom;
-
 dom = Quill.require('dom');
-
 Delta = Quill.require('delta');
 
 Segmentation = (function() {

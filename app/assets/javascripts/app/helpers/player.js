@@ -1,4 +1,4 @@
-App.Helpers.PlayerHelpers = {
+App.Helpers.Player = {
 
   calcMinPixelsPerSec: function(waveHeight, mapHeight, pixelRatio) {
     var availablePixels, height, duration,

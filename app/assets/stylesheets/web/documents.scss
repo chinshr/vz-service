@@ -1544,6 +1544,10 @@ body.documents {
 
             .segment-highlight {
               background-color: #ccc;
+
+              &:hover {
+                opacity: 1.0;
+              }
             }
           }
 

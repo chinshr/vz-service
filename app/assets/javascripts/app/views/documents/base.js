@@ -112,7 +112,7 @@ App.Views.DocumentsBase = Backbone.View.extend({
     this.model.fetch({
       success: (function(_this) {
         return function(model, response, options) {
-          console.log("=> fetched: success");
+          // console.log("=> fetched: success");
           _this.model.ok = true;
           _this.listenTo(_this.model, 'change', _this.saving);
           _this.render();
@@ -120,7 +120,7 @@ App.Views.DocumentsBase = Backbone.View.extend({
       })(this),
       error: (function(_this) {
         return function(model, response, options) {
-          console.log("=> fetched: error");
+          // console.log("=> fetched: error");
           _this.model.ok = false;
           _this.model.errors = [{code: response.status, message: response.statusText}];
           _this.render();
@@ -389,7 +389,7 @@ App.Views.DocumentsBase = Backbone.View.extend({
     this.titleEditor.on('text-change', (function(_this) {
       return function(delta, source) {
         if (source == 'api') {
-          console.log("An API call triggered this change.");
+          // console.log("An API call triggered this change.");
         } else if (source == 'user') {
           _this.model.set({title: $.trim(this.getText())});
           //_this.saving();
@@ -438,9 +438,9 @@ App.Views.DocumentsBase = Backbone.View.extend({
     this.contentEditor.on('text-change', (function(_this) {
       return function(delta, source) {
         if (source == 'api') {
-          console.log("An API call triggered this change.");
+          // console.log("An API call triggered this change.");
         } else if (source == 'user') {
-          console.log(this.getContents());
+          // console.log(this.getContents());
           _this.model.set({rich_text: this.getContents()});
           // _this.model.set({html: $.trim(this.getHTML()), rich_text: this.getContents(), text: this.getText()});
         }
@@ -484,7 +484,7 @@ App.Views.DocumentsBase = Backbone.View.extend({
       return function(range) {
         if (range) {
           if (range.start == range.end) {
-            console.log('User cursor is on', range.start);
+            // console.log('User cursor is on', range.start);
             _this.moveUserInitials(this);
             // TODO remove all popups
             // _this.hideContentEditorFormatPopover();
@@ -537,7 +537,7 @@ App.Views.DocumentsBase = Backbone.View.extend({
     }).on('change', _.bind(function(e) {
       e.preventDefault();
       var value = e.value.newValue;
-      console.log(value);
+      // console.log(value);
       this.wavesurfer.backend.setPlaybackRate(value);
       $("#playback-speed-btn p").html(this.floatToFraction(value));
     }, this));
@@ -637,7 +637,7 @@ App.Views.DocumentsBase = Backbone.View.extend({
     this.stopSaving();
     this.saveInterval = setInterval((function(_this) {
       return function() {
-        console.log("=> about to save.");
+        // console.log("=> about to save.");
         return _this.save();
       };
     })(this), 1000);
@@ -694,7 +694,8 @@ App.Views.DocumentsBase = Backbone.View.extend({
         region.id     = op.attributes.segment;
         region.start  = ts ? ts[0] : null;
         region.end    = ts ? ts[1] : null;
-        region.color  = cs || this.randomColor(0.3);
+        // region.color  = cs || this.randomColor(0.3);
+        region.color  = cs || App.Helpers.Color.rgbaColorFromUid(op.attributes.segment, 0.3);
         region.resize = this.isEdit();
         region.drag   = this.isEdit();
       }
@@ -704,14 +705,14 @@ App.Views.DocumentsBase = Backbone.View.extend({
 
     regions.forEach(_.bind(function (region) {
       if (!_.isEmpty(region)) {
-        console.log(region);
+        // console.log(region);
         this.wavesurfer.addRegion(region);
       }
     }, this));
   },
 
   updateRegion: function(region) {
-    console.log("updateRegion()", region);
+    // console.log("updateRegion()", region);
 
     var uid = this.parseSegmentUid(region.id),
       contents = this.contentEditor.getContents(),
@@ -738,28 +739,32 @@ App.Views.DocumentsBase = Backbone.View.extend({
   },
 
   removeRegion: function(region) {
-    console.log("removeRegion()", region);
+    // console.log("removeRegion()", region);
   },
 
   saveRegions: function() {
-    console.log("saveRegions()");
+    // console.log("saveRegions()");
   },
 
   editAnnotation: function(region) {
-    console.log("editAnnotation()");
+    // console.log("editAnnotation()");
   },
 
   clearSegmentHighlights: function() {
     // console.log("clearSegmentHighlights()");
-    $('.segment-highlight').removeClass("segment-highlight");
+    $("[class^=segment-]")
+      .removeClass("hightlight-segment")
+      .css({"background-color": ""});
   },
 
   highlightSegment: function(region) {
-    console.log("highlightSegment()", region);
+    var match;
+    // console.log("highlightSegment()", region);
     this.clearSegmentHighlights();
     if (region && region.id) {
-      var match;
-      match = $(".segment-" + this.jq(region.id)).addClass("segment-highlight");
+      match = $(".segment-" + this.jq(region.id))
+        .addClass("segment-highlight");
+        // .css({"background-color": region.color});
       $('html, body').animate({
         scrollTop: match.offset().top - ($('header').height() + $('.title-container').height() + 65)
       }, 500);
@@ -767,9 +772,11 @@ App.Views.DocumentsBase = Backbone.View.extend({
   },
 
   lowlightSegment: function(region) {
-    console.log("lowlightSegment()");
+    // console.log("lowlightSegment()");
     if (region && region.id) {
-      $(".segment-" + this.jq(region.id)).removeClass("segment-highlight");
+      $(".segment-" + this.jq(region.id))
+        //.css({"background-color": ""});
+        .removeClass("segment-highlight");
     }
   },
 
@@ -778,12 +785,7 @@ App.Views.DocumentsBase = Backbone.View.extend({
   },
 
   randomColor: function(alpha) {
-    return 'rgba(' + [
-      ~~(Math.random() * 255),
-      ~~(Math.random() * 255),
-      ~~(Math.random() * 255),
-      alpha || 1
-    ] + ')';
+    return App.Helpers.Color.randomRgbaColor(alpha)
   },
 
   floatToFraction: function(number) {
@@ -988,4 +990,4 @@ App.Views.DocumentsBase = Backbone.View.extend({
   isPublish: function() { return false; }
 
 });
-_.extend(App.Views.DocumentsBase.prototype, App.Helpers.PlayerHelpers);
+_.extend(App.Views.DocumentsBase.prototype, App.Helpers.Player);

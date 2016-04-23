@@ -602,4 +602,4 @@ App.Views.Player = Backbone.View.extend({
     }
 
 });
-_.extend(App.Views.Player.prototype, App.Helpers.PlayerHelpers);
+_.extend(App.Views.Player.prototype, App.Helpers.Player);

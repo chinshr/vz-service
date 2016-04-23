@@ -152,22 +152,11 @@ App.Models.MediaHelpers = {
   },
 
   hexColor: function() {
-    var str = this.attributes.slug_id;
-    if (!!str) {
-      return "#" + str.charCodeAt(0).toString(16) +
-        str.charCodeAt(1).toString(16) +
-        str.charCodeAt(2).toString(16);
-    }
+   return App.Helpers.Color.hexColorFromModel(this);
   },
 
   rgbaColor: function() {
-    var str = this.attributes.slug_id;
-    if (!!str) {
-      return "rgba(" +
-        str.charCodeAt(0) + "," +
-        str.charCodeAt(1) + "," +
-        str.charCodeAt(2) + ",.7)";
-    }
+    return App.Helpers.Color.rgbaColorFromModel(this);
   }
 
 };
