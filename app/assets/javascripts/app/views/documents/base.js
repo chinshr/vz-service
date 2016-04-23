@@ -904,7 +904,7 @@ App.Views.DocumentsBase = Backbone.View.extend({
     $('.input-taggable').select2({
       minimumInputLength: 3,
       multiple: true,
-      maximumInputLength: 15,
+      maximumInputLength: 30,
       tokenSeparators: [",", ".", "|"],
       ajax: {
         url: window.location.protocol + "//" + window.location.host + "/api/tags.json",
