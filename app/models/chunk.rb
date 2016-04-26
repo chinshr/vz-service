@@ -141,6 +141,13 @@ class Chunk < ::Document
       {"ops" => rt}
     end
 
+    def segment_id(uid, start_time = nil, end_time = nil, score = nil, options = {})
+      result =  "#{uid}"
+      result += "-t#{sprintf('%.2f', start_time)}-#{sprintf('%.2f', end_time)}".gsub('.', '_') if start_time && end_time
+      result += "-s#{sprintf('%.3f', score)}".gsub('.', '_') if score
+      result
+    end
+
     private
 
     # E.g. "audio" => Upload::AudioUpload
@@ -186,10 +193,7 @@ class Chunk < ::Document
   def master_segment; master_chunk_segment; end
 
   def segment_id
-    result =  "#{uid}"
-    result += "+t#{sprintf('%.2f', start_time)}-#{sprintf('%.2f', end_time)}".gsub('.', '_') if start_time && end_time
-    result += "+s#{sprintf('%.3f', score)}".gsub('.', '_') if score
-    result
+    self.class.segment_id(uid, start_time, end_time, score)
   end
 
   def start_time

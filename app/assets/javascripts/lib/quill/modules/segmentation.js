@@ -4,7 +4,7 @@ Delta = Quill.require('delta');
 
 Segmentation = (function() {
   Segmentation.DEFAULTS = {
-    color: 'transparent',
+    //color: 'transparent',
     enabled: false
   };
 
@@ -41,13 +41,13 @@ Segmentation = (function() {
         }
       };
     })(this));
-    this.addAuthor(this.options.authorId, this.options.color);
+    // this.addSegment(this.options.segmentId, this.options.color);
   }
 
-  Segmentation.prototype.addAuthor = function(id, color) {
+  Segmentation.prototype.addSegment = function(id, color) {
     var styles;
     styles = {};
-    styles[".authorship .author-" + id] = {
+    styles[".segment-" + id] = {
       "background-color": "" + color
     };
     return this.quill.theme.addStyles(styles);

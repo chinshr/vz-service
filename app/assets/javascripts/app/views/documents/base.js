@@ -421,6 +421,7 @@ App.Views.DocumentsBase = Backbone.View.extend({
       this.titleEditorCursorManager = this.titleEditor.getModule('multi-cursor');
       this.contentEditorAuthorship    = this.contentEditor.getModule('authorship');
       this.contentEditorCursorManager = this.contentEditor.getModule('multi-cursor');
+      this.contentEditorSegmentation = this.contentEditor.getModule('segmentation');
     }
 
     if (this.isShow()) {
@@ -676,7 +677,7 @@ App.Views.DocumentsBase = Backbone.View.extend({
   },
 
   loadRegions: function() {
-    var regions, ops;
+    var regions, ops, regionCSS = [];
 
     // extract ops
     if (Object.prototype.toString.call(this.model.attributes.rich_text) === '[object Array]') {
@@ -695,25 +696,29 @@ App.Views.DocumentsBase = Backbone.View.extend({
         region.start  = ts ? ts[0] : null;
         region.end    = ts ? ts[1] : null;
         // region.color  = cs || this.randomColor(0.3);
-        region.color  = cs || App.Helpers.Color.rgbaColorFromUid(op.attributes.segment, 0.3);
+        region.color  = cs || App.Helpers.Color.rgbaColorFromUid(region.id, 0.3);
         region.resize = this.isEdit();
         region.drag   = this.isEdit();
       }
       return region;
     }, this));
 
-
     regions.forEach(_.bind(function (region) {
       if (!_.isEmpty(region)) {
-        // console.log(region);
         this.wavesurfer.addRegion(region);
+        this.contentEditorSegmentation.addSegment(region.id, App.Helpers.Color.rgbaColorFromUid(region.id, 0.3));
+        // regionCSS.push(".segment-" + region.id + " { background-color: " + App.Helpers.Color.rgbaColorFromUid(region.id, 0.3) + " !important; }");
       }
     }, this));
+
+    // var style = document.createElement('style');
+    // style.type = 'text/css';
+    // style.innerHTML = regionCSS.join("\n");
+    // document.getElementsByTagName('head')[0].appendChild(style);
   },
 
   updateRegion: function(region) {
     // console.log("updateRegion()", region);
-
     var uid = this.parseSegmentUid(region.id),
       contents = this.contentEditor.getContents(),
       changes = false;

@@ -509,37 +509,66 @@ class DocumentTest < ActiveSupport::TestCase
 
   context "parse segment" do
     setup do
-      @segment = "37fc59fc-ac05-4a1f-9b72-b94f17f00f2d+t0_02-3_3+s0_75+crgba(45,23,89,0.2)+p123456"
+      @old_segment = "37fc59fc-ac05-4a1f-9b72-b94f17f00f2d+t0_02-3_3+s0_75+crgba(45,23,89,0.2)+p123456"
+      @new_segment = "37fc59fc-ac05-4a1f-9b72-b94f17f00f2d-t0_02-3_3-s0_75-crgba(45,23,89,0.2)-p123456"
     end
 
     should "parse uid" do
-      assert_equal "37fc59fc-ac05-4a1f-9b72-b94f17f00f2d", Document.parse_segment_uid(@segment)
+      assert_equal "37fc59fc-ac05-4a1f-9b72-b94f17f00f2d", Document.parse_segment_uid(@old_segment)
+      assert_equal "37fc59fc-ac05-4a1f-9b72-b94f17f00f2d", Document.parse_segment_uid(@new_segment)
       assert_equal nil, Document.parse_segment_uid(nil)
     end
 
     should "parse time" do
-      assert_equal [0.02, 3.3], Document.parse_segment_time(@segment)
+      assert_equal [0.02, 3.3], Document.parse_segment_time(@old_segment)
+      assert_equal [0.02, 3.3], Document.parse_segment_time(@new_segment)
       assert_equal [1.0, 2.0], Document.parse_segment_time("37f+t1-2")
+      assert_equal [1.0, 2.0], Document.parse_segment_time("37f-t1-2")
       assert_equal nil, Document.parse_segment_time("no-time")
     end
 
     should "parse score" do
-      assert_equal 0.75, Document.parse_segment_score(@segment)
+      assert_equal 0.75, Document.parse_segment_score(@old_segment)
+      assert_equal 0.75, Document.parse_segment_score(@new_segment)
       assert_equal 0.33, Document.parse_segment_score("37f+t0_02-3_3+s0_33")
+      assert_equal 0.33, Document.parse_segment_score("37f-t0_02-3_3-s0_33")
       assert_equal nil, Document.parse_segment_score("no-score#aaa")
     end
 
     should "parse profile" do
-      assert_equal "123456", Document.parse_segment_profile(@segment)
+      assert_equal "123456", Document.parse_segment_profile(@old_segment)
+      assert_equal "123456", Document.parse_segment_profile(@new_segment)
       assert_equal "abcdef", Document.parse_segment_profile("123+pabcdef+cccc")
-      assert_equal nil, Document.parse_segment_profile("no-profile+caaa+t1-2")
+      assert_equal nil, Document.parse_segment_profile("noprofile+caaa+t1-2")
     end
 
     should "parse color" do
-      assert_equal "rgba(45,23,89,0.2)", Document.parse_segment_color(@segment)
+      assert_equal "rgba(45,23,89,0.2)", Document.parse_segment_color(@old_segment)
+      assert_equal "rgba(45,23,89,0.2)", Document.parse_segment_color(@new_segment)
       assert_equal "rgba(45,23,89,0.2)", Document.parse_segment_color("37f+t0_02-3_3+s0_75+crgba(45,23,89,0.2)")
+      assert_equal "rgba(45,23,89,0.2)", Document.parse_segment_color("37f-t0_02-3_3-s0_75-crgba(45,23,89,0.2)")
       assert_equal "ccc", Document.parse_segment_color("37f+t0_02-3_3+s0_75+cccc")
-      assert_equal nil, Document.parse_segment_color("no-color^1-2")
+      assert_equal "ccc", Document.parse_segment_color("37f-t0_02-3_3-s0_75-cccc")
+      assert_equal nil, Document.parse_segment_color("nocolor^1-2")
+    end
+  end
+
+  context "segments" do
+    setup do
+      @document = FactoryGirl.create(:document, rich_text: {"ops"=>
+        [{"attributes"=>{"author"=>"chinshr", "segment"=>"42ffe709-8a98-4e32-ad9f-1d08321d2ee5+t0_65-3_78+s0_500"},
+          "insert"=>"The immigration and naturalization service to the United States in"},
+         {"insert"=>" "},
+         {"attributes"=>{"author"=>"chinshr", "segment"=>"c5be975a-037a-4218-b54b-cc421a222fbe+t3_78-7_05+s0_500"},
+          "insert"=>"cooperation with the National Broadcasting Company has invited a"}]})
+    end
+
+    should "#clean_rich_text_segments" do
+      @document.clean_rich_text_segments
+      assert_equal "42ffe709-8a98-4e32-ad9f-1d08321d2ee5-t0_65-3_78-s0_500",
+        @document.rich_text["ops"][0]["attributes"]["segment"]
+      assert_equal "c5be975a-037a-4218-b54b-cc421a222fbe-t3_78-7_05-s0_500",
+        @document.rich_text["ops"][2]["attributes"]["segment"]
     end
   end
 
