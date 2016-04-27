@@ -103,7 +103,7 @@ App.Views.DocumentsBase = Backbone.View.extend({
   ],
 
   initialize: function() {
-    _.bindAll(this, "publishDocument", "playPause", "stopPlaying",
+    _.bindAll(this, "publishDocument", "playPause", "updatePlayerButton" , "stopPlaying",
       "setMediaElementTitle");
     $(document).on('click', _.bind(this.playerToolbarHandler, this));
     $(document).on('keydown', _.bind(this.playerKeyboardHandler, this));
@@ -289,10 +289,10 @@ App.Views.DocumentsBase = Backbone.View.extend({
     this.wavesurfer.on('region-out', _.bind(this.lowlightSegment, this));
 
     this.wavesurfer.on('region-play', _.bind(function (region) {
-      region.once('out', _.bind(function () {
-        this.wavesurfer.play(region.start);
-        this.wavesurfer.pause();
-      }, this));
+      // region.once('out', _.bind(function () {
+      //   this.wavesurfer.play(region.start);
+      //   this.wavesurfer.pause();
+      // }, this));
     }, this));
 
     /* Minimap plugin */
@@ -329,12 +329,14 @@ App.Views.DocumentsBase = Backbone.View.extend({
     this.wavesurfer.on('play', _.bind(function (e) {
       this.playTimer();
       this.setPlayPageTitle();
+      this.updatePlayerButton();
     }, this));
 
     this.wavesurfer.on('pause', _.bind(function (e) {
       this.stopPlayTimer();
       this.updatePlayTime();
       this.resetPlayPageTitle();
+      this.updatePlayerButton();
     }, this));
 
     this.wavesurfer.on('finish', _.bind(function (e) {
@@ -688,14 +690,13 @@ App.Views.DocumentsBase = Backbone.View.extend({
 
     // build segmented regions
     regions = ops.map(_.bind(function (op) {
-      var region = {};
+      var ts, cs, region = {};
       if (op.attributes && op.attributes.segment) {
-        var ts = this.parseSegmentTime(op.attributes.segment);
-        var cs = this.parseSegmentColor(op.attributes.segment);
+        ts = this.parseSegmentTime(op.attributes.segment);
+        cs = this.parseSegmentColor(op.attributes.segment);
         region.id     = op.attributes.segment;
         region.start  = ts ? ts[0] : null;
         region.end    = ts ? ts[1] : null;
-        // region.color  = cs || this.randomColor(0.3);
         region.color  = cs || App.Helpers.Color.rgbaColorFromUid(region.id, 0.3);
         region.resize = this.isEdit();
         region.drag   = this.isEdit();
@@ -707,14 +708,8 @@ App.Views.DocumentsBase = Backbone.View.extend({
       if (!_.isEmpty(region)) {
         this.wavesurfer.addRegion(region);
         this.contentEditorSegmentation.addSegment(region.id, App.Helpers.Color.rgbaColorFromUid(region.id, 0.3));
-        // regionCSS.push(".segment-" + region.id + " { background-color: " + App.Helpers.Color.rgbaColorFromUid(region.id, 0.3) + " !important; }");
       }
     }, this));
-
-    // var style = document.createElement('style');
-    // style.type = 'text/css';
-    // style.innerHTML = regionCSS.join("\n");
-    // document.getElementsByTagName('head')[0].appendChild(style);
   },
 
   updateRegion: function(region) {
@@ -752,24 +747,23 @@ App.Views.DocumentsBase = Backbone.View.extend({
   },
 
   editAnnotation: function(region) {
-    // console.log("editAnnotation()");
+    console.log("editAnnotation()");
+    //this.clearSegmentHighlights();
+    //this.highlightSegment(region);
   },
 
   clearSegmentHighlights: function() {
-    // console.log("clearSegmentHighlights()");
-    $("[class^=segment-]")
-      .removeClass("hightlight-segment")
-      .css({"background-color": ""});
+    $(".hightlight-segment")
+      .removeClass("hightlight-segment");
   },
 
   highlightSegment: function(region) {
     var match;
-    // console.log("highlightSegment()", region);
-    this.clearSegmentHighlights();
     if (region && region.id) {
+      // console.log("highlightSegment()", region);
+      this.clearSegmentHighlights();
       match = $(".segment-" + this.jq(region.id))
         .addClass("segment-highlight");
-        // .css({"background-color": region.color});
       $('html, body').animate({
         scrollTop: match.offset().top - ($('header').height() + $('.title-container').height() + 65)
       }, 500);
@@ -777,10 +771,9 @@ App.Views.DocumentsBase = Backbone.View.extend({
   },
 
   lowlightSegment: function(region) {
-    // console.log("lowlightSegment()");
+    console.log("lowlightSegment()");
     if (region && region.id) {
-      $(".segment-" + this.jq(region.id))
-        //.css({"background-color": ""});
+      $(".segment-" + this.jq(region.id) + ".segment-highlight")
         .removeClass("segment-highlight");
     }
   },
@@ -815,28 +808,28 @@ App.Views.DocumentsBase = Backbone.View.extend({
     return um ? um[1] : null;
   },
 
-  // "...+t1_45-3_52..." -> [1.45, 3.52]
+  // "...-t1_45-3_52..." -> [1.45, 3.52]
   parseSegmentTime: function(segment) {
     var tm;
-    tm = segment.match(/\+t([0-9_]*)-([0-9_]*)/);
+    tm = segment.match(/[-\+]t([0-9_]*)-([0-9_]*)/);
     return tm ? _.map(tm.slice(1, 3), function(t) { return parseFloat(t.replace(/_/g, '.')); }) : null;
   },
 
   // "...+p12345678..." -> '12345678'
   parseSegmentProfile: function(segment) {
-    var pm = segment.match(/\+p(.+?(?=(\+|$)))/);
+    var pm = segment.match(/[-\+]p(.+?(?=(\+|-|$)))/);
     return pm ? pm[1] : null;
   },
 
   // "...+cafafaf..." -> 'afafaf'
   parseSegmentColor: function(segment) {
-    var cm = segment.match(/\+c(.+?(?=(\+|$)))/);
+    var cm = segment.match(/\+c(.+?(?=(\+|-|$)))/);
     return cm ? cm[1] : null;
   },
 
   // "...+s0_75..." -> 0.75
   parseSegmentScore: function(segment) {
-    var sm = segment.match(/\+s([0-9_]+?(?=(\+|$)))/);
+    var sm = segment.match(/\+s([0-9_]+?(?=(\+|-|$)))/);
     return sm ? parseFloat(sm[1].replace(/_/g, '.')) : null;
   },
 
@@ -965,17 +958,20 @@ App.Views.DocumentsBase = Backbone.View.extend({
   },
 
   playPause: function() {
-    if (this.wavesurfer.isPlaying()) {
-      $(".play-pause").addClass("play").removeClass("pause");
-    } else {
-      $(".play-pause").addClass("pause").removeClass("play");
-    }
     this.wavesurfer.playPause();
   },
 
+  updatePlayerButton: function() {
+    if (this.wavesurfer.isPlaying()) {
+      $(".play-pause").addClass("pause").removeClass("play");
+    } else {
+      $(".play-pause").addClass("play").removeClass("pause");
+    }
+  },
+
   stopPlaying: function() {
-    $(".play-pause").addClass("play").removeClass("pause");
     this.wavesurfer.stop();
+    this.updatePlayerButton();
   },
 
   showPageError: function() {

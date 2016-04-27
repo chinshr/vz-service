@@ -398,10 +398,15 @@ class Document < ActiveRecord::Base
   def clean_rich_text_segments
     rich_text["ops"].each_with_index do |segment, index|
       segment_id = segment.try(:[], "attributes").try(:[], "segment")
+      # upgrade segment format
       if uid = self.class.parse_segment_uid(segment_id)
         start_time, end_time = self.class.parse_segment_time(segment_id)
         score = self.class.parse_segment_score(segment_id)
         rich_text["ops"][index]["attributes"]["segment"] = Chunk.segment_id(uid, start_time, end_time, score)
+      end
+      # remove background color
+      if segment.try(:[], "attributes").try(:[], "background")
+        rich_text["ops"][index]["attributes"].delete("background")
       end
     end
   end

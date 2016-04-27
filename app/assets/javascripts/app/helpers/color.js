@@ -1,11 +1,15 @@
 App.Helpers.Color = {
 
   hexColorFromModel: function(model) {
-    return this.hexColorFromUid(model.attributes.slug_id);
+    return this.hexColorFromUid(model.attributes.uid);
   },
 
   rgbaColorFromModel: function(model, alpha) {
-    return this.rgbaColorFromUid(model.attributes.slug_id, alpha);
+    if (model.attributes && model.attributes.uid) {
+      return this.rgbaColorFromUid(model.attributes.uid, alpha);
+    } else {
+      return this.randomRgbaColor(alpha);
+    }
   },
 
   hexColorFromUid: function(str) {
@@ -22,9 +26,9 @@ App.Helpers.Color = {
         alpha = ".7"
       }
       return "rgba(" +
-        str.charCodeAt(0) + "," +
-        str.charCodeAt(1) + "," +
-        str.charCodeAt(2) + "," + alpha + ")";
+        parseInt(str.slice(0, 2), 16) + "," +
+        parseInt(str.slice(2, 4), 16) + "," +
+        parseInt(str.slice(4, 6), 16) + "," + alpha + ")";
     }
   },
 

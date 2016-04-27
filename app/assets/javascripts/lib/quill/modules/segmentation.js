@@ -18,7 +18,7 @@ Segmentation = (function() {
       this.enable();
     }
     this.quill.addFormat('segment', {
-      "class": 'segment-'
+      "class": "segment-"
     });
     this.quill.on(this.quill.constructor.events.PRE_EVENT, (function(_this) {
       return function(eventName, delta, origin) {
@@ -47,8 +47,8 @@ Segmentation = (function() {
   Segmentation.prototype.addSegment = function(id, color) {
     var styles;
     styles = {};
-    styles[".segment-" + id] = {
-      "background-color": "" + color
+    styles[".segment-" + id + ".segment-highlight"] = {
+      "background-color": "" + color + " !important"
     };
     return this.quill.theme.addStyles(styles);
   };

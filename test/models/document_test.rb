@@ -555,12 +555,15 @@ class DocumentTest < ActiveSupport::TestCase
 
   context "segments" do
     setup do
-      @document = FactoryGirl.create(:document, rich_text: {"ops"=>
-        [{"attributes"=>{"author"=>"chinshr", "segment"=>"42ffe709-8a98-4e32-ad9f-1d08321d2ee5+t0_65-3_78+s0_500"},
+      @document = FactoryGirl.create(:document, rich_text: {"ops"=> [
+        {"attributes"=>{"author"=>"chinshr", "segment"=>"42ffe709-8a98-4e32-ad9f-1d08321d2ee5+t0_65-3_78+s0_500"},
           "insert"=>"The immigration and naturalization service to the United States in"},
-         {"insert"=>" "},
-         {"attributes"=>{"author"=>"chinshr", "segment"=>"c5be975a-037a-4218-b54b-cc421a222fbe+t3_78-7_05+s0_500"},
-          "insert"=>"cooperation with the National Broadcasting Company has invited a"}]})
+        {"insert"=>" "},
+        {"attributes"=>{"author"=>"chinshr", "segment"=>"c5be975a-037a-4218-b54b-cc421a222fbe+t3_78-7_05+s0_500"},
+          "insert"=>"cooperation with the National Broadcasting Company has invited a"},
+        {"attributes"=>{"background"=>"rgba(99, 51, 53, 0.298039)", "author"=>"chinshr", "segment"=>"c358d037-3789-4c9a-a1be-0418d2360d47+t12_92-17_55+s0_500"},
+          "insert"=>"a possession which we ourselves take for granted but which is still %um thrilling"}
+        ]})
     end
 
     should "#clean_rich_text_segments" do
@@ -569,6 +572,8 @@ class DocumentTest < ActiveSupport::TestCase
         @document.rich_text["ops"][0]["attributes"]["segment"]
       assert_equal "c5be975a-037a-4218-b54b-cc421a222fbe-t3_78-7_05-s0_500",
         @document.rich_text["ops"][2]["attributes"]["segment"]
+      assert_equal nil,
+        @document.rich_text["ops"][3]["attributes"]["background"]
     end
   end
 
