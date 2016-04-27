@@ -697,7 +697,7 @@ App.Views.DocumentsBase = Backbone.View.extend({
         region.id     = op.attributes.segment;
         region.start  = ts ? ts[0] : null;
         region.end    = ts ? ts[1] : null;
-        region.color  = cs || App.Helpers.Color.rgbaColorFromUid(region.id, 0.3);
+        region.color  = cs || App.Helpers.Color.rgbaColorFromUid(region.id, 0.25);
         region.resize = this.isEdit();
         region.drag   = this.isEdit();
       }
@@ -778,9 +778,12 @@ App.Views.DocumentsBase = Backbone.View.extend({
       this.clearSegmentHighlights();
       match = $(".segment-" + this.jq(region.id))
         .addClass("segment-highlight");
-      $('html, body').animate({
-        scrollTop: match.offset().top - ($('header').height() + $('.title-container').height() + 65)
-      }, 500);
+
+      if (match.length > 0) {
+        $('html, body').animate({
+          scrollTop: match.offset().top - ($('header').height() + $('.title-container').height() + 65)
+        }, 500);
+      }
     }
   },
 

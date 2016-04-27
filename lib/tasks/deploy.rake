@@ -25,6 +25,15 @@ namespace :deploy do
 
     namespace :document do
 
+      desc 'Clean rich_text segments'
+      task :clean_rich_text_segments => :environment do
+        count = Document.is_root.where("documents.rich_text IS NOT NULL").count
+        puts "#{count} documents with rich_text found."
+        Document.is_root.where("documents.rich_text IS NOT NULL").find_each do |document|
+          Document::CleanRichTextJob.perform_later(document.id)
+        end
+      end
+
       desc 'Destroy only deleted documents and chunks permanently'
       task :create_rich_text_from_segments => :environment do
         count = Document.is_root.where("documents.rich_text IS NULL").count
