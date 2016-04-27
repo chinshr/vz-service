@@ -779,9 +779,9 @@ App.Views.DocumentsBase = Backbone.View.extend({
       match = $(".segment-" + this.jq(region.id))
         .addClass("segment-highlight");
 
-      if (match.length > 0) {
+      if (match.length > 0 && !App.Helpers.Page.isElementInViewport(match)) {
         $('html, body').animate({
-          scrollTop: match.offset().top - ($('header').height() + $('.title-container').height() + 65)
+          scrollTop: match.offset().top - ($('header').height() + $('.title-container').height())
         }, 500);
       }
     }
