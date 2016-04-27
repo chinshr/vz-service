@@ -395,6 +395,25 @@ class Document < ActiveRecord::Base
     end
   end
 
+  def clean_html_segments
+    return if html.blank?
+    doc = Nokogiri::HTML.fragment(self.html)
+    regexp = /(segment-.+?(?=\s|$))/i
+    doc.css('span[class*="segment-"]').each do |element|
+      css_class = element.attributes.try(:[], "class").try(:value)
+      if css_class && (segment_id = css_class.match(regexp).try(:[], 1))
+        if uid = self.class.parse_segment_uid(segment_id)
+          start_time, end_time = self.class.parse_segment_time(segment_id)
+          score = self.class.parse_segment_score(segment_id)
+          new_segment_id = Chunk.segment_id(uid, start_time, end_time, score)
+          new_css_class = element.attributes["class"].value.gsub(regexp, new_segment_id)
+          element.attributes["class"].value = new_css_class
+        end
+      end
+    end
+    self.html = doc.to_html
+  end
+
   def clean_rich_text_segments
     rich_text["ops"].each_with_index do |segment, index|
       segment_id = segment.try(:[], "attributes").try(:[], "segment")

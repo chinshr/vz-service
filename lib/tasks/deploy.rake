@@ -25,12 +25,12 @@ namespace :deploy do
 
     namespace :document do
 
-      desc 'Clean rich_text segments'
-      task :clean_rich_text_segments => :environment do
-        count = Document.is_root.where("documents.rich_text IS NOT NULL").count
-        puts "#{count} documents with rich_text found."
-        Document.is_root.where("documents.rich_text IS NOT NULL").find_each do |document|
-          Document::CleanRichTextJob.perform_later(document.id)
+      desc 'Clean document segments'
+      task :clean_document_segments => :environment do
+        count = Document.is_root.where("documents.rich_text IS NOT NULL OR documents.HTML IS NOT NULL").count
+        puts "#{count} documents with document segments"
+        Document.is_root.where("documents.rich_text IS NOT NULL OR documents.HTML IS NOT NULL").find_each do |document|
+          Document::CleanSegmentsJob.perform_later(document.id)
         end
       end
 
