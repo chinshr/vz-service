@@ -1541,14 +1541,10 @@ body.documents {
             font-size: 22px;
             line-height: 1.6em;
             -webkit-font-smoothing: antialiased;
+          }
 
-            .segment-highlight {
-              background-color: #ccc;
-
-              &:hover {
-                opacity: 1.0;
-              }
-            }
+          .segment-highlight {
+            background-color: #ccc;
           }
 
           .xspacer-container {

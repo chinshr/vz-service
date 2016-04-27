@@ -679,7 +679,7 @@ App.Views.DocumentsBase = Backbone.View.extend({
   },
 
   loadRegions: function() {
-    var regions, ops, regionCSS = [];
+    var regions, ops;
 
     // extract ops
     if (Object.prototype.toString.call(this.model.attributes.rich_text) === '[object Array]') {
@@ -704,12 +704,26 @@ App.Views.DocumentsBase = Backbone.View.extend({
       return region;
     }, this));
 
+    return this.addSegmentsFromRegions(regions);
+  },
+
+  addSegmentsFromRegions: function(regions) {
+    var style, css = [];
+
     regions.forEach(_.bind(function (region) {
       if (!_.isEmpty(region)) {
         this.wavesurfer.addRegion(region);
-        this.contentEditorSegmentation.addSegment(region.id, App.Helpers.Color.rgbaColorFromUid(region.id, 0.3));
+        css.push(".segment-" + region.id + ".segment-highlight { background-color: " + region.color + " !important }");
       }
     }, this));
+    // add styles
+    if (css.length > 0) {
+      style = document.createElement('style');
+      style.type = 'text/css';
+      style.innerHTML = css.join("\n");
+      document.getElementsByTagName('head')[0].appendChild(style);
+    }
+    return regions;
   },
 
   updateRegion: function(region) {
