@@ -22,7 +22,7 @@
             <button id="email-proxy" class="btn btn-primary btn-lg btn-upload btn-upload-email"><i class="fa fa-envelope"></i>&nbsp;my@voyz.es</button>
             <% end %>
             <% if true: %>
-            <div class="email-file-upload-holder">mail to <a class="email-file-link" href="mailto:my@voyz.es?subject=Document title&body=—%0DAttach all your audio files you want transcribed for English United States (en-US)." class="xbtn btn-link btn-upload-email">my@voyz.es</a></div>
+            <div class="email-file-upload-holder">mail to <a class="email-file-link" href="mailto:my@voyz.es?subject=Document title&body=—%0DAttach all your audio files you want transcribed for English United States {en-US}." class="xbtn btn-link btn-upload-email">my@voyz.es</a></div>
             <% end %>
           </div><!-- .form-group-file-upload -->
 

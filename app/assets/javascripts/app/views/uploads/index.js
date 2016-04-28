@@ -355,7 +355,7 @@ App.Views.UploadsIndex = Backbone.View.extend({
 
   mailtoHref: function(locale, emailAddress) {
     var href,
-      text = $("#file-locale option:selected").text() + " (" + $("#file-locale").val() + ")";
+      text = $("#file-locale option:selected").text() + " {" + $("#file-locale").val() + "}";
     // locale
     if (!locale) {
       locale = $("#file-locale").val().toLowerCase()
