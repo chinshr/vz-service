@@ -780,11 +780,23 @@ App.Views.DocumentsBase = Backbone.View.extend({
         .addClass("segment-highlight");
 
       if (match.length > 0 && !App.Helpers.Page.isElementInViewport(match)) {
-        $('html, body').animate({
-          scrollTop: match.offset().top - ($('header').height() + $('.title-container').height())
-        }, 500);
+        this.scrollTo(match);
       }
     }
+  },
+
+  scrollTo: function(el) {
+    var elOffset = el.offset().top;
+    var elHeight = el.height();
+    var windowHeight = $(window).height();
+    var offset;
+
+    if (elHeight < windowHeight) {
+      offset = elOffset - ((windowHeight / 2) - (elHeight / 2));
+    } else {
+      offset = elOffset;
+    }
+    $('html, body').animate({scrollTop: offset}, 700);
   },
 
   lowlightSegment: function(region) {
