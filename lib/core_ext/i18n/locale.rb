@@ -40,7 +40,7 @@ module CoreExt
         #   "de_DE"   I18n.locale_country_code -> :DE
         #
         def locale_country(in_locale = locale)
-          in_locale.to_s.match(/[_-](\w{2})$/) ? $1.to_sym : nil
+          in_locale.to_s.match(/[_-](\w{2})$/) ? $1.to_s.upcase.to_sym : nil
         end
 
         def active_locales

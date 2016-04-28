@@ -4,12 +4,12 @@ class EmailProcessorMailer < ActionMailer::Base
 
   def invalid_message(message)
     @message = message
-    mail(to: message.sender.email, subject: "Sorry, your message cannot be transcribed.")
+    mail(to: message.sender.email, subject: "Sorry, your message cannot be processed.")
   end
 
   def valid_message(message)
     @message = message
-    mail(to: message.sender.email, subject: "We are working hard transcribing your message.")
+    mail(to: message.sender.email, subject: "We are working hard processing your message.")
   end
 
 end
