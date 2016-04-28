@@ -1,3 +1,4 @@
+require "job"
 require "email_processor"
 
 Griddler.configure do |config|
