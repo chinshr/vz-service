@@ -9,7 +9,7 @@ class EmailProcessorMailer < ActionMailer::Base
 
   def valid_message(message)
     @message = message
-    mail(to: message.sender.email, subject: "We are working hard processing your message.")
+    mail(to: message.sender.email, subject: "We are working hard processing your message")
   end
 
 end

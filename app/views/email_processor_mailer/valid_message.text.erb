@@ -1,7 +1,11 @@
-Thanks for your message. We are processing your files:
+You got it! We are processing your request with:
 
-<% @message.attachments.each do |attachment| -%>
-  <%= "#{attachment.file_name} (#{attachment.file_type})" %>
+<% @message.attachments.each do |upload| -%>
+  <% if upload.has_s3_source_url? -%>
+  <%= "#{upload.file_name} (#{upload.file_type})" %>
+  <% else -%>
+  <%= "#{upload.source_url}" %>
+  <% end -%>
 <% end -%>
 
 We will send you an update shortly once we are done.
