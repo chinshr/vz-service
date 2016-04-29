@@ -697,7 +697,7 @@ App.Views.DocumentsBase = Backbone.View.extend({
         region.id     = op.attributes.segment;
         region.start  = ts ? ts[0] : null;
         region.end    = ts ? ts[1] : null;
-        region.color  = cs || App.Helpers.Color.rgbaColorFromUid(region.id, 0.25);
+        region.color  = cs || App.Helpers.Color.rgbaColorFromUid(region.id, 0.2);
         region.resize = this.isEdit();
         region.drag   = this.isEdit();
       }
@@ -710,10 +710,13 @@ App.Views.DocumentsBase = Backbone.View.extend({
   addSegmentsFromRegions: function(regions) {
     var style, css = [];
 
+    // none-highlight hover
+    css.push("span[class*=\"segment-\"]:not(.highlight-segment):hover { background-color: " + 'rgba(255,255,128,.15)' + " !important }");
     regions.forEach(_.bind(function (region) {
       if (!_.isEmpty(region)) {
         this.wavesurfer.addRegion(region);
-        css.push(".segment-" + region.id + ".segment-highlight { background-color: " + region.color + " !important }");
+        css.push("span.segment-" + region.id + ".segment-highlight { background-color: " + App.Helpers.Color.rgbaColorFromUid(region.id, 0.15) + " !important }");
+        css.push("span.segment-" + region.id + ".segment-highlight:hover { background-color: " + App.Helpers.Color.rgbaColorFromUid(region.id, 0.25) + " !important }");
       }
     }, this));
     // add styles
