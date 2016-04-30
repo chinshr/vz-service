@@ -711,6 +711,7 @@ App.Views.DocumentsBase = Backbone.View.extend({
     var style, css = [];
 
     // none-highlight hover
+    css.push("span[class*=\"segment-\"] { border-radius: 2px; }");
     css.push("span[class*=\"segment-\"]:not(.highlight-segment):hover { background-color: " + 'rgba(255,255,128,.15)' + " !important }");
     regions.forEach(_.bind(function (region) {
       if (!_.isEmpty(region)) {
