@@ -3,6 +3,8 @@ ActiveAdmin.register Registration do
   scope :recent
   scope :accepted
   scope :declined
+  permit_params :email, :locale, :first_name, :last_name,
+    :time_zone, :lat, :lng, :address, :postal_code
 
   filter :email
   filter :locale
