@@ -80,7 +80,7 @@ gem 'autoscaler', github: "chinshr/autoscaler"
 gem 'sinatra', require: false
 gem 'unicorn'
 gem 'json'
-gem 'devise'
+gem 'devise', '~> 4.1'
 
 # Active Admin
 

@@ -46,8 +46,7 @@ class Web::Devise::ConfirmationsController < ::Devise::ConfirmationsController
   protected
 
   def with_unconfirmed_confirmable
-    original_token = params[:confirmation_token]
-    confirmation_token = Devise.token_generator.digest(User, :confirmation_token, original_token)
+    confirmation_token = params[:confirmation_token]
     @confirmable = User.find_or_initialize_with_error_by(:confirmation_token, confirmation_token)
     @confirmable.confirmation_validation = true if @confirmable
     if !@confirmable.new_record?

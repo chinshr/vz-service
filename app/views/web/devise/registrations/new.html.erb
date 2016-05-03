@@ -16,6 +16,10 @@
 
   $(function() {
     $("form input[name='user[time_zone]']").val(jstz.determine_timezone().name());
+    $("form").find("button[type=submit]").button("reset");
+    $("form").on('submit', function(e) {
+      $(this).find("button[type=submit]").button("loading");
+    });
   });
 
   <% end %>
@@ -42,7 +46,7 @@
         </div>
       </div>
       <div class="panel-footer">
-        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign up</button>
+        <button class="btn btn-lg btn-primary btn-block" type="submit" data-loading-text="Signing up...">Sign up</button>
       </div>
     <% end %>
   </div><!-- form-tile -->

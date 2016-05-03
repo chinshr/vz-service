@@ -67,11 +67,10 @@ body.devise, body.confirmations {
     } /* .login-quote */
 
     .tile {
-      xfont-family: "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
-
       margin: 25px 0;
       margin: 0 auto;
       max-width: 325px;
+      border: 0;
 
       input {
         font: inherit;
@@ -80,6 +79,11 @@ body.devise, body.confirmations {
 
     .panel {
       box-shadow: 0 2px 5px rgba(0, 0, 0,.3);
+      @include transition(box-shadow .2s ease);
+
+      &:hover, &:focus, &:active {
+        box-shadow: 0 2px 15px rgba(0, 0, 0,.5);
+      }
 
       .panel-heading {
         h1 {
@@ -111,7 +115,13 @@ body.devise, body.confirmations {
             text-decoration: none;
           }
         }
-      }
+      } /* .panel-heading */
+
+      .panel-footer {
+        border-top: 0;
+        background-color: #fff;
+        padding-bottom: 20px;
+      } /* .panel-footer */
 
       .panel-body {
         margin: 0 15px;
@@ -130,6 +140,11 @@ body.devise, body.confirmations {
           }
         }
       }
+    }
+
+    .form-signin-links {
+      padding-left: 15px;
+      padding-right: 15px;
     }
 
     .btn-plain {
@@ -151,6 +166,12 @@ body.devise, body.confirmations {
 
     .btn-block {
       width: 100%;
+      border-radius: 999em;
+      outline: none;
+
+      &:focus {
+        box-shadow: 0 0 3pt 2pt rgba(128,128,128,.4);
+      }
     }
 
     .text-translucent {

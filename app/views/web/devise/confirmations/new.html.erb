@@ -1,6 +1,18 @@
 <%#  Resend confirmation %>
 <% page_title "Resend confirmation" %>
 <%= render "web/shared/devise_errors" %>
+<% content_for :javascript_includes do %>
+  <%= javascript_tag do %>
+
+  $(function() {
+    $("form").find("button[type=submit]").button("reset");
+    $("form").on('submit', function(e) {
+      $(this).find("button[type=submit]").button("loading");
+    });
+  });
+
+  <% end %>
+<% end %>
 
 <div class="container-fluid content-primary">
   <div class="tile form-tile animated fadeInUp">
@@ -15,9 +27,9 @@
           <%= f.label :email, "Email address" %>
           <%= f.email_field :email, :autofocus => "autofocus", :autocapitalize => "off", :autocomplete => "off", :autocorrect => "off", :spellcheck => false, :class => "form-control first last", :placeholder => "Enter email address" %>
         </div>
-      </div>  
+      </div>
       <div class="panel-footer">
-        <button class="btn btn-lg btn-primary btn-block" type="submit">Resend Confirmation</button>
+        <button class="btn btn-lg btn-primary btn-block" type="submit" data-loading-text="Resending confirmation...">Resend Confirmation</button>
       </div>
     <% end %>
   </div><!-- form-tile -->

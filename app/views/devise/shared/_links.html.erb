@@ -12,7 +12,7 @@
 <% end -%>
 
 <%- if devise_mapping.confirmable? && controller_name == 'registrations' # != 'confirmations' %>
-  <%= link_to "Resend confirmation instructions?", new_confirmation_path(resource_name), :class => "btn btn-primary btn-lg btn-plain btn-block btn-rounded btn-transparent" %><br />
+  <%= link_to "Resend confirmation?", new_confirmation_path(resource_name), :class => "btn btn-primary btn-lg btn-plain btn-block btn-rounded btn-transparent" %><br />
 <% end -%>
 
 <%- if devise_mapping.lockable? && resource_class.unlock_strategy_enabled?(:email) && controller_name != 'unlocks' %>
