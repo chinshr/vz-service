@@ -4,13 +4,17 @@ App.Views.DocumentsEdit = App.Views.DocumentsBase.extend({
 
   initialize: function() {
     App.Views.DocumentsBase.prototype.initialize.call(this); // super
-    _.bindAll(this, "presenceCallback", "messageCallback",
-      "hereNowCallback", "fetchUser", "fetchUserUnlessPresent",
-      "isUserPresent", "isUserSelf", "publish");
+    _.bindAll(this, "pubnubPresenceCallback", "pubnubMessageCallback",
+      "pubnubHereNowCallback", "fetchUser", "fetchUserUnlessPresent",
+      "isUserPresent", "isUserSelf", "pubnubPublish", "processContentEditor");
   },
+
+  // begin pubnub
 
   initPubnub: function() {
     var _this = this;
+
+    this.refreshQueue = [];
 
     this.pubnub = PUBNUB.init({
       publish_key: VZ.config.pubnub.publish_key,
@@ -22,15 +26,15 @@ App.Views.DocumentsEdit = App.Views.DocumentsBase.extend({
     });
 
     this.pubnub.subscribe({
-      channel: this.channel(),
-      presence: this.presenceCallback,
-      message: this.messageCallback,
+      channel: this.pubnubChannel(),
+      presence: this.pubnubPresenceCallback,
+      message: this.pubnubMessageCallback,
       state: App.currentUser.attributes
     });
 
     this.pubnub.here_now({
-      channel : this.channel(),
-      callback : this.hereNowCallback
+      channel : this.pubnubChannel(),
+      callback : this.pubnubHereNowCallback
     });
 
     // Publish content editor's content
@@ -38,64 +42,45 @@ App.Views.DocumentsEdit = App.Views.DocumentsBase.extend({
       if (source === 'user') {
         if (_.keys(_this.users).length > 0) {
           var envelope = {'content-editor': {uuid: App.currentUser.attributes.username, 'text-change': {delta: delta}}};
-          _this.publish(envelope);
+          _this.pubnubPublish(envelope);
         }
       }
     });
 
-    /* Publish content editor's cursor selections */
+    // Publish content editor's cursor selections
     this.contentEditor.on('selection-change', function(range) {
       if (range) {
         if (_.keys(_this.users).length > 0) {
           var envelope = {'content-editor': {uuid: App.currentUser.attributes.username, 'selection-change': {range: range}}};
-          _this.publish(envelope);
+          _this.pubnubPublish(envelope);
         }
       }
     });
-  },
 
-  publish: function(envelope) {
-    var _this = this;
-    this.pubnub.publish({
-      channel: this.channel(),
-      message: envelope,
-      callback: function(status) {
-        console.log("-> publish('content-editor->text-change') ", status);
-      },
-      error: function(status) {
-        console.log(JSON.stringify(status));
-        _this.publish(envelope);
-      }
-    });
-  },
+    // http://stackoverflow.com/questions/28460940/chat-messages-ordering-strategy-in-pubnub
+    // https://www.pubnub.com/knowledge-base/discussion/195/how-do-i-synchronize-multiple-devices#latest
+    // Setup queue interval
+    this.refreshQueueInterval = setInterval(function() {
+      _this.refreshQueue.sort(function(a, b) { return a.sequence > b.sequence}).forEach(function(message) {
+        // console.log("-> message: ", message);
+        if (message.sequence < Date.now()) {
+          // remove from refreshQueue
+          var index = _.findIndex(_this.refreshQueue, function(m) { return m.sequence === message.sequence });
+          if (index > -1) {
+            _this.refreshQueue.splice(index, 1);
+          }
+          // ...then process message
+          _this.processContentEditor(message['content-editor']);
+        }
 
-  initUnload: function() {
-    var _this = this;
-    var confirm = function(event) {
-      _this.pubnub.unsubscribe({
-        channel : _this.channel(),
       });
-    };
-    window.onbeforeunload = confirm;
+    }, 50);
   },
 
-  presenceCallback: function(message) {
-    var _this = this;
-    if (message.action === "join" && !_this.isUserSelf(message.uuid)) {
-      this.fetchUserUnlessPresent(message.uuid);
-    } else if(message.action === "leave" && message.uuid !== App.currentUser.attributes.username) {
-      _this.users[message.uuid].destroy();
-    } else if(message.action === "timeout" && message.uuid !== App.currentUser.attributes.username) {
-      _this.users[message.uuid].destroy();
-    }
-    console.log("-> presence: ", message);
-  },
-
-  messageCallback: function(message) {
-    if (message['content-editor'] && message['content-editor'].uuid !== App.currentUser.attributes.username) {
-      var envelope = message['content-editor'],
-        uuid = envelope.uuid;
-
+  processContentEditor: function(envelope) {
+    var uuid;
+    if (envelope) {
+      uuid = envelope.uuid
       this.fetchUserUnlessPresent(uuid);
       if (envelope['text-change']) {
         this.contentEditor.updateContents(envelope['text-change'].delta);
@@ -107,10 +92,51 @@ App.Views.DocumentsEdit = App.Views.DocumentsBase.extend({
         }
       }
     }
-    console.log("-> message: ", message);
   },
 
-  hereNowCallback: function(message) {
+  pubnubPublish: function(envelope) {
+    var _this = this,
+      clientTime, startTime;
+
+    startTime = Date.now();
+    this.pubnub.time(function(timetoken) {
+      var delay = Date.now() - startTime;
+      envelope.sequence = (timetoken / 10000) + delay;
+      // now publish
+      _this.pubnub.publish({
+        channel: _this.pubnubChannel(),
+        message: envelope,
+        callback: function(status) {
+          // console.log("-> publish('content-editor->text-change') ", status);
+        },
+        error: function(status) {
+          // console.log(JSON.stringify(status));
+          _this.pubnubPublish(envelope);
+        }
+      });
+    });
+  },
+
+  pubnubPresenceCallback: function(message) {
+    var _this = this;
+    if (message.action === "join" && !_this.isUserSelf(message.uuid)) {
+      this.fetchUserUnlessPresent(message.uuid);
+    } else if(message.action === "leave" && message.uuid !== App.currentUser.attributes.username) {
+      _this.users[message.uuid].destroy();
+    } else if(message.action === "timeout" && message.uuid !== App.currentUser.attributes.username) {
+      _this.users[message.uuid].destroy();
+    }
+    // console.log("-> presence: ", message);
+  },
+
+  pubnubMessageCallback: function(message) {
+    if (message['content-editor'] && message['content-editor'].uuid !== App.currentUser.attributes.username) {
+      this.refreshQueue.push(message);
+    }
+    // console.log("-> message: ", message);
+  },
+
+  pubnubHereNowCallback: function(message) {
     if (message.uuids.length > 0) {
       for (var i = 0; i < message.uuids.length; i++) {
         var uuid = message.uuids[i];
@@ -119,6 +145,66 @@ App.Views.DocumentsEdit = App.Views.DocumentsBase.extend({
         }
       }
     }
+  },
+
+  pubnubChannel: function() {
+    return "vz-document-edit-" + this.model.attributes.slug_id;
+  },
+
+  isUserPresent: function(uuid) {
+    return typeof(this.users[uuid]) === 'undefined' ? false : true;
+  },
+
+  isUserSelf: function(uuid) {
+    return typeof(uuid) !== "undefined" && uuid === App.currentUser.attributes.username;
+  },
+
+  fetchUserUnlessPresent: function(uuid) {
+    if (typeof(uuid) !== 'undefined' && !this.isUserPresent(uuid)) {
+      this.fetchUser(uuid);
+    }
+  },
+
+  fetchUser: function(uuid) {
+    var _this = this;
+    if (typeof(uuid) !== 'undefined') {
+      this.pubnub.state({
+        channel: this.pubnubChannel(),
+        uuid: uuid,
+        callback: function(attributes) {
+          if (!_this.isUserPresent(attributes.username)) {
+            var model = new App.Models.User(attributes);
+            var user = new App.Views.DocumentsUserInitial({
+              model: model,
+              parent: _this
+            });
+            user.render({style: "z-index:0;"}).moveX(18 + Math.floor(Math.random() * 13));
+            _this.users[attributes.username] = user;
+
+            /* add author */
+            // _this.contentEditorAuthorship.addAuthor(attributes.username, attributes.css_hex_color);
+            _this.contentEditorAuthorship.addAuthor(attributes.username);
+
+            /* initialize cursor */
+            _this.contentEditorCursorManager.setCursor(attributes.username,
+              0, // _this.contentEditor.getLength() - 1,
+              attributes.name, attributes.css_hex_color);
+          }
+        }
+      });
+    }
+  },
+
+  // --- end pubnub
+
+  initUnload: function() {
+    var _this = this;
+    var confirm = function(event) {
+      _this.pubnub.unsubscribe({
+        channel : _this.pubnubChannel(),
+      });
+    };
+    window.onbeforeunload = confirm;
   },
 
   render: function() {
@@ -146,53 +232,6 @@ App.Views.DocumentsEdit = App.Views.DocumentsBase.extend({
     $('#document-edit').show();
   },
 
-  isEdit: function() { return true; },
+  isEdit: function() { return true; }
 
-  channel: function() {
-    return "vz-document-edit-" + this.model.attributes.slug_id;
-  },
-
-  isUserPresent: function(uuid) {
-    return typeof(this.users[uuid]) === 'undefined' ? false : true;
-  },
-
-  isUserSelf: function(uuid) {
-    return typeof(uuid) !== "undefined" && uuid === App.currentUser.attributes.username;
-  },
-
-  fetchUserUnlessPresent: function(uuid) {
-    if (typeof(uuid) !== 'undefined' && !this.isUserPresent(uuid)) {
-      this.fetchUser(uuid);
-    }
-  },
-
-  fetchUser: function(uuid) {
-    var _this = this;
-    if (typeof(uuid) !== 'undefined') {
-      this.pubnub.state({
-        channel: this.channel(),
-        uuid: uuid,
-        callback: function(attributes) {
-          if (!_this.isUserPresent(attributes.username)) {
-            var model = new App.Models.User(attributes);
-            var user = new App.Views.DocumentsUserInitial({
-              model: model,
-              parent: _this
-            });
-            user.render({style: "z-index:0;"}).moveX(18 + Math.floor(Math.random() * 13));
-            _this.users[attributes.username] = user;
-
-            /* add author */
-            // _this.contentEditorAuthorship.addAuthor(attributes.username, attributes.css_hex_color);
-            _this.contentEditorAuthorship.addAuthor(attributes.username);
-
-            /* initialize cursor */
-            _this.contentEditorCursorManager.setCursor(attributes.username,
-              0, // _this.contentEditor.getLength() - 1,
-              attributes.name, attributes.css_hex_color);
-          }
-        }
-      });
-    }
-  }
 });

@@ -480,7 +480,7 @@ App.Views.UploadsIndex = Backbone.View.extend({
 
   refreshUploadCallback: function(message) {
     if (message.command === "refresh_upload" && message.data && message.data.upload_type === "Upload::MediaUpload") {
-      console.log("-> message: ", message);
+      // console.log("-> message: ", message);
       this.refreshUploadQueue.push(message.data);
     }
   },
