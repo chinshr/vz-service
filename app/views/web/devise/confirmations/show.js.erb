@@ -1,1 +1,4 @@
 <%= render "web/shared/devise_errors" %>
+$(function() {
+  $("form").find("button[type=submit]").button("reset");
+});

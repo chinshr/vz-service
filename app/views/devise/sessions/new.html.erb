@@ -1,5 +1,16 @@
 <% page_title "Sign in" %>
 <%= render "web/shared/devise_errors" %>
+<% content_for :javascript_includes do %>
+  <%= javascript_tag do %>
+
+  $(function() {
+    $("form").on('submit', function(e) {
+      $(this).find("button[type=submit]").button("loading");
+    });
+  });
+
+  <% end %>
+<% end %>
 
 <div class="container-fluid content-primary">
   <%= render "devise/shared/login_quote" %>
@@ -26,7 +37,7 @@
         <% end -%>
       </div>
       <div class="panel-footer">
-        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+        <button class="btn btn-lg btn-primary btn-block" type="submit" data-loading-text="Signing in...">Sign in</button>
       </div>
     <% end %>
   </div><!-- form-tile -->
