@@ -1,6 +1,6 @@
 class EmailProcessorMailer < ActionMailer::Base
-  default from: "my@voyz.es"
-  default reply_to: "my@voyz.es"
+  default from: "no-reply@voyz.es"
+  # default reply_to: "my@voyz.es"
 
   def invalid_message(message)
     @message = message
