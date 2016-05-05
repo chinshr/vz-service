@@ -1,4 +1,4 @@
-// mixins
+// model mixins
 App.Models.FormatDate = {
   timeOf: function(field) {
     return App.Helpers.DateFormatter.parse(this.get(field)) / 1000;
@@ -157,6 +157,45 @@ App.Models.MediaHelpers = {
 
   rgbaColor: function() {
     return App.Helpers.Color.rgbaColorFromModel(this);
+  },
+
+  humanizeState: function(state) {
+    state = state || this.attributes.state;
+    if (typeof(this.attributes.status) === 'undefined') {
+      // uploading
+      switch (state) {
+        // upload states
+        case 'uploading':
+        return "Uploading...";
+        case 'completed':
+        return "Processing...";
+        case 'completing':
+        return "Upload finishing";
+        case 'error':
+        return "Upload error.";
+      }
+    } else {
+      // processing
+      switch (state) {
+        // ingest states
+        case 'completed':  // spillover from uploading
+        case 'starting':
+        case 'started':
+        return "Processing..."
+        case 'finished':
+        return "Finished"
+        case 'stopping':
+        return "Stopping..."
+        case 'stopped':
+        return "Stopped"
+        case 'resetting':
+        return "Resetting..."
+        case 'reset':
+        return "Reset"
+        default:
+        return "Working hard...";
+      }
+    }
   }
 
 };

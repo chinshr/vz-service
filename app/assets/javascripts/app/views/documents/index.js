@@ -174,8 +174,7 @@ App.Views.DocumentsIndex = Backbone.View.extend({
 
     _this.collection = _this.collection || new App.Collections.Documents();
     _this.collection.fetch({
-      reset: true,
-      add: true,
+      remove: false,
       data: $.param(this.query),
       success: function(collection, response, xhr) {
         _this.collection = collection;

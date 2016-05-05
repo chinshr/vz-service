@@ -2,12 +2,10 @@ App.Views.UploadsIndex = Backbone.View.extend({
   template: JST['uploads/index'],
   layout: 'grid-item col-lg-2 col-md-3 col-sm-6 col-xs-12',
   offset: 0,
-  limit: 15,
+  limit: 5,
 
   events: {
     'drop #drop-box': 'dropFiles',
-    'change input#files': 'addFiles',
-    'click button#files-proxy': 'trigger',
     'mouseenter #drop-box': 'addHover',
     'mouseleave #drop-box': 'removeHover',
     'change #file-locale': 'initMailTo',
@@ -18,9 +16,9 @@ App.Views.UploadsIndex = Backbone.View.extend({
     _.bindAll(this, "initSourceModal", "initUnload",
       "initDropTarget", "addHover", "removeHover", "trigger",
       "addOne", "addAll", "renderCollection", "addFiles", "dropFiles",
-      "dropzone", "uploadToS3", "statusMessage", "initMailTo",
+      "dropzone", "uploadToS3", "initMailTo",
       "refreshUploadCallback", "refreshLayout", "sourceModalSuccess",
-      "initPlayer", "initInfiniteScroll", "fetchCollection");
+      "initPlayer", "initInfiniteScroll", "fetchCollection", "processRefreshUpload");
 
     options = options || {};
     this.progressViews = {};
@@ -56,6 +54,7 @@ App.Views.UploadsIndex = Backbone.View.extend({
       _this.initUnload();
       _this.initSourceModal();
       _this.initMailTo();
+      _this.initImageUploadInput();
     });
 
     return this;
@@ -217,10 +216,6 @@ App.Views.UploadsIndex = Backbone.View.extend({
     $('body').removeClass('hover');
   },
 
-  trigger: function() {
-    $('#files').trigger('click');
-  },
-
   addFiles: function(e) {
     if ($(e.target).val() === '') {
       return;
@@ -253,87 +248,64 @@ App.Views.UploadsIndex = Backbone.View.extend({
   },
 
   uploadToS3: function(options) {
-    var newUploads = {},
-      s3upload;
+    var _this = this,
+      newUploads = {};
 
-    return s3upload = new S3Upload({
+    return new S3Upload({
       dropped: options.dropped,
       files: options.files,
       selector: options.selector,
       s3SignURL: 'api/account/uploads/signed_s3_put.json',
 
-      onProgress: (function(_this) {
-        return function(xhr, file, percent, status) {
-          var upload;
-          if (!xhr && percent === 0) {
-            upload = new App.Models.Upload({
-              file_name: file.name,
-              file_type: file.type,
-              file_size: parseFloat(file.size),
-              locale: _this.$("#file-locale").val() || "en-US",
-              privacy: "private",
-              editable: true,
-              metadata: {"te_name": VZ.query.te}
-            });
-            newUploads[file.size] = upload;
-            return _this.collection.add(upload);
-          } else {
-            upload = newUploads[file.size];
-            if (upload) {
-              return upload.trigger('upload:progress', {
-                percent: percent,
-                message: _this.statusMessage(status),
-                xhr: xhr
-              });
-            }
-          }
-        };
-      })(this),
-
-      onAbort: (function(_this) {
-        return function(file, status) {
-          var upload;
+      onProgress: function(xhr, file, percent, status) {
+        var upload;
+        if (!xhr && percent === 0) {
+          upload = new App.Models.Upload({
+            type: 'Upload::MediaUpload',
+            file_name: file.name,
+            file_type: file.type,
+            file_size: parseFloat(file.size),
+            locale: _this.$("#file-locale").val() || "en-US",
+            privacy: "private",
+            editable: true,
+            metadata: {"te_name": VZ.query.te}
+          });
+          newUploads[file.size] = upload;
+          return _this.collection.add(upload);
+        } else {
           upload = newUploads[file.size];
-          upload.destroy();
-          delete newUploads[file.size];
-          return _this.$('input#files').replaceWith("<input id='files' type='file' name='files[]' multiple />");
-        };
-      })(this),
-
-      onFinishS3Put: (function(_this) {
-        return function(publicUrl, file) {
-          var upload = newUploads[file.size];
           if (upload) {
-            return upload.save({source_url: publicUrl});
+            return upload.trigger('upload:progress', {
+              percent: percent,
+              status: status,
+              xhr: xhr
+            });
           }
-        };
-      })(this),
+        }
+      },
 
-      onError: (function(_this) {
-        return function(file, status) {
-          var upload;
-          console.log('Upload error: ', status);
-          upload = newUploads[file.size];
-          upload.destroy();
-          return delete newUploads[file.size];
-        };
-      })(this)
+      onAbort: function(file, status) {
+        var upload;
+        upload = newUploads[file.size];
+        upload.destroy();
+        delete newUploads[file.size];
+      },
+
+      onFinishS3Put: function(publicUrl, file) {
+        var upload = newUploads[file.size];
+        if (upload) {
+          return upload.save({source_url: publicUrl});
+        }
+      },
+
+      onError: function(file, status) {
+        var upload;
+        // console.log('Upload error: ', status);
+        upload = newUploads[file.size];
+        upload.destroy();
+        return delete newUploads[file.size];
+      }
     });
-  },
-
-  statusMessage: function(state) {
-    switch (state) {
-      case 'starting':
-      return "Upload starting.";
-      case 'completed':
-      return "Upload completed.";
-      case 'completing':
-      return "Upload finalizing.";
-      case 'uploading':
-      return "Uploading.";
-      default:
-      return "Unknown upload state";
-    }
   },
 
   initMailTo: function() {
@@ -425,10 +397,9 @@ App.Views.UploadsIndex = Backbone.View.extend({
   },
 
   initPubnub: function() {
-    var _this = this,
-      currentRefreshUploadSequence;
+    var _this = this;
 
-    this.refreshUploadQueue = [];
+    this.refreshQueue = [];
 
     this.pubnub = PUBNUB.init({
       publish_key: VZ.config.pubnub.publish_key,
@@ -442,35 +413,46 @@ App.Views.UploadsIndex = Backbone.View.extend({
       state: App.currentUser.attributes
     });
 
-    this.refreshUploadQueueInterval = setInterval(function() {
-      var data = _this.refreshUploadQueue.pop();
-
-      if (data && (!currentRefreshUploadSequence || data.sequence > currentRefreshUploadSequence)) {
-        currentRefreshUploadSequence = data.sequence;
-        var _model = _this.collection.find(function(m) { return m.attributes.uid === data.upload_uid; });
-        if (!!_model) {
-          // existing upload
-          _model.set(data);
-        } else {
-          // new upload
-          _model = new App.Models.Upload({id: data.upload_id});
-          _model.fetch({
-            success: function() {
-              _this.collection.add(_model);
-            },
-            error: function(model, xhr, options) {
-              // may have been deleted, so refresh
-              _this.refreshLayout();
-            }
-          });
+    this.refreshQueueInterval = setInterval(function() {
+      _this.refreshQueue.sort(function(a, b) { return a.sequence > b.sequence}).forEach(function(message) {
+        // console.log("-> message: ", message);
+        // remove from refreshQueue
+        var index = _.findIndex(_this.refreshQueue, function(m) { return m.sequence === message.sequence });
+        if (index > -1) {
+          _this.refreshQueue.splice(index, 1);
         }
-      }
+        // ...then process message
+        _this.processRefreshUpload(message["refresh-upload"]);
+      });
     }, 100);
   },
 
+  processRefreshUpload: function(envelope) {
+    if (envelope) {
+      var _this = this,
+        _model = _this.collection.find(function(m) { return m.attributes.uid === envelope.upload_uid; });
+      if (!!_model) {
+        // existing upload
+        _model.set(envelope);
+      } else {
+        // new upload
+        _model = new App.Models.Upload({id: envelope.upload_id});
+        _model.fetch({
+          success: function() {
+            _this.collection.add(_model);
+          },
+          error: function(model, xhr, options) {
+            // may have been deleted, so refresh
+            _this.refreshLayout();
+          }
+        });
+      }
+    }
+  },
+
   clearUploadQueueTimer: function() {
-    if (this.refreshUploadQueueInterval) {
-      return clearInterval(this.refreshUploadQueueInterval);
+    if (this.refreshQueueInterval) {
+      return clearInterval(this.refreshQueueInterval);
     }
   },
 
@@ -479,9 +461,8 @@ App.Views.UploadsIndex = Backbone.View.extend({
   },
 
   refreshUploadCallback: function(message) {
-    if (message.command === "refresh_upload" && message.data && message.data.upload_type === "Upload::MediaUpload") {
-      // console.log("-> message: ", message);
-      this.refreshUploadQueue.push(message.data);
+    if (message["refresh-upload"] && message["refresh-upload"].upload_type === "Upload::MediaUpload") {
+      this.refreshQueue.push(message);
     }
   },
 
@@ -508,8 +489,7 @@ App.Views.UploadsIndex = Backbone.View.extend({
 
     _this.collection = _this.collection || new App.Collections.AccountUploads();
     _this.collection.fetch({
-      reset: true,
-      add: true,
+      remove: false,
       data: $.param({
         'limit': this.limit,
         'offset': this.offset,
@@ -536,7 +516,7 @@ App.Views.UploadsIndex = Backbone.View.extend({
     });
 
     collectionFetched.done(function() {
-      _this.listenToOnce(_this.collection, 'add', _this.addOne);
+      _this.listenTo(_this.collection, 'add', _this.addOne);
       _this.listenToOnce(_this.collection, 'reset', _this.addAll);
 
       if (!scroll) {
@@ -547,5 +527,38 @@ App.Views.UploadsIndex = Backbone.View.extend({
       }
     });
     return this;
+  },
+
+  initImageUploadInput: function() {
+    var _this = this,
+      input = this.$('input.upload-files-input:file');
+
+    this.$('.btn-upload-file').each(function () {
+      var button = $(this);
+      // input.after(clone).detach();
+      // $.cleanData(input.unbind('remove'));
+
+      button
+        .on('click', function(e) {
+          var form, clone = input.clone(true);
+          e.stopPropagation();
+          e.preventDefault();
+
+          clone
+            .removeClass('upload-files-input')
+            .attr('id', 'files')
+            .on('click', function(e) {
+              e.stopPropagation();
+            })
+            .on('change', _this.addFiles);
+
+          button.parent().find('.upload-files-form').remove();
+          form = $('<form class="upload-files-form"></form>').append(clone);
+          form[0].reset();
+          button.parent().append(form);
+          clone.click();
+        });
+    });
   }
+
 });

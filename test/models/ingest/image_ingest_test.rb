@@ -79,4 +79,12 @@ class Ingest::ImageIngestTest < ActiveSupport::TestCase
       end
     end
   end
+
+  should "broadcast with ingestable's upload" do
+    @ingest = FactoryGirl.create(:image_ingest, :ingestable_document_with_ingest, aasm_state: "started")
+    assert_broadcast :refresh_upload do
+      @ingest.finish!
+      assert_equal :finished, @ingest.state
+    end
+  end
 end

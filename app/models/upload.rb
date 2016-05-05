@@ -138,6 +138,8 @@ class Upload < ActiveRecord::Base
 
   def remove_ingest
     ingest.remove! if ingest && ingest.reload.may_remove?
+  rescue ActiveRecord::RecordNotFound => ex
+    # silently ignore ingest.reload
   end
 
   def perform_delete_job

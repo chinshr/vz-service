@@ -100,7 +100,7 @@ class IngestTest < ActiveSupport::TestCase
 
       should "transition to finished from started" do
         ingest = FactoryGirl.create(:media_ingest_as_audio, :terminate => true, :busy => true)
-        ingest.expects(:remove_servers).once
+        ingest.expects(:remove_from_servers).once
         ingest.update_attributes(aasm_state: :started)
         ingest.status = Ingest::STATE_FINISHED
         assert_equal true, ingest.save
@@ -109,7 +109,7 @@ class IngestTest < ActiveSupport::TestCase
 
       should "transition to stopped from stopping" do
         ingest = FactoryGirl.create(:media_ingest_as_audio, :terminate => false, :busy => true)
-        ingest.expects(:remove_servers).once
+        ingest.expects(:remove_from_servers).once
         ingest.update_attributes(aasm_state: :started)
         assert_enqueued_with(job: Ingest::StopJob) do
           ingest.status = Ingest::STATE_STOPPING
@@ -125,7 +125,7 @@ class IngestTest < ActiveSupport::TestCase
 
       should "transition to reset from resetting" do
         ingest = FactoryGirl.create(:media_ingest_as_audio, :terminate => true, :busy => true)
-        ingest.expects(:remove_servers).once
+        ingest.expects(:remove_from_servers).once
         ingest.update_attributes(aasm_state: :resetting)
         ingest.status = Ingest::STATE_RESET
         assert_equal true, ingest.save
@@ -136,7 +136,7 @@ class IngestTest < ActiveSupport::TestCase
 
       should "transition to removed from removing" do
         ingest = FactoryGirl.create(:media_ingest_as_audio, :busy => false)
-        ingest.expects(:remove_servers).once
+        ingest.expects(:remove_from_servers).once
         ingest.update_attributes(aasm_state: :removing)
         ingest.status = Ingest::STATE_REMOVED
         assert_equal true, ingest.save

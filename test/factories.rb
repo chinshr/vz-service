@@ -101,6 +101,10 @@ FactoryGirl.define do
     trait :ingestable_document do
       association :ingestable, factory: :document_with_track
     end
+
+    trait :ingestable_document_with_ingest do
+      association :ingestable, factory: :document_with_ingest
+    end
   end
 
   factory :chunk do

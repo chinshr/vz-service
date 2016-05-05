@@ -48,8 +48,6 @@ App.Views.TilesBase = Backbone.View.extend({
     if (this.parent) {
       this.parent.refreshLayout();
     }
-    this.stopListening();
-    this.stop();
     return this;
   },
 
@@ -70,76 +68,26 @@ App.Views.TilesBase = Backbone.View.extend({
   },
 
   onUploadProgress: function(data) {
-    console.log(data.percent);
-    console.log(data.message);
-
-    if (!this.$('.progress .progress-bar').hasClass('progress-bar-info')) {
-      this.$('.progress .progress-bar').removeClass('progress-bar-success').addClass('progress-bar-info');
-    }
-    this.$('.progress').addClass('active');
-    this.$('.progress .progress-bar').css('width', '' + data.percent + '%');
-
-    this.$('.message').html(data.message);
-    if (data.percent === 100) {
-      return this._xhr = null;
-    } else if (!this._xhr) {
-      return this._xhr = data.xhr;
-    }
-  },
-
-  ping: function() {
-    this.stop();
-    this.interval = setInterval((function(_this) {
-      return function() {
-        console.log("=> poll (" + (_this.pollCount || 0) + ")");
-        return _this.poll();
-      };
-    })(this), 2500 + parseInt(Math.random() * 1000));
-  },
-
-  stop: function() {
-    return window.clearInterval(this.interval);
-  },
-
-  poll: function() {
-    this.model.sync('read', this.model, {
-      success: (function(_this) {
-        return function(data) {
-          if ((_this.model.attributes.progress || 0) === data.upload.progress) {
-            _this.pollCount = (_this.pollCount || 0) + 1;
-          } else {
-            _this.pollCount = 0;
-          }
-
-          _this.model.set("progress", data.upload.progress);
-          _this.model.set("status", data.upload.status);
-          _this.update();
-
-          if (!(_this.model.hasProgress() && (_this.pollCount || 0) < 50)) {
-            _this.stop();
-            _this.update();
-          }
-        };
-      })(this),
-      error: (function(_this) {
-        return function(model) {
-          console.log("error fetching upload");
-          _this.update(false);
-        };
-      })(this)
+    // console.log(data.percent, data.status);
+    this._xhr = data.xhr;
+    this.model.set({
+      progress: data.percent,
+      state: data.status
     });
   },
 
   update: function() {
     this.updateShare();
     this.updateSlugs();
+    this.updateProgress();
   },
 
   updateStatus: function() {
     var statusEl = this.$('.upload-status');
 
-    if (this.model.attributes.status !== undefined) {
-      statusEl.html(this.model.statusMessage());
+    if (typeof(this.model.attributes.state) !== 'undefined' ||
+      typeof(this.model.attributes.status) !== 'undefined') {
+      // statusEl.html(this.model.statusMessage());
       statusEl
         .removeClass("running")
         .removeClass("error")
@@ -153,8 +101,7 @@ App.Views.TilesBase = Backbone.View.extend({
       } else {
         statusEl.addClass("warning");
       }
-
-      statusEl.html(this.model.statusMessage());
+      statusEl.html(this.model.humanizeState());
       statusEl.show();
     } else {
       statusEl.hide();
@@ -162,12 +109,20 @@ App.Views.TilesBase = Backbone.View.extend({
   },
 
   updateProgress: function() {
-    var hasProgress = this.hasProgress(),
+    var percent = 0,
       progressEl = this.$('.progress'),
       progressBarEl = this.$('.progress .progress-bar');
 
-    if (this.model.attributes.progress !== undefined) {
-      progressBarEl.css('width', "" + this.model.attributes.progress + "%");
+    if (typeof(this.model.hasProgress) === 'function') {
+      if (this.isFileUpload() && (!this.hasUploadProgress() || !!this.model.attributes.id)) {
+        percent = 50;
+      }
+      if (this.isFileUpload() && (this.hasUploadProgress() || !!this.model.attributes.id)) {
+        percent += (this.model.attributes.progress || 0) / 2;
+      } else {
+        percent = this.model.attributes.progress;
+      }
+      progressBarEl.css('width', "" + percent + "%");
       progressBarEl
         .removeClass('progress-bar-info')
         .removeClass('progress-bar-success')
@@ -184,7 +139,7 @@ App.Views.TilesBase = Backbone.View.extend({
       }
 
       // to be 'striped' or not to be...
-      if (hasProgress) {
+      if (this.hasProgress()) {
         progressEl.addClass('active').addClass('progress-striped');
       } else {
         progressEl.removeClass('active').removeClass('progress-striped');
@@ -294,6 +249,10 @@ App.Views.TilesBase = Backbone.View.extend({
 
   hasUploadProgress: function() {
     return !!this._xhr;
+  },
+
+  isFileUpload: function() {
+    return this.model.attributes && !!this.model.attributes.file_name;
   },
 
   documentId: function() {

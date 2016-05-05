@@ -1,20 +1,29 @@
 class UploadListener
 
   def refresh_upload(upload)
-    PubSub.publish upload.user, {
-      command: :refresh_upload,
-      data: {
-        upload_id: upload.id,
-        upload_uid: upload.uid,
-        upload_type: upload.type,
-        progress: upload.progress,
-        state: upload.state,
-        status: upload.status,
-        sequence: Time.zone.now.to_i
-      }
-    }
+    PubSub.publish(upload.user, {
+      "refresh-upload" => upload_hash(upload),
+      "sequence"       => Time.zone.now.to_i
+    })
   rescue FailureResponseError => ex
     Rails.logger.error "PubNub exception: #{ex.message}"
   end
 
+  private
+
+  def upload_hash(upload)
+    hash = Rabl::Renderer.new(template(upload), upload, :view_path => 'app/views', :format => 'hash').render
+    hash[:upload_id]   = hash.delete(:id)
+    hash[:upload_uid]  = hash.delete(:uid)
+    hash[:upload_type] = hash.delete(:type)
+    hash
+  end
+
+  def template(upload)
+    if upload.is_a?(Upload::MediaUpload)
+      'api/account/uploads/show'
+    else
+      'api/uploads/show'
+    end
+  end
 end
