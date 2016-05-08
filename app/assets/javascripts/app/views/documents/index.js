@@ -180,7 +180,8 @@ App.Views.DocumentsIndex = Backbone.View.extend({
         _this.collection = collection;
         if (!scroll || collection.length > 0) {
           // either initial render or endless scroll with results
-          _this.offset += (collection.length > 0 ? Math.min(_this.limit, collection.length) : 0);
+          // _this.offset += (collection.length > 0 ? Math.min(_this.limit, collection.length) : 0);
+          _this.offset += limit;
           _this.blockFetchCollection = false;
           collectionFetched.resolve();
         } else if (scroll && collection.length === 0) {
