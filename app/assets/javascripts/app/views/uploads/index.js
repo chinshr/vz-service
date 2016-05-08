@@ -2,7 +2,7 @@ App.Views.UploadsIndex = Backbone.View.extend({
   template: JST['uploads/index'],
   layout: 'grid-item col-lg-2 col-md-3 col-sm-6 col-xs-12',
   offset: 0,
-  limit: 5,
+  limit: 15,
 
   events: {
     'drop #drop-box': 'dropFiles',
@@ -473,6 +473,8 @@ App.Views.UploadsIndex = Backbone.View.extend({
   initInfiniteScroll: function() {
     var _this = this;
 
+    _this.listenTo(_this.collection, 'add', _this.addOne);
+    _this.listenToOnce(_this.collection, 'reset', _this.addAll);
     document.addEventListener('scroll', function (event) {
       if (document.body.scrollHeight === document.body.scrollTop + window.innerHeight) {
         if (!_this.blockFetchCollection) {
@@ -497,12 +499,13 @@ App.Views.UploadsIndex = Backbone.View.extend({
         'any_of_types': ['media_upload']
       }),
       success: function(collection, response, xhr) {
-        if (!scroll || collection.length > 0) {
+        var length = response.uploads.length;
+        if (!scroll || length > 0) {
           // either initial render or endless scroll with results
-          _this.offset += (collection.length > 0 ? Math.min(_this.limit, collection.length) : 0);
+          _this.offset += (length > 0 ? Math.min(_this.limit, length) : 0);
           _this.blockFetchCollection = false;
           collectionFetched.resolve();
-        } else if (scroll && collection.length === 0) {
+        } else if (scroll && length === 0) {
           // block for N secs when endless scroll without items
           _this.blockFetchCollection = true;
           setTimeout(function() {
@@ -516,14 +519,8 @@ App.Views.UploadsIndex = Backbone.View.extend({
     });
 
     collectionFetched.done(function() {
-      _this.listenTo(_this.collection, 'add', _this.addOne);
-      _this.listenToOnce(_this.collection, 'reset', _this.addAll);
-
       if (!scroll) {
         $('#uploads').html(_this.render().el);
-      } else {
-        // taken care of by listerns
-        //_this.renderCollection(scroll);
       }
     });
     return this;

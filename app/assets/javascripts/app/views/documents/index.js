@@ -152,6 +152,8 @@ App.Views.DocumentsIndex = Backbone.View.extend({
   initInfiniteScroll: function() {
     var _this = this;
 
+    _this.listenToOnce(_this.collection, 'add', _this.addOne);
+    _this.listenToOnce(_this.collection, 'reset', _this.addAll);
     document.addEventListener('scroll', function (event) {
       if (document.body.scrollHeight === document.body.scrollTop + window.innerHeight) {
         if (!_this.blockFetchCollection) {
@@ -177,14 +179,13 @@ App.Views.DocumentsIndex = Backbone.View.extend({
       remove: false,
       data: $.param(this.query),
       success: function(collection, response, xhr) {
-        _this.collection = collection;
+        var length = response.documents.length;
         if (!scroll || collection.length > 0) {
           // either initial render or endless scroll with results
-          // _this.offset += (collection.length > 0 ? Math.min(_this.limit, collection.length) : 0);
-          _this.offset += limit;
+          _this.offset += (length > 0 ? Math.min(_this.limit, length) : 0);
           _this.blockFetchCollection = false;
           collectionFetched.resolve();
-        } else if (scroll && collection.length === 0) {
+        } else if (scroll && length === 0) {
           // block for N secs when endless scroll without items
           _this.blockFetchCollection = true;
           setTimeout(function() {
@@ -198,14 +199,8 @@ App.Views.DocumentsIndex = Backbone.View.extend({
     });
 
     collectionFetched.done(function() {
-      _this.listenToOnce(_this.collection, 'add', _this.addOne);
-      _this.listenToOnce(_this.collection, 'reset', _this.addAll);
-
       if (!scroll) {
         _this.holder.html(_this.render().el);
-      } else {
-        // take care of by listeners
-        // _this.renderCollection(scroll);
       }
     });
     return this;
