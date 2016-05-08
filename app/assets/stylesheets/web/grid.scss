@@ -981,7 +981,7 @@
       .form-group-file-upload {
         margin: 0 0 40px 0;
 
-        #files {
+        .upload-files-input, #files {
           position: absolute;
           top: -1000px;
         }

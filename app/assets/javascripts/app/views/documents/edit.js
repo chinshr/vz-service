@@ -133,7 +133,6 @@ App.Views.DocumentsEdit = App.Views.DocumentsBase.extend({
     if (message['content-editor'] && message['content-editor'].uuid !== App.currentUser.attributes.username) {
       this.refreshQueue.push(message);
     }
-    // console.log("-> message: ", message);
   },
 
   pubnubHereNowCallback: function(message) {

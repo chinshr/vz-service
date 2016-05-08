@@ -4,7 +4,7 @@
     <div class="panel edit-panel">
       <a href="#" class="media-image media-image-thumb">
         <!-- progress -->
-        <div class="progress <% if @progress && @progress < 100: %> progress-striped <% end %>  active" hidden>
+        <div class="progress <% if @progress && @progress < 100: %> progress-striped <% end %> active" hidden>
           <div class="progress-bar progress-bar-success" style="width: <%= @progress %>%"></div>
         </div>
         <span class="thumb thumb-video thumb-crop-top thumb-upload image">

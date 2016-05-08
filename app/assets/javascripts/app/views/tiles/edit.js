@@ -61,8 +61,8 @@ App.Views.TilesEdit = App.Views.TilesBase.extend({
     }
   },
 
-  update: function(hasProgress) {
-    App.Views.TilesBase.prototype.update.call(this, hasProgress); // super
+  update: function() {
+    App.Views.TilesBase.prototype.update.call(this); // super
 
     this.$("input[name='upload[title]']").val(this.model.attributes.title);
     this.$("input[name='upload[tag_list]']").val(_.map(this.model.attributes.tags, function(tag) { return tag.name }));
@@ -70,11 +70,6 @@ App.Views.TilesEdit = App.Views.TilesBase.extend({
     this.$("select[name='upload[locale]']").val(this.model.attributes.locale);
     this.$("form, form input, form textarea, form button").removeAttr('disabled');
     this.$(".form-fields").show();
-
-    // privacy
-    this.$("input[type='radio'][value='" + this.model.attributes.privacy + "']").
-      prop('checked', true).
-      closest('.btn-group .btn').trigger('click');
   },
 
   onFieldChange: function(e) {

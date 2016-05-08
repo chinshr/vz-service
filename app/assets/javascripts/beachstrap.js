@@ -26,48 +26,6 @@
 //= require lib/beachstrap/bootstrap.youtubepopup
 //= require helpers/common
 
-/*
-VZ._registration = (function() {
-  var interval;
-
-  var stop = function stop() {
-    return window.clearInterval(interval);
-  };
-
-  var trigger = function trigger() {
-    $('input#registration_email').trigger('blur');
-    $('input#registration_email').trigger('focus');
-  };
-
-  var fail = function fail(element, message, callback) {
-    callback();
-    stop();
-  }
-
-  var pass = function pass(element, callback) {
-    stop();
-    callback();
-    interval = setInterval(submit, 500);
-  }
-
-  var submit = function submit() {
-    stop();
-    $('input#registration_email').submit();
-  }
-
-  $(function() {
-    ClientSideValidations.callbacks.element.fail = fail;
-    ClientSideValidations.callbacks.element.pass = pass;
-
-    $('.registration-form input#registration_email').bind('keyup', function(event) {
-      stop();
-      if (event.keyCode != 13) {
-        interval = setInterval(trigger, 5000);
-      }
-    });
-  });
-})();
-*/
 
 $(function() {
   $(".youtube").YouTubeModal({autoplay:1, width:680, height:380, color: "#151a28", controls: 0, theme: "dark",

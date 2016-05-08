@@ -382,22 +382,22 @@ class Ingest < ActiveRecord::Base
   end
 
   def after_enter_stopped
-    remove_servers
+    remove_from_servers
   end
 
   def after_enter_reset
     purge_log!
     reset_stage!
     increment! :iteration
-    remove_servers
+    remove_from_servers
   end
 
   def after_enter_finished
-    remove_servers
+    remove_from_servers
   end
 
   def after_enter_removed
-    remove_servers
+    remove_from_servers
   end
 
   def after_enter_restarting
@@ -479,7 +479,7 @@ class Ingest < ActiveRecord::Base
     # server.stop if server && server.ingests.count == 0
   end
 
-  def remove_servers
+  def remove_from_servers
     # will shutdown (stop) server(s) using an
     # on :after_remove callback on ingests association
     # and starting Ingest::Server::StopJob job.

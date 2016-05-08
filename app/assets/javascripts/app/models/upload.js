@@ -1,5 +1,4 @@
 App.Models.Upload = Backbone.Model.extend(_.extend(Backbone.Model, App.Models.MediaHelpers, {
-// App.Models.Upload = Backbone.Model.extend({
   urlRoot: 'api/account/uploads',
 
   defaults: {

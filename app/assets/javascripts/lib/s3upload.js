@@ -50,7 +50,7 @@
       var files = file_element.files,
         results = [];
       for (i = 0, len = files.length; i < len; i++) {
-        results.push(this.uploadFile( files[i] ));
+        results.push(this.uploadFile(files[i]));
       }
       return results;
     };

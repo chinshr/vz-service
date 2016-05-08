@@ -7,7 +7,7 @@ App.Views.PopoversImageUpload = App.Views.PopoverBase.extend({
 
   initialize: function(options) {
     App.Views.PopoverBase.prototype.initialize.call(this, options); // super
-    _.bindAll(this, "update", "refreshUploadCallback", "cancel", "initListeners");
+    _.bindAll(this, "update", "refreshUploadCallback", "cancel", "initListeners", "processRefreshUpload");
 
     this.model     = null;
     this.xhr       = null;
@@ -90,7 +90,7 @@ App.Views.PopoversImageUpload = App.Views.PopoverBase.extend({
             _this.model = new App.Models.Upload({
               type: 'Upload::ImageUpload',
               ingestable_id: _this.parent.model.attributes.document_id,
-              ingestable_type: "Document",
+              ingestable_type: 'Document',
               file_name: file.name,
               file_type: file.type,
               file_size: parseFloat(file.size),
@@ -153,44 +153,6 @@ App.Views.PopoversImageUpload = App.Views.PopoverBase.extend({
     }
   },
 
-  translateStatus: function(state) {
-    if (this.hasUploadProgress()) {
-      // uploading
-      switch (state) {
-        // upload states
-        case 'uploading':
-        return "Uploading...";
-        case 'completed':
-        return "Processing...";
-        case 'completing':
-        return "Upload finishing.";
-        case 'error':
-        return "Upload error.";
-      }
-    } else {
-      // processing
-      switch (state) {
-        // ingest states
-        case 'completed':  // spillover from uploading
-        case 'starting':
-        case 'started':
-        return "Processing..."
-        case 'finished':
-        return "Processing finished."
-        case 'stopping':
-        return "Processing stopping."
-        case 'stopped':
-        return "Processing stopped."
-        case 'resetting':
-        return "Processing resetting."
-        case 'reset':
-        return "Processing reset."
-        default:
-        return "Unknown status (" + state + ").";
-      }
-    }
-  },
-
   updateProgress: function() {
     var percent = 0,
       progressBarEl = this.$('.progress .progress-bar');
@@ -240,7 +202,7 @@ App.Views.PopoversImageUpload = App.Views.PopoverBase.extend({
       uploadStatusEl.addClass('danger');
     }
 
-    uploadStatusEl.html(this.translateStatus(this.model.attributes.state));
+    uploadStatusEl.html(this.model.humanizeState());
     return uploadStatusEl;
   },
 
@@ -261,10 +223,9 @@ App.Views.PopoversImageUpload = App.Views.PopoverBase.extend({
   },
 
   initPubnub: function() {
-    var _this = this,
-      currentRefreshUploadSequence;
+    var _this = this;
 
-    this.refreshUploadQueue = [];
+    this.refreshQueue = [];
 
     this.pubnub = PUBNUB.init({
       publish_key: VZ.config.pubnub.publish_key,
@@ -278,18 +239,28 @@ App.Views.PopoversImageUpload = App.Views.PopoverBase.extend({
       state: App.currentUser.attributes
     });
 
-    this.refreshUploadQueueInterval = setInterval(function() {
-      var data = _this.refreshUploadQueue.pop();
-      if (data && (!currentRefreshUploadSequence || data.sequence > currentRefreshUploadSequence)) {
-        currentRefreshUploadSequence = data.sequence;
-        _this.model.set(data);
-      }
+    this.refreshQueueInterval = setInterval(function() {
+      _this.refreshQueue.sort(function(a, b) { return a.sequence > b.sequence}).forEach(function(message) {
+        // remove from refreshQueue
+        var index = _.findIndex(_this.refreshQueue, function(m) { return m.sequence === message.sequence });
+        if (index > -1) {
+          _this.refreshQueue.splice(index, 1);
+        }
+        // ...then process message
+        _this.processRefreshUpload(message["refresh-upload"]);
+      });
     }, 100);
   },
 
-  clearUploadQueueTimer: function() {
-    if (this.refreshUploadQueueInterval) {
-      return clearInterval(this.refreshUploadQueueInterval);
+  processRefreshUpload: function(envelope) {
+    if (envelope) {
+      this.model.set(envelope);
+    }
+  },
+
+  clearQueueTimer: function() {
+    if (this.refreshQueueInterval) {
+      return clearInterval(this.refreshQueueInterval);
     }
   },
 
@@ -298,16 +269,16 @@ App.Views.PopoversImageUpload = App.Views.PopoverBase.extend({
   },
 
   refreshUploadCallback: function(message) {
-    if (message.command === "refresh_upload" &&
-      message.data && message.data.upload_type === "Upload::ImageUpload" &&
-      message.data.upload_uid === this.model.attributes.uid) {
-      console.log("-> message: ", message);
-      this.refreshUploadQueue.push(message.data);
+    if (message["refresh-upload"] && message["refresh-upload"].upload_type === "Upload::ImageUpload" &&
+      message["refresh-upload"].upload_uid === this.model.attributes.uid) {
+      // console.log("-> message: ", message);
+      this.refreshQueue.push(message);
     }
   },
 
   destroy: function() {
-    this.clearUploadQueueTimer();
+    this.clearQueueTimer();
+    this.hide();
     return App.Views.PopoverBase.prototype.destroy.call(this); // super
   }
 

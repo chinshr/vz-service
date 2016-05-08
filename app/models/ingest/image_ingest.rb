@@ -22,6 +22,17 @@ class Ingest::ImageIngest < Ingest
     Ingest::ImageIngest::ProcessJob.perform_later(self.id)
   end
 
+  def after_enter_finished
+    super
+    # Now, update the ingestable's upload if it's a document
+    # TODO refactor, because this is ugly...
+    if ingestable && ingestable.is_a?(Document)
+      ingestable.ingests.each do |ingestable_ingest|
+        publish(:refresh_upload, ingestable_ingest.upload) if ingestable_ingest.upload
+      end
+    end
+  end
+
   private
 
   def set_iteration

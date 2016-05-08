@@ -17,7 +17,7 @@ App.Views.TilesShow = App.Views.TilesBase.extend({
     _.bindAll(this, "flipTile", "playerOptions", "initPlayerButton",
       "playerLoading", "playerReady", "playerDestroy",
       "playerError", "playerPlay", "playerPause", "playerStop", "playerFinish",
-      "onStart", "onStop", "onReset", "syncEvent", "showMoreTags", "shortenDescription");
+      "onStart", "onStop", "onReset", "onDelete", "syncEvent", "showMoreTags", "shortenDescription");
     App.Views.TilesBase.prototype.initialize.call(this, options); // super
   },
 
@@ -36,6 +36,7 @@ App.Views.TilesShow = App.Views.TilesBase.extend({
 
   update: function() {
     App.Views.TilesBase.prototype.update.call(this); // super
+
     if (this.model.hasFinished()) {
       if (!this.$(".thumb-play-pause").hasClass("play") || !this.$(".thumb-play-pause").hasClass("pause")) {
         this.$(".thumb-play-pause").addClass("play");
@@ -209,7 +210,6 @@ App.Views.TilesShow = App.Views.TilesBase.extend({
     this.model.set({event: event});
     return this.model.sync('update', this.model, {
       success: function() {
-        _this.stop();
         return _this.update();
       },
       error: function() {
@@ -219,25 +219,20 @@ App.Views.TilesShow = App.Views.TilesBase.extend({
   },
 
   onDelete: function(e) {
-    $.confirm("Do you really want to remove \"" + _.escape(this.model.attributes.title) + "\"?", (function(_this) {
-      return function(result) {
-        if (!!result) {
-          if (_this._xhr) {
-            _this._xhr.abort();
-          }
-          _this.model.destroy({
-            wait: true,
-            success: (function(__this) {
-              return function(model, response) {
-                __this.stop();
-                __this.remove();
-                console.log("=> destroyed");
-              };
-            })(_this)
-          });
+    var _this = this;
+    $.confirm("Do you really want to remove \"" + _.escape(this.model.attributes.title) + "\"?", function(result) {
+      if (!!result) {
+        if (_this._xhr) {
+          _this._xhr.abort();
         }
+        _this.model.destroy({
+          wait: true,
+          success: function(model, response) {
+            _this.remove();
+          }
+        });
       }
-    })(this));
+    });
   },
 
   initMorePopover: function() {
