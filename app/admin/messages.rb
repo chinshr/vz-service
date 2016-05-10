@@ -10,6 +10,6 @@ ActiveAdmin.register Message do
     column :to
     column :subject
     column :created_at
-    default_actions
+    actions
   end
 end
