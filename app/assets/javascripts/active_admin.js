@@ -1,7 +1,7 @@
 //= require active_admin/base
-//= require highcharts
 //= require underscore
 //= require gmaps/google
+//= require chartkick
 
 $(function() {
   $('.member_link[confirm]').on('click', function(e) {

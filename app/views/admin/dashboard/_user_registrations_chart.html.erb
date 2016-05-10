@@ -1,0 +1,6 @@
+<%
+  series = {"Registrations" => Registration.organic, "Total" => User, "Confirmed" => User.confirmed}.map {|name, scope|
+    {name: name, data: scope.group_by_week(:created_at, range: 6.months.ago.midnight..Time.zone.now).count}
+}
+%>
+<%= line_chart(series, {height: "300px", width: "100%"}) %>
