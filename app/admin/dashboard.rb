@@ -31,7 +31,7 @@ ActiveAdmin.register_page "Dashboard" do
               "%s total media, %s image uploads" % [Upload::MediaUpload.count, Upload::ImageUpload.count]
             end
             li do
-              "%s total, %s public, %s private documents" % [Document.is_root.count, Document.is_root.with_privacy("public").count, Document.with_privacy("private").count]
+              "%s total, %s public, %s private documents" % [Document.is_root.count, Document.is_root.with_privacy("public").count, Document.is_root.with_privacy("private").count]
             end
           end
         end
