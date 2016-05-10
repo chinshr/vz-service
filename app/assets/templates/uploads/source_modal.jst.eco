@@ -49,8 +49,8 @@
         </div>
         <!-- Modal Footer -->
         <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-primary" data-loading-text="Uploading...">Upload</button>
+          <button type="button" class="btn btn-default btn-chromeless" data-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-chromeless" data-loading-text="Uploading...">Upload</button>
         </div>
       </form>
     </div>

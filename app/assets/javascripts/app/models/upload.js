@@ -5,19 +5,20 @@ App.Models.Upload = Backbone.Model.extend(_.extend(Backbone.Model, App.Models.Me
     "tag_list": []
   },
 
+  dirtyAttributes: {},
+
   validation: {
     title: {
       required: function(value, attr, computedState) {
-        // only on update
-        return typeof(this.attributes.id) === 'undefined' ? false : true;
+        return (this.isNewRecord() && this.isFileUpload()) || !this.isNewRecord() ? true : false;
       }
     },
 
     source_url: {
       required: function(value, attr, computedState) {
-        if (typeof(this.attributes.id) === 'undefined') {
+        if (this.isNewRecord()) {
           // only on create
-          return _.isEmpty(this.attributes.s3_url) ? true : false;
+          return !this.isFileUpload() ? true : false;
         } else {
           // not on update
           return false;
@@ -31,7 +32,18 @@ App.Models.Upload = Backbone.Model.extend(_.extend(Backbone.Model, App.Models.Me
     source_url: "Source URL"
   },
 
+  isDirty: function(key) {
+    if (key && typeof(this.dirtyAttributes[key]) !== 'undefined') {
+      return true;
+    }
+    return false;
+  },
+
+  // {dirty: true}
   set: function(attributes, options) {
+    if (options && options.dirty) {
+      _.extend(this.dirtyAttributes, attributes);
+    }
     if (attributes && attributes.tag_list && _.isString(attributes.tag_list)) {
       attributes.tag_list = attributes.tag_list.split(',')
     }
@@ -56,6 +68,7 @@ App.Models.Upload = Backbone.Model.extend(_.extend(Backbone.Model, App.Models.Me
   },
 
   toJSON: function() {
+    // this.dirtyAttributes = {};
     return {
       upload: _.clone(this.attributes)
     };
@@ -93,6 +106,14 @@ App.Models.Upload = Backbone.Model.extend(_.extend(Backbone.Model, App.Models.Me
 
   hasFinished: function() {
     return (this.attributes.status === 9 ? true : false);
+  },
+
+  isFileUpload: function() {
+    return this.attributes && !!this.attributes.file_name;
+  },
+
+  isNewRecord: function() {
+    return typeof(this.attributes.id) === 'undefined';
   }
 
 }, {className: 'Upload'}));

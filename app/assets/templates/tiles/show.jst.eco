@@ -61,7 +61,7 @@
         <span class="slug edit-slug published-slug" hidden><i class="fa fa-link"><a href="#" target="_blank">http://foo.bar</a></i></span>
       </div><!-- .panel-heading -->
 
-      <% if !_.isEmpty(@description) || @tags.length > 0: %>
+      <% if !_.isEmpty(@description) || (@tags && @tags.length > 0): %>
       <div class="panel-body">
         <% unless _.isEmpty(@description): %>
         <p class="description minimize"><%= @description %></p>
@@ -70,7 +70,7 @@
         <% if @className == 'Upload' || (@className == 'Document' && @tags.length > 0): %>
         <div class="tags-title">Tagged in</div>
         <ul class="tag-list tags-light">
-          <% if @tags.length == 0 && @className == 'Upload': %>
+          <% if (!@tags || @tags.length == 0) && @className == 'Upload': %>
           <li class="empty-tag"><a class="add-tags-link" href="#">Add tags...</a></li>
           <% else: %>
             <% @max_tags = 3 %>

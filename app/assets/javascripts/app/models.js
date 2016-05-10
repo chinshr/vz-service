@@ -193,7 +193,7 @@ App.Models.MediaHelpers = {
         case 'reset':
         return "Reset"
         default:
-        return "Working hard...";
+        return "Processing..";
       }
     }
   }

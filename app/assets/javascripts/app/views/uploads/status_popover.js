@@ -86,21 +86,21 @@ App.Views.UploadsStatusPopover = App.Views.PopoverBase.extend({
 
   update: function() {
     // .action-start
-    if (this.parent.model.attributes._events.indexOf('start') !== -1) {
+    if (this.parent.model.attributes._events && this.parent.model.attributes._events.indexOf('start') !== -1) {
       this.$('.action-start').parent().removeClass('disabled');
     } else {
       this.$('.action-start').parent().addClass('disabled');
     }
 
     // .action-stop
-    if (this.parent.model.attributes._events.indexOf('fail') !== -1) {
+    if (this.parent.model.attributes._events && this.parent.model.attributes._events.indexOf('fail') !== -1) {
       this.$('.action-stop').parent().removeClass('disabled');
     } else {
       this.$('.action-stop').parent().addClass('disabled');
     }
 
     // .action-reset
-    if (this.parent.model.attributes._events.indexOf('reset') !== -1) {
+    if (this.parent.model.attributes._events && this.parent.model.attributes._events.indexOf('reset') !== -1) {
       this.$('.action-reset').parent().removeClass('disabled');
     } else {
       this.$('.action-reset').parent().addClass('disabled');
