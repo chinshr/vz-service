@@ -28,7 +28,10 @@ ActiveAdmin.register_page "Dashboard" do
               "%s total, %s confirmed users" % [User.count, User.confirmed.count]
             end
             li do
-              "%s total, %s public, %s private documents" % [Document.count, Document.with_privacy("public").count, Document.with_privacy("private").count]
+              "%s total media, %s image uploads" % [Upload::MediaUpload.count, Upload::ImageUpload.count]
+            end
+            li do
+              "%s total, %s public, %s private documents" % [Document.is_root.count, Document.is_root.with_privacy("public").count, Document.with_privacy("private").count]
             end
           end
         end
@@ -37,16 +40,28 @@ ActiveAdmin.register_page "Dashboard" do
 
     columns do
       column do
-        panel "Registrations Chart", priority: 4 do
+        panel "User Registrations", priority: 4 do
           div :class => "chart_container" do
-            render "chart"
+            render "user_registrations_chart"
           end
         end
       end
+    end
 
+    columns do
       column do
-        panel "Registrations Location", priority: 5 do
-          render "map"
+        panel "User Uploads", priority: 5 do
+          div :class => "chart_container" do
+            render "user_uploads_chart"
+          end
+        end
+      end
+    end
+
+    columns do
+      column do
+        panel "User Locations", priority: 6 do
+          render "user_locations_map"
         end
       end
     end

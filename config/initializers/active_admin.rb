@@ -177,6 +177,7 @@ ActiveAdmin.setup do |config|
   # To load a javascript file:
   config.register_javascript '//maps.google.com/maps/api/js?v=3.13&amp;sensor=false&amp;libraries=geometry'
   config.register_javascript '//google-maps-utility-library-v3.googlecode.com/svn/tags/markerclustererplus/2.0.14/src/markerclusterer_packed.js'
+  config.register_javascript '//www.google.com/jsapi'
 
   # == CSV options
   #

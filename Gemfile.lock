@@ -160,6 +160,7 @@ GEM
       timers (>= 4.1.1)
     celluloid-supervision (0.20.5)
       timers (>= 4.1.1)
+    chartkick (1.5.2)
     clockwork (1.2.0)
       activesupport
       tzinfo
@@ -243,6 +244,8 @@ GEM
     globalid (0.3.6)
       activesupport (>= 4.1.0)
     gmaps4rails (2.1.2)
+    groupdate (2.5.3)
+      activesupport (>= 3)
     has_scope (0.6.0)
       actionpack (>= 3.2, < 5)
       activesupport (>= 3.2, < 5)
@@ -250,8 +253,6 @@ GEM
     heroku-api (0.4.2)
       excon (~> 0.45)
       multi_json (~> 1.8)
-    highcharts-rails (3.0.10)
-      railties (>= 3.1)
     hitimes (1.2.3)
     htmlentities (4.3.4)
     http-cookie (1.0.2)
@@ -496,6 +497,7 @@ DEPENDENCIES
   autoscaler!
   aws-sdk-v1
   backbone-on-rails
+  chartkick
   client_side_validations!
   clockwork (~> 1.2.0)
   coderay
@@ -516,7 +518,7 @@ DEPENDENCIES
   gingerice
   gmaps4rails
   griddler!
-  highcharts-rails (~> 3.0.0)
+  groupdate
   jquery-rails
   jquery-ui-rails
   json
