@@ -1,5 +1,5 @@
 <%
-  series = {"Uploads" => Upload::MediaUpload}.map {|name, scope|
+  series = {"Uploads" => Upload::MediaUpload, "Messages" => Message::Inbound}.map {|name, scope|
     {name: name, data: scope.group_by_week(:created_at, range: 6.months.ago.midnight..Time.zone.now).count}
 }
 %>
