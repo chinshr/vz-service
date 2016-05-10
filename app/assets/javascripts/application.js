@@ -45,3 +45,8 @@
 //= require web/documents
 //= require web/account/account_application
 //= require app/app
+
+$.ajaxPrefilter(function(options, originalOptions, xhr) {
+  var token = $('meta[name="csrf-token"]').attr('content');
+  xhr.setRequestHeader('X-CSRF-Token', token);
+});
