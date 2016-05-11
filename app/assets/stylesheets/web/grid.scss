@@ -1149,10 +1149,18 @@
     .panel-footer {
       background-color: #fff;
       padding: 10px;
+      border-top: 0;
 
       .btn {
         margin-bottom: 0;
         margin-left: 5px;
+      }
+
+      .btn-chromeless {
+        border-radius: 999em;
+        outline: none;
+        padding-left: 12px;
+        padding-right: 12px;
       }
 
       .form-group {

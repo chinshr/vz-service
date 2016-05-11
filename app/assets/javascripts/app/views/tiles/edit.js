@@ -2,7 +2,9 @@ App.Views.TilesEdit = App.Views.TilesBase.extend({
   template: JST['tiles/edit'],
 
   events: _.extend({
+    'keyup input, keyup textarea': 'setFieldDirty',
     'focusout input': 'onFieldChange',
+    'focusout textarea': 'onFieldChange',
     'change select': 'onSelectionChange',
     'submit': 'onFormSubmit',
   }, App.Views.TilesBase.prototype.events),
@@ -20,7 +22,9 @@ App.Views.TilesEdit = App.Views.TilesBase.extend({
     _.defer((function(_this) {
       return function() {
         _this.initImageUploadInput();
-        _this.$(".action-close").on("click", _this.flipTile);
+        _this.$(".action-close").on("click", function(e) {
+          _this.flipTile();
+        });
         _this.initTagEditor();
       }
     })(this));
@@ -64,12 +68,35 @@ App.Views.TilesEdit = App.Views.TilesBase.extend({
   update: function() {
     App.Views.TilesBase.prototype.update.call(this); // super
 
-    this.$("input[name='upload[title]']").val(this.model.attributes.title);
-    this.$("input[name='upload[tag_list]']").val(_.map(this.model.attributes.tags, function(tag) { return tag.name }));
-    this.$("textarea[name='upload[description]']").val(this.model.attributes.description);
-    this.$("select[name='upload[locale]']").val(this.model.attributes.locale);
-    this.$("form, form input, form textarea, form button").removeAttr('disabled');
+    if (!this.model.isDirty('title')) {
+      this.$("input[name='upload[title]']").val(this.model.attributes.title);
+    }
+    if (!this.model.isDirty('tags')) {
+      this.$("input[name='upload[tag_list]']").val(_.map(this.model.attributes.tags, function(tag) { return tag.name }));
+    }
+    if (!this.model.isDirty('description')) {
+      this.$("textarea[name='upload[description]']").val(this.model.attributes.description);
+    }
+    if (!this.model.isDirty('locale')) {
+      this.$("select[name='upload[locale]']").val(this.model.attributes.locale);
+    }
+
+    if (this.isFileUpload() && this.hasUploadProgress()) {
+      this.$("form, input, textarea, select, button").attr('disabled', true);
+    } else {
+      this.$("form, input, textarea, select, button").attr('disabled', false);
+    }
     this.$(".form-fields").show();
+  },
+
+  setFieldDirty: function(e) {
+    var data, field, key;
+    field = $(e.currentTarget);
+    data  = {};
+    if (!!field.attr('name') && (key = field.attr('name').match(/\[(.+)\]/)[1])) {
+      data[key] = field.val();
+      _.extend(this.model.dirtyAttributes, data);
+    }
   },
 
   onFieldChange: function(e) {
@@ -89,7 +116,7 @@ App.Views.TilesEdit = App.Views.TilesBase.extend({
     data = {};
     if (key = field.attr('name').match(/\[(.+)\]/)[1]) {
       data[key] = field.val();
-      this.model.set(data, {validate: true});
+      this.model.set(data, {validate: true, dirty: true});
       return this.model.isValid();
     }
   },
@@ -114,6 +141,7 @@ App.Views.TilesEdit = App.Views.TilesBase.extend({
       return this.model.sync('update', this.model, {
         success: (function(_this) {
           return function() {
+            _this.model.dirtyAttributes = {};
             _this.$(":submit").button("reset");
             return _this.flipTile();
           };

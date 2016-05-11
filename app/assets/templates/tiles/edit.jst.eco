@@ -81,8 +81,8 @@
         </div><!-- panel-body -->
         <div class="panel-footer">
           <div class="form-group from-group-file-privacy clearfix">
-            <button class="btn btn-sm btn-primary pull-right" type="submit" disabled data-loading-text="Updating...">Update</button>
-            <button class="btn btn-sm btn-default action-close pull-right">Cancel</button>
+            <button class="btn btn-sm btn-primary btn-chromeless pull-right" type="submit" disabled data-loading-text="Updating...">Update</button>
+            <button class="btn btn-sm btn-default btn-chromeless action-close pull-right">Cancel</button>
           </div><!-- .from-group-file-privacy -->
         </div><!-- .panel-footer -->
       </form>
