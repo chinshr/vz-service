@@ -1,2 +1,2 @@
-class Ingest::MediaIngest::CrowdoutWorker < Worker::Ingest::Base
+class Ingest::MediaIngest::CrowdoutWorker < ::Ingest::ApplicationWorker
 end

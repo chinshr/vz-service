@@ -144,7 +144,7 @@ class Api::IngestsControllerTest < ActionController::TestCase
       assert_equal :starting, @ingest2.state
       assert_equal :begin_stage, @ingest2.stage
       put :update, {:id => @ingest2.id, :ingest => {
-        event: "forward_to_harvest_stage"
+        event: "forward_stage"
       }, format: :json}
       assert_response :success
       assert_response_body_attributes_with "ingest"
@@ -268,7 +268,7 @@ class Api::IngestsControllerTest < ActionController::TestCase
     assert_equal false, params.blank?, "response should not be empty"
     (expected_attributes.keys + %w(id upload_id document_id type status
       updated_at created_at started_at stopped_at restarted_at reset_at removed_at finished_at
-      progress messages stage stages iteration busy terminate uid locale events source_url file_name file_type file_size metadata use_source_annotations handle origin_url)).each do |attribute|
+      progress stage stages iteration busy terminate uid locale events source_url file_name file_type file_size metadata use_source_annotations handle origin_url)).each do |attribute|
       assert params.has_key?(attribute), "should contain key '#{attribute}' in response '#{params}'"
     end
 

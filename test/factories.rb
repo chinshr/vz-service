@@ -343,7 +343,7 @@ FactoryGirl.define do
     private_ip_address "10.1.1.123"
     vpc_id nil
     number 1
-    max_processes 5
+    max_workers 5
     region "us-east-1"
     dns "vz-cpw-1.sample-voyzes.com"
     sequence(:instance_id) {|n| "xyz-#{n}"}
@@ -359,9 +359,9 @@ FactoryGirl.define do
     end
   end
 
-  factory :cpw_ingest_process, :class => Ingest::Process do
+  factory :cpw_ingest_process, :class => "Ingest::Process" do
     association :ingest, factory: :media_ingest_as_audio
-    association :server, factory: :cpw_server
+    association :server, factory: :cpw_ingest_server
   end
 
   factory :image, :class => Image do
@@ -383,6 +383,28 @@ FactoryGirl.define do
     width 1024
     height 768
     aspect_ratio (1024 / 768.to_f)
+  end
+
+  factory :ingest_worker, :class => "Ingest::Worker" do
+    association :ingest, factory: :media_ingest_as_audio
+    ingest_iteration 1
+    worker_name "ingest/media_ingest/harvest_worker"
+
+    trait :created do
+      aasm_state "created"
+    end
+
+    trait :running do
+      aasm_state "running"
+    end
+
+    trait :stopped do
+      aasm_state "stopped"
+    end
+
+    trait :finished do
+      aasm_state "finished"
+    end
   end
 
 end

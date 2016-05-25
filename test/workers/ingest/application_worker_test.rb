@@ -1,12 +1,12 @@
 require 'test_helper'
 
-class Ingest::MediaIngest::FooWorker < Worker::Ingest::Base; end
+class Ingest::MediaIngest::FooWorker < Ingest::ApplicationWorker; end
 
-class Worker::Ingest::BaseTest < ActiveSupport::TestCase
+class Ingest::ApplicationWorkerTest < ActiveSupport::TestCase
 
   context "class" do
     setup do
-      Worker::Ingest::Base.queues = {}
+      Ingest::ApplicationWorker.queues = {}
     end
 
     should "#queue_name" do

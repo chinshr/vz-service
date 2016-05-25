@@ -77,7 +77,8 @@ class ActiveSupport::TestCase
     stub_request(:any, /.*pubnub.com.*/)
 
     # stub sqs
-    Worker::Base.stubs(:queue).returns(SQSTestQueue.new)
+    # Worker::Base.stubs(:queue).returns(SQSTestQueue.new)
+    ApplicationWorker.stubs(:queue).returns(SQSTestQueue.new)
   end
 
   teardown do

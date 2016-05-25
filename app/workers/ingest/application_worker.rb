@@ -1,4 +1,4 @@
-class Worker::Ingest::Base < Worker::Base
+class Ingest::ApplicationWorker < ::ApplicationWorker
   class << self
 
     def perform_async(ingest_id, options = {})

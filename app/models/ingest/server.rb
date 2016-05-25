@@ -16,27 +16,32 @@ class Ingest::Server < ActiveRecord::Base
   TENANCY_PRIVATE  = 1
   TENANCY_SETTINGS = {'shared' => TENANCY_SHARED, 'private' => TENANCY_PRIVATE}
 
-  has_many :processes, class_name: "Ingest::Process", dependent: :destroy
-  has_many :ingests, through: :processes, after_remove: :async_server_update
+  has_many :workers, class_name: "Ingest::Worker"
+  has_many :ingests, through: :workers
 
   acts_as_paranoid
 
-  validates :max_processes, numericality: true
+  validates :max_workers, numericality: true
 
   scope :available, -> (tenancy = :shared) {
-    select("ingest_servers.*, (SELECT COUNT(ingest_processes.id) FROM ingest_processes WHERE ingest_processes.server_id = ingest_servers.id) AS processes_count, (ingest_servers.max_processes - (SELECT COUNT(ingest_processes.id) FROM ingest_processes WHERE ingest_processes.server_id = ingest_servers.id)) AS available_processes_count")
+    select("ingest_servers.*, (SELECT COUNT(ingest_workers.id) FROM ingest_workers WHERE ingest_workers.server_id = ingest_servers.id) AS workers_count, (ingest_servers.max_workers - (SELECT COUNT(ingest_workers.id) FROM ingest_workers WHERE ingest_workers.server_id = ingest_servers.id AND ingest_workers.aasm_state IN ('created', 'running'))) AS available_workers_count")
       .enabled
       .with_tenancy(tenancy)
-      .having("(max_processes - (SELECT COUNT(ingest_processes.id) FROM ingest_processes WHERE ingest_processes.server_id = ingest_servers.id)) > 0")
+      .having("(max_workers - (SELECT COUNT(ingest_workers.id) FROM ingest_workers WHERE ingest_workers.server_id = ingest_servers.id AND ingest_workers.aasm_state IN ('created', 'running'))) > 0")
       .group("ingest_servers.id")
-      .order("available_processes_count DESC")
+      .order("available_workers_count DESC")
   }
   scope :with_tenancy, -> (tenancy) {
     where("ingest_servers.tenancy_mask & #{tenancy_mask(tenancy)} > 0")
   }
-  scope :without_processes, -> {
-    select("ingest_servers.*, (SELECT COUNT(ingest_processes.id) FROM ingest_processes WHERE ingest_processes.server_id = ingest_servers.id) AS processes_count")
-      .having("(SELECT COUNT(ingest_processes.id) FROM ingest_processes WHERE ingest_processes.server_id = ingest_servers.id) = 0")
+  scope :without_workers, -> {
+    select("ingest_servers.*, (SELECT COUNT(ingest_workers.id) FROM ingest_workers WHERE ingest_workers.server_id = ingest_servers.id) AS workers_count")
+      .having("(SELECT COUNT(ingest_workers.id) FROM ingest_workers WHERE ingest_workers.server_id = ingest_servers.id) = 0")
+      .group("ingest_servers.id")
+  }
+  scope :without_busy_workers, -> {
+    select("ingest_servers.*, (SELECT COUNT(ingest_workers.id) FROM ingest_workers WHERE ingest_workers.server_id = ingest_servers.id AND ingest_workers.aasm_state IN ('created', 'running')) AS workers_count")
+      .having("(SELECT COUNT(ingest_workers.id) FROM ingest_workers WHERE ingest_workers.server_id = ingest_servers.id AND ingest_workers.aasm_state IN ('created', 'running')) = 0")
       .group("ingest_servers.id")
   }
 
@@ -73,7 +78,7 @@ class Ingest::Server < ActiveRecord::Base
         server.instance_type      = instance.instance_type || "t2.micro" # -> "t2.micro"
         # calculated fields
         server.number             = next_number
-        server.max_processes      = max_processes_from(server.instance_type)
+        server.max_workers        = max_workers_from(server.instance_type)
         # assign attributes
         attributes.each do |k, v|
           server.send("#{k}=", v)
@@ -87,7 +92,7 @@ class Ingest::Server < ActiveRecord::Base
     end
 
     # https://aws.amazon.com/ec2/instance-types/
-    def max_processes_from(instance_type)
+    def max_workers_from(instance_type)
       type, size = instance_type.split('.')
       base = case type
       when 't2' then 2
@@ -159,12 +164,12 @@ class Ingest::Server < ActiveRecord::Base
     ::Ingest::Server::TerminateJob.perform_later(self.id)
   end
 
-  def with_running_processes?
-    processes.count > 0 && ingests.any? {|i| i.started? || i.starting?}
+  def with_busy_workers?
+    workers.any_of_state(['created', 'running']).count > 0
   end
 
-  def without_running_processes?
-    processes.count == 0 || ingests.none? {|i| i.started? || i.starting?}
+  def without_busy_workers?
+    workers.any_of_state(['created', 'running']).count == 0
   end
 
   protected
@@ -174,7 +179,7 @@ class Ingest::Server < ActiveRecord::Base
   end
 
   def _restart
-    case instance.status
+    case instance.try(:status)
     when :running, :pending
       enable!
     when :terminated, :shutting_down
@@ -183,31 +188,41 @@ class Ingest::Server < ActiveRecord::Base
       wait_until(:stopped)
       _restart
     when :stopped
-      instance.start unless test?
+      instance_start unless test?
       enable!
+    else
+      false
     end
+  rescue AASM::InvalidTransition => ex
+    # happens when enable! on disabled server
+    false
   end
 
   def _stop
-    case instance.status
+    case instance.try(:status)
     when :running
-      instance.stop unless test?
+      instance_stop unless test?
       true
     when :pending
-      instance.stop unless test?
+      instance_stop unless test?
       true
     when :terminated, :shutting_down
       false
     when :stopping, :stopped
       true
+    else
+      false
     end
+  rescue AWS::EC2::Errors::InvalidInstanceID::NotFound => ex
+    Rails.logger.info("Instance #{instance.id} not found, possibly manually removed.")
+    false
   end
 
   def _terminate
     disable!
-    case instance.status
+    case instance.try(:status)
     when :running
-      instance.terminate unless test?
+      instance_terminate unless test?
       true
     when :pending
       wait_until(:terminated)
@@ -218,12 +233,14 @@ class Ingest::Server < ActiveRecord::Base
       wait_until(:stopped)
       _terminate
     when :stopped
-      instance.terminate unless test?
+      instance_terminate unless test?
       true
+    else
+      false
     end
   rescue AWS::EC2::Errors::InvalidInstanceID::NotFound => ex
     Rails.logger.info("Instance #{instance.id} not found, possibly manually removed.")
-    true
+    false
   end
 
   def wait_until(status)
@@ -239,15 +256,29 @@ class Ingest::Server < ActiveRecord::Base
     true
   end
 
-  def async_server_update(record = nil)
-    stop if ingests.count == 0
-  end
-
   def enter_enabled
     self.enabled_at = Time.zone.now
   end
 
   def enter_disabled
     self.disabled_at = Time.zone.now
+  end
+
+  def instance_start
+    result = instance.start
+    update_column(:launched_at, instance.launch_time)
+    result
+  end
+
+  def instance_stop
+    result = instance.stop
+    update_column(:stopped_at, Time.zone.now)
+    result
+  end
+
+  def instance_terminate
+    result = instance.terminate
+    update_column(:terminated_at, Time.zone.now)
+    result
   end
 end

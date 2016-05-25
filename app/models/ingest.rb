@@ -18,13 +18,11 @@ class Ingest < ActiveRecord::Base
   STATE_FINISHED    = 9
   STATE_RESTARTING  = 10
   STATES = {
-    created: STATE_CREATED, starting: STATE_STARTING, started: STATE_STARTED, 
+    created: STATE_CREATED, starting: STATE_STARTING, started: STATE_STARTED,
     stopping: STATE_STOPPING, stopped: STATE_STOPPED, resetting: STATE_RESETTING,
-    reset: STATE_RESET, removing: STATE_REMOVING, removed: STATE_REMOVED, 
+    reset: STATE_RESET, removing: STATE_REMOVING, removed: STATE_REMOVED,
     finished: STATE_FINISHED,  restarting: STATE_RESTARTING
   }
-
-  serialize :messages, Hash
 
   delegate :track, to: :document, allow_nil: true  # document's master track
   delegate :track=, to: :document, allow_nil: true # dito
@@ -39,9 +37,8 @@ class Ingest < ActiveRecord::Base
   end
   has_many :tracks, -> { uniq }, through: :chunks, source: :track
   has_many :tracks_including_master_track, -> {uniq}, through: :segments, source: :track, class_name: "Track"
-  has_many :processes, class_name: "Ingest::Process", dependent: :destroy
-  has_many :servers, through: :processes, after_remove: :async_server_update
-
+  has_many :workers, :class_name => "Ingest::Worker", :dependent => :destroy
+  has_many :servers, through: :workers
   has_many :images, :class_name => "::Image", :foreign_key => :ingest_id, :dependent => :destroy
 
   acts_as_paranoid
@@ -50,7 +47,7 @@ class Ingest < ActiveRecord::Base
 
   # public scopes
   filtered_scopes :sort_order, :reverse_sort, :any_of_status, :none_of_status,
-    :document_id, :is_busy, :is_terminated
+    :document_id, :is_busy, :is_terminate
   scope :sort_order, -> (param) {
     case param.first[0]  # E.g. get first key of {"id"=>"asc"}
     when "id"
@@ -68,7 +65,7 @@ class Ingest < ActiveRecord::Base
     map {|s| s.match(/^([\-]{,1}[0-9]+)$/) ? s : nil}.reject(&:blank?).map {|s| Ingest::STATES.key(s.to_i)}.uniq)}
   scope :document_id, -> (params) { where(document_id: params) }
   scope :is_busy, -> (param) { where("ingests.busy = ?", Model::Helper.booleanize(param)) }
-  scope :is_terminated, -> (param) { where("ingests.terminate = ?", Model::Helper.booleanize(param)) }
+  scope :is_terminate, -> (param) { where("ingests.terminate = ?", Model::Helper.booleanize(param)) }
 
   aasm column: 'aasm_state' do
     state :created, initial: true
@@ -76,7 +73,7 @@ class Ingest < ActiveRecord::Base
     state :started, :enter => :enter_started
     state :stopping, :enter => :enter_stopping, :after_enter => :after_enter_stopping
     state :stopped, :enter => :enter_stopped, :after_enter => :after_enter_stopped
-    state :resetting, :after_enter => :after_enter_resetting
+    state :resetting, :enter => :enter_resetting, :after_enter => :after_enter_resetting
     state :reset, :enter => :enter_reset, :after_enter => :after_enter_reset
     state :removing, :enter => :enter_removing, :after_enter => :after_enter_removing
     state :removed, :enter => :enter_removed, :after_enter => :after_enter_removed
@@ -88,7 +85,7 @@ class Ingest < ActiveRecord::Base
     end
 
     event :stop, :after => :after_event_stop do
-      transitions :from => :started, :to => :stopping
+      transitions :from => [:starting, :restarting, :started], :to => :stopping
     end
 
     event :reset, :after => :after_event_reset do
@@ -211,7 +208,7 @@ class Ingest < ActiveRecord::Base
   end
 
   def purge_log!
-    update_attribute(:messages, nil)
+    update_attribute(:messages, {})
   end
 
   # set_progress! 10 => 10%
@@ -246,7 +243,7 @@ class Ingest < ActiveRecord::Base
 
   # NOT inverse
   def not_busy?; !busy?; end
-  def not_terminated?; !terminate?; end
+  def not_terminate?; !terminate?; end
   def not_created?; !created?; end
   def not_starting?; !starting?; end
   def not_started?; !started?; end
@@ -318,11 +315,6 @@ class Ingest < ActiveRecord::Base
     end
   end
 
-  def reset_stage!
-    # overload in subclass
-    update_attribute(:aasm_stage, nil)
-  end
-
   def perform_delete_job
     Ingest::DeleteJob.perform_later(self.id)
   end
@@ -372,33 +364,24 @@ class Ingest < ActiveRecord::Base
     self.removed_at = Time.zone.now
   end
 
+  def enter_resetting
+    self.terminate = true
+  end
+
   #--- after_enter
 
   def after_enter_starting; end
   def after_enter_stopping; end
-
-  def after_enter_resetting
-    self.terminate = true
-  end
-
-  def after_enter_stopped
-    remove_from_servers
-  end
+  def after_enter_stopped; end
+  def after_enter_resetting; end
 
   def after_enter_reset
-    purge_log!
-    reset_stage!
     increment! :iteration
-    remove_from_servers
   end
 
-  def after_enter_finished
-    remove_from_servers
-  end
+  def after_enter_finished; end
 
-  def after_enter_removed
-    remove_from_servers
-  end
+  def after_enter_removed; end
 
   def after_enter_restarting
     self.restarted_at = Time.zone.now
@@ -426,6 +409,7 @@ class Ingest < ActiveRecord::Base
 
   def after_commit_event_stop
     Ingest::StopJob.perform_later(self.id) if @after_commit_event_stop
+    @after_commit_event_stop = false
   end
 
   def after_event_reset
@@ -435,6 +419,7 @@ class Ingest < ActiveRecord::Base
 
   def after_commit_event_reset
     Ingest::ResetJob.perform_later(self.id) if @after_commit_event_reset
+    @after_commit_event_reset = false
   end
 
   def after_event_remove
@@ -444,6 +429,7 @@ class Ingest < ActiveRecord::Base
 
   def after_commit_event_remove
     Ingest::RemoveJob.perform_later(self.id) if @after_commit_event_remove
+    @after_commit_event_remove = false
   end
 
   def after_commit_event_process; end
@@ -472,20 +458,6 @@ class Ingest < ActiveRecord::Base
 
   def has_valid_source_url?
     Model::URI::Target.new(source_url).valid?
-  end
-
-  def async_server_update(server = nil)
-    # TODO: should this be moved into prune chron job
-    # server.stop if server && server.ingests.count == 0
-  end
-
-  def remove_from_servers
-    # will shutdown (stop) server(s) using an
-    # on :after_remove callback on ingests association
-    # and starting Ingest::Server::StopJob job.
-    servers.each do |server|
-      server.ingests.delete(self)
-    end
   end
 
   def refresh_upload

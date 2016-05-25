@@ -1,20 +1,13 @@
-class Ingest::StopJob < ActiveJob::Base
-  queue_as :default
-
-  RETRIES      = 5
-  WAIT_IN_SECS = 1.minute
+class Ingest::StopJob < Ingest::ProcessJob
 
   def perform(ingest_id, options = {})
-    options = options.reverse_merge({retries: RETRIES})
-    if @ingest = Ingest.find(ingest_id)
-      if @ingest.not_busy?
-        @ingest.with_lock do
-          @ingest.process!
-        end
-      else
-        Ingest::StopJob.set(wait: WAIT_IN_SECS).perform_later(ingest_id, {retries: options[:retries] - 1}) if options[:retries] > 0
-      end
-    end
+    stop_all_running_workers(ingest_id)
+    super(ingest_id, options)
   end
 
+  protected
+
+  def stop_all_running_workers(ingest_id)
+    Ingest::Worker.active.ingest_id(ingest_id).find_each {|w| w.stop! if w.may_stop?}
+  end
 end

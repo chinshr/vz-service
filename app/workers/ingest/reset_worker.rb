@@ -1,2 +1,2 @@
-class Ingest::ResetWorker < Worker::Ingest::Base
+class Ingest::ResetWorker < ::Ingest::ApplicationWorker
 end

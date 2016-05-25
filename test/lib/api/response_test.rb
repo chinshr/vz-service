@@ -10,10 +10,21 @@ class Api::ResponseTest < ActiveSupport::TestCase
       assert_equal Api::Response, @api_response.class
     end
 
-    should "add data" do
-      data = {:test => 1}
-      @api_response.add_data(data)
-      assert_equal data, @api_response.data
+    context "#add_data" do
+
+      should "be valid" do
+        data = {"test" => 1}
+        @api_response.add_data(data)
+        assert_equal data, @api_response.data
+        assert_equal Api::Code::SUCCESS, @api_response.code
+      end
+
+      should "be invalid with validation error" do
+        data = {"document" => {"id" => 1, "name" => "foo", "errors" => {"state" => "invalid"}}}
+        @api_response.add_data(data)
+        assert_equal({"code" => Api::Code::VALIDATION_ERROR}.merge(data), JSON.parse(@api_response.to_json))
+      end
+
     end
 
     should "add errors" do

@@ -37,33 +37,39 @@ class Ingest::Server::PruneJobTest < ActiveSupport::TestCase
   context "#stop" do
     setup do
       @ingest = FactoryGirl.create(:media_ingest_as_audio)
+      @worker = FactoryGirl.create(:ingest_worker, :running, ingest: @ingest)
     end
 
-    should "stop server without ingests" do
-      server = FactoryGirl.create(:cpw_ingest_server, :enabled, enabled_at: Time.zone.now - 16.minutes)
-      assert_enqueued_with(job: Ingest::Server::StopJob, args:[server.id]) do
-        Ingest::Server::PruneJob.new.perform
+    context "servers enabled almost 1 hour ago" do
+      should "stop without busy workers" do
+        server = FactoryGirl.create(:cpw_ingest_server, :enabled, enabled_at: Time.zone.now - 55.minutes)
+        @worker.update_attributes(server: server)
+        @worker.finish!
+        assert_enqueued_with(job: Ingest::Server::StopJob, args:[server.id]) do
+          Ingest::Server::PruneJob.new.perform
+        end
+      end
+
+      should "don't stop with busy workers" do
+        server = FactoryGirl.create(:cpw_ingest_server, :enabled, enabled_at: Time.zone.now - 55.minutes)
+        @worker.update_attributes(server: server)
+        assert_enqueued_jobs 0 do
+          Ingest::Server::PruneJob.new.perform
+        end
       end
     end
 
-    should "not stop servers with running ingests" do
-      server = FactoryGirl.create(:cpw_ingest_server, :enabled, enabled_at: Time.zone.now - 16.minutes)
-      server.ingests << @ingest
-      Ingest::Server.any_instance.expects(:stop).never
-    end
-
-    should "stop servers with removed ingests" do
+    should "stop servers with stopped workers" do
       server = FactoryGirl.create(:cpw_ingest_server, :enabled, enabled_at: Time.zone.now - 1.hour)
-      @ingest.remove! and @ingest.process!
-      assert_equal :removed, @ingest.state
-      server.ingests << @ingest
+      worker = FactoryGirl.create(:ingest_worker, :stopped, {ingest: @ingest, server: server})
       assert_enqueued_with(job: Ingest::Server::StopJob, args:[server.id]) do
         Ingest::Server::PruneJob.new.perform
       end
     end
 
-    should "not stop recently launched servers" do
-      server = FactoryGirl.create(:cpw_ingest_server, :enabled, enabled_at: Time.zone.now - 1.minutes)
+    should "not stop 'recently' launched servers" do
+      server = FactoryGirl.create(:cpw_ingest_server, :enabled, enabled_at: Time.zone.now - 54.minutes)
+      assert_equal [server].to_set, Ingest::Server.enabled.without_busy_workers.to_set
       Ingest::Server.any_instance.expects(:stop).never
       Ingest::Server::PruneJob.new.perform
     end
@@ -84,15 +90,14 @@ class Ingest::Server::PruneJobTest < ActiveSupport::TestCase
 
     should "not terminate stale servers with ingests" do
       server = FactoryGirl.create(:cpw_ingest_server, :enabled, enabled_at: Time.zone.now - 8.hours - 1.minute)
-      server.ingests << @ingest
+      worker = FactoryGirl.create(:ingest_worker, server: server)
       Ingest::Server.any_instance.expects(:terminate).never
+      Ingest::Server::PruneJob.new.perform
     end
 
-    should "terminate stale servers with removed ingests" do
+    should "terminate stale servers with no busy workers" do
       server = FactoryGirl.create(:cpw_ingest_server, :enabled, enabled_at: Time.zone.now - 8.hours - 1.minute)
-      @ingest.remove! && @ingest.process!
-      assert_equal :removed, @ingest.state
-      server.ingests << @ingest
+      worker = FactoryGirl.create(:ingest_worker, :finished, {ingest: @ingest, server: server})
       assert_enqueued_with(job: ::Ingest::Server::TerminateJob, args:[server.id]) do
         Ingest::Server::PruneJob.new.perform
       end

@@ -308,6 +308,7 @@ GEM
     newrelic_rpm (3.15.1.316)
     nokogiri (1.6.7.2)
       mini_portile2 (~> 2.0.0.rc2)
+    nori (2.6.0)
     oj (2.15.0)
     orm_adapter (0.5.0)
     paper_trail (4.1.0)
@@ -483,6 +484,7 @@ GEM
     whatlanguage (1.0.6)
     wisper (1.6.1)
     wisper-minitest (0.0.1)
+    yajl-ruby (1.2.1)
     yui-compressor (0.12.0)
 
 PLATFORMS
@@ -533,6 +535,7 @@ DEPENDENCIES
   modernizr-rails
   newrelic_rpm
   nokogiri
+  nori
   oj
   paper_trail (~> 4)
   paranoia (~> 2.0)
@@ -573,6 +576,7 @@ DEPENDENCIES
   whatlanguage (~> 1.0.5)
   wisper (~> 1.6.1)
   wisper-minitest
+  yajl-ruby
   yui-compressor
 
 BUNDLED WITH
