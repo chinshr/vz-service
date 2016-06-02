@@ -9,6 +9,16 @@
     });
   });
 
+  history.navigationMode = 'compatible';
+  $(document).ready(function() {
+    $(this).find("button[type=submit]").button("reset");
+  });
+
+  $(window).bind('beforeunload', function() {
+    $(this).find("button[type=submit]").button("reset");
+  });
+
+
   <% end %>
 <% end %>
 
