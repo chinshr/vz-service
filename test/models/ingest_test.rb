@@ -14,6 +14,16 @@ class IngestTest < ActiveSupport::TestCase
     should have_many(:tracks).through(:chunks)
     should have_many(:workers).dependent(:destroy)
     should have_many(:servers).through(:workers)
+
+    should "have_many uniq servers" do
+      ingest = FactoryGirl.create(:media_ingest_as_audio)
+      server = FactoryGirl.create(:cpw_ingest_server)
+      w1 = FactoryGirl.create(:ingest_worker, server: server, ingest: ingest)
+      w2 = FactoryGirl.create(:ingest_worker, server: server, ingest: ingest)
+      w3 = FactoryGirl.create(:ingest_worker, server: server, ingest: ingest)
+      assert_equal 1, ingest.servers.to_a.size
+    end
+
   end
 
   context "validations" do

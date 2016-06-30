@@ -11,7 +11,7 @@ class Ingest::ServerTest < ActiveSupport::TestCase
       w1 = FactoryGirl.create(:ingest_worker, server: server, ingest: ingest)
       w2 = FactoryGirl.create(:ingest_worker, server: server, ingest: ingest)
       w3 = FactoryGirl.create(:ingest_worker, server: server, ingest: ingest)
-      assert_equal 1, server.ingests.count
+      assert_equal 1, server.ingests.to_a.size
     end
   end
 

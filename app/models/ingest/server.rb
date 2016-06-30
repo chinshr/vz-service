@@ -17,7 +17,7 @@ class Ingest::Server < ActiveRecord::Base
   TENANCY_SETTINGS = {'shared' => TENANCY_SHARED, 'private' => TENANCY_PRIVATE}
 
   has_many :workers, class_name: "Ingest::Worker"
-  has_many :ingests, through: :workers, uniq: true
+  has_many :ingests, -> { select("DISTINCT ON (id) ingests.*") }, through: :workers
 
   acts_as_paranoid
 

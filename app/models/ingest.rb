@@ -38,7 +38,7 @@ class Ingest < ActiveRecord::Base
   has_many :tracks, -> { uniq }, through: :chunks, source: :track
   has_many :tracks_including_master_track, -> {uniq}, through: :segments, source: :track, class_name: "Track"
   has_many :workers, :class_name => "Ingest::Worker", :dependent => :destroy
-  has_many :servers, through: :workers
+  has_many :servers, -> { select("DISTINCT ON (id) ingest_servers.*") }, through: :workers
   has_many :images, :class_name => "::Image", :foreign_key => :ingest_id, :dependent => :destroy
 
   acts_as_paranoid
