@@ -83,7 +83,7 @@ class Ingest::Server < ActiveRecord::Base
         attributes.each do |k, v|
           server.send("#{k}=", v)
         end
-        server.enable if instance.status == :running
+        server.enable if instance.status == :running || instance.status == :pending
       end
     end
 
