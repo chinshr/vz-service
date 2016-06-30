@@ -4,8 +4,6 @@ class ::Ingest::Worker < ActiveRecord::Base
   include Model::Filter
   include Model::Uid
 
-  attr_writer :instance_id
-
   self.table_name = "ingest_workers"
 
   delegate :progress, to: :ingest, allow_nil: true
@@ -83,10 +81,6 @@ class ::Ingest::Worker < ActiveRecord::Base
     def generate_uid; SecureRandom.uuid; end
   end
 
-  def instance_id
-    server.instance_id if server
-  end
-
   def worker_class
     worker_name.classify.constantize if worker_name.present?
   rescue NameError
@@ -121,10 +115,12 @@ class ::Ingest::Worker < ActiveRecord::Base
   end
 
   def set_server_from_instance_id
-    if @instance_id
-      if server_from_instance_id = Ingest::Server.find_by_instance_id(@instance_id)
+    if instance_id && changes[:instance_id] && !server_id
+      if server_from_instance_id = Ingest::Server.find_by_instance_id(instance_id)
         self.server = server_from_instance_id
       end
+    elsif server_id && changes[:server_id]
+      self.instance_id = server.instance_id
     end
   end
 
