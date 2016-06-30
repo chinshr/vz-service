@@ -4,6 +4,15 @@ class Ingest::ServerTest < ActiveSupport::TestCase
   context "associations" do
     should have_many(:workers)
     should have_many(:ingests).through(:workers)
+
+    should "have_many uniq ingests" do
+      ingest = FactoryGirl.create(:media_ingest_as_audio)
+      server = FactoryGirl.create(:cpw_ingest_server)
+      w1 = FactoryGirl.create(:ingest_worker, server: server, ingest: ingest)
+      w2 = FactoryGirl.create(:ingest_worker, server: server, ingest: ingest)
+      w3 = FactoryGirl.create(:ingest_worker, server: server, ingest: ingest)
+      assert_equal 1, server.ingests.count
+    end
   end
 
   context "validations" do
