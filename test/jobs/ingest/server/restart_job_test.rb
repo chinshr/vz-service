@@ -39,7 +39,7 @@ class Ingest::Server::RestartJobTest < ActiveSupport::TestCase
       aws_ec2_instance.expects(:launch_time).returns(Time.zone.now)
       aws_ec2_instance.expects(:image_id).returns("ami-8fcbb0ea")
       aws_ec2_instance.expects(:instance_type).returns("t2.micro")
-      aws_ec2_instance.expects(:status).returns(:pending)
+      aws_ec2_instance.stubs(:status).returns(:pending)
       Provider::AWS::EC2.any_instance.stubs(:launch).returns(aws_ec2_instance)
       Ingest::Server.any_instance.expects(:_restart).returns(true)
       assert_difference "Ingest::Server.count", 1 do
