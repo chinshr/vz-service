@@ -372,7 +372,7 @@ class Ingest::WorkerTest < ActiveSupport::TestCase
     end
 
     should "set server from instance id on update" do
-      @worker = FactoryGirl.create(:ingest_worker, instance_id: FactoryGirl.create(:cpw_ingest_server).instance_id)
+      @worker = FactoryGirl.create(:ingest_worker)
       @worker.update_attributes(instance_id: @server.instance_id)
       assert_equal @server, @worker.server
       assert_equal @server.instance_id, @worker.instance_id
