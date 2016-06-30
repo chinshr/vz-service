@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160413060411) do
+ActiveRecord::Schema.define(version: 20160624062222) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -227,16 +227,6 @@ ActiveRecord::Schema.define(version: 20160413060411) do
   add_index "images", ["iteration"], name: "index_images_on_iteration", using: :btree
   add_index "images", ["uid"], name: "index_images_on_uid", using: :btree
 
-  create_table "ingest_processes", force: :cascade do |t|
-    t.integer  "ingest_id"
-    t.integer  "server_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "ingest_processes", ["ingest_id", "server_id"], name: "index_ingest_processes_on_ingest_id_and_server_id", unique: true, using: :btree
-  add_index "ingest_processes", ["server_id", "ingest_id"], name: "index_ingest_processes_on_server_id_and_ingest_id", unique: true, using: :btree
-
   create_table "ingest_servers", force: :cascade do |t|
     t.string   "type",               limit: 255,                     null: false
     t.string   "name",               limit: 255
@@ -244,7 +234,7 @@ ActiveRecord::Schema.define(version: 20160413060411) do
     t.string   "vpc_id",             limit: 255
     t.integer  "tenancy_mask",                   default: 0,         null: false
     t.integer  "number",                         default: 0,         null: false
-    t.integer  "max_processes",                  default: 1,         null: false
+    t.integer  "max_workers",                    default: 1,         null: false
     t.string   "private_ip_address", limit: 255
     t.string   "public_ip_address",  limit: 255
     t.string   "instance_id",        limit: 255
@@ -260,6 +250,8 @@ ActiveRecord::Schema.define(version: 20160413060411) do
     t.datetime "disabled_at"
     t.string   "uid",                limit: 255
     t.datetime "deleted_at"
+    t.datetime "stopped_at"
+    t.datetime "terminated_at"
   end
 
   add_index "ingest_servers", ["aasm_state"], name: "index_ingest_servers_on_aasm_state", using: :btree
@@ -267,13 +259,41 @@ ActiveRecord::Schema.define(version: 20160413060411) do
   add_index "ingest_servers", ["image_id"], name: "index_ingest_servers_on_image_id", using: :btree
   add_index "ingest_servers", ["instance_type"], name: "index_ingest_servers_on_instance_type", using: :btree
   add_index "ingest_servers", ["launched_at"], name: "index_ingest_servers_on_launched_at", using: :btree
-  add_index "ingest_servers", ["max_processes"], name: "index_ingest_servers_on_max_processes", using: :btree
+  add_index "ingest_servers", ["max_workers"], name: "index_ingest_servers_on_max_workers", using: :btree
   add_index "ingest_servers", ["name"], name: "index_ingest_servers_on_name", using: :btree
+  add_index "ingest_servers", ["stopped_at"], name: "index_ingest_servers_on_stopped_at", using: :btree
   add_index "ingest_servers", ["tenancy_mask"], name: "index_ingest_servers_on_tenancy_mask", using: :btree
+  add_index "ingest_servers", ["terminated_at"], name: "index_ingest_servers_on_terminated_at", using: :btree
   add_index "ingest_servers", ["type"], name: "index_ingest_servers_on_type", using: :btree
   add_index "ingest_servers", ["uid"], name: "index_ingest_servers_on_uid", unique: true, using: :btree
   add_index "ingest_servers", ["version"], name: "index_ingest_servers_on_version", using: :btree
   add_index "ingest_servers", ["vpc_id"], name: "index_ingest_servers_on_vpc_id", using: :btree
+
+  create_table "ingest_workers", force: :cascade do |t|
+    t.string   "uid"
+    t.integer  "ingest_id"
+    t.integer  "ingest_iteration"
+    t.integer  "server_id"
+    t.string   "worker_name"
+    t.string   "aasm_state",       default: "created", null: false
+    t.datetime "started_at"
+    t.datetime "stopped_at"
+    t.datetime "finished_at"
+    t.datetime "created_at",                           null: false
+    t.datetime "updated_at",                           null: false
+    t.json     "messages",         default: {},        null: false
+  end
+
+  add_index "ingest_workers", ["aasm_state"], name: "index_ingest_workers_on_aasm_state", using: :btree
+  add_index "ingest_workers", ["created_at"], name: "index_ingest_workers_on_created_at", using: :btree
+  add_index "ingest_workers", ["finished_at"], name: "index_ingest_workers_on_finished_at", using: :btree
+  add_index "ingest_workers", ["ingest_id"], name: "index_ingest_workers_on_ingest_id", using: :btree
+  add_index "ingest_workers", ["ingest_iteration"], name: "index_ingest_workers_on_ingest_iteration", using: :btree
+  add_index "ingest_workers", ["server_id"], name: "index_ingest_workers_on_server_id", using: :btree
+  add_index "ingest_workers", ["started_at"], name: "index_ingest_workers_on_started_at", using: :btree
+  add_index "ingest_workers", ["stopped_at"], name: "index_ingest_workers_on_stopped_at", using: :btree
+  add_index "ingest_workers", ["uid"], name: "index_ingest_workers_on_uid", using: :btree
+  add_index "ingest_workers", ["worker_name"], name: "index_ingest_workers_on_worker_name", using: :btree
 
   create_table "ingests", force: :cascade do |t|
     t.integer  "upload_id"
@@ -287,7 +307,6 @@ ActiveRecord::Schema.define(version: 20160413060411) do
     t.datetime "removed_at"
     t.datetime "finished_at"
     t.float    "progress",                           default: 0.0,       null: false
-    t.text     "messages"
     t.string   "aasm_stage",             limit: 255
     t.integer  "iteration",                          default: 0,         null: false
     t.boolean  "busy",                               default: false,     null: false
@@ -306,6 +325,7 @@ ActiveRecord::Schema.define(version: 20160413060411) do
     t.integer  "ingestable_id"
     t.string   "ingestable_type",        limit: 255
     t.datetime "deleted_at"
+    t.json     "messages",                           default: {},        null: false
   end
 
   add_index "ingests", ["aasm_stage"], name: "index_ingests_on_aasm_stage", using: :btree

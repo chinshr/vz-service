@@ -16,20 +16,12 @@ module Model::Ingest::MediaStages
       state :archive_stage, enter: :enter_archive_stage, after_enter: :after_enter_archive_stage, after_exit: :after_exit_archive_stage
       state :end_stage, enter: :enter_end_stage, after_enter: :after_enter_end_stage
 
-      event :forward_to_harvest_stage, after: :after_event_forward_stage, after_commit: :after_commit_event_forward_stage do
+      event :forward_stage, after: :after_event_forward_stage, after_commit: :after_commit_event_forward_stage do
         transitions :from => :begin_stage, :to => :harvest_stage, :guard => :can_forward_stage?
-      end
-
-      event :forward_to_transcode_stage, after: :after_event_forward_stage, after_commit: :after_commit_event_forward_stage do
         transitions :from => :harvest_stage, :to => :transcode_stage, :guard => :can_forward_stage?
-      end
-
-      event :forward_to_split_stage, after: :after_event_forward_stage, after_commit: :after_commit_event_forward_stage do
         transitions :from => :transcode_stage, :to => :split_stage, :guard => :can_forward_stage?
-      end
-
-      event :forward_to_archive_stage, after: :after_event_forward_stage, after_commit: :after_commit_event_forward_stage do
         transitions :from => :split_stage, :to => :archive_stage, :guard => :can_forward_stage?
+        transitions :from => :archive_stage, :to => :end_stage, :guard => :can_forward_stage?
       end
 
       event :reset_stage do
@@ -65,6 +57,12 @@ module Model::Ingest::MediaStages
       nil
     end
 
+    def worker_name_from_stage(stage_or_stage_name)
+      if klass = worker_class_from_stage(stage_or_stage_name)
+        klass.name.underscore
+      end
+    end
+
     private
 
     # E.g. :archive_stage -> 'archive'
@@ -90,23 +88,23 @@ module Model::Ingest::MediaStages
     @recently_busy = value
   end
 
-  protected
-
-  def can_forward_stage?
-    not_terminated? && not_busy?
-  end
-
   def trigger_next_stage_with!(stage_or_stage_name)
     result = false
     if next_stage = stage_after(stage_or_stage_name)
       if :end_stage == next_stage
-        Ingest::MediaIngest::EndJob.perform_later(self.id)
+        fast_forward_stage!
       elsif worker_class = self.class.worker_class_from_stage(next_stage)
         worker_class.perform_workflow(self.id)
         result = true
       end
     end
     result
+  end
+
+  protected
+
+  def can_forward_stage?
+    not_terminate? && not_busy?
   end
 
   def after_commit_set_busy
@@ -117,28 +115,25 @@ module Model::Ingest::MediaStages
     true # make sure we don't stop here
   end
 
-  def after_commit_event_start
+  def after_enter_starting
     super
-    # allocate server
-    Ingest::StartJob.perform_later(self.id) unless Rails.env.development?
     if begin_stage?
       # start workflow from the beginning
-      trigger_next_stage_with!(stage)
+      @trigger = stage
     elsif rewind_stage!
       # or, restart from where it was stopped at
-      trigger_next_stage_with!(stage)
+      @trigger = stage
     end
-    true # make sure we don't stop here
   end
 
   def after_commit_trigger_stage_async
-    trigger_next_stage_with!(@trigger)
-    true # make sure we don't stop here
+    trigger_next_stage_with!(@trigger) if !!@trigger && !end_stage?
+    @trigger = nil
   end
 
   def after_enter_restarting
     super
-    after_commit_event_start
+    # after_commit_event_start
   end
 
   def enter_finished
@@ -146,9 +141,9 @@ module Model::Ingest::MediaStages
     Ingest::MediaIngestMailer.finished_processing(self).deliver_later if user
   end
 
-  def enter_reset
+  def after_enter_reset
     super
-    reset_stage
+    reset_stage! if respond_to?(:reset_stage!)
   end
 
   def enter_harvest_stage; end
@@ -203,8 +198,32 @@ module Model::Ingest::MediaStages
   end
 
   def rewind_stage!
-    if previous_stage = stage_before(stage)
-      update_attributes(aasm_stage: previous_stage)
+    result = rewind_stage
+    if result.present? && result != stage
+      update_attributes(aasm_stage: result)
+    end
+    result
+  end
+
+  def rewind_stage
+    @rewind_stage ||= begin
+      result, finished_workers = nil, workers.finished.order(created_at: :desc)
+      # check finished workers...
+      finished_workers.each do |finished_worker|
+        break if result = finished_worker.related_ingest_stage
+      end if !end_stage? && finished_workers.count > 0
+
+      # in case there is no result but we have stopped stages...
+      if !result && !end_stage? && stage
+        stopped_workers = workers.stopped.order(created_at: :desc)
+        stopped_workers.each do |stopped_worker|
+          if stopped_worker.related_ingest_stage == stage
+            result = stage_before(stage)
+            break
+          end
+        end if stopped_workers.count > 0
+      end
+      result
     end
   end
 end

@@ -73,7 +73,6 @@ class Ingest::MediaIngestTest < ActiveSupport::TestCase
       ingest = FactoryGirl.create(:media_ingest_as_audio)
       ingest.update_attributes(aasm_state: "created")
       assert_equal :created, ingest.state
-
       Ingest::MediaIngest::HarvestWorker.expects(:perform_workflow).with(ingest.id).once
 
       ingest.start!  # inside model!
@@ -83,7 +82,6 @@ class Ingest::MediaIngestTest < ActiveSupport::TestCase
     should "process (from starting)" do
       ingest = FactoryGirl.create(:media_ingest_as_audio, aasm_state: "starting")
       assert_equal :starting, ingest.state
-
       Ingest::MediaIngest::HarvestWorker.expects(:perform_workflow).with(ingest.id).never
 
       ingest.process!  # inside worker!
@@ -93,7 +91,6 @@ class Ingest::MediaIngestTest < ActiveSupport::TestCase
     should "stop (from started)" do
       ingest = FactoryGirl.create(:media_ingest_as_audio, aasm_state: "started")
       assert_equal :started, ingest.state
-
       Ingest::MediaIngest::HarvestWorker.expects(:perform_workflow).with(ingest.id).never
 
       ingest.stop!  # inside model!
@@ -103,7 +100,6 @@ class Ingest::MediaIngestTest < ActiveSupport::TestCase
     should "process (from stopping)" do
       ingest = FactoryGirl.create(:media_ingest_as_audio, aasm_state: "stopping")
       assert_equal :stopping, ingest.state
-
       Ingest::MediaIngest::HarvestWorker.expects(:perform_workflow).with(ingest.id).never
 
       ingest.process!  # inside worker!
@@ -114,7 +110,6 @@ class Ingest::MediaIngestTest < ActiveSupport::TestCase
       ingest = FactoryGirl.create(:media_ingest_as_audio, aasm_state: "stopped")
       ingest.update_attributes(aasm_state: "stopped")
       assert_equal :stopped, ingest.state
-
       Ingest::MediaIngest::HarvestWorker.expects(:perform_workflow).with(ingest.id).never
 
       ingest.reset!  # inside model!
@@ -126,7 +121,6 @@ class Ingest::MediaIngestTest < ActiveSupport::TestCase
       ingest = FactoryGirl.create(:media_ingest_as_audio)
       ingest.update_attributes(aasm_state: "resetting")
       assert_equal :resetting, ingest.state
-
       Ingest::MediaIngest::HarvestWorker.expects(:perform_workflow).with(ingest.id).never
 
       ingest.process!  # inside worker!
@@ -139,7 +133,6 @@ class Ingest::MediaIngestTest < ActiveSupport::TestCase
       ingest.update_attributes(aasm_state: "stopped")
 
       assert_equal :stopped, ingest.state
-
       Ingest::MediaIngest::HarvestWorker.expects(:perform_workflow).with(ingest.id).never
 
       ingest.remove!  # inside model!
@@ -149,7 +142,6 @@ class Ingest::MediaIngestTest < ActiveSupport::TestCase
     should "process (from removing)" do
       ingest = FactoryGirl.create(:media_ingest_as_audio, aasm_state: "removing")
       assert_equal :removing, ingest.state
-
       Ingest::MediaIngest::HarvestWorker.expects(:perform_workflow).with(ingest.id).never
 
       ingest.process!  # inside worker!
@@ -226,18 +218,17 @@ class Ingest::MediaIngestTest < ActiveSupport::TestCase
 
     should "include stage machine events" do
       ingest = Ingest::MediaIngest.new
-      assert_equal true, ingest.events.include?(:forward_to_harvest_stage)
       assert_equal true, ingest.events.include?(:reset_stage)
       assert_equal true, ingest.events.include?(:fast_forward_stage)
     end
 
-    context "traverse stages" do
+    context "traverse stages with explicit forward" do
       context "forward from 'begin' stage" do
         should "forward 'begin' to 'harvest' stage when state 'starting'" do
           @ingest = FactoryGirl.create(:media_ingest_as_audio, aasm_state: "starting")
           assert_equal :begin_stage, @ingest.stage
           assert_equal 0, @ingest.progress
-          assert_equal true, @ingest.update_attributes(event: "forward_to_harvest_stage")
+          assert_equal true, @ingest.update_attributes(event: "forward_stage")
           assert_equal :harvest_stage, @ingest.stage
           assert_equal 10, @ingest.progress
         end
@@ -248,7 +239,7 @@ class Ingest::MediaIngestTest < ActiveSupport::TestCase
           assert_equal :begin_stage, @ingest.stage
           assert_equal false, @ingest.busy?
           assert_equal true, @ingest.update_attributes(busy: true,
-            event: :forward_to_harvest_stage,
+            event: :forward_stage,
             status: Ingest::STATE_STARTED)
           assert_equal :harvest_stage, @ingest.stage
           assert_equal :started, @ingest.state
@@ -260,7 +251,7 @@ class Ingest::MediaIngestTest < ActiveSupport::TestCase
           @ingest = FactoryGirl.create(:media_ingest_as_audio, aasm_state: "stopped")
           @ingest.fail!  # force to stopped!
           assert_equal :stopped, @ingest.state
-          @ingest.event = "forward_to_harvest_stage"
+          @ingest.event = "forward_stage"
           assert_equal false, @ingest.save
           assert_equal true, !!@ingest.errors[:status]
           assert_equal :begin_stage, @ingest.reload.stage
@@ -268,7 +259,7 @@ class Ingest::MediaIngestTest < ActiveSupport::TestCase
 
         should "'forward_stage' using event when state 'starting'" do
           @ingest = FactoryGirl.create(:media_ingest_as_audio, aasm_state: "starting")
-          @ingest.event = "forward_to_harvest_stage"
+          @ingest.event = "forward_stage"
           assert_equal true, @ingest.save
           assert_equal :harvest_stage, @ingest.stage
         end
@@ -277,7 +268,7 @@ class Ingest::MediaIngestTest < ActiveSupport::TestCase
       should "forward 'harvest' to 'transcode' stage" do
         @ingest = FactoryGirl.create(:media_ingest_as_audio, aasm_state: "started", aasm_stage: "harvest_stage")
         assert_equal :harvest_stage, @ingest.stage
-        assert_equal true, @ingest.forward_to_transcode_stage!
+        assert_equal true, @ingest.forward_stage!
         assert_equal :transcode_stage, @ingest.stage
         assert_equal 20, @ingest.progress
       end
@@ -285,7 +276,7 @@ class Ingest::MediaIngestTest < ActiveSupport::TestCase
       should "forward 'transcode' to 'split' stage" do
         @ingest = FactoryGirl.create(:media_ingest_as_audio, aasm_state: "started", aasm_stage: "transcode_stage")
         assert_equal :transcode_stage, @ingest.stage
-        assert_equal true, @ingest.forward_to_split_stage!
+        assert_equal true, @ingest.forward_stage!
         assert_equal :split_stage, @ingest.stage
         assert_equal 30, @ingest.progress
       end
@@ -294,18 +285,10 @@ class Ingest::MediaIngestTest < ActiveSupport::TestCase
         @ingest = FactoryGirl.create(:media_ingest_as_audio, aasm_state: "started", aasm_stage: "split_stage")
         assert_equal :split_stage, @ingest.stage
         assert_enqueued_with(job: Document::CreateRichTextJob) do
-          assert_equal true, @ingest.forward_to_archive_stage!
+          assert_equal true, @ingest.forward_stage!
         end
         assert_equal :archive_stage, @ingest.stage
         assert_equal 90, @ingest.progress
-      end
-
-      should "not forward to 'archive' from 'archive'" do
-        @ingest = FactoryGirl.create(:media_ingest_as_audio, aasm_state: "started", aasm_stage: "archive_stage")
-        assert_equal :archive_stage, @ingest.stage
-        assert_raise AASM::InvalidTransition do
-          assert_equal false, @ingest.forward_to_archive_stage!
-        end
       end
 
       should "not forward when terminated" do
@@ -313,7 +296,7 @@ class Ingest::MediaIngestTest < ActiveSupport::TestCase
         assert_equal :harvest_stage, @ingest.stage
         assert_equal true, @ingest.terminate?
         assert_raise AASM::InvalidTransition do
-          assert_equal false, @ingest.forward_to_transcode_stage!
+          assert_equal false, @ingest.forward_stage!
         end
       end
 
@@ -321,7 +304,7 @@ class Ingest::MediaIngestTest < ActiveSupport::TestCase
         @ingest = FactoryGirl.create(:media_ingest_as_audio, aasm_state: "started", aasm_stage: "harvest_stage", terminate: true)
         assert_equal :harvest_stage, @ingest.stage
         assert_equal true, @ingest.terminate?
-        @ingest.event = :forward_to_transcode_stage
+        @ingest.event = :forward_stage
         assert_equal false, @ingest.save
       end
 
@@ -330,7 +313,7 @@ class Ingest::MediaIngestTest < ActiveSupport::TestCase
         assert_equal :harvest_stage, @ingest.stage
         assert_equal true, @ingest.busy?
         assert_raise AASM::InvalidTransition do
-          assert_equal false, @ingest.forward_to_transcode_stage!
+          assert_equal false, @ingest.forward_stage!
         end
       end
 
@@ -338,7 +321,7 @@ class Ingest::MediaIngestTest < ActiveSupport::TestCase
         @ingest = FactoryGirl.create(:media_ingest_as_audio, aasm_state: "started", aasm_stage: "harvest_stage", busy: true)
         assert_equal :harvest_stage, @ingest.stage
         assert_equal true, @ingest.busy?
-        @ingest.event = :forward_to_transcode_stage
+        @ingest.event = :forward_stage
         assert_equal false, @ingest.save
       end
 
@@ -350,8 +333,52 @@ class Ingest::MediaIngestTest < ActiveSupport::TestCase
       end
     end
 
-    context "event start ingest" do
+    context "traverses stages with 'forward_stage'" do
+      should "forward 'begin' to 'harvest' stage when state 'starting'" do
+        @ingest = FactoryGirl.create(:media_ingest_as_audio, aasm_state: "starting")
+        assert_equal :begin_stage, @ingest.stage
+        assert_equal 0, @ingest.progress
+        assert_equal true, @ingest.forward_stage!
+        assert_equal :harvest_stage, @ingest.stage
+        assert_equal 10, @ingest.progress
+      end
 
+      should "forward 'harvest' to 'transcode' stage" do
+        @ingest = FactoryGirl.create(:media_ingest_as_audio, aasm_state: "started", aasm_stage: "harvest_stage")
+        assert_equal :harvest_stage, @ingest.stage
+        assert_equal true, @ingest.forward_stage!
+        assert_equal :transcode_stage, @ingest.stage
+        assert_equal 20, @ingest.progress
+      end
+
+      should "forward 'transcode' to 'split' stage" do
+        @ingest = FactoryGirl.create(:media_ingest_as_audio, aasm_state: "started", aasm_stage: "transcode_stage")
+        assert_equal :transcode_stage, @ingest.stage
+        assert_equal true, @ingest.forward_stage!
+        assert_equal :split_stage, @ingest.stage
+        assert_equal 30, @ingest.progress
+      end
+
+      should "forward 'split' to 'archive' stage" do
+        @ingest = FactoryGirl.create(:media_ingest_as_audio, aasm_state: "started", aasm_stage: "split_stage")
+        assert_equal :split_stage, @ingest.stage
+        assert_enqueued_with(job: Document::CreateRichTextJob) do
+          assert_equal true, @ingest.forward_stage!
+        end
+        assert_equal :archive_stage, @ingest.stage
+        assert_equal 90, @ingest.progress
+      end
+
+      should "forward 'archive' to 'end' stage" do
+        @ingest = FactoryGirl.create(:media_ingest_as_audio, aasm_state: "started", aasm_stage: "archive_stage")
+        assert_equal :archive_stage, @ingest.stage
+        assert_equal true, @ingest.forward_stage!
+        assert_equal :end_stage, @ingest.stage
+        assert_equal 100, @ingest.progress
+      end
+    end
+
+    context "event start ingest" do
       should "start and trigger 'harvest' stage when created" do
         @ingest = FactoryGirl.create(:media_ingest_as_audio, aasm_state: "created")
         @ingest.update_attributes(aasm_state: "created", aasm_stage: "begin_stage")
@@ -365,8 +392,10 @@ class Ingest::MediaIngestTest < ActiveSupport::TestCase
       should "rewind and trigger 'harvest' stage when start after stopped at 'harvest' stage" do
         @ingest = FactoryGirl.create(:media_ingest_as_audio, aasm_state: "stopped", aasm_stage: "harvest_stage")
         @ingest.update_attributes(aasm_state: "stopped", aasm_stage: "harvest_stage")
+        worker = FactoryGirl.create(:ingest_worker, :stopped, ingest: @ingest)
         assert_equal :stopped, @ingest.state
         assert_equal :harvest_stage, @ingest.stage
+        assert_equal :begin_stage, @ingest.send(:rewind_stage)
         Ingest::MediaIngest::HarvestWorker.expects(:perform_workflow).with(@ingest.id).once
         @ingest.start!
         assert_equal :begin_stage, @ingest.stage
@@ -407,9 +436,37 @@ class Ingest::MediaIngestTest < ActiveSupport::TestCase
       should "trigger 'end' from 'archive' stage" do
         @ingest = FactoryGirl.create(:media_ingest_as_audio, aasm_state: "started", aasm_stage: "archive_stage")
         assert_equal :archive_stage, @ingest.stage
-        Ingest::MediaIngest::EndJob.expects(:perform_later).with(@ingest.id).once
+        # Ingest::MediaIngest::EndJob.expects(:perform_later).with(@ingest.id).once
         @ingest.update_attributes(trigger: @ingest.stage)
+        assert_equal :end_stage, @ingest.stage
+        assert_equal :finished, @ingest.state
       end
+    end
+  end
+
+  context "#rewind_stage" do
+    should "not from begin_stage" do
+      ingest = FactoryGirl.create(:media_ingest_as_audio, aasm_stage: "begin_stage")
+      assert_equal nil, ingest.send(:rewind_stage)
+    end
+
+    should "to 'begin_stage' from stopped 'transcode_stage'" do
+      ingest = FactoryGirl.create(:media_ingest_as_audio)
+      ingest.update_attributes(aasm_stage: "harvest_stage")
+      w1 = FactoryGirl.create(:ingest_worker, :stopped, ingest: ingest, worker_name: "ingest/media_ingest/harvest_worker")
+      assert_equal :begin_stage, ingest.send(:rewind_stage)
+    end
+
+    should "to finished 'harvest_stage'" do
+      ingest = FactoryGirl.create(:media_ingest_as_audio, aasm_stage: "transcode_stage")
+      w1 = FactoryGirl.create(:ingest_worker, :finished, ingest: ingest, worker_name: "ingest/media_ingest/harvest_worker")
+      w2 = FactoryGirl.create(:ingest_worker, :stopped, ingest: ingest, worker_name: "ingest/media_ingest/transcode_worker")
+      assert_equal :harvest_stage, ingest.send(:rewind_stage)
+    end
+
+    should "not from 'end_stage'" do
+      ingest = FactoryGirl.create(:media_ingest_as_audio, aasm_stage: "end_stage")
+      assert_equal nil, ingest.send(:rewind_stage)
     end
   end
 end

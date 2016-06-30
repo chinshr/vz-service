@@ -1,4 +1,4 @@
-class Worker::Base
+class ApplicationWorker
   attr_accessor :params
   cattr_accessor :queues
   self.queues = {}
@@ -26,8 +26,12 @@ class Worker::Base
     end
   end  # class methods
 
-  def perform(params = {})
-    self.params = params
+  def perform(attributes = {})
+    self.params = attributes
+    if ingest_id = params[:ingest_id]
+      worker = ::Ingest::Worker.create(ingest_id: ingest_id, worker_name: self.class.name.underscore)
+      self.params.reverse_merge!({worker_id: worker.id}) if worker.persisted?
+    end
     queue.send_message(params.to_json)
   end
 

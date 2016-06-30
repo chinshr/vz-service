@@ -12,8 +12,8 @@ class IngestTest < ActiveSupport::TestCase
     should have_many(:segments).dependent(:nullify)
     should have_many(:chunks).through(:segments)
     should have_many(:tracks).through(:chunks)
-    should have_many(:processes).dependent(:destroy)
-    should have_many(:servers).through(:processes)
+    should have_many(:workers).dependent(:destroy)
+    should have_many(:servers).through(:workers)
   end
 
   context "validations" do
@@ -38,7 +38,7 @@ class IngestTest < ActiveSupport::TestCase
 
     should "have filtered scopes" do
       assert_equal [:any_of_status, :none_of_status, :sort_order, :reverse_sort,
-        :offset, :limit, :document_id, :is_busy, :is_terminated].to_set,
+        :offset, :limit, :document_id, :is_busy, :is_terminate].to_set,
         Ingest.scopes.to_set
     end
 
@@ -66,9 +66,9 @@ class IngestTest < ActiveSupport::TestCase
       assert_equal [@ingest], Ingest.is_busy(false)
     end
 
-    should "#is_terminated" do
-      assert_equal [], Ingest.is_terminated(true)
-      assert_equal [@ingest], Ingest.is_terminated(false)
+    should "#is_terminate" do
+      assert_equal [], Ingest.is_terminate(true)
+      assert_equal [@ingest], Ingest.is_terminate(false)
     end
   end # context "scopes"
 
@@ -100,7 +100,6 @@ class IngestTest < ActiveSupport::TestCase
 
       should "transition to finished from started" do
         ingest = FactoryGirl.create(:media_ingest_as_audio, :terminate => true, :busy => true)
-        ingest.expects(:remove_from_servers).once
         ingest.update_attributes(aasm_state: :started)
         ingest.status = Ingest::STATE_FINISHED
         assert_equal true, ingest.save
@@ -109,7 +108,6 @@ class IngestTest < ActiveSupport::TestCase
 
       should "transition to stopped from stopping" do
         ingest = FactoryGirl.create(:media_ingest_as_audio, :terminate => false, :busy => true)
-        ingest.expects(:remove_from_servers).once
         ingest.update_attributes(aasm_state: :started)
         assert_enqueued_with(job: Ingest::StopJob) do
           ingest.status = Ingest::STATE_STOPPING
@@ -125,7 +123,6 @@ class IngestTest < ActiveSupport::TestCase
 
       should "transition to reset from resetting" do
         ingest = FactoryGirl.create(:media_ingest_as_audio, :terminate => true, :busy => true)
-        ingest.expects(:remove_from_servers).once
         ingest.update_attributes(aasm_state: :resetting)
         ingest.status = Ingest::STATE_RESET
         assert_equal true, ingest.save
@@ -136,7 +133,6 @@ class IngestTest < ActiveSupport::TestCase
 
       should "transition to removed from removing" do
         ingest = FactoryGirl.create(:media_ingest_as_audio, :busy => false)
-        ingest.expects(:remove_from_servers).once
         ingest.update_attributes(aasm_state: :removing)
         ingest.status = Ingest::STATE_REMOVED
         assert_equal true, ingest.save
@@ -246,7 +242,8 @@ class IngestTest < ActiveSupport::TestCase
       ingest.event = :process
       assert_equal :started, ingest.state
     end
-  end
+
+  end # context :state_machine
 
   should "#stages" do
     assert_equal [], Ingest.new.stages
@@ -279,8 +276,8 @@ class IngestTest < ActiveSupport::TestCase
     end
 
     should "not be terminated" do
-      assert_equal false, Ingest.new(terminate: true).not_terminated?
-      assert_equal true, Ingest.new(terminate: false).not_terminated?
+      assert_equal false, Ingest.new(terminate: true).not_terminate?
+      assert_equal true, Ingest.new(terminate: false).not_terminate?
     end
 
     should "not be 'created'" do
@@ -432,46 +429,26 @@ class IngestTest < ActiveSupport::TestCase
     assert_equal 1, @chunk1.reload.position
   end
 
-=begin
-  should "stop server when server is removed" do
-    ingest = FactoryGirl.create(:media_ingest_as_audio)
-    server = FactoryGirl.create(:cpw_ingest_server)
-    ingest.servers << server
-    assert_difference "Ingest::Process.count", -1 do
-      assert_enqueued_with(job: Ingest::Server::StopJob) do
-        ingest.servers.delete(server)
-      end
-    end
-  end
-=end
-
   context "stop servers" do
     setup do
       @ingest = FactoryGirl.create(:media_ingest_as_audio, aasm_state: "started")
       @server = FactoryGirl.create(:cpw_ingest_server)
-      @ingest.servers << @server
     end
 
     should "when finished" do
       @ingest.update_attributes(aasm_state: "started")
-      assert_difference "Ingest::Process.count", -1 do
-        assert_enqueued_with(job: Ingest::Server::StopJob) do
-          assert_equal true, @ingest.finish!
-        end
-      end
+      # assert_enqueued_with(job: Ingest::Server::StopJob) do
+        assert_equal true, @ingest.finish!
+      # end
       assert_equal :finished, @ingest.state
-      assert_equal [], @ingest.reload.servers
     end
 
     should "when stopped" do
       @ingest.update_attributes(aasm_state: "stopping")
-      assert_difference "Ingest::Process.count", -1 do
-        assert_enqueued_with(job: Ingest::Server::StopJob) do
-          assert_equal true, @ingest.process!
-        end
-      end
+      # assert_enqueued_with(job: Ingest::Server::StopJob) do
+        assert_equal true, @ingest.process!
+      # end
       assert_equal :stopped, @ingest.state
-      assert_equal [], @ingest.reload.servers
     end
   end
 

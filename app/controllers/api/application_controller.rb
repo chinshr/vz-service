@@ -2,11 +2,14 @@ class Api::ApplicationController < ::ApplicationController
   include Api::Limit
   include Api::Require
 
+  layout "api/application"
+
   respond_to :json, :xml
 
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :null_session
+  skip_before_action :verify_authenticity_token
 
   before_action :set_response_version_header
 

@@ -1,0 +1,7 @@
+<%= raw(case (request.format.to_sym || response.content_type.to_s)
+  when :json, /\bjson$/ then Api::Response.new(Yajl::Parser.parse(yield)).to_json
+  when :xml, /\bxml$/ then Api::Response.new(Nori.new.parse(yield)).to_xml(root: "response")
+  else
+    "API: unknown content type."
+  end
+) %>

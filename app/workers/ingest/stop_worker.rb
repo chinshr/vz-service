@@ -1,2 +1,2 @@
-class Ingest::StopWorker < Worker::Ingest::Base
+class Ingest::StopWorker < ::Ingest::ApplicationWorker
 end

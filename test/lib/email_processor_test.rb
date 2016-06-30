@@ -3,7 +3,7 @@ require 'test_helper'
 class EmailProcessorTest < ActiveSupport::TestCase
   setup do
     EmailProcessor.stubs(:upload_file_to_s3_bucket).returns(true)
-    Ingest::StartJob.stubs(:perform_later).returns(true)
+    Ingest::Server::RestartJob.stubs(:perform_later).returns(true)
     ActionMailer::Base.deliveries.clear
     @email = mock('email')
     @email.stubs(:attachments).returns([])

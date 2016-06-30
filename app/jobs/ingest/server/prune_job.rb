@@ -2,7 +2,7 @@ class Ingest::Server::PruneJob < ActiveJob::Base
   queue_as :default
 
   def perform
-    stop_servers_without_ingests
+    stop_servers_without_workers
     terminate_stale_ingest_servers
     sync_server_status
     destroy_terminated_servers
@@ -27,35 +27,33 @@ class Ingest::Server::PruneJob < ActiveJob::Base
     end
   end
 
-  def stop_servers_without_ingests
-    Ingest::Server.enabled
-      .where("ingest_servers.enabled_at < ?", Time.zone.now - 15.minutes)
+  def stop_servers_without_workers
+    Ingest::Server.enabled.without_busy_workers
+      .where("ingest_servers.enabled_at < ?", Time.zone.now - 55.minutes)
       .find_each do |server|
         server.with_lock do
-          if server.without_running_processes?
-            server.processes.destroy_all
-            server.stop
-          end
+          server.stop
         end
     end
   end
 
   def terminate_stale_ingest_servers
     # enabled without processes
-    Ingest::Server.enabled
+    Ingest::Server.enabled.without_busy_workers
       .where("ingest_servers.enabled_at < ?", Time.zone.now - 8.hours)
       .find_each do |server|
         server.with_lock do
-          if server.without_running_processes?
-            server.processes.destroy_all
+          if server.without_busy_workers?
             server.terminate
           end
         end
     end
 
     # pending
-    Ingest::Server.pending.without_processes.find_each do |server|
-      server.terminate
+    Ingest::Server.pending.without_busy_workers.find_each do |server|
+      server.with_lock do
+        server.terminate
+      end
     end
   end
 

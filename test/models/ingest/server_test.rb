@@ -1,89 +1,13 @@
 require 'test_helper'
-require "#{Rails.root}/app/models/ingest/process"
 
 class Ingest::ServerTest < ActiveSupport::TestCase
   context "associations" do
-    should have_many(:processes).dependent(:destroy)
-    should have_many(:ingests).through(:processes)
-
-    context "delete ingests" do
-      setup do
-        @ingest = FactoryGirl.create(:media_ingest_as_audio)
-        @server = FactoryGirl.create(:cpw_ingest_server, :enabled)
-      end
-
-      should "ingest process through server" do
-        assert_difference "Ingest::Process.count", 2 do
-          @server.ingests << @ingest
-          @server.ingests << FactoryGirl.create(:media_ingest_as_audio)
-        end
-        assert_equal 2, @server.processes.count
-        assert_no_difference "Ingest.count" do
-          assert_difference "Ingest::Process.count", -1 do
-            @server.ingests.delete(@ingest)
-            assert_equal 1, @server.processes.count
-          end
-        end
-      end
-
-      should "remove process on ingest.remove!" do
-        assert_difference "Ingest::Process.count", 1 do
-          @server.ingests << @ingest
-        end
-        assert_equal 1, @server.processes.count
-        assert_no_difference "Ingest.count" do
-          assert_difference "Ingest::Process.count", -1 do
-            @ingest.remove!
-            assert_equal :removing, @ingest.state
-            @ingest.process!
-            assert_equal :removed, @ingest.state
-            assert_equal 0, @server.processes.count
-          end
-        end
-      end
-
-      should "remove process on ingest.fail!" do
-        assert_difference "Ingest::Process.count", 1 do
-          @server.ingests << @ingest
-        end
-        assert_equal 1, @server.processes.count
-        assert_no_difference "Ingest.count" do
-          assert_difference "Ingest::Process.count", -1 do
-            @ingest.fail!
-            assert_equal :stopped, @ingest.state
-            assert_equal 0, @server.processes.count
-          end
-        end
-      end
-
-      should "remove process on ingest.destroy" do
-        assert_difference "Ingest::Process.count", 1 do
-          @server.ingests << @ingest
-        end
-        assert_equal 1, @server.processes.count
-        assert_difference "Ingest.count", -1 do
-          assert_difference "Ingest::Process.count", -1 do
-            @ingest.destroy
-            assert_equal 0, @server.processes.count
-          end
-        end
-      end
-
-      should "ingest process through ingest" do
-        assert_difference "Ingest::Process.count" do
-          @ingest.servers << @server
-        end
-        assert_no_difference "Ingest::Server.count" do
-          assert_difference "Ingest::Process.count", -1 do
-            @ingest.servers.delete(@server)
-          end
-        end
-      end
-    end
+    should have_many(:workers)
+    should have_many(:ingests).through(:workers)
   end
 
   context "validations" do
-    should validate_numericality_of :max_processes
+    should validate_numericality_of :max_workers
   end
 
   should "create CPW server" do
@@ -100,16 +24,16 @@ class Ingest::ServerTest < ActiveSupport::TestCase
       assert_equal 2, Ingest::Server::CPWServer.next_number
     end
 
-    should "calculate max_processes_from" do
+    should "calculate max_workers_from" do
       # foobar
-      assert_equal 1, Ingest::Server.max_processes_from('foobar')
+      assert_equal 1, Ingest::Server.max_workers_from('foobar')
       # t2
-      assert_equal 2, Ingest::Server.max_processes_from('t2.micro')
-      assert_equal 2, Ingest::Server.max_processes_from('t2.small')
-      assert_equal 4, Ingest::Server.max_processes_from('t2.medium')
-      assert_equal 6, Ingest::Server.max_processes_from('t2.large')
+      assert_equal 2, Ingest::Server.max_workers_from('t2.micro')
+      assert_equal 2, Ingest::Server.max_workers_from('t2.small')
+      assert_equal 4, Ingest::Server.max_workers_from('t2.medium')
+      assert_equal 6, Ingest::Server.max_workers_from('t2.large')
       # m3
-      assert_equal 20, Ingest::Server.max_processes_from('m3.xlarge')
+      assert_equal 20, Ingest::Server.max_workers_from('m3.xlarge')
     end
 
     context "create_from" do
@@ -133,7 +57,7 @@ class Ingest::ServerTest < ActiveSupport::TestCase
           assert_equal "ami-8fcbb0ea", server.image_id
           assert_equal "m3.medium", server.instance_type
           assert_equal 1, server.number
-          assert_equal 8, server.max_processes
+          assert_equal 8, server.max_workers
           assert_equal :enabled, server.state
         end
       end
@@ -157,6 +81,7 @@ class Ingest::ServerTest < ActiveSupport::TestCase
     should "keep running when running" do
       instance_class = mock("AWS::EC2::Instance")
       instance_class.stubs(:status).returns(:running)
+      instance_class.stubs(:launch_time).returns(Time.zone.now)
       Provider::AWS::EC2.any_instance.stubs(:instance).returns(instance_class)
       server = FactoryGirl.create(:cpw_ingest_server)
       assert_equal true, server.send(:_restart)
@@ -166,6 +91,7 @@ class Ingest::ServerTest < ActiveSupport::TestCase
       instance_class = mock("AWS::EC2::Instance")
       instance_class.stubs(:status).returns(:stopped)
       instance_class.expects(:start)
+      instance_class.stubs(:launch_time).returns(Time.zone.now)
       Provider::AWS::EC2.any_instance.stubs(:instance).returns(instance_class)
       server = FactoryGirl.create(:cpw_ingest_server)
       assert_equal true, server.send(:_restart)
@@ -191,6 +117,7 @@ class Ingest::ServerTest < ActiveSupport::TestCase
       instance_class = mock("AWS::EC2::Instance")
       instance_class.stubs(:status).returns(:stopping).then.returns(:stopped)
       instance_class.expects(:start)
+      instance_class.stubs(:launch_time).returns(Time.zone.now)
       Provider::AWS::EC2.any_instance.stubs(:instance).returns(instance_class)
       server = FactoryGirl.create(:cpw_ingest_server)
       server.expects(:wait_until).with(:stopped)
@@ -317,6 +244,20 @@ class Ingest::ServerTest < ActiveSupport::TestCase
     end
   end
 
+  should "#with_busy_workers?" do
+    server = FactoryGirl.create(:cpw_ingest_server)
+    assert_equal false, server.with_busy_workers?
+    FactoryGirl.create(:ingest_worker, :running, {server: server})
+    assert_equal true, server.with_busy_workers?
+  end
+
+  should "#without_busy_workers?" do
+    server = FactoryGirl.create(:cpw_ingest_server)
+    assert_equal true, server.without_busy_workers?
+    FactoryGirl.create(:ingest_worker, {server: server})
+    assert_equal false, server.without_busy_workers?
+  end
+
   context "scopes" do
     context "state machine" do
       should "#pending" do
@@ -342,30 +283,50 @@ class Ingest::ServerTest < ActiveSupport::TestCase
       end
     end
 
-    context "#without_processes" do
+    context "#without_workers" do
       should "be empty" do
-        assert_nil Ingest::Server.without_processes.first
+        assert_nil Ingest::Server.without_workers.first
       end
 
-      should "find server without processes" do
-        server = FactoryGirl.create(:cpw_ingest_server, max_processes: 1, aasm_state: "enabled")
-        assert_equal server, Ingest::Server.without_processes.first
+      should "find server without workers" do
+        server = FactoryGirl.create(:cpw_ingest_server, max_workers: 1, aasm_state: "enabled")
+        assert_equal server, Ingest::Server.without_workers.first
       end
 
-      should "not find server without processes" do
-        server = FactoryGirl.create(:cpw_ingest_server, max_processes: 1, aasm_state: "enabled")
-        server.ingests << FactoryGirl.create(:media_ingest_as_audio)
-        assert_equal nil, Ingest::Server.without_processes.first
+      should "not find server without workers" do
+        server = FactoryGirl.create(:cpw_ingest_server, max_workers: 1, aasm_state: "enabled")
+        worker = Ingest::Worker.create(worker_name: "foobar", ingest: FactoryGirl.create(:media_ingest_as_audio), server: server)
+        assert_equal nil, Ingest::Server.without_workers.first
+      end
+    end
+
+    context "#without_busy_workers" do
+      should "be empty" do
+        assert_nil Ingest::Server.without_busy_workers.first
       end
 
-      should "find server with deleted processes" do
-        server = FactoryGirl.create(:cpw_ingest_server, max_processes: 1, aasm_state: "enabled")
-        ingest = FactoryGirl.create(:media_ingest_as_audio)
-        server.ingests << ingest
-        server.ingests.delete(ingest)
-        assert_equal server, Ingest::Server.without_processes.first
+      should "find server without busy workers" do
+        server = FactoryGirl.create(:cpw_ingest_server, max_workers: 1, aasm_state: "enabled")
+        assert_equal server, Ingest::Server.without_busy_workers.first
       end
 
+      should "not find server with 'created' workers" do
+        server = FactoryGirl.create(:cpw_ingest_server, max_workers: 1, aasm_state: "enabled")
+        worker = FactoryGirl.create(:ingest_worker, server: server)
+        assert_equal nil, Ingest::Server.without_busy_workers.first
+      end
+
+      should "not find server with 'running' workers" do
+        server = FactoryGirl.create(:cpw_ingest_server, max_workers: 1, aasm_state: "enabled")
+        worker = FactoryGirl.create(:ingest_worker, :running, {server: server})
+        assert_equal nil, Ingest::Server.without_busy_workers.first
+      end
+
+      should "find server with 'finished' workers" do
+        server = FactoryGirl.create(:cpw_ingest_server, max_workers: 1, aasm_state: "enabled")
+        worker = FactoryGirl.create(:ingest_worker, :finished, {server: server})
+        assert_equal server, Ingest::Server.without_busy_workers.first
+      end
     end
 
     context "#available" do
@@ -374,46 +335,39 @@ class Ingest::ServerTest < ActiveSupport::TestCase
       end
 
       should "be available when enabled and without consumption" do
-        server = FactoryGirl.create(:cpw_ingest_server, max_processes: 1, aasm_state: "enabled")
+        server = FactoryGirl.create(:cpw_ingest_server, max_workers: 1, aasm_state: "enabled")
         assert_equal server, Ingest::Server.available.first
       end
 
       should "not be available when pending" do
-        server = FactoryGirl.create(:cpw_ingest_server, max_processes: 1, aasm_state: "pending")
+        server = FactoryGirl.create(:cpw_ingest_server, max_workers: 1, aasm_state: "pending")
         assert_nil Ingest::Server.available.first
       end
 
       should "not be available when disabled" do
-        server = FactoryGirl.create(:cpw_ingest_server, max_processes: 1, aasm_state: "disabled")
+        server = FactoryGirl.create(:cpw_ingest_server, max_workers: 1, aasm_state: "disabled")
         assert_nil Ingest::Server.available.first
       end
 
-      should "be consumed for 1 ingest" do
-        server = FactoryGirl.create(:cpw_ingest_server, max_processes: 1, aasm_state: "enabled")
+      should "be consumed for 1 worker" do
+        server = FactoryGirl.create(:cpw_ingest_server, max_workers: 1, aasm_state: "enabled")
         ingest = FactoryGirl.create(:media_ingest_as_audio)
-        server.ingests << ingest
+        worker = FactoryGirl.create(:ingest_worker, :running, server: server, ingest: ingest)
         assert_nil Ingest::Server.available.first
       end
 
       should "be consumed for 2 ingests" do
-        server = FactoryGirl.create(:cpw_ingest_server, max_processes: 2, aasm_state: "enabled")
+        server = FactoryGirl.create(:cpw_ingest_server, max_workers: 2, aasm_state: "enabled")
         ingest1 = FactoryGirl.create(:media_ingest_as_audio)
         ingest2 = FactoryGirl.create(:media_ingest_as_audio)
-        server.ingests << ingest1
-        assert_equal server, Ingest::Server.available.first
-        server.ingests << ingest2
-        assert_nil Ingest::Server.available.first
-      end
-    end
-  end
 
-  should "stop server when last ingest is removed" do
-    @ingest = FactoryGirl.create(:media_ingest_as_audio)
-    @server = FactoryGirl.create(:cpw_ingest_server)
-    @server.ingests << @ingest
-    assert_difference "Ingest::Process.count", -1 do
-      assert_enqueued_with(job: Ingest::Server::StopJob) do
-        @server.ingests.delete(@ingest)
+        assert_equal server, Ingest::Server.available.first
+        FactoryGirl.create(:ingest_worker, :running, server: server, ingest: ingest1)
+        assert_equal server, Ingest::Server.available.first
+        FactoryGirl.create(:ingest_worker, :finished, server: server, ingest: ingest1)
+        assert_equal server, Ingest::Server.available.first
+        FactoryGirl.create(:ingest_worker, :running, server: server, ingest: ingest2)
+        assert_nil Ingest::Server.available.first
       end
     end
   end

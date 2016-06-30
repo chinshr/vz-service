@@ -23,13 +23,13 @@ class Ingest::PruneJob < ActiveJob::Base
 
   def process_stale_ingests_in_between_states
     # re-process 'in between' states, e.g. :starting, etc.
-    Ingest.any_of_status([Ingest::STATE_REMOVING, Ingest::STATE_RESETTING, Ingest::STATE_STOPPING]).is_terminated(true).is_busy(false).find_each do |ingest|
-      ingest.process!
+    Ingest.any_of_status([Ingest::STATE_REMOVING, Ingest::STATE_RESETTING, Ingest::STATE_STOPPING]).is_terminate(true).find_each do |ingest|
+      Ingest::ProcessJob.perform_later(ingest.id)
     end
   end
 
   def stop_stale_running_ingests
-    Ingest.started.is_busy(false).is_terminated(false).where("ingests.created_at < ?", Time.zone.now - 2.hour).find_each do |ingest|
+    Ingest.started.is_busy(false).is_terminate(false).where("ingests.created_at < ?", Time.zone.now - 2.hour).find_each do |ingest|
       ingest.stop!
     end
   end
