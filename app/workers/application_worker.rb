@@ -1,4 +1,4 @@
-class ApplicationWorker
+class ::ApplicationWorker
   attr_accessor :params
   cattr_accessor :queues
   self.queues = {}
