@@ -1,2 +1,2 @@
-class Ingest::RemoveWorker < ::Ingest::ApplicationWorker
+class ::Ingest::RemoveWorker < ::Ingest::IngestApplicationWorker
 end
