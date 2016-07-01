@@ -1,2 +1,2 @@
-class Ingest::MediaIngest::SplitWorker < ::Ingest::ApplicationWorker
+class ::Ingest::MediaIngest::SplitWorker < ::Ingest::IngestApplicationWorker
 end
