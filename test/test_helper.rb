@@ -1,8 +1,12 @@
 ENV["RAILS_ENV"] ||= "test"
 ENV["PUBNUB_DISABLED"] ||= "true"
+ENV["CODECLIMATE_REPO_TOKEN"] ||= "131d67864fbd157df1e2a2745c5d9a1bbed1783706ff91f1178a5913ba5013eb"
 
-require 'simplecov'
-SimpleCov.start
+# require 'simplecov'
+# SimpleCov.start
+require 'codeclimate-test-reporter'
+CodeClimate::TestReporter.start
+
 require File.expand_path('../../config/environment', __FILE__)
 require 'rails/test_help'
 require 'shoulda'
@@ -11,6 +15,10 @@ require 'geocoder'
 require 'webmock/minitest'
 require 'active_job/test_helper.rb'
 require 'wisper/minitest/assertions'
+
+SimpleCov.start do
+  add_filter "/vendor/" # Ignores any file containing "/vendor/" in its path.
+end
 
 Sidekiq::Testing.fake!
 AWS.stub!
@@ -30,7 +38,7 @@ Geocoder::Lookup::Test.set_default_stub(
   ]
 )
 
-#WebMock.disable_net_connect!(:net_http_connect_on_start => true)
+WebMock.disable_net_connect!(allow_localhost: true, allow: ["codeclimate.com"])
 Warden.test_mode!
 
 class SQSTestQueue

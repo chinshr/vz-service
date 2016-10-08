@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 ruby '2.2.3'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '4.2.5'
+gem 'rails', '4.2.7.1'
 gem 'activerecord-deprecated_finders', require: 'active_record/deprecated_finders'
 gem 'responders', '~> 2.0'
 
@@ -45,6 +45,7 @@ end
 
 group :development do
   gem 'web-console', '~> 2.0'
+  gem 'brakeman', require: false
 end
 
 group :test do
@@ -59,6 +60,7 @@ group :test do
   gem 'webmock'
   gem 'timecop'
   gem 'wisper-minitest', require: false
+  gem 'codeclimate-test-reporter', require: nil
 end
 
 group :production do
@@ -76,7 +78,7 @@ gem 'rabl'
 gem 'oj'
 gem 'aasm', '~> 4.7'
 gem 'sidekiq', '~> 3.5.1'
-gem 'autoscaler', github: "chinshr/autoscaler"
+gem 'autoscaler', git: 'https://github.com/chinshr/autoscaler'
 gem 'sinatra', require: false
 gem 'unicorn'
 gem 'json'
@@ -85,23 +87,18 @@ gem 'devise', '~> 4.1'
 # Active Admin
 
 gem 'activeadmin', git: 'https://github.com/activeadmin/activeadmin' # '~> 1.0.0.pre2'
-gem 'ransack',    github: 'activerecord-hackery/ransack'
-gem 'kaminari',   github: 'amatsuda/kaminari', branch: '0-17-stable'
-gem 'formtastic', github: 'justinfrench/formtastic'
-gem 'draper'#,     github: 'audionerd/draper', branch: 'rails5', ref: 'e816e0e587'
-# <active_admin hack> for Rails 4.1
-# gem 'formtastic', github: "justinfrench/formtastic"
-# gem 'polyamorous', :github => "activerecord-hackery/polyamorous"
-# gem "ransack", github: "activerecord-hackery/ransack", branch: "rails-4.1"
-# </hack> for Rails 4.1
+gem 'ransack', git: 'https://github.com/activerecord-hackery/ransack'
+gem 'kaminari', git: 'https://github.com/amatsuda/kaminari', branch: '0-17-stable'
+gem 'formtastic', git: 'https://github.com/justinfrench/formtastic'
+gem 'draper'
 
-gem 'client_side_validations', github: "DavyJonesLocker/client_side_validations"
+gem 'client_side_validations', git: 'https://github.com/DavyJonesLocker/client_side_validations'
 gem 'geocoder'
 gem 'maxminddb'
 gem 'gmaps4rails'
 gem 'nokogiri'
 gem 'whatlanguage', '~> 1.0.5'
-gem 'griddler', git: "https://github.com/chinshr/griddler.git" # :path => "../griddler"
+gem 'griddler', git: 'https://github.com/chinshr/griddler.git'
 gem 'newrelic_rpm'
 gem 'amatch'
 gem 'fuzzy_match'

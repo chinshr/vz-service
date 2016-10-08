@@ -1,0 +1,175 @@
+{
+  "ignored_warnings": [
+    {
+      "warning_type": "SQL Injection",
+      "warning_code": 0,
+      "fingerprint": "14dff014a674c07a4acb838ca89e5644a2a55a2f36f4a19cb1894cabb5f277a5",
+      "message": "Possible SQL injection",
+      "file": "app/models/document.rb",
+      "line": 119,
+      "link": "http://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "code": "where(\"#{accessibility_sql_condition(\"view\", \"comment\", \"edit\")} OR (documents.aasm_state = ? AND (NOT #{privacy_sql_condition(\"private\")}))\", \"published\")",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Document",
+        "method": null
+      },
+      "user_input": "accessibility_sql_condition(\"view\", \"comment\", \"edit\")",
+      "confidence": "Medium",
+      "note": ""
+    },
+    {
+      "warning_type": "Redirect",
+      "warning_code": 18,
+      "fingerprint": "234ec26f38e0d00487684fb773ebb2c64e41e20238a44e240abaa6c68c4f3f77",
+      "message": "Possible unprotected redirect",
+      "file": "app/controllers/web/documents_controller.rb",
+      "line": 18,
+      "link": "http://brakemanscanner.org/docs/warning_types/redirect/",
+      "code": "redirect_to(Document.where(\"documents.slug_id = ?\", params[:id]).first!.track.mp3_stream_url)",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Web::DocumentsController",
+        "method": "show"
+      },
+      "user_input": "Document.where(\"documents.slug_id = ?\", params[:id]).first!.track.mp3_stream_url",
+      "confidence": "High",
+      "note": ""
+    },
+    {
+      "warning_type": "SQL Injection",
+      "warning_code": 0,
+      "fingerprint": "26d2dea188865c2aeba7536cf8380e93b0ed9825261beeefc46cf710c67ef7ec",
+      "message": "Possible SQL injection",
+      "file": "app/models/document.rb",
+      "line": 116,
+      "link": "http://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "code": "where(\"(#{privacy_sql_condition(\"public\", \"unlisted\")} AND #{accessibility_sql_condition(\"view\", \"comment\", \"edit\")}) OR documents.user_id = ?\", user)",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Document",
+        "method": null
+      },
+      "user_input": "privacy_sql_condition(\"public\", \"unlisted\")",
+      "confidence": "Medium",
+      "note": ""
+    },
+    {
+      "warning_type": "Cross Site Scripting",
+      "warning_code": 2,
+      "fingerprint": "33ada12f2050e6946052026472550922a6e78efa70e3dca736178fee7597b060",
+      "message": "Unescaped model attribute",
+      "file": "app/views/web/documents/_show.html.erb",
+      "line": 13,
+      "link": "http://brakemanscanner.org/docs/warning_types/cross_site_scripting",
+      "code": "Document.where(\"documents.slug_id = ?\", params[:id]).first!.html",
+      "render_path": [{"type":"controller","class":"Web::DocumentsController","method":"show","line":14,"file":"app/controllers/web/documents_controller.rb"},{"type":"template","name":"web/documents/show","line":6,"file":"app/views/web/documents/show.html.erb"}],
+      "location": {
+        "type": "template",
+        "template": "web/documents/_show"
+      },
+      "user_input": null,
+      "confidence": "Medium",
+      "note": ""
+    },
+    {
+      "warning_type": "Redirect",
+      "warning_code": 18,
+      "fingerprint": "8b1334fe7d34006b0cac6bd665076e2506851bd602ff8143b791e4f1bd9774f6",
+      "message": "Possible unprotected redirect",
+      "file": "app/controllers/web/documents_controller.rb",
+      "line": 29,
+      "link": "http://brakemanscanner.org/docs/warning_types/redirect/",
+      "code": "redirect_to(Document.where(\"documents.slug_id = ?\", params[:id]).first!.tracks.last.stream_url)",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Web::DocumentsController",
+        "method": "stream"
+      },
+      "user_input": "Document.where(\"documents.slug_id = ?\", params[:id]).first!.tracks.last.stream_url",
+      "confidence": "High",
+      "note": ""
+    },
+    {
+      "warning_type": "Redirect",
+      "warning_code": 18,
+      "fingerprint": "9ab1fb7d9b01bdff74598f2cbc739cae68997f161e838d8d931b4419fff72129",
+      "message": "Possible unprotected redirect",
+      "file": "app/controllers/web/profiles/documents_controller.rb",
+      "line": 16,
+      "link": "http://brakemanscanner.org/docs/warning_types/redirect/",
+      "code": "redirect_to(User.friendly.find(user_id).documents.friendly.find(params[:id]).track.mp3_stream_url)",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Web::Profiles::DocumentsController",
+        "method": "show"
+      },
+      "user_input": "User.friendly.find(user_id).documents.friendly.find(params[:id]).track.mp3_stream_url",
+      "confidence": "High",
+      "note": ""
+    },
+    {
+      "warning_type": "Cross Site Scripting",
+      "warning_code": 2,
+      "fingerprint": "bfd3e3bc194ae68c9f39e858117f89702abbb6c2baba5c56aa7928573e5a511f",
+      "message": "Unescaped model attribute",
+      "file": "app/views/web/profiles/documents/_show.html.erb",
+      "line": 13,
+      "link": "http://brakemanscanner.org/docs/warning_types/cross_site_scripting",
+      "code": "User.friendly.find(user_id).documents.friendly.find(params[:id]).html",
+      "render_path": [{"type":"controller","class":"Web::Profiles::DocumentsController","method":"show","line":12,"file":"app/controllers/web/profiles/documents_controller.rb"},{"type":"template","name":"web/profiles/documents/show","line":5,"file":"app/views/web/profiles/documents/show.html.erb"}],
+      "location": {
+        "type": "template",
+        "template": "web/profiles/documents/_show"
+      },
+      "user_input": null,
+      "confidence": "High",
+      "note": ""
+    },
+    {
+      "warning_type": "Dangerous Send",
+      "warning_code": 23,
+      "fingerprint": "d2f6a14aeb9d2891ef99ee04028fdf3acd46b9d60376293b969f902927e2ed98",
+      "message": "User controlled method execution",
+      "file": "app/controllers/web/profiles/documents_controller.rb",
+      "line": 51,
+      "link": "http://brakemanscanner.org/docs/warning_types/dangerous_send/",
+      "code": "policy(:\"profile/document\").public_send((params[:action].to_s + \"?\"))",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Web::Profiles::DocumentsController",
+        "method": "authorize"
+      },
+      "user_input": "(params[:action].to_s + \"?\")",
+      "confidence": "High",
+      "note": ""
+    },
+    {
+      "warning_type": "SQL Injection",
+      "warning_code": 0,
+      "fingerprint": "e7e15b3f2c5cbec7e8c06680a4b4976fbdf692272f170703e422494e5c740a96",
+      "message": "Possible SQL injection",
+      "file": "app/models/ingest/server.rb",
+      "line": 35,
+      "link": "http://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "code": "where(\"ingest_servers.tenancy_mask & #{tenancy_mask(tenancy)} > 0\")",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Ingest::Server",
+        "method": "with_tenancy"
+      },
+      "user_input": "tenancy_mask(tenancy)",
+      "confidence": "Medium",
+      "note": ""
+    }
+  ],
+  "updated": "2016-10-08 10:46:57 -0700",
+  "brakeman_version": "3.4.0"
+}
