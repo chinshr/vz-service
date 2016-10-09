@@ -145,6 +145,10 @@ class Ingest < ActiveRecord::Base
     end
     alias_method_chain :new, :cast
 
+    def policy_class
+      IngestPolicy
+    end
+
     def generate_uid
       SecureRandom.uuid
     end

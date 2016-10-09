@@ -48,6 +48,10 @@ class Track < ActiveRecord::Base
       SecureRandom.uuid
     end
 
+    def policy_class
+      TrackPolicy
+    end
+
     def s3_url_to_key(s3_url)
       path = URI.parse(s3_url).path.split("/").reject(&:blank?) if s3_url
       File.join(path.slice(1..-1)) if path && path.length > 0
