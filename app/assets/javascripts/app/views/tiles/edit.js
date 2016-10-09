@@ -6,7 +6,7 @@ App.Views.TilesEdit = App.Views.TilesBase.extend({
     'focusout input': 'onFieldChange',
     'focusout textarea': 'onFieldChange',
     'change select': 'onSelectionChange',
-    'submit': 'onFormSubmit',
+    'submit': 'onFormSubmit'
   }, App.Views.TilesBase.prototype.events),
 
   initialize: function(options) {
@@ -122,10 +122,11 @@ App.Views.TilesEdit = App.Views.TilesBase.extend({
   },
 
   onFormSubmit: function(e) {
-    var data = {},
-     form = $(e.target);
-    e.originalEvent.preventDefault();
+    var _this = this,
+      data = {},
+      form = $(e.target);
 
+    e.originalEvent.preventDefault();
     _.map(form.serializeArray(), function(n) {
       var key;
       key = n['name'].match(/\[(.+)\]/);
@@ -134,23 +135,19 @@ App.Views.TilesEdit = App.Views.TilesBase.extend({
       }
     });
 
-    this.model.set(data, { validate: true });
+    this.model.set(data, {validate: true});
     if (this.model.isValid()) {
       this.$('button[type="submit"]').button("loading");
 
       return this.model.sync('update', this.model, {
-        success: (function(_this) {
-          return function() {
-            _this.model.dirtyAttributes = {};
-            _this.$(":submit").button("reset");
-            return _this.flipTile();
-          };
-        })(this),
-        error: (function(_this) {
-          return function() {
-            return _this.$(":submit").button("reset");
-          };
-        })(this)
+        success: function() {
+          _this.model.dirtyAttributes = {};
+          _this.$(":submit").button("reset");
+          return _this.flipTile();
+        },
+        error: function() {
+          return _this.$(":submit").button("reset");
+        }
       });
     }
   },
@@ -184,7 +181,7 @@ App.Views.TilesEdit = App.Views.TilesBase.extend({
         callbacks: {
           finished: this.imageUploadFinished,
           stopped: this.imageUploadStopped,
-          canceled: this.imageUploadCanceled,
+          canceled: this.imageUploadCanceled
         }
       }).render().show();
     }
@@ -201,7 +198,7 @@ App.Views.TilesEdit = App.Views.TilesBase.extend({
         callbacks: {
           finished: this.imageUploadFinished,
           stopped: this.imageUploadStopped,
-          canceled: this.imageUploadCanceled,
+          canceled: this.imageUploadCanceled
         }
       }).render().show();
     }
@@ -234,7 +231,7 @@ App.Views.TilesEdit = App.Views.TilesBase.extend({
 
   updateImages: function(data) {
     var squareImageSrc = this.model.imageSource(1);
-    if (!!squareImageSrc) {
+    if (squareImageSrc) {
       this.$('.thumb-image.thumb-image-square').attr('src', squareImageSrc);
     }
   },

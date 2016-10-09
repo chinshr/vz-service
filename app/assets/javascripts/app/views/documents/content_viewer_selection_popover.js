@@ -10,6 +10,8 @@ App.Views.DocumentsContentViewerSelectionPopover = App.Views.PopoverBase.extend(
   },
 
   render: function() {
+    var _this = this;
+
     this.template = _.template($('#content-editor-toolbar-template').html(), {});
     this.holder = $('#content-viewer');
     this.popover = this.holder.popover({
@@ -19,35 +21,29 @@ App.Views.DocumentsContentViewerSelectionPopover = App.Views.PopoverBase.extend(
       placement: 'top',
       template: '<div class="popover content-viewer-selection-popover popover-ace" id="content-viewer-selection-popover"><div class="arrow"></div><div class="popover-content toolbar-nav"></div></div>',
       content: this.$el.html(this.template)
-    }).on('show.bs.popover', (function(_this) {
-      return function(e) {
+    }).on('show.bs.popover', function(e) {
         //_this.reposition(_this.popover.$tip);
-      }
-    })(this)).on('shown.bs.popover', this.setup)
+    }).on('shown.bs.popover', this.setup)
       .on('hidden.bs.popover', this.teardown)
       .on('inserted.bs.popover', function() { /* not firing! */ })
       .data("bs.popover");
 
-    // TODO: event `inserted.bs.popover` does not work in this
+    // event `inserted.bs.popover` does not work in this
     // version of Bootstrap, following is a workaround to set
     // position before the popover is inserted into DOM.
-    $('body').on('DOMNodeInserted', (function(_this) {
-      return function (e) {
-        if ($(e.target).attr("id") === 'content-viewer-selection-popover') {
-          _this.reposition(e.target);
-        }
+    $('body').on('DOMNodeInserted', function (e) {
+      if ($(e.target).attr("id") === 'content-viewer-selection-popover') {
+        _this.reposition(e.target);
       }
-    })(this));
+    });
 
     // close on escape
-    $(document).keydown((function(_this) {
-      return function(e) {
-        e.stopPropagation();
-        if (e.keyCode === 27) {
-          _this.hide();
-        }
+    $(document).keydown(function(e) {
+      e.stopPropagation();
+      if (e.keyCode === 27) {
+        _this.hide();
       }
-    })(this));
+    });
 
     return this;
   },

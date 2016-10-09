@@ -48,6 +48,7 @@ App.Views.PopoversImageUpload = App.Views.PopoverBase.extend({
   },
 
   render: function() {
+    var _this = this;
     this.holder  = this.holder || this.parent.$(".btn-image-upload");
     this.popover = this.holder.popover({
       container: 'body',
@@ -62,21 +63,20 @@ App.Views.PopoversImageUpload = App.Views.PopoverBase.extend({
       .on('hidden.bs.popover', this.teardown)
       .data("bs.popover");
 
-    this.holder.on('click', (function(_this) {
-      return function(e) {
-        e.stopPropagation();
-        e.preventDefault();
-        _this.holder.tooltip('hide');
-        /* close all other popovers except this */
-        _this.holder.not(this).popover('hide');
-        // _this.popover.toggle();
-      };
-    })(this));
+    this.holder.on('click', function(e) {
+      e.stopPropagation();
+      e.preventDefault();
+      _this.holder.tooltip('hide');
+      /* close all other popovers except this */
+      _this.holder.not(this).popover('hide');
+      // _this.popover.toggle();
+    });
 
     return this;
   },
 
   uploadToS3: function(options) {
+    var _this = this;
     return new S3Upload({
       dropped: options.dropped,
       files: options.files,
@@ -84,66 +84,58 @@ App.Views.PopoversImageUpload = App.Views.PopoverBase.extend({
       s3SignURL: 'api/account/uploads/signed_s3_put.json',
 
       // progress
-      onProgress: (function(_this) {
-        return function(xhr, file, percent, status) {
-          if (!xhr && percent === 0) {
-            _this.model = new App.Models.Upload({
-              type: 'Upload::ImageUpload',
-              ingestable_id: _this.parent.model.attributes.document_id,
-              ingestable_type: 'Document',
-              file_name: file.name,
-              file_type: file.type,
-              file_size: parseFloat(file.size),
-              locale: _this.parent.model.locale
+      onProgress: function(xhr, file, percent, status) {
+        if (!xhr && percent === 0) {
+          _this.model = new App.Models.Upload({
+            type: 'Upload::ImageUpload',
+            ingestable_id: _this.parent.model.attributes.document_id,
+            ingestable_type: 'Document',
+            file_name: file.name,
+            file_type: file.type,
+            file_size: parseFloat(file.size),
+            locale: _this.parent.model.locale
+          });
+          _this.initListeners();
+          return _this.model;
+        } else {
+          if (_this.model) {
+            _this.xhr = xhr;
+            return _this.model.set({
+              progress: percent,
+              state: status
             });
-            _this.initListeners();
-            return _this.model;
-          } else {
-            if (_this.model) {
-              _this.xhr = xhr;
-              return _this.model.set({
-                progress: percent,
-                state: status
-              });
-            }
           }
-        };
-      })(this),
+        }
+      },
 
       // abort
-      onAbort: (function(_this) {
-        return function(file, status) {
-          if (_this.callbacks.canceled) {
-            return _this.callbacks.canceled(file, status);
-          }
-        };
-      })(this),
+      onAbort: function(file, status) {
+        if (_this.callbacks.canceled) {
+          return _this.callbacks.canceled(file, status);
+        }
+      },
 
       // finished
-      onFinishS3Put: (function(_this) {
-        return function(publicUrl, file) {
-          if (_this.model) {
-            _this.xhr = null;
-            return _this.model.save({source_url: publicUrl}, {
-              success: function(model, response) {
-                console.log(model, response);
-              },
-              error: function(model, response) {
-                console.log(model, response);
-              }
-            });
-          }
-        };
-      })(this),
+      onFinishS3Put: function(publicUrl, file) {
+        if (_this.model) {
+          _this.xhr = null;
+          return _this.model.save({source_url: publicUrl}, {
+            success: function(model, response) {
+              console.log(model, response);
+            },
+            error: function(model, response) {
+              console.log(model, response);
+            }
+          });
+        }
+      },
 
       // error
-      onError: (function(_this) {
-        return function(file, status) {
-          if (_this.model) {
-            return _this.model.set({state: status});
-          }
-        };
-      })(this)
+      onError: function(file, status) {
+        if (_this.model) {
+          return _this.model.set({state: status});
+        }
+      }
     });
   },
 

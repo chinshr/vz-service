@@ -221,7 +221,7 @@ App.Views.TilesShow = App.Views.TilesBase.extend({
   onDelete: function(e) {
     var _this = this;
     $.confirm("Do you really want to remove \"" + _.escape(this.model.attributes.title) + "\"?", function(result) {
-      if (!!result) {
+      if (result) {
         if (_this._xhr) {
           _this._xhr.abort();
         }
@@ -236,17 +236,19 @@ App.Views.TilesShow = App.Views.TilesBase.extend({
   },
 
   initMorePopover: function() {
-    return this.morePopoverView = new App.Views.UploadsMorePopover({
+    this.morePopoverView = new App.Views.UploadsMorePopover({
       parent: this,
       placement: "auto top"
     });
+    return this.morePopoverView;
   },
 
   initStatusPopover: function() {
-    return this.statusPopoverView = new App.Views.UploadsStatusPopover({
+    this.statusPopoverView = new App.Views.UploadsStatusPopover({
       parent: this,
       placement: "auto bottom"
     });
+    return this.statusPopoverView;
   },
 
   showMoreTags: function(e) {

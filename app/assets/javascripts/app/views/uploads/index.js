@@ -183,12 +183,13 @@ App.Views.UploadsIndex = Backbone.View.extend({
   },
 
   initSourceModal: function() {
-    return this.sourceModal = new App.Views.UploadsSourceModal({
+    this.sourceModal = new App.Views.UploadsSourceModal({
       parent: this,
       callbacks: {
         success: this.sourceModalSuccess
       }
     });
+    return this.sourceModal;
   },
 
   sourceModalSuccess: function() {
@@ -373,12 +374,7 @@ App.Views.UploadsIndex = Backbone.View.extend({
         'number': function (elem) {
           return parseInt($(elem).find('.number').text(), 10);
         }
-      },
-      // filter: function () {
-      //   var isHidden = $(this).hasClass("initially-hidden");
-      //   console.log(isHidden);
-      //   return !isHidden;
-      // }
+      }
     });
 
     return this.grid;

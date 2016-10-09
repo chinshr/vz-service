@@ -374,6 +374,8 @@ App.Views.DocumentsBase = Backbone.View.extend({
   },
 
   initEditor: function() {
+    var _this = this;
+
     this.titleEditor = new Quill(this.isEdit() ? '#title-editor' : '#title-editor', {
       'modules': {
         'authorship': {
@@ -388,16 +390,13 @@ App.Views.DocumentsBase = Backbone.View.extend({
       this.titleEditor.editor.disable();
     }
 
-    this.titleEditor.on('text-change', (function(_this) {
-      return function(delta, source) {
-        if (source === 'api') {
-          // console.log("An API call triggered this change.");
-        } else if (source === 'user') {
-          _this.model.set({title: $.trim(this.getText())});
-          //_this.saving();
-        }
-      };
-    })(this));
+    this.titleEditor.on('text-change', function(delta, source) {
+      if (source === 'api') {
+        // console.log("An API call triggered this change.");
+      } else if (source === 'user') {
+        _this.model.set({title: $.trim(this.getText())});
+      }
+    });
 
     if (this.model.attributes.title) {
       // this.titleEditor.setText(this.model.attributes.title);  // v0.9.x
@@ -438,72 +437,53 @@ App.Views.DocumentsBase = Backbone.View.extend({
       this.contentEditor.setText(this.model.attributes.text);
     }
 
-    this.contentEditor.on('text-change', (function(_this) {
-      return function(delta, source) {
-        if (source === 'api') {
-          // console.log("An API call triggered this change.");
-        } else if (source === 'user') {
-          // console.log(this.getContents());
-          _this.model.set({rich_text: this.getContents()});
-          // _this.model.set({html: $.trim(this.getHTML()), rich_text: this.getContents(), text: this.getText()});
-        }
-      };
-    })(this));
+    this.contentEditor.on('text-change', function(delta, source) {
+      if (source === 'api') {
+        // console.log("An API call triggered this change.");
+      } else if (source === 'user') {
+        _this.model.set({rich_text: this.getContents()});
+      }
+    });
 
     this.contentEditor.addContainer('spacer-container');
     this.contentEditor.onModuleLoad('toolbar', function(toolbar) {
       $('#content-editor iframe').contents().find('body').css('overflow', 'hidden');
     });
 
-    this.titleEditor.on('text-change', (function(_this) {
-      return function(delta, source) {
-        _this.moveUserInitials(this);
-      }
-    })(this));
+    this.titleEditor.on('text-change', function(delta, source) {
+      _this.moveUserInitials(this);
+    });
 
-    this.contentEditor.on('text-change', (function(_this) {
-      return function(delta, source) {
-        _this.moveUserInitials(this);
-      }
-    })(this));
+    this.contentEditor.on('text-change', function(delta, source) {
+      _this.moveUserInitials(this);
+    });
 
-    this.titleEditor.on('selection-change', (function(_this) {
-      return function(range) {
-        if (range) {
-          if (range.start === range.end) {
-            // console.log('User cursor is on', range.start);
-            _this.moveUserInitials(this, $('header').height() - 3);
-          } else {
-            // var text = editor.getText(range.start, range.end);
-            // console.log('User has highlighted', text);
-          }
+    this.titleEditor.on('selection-change', function(range) {
+      if (range) {
+        if (range.start === range.end) {
+          // console.log('User cursor is on', range.start);
+          _this.moveUserInitials(this, $('header').height() - 3);
         } else {
-          // console.log('Cursor not in the editor');
+          // var text = editor.getText(range.start, range.end);
+          // console.log('User has highlighted', text);
+        }
+      } else {
+        // console.log('Cursor not in the editor');
+      }
+    });
+
+    this.contentEditor.on('selection-change', function(range) {
+      if (range) {
+        if (range.start === range.end) {
+          _this.moveUserInitials(this);
+          _this.contentEditorFormatPopoverView.hide();
+        } else {
+          var text = _this.contentEditor.getText(range.start, range.end);
+          // console.log('User has highlighted', text);
+          _this.contentEditorFormatPopoverView.show(this);
         }
       }
-    })(this));
-
-    this.contentEditor.on('selection-change', (function(_this) {
-      return function(range) {
-        if (range) {
-          if (range.start === range.end) {
-            // console.log('User cursor is on', range.start);
-            _this.moveUserInitials(this);
-            // remove all popups
-            // _this.hideContentEditorFormatPopover();
-            _this.contentEditorFormatPopoverView.hide();
-          } else {
-            var text = _this.contentEditor.getText(range.start, range.end);
-            // show format popup
-            console.log('User has highlighted', text);
-            // _this.showContentEditorFormatPopover(this);
-            _this.contentEditorFormatPopoverView.show(this);
-          }
-        } else {
-          // TODO remove, this block is never reached
-        }
-      }
-    })(this));
+    });
 
     var contentEditorKeyboard = this.contentEditor.getModule('keyboard');
     var titleEditorKeyboard   = this.titleEditor.getModule('keyboard');

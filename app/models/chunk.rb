@@ -89,11 +89,6 @@ class Chunk < ::Document
     end
     alias_method_chain :new, :cast
 
-    # TODO: obsolete
-    def policy_class
-      ChunkPolicy
-    end
-
     def class_names_for(params)
       Array.wrap(params).map {|p| class_name_for(p)}.reject(&:blank?)
     end

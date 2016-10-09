@@ -374,7 +374,7 @@ App.Views.Player = Backbone.View.extend({
       height: this.mapHeight,
       waveColor: '#ddd',
       progressColor: '#999',
-      cursorColor: '#5492ce',
+      cursorColor: '#5492ce'
     });
 
     /* Timeline plugin */
@@ -414,11 +414,12 @@ App.Views.Player = Backbone.View.extend({
   },
 
   initSharePopover: function() {
-    return this.sharePopoverView = new App.Views.PopoversShare({
+    this.sharePopoverView = new App.Views.PopoversShare({
       parent: this,
       holder: this.$el.find('.btn-share'),
       placement: 'auto top'
     });
+    return this.sharePopoverView;
   },
 
   adjustProtocol: function(url) {
@@ -430,12 +431,11 @@ App.Views.Player = Backbone.View.extend({
   },
 
   startPlayTimer: function() {
+    var _this = this;
     this.stopPlayTimer();
-    this.playTimerInterval = setInterval((function(_this) {
-      return function() {
-        _this.updatePlayTime();
-      };
-    })(this), 100);
+    this.playTimerInterval = setInterval(function() {
+      _this.updatePlayTime();
+    }, 100);
   },
 
   updatePlayTime: function() {
@@ -505,8 +505,8 @@ App.Views.Player = Backbone.View.extend({
     var h, m, s, f;
     number = Math.round(number * 10) / 10;
     number = (number).toString().split('.');
-    s = parseInt(number[0]);
-    f = parseInt(number[1] || '0');
+    s = parseInt(number[0], 10);
+    f = parseInt(number[1] || '0', 10);
     h = Math.floor(s / 3600);
     m = Math.floor((s % 3600) / 60);
     s = Math.floor((s % 3600) % 60);
@@ -575,7 +575,7 @@ App.Views.Player = Backbone.View.extend({
           maxCanvasWidth = 4096;
           maxCanvasArea  = 4096 * 4096;
         }
-        height          = this.waveHeight + this.mapHeight,
+        height          = this.waveHeight + this.mapHeight;
         duration        = this.model.attributes.track.duration; // in secs
         availablePixels = Math.min(maxCanvasWidth, maxCanvasArea / height);
         pixelsPerSec    = availablePixels / duration / pixelRatio;
