@@ -27,7 +27,7 @@ App.Helpers.Player = {
         maxCanvasWidth = 4096;
         maxCanvasArea  = 4096 * 4096;
       }
-      height          = this.waveHeight + this.mapHeight,
+      height          = this.waveHeight + this.mapHeight;
       duration        = this.model.attributes.track.duration; // in secs
       availablePixels = Math.min(maxCanvasWidth, maxCanvasArea / height);
       pixelsPerSec    = availablePixels / duration / pixelRatio;

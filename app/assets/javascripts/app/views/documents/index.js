@@ -139,7 +139,7 @@ App.Views.DocumentsIndex = Backbone.View.extend({
       setTimeout(function() {
         _this.grid.isotope('layout');
         if (callback) {
-          callback(_this);
+          return callback(_this);
         }
       }, delay || 50);
     }
@@ -171,7 +171,7 @@ App.Views.DocumentsIndex = Backbone.View.extend({
     this.holder = $(this.holder);
     this.query  = _.extend(this.query, {
       'limit': this.limit,
-      'offset': this.offset,
+      'offset': this.offset
     });
 
     _this.collection = _this.collection || new App.Collections.Documents();

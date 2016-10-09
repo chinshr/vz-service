@@ -145,11 +145,6 @@ class Ingest < ActiveRecord::Base
     end
     alias_method_chain :new, :cast
 
-    # TODO: obsolete
-    def policy_class
-      IngestPolicy
-    end
-
     def generate_uid
       SecureRandom.uuid
     end
@@ -263,12 +258,10 @@ class Ingest < ActiveRecord::Base
     self[:progress] = value.round(2) if value
   end
 
-  # TODO: obsolete, refactor
   def document_url
     "http://voyz.es/#{document.slug}"
   end
 
-  # TODO: obsolete, refactor
   def edit_document_url
     "http://voyz.es/#{document.slug}/edit"
   end

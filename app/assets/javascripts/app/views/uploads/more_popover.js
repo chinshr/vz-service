@@ -11,6 +11,8 @@ App.Views.UploadsMorePopover = App.Views.PopoverBase.extend({
   },
 
   render: function() {
+    var _this = this;
+
     this.holder  = this.parent.$(".btn-more");
     this.popover = this.holder.popover({
       container: 'body',
@@ -25,39 +27,32 @@ App.Views.UploadsMorePopover = App.Views.PopoverBase.extend({
       .data("bs.popover");
 
     // close popover when another one is opened
-    this.holder.on('click', (function(_this) {
-      return function(e) {
-        e.stopPropagation();
-        e.preventDefault();
-        _this.holder.tooltip('hide');
-        /* close all other popovers except this */
-        _this.holder.not(this).popover('hide');
-        $('.btn-more, .btn-popover, [data-rel="popover"], .popover').not(_this.holder).popover('hide');
-        _this.popover.toggle();
-      };
-    })(this));
+    this.holder.on('click', function(e) {
+      e.stopPropagation();
+      e.preventDefault();
+      _this.holder.tooltip('hide');
+      /* close all other popovers except this */
+      _this.holder.not(this).popover('hide');
+      $('.btn-more, .btn-popover, [data-rel="popover"], .popover').not(_this.holder).popover('hide');
+      _this.popover.toggle();
+    });
 
     // ???
-    $(document).on('click', (function(_this) {
-      return function(e) {
-        if (!$(e.target).is(_this.holder) && _this.holder.find($(e.target)).length === 0 && $(".btn-more").find($(e.target)).length === 0) {
-          _this.hide();
-        }
+    $(document).on('click', function(e) {
+      if (!$(e.target).is(_this.holder) && _this.holder.find($(e.target)).length === 0 && $(".btn-more").find($(e.target)).length === 0) {
+        _this.hide();
       }
-    })(this));
+    });
 
     // close on escape
-    $(document).keydown((function(_this) {
-      return function(e) {
-        e.stopPropagation();
-        if (e.keyCode === 27) {
-          _this.hide();
-        }
+    $(document).keydown(function(e) {
+      e.stopPropagation();
+      if (e.keyCode === 27) {
+        _this.hide();
       }
-    })(this));
+    });
 
     this.holder.show();
-
     return this;
   },
 
