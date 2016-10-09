@@ -17,8 +17,8 @@ App.Views.DocumentsBase = Backbone.View.extend({
     },
 
     'playback-rate-down': function (event) {
-      var value;
-      if (value = $("#playback-speed-slider").slider("getValue")) {
+      var value = $("#playback-speed-slider").slider("getValue");
+      if (value) {
         value -= 0.5;
         if (value >= 0.5) {
           this.wavesurfer.backend.setPlaybackRate(value);
@@ -29,8 +29,8 @@ App.Views.DocumentsBase = Backbone.View.extend({
     },
 
     'playback-rate-up': function (event) {
-      var value;
-      if (value = $("#playback-speed-slider").slider("getValue")) {
+      var value = $("#playback-speed-slider").slider("getValue");
+      if (value) {
         value += 0.5;
         if (value <= 3) {
           this.wavesurfer.backend.setPlaybackRate(value);
@@ -89,7 +89,7 @@ App.Views.DocumentsBase = Backbone.View.extend({
 
     'save': function () {
       this.save();
-    },
+    }
   },
 
   keyboardEvents: [
@@ -99,7 +99,7 @@ App.Views.DocumentsBase = Backbone.View.extend({
     {name: 'step-forward', key: 113, ctrlKey: false, altKey: false, metaKey: false, shiftKey: false},       // F2
     {name: 'playback-rate-down', key: 114, ctrlKey: false, altKey: false, metaKey: false, shiftKey: false},       // F3
     {name: 'playback-rate-up', key: 115, ctrlKey: false, altKey: false, metaKey: false, shiftKey: false},       // F4
-    {name: 'save', key: 83, ctrlKey: false, altKey: false, metaKey: true, shiftKey: true},               // Shift+Cmd+S
+    {name: 'save', key: 83, ctrlKey: false, altKey: false, metaKey: true, shiftKey: true}               // Shift+Cmd+S
   ],
 
   initialize: function() {
@@ -390,9 +390,9 @@ App.Views.DocumentsBase = Backbone.View.extend({
 
     this.titleEditor.on('text-change', (function(_this) {
       return function(delta, source) {
-        if (source == 'api') {
+        if (source === 'api') {
           // console.log("An API call triggered this change.");
-        } else if (source == 'user') {
+        } else if (source === 'user') {
           _this.model.set({title: $.trim(this.getText())});
           //_this.saving();
         }
@@ -440,9 +440,9 @@ App.Views.DocumentsBase = Backbone.View.extend({
 
     this.contentEditor.on('text-change', (function(_this) {
       return function(delta, source) {
-        if (source == 'api') {
+        if (source === 'api') {
           // console.log("An API call triggered this change.");
-        } else if (source == 'user') {
+        } else if (source === 'user') {
           // console.log(this.getContents());
           _this.model.set({rich_text: this.getContents()});
           // _this.model.set({html: $.trim(this.getHTML()), rich_text: this.getContents(), text: this.getText()});
@@ -470,7 +470,7 @@ App.Views.DocumentsBase = Backbone.View.extend({
     this.titleEditor.on('selection-change', (function(_this) {
       return function(range) {
         if (range) {
-          if (range.start == range.end) {
+          if (range.start === range.end) {
             // console.log('User cursor is on', range.start);
             _this.moveUserInitials(this, $('header').height() - 3);
           } else {
@@ -486,15 +486,15 @@ App.Views.DocumentsBase = Backbone.View.extend({
     this.contentEditor.on('selection-change', (function(_this) {
       return function(range) {
         if (range) {
-          if (range.start == range.end) {
+          if (range.start === range.end) {
             // console.log('User cursor is on', range.start);
             _this.moveUserInitials(this);
-            // TODO remove all popups
+            // remove all popups
             // _this.hideContentEditorFormatPopover();
             _this.contentEditorFormatPopoverView.hide();
           } else {
             var text = _this.contentEditor.getText(range.start, range.end);
-            // TODO show format popup
+            // show format popup
             console.log('User has highlighted', text);
             // _this.showContentEditorFormatPopover(this);
             _this.contentEditorFormatPopoverView.show(this);
@@ -535,7 +535,7 @@ App.Views.DocumentsBase = Backbone.View.extend({
       orientation: 'horizontal',
       value: 1,
       tooltip: 'hide',  // 'show' || 'hide' || 'always'
-      handle: 'round',  // 'square' || 'triangle' || 'custom'
+      handle: 'round'  // 'square' || 'triangle' || 'custom'
       // ticks: [0.5, 3],
     }).on('change', _.bind(function(e) {
       e.preventDefault();
@@ -624,8 +624,8 @@ App.Views.DocumentsBase = Backbone.View.extend({
     var h, m, s, f;
     number = Math.round(number * 10) / 10;
     number = (number).toString().split('.');
-    s = parseInt(number[0]);
-    f = parseInt(number[1] || '0');
+    s = parseInt(number[0], 10);
+    f = parseInt(number[1] || '0', 10);
     h = Math.floor(s / 3600);
     m = Math.floor((s % 3600) / 60);
     s = Math.floor((s % 3600) % 60);
@@ -821,8 +821,8 @@ App.Views.DocumentsBase = Backbone.View.extend({
 
   floatToFraction: function(number) {
     var half = "";
-    var full = parseInt(number) < 1 ? "" : parseInt(number);
-    if (Math.abs(parseInt(number) - number) > 0) {
+    var full = parseInt(number) < 1 ? "" : parseInt(number, 10);
+    if (Math.abs(parseInt(number) - number, 10) > 0) {
       half = "½";
     }
     return "" + full + half + "×";
