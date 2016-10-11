@@ -1514,12 +1514,11 @@ body.documents {
 
         .content-container {
           padding-top: 20px;
-          font-weight: normal;
+          font-weight: 300;
           font-size: 22px;
           line-height: 1.6em;
           color: #000;
-          // font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-          font-family: 'PT Serif', Georgia, Times, 'Times New Roman', serif;
+          font-family: 'Merriweather', Georgia, Times, 'Times New Roman', serif;
 
           .content-holder {
             overflow: hidden;
@@ -1535,9 +1534,8 @@ body.documents {
 
           /* Inside editor styles */
           #content-editor .ql-editor {
-            // font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-            font-family: 'PT Serif', Georgia, Times, 'Times New Roman', serif;
-            font-weight: normal;
+            font-family: 'Merriweather', Georgia, Times, 'Times New Roman', serif;
+            font-weight: 300;
             font-size: 22px;
             line-height: 1.6em;
             -webkit-font-smoothing: antialiased;
