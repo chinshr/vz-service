@@ -284,6 +284,8 @@ GEM
     mail (2.6.4)
       mime-types (>= 1.16, < 4)
     maxminddb (0.1.11)
+    merriweather-rails (1.0.0)
+      railties (>= 3.2, < 5.1)
     metaclass (0.0.4)
     metainspector (5.1.2)
       addressable (~> 2.4)
@@ -333,8 +335,6 @@ GEM
     pry-rails (0.3.4)
       pry (>= 0.9.10)
     psych (2.0.17)
-    pt-serif-rails (1.0.0)
-      railties (>= 3.2, < 5.1)
     pubnub (3.7.10)
       eventmachine (~> 1.0)
       json (~> 1.8)
@@ -533,6 +533,7 @@ DEPENDENCIES
   kgio
   lato-rails
   maxminddb
+  merriweather-rails
   metainspector
   mini_magick
   minitest
@@ -548,7 +549,6 @@ DEPENDENCIES
   pry-nav
   pry-rails
   psych
-  pt-serif-rails
   pubnub (~> 3.7.9)
   pundit
   rabl
