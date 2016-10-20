@@ -486,7 +486,7 @@ GEM
       hashdiff
     whatlanguage (1.0.6)
     wisper (1.6.1)
-    wisper-minitest (0.0.1)
+    wisper-minitest (0.0.3)
     yajl-ruby (1.2.1)
     yui-compressor (0.12.0)
 
