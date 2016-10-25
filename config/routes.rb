@@ -66,6 +66,7 @@ Voyzes::Application.routes.draw do
     post 'authorize/user' => 'authorization#user_authorize', as: "authorization_user_authorize"
     get 'authorize/status' => 'authorization#status', as: "authorization_status"
     delete 'authorize/user' => 'authorization#user_deauthorize', as: "authorization_user_deauthorize"
+    get 'status' => 'status#index'
 
     resources :tags, :only => :index do
       collection do
