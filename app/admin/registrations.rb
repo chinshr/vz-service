@@ -12,6 +12,7 @@ ActiveAdmin.register Registration do
   filter :city
 
   index do
+    selectable_column
     column :email
     column :name
     column :locale
