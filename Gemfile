@@ -86,11 +86,12 @@ gem 'devise', '~> 4.1'
 
 # Active Admin
 
+gem 'inherited_resources', git: 'https://github.com/activeadmin/inherited_resources'
 gem 'activeadmin', git: 'https://github.com/activeadmin/activeadmin' # '~> 1.0.0.pre2'
 gem 'ransack', git: 'https://github.com/activerecord-hackery/ransack'
 gem 'kaminari', git: 'https://github.com/amatsuda/kaminari', branch: '0-17-stable'
 gem 'formtastic', git: 'https://github.com/justinfrench/formtastic'
-gem 'draper'
+gem 'draper', git: 'https://github.com/audionerd/draper', branch: 'rails5', ref: 'e816e0e587'
 
 gem 'client_side_validations', git: 'https://github.com/DavyJonesLocker/client_side_validations'
 gem 'geocoder'

@@ -5,6 +5,7 @@ ActiveAdmin.register Message do
   filter :text
 
   index do
+    selectable_column
     column :id
     column :from
     column :to

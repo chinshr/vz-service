@@ -18,6 +18,7 @@ ActiveAdmin.register User do
   filter :uid
 
   index do
+    selectable_column
     column :id
     column :email
     column :confirmed_at

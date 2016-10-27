@@ -16,6 +16,7 @@ ActiveAdmin.register Document do
   filter :published_at
 
   index do
+    selectable_column
     column :id
     column :title
     column(:privacy) do |resource|
