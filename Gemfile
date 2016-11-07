@@ -76,7 +76,7 @@ gem 'eco'
 gem 'ejs'
 gem 'rabl'
 gem 'oj'
-gem 'aasm', '~> 4.7'
+gem 'aasm', '~> 4.11.1'
 gem 'sidekiq', '~> 3.5.1'
 gem 'autoscaler', git: 'https://github.com/chinshr/autoscaler'
 gem 'sinatra', require: false

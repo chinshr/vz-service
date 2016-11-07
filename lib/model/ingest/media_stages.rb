@@ -133,7 +133,6 @@ module Model::Ingest::MediaStages
 
   def after_enter_restarting
     super
-    # after_commit_event_start
   end
 
   def enter_finished
