@@ -75,7 +75,8 @@ class ::Ingest::Worker < ActiveRecord::Base
   before_validation :set_ingest_iteration_from_ingest, on: :create
   before_validation :set_server_from_instance_id
   after_commit :after_enter_created, on: :create
-  after_commit :update_ingest_if_changed
+  after_commit :update_ingest_if_changed,
+    :after_commit_running, :after_commit_finished, :after_commit_stopped
 
   class << self
     def generate_uid; SecureRandom.uuid; end
@@ -139,11 +140,18 @@ class ::Ingest::Worker < ActiveRecord::Base
   end
 
   def after_enter_running
-    if ingest
-      attrs = {busy: true}
-      attrs.merge!({status: Ingest::STATE_STARTED}) if ingest.starting?
-      attrs.merge!({event: 'forward_stage'}) if could_forward_ingest_stage?
-      ingest.update_attributes(attrs) if attrs.present?
+    @after_enter_running = true
+  end
+
+  def after_commit_running
+    if @after_enter_running
+      if ingest
+        attrs = {busy: true}
+        attrs.merge!({status: Ingest::STATE_STARTED}) if ingest.starting?
+        attrs.merge!({event: 'forward_stage'}) if could_forward_ingest_stage?
+        ingest.update_attributes(attrs) if attrs.present?
+      end
+      @after_enter_running = false
     end
   end
 
@@ -152,10 +160,21 @@ class ::Ingest::Worker < ActiveRecord::Base
   end
 
   def after_enter_stopped
-    if ingest && ingest_iteration == ingest.iteration
-      attrs = {busy: false}
-      attrs.merge!({event: "stop"}) if related_ingest_stage?
-      ingest.update_attributes(attrs) if attrs.present?
+    @after_enter_stopped = true
+  end
+
+  def after_commit_stopped
+    if @after_enter_stopped
+      if ingest && ingest_iteration == ingest.iteration
+        attrs = {busy: false}
+        attrs.merge!({event: "stop"}) if related_ingest_stage?
+        if attrs.present?
+          ingest.attributes = attrs
+          # ingest.update_attributes(attrs) if attrs.present?
+          ingest.save(validate: false)
+        end
+      end
+      @after_enter_stopped = false
     end
   end
 
@@ -164,15 +183,22 @@ class ::Ingest::Worker < ActiveRecord::Base
   end
 
   def after_enter_finished
-    if ingest && ingest_iteration == ingest.iteration
-      ingest.update_attributes({busy: false})
-      if not_terminate? && ingest.respond_to?(:trigger_next_stage_with!)
-        # continue with next stage
-        ingest.trigger_next_stage_with!(related_ingest_stage)
-      elsif (ingest.removing? || ingest.resetting? || ingest.stopping?) && terminate?
-        # sets ingest state to stopped | reset | removed
-        Ingest::ProcessJob.perform_later(ingest.id)
+    @after_enter_finished = true
+  end
+
+  def after_commit_finished
+    if @after_enter_finished
+      if ingest && ingest_iteration == ingest.iteration
+        ingest.update_attributes({busy: false})
+        if not_terminate? && ingest.respond_to?(:trigger_next_stage_with!)
+          # continue with next stage
+          ingest.trigger_next_stage_with!(related_ingest_stage)
+        elsif (ingest.removing? || ingest.resetting? || ingest.stopping?) && terminate?
+          # sets ingest state to stopped | reset | removed
+          Ingest::ProcessJob.perform_later(ingest.id)
+        end
       end
+      @after_enter_finished = false
     end
   end
 
