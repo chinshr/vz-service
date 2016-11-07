@@ -57,18 +57,6 @@ GIT
       activesupport (>= 3.0.0)
 
 GIT
-  remote: https://github.com/audionerd/draper
-  revision: e816e0e5876b76c648c0928f1c3f2aa2c7a3d1f2
-  ref: e816e0e587
-  branch: rails5
-  specs:
-    draper (2.1.0)
-      actionpack (>= 3.0)
-      activemodel (>= 3.0)
-      activesupport (>= 3.0)
-      request_store (~> 1.0)
-
-GIT
   remote: https://github.com/chinshr/autoscaler
   revision: 5668d8d98192486517a03e68c919c6f8e7979297
   specs:
@@ -216,6 +204,11 @@ GEM
     dotenv (0.11.1)
       dotenv-deployment (~> 0.0.2)
     dotenv-deployment (0.0.2)
+    draper (2.1.0)
+      actionpack (>= 3.0)
+      activemodel (>= 3.0)
+      activesupport (>= 3.0)
+      request_store (~> 1.0)
     eco (1.0.0)
       coffee-script
       eco-source
@@ -523,7 +516,7 @@ DEPENDENCIES
   coffee-rails
   dalli
   devise (~> 4.1)
-  draper!
+  draper
   eco
   ejs
   factory_girl_rails
