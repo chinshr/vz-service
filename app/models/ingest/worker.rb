@@ -149,7 +149,10 @@ class ::Ingest::Worker < ActiveRecord::Base
         attrs = {busy: true}
         attrs.merge!({status: Ingest::STATE_STARTED}) if ingest.starting?
         attrs.merge!({event: 'forward_stage'}) if could_forward_ingest_stage?
-        ingest.update_attributes(attrs) if attrs.present?
+        if attrs.present?
+          ingest.attributes = attrs
+          ingest.save(validate: false)
+        end
       end
       @after_enter_running = false
     end
@@ -170,7 +173,6 @@ class ::Ingest::Worker < ActiveRecord::Base
         attrs.merge!({event: "stop"}) if related_ingest_stage?
         if attrs.present?
           ingest.attributes = attrs
-          # ingest.update_attributes(attrs) if attrs.present?
           ingest.save(validate: false)
         end
       end
