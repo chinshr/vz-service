@@ -7,17 +7,15 @@ module Clockwork
     puts "Running #{job}"
   end
 
-  # handler receives the time when job is prepared to run in the 2nd argument
-  # handler do |job, time|
-  #   puts "Running #{job}, at #{time}"
-  # end
-
   every(15.minutes, 'ingest.prune.job') {
     Ingest::PruneJob.perform_later
   }
 
-  every(20.minutes, 'ingest.server.prune.job') {
-    Ingest::Server::PruneJob.perform_later
+  every(10.minutes, 'ingest.worker.prune.job') {
+    Ingest::Worker::PruneJob.perform_later
   }
 
+  every(5.minutes, 'ingest.server.prune.job') {
+    Ingest::Server::PruneJob.perform_later
+  }
 end
