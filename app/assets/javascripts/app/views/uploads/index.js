@@ -269,7 +269,7 @@ App.Views.UploadsIndex = Backbone.View.extend({
             locale: _this.$("#file-locale").val() || "en-US",
             privacy: "private",
             editable: true,
-            metadata: {"te_name": VZ.query.te || "voicebase"}
+            metadata: {"te_name": VZ.query.te}
           });
           newUploads[file.size] = upload;
           return _this.collection.add(upload);
