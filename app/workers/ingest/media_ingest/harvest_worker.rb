@@ -1,2 +1,2 @@
-class ::Ingest::MediaIngest::HarvestWorker < ::Ingest::IngestApplicationWorker
+class ::Ingest::MediaIngest::HarvestWorker < ApplicationWorker
 end

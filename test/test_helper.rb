@@ -42,7 +42,15 @@ WebMock.disable_net_connect!(allow_localhost: true, allow: ["codeclimate.com"])
 Warden.test_mode!
 
 class SQSTestQueue
-  def send_message(message); message; end
+  attr_accessor :name
+
+  def initialize(name = "empty")
+    @name = name
+  end
+
+  def send_message(message)
+    message
+  end
 end
 
 class ActiveSupport::TestCase
@@ -84,14 +92,13 @@ class ActiveSupport::TestCase
     # pubnub, currently not working
     stub_request(:any, /.*pubnub.com.*/)
 
-    # stub sqs
-    # Worker::Base.stubs(:queue).returns(SQSTestQueue.new)
-    ApplicationWorker.stubs(:queue).returns(SQSTestQueue.new)
-  end
-
-  teardown do
-    # Ingest.all.each {|i| i.delete_without_job}
-    # Upload.all.each {|u| u.delete_without_job}
+    # Stubs SQS
+    @sqs_queue  = SQSTestQueue.new
+    @sqs_queues = mock("AWS::SQS::Queues")
+    @sqs_queues.stubs(:named).returns(@sqs_queue)
+    @sqs_proxy  = mock("AWS::SQS::Proxy")
+    @sqs_proxy.stubs(:queues).returns(@sqs_queues)
+    @sqs        = AWS::SQS.stubs(:new).returns(@sqs_proxy)
   end
 end
 
