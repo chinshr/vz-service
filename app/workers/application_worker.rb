@@ -38,6 +38,9 @@ class ApplicationWorker
     Rails.logger.info "+++ ApplicationWorker#perform (#{self.class.name}#perform) after ::Ingest::Worker.create(ingest_id: #{ingest_id}, worker_id=#{worker.id}) with #{params.inspect}"
     result = queue.send_message(params.to_json)
     Rails.logger.info "+++ ApplicationWorker#perform (#{self.class.name}#perform) after queue.send_message with #{params.inspect}"
+  rescue Exception => ex
+    Rails.logger.info "+++ ApplicationWorker#perform (#{self.class.name}#perform) error caught '#{ex.message}', backtrace: #{ex.backtrace}"
+  ensure
     result
   end
 
