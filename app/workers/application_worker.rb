@@ -1,17 +1,16 @@
-class ::ApplicationWorker
+class ApplicationWorker
   attr_accessor :params
   cattr_accessor :queues
-  self.queues = {}
+  cattr_accessor :sqs
 
   class << self
-
     def perform_async(params = {})
       new.perform(params)
     end
     alias_method :perform_later, :perform_async
 
-    def perform_workflow(params = {})
-      new.perform(params.reverse_merge(workflow: true))
+    def perform_workflow(ingest_id, params = {})
+      new.perform({ingest_id: ingest_id, workflow: true}.reverse_merge(params))
     end
 
     def queue_name
@@ -21,8 +20,9 @@ class ::ApplicationWorker
     end
 
     def queue(name = queue_name)
-      @@sqs ||= AWS::SQS.new
-      queues[name.to_sym] ||= @@sqs.queues.named(name)
+      self.sqs ||= AWS::SQS.new
+      self.queues = {} unless queues.present?
+      queues[name.to_sym] ||= sqs.queues.named(name)
     end
   end  # class methods
 

@@ -1,2 +1,2 @@
-class ::Ingest::MediaIngest::TranscodeWorker < ::Ingest::IngestApplicationWorker
+class ::Ingest::MediaIngest::TranscodeWorker < ApplicationWorker
 end
