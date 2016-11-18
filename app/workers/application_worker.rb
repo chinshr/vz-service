@@ -22,17 +22,23 @@ class ApplicationWorker
     def queue(name = queue_name)
       self.sqs ||= AWS::SQS.new
       self.queues = {} unless queues.present?
-      queues[name.to_sym] ||= sqs.queues.named(name)
+      # queues[name.to_sym] ||= sqs.queues.named(name)
+      sqs.queues.named(name)
     end
   end  # class methods
 
   def perform(attributes = {})
-    self.params = attributes
+    result, ingest_id, worker = nil, nil, nil
+    self.params = attributes.clone
+    Rails.logger.info "+++ ApplicationWorker#perform begin with #{params.inspect}"
     if ingest_id = params[:ingest_id]
       worker = ::Ingest::Worker.create(ingest_id: ingest_id, worker_name: self.class.name.underscore)
       self.params.reverse_merge!({worker_id: worker.id}) if worker.persisted?
     end
-    queue.send_message(params.to_json)
+    Rails.logger.info "+++ ApplicationWorker#perform after ::Ingest::Worker.create(ingest_id: #{ingest_id}, worker_id=#{worker.id}) with #{params.inspect}"
+    result = queue.send_message(params.to_json)
+    Rails.logger.info "+++ ApplicationWorker#perform after queue.send_message with #{params.inspect}"
+    result
   end
 
   protected
