@@ -34,7 +34,8 @@ module Web::ApplicationHelper
     ["The only source of knowledge is experience.", "Albert Einstein"],
     ["The monotony and solitude of a quiet life stimulates the creative mind.", "Albert Einstein"],
     ["Peace cannot be kept by force; it can only be achieved by understanding.", "Albert Einstein"],
-    ["A person who never made a mistake, never tried anything new.", "Albert Einstein"]
+    ["A person who never made a mistake, never tried anything new.", "Albert Einstein"],
+    ["First learn the meaning of what you say, and then speak.", "Epictetus"]
   ]
 
   def markdown(text)
