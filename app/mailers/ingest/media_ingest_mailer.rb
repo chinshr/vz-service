@@ -3,7 +3,8 @@ class Ingest::MediaIngestMailer < ActionMailer::Base
 
   def finished_processing(ingest)
     @ingest = ingest
-    mail(to: @ingest.user.email, subject: "Finished, '#{@ingest.title}' has been processed.")
+    mail(to: @ingest.user.email,
+      subject: "Finished, '#{@ingest.title}' has been processed.",
+      bcc: APP_CONFIG['ADMIN_EMAIL_ADDRESSES'])
   end
-
 end

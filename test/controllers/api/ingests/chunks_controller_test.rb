@@ -38,11 +38,9 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
         :offset            => 0,
         :text              => "I like pickles",
         :score             => 0.59,
-        :response          => {"status" => 3, "hypothesis" => "I like pickles"},
-        :processing_errors => [{"stage" => "transcribe", "errors" => ["foo", "bar"]}],
+        :response          => {"status" => 3, "hypotheses" => [{"utterance" => "I like pickles", "confidence" => 0.9876}], "words" => @words},
         :processing_status => 3,
-        :ingest_iteration  => 1,
-        :words             => @words
+        :ingest_iteration  => 1
       }
     end
 
@@ -66,7 +64,12 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
         attributes[:type] = "Chunk::PocketsphinxChunk"
         assert_attributes response_body["chunk"], attributes
         assert_equal 1, Chunk::PocketsphinxChunk.last.ingest_iteration
-        assert_equal @words, Chunk::PocketsphinxChunk.last.words
+        assert_equal true, response_body["chunk"].has_key?("response")
+        assert_equal true, response_body["chunk"]["response"].has_key?("words")
+        assert_equal true, response_body["chunk"]["response"].has_key?("hypotheses")
+        assert_equal 1, response_body["chunk"]["response"]["hypotheses"].size
+        assert_equal true, response_body["chunk"]["response"].has_key?("words")
+        assert_equal @words, response_body["chunk"]["response"]["words"]
       end
     end
 
@@ -354,7 +357,7 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
   def assert_attributes(params, expected_attributes = {})
     assert_equal false, params.blank?, "response should not be empty"
     (expected_attributes.stringify_keys.keys + %w(id document_id ingest_id type position offset duration start_at
-      end_at text score response processing_errors processing_status uid ingest_iteration locale words)).uniq.each do |attribute|
+      end_at text score response processing_status uid ingest_iteration locale)).uniq.each do |attribute|
       assert params.has_key?(attribute), "should contain key '#{attribute}' in response '#{params}'"
     end
 

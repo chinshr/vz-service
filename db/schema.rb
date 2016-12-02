@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160630062737) do
+ActiveRecord::Schema.define(version: 20161202183559) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -138,8 +138,7 @@ ActiveRecord::Schema.define(version: 20160630062737) do
     t.float    "score"
     t.string   "type",               limit: 255
     t.integer  "processing_status",                                       default: 0,             null: false
-    t.json     "response"
-    t.json     "processing_errors"
+    t.jsonb    "response",                                                default: {},            null: false
     t.string   "uid",                limit: 255
     t.integer  "ingest_iteration"
     t.integer  "turkee_task_id"
@@ -149,7 +148,6 @@ ActiveRecord::Schema.define(version: 20160630062737) do
     t.string   "aasm_state",         limit: 255,                          default: "unpublished", null: false
     t.datetime "published_at"
     t.integer  "accessibility_mask",                                      default: 0,             null: false
-    t.json     "words",                                                   default: []
     t.datetime "removed_at"
     t.datetime "deleted_at"
   end
@@ -165,6 +163,7 @@ ActiveRecord::Schema.define(version: 20160630062737) do
   add_index "documents", ["processing_status"], name: "index_documents_on_processing_status", using: :btree
   add_index "documents", ["published_at"], name: "index_documents_on_published_at", using: :btree
   add_index "documents", ["removed_at"], name: "index_documents_on_removed_at", using: :btree
+  add_index "documents", ["response"], name: "index_documents_on_response", using: :gin
   add_index "documents", ["score"], name: "index_documents_on_score", using: :btree
   add_index "documents", ["slug"], name: "index_documents_on_slug", unique: true, using: :btree
   add_index "documents", ["slug_id"], name: "index_documents_on_slug_id", unique: true, using: :btree

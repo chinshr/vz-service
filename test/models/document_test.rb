@@ -817,21 +817,6 @@ class DocumentTest < ActiveSupport::TestCase
 
   end
 
-  context "words" do
-
-    should "be initialized with empty array" do
-      document = Document.new
-      assert_equal [], document.words
-    end
-
-    should "set/get words as json" do
-      words = [{"p"=>1,"c"=>0.7,"s"=>1.610,"e"=>1.780,"w"=>"This"},{"p"=>2,"c"=>0.714,"s"=>1.780,"e"=>1.960,"w"=>"is"}]
-      document = FactoryGirl.create(:document, words: words)
-      assert_equal words, document.reload.words
-      assert_equal words.first, document.words.first
-    end
-  end
-
   context "#destroy" do
     setup do
       @document = FactoryGirl.create(:document)
