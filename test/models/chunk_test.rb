@@ -379,7 +379,6 @@ class ChunkTest < ActiveSupport::TestCase
         :text              => "I like pickles",
         :score             => 0.59,
         :response          => {status: 3},
-        :processing_errors => [],
         :processing_status => 3
       }
     end
@@ -437,19 +436,5 @@ class ChunkTest < ActiveSupport::TestCase
     chunk = FactoryGirl.create(:chunk)
     assert_equal false, chunk.is_root?
     assert_equal false, chunk.is_root
-  end
-
-  context "words" do
-    should "be initialized with empty array" do
-      chunk = Chunk::GoogleSpeechChunk.new
-      assert_equal [], chunk.words
-    end
-
-    should "set/get words as json" do
-      words = [{"p"=>1,"c"=>0.7,"s"=>1.610,"e"=>1.780,"w"=>"This"},{"p"=>2,"c"=>0.714,"s"=>1.780,"e"=>1.960,"w"=>"is"}]
-      chunk = FactoryGirl.create(:chunk, words: words)
-      assert_equal words, chunk.reload.words
-      assert_equal words.first, chunk.words.first
-    end
   end
 end

@@ -5,7 +5,6 @@ class ChunkPolicy < IngestPolicy
 
   def permitted_attributes(action_name = nil)
     [:type, :position, :offset, :duration, :start_time,
-      :end_time, :text, :score, :response, :processing_errors,
-      :processing_status]
+      :end_time, :text, :score, :response, :processing_status]
   end
 end
