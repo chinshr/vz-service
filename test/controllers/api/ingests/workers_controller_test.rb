@@ -164,11 +164,13 @@ class Api::Ingests::WorkersControllerTest < ActionController::TestCase
         sign_in :user, @user2
         assert_equal :created, @worker1.state
         put :update, {:ingest_id => @ingest.id, :id => @worker1.id, :worker => {
-          event: "start"
+          event: "start",
+          lock_count: 1
         }, format: :json}
         assert_response :success
         assert_response_body_attributes_with "worker"
         assert_equal "running", response_body["worker"]["state"]
+        assert_equal 1, response_body["worker"]["lock_count"]
       end
 
       should "update worker to start with #status=" do

@@ -455,6 +455,11 @@ class Ingest::WorkerTest < ActiveSupport::TestCase
       worker.update_attribute(:messages, messages)
       assert_equal messages, worker.reload.messages
     end
+
+    should "have `lock_count` column" do
+      worker = FactoryGirl.create(:ingest_worker)
+      assert_equal 0, worker.lock_count
+    end
   end
 
   context "integration" do
