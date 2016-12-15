@@ -507,6 +507,7 @@ class Ingest::WorkerTest < ActiveSupport::TestCase
       # try to start again, but already running
       split_worker.update_attributes({event: "start", instance_id: "i-0f6eea52db2f0c4ff"})
       assert_equal false, split_worker.errors.empty?
+      assert_equal true, split_worker.running?
     end
   end
 end
