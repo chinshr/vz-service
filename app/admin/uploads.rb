@@ -1,4 +1,8 @@
 ActiveAdmin.register Upload do
+  menu parent: "Ingests"
+
+  actions :all, :except => [:new, :edit, :destroy]
+
   permit_params
 
   scope :all
@@ -22,10 +26,12 @@ ActiveAdmin.register Upload do
 
   index do
     selectable_column
-    column :id
+    column :id do |resource|
+      link_to(resource.id, resource_path(resource), {title: resource.uid})
+    end
     column :title do |resource|
       if resource.respond_to? :title
-        link_to resource.title, admin_document_path(resource)
+        link_to resource.title, web_document_path(resource.slug_id)
       end
     end
     column :locale
@@ -37,10 +43,7 @@ ActiveAdmin.register Upload do
       resource.ingest.iteration
     end
     column(:state) do |resource|
-      colors = {:created => :grey, :starting => :grey, :started => :ok, :restarting => :grey,
-        :stopping => :grey, :stopped => :error, :resetting => :warning, :reset => :warning,
-        :finished => :ok, :removing => :warning, :removed => :warning}
-      status_tag(resource.ingest.state.to_s, colors[resource.ingest.state])
+      resource_state_status_tag(resource.ingest)
     end
     column do |resource|
       links = ""
@@ -50,7 +53,7 @@ ActiveAdmin.register Upload do
           :method => :delete, :class => "member_link delete_link", :confirm => "Are you really really really sure?"
       end
       # (resource.ingest.aasm.events(resource.ingest.aasm.current_state) - [:process, :fail, :finish]).each do |event|
-      (resource.ingest.events - [:process, :fail, :finish]).each do |event|
+      (resource.ingest.aasm(:default).events.map(&:name) - [:process, :fail, :finish]).each do |event|
         links += link_to event.to_s.humanize, switch_admin_upload_path(resource, params.merge(:event => event)),
           :class => "member_link view_link button", :confirm => "Really want to #{event.to_s.humanize.downcase}?"
       end

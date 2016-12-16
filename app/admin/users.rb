@@ -1,6 +1,9 @@
 ActiveAdmin.register User do
+  actions :all, :except => [:new]
+
   scope :all
   scope :confirmed
+
   permit_params :email, :city, :first_name, :last_name,
     :initials, :username
 

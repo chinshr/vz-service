@@ -1,9 +1,12 @@
 ActiveAdmin.register Document do
   permit_params :title, :description, :privacy_mask, :locale
 
-  scope("All", default: true) {|scope| scope.is_root }
+  actions :all, :except => [:new, :edit, :destroy]
+
+  scope("All") {|scope| scope.is_root }
+  scope("Documents", default: true) {|scope| scope.is_root(true) }
   scope("Chunks") {|scope| scope.is_root(false) }
-  scope("Recent") {|scope| scope.is_root.recent(1000) }
+  scope("Recent Documents") {|scope| scope.is_root(true).recent(1000) }
 
   controller do
     def find_resource
@@ -18,7 +21,11 @@ ActiveAdmin.register Document do
   index do
     selectable_column
     column :id
-    column :title
+    column :title do |resource|
+      if resource.respond_to? :title
+        link_to resource.title, web_document_path(resource.slug_id)
+      end
+    end
     column(:privacy) do |resource|
       resource.privacy.map(&:to_s).join(", ")
     end

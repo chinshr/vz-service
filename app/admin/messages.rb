@@ -1,4 +1,6 @@
 ActiveAdmin.register Message do
+  menu false
+
   filter :from
   filter :to
   filter :subject
