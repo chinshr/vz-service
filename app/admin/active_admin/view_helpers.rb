@@ -21,7 +21,7 @@ def resource_status_tag(state)
   colors = {
     :created => :grey, :starting => :grey, :started => :ok, :restarting => :grey,
     :stopping => :grey, :stopped => :error, :resetting => :warning, :reset => :warning,
-    :finished => :ok, :removing => :warning, :removed => :warning
+    :finished => :ok, :removing => :warning, :removed => :warning, :running => :warning
   }
   status_tag(state.to_s, colors[state.to_sym])
 end
