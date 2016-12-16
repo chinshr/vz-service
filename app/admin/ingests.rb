@@ -35,6 +35,7 @@ ActiveAdmin.register Ingest do
   end
 
   show do
+    # ingest attributes
     attributes_table do
       row :id
       row :uid
@@ -77,8 +78,9 @@ ActiveAdmin.register Ingest do
       row :metadata
       row :messages
 
-      panel "Workers" do
-        table_for resource.workers do
+      # workers
+      panel "Ingest Workers" do
+        table_for resource.workers.order(created_at: :asc) do
           column :id do |resource|
             link_to resource.id, admin_ingest_worker_path(resource), {title: resource.uid}
           end
@@ -98,6 +100,22 @@ ActiveAdmin.register Ingest do
           column :started_at
           column :stopped_at
           column :finished_at
+        end
+      end
+
+      # chunks
+      panel "Ingest Chunks" do
+        table_for resource.chunks.order(created_at: :asc) do
+          column :id do |resource|
+            link_to resource.id, admin_document_path(resource), {title: resource.uid}
+          end
+          column :position
+          column :start_time
+          column :end_time
+          column :duration
+          column :text
+          column :locale
+          column :created_at
         end
       end
 
