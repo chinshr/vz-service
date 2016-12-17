@@ -24,7 +24,7 @@ ActiveAdmin.register Registration do
     end
 
     # default_actions
-    column do |resource|
+    column :actions do |resource|
       links = link_to I18n.t('active_admin.view'), resource_path(resource), :class => "member_link view_link"
       links += link_to I18n.t('active_admin.edit'), edit_resource_path(resource), :class => "member_link edit_link"
       links += link_to I18n.t('active_admin.delete'), resource_path(resource),

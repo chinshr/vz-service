@@ -45,7 +45,7 @@ ActiveAdmin.register Upload do
     column(:state) do |resource|
       resource_state_status_tag(resource.ingest)
     end
-    column do |resource|
+    column :actions do |resource|
       links = ""
       links += link_to I18n.t('active_admin.view'), resource_path(resource), :class => "member_link view_link"
       if resource.ingest.state == :removed

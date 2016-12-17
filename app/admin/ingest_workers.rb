@@ -21,7 +21,9 @@ ActiveAdmin.register Ingest::Worker do
     column :id do |resource|
       link_to(resource.id, resource_path(resource), {title: resource.uid})
     end
-    column :worker_name
+    column :worker_name do |resource|
+      link_to(resource.worker_name, resource_path(resource))
+    end
     column :state do |resource|
       resource_state_status_tag(resource)
     end
@@ -29,13 +31,13 @@ ActiveAdmin.register Ingest::Worker do
     column :ingest_iteration
     column :server do |resource|
       if resource.server
-        link_to(resource.server.instance_id, resource_path(resource.server))
+        link_to(resource.server.instance_id, admin_ingest_server_path(resource.server))
       end
     end
     column :started_at
     column :stopped_at
     column :finished_at
-    column do |resource|
+    column :actions do |resource|
       links = ""
       links += link_to I18n.t('active_admin.view'), resource_path(resource), :class => "member_link view_link"
       resource.aasm(:default).events(permitted: true).map(&:name).each do |event|

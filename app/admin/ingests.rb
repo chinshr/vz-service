@@ -108,9 +108,19 @@ ActiveAdmin.register Ingest do
               link_to(resource.server.instance_id, admin_ingest_server_path(resource.server))
             end
           end
+          column :created_at
           column :started_at
           column :stopped_at
           column :finished_at
+          column :actions do |resource|
+            links = ""
+            # links += link_to I18n.t('active_admin.view'), resource_path(resource), :class => "member_link view_link"
+            resource.aasm(:default).events(permitted: true).map(&:name).each do |event|
+              links += link_to event.to_s.humanize, switch_admin_ingest_path(resource, params.merge(:event => event)),
+                :class => "member_link view_link button", :confirm => "Really want to #{event.to_s.humanize.downcase}?"
+            end
+            links.html_safe
+          end
         end
       end
 
@@ -125,7 +135,7 @@ ActiveAdmin.register Ingest do
           column :end_time
           column :duration
           column :text
-          column :locale
+          column :score
           column :created_at
         end
       end
