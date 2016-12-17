@@ -3,18 +3,23 @@ ActiveAdmin.register Ingest do
 
   filter :created_at
 
+  scope :all
+  scope("Media", default: true) {|scope| scope.where("ingests.type = ?", "Ingest::MediaIngest")}
+  scope("Image") {|scope| scope.where("ingests.type = ?", "Ingest::ImageIngest")}
+
   index do
     selectable_column
     column :id do |resource|
       link_to(resource.id, resource_path(resource), {title: resource.uid})
     end
+    column :type do |resource|
+      link_to(resource.type, resource_path(resource))
+    end
     column :state do |resource|
       resource_state_status_tag(resource)
     end
     column :stage do |resource|
-      span class: "status_tag" do
-        resource.aasm_stage
-      end
+      resource_status_tag(resource.aasm_stage)
     end
     column :progress do |resource|
       resource_progress_tag(resource)
@@ -47,7 +52,7 @@ ActiveAdmin.register Ingest do
         resource_state_status_tag(resource)
       end
       row :stage do |resource|
-        resource_status_tag(resource.stage)
+        resource_status_tag(resource.aasm_stage)
       end
 
       row :iteration

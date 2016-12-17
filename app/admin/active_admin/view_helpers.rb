@@ -14,7 +14,7 @@ def resource_progress_tag(resource)
 end
 
 def resource_state_status_tag(resource)
-  resource_status_tag(resource.state)
+  resource_status_tag(resource.state) if resource && resource.state.present?
 end
 
 def resource_status_tag(state)
@@ -23,5 +23,5 @@ def resource_status_tag(state)
     :stopping => :grey, :stopped => :error, :resetting => :warning, :reset => :warning,
     :finished => :ok, :removing => :warning, :removed => :warning, :running => :warning
   }
-  status_tag(state.to_s, colors[state.to_sym])
+  status_tag(state.to_s, colors[state.to_sym]) if state.present?
 end
