@@ -53,7 +53,7 @@ ActiveAdmin.register Upload do
           :method => :delete, :class => "member_link delete_link", :confirm => "Are you really really really sure?"
       end
       # (resource.ingest.aasm.events(resource.ingest.aasm.current_state) - [:process, :fail, :finish]).each do |event|
-      (resource.ingest.aasm(:default).events.map(&:name) - [:process, :fail, :finish]).each do |event|
+      (resource.ingest.aasm(:default).events(permitted: true).map(&:name) - [:process, :fail, :finish]).each do |event|
         links += link_to event.to_s.humanize, switch_admin_upload_path(resource, params.merge(:event => event)),
           :class => "member_link view_link button", :confirm => "Really want to #{event.to_s.humanize.downcase}?"
       end

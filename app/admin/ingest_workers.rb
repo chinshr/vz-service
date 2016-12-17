@@ -5,7 +5,16 @@ ActiveAdmin.register Ingest::Worker do
 
   permit_params
 
-  filter :created_at
+  filter :worker_name
+  filter :aasm_state, label: "State"
+  filter :lock_count
+  filter :ingest_iteration
+  filter :started_at
+  filter :stopped_at
+  filter :finished_at
+
+  scope :all
+  scope :active
 
   index do
     selectable_column
@@ -29,12 +38,22 @@ ActiveAdmin.register Ingest::Worker do
     column do |resource|
       links = ""
       links += link_to I18n.t('active_admin.view'), resource_path(resource), :class => "member_link view_link"
-      # (resource.aasm(:default).events.map(&:name) - []).each do |event|
-      #   links += link_to event.to_s.humanize, switch_admin_ingest_worker_path(resource, params.merge(:event => event)),
-      #     :class => "member_link view_link button", :confirm => "Really want to #{event.to_s.humanize.downcase}?"
-      # end
+      resource.aasm(:default).events(permitted: true).map(&:name).each do |event|
+        links += link_to event.to_s.humanize, switch_admin_ingest_path(resource, params.merge(:event => event)),
+          :class => "member_link view_link button", :confirm => "Really want to #{event.to_s.humanize.downcase}?"
+      end
       links.html_safe
     end
+  end
+
+  member_action :switch do
+    resource = Ingest::Worker.find(params[:id])
+    resource.send(:"#{params[:event]}!")
+    params.delete(:controller)
+    params.delete(:action)
+    params.delete(:event)
+    params.delete(:id)
+    redirect_to admin_ingest_worers_path(params)
   end
 
 end

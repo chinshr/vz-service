@@ -1,7 +1,13 @@
 ActiveAdmin.register Ingest do
   permit_params
 
+  actions :all, :except => [:new, :edit, :destroy]
+
   filter :created_at
+  filter :id
+  filter :uid
+  filter :aasm_state, label: "State"
+  filter :aasm_stage, label: "Stage"
 
   scope :all
   scope("Media", default: true) {|scope| scope.where("ingests.type = ?", "Ingest::MediaIngest")}
