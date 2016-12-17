@@ -69,7 +69,7 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
         assert_equal true, response_body["chunk"]["response"].has_key?("hypotheses")
         assert_equal 1, response_body["chunk"]["response"]["hypotheses"].size
         assert_equal true, response_body["chunk"]["response"].has_key?("words")
-        assert_equal @words, response_body["chunk"]["response"]["words"]
+        assert_equal 2, response_body["chunk"]["response"]["words"].size
       end
     end
 
@@ -255,18 +255,19 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
       sign_in :user, @user2
       put :update, {ingest_id: @ingest1.id, id: @chunk1.id, :chunk => {
         :score             => 0.95,
-        :response          => {"status" => 1, "hypothesis" => "You got it!"},
+        :response          => {"status" => 1, "hypotheses" => {"utterance" => "You got it!", "confidence" => 0.95}},
       }, format: :json}
       assert_response :success
       assert_response_body_attributes_with "chunk"
       assert_equal 0.95, @chunk1.reload.score
-      assert_equal({"status" => 1, "hypothesis" => "You got it!"}, @chunk1.reload.response)
+      assert_equal 1, @chunk1.response.status
+      assert_equal "You got it!", @chunk1.response.hypotheses[0].utterance
     end
 
     should "update ingest with track_attributes to create new track" do
       sign_in :user, @user2
       attributes = {:score => 0.95,
-        :response => {"status" => 1, "hypothesis" => "You got it!"},
+        :response => {"status" => 1, "hypotheses" => {"utterance" => "You got it!", "confidence" => 0.95}},
       }
       track_attributes = {s3_url: @s3_url, s3_mp3_url: @s3_mp3_url}
       assert_no_difference 'Chunk::GoogleSpeechChunk.count' do
@@ -276,7 +277,8 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
           assert_response :success
           assert_response_body_attributes_with "chunk"
           assert_equal 0.95, @chunk1.reload.score
-          assert_equal({"status" => 1, "hypothesis" => "You got it!"}, @chunk1.reload.response)
+          assert_equal 1, @chunk1.response.status
+          assert_equal "You got it!", @chunk1.response.hypotheses[0].utterance
           assert_not_nil response_body["chunk"]["track"]
           assert_equal @s3_url, response_body["chunk"]["track"]["s3_url"]
           assert_equal @s3_mp3_url, response_body["chunk"]["track"]["s3_mp3_url"]
@@ -301,7 +303,6 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
           assert_response :success
           assert_response_body_attributes_with "chunk"
           assert_equal 0.95, @chunk1.reload.score
-          assert_equal({"status" => 1, "hypothesis" => "You got it!"}, @chunk1.reload.response)
           assert_not_nil response_body["chunk"]["track"]
           assert_equal @s3_url, response_body["chunk"]["track"]["s3_url"]
           assert_equal @s3_mp3_url, response_body["chunk"]["track"]["s3_mp3_url"]
@@ -362,7 +363,10 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
     end
 
     expected_attributes.stringify_keys.each do |key, value|
-      assert_equal value, params[key], "'#{key}' attribute should contain '#{value}', but was '#{params[key]}'"
+      if key.to_s == "response"
+      else
+        assert_equal value, params[key], "'#{key}' attribute should contain '#{value}', but was '#{params[key]}'"
+      end
     end
   end
 end

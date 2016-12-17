@@ -339,10 +339,10 @@ class ChunkTest < ActiveSupport::TestCase
   end # context "scopes"
 
   should "have response" do
-    segment = FactoryGirl.create(:chunk)
-    assert_equal 0, segment.response['status']
-    assert_equal "I like pickles", segment.text
-    assert_equal 0.59, segment.score
+    chunk = FactoryGirl.create(:chunk)
+    assert_equal 0, chunk.response.as_json['status']
+    assert_equal "I like pickles", chunk.text
+    assert_equal 0.59, chunk.score
   end
 
   context "slug" do
@@ -436,5 +436,156 @@ class ChunkTest < ActiveSupport::TestCase
     chunk = FactoryGirl.create(:chunk)
     assert_equal false, chunk.is_root?
     assert_equal false, chunk.is_root
+  end
+
+  context "response" do
+    should "#version" do
+      assert_equal Document::Response::VERSION, FactoryGirl.build(:chunk, :errors).response.version
+    end
+
+    should "#id" do
+      assert_equal "ab345ae89f8b17d8e8298c9c7814700a-9", FactoryGirl.build(:chunk, :errors).response.id
+    end
+
+    should "#status" do
+      assert_equal -1, FactoryGirl.build(:chunk, :errors).response.status
+    end
+
+    should "#errors" do
+      assert_equal "Split error", FactoryGirl.build(:chunk, :errors).response.errors.first
+    end
+
+    should "#external_status" do
+      assert_equal "(c21r)", FactoryGirl.build(:chunk, :errors).response.external_status
+    end
+
+    context "#hypotheses" do
+      setup do
+        @chunk = FactoryGirl.build(:chunk, :hypotheses)
+      end
+
+      should "get" do
+        assert_not_nil @chunk.response.hypotheses
+        assert_equal Document::Response::HypothesisCollection, @chunk.response.hypotheses.class
+        assert_equal Document::Response::Hypothesis, @chunk.response.hypotheses[0].class
+        assert_equal "I like pickles", @chunk.response.hypotheses[0].utterance
+        assert_equal 0.59408695, @chunk.response.hypotheses[0].confidence
+      end
+    end
+
+    context "#keywords" do
+      setup do
+        @chunk = FactoryGirl.build(:chunk, :keywords)
+      end
+
+      should "get" do
+        assert_not_nil @chunk.response.keywords
+        assert_equal Document::Response::KeywordCollection, @chunk.response.keywords.class
+        assert_equal Document::Response::Keyword, @chunk.response.keywords[0].class
+        assert_equal "89f8b1", @chunk.response.keywords[0].id
+        assert_equal "pickle", @chunk.response.keywords[0].text
+        assert_equal 0.974, @chunk.response.keywords[0].relevance
+        # emotions
+        assert_not_nil @chunk.response.keywords[0].emotions
+        assert_equal Document::Response::Emotions, @chunk.response.keywords[0].emotions.class
+        assert_equal 0.0231, @chunk.response.keywords[0].emotions.joy
+        assert_equal 0.0123, @chunk.response.keywords[0].emotions.fear
+        assert_equal 0.2344, @chunk.response.keywords[0].emotions.anger
+        assert_equal 0.234, @chunk.response.keywords[0].emotions.disgust
+        assert_equal 0.23432, @chunk.response.keywords[0].emotions.sadness
+        # sentiment
+        assert_not_nil @chunk.response.keywords[0].sentiment
+        assert_equal Document::Response::Sentiment, @chunk.response.keywords[0].sentiment.class
+        assert_equal "neutral", @chunk.response.keywords[0].sentiment.type
+        assert_equal 0.08423, @chunk.response.keywords[0].sentiment.score
+      end
+    end
+
+    context "#words" do
+      setup do
+        @chunk = FactoryGirl.build(:chunk, :words)
+      end
+
+      should "get" do
+        assert_equal Document::Response::WordCollection, @chunk.response.words.class
+        assert_equal 50, @chunk.response.words.size
+        # attributes
+        assert_not_nil @chunk.response.words[0].i
+        assert_not_nil @chunk.response.words[0].id
+        assert_equal "This", @chunk.response.words[0].w
+        assert_equal "This", @chunk.response.words[0].word
+        assert_equal 1, @chunk.response.words[0].p
+        assert_equal 1, @chunk.response.words[0].position
+        assert_equal 0.7, @chunk.response.words[0].c
+        assert_equal 0.7, @chunk.response.words[0].confidence
+        assert_equal 1610.0, @chunk.response.words[0].s
+        assert_equal 1610.0, @chunk.response.words[0].start_time
+        assert_equal 1780.0, @chunk.response.words[0].e
+        assert_equal 1780.0, @chunk.response.words[0].end_time
+        # meta
+        assert_equal ".", @chunk.response.words.last.word
+        assert_equal "punc", @chunk.response.words.last.meta
+      end
+
+      should "#to_s" do
+        sentence = "This is Tom Cook car team. This is a production. Verification video of a new feature. The future is direct video uploads to S three from Android devices. If this video upload successful even I believe this test is complete and the feature is verified."
+        assert_equal sentence, @chunk.response.words.to_s
+      end
+
+      should "get #word aliases" do
+        word = Document::Response::Word.new({id: "xyz", p: 1, s: 1.0, e: 2.0, w: "Hi!", c: 0.97, m: "punc"})
+        assert_equal "xyz", word.id
+        assert_equal 1, word.position
+        assert_equal 1.0, word.start_time
+        assert_equal 2.0, word.end_time
+        assert_equal "Hi!", word.word
+        assert_equal 0.97, word.confidence
+
+        assert_equal word.i, word.id
+        assert_equal word.p, word.position
+        assert_equal word.s, word.start_time
+        assert_equal word.e, word.end_time
+        assert_equal word.w, word.word
+        assert_equal word.c, word.confidence
+      end
+
+      should "set #word aliases" do
+        word = Document::Response::Word.new({id: "xyz", p: 1, s: 1.0, e: 2.0, w: "Hi!", c: 0.97, m: "punc"})
+        word.id = "abc"
+        word.position = 2
+        word.start_time = 5.0
+        word.end_time = 6.0
+        word.word = "Awesome!"
+        word.confidence = 0.99
+
+        assert_equal "abc", word.i
+        assert_equal 2, word.p
+        assert_equal 5.0, word.s
+        assert_equal 6.0, word.e
+        assert_equal "Awesome!", word.w
+        assert_equal 0.99, word.c
+      end
+    end
+
+    context "#speaker_segment" do
+      setup do
+        @chunk = FactoryGirl.build(:chunk, :speaker_segment)
+      end
+
+      should "get" do
+        assert_equal Document::Response::SpeakerSegment, @chunk.response.speaker_segment.class
+        assert_not_nil @chunk.response.speaker_segment
+        assert_not_nil @chunk.response.speaker_segment.id
+        assert_equal "M", @chunk.response.speaker_segment.gender
+        assert_equal "U", @chunk.response.speaker_segment.bandwidth
+        assert_equal "S0", @chunk.response.speaker_segment.speaker_id
+        assert_equal "http://www.example.com/o/896d36d4/S0.gmm", @chunk.response.speaker_segment.speaker_model_uri
+        assert_equal "-271324790387066728", @chunk.response.speaker_segment.speaker_supervector_hash
+        assert_equal -31.339274605309463, @chunk.response.speaker_segment.speaker_mean_log_likelihood
+        assert_equal 13.3100004196167, @chunk.response.speaker_segment.duration
+        assert_equal 0.10999999940395355, @chunk.response.speaker_segment.start_time
+        assert_equal 13.420000419020653, @chunk.response.speaker_segment.end_time
+      end
+    end
   end
 end
