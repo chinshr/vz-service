@@ -17,6 +17,8 @@ class Document < ActiveRecord::Base
   STATE_REMOVED          = 2
   STATES                 = {unpublished: STATE_UNPUBLISHED, published: STATE_PUBLISHED, removed: STATE_REMOVED}
 
+  serialize :response, Document::Response
+
   delegate :duration, to: :track, allow_nil: true
   delegate :duration=, to: :track, allow_nil: true
   delegate :start_at, to: :track, allow_nil: true

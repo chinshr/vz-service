@@ -891,5 +891,60 @@ class DocumentTest < ActiveSupport::TestCase
         end
       end
     end
+  end #destroy
+
+  context "response" do
+    context "#keywords" do
+      setup do
+        @document = FactoryGirl.build(:document, :keywords)
+      end
+
+      should "get" do
+        assert_not_nil @document.response.keywords
+        assert_equal Document::Response::KeywordCollection, @document.response.keywords.class
+        assert_equal Document::Response::Keyword, @document.response.keywords[0].class
+        assert_equal "89f8b1", @document.response.keywords[0].id
+        assert_equal "pickle", @document.response.keywords[0].text
+        assert_equal 0.974, @document.response.keywords[0].relevance
+        # emotions
+        assert_not_nil @document.response.keywords[0].emotions
+        assert_equal Document::Response::Emotions, @document.response.keywords[0].emotions.class
+        assert_equal 0.0231, @document.response.keywords[0].emotions.joy
+        assert_equal 0.0123, @document.response.keywords[0].emotions.fear
+        assert_equal 0.2344, @document.response.keywords[0].emotions.anger
+        assert_equal 0.234, @document.response.keywords[0].emotions.disgust
+        assert_equal 0.23432, @document.response.keywords[0].emotions.sadness
+        # sentiment
+        assert_not_nil @document.response.keywords[0].sentiment
+        assert_equal Document::Response::Sentiment, @document.response.keywords[0].sentiment.class
+        assert_equal "neutral", @document.response.keywords[0].sentiment.type
+        assert_equal 0.08423, @document.response.keywords[0].sentiment.score
+      end
+    end
+
+    context "#entities" do
+      setup do
+        @document = FactoryGirl.build(:document, :entities)
+      end
+
+      should "get" do
+        assert_not_nil @document.response.entities
+        assert_equal Document::Response::EntityCollection, @document.response.entities.class
+        assert_equal Document::Response::Entity, @document.response.entities[0].class
+        assert_equal "abcd1", @document.response.entities[0].id
+        assert_equal "Person", @document.response.entities[0].type
+        assert_equal 0.948322, @document.response.entities[0].relevance
+        assert_equal 1, @document.response.entities[0].count
+        assert_equal "Donald Trump", @document.response.entities[0].text
+        assert_equal Document::Response::Disambiguated, @document.response.entities[0].disambiguated.class
+        assert_equal "Donald Trump", @document.response.entities[0].disambiguated.name
+        assert_equal ["AwardNominee", "AwardWinner", "Celebrity", "CompanyFounder", "TVPersonality", "TVProducer", "FilmActor", "TVActor"], @document.response.entities[0].disambiguated.sub_type
+        assert_equal "http://www.trumponline.com/", @document.response.entities[0].disambiguated.website
+        assert_equal "http://dbpedia.org/resource/Donald_Trump", @document.response.entities[0].disambiguated.dbpedia
+        assert_equal "http://rdf.freebase.com/ns/m.0cqt90", @document.response.entities[0].disambiguated.freebase
+        assert_equal "http://sw.opencyc.org/concept/Mx4rv0ncIZwpEbGdrcN5Y29ycA", @document.response.entities[0].disambiguated.opencyc
+        assert_equal "http://yago-knowledge.org/resource/Donald_Trump", @document.response.entities[0].disambiguated.yago
+      end
+    end
   end
 end
