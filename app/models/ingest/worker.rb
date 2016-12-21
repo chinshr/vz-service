@@ -137,6 +137,7 @@ class ::Ingest::Worker < ActiveRecord::Base
 
   def enter_running
     self.started_at = Time.zone.now
+    increment(:lock_count)
   end
 
   def after_enter_running
@@ -146,11 +147,11 @@ class ::Ingest::Worker < ActiveRecord::Base
   def after_commit_running
     if @after_enter_running
       if ingest
-        attrs = {busy: true}
-        attrs.merge!({status: Ingest::STATE_STARTED}) if ingest.starting?
-        attrs.merge!({event: 'forward_stage'}) if could_forward_ingest_stage?
-        if attrs.present?
-          ingest.attributes = attrs
+        ingest_attributes = {busy: true}
+        ingest_attributes.merge!({status: Ingest::STATE_STARTED}) if ingest.starting?
+        ingest_attributes.merge!({event: 'forward_stage'}) if could_forward_ingest_stage?
+        if ingest_attributes.present?
+          ingest.attributes = ingest_attributes
           ingest.save(validate: false)
         end
       end
@@ -169,10 +170,10 @@ class ::Ingest::Worker < ActiveRecord::Base
   def after_commit_stopped
     if @after_enter_stopped
       if ingest && ingest_iteration == ingest.iteration
-        attrs = {busy: false}
-        attrs.merge!({event: "stop"}) if related_ingest_stage?
-        if attrs.present?
-          ingest.attributes = attrs
+        ingest_attributes = {busy: false}
+        ingest_attributes.merge!({event: "stop"}) if related_ingest_stage?
+        if ingest_attributes.present?
+          ingest.attributes = ingest_attributes
           ingest.save(validate: false)
         end
       end
