@@ -5,14 +5,25 @@ class RegistrationTest < ActiveSupport::TestCase
     ActionMailer::Base.deliveries.clear
   end
 
-  should "validate email formatting" do
-    registration = Registration.new :email => "test@example.com"
-    assert_no_error_on registration, :email
-  end
+  context "validations" do
+    should validate_presence_of :email
+    should validate_uniqueness_of(:email).case_insensitive
 
-  should "not validate email formatting" do
-    registration = Registration.new :email => "test@com"
-    assert_error_on registration, :email
+    should "validate email formatting" do
+      registration = Registration.new :email => "test@example.com"
+      assert_no_error_on registration, :email
+    end
+
+    should "not validate email formatting" do
+      registration = Registration.new :email => "test@com"
+      assert_error_on registration, :email
+    end
+
+    should "lowercase email when validated" do
+      registration = Registration.new :email => "TeST@ExAmpLe.CoM"
+      assert_equal true, registration.valid?
+      assert_equal "test@example.com", registration.email
+    end
   end
 
   should "locale" do

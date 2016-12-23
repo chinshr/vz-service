@@ -27,6 +27,18 @@ class UserTest < ActiveSupport::TestCase
       assert_equal true, user.errors[:username].include?("is too short (minimum is 2 characters)")
     end
 
+    should "not downcase empty email address" do
+      user = User.new(:email => nil)
+      assert_equal false, user.valid?
+      assert_equal nil, user.email
+    end
+
+    should "downcase email address" do
+      user = User.new(:email => "TeST@ExAMplE.cOM")
+      assert_equal true, user.valid?
+      assert_equal "test@example.com", user.email
+    end
+
     should validate_presence_of :username
     should validate_length_of(:username).is_at_least(2).is_at_most(40)
     should validate_presence_of :first_name
@@ -101,7 +113,7 @@ class UserTest < ActiveSupport::TestCase
     end
 
     should "not be valid with pending registration" do
-      registration = FactoryGirl.build(:registration, email: "juergen@example.com")
+      registration = FactoryGirl.build(:registration, email: "Juergen@Example.com")
       user = FactoryGirl.build(:user, first_name: "J", last_name: "F", email: "juergen@example.com")
       user.force_registration_validation = true
       assert_equal false, user.valid?, "should not be valid"
@@ -116,9 +128,9 @@ class UserTest < ActiveSupport::TestCase
     end
 
     should "be valid with accepted registration" do
-      registration = FactoryGirl.build(:registration, email: "juergen@example.com")
+      registration = FactoryGirl.build(:registration, email: "Juergen@Example.com")
       assert_equal true, registration.accept!
-      user = FactoryGirl.build(:user, first_name: "J", last_name: "F", email: "juergen@example.com")
+      user = FactoryGirl.build(:user, first_name: "J", last_name: "F", email: "juerGen@exAmple.com")
       user.force_registration_validation = true
       assert_equal true, user.valid?, "should be valid"
     end

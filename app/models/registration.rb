@@ -29,8 +29,8 @@ class Registration < ActiveRecord::Base
 
   end
 
-  validates :email, uniqueness: true, presence: true, email_format: true
-
+  validates :email, presence: true, email_format: true,
+    uniqueness: { case_sensitive: false }
   scope :organic, -> { where("registrations.type IS NULL") }
   scope :recent, -> (n = nil) {
     scoped = order(created_at: :desc)
@@ -38,6 +38,7 @@ class Registration < ActiveRecord::Base
     scoped
   }
 
+  before_validation :downcase_email, on: :create
   before_save :geocode, :if => :has_ip_address?, :unless => :geocoded?
   before_save :reverse_geocode, :if => :geocoded?
   after_commit :after_enter_pending, on: :create
@@ -135,4 +136,9 @@ class Registration < ActiveRecord::Base
     RegistrationMailer.confirmation(self).deliver_later
   end
 
+  private
+
+  def downcase_email
+    self.email = email.downcase if email.present?
+  end
 end
