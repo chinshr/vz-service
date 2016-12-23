@@ -164,8 +164,7 @@ class Api::Ingests::WorkersControllerTest < ActionController::TestCase
         sign_in :user, @user2
         assert_equal :created, @worker1.state
         put :update, {:ingest_id => @ingest.id, :id => @worker1.id, :worker => {
-          event: "start",
-          lock_count: 1
+          event: "start"
         }, format: :json}
         assert_response :success
         assert_response_body_attributes_with "worker"

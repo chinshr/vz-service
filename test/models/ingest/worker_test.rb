@@ -465,49 +465,99 @@ class Ingest::WorkerTest < ActiveSupport::TestCase
   context "integration" do
     setup do
       AWS::SQS::Queue.any_instance.stubs(:send_message).returns({})
-      @ingest = FactoryGirl.create(:media_ingest_as_audio, aasm_state: "started", aasm_stage: "transcode_stage",
-        busy: true, terminate: false, iteration: 0)
-      @harvest_worker = FactoryGirl.create(:ingest_worker, :finished, ingest: @ingest,
-        worker_name: "ingest/media_ingest/harvest_worker", ingest_iteration: 0)
-      @transcode_worker = FactoryGirl.create(:ingest_worker, :running, ingest: @ingest,
-        worker_name: "ingest/media_ingest/transcode_worker", ingest_iteration: 0)
     end
 
-    should "check setup" do
-      assert_equal :started, @ingest.state
-      assert_equal :transcode_stage, @ingest.stage
-      assert_equal true, @ingest.busy?
-      assert_equal false, @ingest.terminate?
-      assert_equal 2, @ingest.workers.count
-      assert_equal @ingest.iteration, @harvest_worker.ingest_iteration
-      assert_equal @ingest.iteration, @transcode_worker.ingest_iteration
+    context "start / stop" do
+      setup do
+        @ingest = FactoryGirl.create(:media_ingest_as_audio, aasm_state: "started", aasm_stage: "transcode_stage",
+          busy: true, terminate: false, iteration: 0)
+        @harvest_worker = FactoryGirl.create(:ingest_worker, :finished, ingest: @ingest,
+          worker_name: "ingest/media_ingest/harvest_worker", ingest_iteration: 0)
+        @transcode_worker = FactoryGirl.create(:ingest_worker, :running, ingest: @ingest,
+          worker_name: "ingest/media_ingest/transcode_worker", ingest_iteration: 0)
+      end
+
+      should "check setup" do
+        assert_equal :started, @ingest.state
+        assert_equal :transcode_stage, @ingest.stage
+        assert_equal true, @ingest.busy?
+        assert_equal false, @ingest.terminate?
+        assert_equal 2, @ingest.workers.count
+        assert_equal @ingest.iteration, @harvest_worker.ingest_iteration
+        assert_equal @ingest.iteration, @transcode_worker.ingest_iteration
+      end
+
+      should "`finish` transcode worker" do
+        @transcode_worker.update_attributes({event: "finish"})
+        assert_equal true, @transcode_worker.finished?
+        assert_equal false, @ingest.busy?
+        assert_equal false, @ingest.terminate?
+        assert_equal 3, @ingest.workers.count
+        assert_equal 1, @ingest.workers.where(worker_name: "ingest/media_ingest/split_worker").count
+      end
+
+      should "`start` split worker" do
+        @transcode_worker.update_attributes({event: "finish"})
+        assert_equal true, @transcode_worker.finished?
+        split_worker = @ingest.workers.where(worker_name: "ingest/media_ingest/split_worker").first
+        assert_not_nil split_worker
+        assert_equal true, split_worker.created?
+        assert_equal false, @ingest.busy?
+        assert_equal false, @ingest.terminate?
+        split_worker.update_attributes({event: "start", instance_id: "i-0f6eea52db2f0c4ff"})
+        assert_equal true, split_worker.errors.empty?
+        assert_equal true, split_worker.running?
+        assert_equal true, @ingest.busy?
+        # try to start again, but already running
+        split_worker.update_attributes({event: "start", instance_id: "i-0f6eea52db2f0c4ff"})
+        assert_equal false, split_worker.errors.empty?
+        assert_equal true, split_worker.running?
+      end
     end
 
-    should "`finish` transcode worker" do
-      @transcode_worker.update_attributes({event: "finish"})
-      assert_equal true, @transcode_worker.finished?
-      assert_equal false, @ingest.busy?
-      assert_equal false, @ingest.terminate?
-      assert_equal 3, @ingest.workers.count
-      assert_equal 1, @ingest.workers.where(worker_name: "ingest/media_ingest/split_worker").count
-    end
+    context "archive to end stage" do
+      setup do
+        @ingest = FactoryGirl.create(:media_ingest_as_audio, aasm_state: "started", aasm_stage: "split_stage",
+          busy: true, terminate: false, iteration: 0, progress: 80)
+        @split_worker = FactoryGirl.create(:ingest_worker, :running, ingest: @ingest,
+          worker_name: "ingest/media_ingest/split_worker", ingest_iteration: 0)
+      end
 
-    should "`start` split worker" do
-      @transcode_worker.update_attributes({event: "finish"})
-      assert_equal true, @transcode_worker.finished?
-      split_worker = @ingest.workers.where(worker_name: "ingest/media_ingest/split_worker").first
-      assert_not_nil split_worker
-      assert_equal true, split_worker.created?
-      assert_equal false, @ingest.busy?
-      assert_equal false, @ingest.terminate?
-      split_worker.update_attributes({event: "start", instance_id: "i-0f6eea52db2f0c4ff"})
-      assert_equal true, split_worker.errors.empty?
-      assert_equal true, split_worker.running?
-      assert_equal true, @ingest.busy?
-      # try to start again, but already running
-      split_worker.update_attributes({event: "start", instance_id: "i-0f6eea52db2f0c4ff"})
-      assert_equal false, split_worker.errors.empty?
-      assert_equal true, split_worker.running?
+      should "no duplicate archive worker" do
+        assert_equal :started, @ingest.state
+        assert_equal :split_stage, @ingest.stage
+        assert_equal true, @ingest.busy?
+        assert_equal false, @ingest.terminate?
+        assert_equal 1, @ingest.workers.count
+        @split_worker.update_attributes({event: "finish"})
+        assert_equal false, @ingest.busy?
+        assert_equal 2, @ingest.workers.count
+        archive_worker = @ingest.workers.where(worker_name: "ingest/media_ingest/archive_worker").first
+        assert_not_nil archive_worker
+        assert_equal :created, archive_worker.state
+        ingest_id, archive_worker_id = @ingest.id, archive_worker.id
+        assert_equal :split_stage, @ingest.stage
+        # shoryuken 1st archive worker trying to lock
+        archive_worker1 = Ingest::Worker.filter({ingest_id: ingest_id}).find(archive_worker_id)
+        assert_equal :created, archive_worker1.state
+        archive_worker1.update_attributes({event: "start", instance_id: "xyz"})
+        assert_equal :running, archive_worker1.state
+        assert_equal 1, archive_worker1.lock_count
+        assert_equal :archive_stage, @ingest.reload.stage
+        # rogue 2nd archive worker also trying to lock
+        archive_worker2 = Ingest::Worker.filter({ingest_id: ingest_id}).find(archive_worker_id)
+        assert_equal :running, archive_worker2.state
+        archive_worker2.update_attributes({event: "start", instance_id: "xyz"})
+        assert_equal false, archive_worker2.errors.blank?
+        assert_equal 1, archive_worker2.lock_count
+        # 1st worker finishes
+        archive_worker1.update_attributes({event: "finish"})
+        assert_equal :finished, archive_worker1.state
+        # were are done, right?
+        assert_equal :finished, @ingest.reload.state
+        assert_equal :end_stage, @ingest.stage
+        assert_equal 100.0, @ingest.progress
+      end
     end
   end
 end
