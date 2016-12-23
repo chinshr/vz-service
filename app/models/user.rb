@@ -34,7 +34,7 @@ class User < ActiveRecord::Base
   acts_as_tagger
   friendly_id :username, use: [:slugged, :history]
 
-  validates :email, presence: true, email_format: true#, uniqueness: true
+  validates :email, presence: true, email_format: true #, uniqueness: true
   validates :email, registration: true, on: :create, if: :should_perform_registration_validation?
   validates :username, presence: true, uniqueness: true, length: { minimum: 2, maximum: 40 }, username_format: true, if: :confirmed_or_confirmation_validation?
   validates :first_name, presence: true, length: { minimum: 1, maximum: 125 }, if: :confirmed_or_confirmation_validation?
@@ -43,6 +43,7 @@ class User < ActiveRecord::Base
 
   scope :confirmed, lambda { where("users.confirmed_at IS NOT NULL") }
 
+  before_validation :downcase_email, on: :create
   before_save :geocode, if: :has_ip_address?, unless: :geocoded?
   before_save :reverse_geocode, if: :geocoded?
 
@@ -154,4 +155,11 @@ class User < ActiveRecord::Base
   def should_generate_new_friendly_id?
     new_record? || slug.blank? || !!changes[:username]
   end
+
+  private
+
+  def downcase_email
+    self.email = email.downcase if email.present?
+  end
+
 end
