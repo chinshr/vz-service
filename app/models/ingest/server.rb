@@ -238,7 +238,7 @@ class Ingest::Server < ActiveRecord::Base
     else
       false
     end
-  rescue AWS::EC2::Errors::InvalidInstanceID::NotFound => ex
+  rescue AWS::EC2::Errors::InvalidInstanceID::NotFound, AWS::Core::Resource::NotFound => ex
     Rails.logger.info("Instance #{instance.id} not found, possibly manually removed.")
     false
   end
