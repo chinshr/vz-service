@@ -20,6 +20,7 @@ class Api::Ingests::WorkersControllerTest < ActionController::TestCase
           post :create, ingest_id: @ingest.id, worker: {
             ingest_iteration: 1,
             worker_name: "ingest/media_ingest/harvest_worker",
+            worker_object_id: "xyzabcd123",
             messages: messages
           }, format: :json
         end
@@ -27,6 +28,7 @@ class Api::Ingests::WorkersControllerTest < ActionController::TestCase
         assert_attributes response_body["worker"]
         assert_equal 1, response_body["worker"]["ingest_iteration"]
         assert_equal "ingest/media_ingest/harvest_worker", response_body["worker"]["worker_name"]
+        assert_equal "xyzabcd123", response_body["worker"]["worker_object_id"]
         assert_equal "created", response_body["worker"]["state"]
         assert_equal messages, response_body["worker"]["messages"]
       end
@@ -164,12 +166,14 @@ class Api::Ingests::WorkersControllerTest < ActionController::TestCase
         sign_in :user, @user2
         assert_equal :created, @worker1.state
         put :update, {:ingest_id => @ingest.id, :id => @worker1.id, :worker => {
-          event: "start"
+          event: "start",
+          worker_object_id: "putabcd1234"
         }, format: :json}
         assert_response :success
         assert_response_body_attributes_with "worker"
         assert_equal "running", response_body["worker"]["state"]
         assert_equal 1, response_body["worker"]["lock_count"]
+        assert_equal "putabcd1234", response_body["worker"]["worker_object_id"]
       end
 
       should "update worker to start with #status=" do
@@ -259,7 +263,7 @@ class Api::Ingests::WorkersControllerTest < ActionController::TestCase
   protected
 
   def assert_attributes(response, expected_attributes = {})
-    %w(id uid state status ingest_iteration worker_name created_at started_at stopped_at finished_at ingest_id server_id messages progress).each do |key|
+    %w(id uid state status ingest_iteration worker_name created_at started_at stopped_at finished_at ingest_id server_id messages progress lock_count worker_object_id).each do |key|
       assert response.has_key?(key), "should contain key '#{key}' in '#{response}'"
     end
   end
