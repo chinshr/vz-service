@@ -476,6 +476,10 @@ FactoryGirl.define do
     trait :finished do
       aasm_state "finished"
     end
+
+    trait :failed do
+      aasm_state "failed"
+    end
   end
 
 end

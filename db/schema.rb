@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161226175845) do
+ActiveRecord::Schema.define(version: 20161226194040) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -284,10 +284,12 @@ ActiveRecord::Schema.define(version: 20161226175845) do
     t.string   "instance_id"
     t.integer  "lock_count",       default: 0,         null: false
     t.string   "worker_object_id"
+    t.datetime "failed_at"
   end
 
   add_index "ingest_workers", ["aasm_state"], name: "index_ingest_workers_on_aasm_state", using: :btree
   add_index "ingest_workers", ["created_at"], name: "index_ingest_workers_on_created_at", using: :btree
+  add_index "ingest_workers", ["failed_at"], name: "index_ingest_workers_on_failed_at", using: :btree
   add_index "ingest_workers", ["finished_at"], name: "index_ingest_workers_on_finished_at", using: :btree
   add_index "ingest_workers", ["ingest_id"], name: "index_ingest_workers_on_ingest_id", using: :btree
   add_index "ingest_workers", ["ingest_iteration"], name: "index_ingest_workers_on_ingest_iteration", using: :btree
