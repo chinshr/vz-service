@@ -211,12 +211,16 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
     end
 
     should "count ingest chunks when backend user is signed in" do
-      @chunk1 = FactoryGirl.create(:chunk_google_speech, document: @ingest1.document, ingest_id: @ingest1.id)
+      count = 27
+      count.times do |index|
+        FactoryGirl.create(:chunk_google_speech, document: @ingest1.document,
+          ingest_id: @ingest1.id, position: index + 1)
+      end
       sign_in :user, @user2
       get :count, ingest_id: @ingest1.id, format: :json
       assert_response :success
       assert response_body.has_key?("count"), "should have root"
-      assert_equal @ingest1.chunks.count, response_body["count"], "should have count"
+      assert_equal count, response_body["count"], "should have count"
     end
   end
 
