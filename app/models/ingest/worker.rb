@@ -52,17 +52,18 @@ class ::Ingest::Worker < ActiveRecord::Base
   scope :active, -> { any_of_state(["created", "running"]) }
 
   aasm column: 'aasm_state' do
-    state :created, initial: true
+    state :created, initial: true, enter: :enter_created, after_enter: :after_enter_created
     state :running, enter: :enter_running, after_enter: :after_enter_running
     state :stopped, enter: :enter_stopped, after_enter: :after_enter_stopped
     state :finished, enter: :enter_finished, after_enter: :after_enter_finished
+    state :failed, enter: :enter_failed, after_enter: :after_enter_failed
 
     event :start, :after_commit => :after_commit_event_start do
       transitions :from => :created, :to => :running, :guard => :can_start?
     end
 
     event :stop, :after_commit => :after_commit_event_stop do
-      transitions :from => [:created, :running, :stopped], :to => :stopped
+      transitions :from => [:created, :running, :stopped, :failed], :to => :stopped
     end
 
     event :finish, :after_commit => :after_commit_event_finish do
@@ -70,13 +71,25 @@ class ::Ingest::Worker < ActiveRecord::Base
       transitions :from => :running, :to => :stopped
       transitions :from => :finished, :to => :finished
     end
+
+    event :fail, :after_commit => :after_commit_event_fail do
+      transitions :from => :running, :to => :failed, :guard => :can_fail?
+      transitions :from => :failed, :to => :failed
+      transitions :from => [:created, :running, :stopped], :to => :stopped
+    end
+
+    event :reset, :after_commit => :after_commit_event_reset do
+      transitions :from => :failed, :to => :created, :guard => :can_reset?
+      transitions :from => :created, :to => :created
+    end
   end
 
   before_validation :set_ingest_iteration_from_ingest, on: :create
   before_validation :set_server_from_instance_id
   after_commit :after_enter_created, on: :create
   after_commit :update_ingest_if_changed,
-    :after_commit_running, :after_commit_finished, :after_commit_stopped
+    :after_commit_running, :after_commit_finished,
+    :after_commit_stopped, :after_commit_failed
 
   class << self
     def generate_uid; SecureRandom.uuid; end
@@ -127,13 +140,22 @@ class ::Ingest::Worker < ActiveRecord::Base
 
   private
 
-  def after_enter_created
-    Ingest::Server::RestartJob.perform_later
-  end
-
   def after_commit_event_start; end
   def after_commit_event_stop; end
   def after_commit_event_finish; end
+  def after_commit_event_fail; end
+  def after_commit_event_reset; end
+
+  def enter_created
+    # when reset transitions to `created`
+    self.instance_id      = nil
+    self.server_id        = nil
+    self.worker_object_id = nil
+  end
+
+  def after_enter_created
+    Ingest::Server::RestartJob.perform_later
+  end
 
   def enter_running
     self.started_at = Time.zone.now
@@ -172,10 +194,8 @@ class ::Ingest::Worker < ActiveRecord::Base
       if ingest && ingest_iteration == ingest.iteration
         ingest_attributes = {busy: false}
         ingest_attributes.merge!({event: "stop"}) if related_ingest_stage?
-        if ingest_attributes.present?
-          ingest.attributes = ingest_attributes
-          ingest.save(validate: false)
-        end
+        ingest.attributes = ingest_attributes
+        ingest.save(validate: false)
       end
       @after_enter_stopped = false
     end
@@ -205,11 +225,25 @@ class ::Ingest::Worker < ActiveRecord::Base
     end
   end
 
-  def can_start?
-    if ingest
-      (ingest.starting? || ingest.started?) && ingest.not_terminate?
-    else
-      true
+  def enter_failed
+    self.failed_at = Time.zone.now
+  end
+
+  def after_enter_failed
+    @after_enter_failed = true
+  end
+
+  def after_commit_failed
+    if @after_enter_failed
+      if ingest && ingest_iteration == ingest.iteration
+        # TODO: handle perform error, reset! will restart until threshold,
+        # for now, like stop worker, which stops ingest!
+        ingest_attributes = {busy: false}
+        ingest_attributes.merge!({event: "stop"}) if related_ingest_stage?
+        ingest.attributes = ingest_attributes
+        ingest.save(validate: false)
+      end
+      @after_enter_failed = false
     end
   end
 
@@ -225,7 +259,31 @@ class ::Ingest::Worker < ActiveRecord::Base
     !terminate?
   end
 
+  def can_start?
+    if ingest
+      (ingest.starting? || ingest.started?) && ingest.not_terminate?
+    else
+      true
+    end
+  end
+
   def can_finish?
+    if ingest
+      ingest_iteration == ingest.iteration && not_terminate?
+    else
+      true
+    end
+  end
+
+  def can_fail?
+    if ingest
+      ingest_iteration == ingest.iteration && not_terminate?
+    else
+      true
+    end
+  end
+
+  def can_reset?
     if ingest
       ingest_iteration == ingest.iteration && not_terminate?
     else

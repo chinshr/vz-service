@@ -174,6 +174,14 @@ class Ingest::WorkerTest < ActiveSupport::TestCase
         assert_not_nil @worker.started_at
       end
 
+      should "not #start! when not created" do
+        @worker = FactoryGirl.create(:ingest_worker, :running)
+        assert_raise AASM::InvalidTransition do
+          assert_equal false, @worker.start!
+        end
+        assert_equal :running, @worker.state
+      end
+
       should "#stop! when worker is 'running'" do
         @worker = FactoryGirl.create(:ingest_worker, :running)
         @worker.expects(:after_commit_event_stop).once
@@ -349,6 +357,80 @@ class Ingest::WorkerTest < ActiveSupport::TestCase
         end
       end
 
+      context "#fail!" do
+        should "transition to `failed` from `running`" do
+          @worker = FactoryGirl.create(:ingest_worker, :running, ingest_iteration: 1,
+            ingest: FactoryGirl.create(:media_ingest_as_audio, iteration: 1))
+          @worker.expects(:after_commit_event_fail).once
+          @worker.expects(:after_enter_failed).once
+          assert_equal true, @worker.fail!
+          assert_equal :failed, @worker.state
+          assert_not_nil @worker.failed_at
+        end
+
+        should "transition to `failed` from `failed`" do
+          @worker = FactoryGirl.create(:ingest_worker, :failed)
+          @worker.expects(:after_commit_event_fail).once
+          @worker.expects(:after_enter_failed).once
+          assert_equal true, @worker.fail!
+          assert_equal :failed, @worker.state
+        end
+
+        should "transition to `stopped` from `created`" do
+          @worker = FactoryGirl.create(:ingest_worker, :created)
+          @worker.expects(:after_commit_event_fail).once
+          @worker.expects(:after_enter_failed).never
+          assert_equal true, @worker.fail!
+          assert_equal :stopped, @worker.state
+        end
+
+        should "transition to `stopped` from `stopped`" do
+          @worker = FactoryGirl.create(:ingest_worker, :stopped)
+          @worker.expects(:after_commit_event_fail).once
+          @worker.expects(:after_enter_failed).never
+          assert_equal true, @worker.fail!
+          assert_equal :stopped, @worker.state
+        end
+      end
+
+      context "#reset!" do
+        should "transition to `created` from `failed`" do
+          @worker = FactoryGirl.create(:ingest_worker, :failed, ingest_iteration: 1,
+            ingest: FactoryGirl.create(:media_ingest_as_audio, iteration: 1))
+          @worker.expects(:after_commit_event_reset).once
+          @worker.expects(:enter_created).once
+          @worker.expects(:after_enter_created).once
+          assert_equal true, @worker.reset!
+          assert_equal :created, @worker.state
+        end
+
+        should "transition to `created` from `created`" do
+          @worker = FactoryGirl.create(:ingest_worker, :created, ingest_iteration: 1,
+            ingest: FactoryGirl.create(:media_ingest_as_audio, iteration: 1))
+          @worker.expects(:after_commit_event_reset).once
+          @worker.expects(:enter_created).once
+          @worker.expects(:after_enter_created).once
+          assert_equal true, @worker.reset!
+          assert_equal :created, @worker.state
+        end
+
+        should "clear attributes and transition to `created` from `failed`" do
+          @worker = FactoryGirl.create(:ingest_worker, :failed, ingest_iteration: 1,
+            instance_id: "xyz123", worker_object_id: "a7e323d", lock_count: 1,
+            ingest: FactoryGirl.create(:media_ingest_as_audio, iteration: 1),
+            server: FactoryGirl.create(:cpw_ingest_server))
+          assert_not_nil @worker.instance_id
+          assert_not_nil @worker.server_id
+          assert_not_nil @worker.worker_object_id
+          assert_equal 1, @worker.lock_count
+          assert_equal true, @worker.reset!
+          assert_equal :created, @worker.state
+          assert_nil @worker.instance_id
+          assert_nil @worker.server_id
+          assert_nil @worker.worker_object_id
+          assert_equal 1, @worker.lock_count
+        end
+      end
     end # context state machine
 
     context "instance_id" do
