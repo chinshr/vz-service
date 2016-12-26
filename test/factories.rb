@@ -459,6 +459,7 @@ FactoryGirl.define do
     association :ingest, factory: :media_ingest_as_audio
     ingest_iteration 1
     worker_name "ingest/media_ingest/harvest_worker"
+    worker_object_id "70365892547420"
 
     trait :created do
       aasm_state "created"

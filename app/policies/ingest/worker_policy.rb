@@ -24,7 +24,7 @@ class Ingest::WorkerPolicy < ApplicationPolicy
   end
 
   def permitted_attributes(action_name = nil)
-    keys = [:ingest_iteration, :worker_name, :event, :status, :instance_id, :progress, :lock_count]
+    keys = [:ingest_iteration, :worker_name, :event, :status, :instance_id, :progress, :lock_count, :worker_object_id]
     keys
   end
 end

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161215003401) do
+ActiveRecord::Schema.define(version: 20161226175845) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -283,6 +283,7 @@ ActiveRecord::Schema.define(version: 20161215003401) do
     t.json     "messages",         default: {},        null: false
     t.string   "instance_id"
     t.integer  "lock_count",       default: 0,         null: false
+    t.string   "worker_object_id"
   end
 
   add_index "ingest_workers", ["aasm_state"], name: "index_ingest_workers_on_aasm_state", using: :btree
