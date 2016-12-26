@@ -26,7 +26,7 @@ class Api::Ingests::ChunksController < Api::ApplicationController
   # [GET] /api/ingests/:ingest_id/count(.:format)
   def count
     authorize :"ingest/chunk"
-    render :json => {:count => @ingest.chunks.filter(params).count}
+    render :json => {:count => @ingest.chunks.filter(count_params).count}
   end
 
   # [GET] /api/ingests/:ingest_id/chunks/:id(.:format)
