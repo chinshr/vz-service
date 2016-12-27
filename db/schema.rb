@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161226194040) do
+ActiveRecord::Schema.define(version: 20161227185924) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -123,33 +123,34 @@ ActiveRecord::Schema.define(version: 20161226194040) do
   add_index "attachings", ["message_id", "upload_id"], name: "index_attachings_on_message_id_and_upload_id", unique: true, using: :btree
 
   create_table "documents", force: :cascade do |t|
-    t.string   "title",              limit: 255
-    t.string   "slug_id",            limit: 255,                                                  null: false
+    t.string   "title",                 limit: 255
+    t.string   "slug_id",               limit: 255,                                                  null: false
     t.text     "description"
-    t.integer  "privacy_mask",                                            default: 0,             null: false
-    t.string   "locale",             limit: 5,                            default: "en-US",       null: false
+    t.integer  "privacy_mask",                                               default: 0,             null: false
+    t.string   "locale",                limit: 5,                            default: "en-US",       null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.text     "html"
     t.integer  "user_id"
     t.json     "rich_text"
     t.text     "text"
-    t.decimal  "offset",                         precision: 15, scale: 3
+    t.decimal  "offset",                            precision: 15, scale: 3
     t.float    "score"
-    t.string   "type",               limit: 255
-    t.integer  "processing_status",                                       default: 0,             null: false
-    t.jsonb    "response",                                                default: {},            null: false
-    t.string   "uid",                limit: 255
+    t.string   "type",                  limit: 255
+    t.integer  "processing_status",                                          default: 0,             null: false
+    t.jsonb    "response",                                                   default: {},            null: false
+    t.string   "uid",                   limit: 255
     t.integer  "ingest_iteration"
     t.integer  "turkee_task_id"
-    t.string   "slug",               limit: 255
-    t.decimal  "start_time",                     precision: 15, scale: 3
-    t.decimal  "end_time",                       precision: 15, scale: 3
-    t.string   "aasm_state",         limit: 255,                          default: "unpublished", null: false
+    t.string   "slug",                  limit: 255
+    t.decimal  "start_time",                        precision: 15, scale: 3
+    t.decimal  "end_time",                          precision: 15, scale: 3
+    t.string   "aasm_state",            limit: 255,                          default: "unpublished", null: false
     t.datetime "published_at"
-    t.integer  "accessibility_mask",                                      default: 0,             null: false
+    t.integer  "accessibility_mask",                                         default: 0,             null: false
     t.datetime "removed_at"
     t.datetime "deleted_at"
+    t.integer  "processed_stages_mask",                                      default: 0,             null: false
   end
 
   add_index "documents", ["aasm_state"], name: "index_documents_on_aasm_state", using: :btree
@@ -160,6 +161,7 @@ ActiveRecord::Schema.define(version: 20161226194040) do
   add_index "documents", ["locale"], name: "documents_locale_with_text_pattern_ops", using: :btree
   add_index "documents", ["offset"], name: "index_documents_on_offset", using: :btree
   add_index "documents", ["privacy_mask"], name: "index_documents_on_privacy_mask", using: :btree
+  add_index "documents", ["processed_stages_mask"], name: "index_documents_on_processed_stages_mask", using: :btree
   add_index "documents", ["processing_status"], name: "index_documents_on_processing_status", using: :btree
   add_index "documents", ["published_at"], name: "index_documents_on_published_at", using: :btree
   add_index "documents", ["removed_at"], name: "index_documents_on_removed_at", using: :btree

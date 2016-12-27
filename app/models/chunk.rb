@@ -1,4 +1,6 @@
 class Chunk < ::Document
+  include ::Speech::Stages::ProcessHelper
+
   STATES = {unprocessed: 0, built: 1, encoded: 2,
     transcribed: 3, build_error: -1, encoding_error: -2,
     transcription_error: -3}
@@ -28,7 +30,8 @@ class Chunk < ::Document
   filtered_scopes :sort_order, :reverse_sort, :any_of_types, :none_of_types,
     :any_of_processing_status, :none_of_processing_status,
     :any_of_positions, :any_of_ingest_iterations, :score_lt, :score_gt,
-    :score_lteq, :score_gteq, :ingest_id, :none_of_ingest_ids
+    :score_lteq, :score_gteq, :ingest_id, :none_of_ingest_ids,
+    :any_of_processed_stages
   scope :sort_order, -> (param) {
     case param.first[0]  # E.g. get first key of {"id"=>"asc"}
     when "id"
@@ -60,6 +63,7 @@ class Chunk < ::Document
   scope :score_gteq, -> (param) {where(self.arel_table[:score].gteq(param))}
   scope :ingest_id, -> (param) {joins(:master_chunk_segment).where("segments.ingest_id = ?", param)}
   scope :none_of_ingest_ids, -> (params) {joins(:master_chunk_segment).where("segments.ingest_id NOT IN (?)", Array.wrap(params))}
+  scope :any_of_processed_stages, -> (params) {where(any_of_processed_stages_sql_condition(params))}
 
   # private scopes
   scope :transcribed, -> {where(:processing_status => STATES[:transcribed])}
@@ -145,6 +149,14 @@ class Chunk < ::Document
       result += "-t#{sprintf('%.2f', start_time)}-#{sprintf('%.2f', end_time)}".gsub('.', '_') if start_time && end_time
       result += "-s#{sprintf('%.3f', score)}".gsub('.', '_') if score
       result
+    end
+
+    def any_of_processed_stages_sql_condition(*args)
+      result = []
+      Array.wrap(args).flatten.each do |value|
+        result << "(documents.processed_stages_mask & #{::Speech::Stages::ProcessedStages.bits(value)} > 0)"
+      end
+      result.length > 0 ? "(#{ result.join(" OR ") })" : "(1 = 1)"
     end
 
     private

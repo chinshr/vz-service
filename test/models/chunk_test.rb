@@ -90,8 +90,8 @@ class ChunkTest < ActiveSupport::TestCase
       # assert_equal sc1.track, cc1.chunks[0].track
       # assert_equal rc1.track, cc1.chunks[1].track
 
-      assert_equal nil, cc1.child_segments[0].position
-      assert_equal nil, cc1.child_segments[1].position
+      assert_nil cc1.child_segments[0].position
+      assert_nil cc1.child_segments[1].position
 
       assert_equal @cc_t1, cc1.track
       assert_equal sc1, cc1.document
@@ -150,7 +150,7 @@ class ChunkTest < ActiveSupport::TestCase
         :any_of_locales, :any_of_status, :none_of_status, :any_of_tags, :none_of_tags,
         :created_at_gt, :created_at_gteq, :created_at_lt, :created_at_lteq,
         :updated_at_gt, :updated_at_gteq, :updated_at_lt, :updated_at_lteq,
-        :published_at_gt, :published_at_gteq, :published_at_lt, :published_at_lteq].to_set, Chunk.scopes.to_set
+        :published_at_gt, :published_at_gteq, :published_at_lt, :published_at_lteq, :any_of_processed_stages].to_set, Chunk.scopes.to_set
     end
 
     should "have any_of_processing_status" do
@@ -336,6 +336,14 @@ class ChunkTest < ActiveSupport::TestCase
           rt['ops'][0]['attributes']['segment']
       end
     end
+
+    should "have any_of_processed_stages" do
+      @chunk.update_attribute(:processed_stages_mask, ::Speech::Stages::ProcessedStages.bits([:build, :encode]))
+      assert_equal true, Chunk.any_of_processed_stages(:build).include?(@chunk)
+      assert_equal true, Chunk.any_of_processed_stages(:encode).include?(@chunk)
+      assert_equal false, Chunk.any_of_processed_stages(:convert).include?(@chunk)
+    end
+
   end # context "scopes"
 
   should "have response" do
@@ -586,6 +594,31 @@ class ChunkTest < ActiveSupport::TestCase
         assert_equal 0.10999999940395355, @chunk.response.speaker_segment.start_time
         assert_equal 13.420000419020653, @chunk.response.speaker_segment.end_time
       end
+    end
+  end
+
+  context "#processed_stages" do
+    setup do
+      @chunk = FactoryGirl.build(:chunk, :speaker_segment)
+    end
+
+    should "set" do
+      @chunk.processed_stages = :build
+      assert_equal [:build], @chunk.processed_stages.to_a
+      assert_equal @chunk.processed_stages_mask, @chunk.processed_stages.bits
+    end
+
+    should "initialize with attribute" do
+      @chunk.processed_stages_mask = 1
+      assert_equal [:build], @chunk.processed_stages.to_a
+    end
+
+    should "get and set" do
+      chunk = FactoryGirl.build(:chunk, :speaker_segment, processed_stages_mask: 1)
+      assert_equal [:build], chunk.processed_stages.get
+      chunk.processed_stages << :encode
+      assert_equal [:build, :encode], chunk.processed_stages.get
+      assert_equal chunk.processed_stages_mask, chunk.processed_stages.bits
     end
   end
 end

@@ -89,6 +89,13 @@ GIT
     formtastic (3.2.0.pre)
       actionpack (>= 4.1.0)
 
+GIT
+  remote: https://github.com/vzo/speech-stages
+  revision: 70fbc033793db5e8109e6711fac5fc128fbc781a
+  specs:
+    speech-stages (0.0.6)
+      activesupport
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -316,7 +323,7 @@ GEM
     mime-types (2.99.3)
     mini_magick (4.5.1)
     mini_portile2 (2.1.0)
-    minitest (5.9.1)
+    minitest (5.10.1)
     mocha (1.1.0)
       metaclass (~> 0.0.1)
     modernizr-rails (2.7.1)
@@ -591,6 +598,7 @@ DEPENDENCIES
   sidekiq (~> 3.5.1)
   simplecov
   sinatra
+  speech-stages!
   srt
   test_after_commit
   thin
