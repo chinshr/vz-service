@@ -135,3 +135,4 @@ gem 'yajl-ruby', require: 'yajl'
 gem 'nori', require: 'nori'
 gem 'virtus'
 gem 'virtus_convert'
+gem 'speech-stages', :git => "https://github.com/vzo/speech-stages"
