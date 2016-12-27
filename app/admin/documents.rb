@@ -35,4 +35,50 @@ ActiveAdmin.register Document do
     actions
   end
 
+  show do
+    attributes_table do
+      row :id
+      row :uid
+      row :title
+      row :slug
+      row :description
+      row :privacy do |resource|
+        resource_status_tag(resource.privacy.first)
+      end
+      row :locale
+      row :html
+      row :user
+      row :rich_text
+      row :text
+      row :offset
+      row :start_time
+      row :end_time
+      row :score
+      row :type
+      row :processing_status
+      row :response do |resource|
+        resource.response.to_json
+      end
+      row :ingest_iteration
+      row :turkee_task
+      row :slug
+      row :state do |resource|
+        resource_status_tag(resource.aasm_state)
+      end
+      row :accessibility_mask
+      row :accessibility do |resource|
+        resource_status_tag(resource.accessibility.first)
+      end
+      row :processed_stages_mask
+      row :processed_stages do |resource|
+        resource.processed_stages.map(&:to_s).join(", ")
+      end
+
+      row :created_at
+      row :updated_at
+      row :published_at
+      row :removed_at
+      row :deleted_at
+    end
+  end
 end

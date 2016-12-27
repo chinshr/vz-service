@@ -258,14 +258,16 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
     should "update ingest with backend user" do
       sign_in :user, @user2
       put :update, {ingest_id: @ingest1.id, id: @chunk1.id, :chunk => {
-        :score             => 0.95,
-        :response          => {"status" => 1, "hypotheses" => {"utterance" => "You got it!", "confidence" => 0.95}},
+        :score                 => 0.95,
+        :response              => {"status" => 1, "hypotheses" => {"utterance" => "You got it!", "confidence" => 0.95}},
+        :processed_stages_mask => ::Speech::Stages::ProcessedStages.bits([:build, :encode, :convert, :extract])
       }, format: :json}
       assert_response :success
       assert_response_body_attributes_with "chunk"
       assert_equal 0.95, @chunk1.reload.score
       assert_equal 1, @chunk1.response.status
       assert_equal "You got it!", @chunk1.response.hypotheses[0].utterance
+      assert_equal [:build, :encode, :convert, :extract], @chunk1.processed_stages.to_a
     end
 
     should "update ingest with track_attributes to create new track" do
@@ -362,7 +364,7 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
   def assert_attributes(params, expected_attributes = {})
     assert_equal false, params.blank?, "response should not be empty"
     (expected_attributes.stringify_keys.keys + %w(id document_id ingest_id type position offset duration start_at
-      end_at text score response processing_status uid ingest_iteration locale)).uniq.each do |attribute|
+      end_at text score response processing_status uid ingest_iteration locale processed_stages_mask)).uniq.each do |attribute|
       assert params.has_key?(attribute), "should contain key '#{attribute}' in response '#{params}'"
     end
 

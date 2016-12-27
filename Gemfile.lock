@@ -91,9 +91,9 @@ GIT
 
 GIT
   remote: https://github.com/vzo/speech-stages
-  revision: 70fbc033793db5e8109e6711fac5fc128fbc781a
+  revision: 2a3a28ab910c7f51c6f9e4775d05eaa5e690fbb2
   specs:
-    speech-stages (0.0.6)
+    speech-stages (0.0.7)
       activesupport
 
 GEM
