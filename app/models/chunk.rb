@@ -1,6 +1,4 @@
 class Chunk < ::Document
-  include ::Speech::Stages::ProcessHelper
-
   STATES = {unprocessed: 0, built: 1, encoded: 2,
     transcribed: 3, build_error: -1, encoding_error: -2,
     transcription_error: -3}
@@ -32,6 +30,7 @@ class Chunk < ::Document
     :any_of_positions, :any_of_ingest_iterations, :score_lt, :score_gt,
     :score_lteq, :score_gteq, :ingest_id, :none_of_ingest_ids,
     :any_of_processed_stages
+
   scope :sort_order, -> (param) {
     case param.first[0]  # E.g. get first key of {"id"=>"asc"}
     when "id"

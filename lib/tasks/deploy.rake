@@ -23,6 +23,22 @@ namespace :deploy do
       end
     end
 
+    namespace :chunk do
+
+      desc 'Update processed stages based on processing status'
+      task :update_processed_stages_based_on_processing_status => :environment do
+        Chunk.where("documents.processed_stages_mask = ? AND documents.processing_status = ?", 0, ::Speech::State::STATUS_PROCESSED).find_each do |chunk|
+          chunk.processed_stages << :build
+          chunk.processed_stages << :encode
+          chunk.processed_stages << :convert if chunk.response.hypotheses.present?
+          chunk.processed_stages << :extract if chunk.response.keywords.present?
+          puts "Updating chunk ID=#{chunk.id}, stages #{chunk.processed_stages.to_a.inspect}"
+          chunk.save(validate: false)
+        end
+      end
+
+    end
+
     namespace :document do
 
       desc 'Clean document segments'

@@ -10,6 +10,6 @@ class Ingest::ChunkPolicy < ChunkPolicy
 
   def permitted_attributes(action_name = nil)
     track_attributes = policy(:"ingest/track").permitted_attributes(action_name)
-    super(action_name) + [:ingest_iteration, :document_id, {words: []}, {chunk_ids: []}, {track_attributes: track_attributes}]
+    super(action_name) + [:ingest_iteration, :document_id, {words: []}, {chunk_ids: []}, {track_attributes: track_attributes}, :processing_status, :processed_stages_mask]
   end
 end

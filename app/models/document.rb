@@ -9,6 +9,7 @@ class Document < ActiveRecord::Base
   include Model::Uid
   include ActionView::Helpers::TextHelper
   include ActionView::Helpers::SanitizeHelper
+  include ::Speech::Stages::ProcessHelper
 
   PRIVACY_SETTINGS       = {'public' => 0, 'private' => 1, 'unlisted' => 2}
   ACCESSIBILITY_SETTINGS = {'view' => 0, 'comment' => 1, 'edit' => 2}
