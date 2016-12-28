@@ -252,6 +252,10 @@ FactoryGirl.define do
     sequence(:last_name) {|n| "last-name-#{n}"}
     confirmed_at Time.zone.now - 1.day
     current_sign_in_ip "95.63.14.59"
+
+    trait :unconfirmed do
+      confirmed_at nil
+    end
   end
 
   factory :unconfirmed_user, :class => "User", :parent => :user do
