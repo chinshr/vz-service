@@ -30,7 +30,7 @@ class UserTest < ActiveSupport::TestCase
     should "not downcase empty email address" do
       user = User.new(:email => nil)
       assert_equal false, user.valid?
-      assert_equal nil, user.email
+      assert_nil user.email
     end
 
     should "downcase email address" do
@@ -130,7 +130,7 @@ class UserTest < ActiveSupport::TestCase
     should "be valid with accepted registration" do
       registration = FactoryGirl.build(:registration, email: "Juergen@Example.com")
       assert_equal true, registration.accept!
-      user = FactoryGirl.build(:user, first_name: "J", last_name: "F", email: "juerGen@exAmple.com")
+      user = User.new({first_name: "J", last_name: "F", email: "juerGen@exAmple.com"})
       user.force_registration_validation = true
       assert_equal true, user.valid?, "should be valid"
     end
@@ -219,4 +219,5 @@ class UserTest < ActiveSupport::TestCase
       assert_equal [@user].to_set, User.confirmed.to_set
     end
   end
+
 end
