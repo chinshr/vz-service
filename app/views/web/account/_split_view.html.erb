@@ -2,39 +2,37 @@
 <div id="split-view" class="row">
   <div class="col-sm-4 col-md-3 sidebar">
     <ul class="nav nav-sidebar xnav-pills nav-stacked">
-      <li class="<%= dom_active_class(Web::Account::DashboardsController) %>">
-        <a href="<%= web_dashboard_path %>">
-          <i class="fa fa-dashboard fa-fw icon"></i>
-          <span>Dashboard</span>
-          <b class="glyphicon glyphicon-chevron-right chevron"></b>
+      <li class="<%= dom_active_class(Web::Account::SettingsController) %>">
+        <a href="<%= web_account_settings_path %>">
+          <i class="fa fa-cog fa-fw icon"></i>
+          <span>Settings</span>
+          <b class="fa fa-chevron-right chevron"></b>
         </a>
       </li>
 
       <li class="<%= dom_active_class(Web::Account::ProfilesController) %>">
         <a href="<%= web_account_profile_path %>">
           <i class="fa fa-user fa-fw icon icon"></i>
-          <span>User Profile</span>
-          <b class="glyphicon glyphicon-chevron-right chevron"></b>
+          <span>Profile</span>
+          <b class="fa fa-chevron-right chevron"></b>
         </a>
       </li>
 
-      <li class="<%= dom_active_class(Web::Account::SettingsController) %>">
-        <a href="<%= web_account_settings_path %>">
-          <i class="fa fa-cog fa-fw icon icon"></i>
-          <span>Account Settings</span>
-          <b class="glyphicon glyphicon-chevron-right chevron"></b>
-        </a>
-      </li>
-<% if false %>
       <li class="<%= dom_active_class(Web::Account::BillingsController) %>">
         <a href="<%= web_account_billing_path %>">
-          <i class="glyphicon glyphicon-usd icon"></i>
-          <span>Billing Information</span>
-          <b class="glyphicon glyphicon-chevron-right chevron"></b>
-          <!-- <span class="badge pull-right"><%= 3 %></span> --> 
+          <i class="fa fa-shopping-bag fa-fw icon"></i>
+          <span>Billing</span>
+          <b class="fa fa-chevron-right chevron"></b>
         </a>
       </li>
-<% end %>
+
+      <li class="<%= dom_active_class(Web::Account::DashboardsController) %>">
+        <a href="<%= web_dashboard_path %>">
+          <i class="fa fa-th-large fa-fw icon"></i>
+          <span>Return to Dashboard</span>
+          <b class="fa fa-chevron-right chevron"></b>
+        </a>
+      </li>
     </ul>
   </div>
   <div class="col-sm-8 col-sm-offset-4 col-md-9 col-md-offset-3 main">

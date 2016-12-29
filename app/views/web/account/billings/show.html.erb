@@ -2,25 +2,67 @@
 <a class="navbar-tag" href="/dashboard">Account</a>
 <% end %>
 
-<h1 class="page-header">Billing History</h1>
+<h1 class="page-header">Billing Overview</h1>
 
+<% if current_subscription.present? && current_subscription.persisted? %>
+<p>
+  <i class="fa fa-credit-card fa-right-padding"></i><span class="subscription-payment-type"><%= subscription_payment_type(current_subscription) %></span> card on file ending in <span class="subscription-card-number"><%= subscription_card_number(current_subscription) %></span>, expiring <span class="subscription-card-expiration"><%= subscription_card_expiration(current_subscription) %></span>.
+</p>
+<p>
+  <i class="fa fa-calendar fa-right-padding"></i>You are paying <span class="subscription-price"><%= subscription_price(current_subscription) %></span> per <span class="subscription-plan-interval"><%= subscription_plan_interval(current_subscription) %></span> for a <span class="subscription-plan-name"><%= subscription_plan_name(current_subscription) %></span>,&nbsp;<%= subscription_plan_user_seats(current_subscription) %> license.
+  <% if current_subscription.cancel_at_period_end %>
+  You canceled, your last payment is due on <span class="subscription-next-payment-due-on"><%= subscription_next_payment_due_on(current_subscription) %></span>.
+  <% else %>
+  Next payment due on <span class="subscription-next-payment-due-on"><%= subscription_next_payment_due_on(current_subscription) %></span>.
+  <% end %>
+</p>
+<div class="form-group action">
+  <a class="btn btn-primary" href="<%= web_account_billing_payment_method_path %>">Update Credit Card</a>
+</div>
+<% else %>
+<p><i class="fa fa-calendar fa-right-padding"></i>You are currently on the <span class="subscription-plan-name">Free</span> plan.</p>
+<% end %>
+
+<h2 class="page-header">Change Plan</h2>
+
+<%= render "web/shared/pricing_grid", show_account: true %>
+
+<% if current_subscription && (current_subscription.cancel_at_period_end.nil? || !current_subscription.cancel_at_period_end) %>
+<h2 class="page-header">Downgrade to Free</h2>
+<p>
+You can downgrade your plan to a Free account at anytime, but you will no longer be able to access your private media documents or create new ones. Need to talk to someone? <%= mail_to("support@voyz.es", "Contact us", subject: "Help with subscription")%>, we would love to help.
+</p>
+<div class="form-group action">
+  <%= button_to_cancel_subscription "Downgrade", :data => {confirm: "Are you sure you want to downgrade to a Free plan?" }, :class => "btn btn-primary btn-danger" %>
+</div>
+<% end %>
+
+<% if @sales.size > 0 %>
+<h2 class="page-header">Billing History</h2>
 <table class="table table-hover table-condensed">
   <thead>
     <tr>
-      <th>#</th>
+      <th></th>
+      <th>ID</th>
       <th>Date</th>
-      <th>Plan</th>
-      <th>Amount (USD)</th>
-      <th>Invoice</th>
+      <th>Amount</th>
+      <th>Description</th>
+      <th>Payment method</th>
+      <th></th>
     </tr>
   </thead>
   <tbody>
-      <tr id="transaction_1">
-        <td><%= 1 %></td>
-        <td><%= Date.today.to_s %></td>
-        <td><%= link_to "Gold", "#" %></td>
-        <td><%= "$9.99" %></td>
-        <td><%= link_to "534522134", "#" %></td>
-      </tr>
+  <% @sales.each do |sale| %>
+    <tr id="transaction_<%= sale.id %>">
+      <td><%= sale_tag(sale) %></td>
+      <td><%= sale.guid %></td>
+      <td><%= sale_date(sale) %></td>
+      <td><%= sale_price(sale) %></td>
+      <td><%= sale_description(sale) %></td>
+      <td><%= sale_payment_method_description(sale) %></td>
+      <td></td>
+    </tr>
+  <% end %>
   </tbody>
 </table>
+<% end %>

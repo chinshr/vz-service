@@ -29,4 +29,8 @@ class Web::ApplicationController < ApplicationController
     end
   end
 
+  def current_subscription
+    @current_subscription ||= Payola::Subscription.find_by(owner: current_user) if current_user
+  end
+  helper_method :current_subscription
 end

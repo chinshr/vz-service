@@ -30,6 +30,7 @@ class User < ActiveRecord::Base
   has_many :uploads, dependent: :nullify
   has_many :ingests, through: :uploads, source: :ingest
   has_many :client_accesses, dependent: :destroy, class_name: "Api::ClientAccess"
+  belongs_to :plan
 
   acts_as_tagger
   friendly_id :username, use: [:slugged, :history]
@@ -53,6 +54,11 @@ class User < ActiveRecord::Base
       SecureRandom.uuid
     end
 
+    def update_subscription_plan(subscription)
+      if user = subscription.owner
+        user.update_column(:plan_id, subscription.plan_id)
+      end
+    end
   end
 
   def password_required?

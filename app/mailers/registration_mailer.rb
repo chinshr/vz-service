@@ -1,4 +1,4 @@
-class RegistrationMailer < ActionMailer::Base
+class RegistrationMailer < ApplicationMailer
   default from: "no-reply@voyz.es"
 
   def confirmation(registration)

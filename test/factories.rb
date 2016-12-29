@@ -486,4 +486,69 @@ FactoryGirl.define do
     end
   end
 
+  factory :plan do
+    sequence(:name) {|n| "plan-name-#{n}"}
+    amount 995
+    interval 'month'
+    sequence(:stripe_id) {|n| "stripe-id-#{n}"}
+    features ['20 media per month', 'Up to 90 min. per media', 'Highest quality', '10 Users', '**Private** and **public** files'].join("\n\n")
+    display_order 1
+    enabled true
+    visible true
+
+    trait :enabled do
+      enabled true
+    end
+
+    trait :disabled do
+      enabled false
+    end
+
+    trait :visible do
+      visible true
+    end
+
+    trait :hidden do
+      visible false
+    end
+
+    trait :with_stripe do
+      create_stripe true
+    end
+
+    trait :without_stripe do
+      create_stripe false
+    end
+  end
+
+  factory :sale, :class => "Payola::Sale" do
+    email 'test@example.com'
+    product
+    stripe_token 'tok_test'
+    currency 'usd'
+    amount 100
+  end
+
+  factory :product, parent: :plan do
+  end
+
+  factory :subscription, :class => "Payola::Subscription" do
+    association :plan, factory: :plan
+    start "2014-11-04 22:34:39"
+    status "MyString"
+    association :owner, factory: :user
+    cancel_at_period_end false
+    current_period_start "2014-11-04 22:34:39"
+    current_period_end "2014-11-04 22:34:39"
+    ended_at "2014-11-04 22:34:39"
+    trial_start Time.now
+    trial_end Time.now + 7.days
+    canceled_at "2014-11-04 22:34:39"
+    email "test@example.com"
+    stripe_token "yyz123"
+    currency 'usd'
+    quantity 1
+    stripe_id 'sub_123456'
+  end
+
 end

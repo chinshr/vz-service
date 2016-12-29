@@ -21,6 +21,13 @@ class Web::Account::SettingsController < Web::Account::ApplicationController
     end
   end
 
+  # [DELETE] /account/settings(.:format)
+  def destroy
+    current_user.destroy
+    sign_out
+    redirect_to "/"
+  end
+
   protected
 
   def update_needs_confirmation?(resource, previous)

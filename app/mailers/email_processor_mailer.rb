@@ -1,4 +1,4 @@
-class EmailProcessorMailer < ActionMailer::Base
+class EmailProcessorMailer < ApplicationMailer
   default from: "no-reply@voyz.es"
   # default reply_to: "my@voyz.es"
 

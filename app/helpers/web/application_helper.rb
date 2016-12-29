@@ -51,6 +51,10 @@ module Web::ApplicationHelper
     markdown(File.read(Rails.root + "doc/TERMS-OF-SERVICE.md"))
   end
 
+  def faqs_from_markdown
+    markdown(File.read(Rails.root + "doc/FAQS.md"))
+  end
+
   # E.g. devise sessions
   def dom_controller_class
     controller.class.name.split("::").map {|e| e.gsub("Controller", "").underscore.dasherize}.join(" ")
@@ -167,5 +171,198 @@ module Web::ApplicationHelper
   def page_title(caption, with_brand_name = true)
     caption += " — VOYZ.ES" if with_brand_name
     content_for(:title, caption)
+  end
+
+  def plan_name(plan)
+    name = plan.name.to_s
+    name[0].upcase + name[1..-1]
+    name
+  end
+
+  def plan_plan_name(plan)
+    name = plan.name.to_s
+    name[0].upcase + name[1..-1]
+    "#{name} plan"
+  end
+
+  def plan_price(plan, options = {})
+    options = {precision: 0}.merge(options)
+    number_to_currency(plan.amount / 100.0, options)
+  end
+
+  def plan_interval(plan)
+    interval = %w(month year week 6-month 3-month).include?(plan.interval) ? plan.interval.delete('-') : 'month'
+    I18n.t("pricing.plan_intervals.#{interval}")
+  end
+
+  def plan_order(index)
+    (index || 0) + 1
+  end
+
+  def plan_human_order(index)
+    plan_order(index).humanize(locale: :en)
+  end
+
+  def plan_display_order(plan)
+    plan.display_order || 1
+  end
+
+  def plan_human_display_order(plan)
+    (plan.display_order || 1).humanize(locale: :en)
+  end
+
+  def plan_highlight(plan)
+    if plan && plan.highlight
+      I18n.t("pricing.plan_highlight.#{plan.highlight}")
+    end
+  end
+
+  def plan_split_features(plan)
+    re = /([\n\n]+)|([\r\n]+)/
+    features = plan.features.to_s.split(re).map {|e| e.gsub(re, "")}.reject(&:blank?)
+    features.map {|e| yield e} if block_given?
+    features
+  end
+
+  def month_collection_for_select
+    12.times.map {|i| [I18n.l(Date.parse("16/#{i + 1}/1"), format: "%b") + " (#{(i + 1).to_s.rjust(2, "0")})", i + 1] }
+  end
+
+  def year_collection_for_select
+    current_year = Time.zone.now.year
+    exp_year = current_year + 10
+    (current_year..exp_year).map {|y| ["#{y}", y]}
+  end
+
+  def subscription_payment_type(subscription)
+    subscription.card_type
+  end
+
+  def subscription_card_number(subscription)
+    "**** **** **** #{subscription.card_last4}"
+  end
+
+  def subscription_card_expiration(subscription)
+    l(subscription.card_expiration, format: "%m/%Y")
+  end
+
+  def subscription_plan_interval(subscription)
+    plan_interval(subscription.plan)
+  end
+
+  def subscription_next_payment_due_on(subscription)
+    l(subscription.current_period_end, format: "%Y-%m-%d")
+  end
+
+  def subscription_price(subscription, options = {})
+    options = {precision: 0}.merge(options)
+    number_to_currency(subscription.amount / 100.0, options)
+  end
+
+  def subscription_plan_name(subscription)
+    plan = subscription.plan
+    if plan
+      name = plan.name.to_s
+      name[0].upcase + name[1..-1]
+      "#{name} plan"
+    end
+  end
+
+  def subscription_plan_user_seats(subscription)
+    "1 user"
+  end
+
+  def button_to_cancel_subscription(body, html_options = {})
+    url = web_account_billing_subscription_path
+    capture do
+      form_for current_subscription, as: 'subscription', url: url, html: {method: :delete, role: 'form'} do |f|
+        hidden_field_tag(:guid, current_subscription.guid) +
+        f.submit(body, html_options)
+      end
+    end
+  end
+
+  def button_to_account_plan_sign_up_or_change(plan, options = {}, html_options = {})
+    body, url, form_method = nil, nil, :post
+    show_account = !!options[:show_account]
+    html_options[:class] ||= "btn popup-with-zoom-anim"
+    html_options[:disabled] ||= 'disabled' if options[:disabled]
+
+    if current_subscription.nil?
+      if current_user
+        body = "Upgrade"
+        url = new_web_account_billing_payment_method_path(plan_id: plan.uid)
+      else
+        body = "Sign up"
+        url = new_user_registration_path(plan_id: plan.uid)
+      end
+      # link
+      link_to(body, url, html_options)
+    elsif current_subscription.persisted?
+      if current_user
+        url = web_account_billing_subscription_path
+        form_method = :put
+        if current_subscription.plan == plan && !current_subscription.cancel_at_period_end
+          body = "Current"
+          html_options[:disabled] = 'disabled'
+        elsif current_subscription.plan.display_order > plan.display_order
+          body = "Downgrade"
+          html_options[:data] = {confirm: "Are you sure you want to downgrade to a #{plan_plan_name(plan)}?"} if options[:confirm]
+        else
+          body = "Upgrade"
+          html_options[:data] = {confirm: "Are you sure you want to upgrade to a #{plan_plan_name(plan)}?"} if options[:confirm]
+        end
+      else
+        # case does not exist
+      end
+      # form
+      capture do
+        form_for current_subscription, as: 'subscription', url: url, html: {method: form_method, role: 'form'} do |f|
+          hidden_field_tag(:plan_id, plan.uid) +
+          hidden_field_tag(:plan_class, plan.plan_class) +
+          hidden_field_tag(:quantity, 1) +
+          f.submit(body, html_options)
+        end
+      end
+    end
+  end
+
+  def sale_tag(sale)
+    fa_tag, color = "fa-check", "green"
+    if sale.finished? || sale.refunded?
+      fa_tag, color = "fa-check", "green"
+    else
+      fa_tag, color = "fa-times", "red"
+    end
+    %(<i class="fa #{fa_tag}" style="color: #{color};"></i>).html_safe
+  end
+
+  def sale_date(sale, options = {})
+    l(sale.created_at, format: :short)
+  end
+
+  def sale_price(sale, options = {})
+    options = {precision: 0}.merge(options)
+    number_to_currency(sale.amount / 100.0, options)
+  end
+
+  def sale_name(sale)
+    if sale.product && sale.product.is_a?(Plan)
+      "#{plan_name(sale.product)} plan"
+    end
+  end
+
+  def sale_description(sale)
+    if sale.product && sale.product.is_a?(Plan)
+      "#{plan_name(sale.product)} plan"
+    end
+  end
+
+  def sale_payment_type(sale)
+    sale.card_type
+  end
+
+  def sale_payment_method_description(sale)
+    %(<i class="fa fa-credit-card fa-right-padding"></i>#{sale_payment_type(sale)} ending in #{sale.card_last4}).html_safe
   end
 end

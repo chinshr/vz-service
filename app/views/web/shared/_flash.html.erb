@@ -1,6 +1,7 @@
 <%
-  type             ||= :javascript
-  remote           ||= false
+  type   ||= :javascript
+  remote ||= false
+  on     ||= false
   notifier_options ||= {
     customClass: "#{dom_controller_class} #{dom_controller_action_class}",
     offset: {
@@ -12,8 +13,7 @@
   }
 %>
 <% if type == :javascript %>
-  <% if remote %>
-
+  <% if remote && on %>
     <%= content_for :javascript_includes do %>
       <%= javascript_tag do %>
       $('<%= on %>').on('ajax:complete', function(event, request, status) {
@@ -45,7 +45,6 @@
   <% else %>
     <%= content_for :javascript_includes do %>
       <%= javascript_tag do %>
-
         $(function() {
         <% flash.each do |key, message| %>
           $.notify('<%= message %>', '<%= notifier_type_from(key) %>', <%= raw(notifier_options.to_json) %>);

@@ -14,6 +14,7 @@
 //= require jquery_ujs
 //= require jquery-ui/core
 //= require jquery-ui/widget
+//= require jquery-ui/datepicker
 //= require lib/pubnub
 //= require lib/nprogress
 //= require lib/sprintf
@@ -28,8 +29,11 @@
 //= require lib/isotope
 //= require lib/jquery.iframe-transport
 //= require lib/jquery.fileupload
+//= require lib/jquery.creditCardValidator
+//= require lib/vanillaTextMask
 //= require underscore
 //= require backbone
+//= require payola
 //= require lib/backbone/backbone.validation
 //= require lib/backbone/backbone.validation.config
 //= require lib/simply-toast
@@ -50,3 +54,21 @@ $.ajaxPrefilter(function(options, originalOptions, xhr) {
   var token = $('meta[name="csrf-token"]').attr('content');
   xhr.setRequestHeader('X-CSRF-Token', token);
 });
+
+// override the default confirm dialog behavior
+$.rails.allowAction = function(link){
+  if (link.data("confirm") == undefined){
+    return true;
+  }
+  var message = link.data("confirm");
+
+  $.confirm(message, function(result) {
+    if (result) {
+      link.data("confirm", null);
+      link.trigger("click.rails");
+    }
+    return result;
+  });
+
+  return false;
+}

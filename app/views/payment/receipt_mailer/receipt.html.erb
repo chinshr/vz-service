@@ -1,0 +1,22 @@
+<p>We have received payment for your VOYZ.ES subscription. Thanks for your business!</p>
+
+<p>Questions? Please contact <%= Payola.support_email %>.</p>
+
+<p>
+==================================================<br />
+VOYZ.ES RECEIPT - <%= @product.name.upcase %> PLAN<br />
+<br />
+<%= @product.name %> plan
+<br />
+Amount: <%= formatted_price(@sale.amount) %><br />
+<br />
+Email on file: <%= @sale.email %><br />
+Transcaction ID: <%= @sale.guid %><br />
+Date: <%= l(@sale.created_at) %><br />
+<br />
+==================================================<br />
+</p>
+<% if Payola.pdf_receipt %>
+<p>Attached you'll find a PDF receipt for your records.</p>
+<% end %>
+<p><%= link_to "Click here to manage your plan", web_account_billing_url %></p>

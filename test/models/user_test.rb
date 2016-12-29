@@ -12,6 +12,7 @@ class UserTest < ActiveSupport::TestCase
     should have_many(:documents).dependent(:nullify)
     should have_many(:uploads).dependent(:nullify)
     should have_many(:ingests).through(:uploads)
+    should belong_to(:plan)
   end
 
   context "validations" do
@@ -220,4 +221,11 @@ class UserTest < ActiveSupport::TestCase
     end
   end
 
+  should "#update_subscription_plan" do
+    user = FactoryGirl.create(:user)
+    subscription = FactoryGirl.create(:subscription, owner: user)
+    assert_nil user.plan
+    User.update_subscription_plan(subscription)
+    assert_equal subscription.plan, user.plan
+  end
 end
