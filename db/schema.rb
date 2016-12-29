@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161227185924) do
+ActiveRecord::Schema.define(version: 20161229185629) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -121,6 +121,13 @@ ActiveRecord::Schema.define(version: 20161227185924) do
   end
 
   add_index "attachings", ["message_id", "upload_id"], name: "index_attachings_on_message_id_and_upload_id", unique: true, using: :btree
+
+  create_table "coupons", force: :cascade do |t|
+    t.string   "code"
+    t.string   "free_trial_length"
+    t.datetime "created_at",        null: false
+    t.datetime "updated_at",        null: false
+  end
 
   create_table "documents", force: :cascade do |t|
     t.string   "title",                 limit: 255
@@ -373,6 +380,18 @@ ActiveRecord::Schema.define(version: 20161227185924) do
   add_index "messages", ["type"], name: "index_messages_on_type", using: :btree
   add_index "messages", ["uid"], name: "index_messages_on_uid", using: :btree
 
+  create_table "plans", force: :cascade do |t|
+    t.string   "name"
+    t.string   "stripe_id"
+    t.float    "price"
+    t.string   "interval"
+    t.text     "features"
+    t.boolean  "highlight"
+    t.integer  "display_order"
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
+  end
+
   create_table "registrations", force: :cascade do |t|
     t.string   "email",        limit: 255
     t.string   "locale",       limit: 8
@@ -429,6 +448,18 @@ ActiveRecord::Schema.define(version: 20161227185924) do
   add_index "segments", ["position"], name: "index_segments_on_position", using: :btree
   add_index "segments", ["track_id"], name: "index_segments_on_track_id", using: :btree
   add_index "segments", ["type"], name: "index_segments_on_type", using: :btree
+
+  create_table "subscriptions", force: :cascade do |t|
+    t.string   "stripe_id"
+    t.integer  "plan_id"
+    t.string   "last_four"
+    t.integer  "coupon_id"
+    t.string   "card_type"
+    t.float    "current_price"
+    t.integer  "user_id"
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
+  end
 
   create_table "taggings", force: :cascade do |t|
     t.integer  "tag_id"

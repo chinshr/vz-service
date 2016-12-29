@@ -68,3 +68,35 @@ if @mt_client.new_record?
   @mt_client.key = "Srur1MOdW71ONKK5IY4b88KLTEjzyCYv4Fay2GYWpnM4"
   @mt_client.save!
 end
+
+# Koudoku Plans
+
+@personal_plan = Plan.find_or_initialize_by(name: 'Personal')
+if @personal_plan.new_record?
+  @personal_plan.price = 9.00
+  @personal_plan.interval = 'month'
+  @personal_plan.stripe_id = '10'
+  @personal_plan.features = ['5 media per month', 'Up to 30 min. per media', 'Normal quality', '1 User', '**Private** and **public** files'].join("\n\n")
+  @personal_plan.display_order = 1
+  @personal_plan.save!
+end
+
+@personal_plan = Plan.find_or_initialize_by(name: 'Professional')
+if @personal_plan.new_record?
+  @personal_plan.price = 35.00
+  @personal_plan.interval = 'month'
+  @personal_plan.stripe_id = '20'
+  @personal_plan.features = ['10 media per month', 'Up to 60 min. per media', 'High quality', '1 User', '**Private** and **public** files'].join("\n\n")
+  @personal_plan.display_order = 2
+  @personal_plan.save!
+end
+
+@personal_plan = Plan.find_or_initialize_by(name: 'Enterprise')
+if @personal_plan.new_record?
+  @personal_plan.price = 995.00
+  @personal_plan.interval = 'month'
+  @personal_plan.stripe_id = '30'
+  @personal_plan.features = ['20 media per month', 'Up to 90 min. per media', 'Highest quality', '10 Users', '**Private** and **public** files'].join("\n\n")
+  @personal_plan.display_order = 3
+  @personal_plan.save!
+end

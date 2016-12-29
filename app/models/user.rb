@@ -1,4 +1,7 @@
 class User < ActiveRecord::Base
+# Added by Koudoku.
+  has_one :subscription
+
   extend FriendlyId
   include Model::User::Roles
   include Model::Uid

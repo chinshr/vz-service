@@ -1,7 +1,7 @@
 require "sidekiq/web"
 
 Voyzes::Application.routes.draw do
-  # admin
+  # active admin
   devise_for :admin_users, ActiveAdmin::Devise.config
   ActiveAdmin.routes(self)
 
@@ -16,6 +16,12 @@ Voyzes::Application.routes.draw do
   active_admin_constraint = lambda {|request| request.env["warden"].authenticate? && request.env['warden'].user && request.env['warden'].user.is_a?(AdminUser)}
   constraints active_admin_constraint do
     mount Sidekiq::Web, at: "/admin/sidekiq"
+  end
+
+  # koudoku pricing
+  mount Koudoku::Engine, at: 'koudoku'
+  scope module: 'koudoku' do
+    get 'pricing' => 'subscriptions#index', as: 'pricing'
   end
 
   # site
