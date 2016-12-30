@@ -41,6 +41,8 @@
   <%= javascript_include_tag "lib/html5shiv.js" %>
   <%= javascript_include_tag "lib/respond.min.js" %>
   <![endif]-->
+
+  <%= yield :koudoku %>
 </head>
 <body class="<%= dom_controller_class %> <%= dom_controller_action_class %>">
   <div id="content">
