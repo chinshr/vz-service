@@ -16,6 +16,9 @@ defaults: &defaults
     - juergen@voyz.es
     - anamaria@voyz.es
 
+  STRIPE_API_KEY: <%= ENV.fetch("STRIPE_API_KEY", "sk_test_1wq0EmNfTbJ92Co2bBRpVe26") %>
+  STRIPE_PUBLISHABLE_KEY: <%= ENV.fetch("STRIPE_PUBLISHABLE_KEY", "pk_test_Om7g3u90n6YSK8rMbbiBK0MB") %>
+
 development:
   <<: *defaults
   S3_INBOUND_BUCKET: <%= ENV.fetch('S3_INBOUND_BUCKET', "vz-dev-dropbox") %>

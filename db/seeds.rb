@@ -68,3 +68,55 @@ if @mt_client.new_record?
   @mt_client.key = "Srur1MOdW71ONKK5IY4b88KLTEjzyCYv4Fay2GYWpnM4"
   @mt_client.save!
 end
+
+# Subscription plans
+
+personal_plan = Plan.where(name: 'Personal').first_or_initialize do |p|
+  p.amount        = 900
+  p.interval      = 'month'
+  p.stripe_id     = 'personal_month'
+  p.features      = ['5 media per month', 'Up to 30 min. per media', 'Normal quality', '1 User'].join("\n\n")
+  p.display_order = 10
+  p.enabled       = true
+  p.visible       = true
+  p.create_stripe = true
+end
+personal_plan.save!
+
+professional_plan = Plan.where(name: 'Professional').first_or_initialize do |p|
+  p.amount        = 3500
+  p.interval      = 'month'
+  p.stripe_id     = 'professional_month'
+  p.features      = ['10 media per month', 'Up to 60 min. per media', 'High quality', '1 User'].join("\n\n")
+  p.display_order = 20
+  p.highlight     = "popular"
+  p.enabled       = true
+  p.visible       = true
+  p.create_stripe = true
+end
+professional_plan.save!
+
+team_plan = Plan.where(name: 'Team').first_or_initialize do |p|
+  p.amount        = 9500
+  p.interval      = 'month'
+  p.stripe_id     = 'team_month'
+  p.features      = ['10 media per month/user', 'Up to 60 min. per media', 'Highest quality', '3 Users'].join("\n\n")
+  p.display_order = 30
+  p.highlight     = "coming_soon"
+  p.enabled       = false
+  p.visible       = true
+  p.create_stripe = true
+end
+team_plan.save!
+
+enterprise_plan = Plan.where(name: 'Enterprise').first_or_initialize do |p|
+  p.amount        = 99500
+  p.interval      = 'month'
+  p.stripe_id     = 'enterprise_month'
+  p.features      = ['20 media per month', 'Up to 90 min. per media', 'Highest quality', '10 Users'].join("\n\n")
+  p.display_order = 40
+  p.enabled       = false
+  p.visible       = false
+  p.create_stripe = false
+end
+enterprise_plan.save!

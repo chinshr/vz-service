@@ -2,6 +2,55 @@
 
 body.account {
 
+  /* ====================== GENERAL ========================= */
+
+  p {
+    font-size: 20px;
+    line-height: 1.5em;
+    color: #000;
+    font-weight: 400;
+    font-style: normal;
+  }
+
+  .fa.fa-right-padding {
+    padding-right: 7px;
+    min-width: 35px;
+  }
+
+  /* ====================== BILLING ========================= */
+
+  .subscription-payment-type {
+    font-weight: 800;
+  }
+
+  .subscription-card-number {
+    font-family: "Courier New", Courier, monospace;
+    font-weight: 800;
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+
+  .subscription-card-expiration {
+    font-family: "Courier New", Courier, monospace;
+    font-weight: 800;
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+
+  .subscription-plan-name {
+    font-weight: 800;
+  }
+
+  .subscription-plan-interval {
+    font-weight: 800;
+  }
+  .subscription-next-payment-due-on {
+    font-weight: 800;
+  }
+  .subscription-price {
+    font-weight: 800;
+  }
+
   /* ====================== BLANKSTATE ========================= */
 
   #dashboard-container {
@@ -275,13 +324,29 @@ body.account {
           font-size: 16px;
         }
 
-        input, select {
-          font-size: 16px;
-          background-color: #eee;
+        button.btn,
+        a.btn,
+        input.btn {
+          display: inline-block;
+          font-size: 20px;
+          padding: 0 25px;
+          border-width: 2px;
+          border-radius: 300px;
+          // color: #fff;
+          line-height: 45px;
+          vertical-align: middle;
+          height: 49px;
         }
 
-        button {
+        button.btn.btn-primary,
+        a.btn.btn-primary,
+        input.btn.btn-primary {
           font-size: 20px;
+        }
+
+        input, select {
+          font-size: 16px;
+          xbackground-color: #eee;
         }
 
         &.action {

@@ -21,7 +21,7 @@ gem 'coffee-rails'#, '~> 4.0.0'
 group :assets do
   # Use jquery as the JavaScript library
   gem 'jquery-rails'
-  gem 'jquery-ui-rails'
+  gem 'jquery-ui-rails', '~> 5.0.5'
   gem 'yui-compressor'
   # gem 'compass-rails'
 end
@@ -136,3 +136,7 @@ gem 'nori', require: 'nori'
 gem 'virtus'
 gem 'virtus_convert'
 gem 'speech-stages', :git => "https://github.com/vzo/speech-stages"
+gem 'payola-payments'
+gem 'humanize'
+gem 'docverter'
+gem 'rails-i18n', '~> 4.0.0'

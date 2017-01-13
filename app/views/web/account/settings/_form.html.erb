@@ -2,7 +2,7 @@
 <a class="navbar-tag" href="/dashboard">Account</a>
 <% end %>
 
-<h1 class="page-header">Settings</h1>
+<h1 class="page-header">Account Settings</h1>
 
 <%= form_for(current_user, {as: :user, url: web_account_settings_path, validate: true, remote: false, html: {method: :put, class: "form-horizontal", role: "form"}}) do |f| %>
   <%= render "web/shared/flash", remote: true, on: "#user_current_password" %>
@@ -10,7 +10,7 @@
   <div class="form-group">
     <%= f.label :current_password %>
     <%= f.password_field :current_password, :class => "form-control", :placeholder => "Enter current password" %>
-    <span class="help-block">We need your current password to confirm your changes.</span>
+    <span class="help-block">We always require your current account password to confirm any changes.</span>
   </div>
 
   <h2 class="sub-header">Account</h2>
@@ -25,8 +25,11 @@
     <%= f.text_field :username, :class => "form-control", :placeholder => "Enter desired username" %>
     <span class="help-block">Your profile at <i><%= "#{request.base_url}/@#{current_user.username}" %></i></span>
   </div>
+  <div class="form-group action">
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+  </div>
 
-  <h2 class="sub-header">Password</h2>
+  <h2 class="sub-header">Change Password</h2>
 
   <div class="form-group">
     <%= f.label :password %>
@@ -40,14 +43,21 @@
   </div>
 
   <div class="form-group action">
-    <button type="submit" class="btn btn-primary">Save Changes</button>
+    <button type="submit" class="btn btn-primary">Update Password</button>
   </div>
 <% end %>
-<!--
 
-<h3>Cancel my account</h3>
+<h2 class="sub-header">Cancel Account</h2>
 
-<p>Unhappy? <%= button_to "Cancel my account", registration_path(:user), :data => { :confirm => "Are you sure?" }, :method => :delete %></p>
+<% if current_subscription %>
+<p>Are you sure you don’t want to just <a href="<%= web_account_billing_path %>">downgrade your plan</a> to a Free account? We won’t charge your credit card anymore.</p>
+<% end %>
 
-<%= link_to "Back", :back %>
--->
+<p>Clicking the button below will delete all your media documents and  your user account.</p>
+
+<p><b>Note:</b> This action cannot be undone.</p>
+<div class="form-group action">
+  <%= button_to "Delete Account", "url", :data => {confirm: "Are you sure?" }, :class => "btn btn-primary btn-danger", :method => :delete %>
+</div>
+
+<p>Do you want to talk to someone before you go? <%= mail_to("support@voyz.es", "Contact us", subject: "Help with account cancellation")%>, we would love to hear your thoughts.</p>

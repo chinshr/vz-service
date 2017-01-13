@@ -6,8 +6,15 @@ Voyzes::Application.routes.draw do
   ActiveAdmin.routes(self)
 
   # user devise
-  devise_for :users, :controllers => {registrations: 'web/devise/registrations', confirmations: 'web/devise/confirmations'},
-    :path_names => {:sign_in => 'sign-in', :sign_up => 'sign-up', :sign_out => 'sign-out'}
+  devise_for :users, :controllers => {
+    :registrations => 'web/devise/registrations',
+    :confirmations => 'web/devise/confirmations'
+  },
+  :path_names => {
+    :sign_in => 'sign-in',
+    :sign_up => 'sign-up',
+    :sign_out => 'sign-out'
+  }
   devise_scope :user do
     put "/users/confirmation" => "web/devise/confirmations#update", :as => :update_user_confirmation
   end
@@ -18,30 +25,43 @@ Voyzes::Application.routes.draw do
     mount Sidekiq::Web, at: "/admin/sidekiq"
   end
 
+  # payola
+  mount Payola::Engine => '/payola', as: :payola
+
   # site
   root 'web/pages#index'
 
   # Web::Application
   scope :module => "web", :as => "web" do
+
     # explore
     get '/explore' => "explorers#index", as: "explore"
     get '/explore/tag/:id' => "explorers#show", as: "explore_tag"
     get '/explore/tag/:id/latest' => "explorers#show", params: {recent: true}
+
     # search
     get '/search' => "searches#index", as: "search"
     get '/search/users' => "searches/users#index", as: "search_users"
 
+    # pages
+    get '/pricing' => "pages#pricing"
+    get '/faqs' => "pages#faqs"
+
+    # terms
     get '/terms/privacy-policy' => "terms#privacy_policy"
     get '/terms/terms-of-service' => "terms#terms_of_service"
 
     resources :registrations, only: :create
 
-    # Web:Account::Application
+    # account
     get "/account" => 'account/application#index'  # => redirects /dashboard
     resource :dashboard, only: :show, controller: "account/dashboards"
     namespace :account do
       resource :profile, only: [:show, :update]
-      resource :billing, only: [:show]
+      resource :billing, only: [:show] do
+        resource :subscription, only: [:show, :create, :update, :destroy]
+        resource :payment_method, only: [:new, :show, :update]
+      end
       resource :settings, only: [:show, :edit, :update]
     end
 

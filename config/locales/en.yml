@@ -22,20 +22,20 @@
 en:
   hello: "Hello world"
 
-  date:
-    formats:
-      long: "%Y-%m-%d"
-
-  time:
-    formats:
-      long: "%Y-%m-%d %H:%M:%S"
-
   devise:
     registrations:
       user:
         updated: "Successfully updated."
         not_updated: "Changes were not saved."
         update_needs_confirmation: "Confirmation password required."
+
+  pricing:
+    plan_intervals:
+      month: "month"
+      year: "year"
+    plan_highlight:
+      popular: "Popular"
+      coming_soon: "Soon"
 
   lib:
     model:
@@ -47,6 +47,25 @@ en:
           access_forbidden: "access forbidden"
           not_found: "not found"
           request_timeout: "request timeout"
+
+  payola:
+    cards:
+      created: Successfully created new card.
+      not_created: Could not create new card.
+      destroyed: Successfully removed the card.
+      not_destroyed: Could not remove the card.
+      not_authorized: You cannot modify this customer.
+    customers:
+      updated: Successfully updated customer.
+      not_updated: Could not update customer.
+      not_authorized: You cannot modify this customer.
+    subscriptions:
+      plan_updated: Subscription plan updated.
+      plan_canceled: Subscription plan canceled.
+      quantity_updated: Subscription quantity updated.
+      card_updated: Card updated.
+      not_authorized: You cannot modify this subscription.
+
   api:
     error:
       boolean_argument_error: "Invalid boolean argument"

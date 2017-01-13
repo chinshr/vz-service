@@ -1,4 +1,7 @@
 class Web::Account::ApplicationController < Web::ApplicationController
+  include Payola::StatusBehavior
+  include PaymentBehavior
+
   before_filter :authenticate_user!
   before_filter :redirect_to_dashboard
   after_filter :flash_to_headers
@@ -63,5 +66,4 @@ class Web::Account::ApplicationController < Web::ApplicationController
   def resource_name
     "User"
   end
-
 end

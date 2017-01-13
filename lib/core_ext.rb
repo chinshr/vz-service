@@ -3,7 +3,7 @@ require "core_ext/i18n/locale"
 # ==with
 #
 # We have been struggling with the absence of @with@ blocks
-# in Ruby for a long time. We had something similar in 
+# in Ruby for a long time. We had something similar in
 # Object Pascal where it came quite handy as a reserved
 # keyword.
 #

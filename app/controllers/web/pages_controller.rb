@@ -5,6 +5,14 @@ class Web::PagesController < Web::ApplicationController
     render :layout => "beachstrap"
   end
 
+  def pricing
+    @plans = Plan.with_stripe.visible.order(display_order: :asc)
+    @subscription = Payola::Subscription.find_by(owner_id: current_user.id) if current_user
+  end
+
+  def faq
+  end
+
   protected
 
   def set_cache_headers

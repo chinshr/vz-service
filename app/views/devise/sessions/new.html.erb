@@ -18,7 +18,6 @@
     $(this).find("button[type=submit]").button("reset");
   });
 
-
   <% end %>
 <% end %>
 
@@ -35,11 +34,11 @@
       <div class="panel-body">
         <div class="form-group">
           <%= f.label :email, "Email address", :class => "sr-only" %>
-          <%= f.email_field :email, :autofocus => "autofocus", :autocapitalize => "off", :autocomplete => "off", :autocorrect => "off", :spellcheck => false, :class => "form-control first", :placeholder => "Enter email address" %>
+          <%= f.email_field :email, :autofocus => "autofocus", :autocapitalize => "off", :autocomplete => "new-user-session", :autocorrect => "off", :spellcheck => false, :class => "form-control first", :placeholder => "Enter email address" %>
         </div>
         <div class="form-group">
           <%= f.label :password, "Password", :class => "sr-only" %>
-          <%= f.password_field :password, :class => "form-control last", :placeholder => "Enter password" %>
+          <%= f.password_field :password, :class => "form-control last", :placeholder => "Enter password", autocomplete: "new-user-session" %>
         </div>
 
         <% if devise_mapping.rememberable? -%>

@@ -1,0 +1,40 @@
+<%= javascript_tag do %>
+
+  $(function() {
+    var cardNumberEl = $('#card_number');
+
+    if (cardNumberEl.size() !== 0) {
+      cardNumberEl.validateCreditCard(function(result) {
+        var cardClass = "fa-credit-card-alt",
+          defaultCardClass = "fa-credit-card-alt";
+        if (result.card_type && result.card_type.name) {
+          switch(result.card_type.name) {
+            case 'visa':
+            case 'visa_electron':
+              cardClass = "fa-cc-visa";
+              break;
+            case 'amex':
+              cardClass = "fa-cc-amex";
+              break;
+            case 'diners_club_carte_blanche':
+            case 'diners_club_international':
+              cardClass = "fa-cc-diners-club";
+              break;
+            case 'jcb':
+              cardClass = "fa-cc-jcb";
+              break;
+            case 'mastercard':
+              cardClass = "fa-cc-mastercard";
+              break;
+            default:
+              cardClass = defaultCardClass;
+          }
+        }
+        $(".input-group-subscription-number-group-addon i")
+          .removeClass()
+          .addClass("fa " + cardClass);
+      });
+    }
+  });
+
+<% end %>
