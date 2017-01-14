@@ -4,7 +4,7 @@ Pricing information is available [here](/pricing).
 
 ## What media files do you support?
 
-We support almost all media file types (audio and video), including aac, aif, m4a, mov, mp3, mp4, wav, and many more.
+We support almost all media file types (audio and video), including aac, aif, m4a, mov, mp3, mp4, wav, wma, and many more.
 
 ## Is there any media size or length limitation?
 
