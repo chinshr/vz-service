@@ -27,9 +27,9 @@
             <label for="file-locale">Language</label>
             <select data-placeholder="Choose a Language..." id="file-locale" name="upload[locale]" class="form-control input-sm input-single-searchable">
               <option value="en-US">English United States</option>
+              <option value="en-GB">English Great Britain</option>
               <option value="es-ES">Spanish International</option>
   <!--
-              <option value="en-UK" disabled>English Great Britain</option>
               <option value="de-DE" disabled>German Germany</option>
               <option value="fr-FR" disabled>French France</option>
               <option value="it-IT" disabled>Italian Italy</option>

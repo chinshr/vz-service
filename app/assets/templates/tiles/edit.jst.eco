@@ -64,9 +64,9 @@
               <label class="sr-only" for="">Audio Language</label>
               <select class="form-control input-sm file-locale input-single-searchable" name="upload[locale]" value="<%= @locale %>">
                 <option value="en-US"<%= if @locale == "en-US": %> selected="selected"<% end %>>English United States</option>
+                <option value="en-GB" <%= if @locale == "en-GB": %> selected="selected"<% end %>>English Great Britain</option>
                 <option value="es-ES" <%= if @locale == "es-ES": %> selected="selected"<% end %>>Spanish International</option>
 <!--
-                <option value="en-UK" disabled <%= if @locale == "en-UK": %> selected="selected"<% end %>>English Great Britain</option>
                 <option value="de-DE" disabled <%= if @locale == "de-DE": %> selected="selected" <% end %>>German Germany</option>
                 <option value="fr-FR" disabled <%= if @locale == "fr-FR": %> selected="selected"<% end %>>French France</option>
                 <option value="it-IT" disabled <%= if @locale == "it-IT": %> selected="selected"<% end %>>Italian Italy</option>
