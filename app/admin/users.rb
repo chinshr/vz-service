@@ -5,7 +5,7 @@ ActiveAdmin.register User do
   scope :confirmed
 
   permit_params :email, :city, :first_name, :last_name,
-    :initials, :username
+    :initials, :username, :plan_id
 
   controller do
     def find_resource
