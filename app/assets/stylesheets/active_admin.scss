@@ -44,5 +44,20 @@ body.active_admin {
      -moz-border-radius: 1px;
      border-radius: 1px;
   }
-}
 
+  .ace-editor {
+  }
+
+  pre {
+    margin: 0;
+  }
+
+  form fieldset ol > li label.label {
+    display: block;
+    width: 20%;
+    float: left;
+    font-size: 1.0em;
+    font-weight: bold;
+    color: #5E6469;
+  }
+}

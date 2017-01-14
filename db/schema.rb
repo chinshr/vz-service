@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161229233239) do
+ActiveRecord::Schema.define(version: 20170115225609) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -484,11 +484,12 @@ ActiveRecord::Schema.define(version: 20161229233239) do
     t.boolean  "enabled",       default: false, null: false
     t.boolean  "visible",       default: false, null: false
     t.boolean  "create_stripe", default: false, null: false
-    t.json     "metadata",      default: {},    null: false
     t.datetime "created_at",                    null: false
     t.datetime "updated_at",                    null: false
+    t.jsonb    "config",        default: {},    null: false
   end
 
+  add_index "plans", ["config"], name: "index_plans_on_config", using: :gin
   add_index "plans", ["create_stripe"], name: "index_plans_on_create_stripe", using: :btree
   add_index "plans", ["display_order"], name: "index_plans_on_display_order", using: :btree
   add_index "plans", ["enabled"], name: "index_plans_on_enabled", using: :btree
@@ -698,6 +699,7 @@ ActiveRecord::Schema.define(version: 20161229233239) do
     t.string   "uid",                    limit: 255
     t.text     "description"
     t.integer  "plan_id"
+    t.jsonb    "properties",                                                  default: {}, null: false
   end
 
   add_index "users", ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true, using: :btree

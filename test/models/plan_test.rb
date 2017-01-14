@@ -65,4 +65,21 @@ class PlanTest < ActiveSupport::TestCase
     Payola::CreatePlan.expects(:call).never
     stripe_plan = FactoryGirl.create(:plan, :without_stripe)
   end
+
+  context "#config" do
+    should "get" do
+      plan = FactoryGirl.create(:plan, :enabled)
+      assert_not_nil plan.config
+      assert_equal "Plan::Config", plan.config.class.name
+      assert_nil plan.config.transcription.engine
+    end
+
+    should "set" do
+      plan = FactoryGirl.create(:plan, :enabled)
+      plan.config.transcription.engine = "test-engine"
+      assert_equal true, plan.save
+      plan.reload
+      assert_equal "test-engine", plan.config.transcription.engine
+    end
+  end
 end

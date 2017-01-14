@@ -248,6 +248,16 @@ App.Views.UploadsIndex = Backbone.View.extend({
     event.originalEvent.stopPropagation();
   },
 
+  getUploadMetadata: function() {
+    var config = App.currentUser.attributes.properties.config;
+    if (config.transcription && VZ.query.te) {
+      config.transcription.engine = VZ.query.te;
+    }
+    return {
+      "config": config
+    };
+  },
+
   uploadToS3: function(options) {
     var _this = this,
       newUploads = {};
@@ -269,7 +279,7 @@ App.Views.UploadsIndex = Backbone.View.extend({
             locale: _this.$("#file-locale").val() || "en-US",
             privacy: "private",
             editable: true,
-            metadata: {"te_name": VZ.query.te}
+            metadata: _this.getUploadMetadata()
           });
           newUploads[file.size] = upload;
           return _this.collection.add(upload);

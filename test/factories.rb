@@ -256,6 +256,21 @@ FactoryGirl.define do
     trait :unconfirmed do
       confirmed_at nil
     end
+
+    trait :with_personal_plan do
+      association :plan
+      properties({
+        "config": {
+          "quotas": {
+            "uploads_per_month": 5,
+            "length_per_media": 3600
+          },
+          "transcription": {
+            "engine": "test_engine"
+          }
+        }
+      })
+    end
   end
 
   factory :unconfirmed_user, :class => "User", :parent => :user do

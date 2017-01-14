@@ -2,7 +2,7 @@ class Plan < ActiveRecord::Base
   include Model::Uid
   include Payola::Plan
 
-  STRIPE_PLAN_IDS = %w(personal professional team enterprise).freeze
+  serialize :config, Plan::Config
 
   has_many :users
 

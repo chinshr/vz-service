@@ -1,1 +1,2 @@
-attributes :uid, :username, :name, :first_name, :last_name, :initials, :avatar_url, :css_hex_color, :css_rgb_color
+attributes :uid, :username, :name, :first_name, :last_name, :initials,
+  :avatar_url, :css_hex_color, :css_rgb_color, :properties
