@@ -22,15 +22,17 @@ ActiveAdmin.register Payola::Subscription, as: "Subscription" do
       link_to(resource.id, "subscriptions/#{resource.id}")
     end
     column :email
+    column :plan
     column :guid
     column :amount do |resource|
       number_to_currency(resource.amount / 100.0, {unit: "$"})
     end
     column :state
     column :stripe_status
-    column :stripe_token
     column :card_type
     column :card_last4
+    column "Canceled", :cancel_at_period_end
+    column :created_at
 
     # actions
     column do |resource|
