@@ -3,6 +3,11 @@ ActiveAdmin.register Payola::Subscription, as: "Subscription" do
 
   actions :all, :except => [:new, :edit, :destroy]
 
+  filter :email
+  filter :guid
+  filter :state
+  filter :stripe_status
+  filter :stripe_token
   filter :created_at
 
   scope :all
