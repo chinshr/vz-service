@@ -243,7 +243,7 @@ module Web::ApplicationHelper
   end
 
   def subscription_card_expiration(subscription)
-    l(subscription.card_expiration, format: "%m/%Y")
+    l(subscription.card_expiration, format: "%m/%Y") if subscription.card_expiration.present?
   end
 
   def subscription_plan_interval(subscription)
@@ -251,12 +251,12 @@ module Web::ApplicationHelper
   end
 
   def subscription_next_payment_due_on(subscription)
-    l(subscription.current_period_end, format: "%Y-%m-%d")
+    l(subscription.current_period_end, format: "%Y-%m-%d") if subscription.current_period_end.present?
   end
 
   def subscription_price(subscription, options = {})
     options = {precision: 0}.merge(options)
-    number_to_currency(subscription.amount / 100.0, options)
+    number_to_currency(subscription.amount / 100.0, options) if subscription.amount
   end
 
   def subscription_plan_name(subscription)
