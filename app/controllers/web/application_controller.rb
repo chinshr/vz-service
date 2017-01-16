@@ -30,7 +30,7 @@ class Web::ApplicationController < ApplicationController
   end
 
   def current_subscription
-    @current_subscription ||= Payola::Subscription.find_by(owner: current_user) if current_user
+    @current_subscription ||= Payola::Subscription.active.find_by(owner: current_user) if current_user
   end
   helper_method :current_subscription
 end
