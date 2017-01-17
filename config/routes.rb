@@ -31,6 +31,9 @@ Voyzes::Application.routes.draw do
   # site
   root 'web/pages#index'
 
+  # new home page
+  get '/diecisiete' => "web/pages#diecisiete"
+
   # Web::Application
   scope :module => "web", :as => "web" do
 
