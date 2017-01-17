@@ -18,6 +18,7 @@
 //= require lib/rails.validations
 //= require lib/rails.validations.bootstrap
 //= require lib/detect_timezone
+//= require lib/siriwave
 //= require lib/beachstrap/waypoints.min.js
 //= require lib/beachstrap/beachstrap-script
 //= require lib/beachstrap/jquery.nav
@@ -89,4 +90,19 @@ $(function() {
       }
     );
   });
+
+  var siriWave = new SiriWave({
+    container: document.getElementById('siri-wave'),
+    style: "ios9",
+    cover: true,
+    speed: 0.01,
+    frequency: 0.2,
+    amplitude: 0.2,
+    definition: [
+      { color: '84,130,140' },
+      { color: '118,183,198' },
+      { color: '153,237,255' }
+    ]
+  });
+  siriWave.start();
 });

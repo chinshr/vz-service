@@ -1,48 +1,35 @@
-/*
-Author: Mammoth-Interactive
-Description: Beachstrap theme styles
-Date: 17 March 2014
-*/
+@import 'web/setup';
 
-/* Table of Contents
-==================================================
+/* ==================== COLORS ================== */
 
-#GENERAL
-#HEADER
-#MAIN
-#CAROUSEL SECTION
-#PARALLAX SECTION
-#TEAM SECTION
-#SIGNUP SECTION
-#CONTACT SECTION
-#BLOG SECTION
-#FOOTER
-#MEDIA QUERIES
-
-==================================================
-*/
+$color-cyan-dark: #54828c;
+$color-cyan-light: #76b7c6;
+$color-cyan-dirty: #8f9da0;
+$color-cyan-dirty-light: #b1c2c6;
+$color-celeste: #99edff;
+$color-brown-light: #f2ab30;
+$color-brown: #bf9c60;
+$color-brown-dark: #998d82;
+$color-white: #fff;
+$color-black: #000;
+$color-mustard: #c9cf23;
+$color-mustard-light: #c9cf23;
 
 /* ==================== GENERAL ================== */
 
-$color-white:#fff;
-$color-orange:#F1784D;
-$color-dark-blue:#3D505F;
-
-@mixin transition($trans:background .5s ease){
-  -webkit-transition:$trans;
-  -moz-transition:$trans;
-  -o-transition:$trans;
-  transition:$trans;
+@mixin transition($trans: background .5s ease){
+  -webkit-transition: $trans;
+  -moz-transition: $trans;
+  -o-transition: $trans;
+  transition: $trans;
 }
 
 @mixin slideIn($trans: translateX(-480px)){
-  -webkit-transform:$trans;
-  -moz-transform:$trans;
-  -o-transform:$trans;
-  transform:$trans;
+  -webkit-transform: $trans;
+  -moz-transform: $trans;
+  -o-transform: $trans;
+  transform: $trans;
 }
-
-@import 'web/setup';
 
 body {
   font-family: $font-family;
@@ -59,6 +46,7 @@ h1, h2, h3, h4, h5 {
   margin-bottom:26px;
 
 }
+
 h1 {
   font-size: 42px;
   line-height: 52px;
@@ -80,10 +68,7 @@ p {
   margin-bottom:32px;
 }
 
-form {
-}
-
-.form-control{
+.form-control {
   border-radius: 0;
   border:1px solid #ccc;
   @include transition;
@@ -95,7 +80,7 @@ form {
   }
 }
 
-.btn-db{
+.btn-db {
   background-color: $color-dark-blue;
   color: #fff;
   border-radius:0;
@@ -109,11 +94,11 @@ form {
   }
 }
 
-.sn-links a{
+.sn-links a {
   color: $color-dark-blue;
   @include transition(color 0.5s ease);
 
-  &:hover{
+  &:hover {
     color: $color-orange;
   }
 
@@ -125,298 +110,47 @@ form {
 
 /* ====================== HEADER ========================= */
 
-header {
-  background-color: rgba(0, 0, 0, 0.7);
+header.page-header {
+  background: transparent -webkit-linear-gradient(0deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.9) 90%);
+  background: linear-gradient(0deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.9) 90%);
+  background-color: transparent;
   @include transition(background-color .2s ease);
 
-  // background-color: #292d33;
-  height: 70px;
-  padding: 0;
-  position: fixed;
-  z-index: 200;
-  width:100%;
-  top: 0;
-
-  #logo {
-    margin: 0;
-    padding: 0;
-    text-indent: -9999px;
-    background: image-url('voyzes-logo-110x70.png') no-repeat 0 0;
+  .navbar-tag {
+    // color: $color-cyan-light !important;
+    color: $color-brown-light !important;
   }
 
-  @media only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 2/1), only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min-device-pixel-ratio: 2) {
-    #logo {
-      background: image-url('voyzes-logo-110x70@2x.png') no-repeat 0 0 !important;
-      background-size: 110px 70px !important;
+  .navbar-tag:hover,
+  .navbar-tag:active,
+  .navbar-tag:focus {
+    // color: $color-cyan-dark !important;
+    color: $color-brown !important;
+  }
+
+  .button-chromeless {
+    color: rgba(255,255,255,.9) !important;
+
+    &:hover {
+      color: rgba(255,255,255,.99) !important;
     }
   }
 
-  nav {
-    &.navbar, &.navbar-collapse {
-      border: 0;
+  #sign-up-button {
+    border-color: $color-mustard !important;
+    background-color: $color-mustard;
+    color: #color-white;
+    font-weight: 600 !important;
+  }
+
+  #sign-in-button {
+    color: rgba(255,255,255,.9) !important;
+    font-weight: 600 !important;
+
+    &:hover {
+      color: rgba(255,255,255,.99) !important;
     }
-
-    a {
-      color: $color-white;
-      font-weight: 700;
-      @include transition;
-
-      &:hover, &.active{
-        color: $color-orange;
-        text-decoration: none;
-      }
-    }
-
-    .navbar-nav {
-      li {
-        height: 70px;
-
-        &.active {
-          xbackground-color: rgba(55, 61, 68, 0.8) !important;
-        }
-      }
-    }
-
-    ul.nav {
-      text-transform: uppercase;
-      text-align: right;
-      padding-top: 0;
-      font-size: 16px;
-
-      li {
-        display: inline;
-        padding: 15px;
-
-        &:last-child{
-          margin-right:0;
-        }
-
-        a {
-          text-decoration: none;
-          padding: 11px 0 9px 0;
-
-          &:hover {
-            color: $color-orange;
-          }
-
-          &:focus {
-            color: $color-white;
-          }
-        }
-
-        &.active {
-          border: 0 solid #4285f4;
-          border-bottom-width: 1px;
-        }
-
-        &:hover {
-          border: 0 solid #4285f4;
-          border-bottom-width: 1px;
-          @include transition(border .2s);
-        }
-
-        &.active a {
-          xcolor: $color-orange;
-          xbackground-color: #292d33;
-        }
-
-        &.dropdown {
-          padding-left: 45px;
-        }
-
-        &.dropdown:hover {
-          background-color: #373d44;
-          @include transition;
-        }
-
-        &.dropdown.open {
-          background-color: #373d44;
-        }
-
-        &.dropdown.open > a {
-          background-color: transparent !important;
-        }
-
-        &.dropdown span {
-          margin-left: 10px;
-        }
-
-        &.dropdown .dropdown-toggle .avatar {
-          position: absolute;
-          top: 19px;
-          left: 10px;
-          border-radius: 300px;
-          width: 35px;
-          height: 35px;
-          display: block;
-          overflow: hidden;
-        }
-      }
-
-      .dropdown-menu {
-        top: 70px;
-        border: none;
-        sbackground-color: #3d444b;
-        sbackground-color: rgba(21.255, 26.255, 40.255, 0.8);
-        background-color: #3d444b;
-        padding: 0;
-        min-width: 236px;
-
-        .divider {
-          background-color: transparent;
-        }
-
-        li {
-          text-align: left;
-          margin: 0;
-          padding: 0;
-          font-size: 16px;
-
-          &.logout a {
-            margin: 10px;
-          }
-        }
-
-        & > li > a {
-          padding-top: 15px;
-          padding-bottom: 15px;
-          color: $color-white;
-          text-decoration: none;
-          font-weight: bold;
-        }
-
-        & > li > a:hover,
-        & > li > a:focus {
-          color: $color-white;
-          text-decoration: none;
-          background-color: #292d33;
-        }
-
-        & > .active > a,
-        & > .active > a:hover,
-        & > .active > a:focus {
-          color: #fff;
-          text-decoration: none;
-          background-color: #428bca;
-          outline: 0;
-        }
-      }
-    } /* ul.nav */
-  } /* nav */
-
-  nav.navbar-default {
-    background-color: transparent;
-    margin-top: 0;
-
-    .navbar-toggle {
-      margin-top: 18px;
-    }
-    .navbar-toggle:hover,
-    .navbar-toggle:focus {
-      background-color: rgba(55, 61, 68, 0.8);
-    }
-
-    .navbar-brand {
-      width: 115px;
-    }
-
-    .navbar-brand:hover,
-    .navbar-brand:focus {
-      color: #5e5e5e;
-      background-color: transparent;
-    }
-
-    .navbar-tag {
-      margin: 16px 0;
-      text-transform: uppercase;
-      font-weight: 300;
-      font-size: 26px;
-      float: left;
-      width: 250px;
-      color: #777;
-      @include transition(color .2s ease);
-    }
-
-    .navbar-tag:hover,
-    .navbar-tag:focus {
-      color: $color-white;
-      background-color: transparent;
-      @include transition(color .2s ease);
-    }
-
-    @media (max-width: 480px) {
-      .navbar-tag {
-        display: none;
-      }
-    }
-
-    .navbar-text {
-      color: #777;
-    }
-
-    .navbar-nav {
-      li {
-        &.active a {
-          color: $color-orange;
-        }
-
-        &:hover {
-          @include transition;
-        }
-
-        &.active {
-          xbackground-color: #373d44;
-          background-color: rgba(55, 61, 68, 0.8)
-        }
-      }
-    }
-
-    .navbar-nav > li > a {
-      xpadding-top: 10px;
-      xpadding-bottom: 10px;
-      color: $color-white;
-      font-weight: bold;
-    }
-
-    .navbar-nav > li > a:hover,
-    .navbar-nav > li > a:focus {
-      color: $color-orange;
-      background-color: transparent;
-      @include transition(color .2s ease);
-    }
-
-    .navbar-nav > .active > a,
-    .navbar-nav > .active > a:hover,
-    .navbar-nav > .active > a:focus {
-      color: $color-orange;
-      background-color: transparent;
-    }
-
-    .navbar-nav > .disabled > a,
-    .navbar-nav > .disabled > a:hover,
-    .navbar-nav > .disabled > a:focus {
-      color: #ccc;
-      background-color: transparent;
-    }
-
-    .btn-group {
-      text-transform: uppercase;
-      margin: 20px;
-
-      a {
-        font-weight: bold;
-      }
-
-      a:hover,
-      a:focus {
-        color: $color-white;
-        background-color: transparent;
-        @include transition;
-      }
-
-    }
-  } /* nav.navbar-default */
-
+  }
 }
 
 /* ====================== MODAL ======================== */
@@ -555,164 +289,7 @@ header {
 
 }
 
-/* ================================ CAROUSEL SECTION =================================== */
-
-.carousel {
-  background: #f8f8f8;
-  border-top:1px solid #ccc;
-  border-bottom:1px solid #ccc;
-  text-align: center;
-  padding-top:40px;
-  padding-bottom:80px;
-
-  .carousel-indicators{
-    display: block;
-    bottom:-50px;
-  }
-
-  .carousel-inner > .item > img{
-    margin:0 auto;
-  }
-
-  .container p, .container h1, .container h2{
-    max-width:800px;
-    margin: 20px auto;
-  }
-}
-
-.carousel-control{
-  color: #000 !important;
-}
-
-.carousel-indicators li{
-  border:1px solid #aaa;
-}
-
-.carousel-indicators .active{
-  background-color: #aaa;
-  border:1px solid #fff;
-}
-
-
-/* ======= PARALLAX SECTION =========== */
-
-#parallax{
-  position: relative;
-  width:100%;
-  background: image-url('beachstrap/parallaxBg.jpg') no-repeat 50% 0 fixed;
-  background-size: cover;
-  height:350px;
-
-  h2{
-    color:#fff;
-    margin-top:130px;
-    text-align: center;
-    font-weight:700;
-    text-shadow: 0px 1px 1px black;
-  }
-
-}
-
-/* ================= TEAM SECTION ==================== */
-
-#our-team{
-  padding:40px 0 60px 0;
-  text-align: center;
-
-  .staff-mem{
-    cursor:pointer;
-    position: relative;
-    top:0;
-    @include transition(all .5s ease);
-
-    p{
-      margin-bottom:10px;
-    }
-
-    &.anim{
-      top:-10px;
-    }
-
-    img{
-      margin:0 auto;
-      border:1px solid #ccc ;
-    }
-
-    }/* end staff-me */
-
-    p{
-      margin-bottom:60px;
-    }
-  }
-
-/* ================= SIGN UP SECTION ======================== */
-
-#signup{
-  background: $color-orange;
-  color: #fff;
-  padding:30px 0 60px 0;
-  text-align: center;
-
-  h3{
-    color: #fff;
-  }
-}
-
-/* ================= CONTACT SECTION ======================== */
-
-#contact{
-  background: #f8f8f8;
-  padding:40px 0 60px 0;
-  text-align: center;
-  border-bottom:1px solid #ccc;
-
-  p{
-    margin:10px 0;
-  }
-
-  .btn{
-    width:100%;
-  }
-}
-
-/* ================= BLOG SECTION ======================== */
-#blog{
-  padding:40px 0 40px 0;
-  text-align: center;
-
-  .post{
-    cursor: pointer;
-
-    p{
-      margin: 20px 0;
-    }
-
-    .post-pic{
-      text-align: center;
-      margin: 10px auto;
-      box-sizing: border-box;
-      overflow: hidden;
-      border:3px solid #000;
-      max-width:370px;
-      max-height:240px;
-
-      img{
-        @include transition(all 2.5s ease);
-
-        &.anim{
-          -webkit-transform: scale(1.2);
-          -moz-transform: scale(1.2);
-          -o-transform: scale(1.2);
-          transform: scale(1.2);
-        }
-        }/* end img */
-        }/* end post pic */
-        }/* end post */
-      }
-
-/* ============================= FOOTER =============================== */
-
-footer{
+footer {
   background-color: #222327;
   padding:10px 0;
 
@@ -766,46 +343,7 @@ footer{
   }
 }
 
-@media only screen and (min-width: 480px) and (max-width: 767px){
-  /* iPhone Landscape */
-  /*
-  header {
-    a.mini-nav {
-      font-size: 28px;
-      color: #fff;
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      padding: 0 8px;
-      border-radius: 5px;
-    }
-
-    nav ul {
-      padding: 0;
-      margin-top:40px;
-      display: none;
-    }
-
-    nav ul.nav {
-      li {
-        display: block;
-        text-align: center;
-        margin:0;
-        padding:10px 0;
-        width: 100%;
-        border-top:1px solid rgba(255, 255, 255, 0.2);
-
-        &:hover {
-          background: rgba(0.255, 0.255, 0.255, 0.2);
-        }
-
-        a {
-          display: block;
-          width:100%;
-        }
-      }
-    }
-  }
-  */
-
+@media only screen and (min-width: 480px) and (max-width: 767px) {
   header {
     nav {
       .navbar-collapse {
