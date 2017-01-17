@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="description" content="Record your Life. Your conversations deserve a place to be found.">
+    <meta name="author" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= content_for?(:title) ? yield(:title) : "VOYZ.ES" %></title>
+    <%= csrf_meta_tags %>
+
+    <!-- Add to homescreen for Chrome on Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <%=h yield(:head_includes) %>
+
+    <link rel="dns-prefetch" href="//fonts.googleapis.com">
+
+    <!-- Bootstrap core CSS -->
+    <%= stylesheet_link_tag "diecisiete" %>
+
+    <!-- Add modernizr -->
+    <%= javascript_include_tag :modernizr %>
+
+    <!-- For third-generation iPad with high-resolution Retina display: -->
+    <!-- Size should be 144 x 144 pixels -->
+    <%= favicon_link_tag 'apple-touch-icon-144x144-precomposed.png', :rel => 'apple-touch-icon-precomposed', :type => 'image/png', :sizes => '144x144' %>
+
+    <!-- For iPhone with high-resolution Retina display: -->
+    <!-- Size should be 114 x 114 pixels -->
+    <%= favicon_link_tag 'apple-touch-icon-114x114-precomposed.png', :rel => 'apple-touch-icon-precomposed', :type => 'image/png', :sizes => '114x114' %>
+
+    <!-- For first- and second-generation iPad: -->
+    <!-- Size should be 72 x 72 pixels -->
+    <%= favicon_link_tag 'apple-touch-icon-72x72-precomposed.png', :rel => 'apple-touch-icon-precomposed', :type => 'image/png', :sizes => '72x72' %>
+
+    <!-- For non-Retina iPhone, iPod Touch, and Android 2.1+ devices: -->
+    <!-- Size should be 57 x 57 pixels -->
+    <%= favicon_link_tag 'apple-touch-icon-precomposed.png', :rel => 'apple-touch-icon-precomposed', :type => 'image/png' %>
+
+    <!-- For all other devices -->
+    <!-- Size should be 32 x 32 pixels -->
+    <%= favicon_link_tag 'favicon.ico', :rel => 'shortcut icon', :type => 'image/vnd.microsoft.icon' %>
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    <%= javascript_include_tag "lib/html5shiv.js" %>
+    <%= javascript_include_tag "lib/respond.min.js" %>
+    <![endif]-->
+  </head>
+
+  <body data-spy="scroll" data-offset="70" data-target="#navigation" class="<%= dom_controller_class %> <%= dom_controller_action_class %> selected-main-item">
+    <div id="content">
+      <header>
+        <div class="container">
+          <nav class="navbar navbar-default xnavbar-fixed-top" id="navigation" role="navigation">
+            <div class="container-fluid">
+              <!-- Brand and toggle get grouped for better mobile display -->
+              <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" area-expanded="false" aria-controls="navbar">
+                  <span class="sr-only">Toggle navigation</span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                </button>
+                <a id="logo" class="navbar-brand" href="/">VOYZ.ES</a>
+                <a class="navbar-tag" href="/">Record your Life</a>
+              </div>
+
+              <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav pull-right">
+                  <li id="selected-main-item" class="active"><a href="#main" title="Why We Do It">Why</a></li>
+                  <li id="selected-intro-strip-item" class="xhidden"><a href="#intro-strip" title="How It Works">How</a></li>
+                  <li id="selected-work-item"><a href="#work" title="What We Do">What</a></li>
+                  <li id="selected-our-team-item"><a href="#our-team" title="Our Team">Who</a></li>
+                </ul>
+              </div><!-- #navbar .collapse .navbar-collapse -->
+            </div><!-- .container-fluid -->
+          </nav>
+        </div><!-- .container -->
+      </header>
+
+      <!-- mainImage -->
+      <div id="main">
+        <div class="container">
+          <div class="row">
+            <div class="cont-gradient"></div>
+            <div class="col-lg-7 col-lg-offset-5 col-md-8 col-md-offset-4 col-sm-10 col-sm-offset-1 col-xs-12">
+              <div class="cont-wrapper">
+                <p class="intro">Your conversations <br/>deserve a place to be found</p>
+                <div class="actions">
+                  <div class="play-wrapper btn-wrp">
+                    <a href="https://www.youtube.com/watch?v=w2oLFpcMPlo" id="play-video" class="c2a-button youtube"><i class="glyphicon glyphicon-play"></i></a>
+                  </div><!-- .play-wrapper -->
+                  <div class="registration-form">
+                    <h4>Want to join the beta list?</h4>
+                    <%= form_for(@registration || Registration.new, {:url => web_registrations_path, :validate => true, :remote => true}) do |f| %>
+                      <div class="form-group">
+                        <div class="input-group">
+                          <%= f.email_field :email, :autofocus => "autofocus", :autocapitalize => "off", :autocomplete => "off", :autocorrect => "off", :spellcheck => false, :class => "form-control first", :placeholder => "Enter your email address to register", :"data-error-style" => "inline" %>
+                          <span type="submit" class="input-group-addon">
+                            <button class="btn btn-submit glyphicon glyphicon-arrow-right"></button>
+                          </span>
+                        </div>
+                      </div>
+                      <%= f.hidden_field :time_zone %>
+                      <% content_for :javascript_includes do %>
+                        <%= javascript_tag do %>
+                          $(function() {
+                            $("form input[name='registration[time_zone]']").val(jstz.determine_timezone().name());
+                          });
+                        <% end %>
+                      <% end %>
+                      <%#= f.submit "Notify me!", :class => "btn btn-lg btn-primary btn-block" %>
+                    <% end %>
+                  </div>
+                  <div class="registration-success">
+                    <h4>Thanks for your interest. You will hear back from us shortly.</h4>
+                    <div class="social-container">
+                      <p>Spread the word:</p>
+                      <ul class="social-networks">
+                        <li class="facebook"><a class="fa fa-facebook" href="#" data-href=""></a></li>
+                        <li class="twitter"><a class="fa fa-twitter" href="#" data-href="" ></a></li>
+                        <li class="linkedin"><a class="fa fa-linkedin" href="#" data-href=""></a></li>
+                        <li class="email"><a class="fa fa-envelope" href="#" data-href=""></a></li>
+                      </ul><!-- .social-networks -->
+                    </div><!-- .social-container -->
+                  </div>
+                </div><!-- .actions -->
+              </div><!-- end cont wrapper -->
+            </div><!-- end 8 -->
+          </div>
+        </div><!-- end container -->
+      </div><!-- end row -->
+
+      <!-- intro strip -->
+      <div id="intro-strip">
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-8 col-lg-offset-2"><h1>How It Works</h1></div>
+          </div><!-- end row -->
+        </div><!-- end container -->
+      </div><!-- end intro strip -->
+
+      <div id="home">
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-5 col-md-5 col-sm-5 ipad hidden-xs">
+              <img src="<%= asset_path('beachstrap/ipadShot1.png') %>" class="img-responsive" alt="ipadShot" />
+            </div>
+            <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12 text">
+              <h2>A tool to record, organize and find everyday conversations</h2>
+              <ul>
+                <li><b>Easily record, transcribe and organize your voice:</b> conversations, interviews, office meetings, focus groups or classes.</li>
+                <li><strong>Store</strong> your audio content privately or publicly in a secure system.</li>
+                <li><strong>Edit and improve your transcriptions</strong> directly or through crowdsourcing.</li>
+                <li><strong>Share and discover</strong> voices from around the world.</li>
+              </ul>
+              <%#
+              <p><strong>Full responsive design, css3 animationsfully customisable</strong></p>
+              <p class="btn-wrp"><a class="c2a-button">Call to action</a></p>
+              %>
+            </div>
+          </div><!-- end row -->
+        </div><!-- end container -->
+      </div><!-- end home -->
+
+    <!-- ======================= CAROUSEL ========================= -->
+
+      <div id="work">
+        <div id="myCarousel" class="carousel slide">
+          <div class="container">
+            <div class="row">
+              <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <!-- Indicators -->
+                <ol class="carousel-indicators">
+                  <%#
+                  <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+                  <li data-target="#myCarousel" data-slide-to="1"></li>
+                  <li data-target="#myCarousel" data-slide-to="2"></li>
+                  %>
+                </ol>
+
+                <div class="carousel-inner">
+                  <!-- carousel item -->
+                  <div class="item active">
+                    <!-- edit contents here -->
+                    <div class="container">
+                      <h1>What we do</h1>
+                      <div class="caption">
+                        <p>VOYZ.ES helps organize and automatically extract structured information from recordings.</p>
+                        <p>Simultaneously collaborate with others on voice documents. Universities and media producers use VOYZ.ES to team up on transcripts for their videos and podcasts.</p>
+                        <p>Share all or portions of your conversations with others and harness your findings from in depth insights.</p>
+                        <p>VOYZ.ES employes the latest in neuronal network based ASR technology. It is continuously improving the quality of its transcripts for English, Spanish, and soon, other languages.</p>
+                      </div>
+                    </div>
+
+                    <div class="container">
+                      <div class="row placeholders">
+                        <div class="col-lg-3 col-md-3 col-sm-3 placeholder">
+                          <button class="btn btn-default btn-circle">
+                            <i class="glyphicon glyphicon-phone"></i>
+                          </button>
+                          <h4>Record</h4>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-3 placeholder">
+                          <button class="btn btn-default btn-circle">
+                            <i class="glyphicon glyphicon-edit"></i>
+                          </button>
+                          <h4>Edit</h4>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-3 placeholder">
+                          <button class="btn btn-default btn-circle">
+                            <i class="glyphicon glyphicon-comment"></i>
+                          </button>
+                          <h4>Share</h4>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-3 placeholder">
+                          <button class="btn btn-default btn-circle">
+                            <i class="glyphicon glyphicon-globe"></i>
+                          </button>
+                          <h4>Discover</h4>
+                        </div>
+                      </div><!-- end row -->
+                    </div><!-- end container -->
+                    <%#
+                    <img src="/assets/beachstrap/responsiveShot.png" alt="responsiveShot" class="img-responsive" >
+                    <p class="btn-wrp"><a class="c2a-button">Call to action</a></p>
+                    %>
+                    <!-- stop editing here -->
+                  </div>
+                  <!-- end item -->
+
+                  <%#
+                  <!-- carousel item -->
+                  <div class="item">
+                    <!-- edit contents here -->
+                    <div class="container">
+                      <h1>Example headline.</h1>
+                      <div class="caption">
+                        <p>Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
+                      </div>
+                    </div>
+                    <img src="/assets/beachstrap/responsiveShot.png" alt="responsiveShot" class="img-responsive" >
+                    <p class="btn-wrp"><a class="c2a-button">Call to action</a></p>
+                    <!-- stop editing here -->
+                  </div>
+                  <!-- end item -->
+
+                  <!-- carousel item -->
+                  <div class="item">
+                    <!-- edit contents here -->
+                    <div class="container">
+                      <h1>Example headline.</h1>
+                      <div class="caption">
+                        <p>Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
+                      </div>
+                    </div>
+                    <img src="/assets/beachstrap/responsiveShot.png" alt="responsiveShot" class="img-responsive" >
+                    <p class="btn-wrp"><a class="c2a-button">Call to action</a></p>
+                    <!-- stop editing here -->
+                  </div>
+                  <!-- end item -->
+                  %>
+                </div><!-- end carousel inner -->
+                <%#
+                <a class="left carousel-control" href="#myCarousel" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a>
+                <a class="right carousel-control" href="#myCarousel" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>
+                %>
+              </div>
+            </div>
+          </div>
+        </div><!-- end carousel -->
+      </div><!-- end work -->
+
+      <!-- ========================= PARALLAX BACKGROUND STRIP ================================ -->
+
+      <div id="parallax" data-speed="8" class="hidden-sm hidden-xs">
+        <div class="container">
+           <div class="row">
+            <div class="col-lg-8 col-lg-offset-2">
+              <h2>With VOYZ.ES more information will be publicly accessible to a wider audience. People will discover extraordinary ideas in ordinary talks.</h2>
+            </div>
+           </div>
+         </div>
+      </div>
+
+      <!-- ========================= TEAM STRIP ================================ -->
+      <div id="our-team">
+        <div class="container">
+          <div class="row about-intro">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+              <h2>About Us</h2>
+              <%#
+              <p>We are a group of people concerned about communication and transparency. We aim to increase sharing and indexation of audio recordings to improve work and academic efficiency; and to tackle issues of transparency.
+              </p>
+              %>
+            </div>
+          </div><!-- end row -->
+          <div class="row staff-row">
+            <div class="col-lg-offset-2 col-lg-4 col-md-offset-2 col-md-4 col-sm-offset-2 col-sm-4">
+              <div class="staff-mem">
+                <img src="<%= asset_path('beachstrap/ana-maria.png') %>" class="img-responsive img-circle">
+                <h3>Ana Maria Carrano</h3>
+                <p>Journalist, Knight Fellow at Stanford University. Project manager of the first three newspaper apps for tablets in Venezuela. Co-founder of Venezuela Decoded.
+                </p>
+                <p class="sn-links">
+                  <a href="//twitter.com/anamariacarrano" title="twitter" target="_blank"><i class="fa fa-twitter"></i></a>
+                  <a href="//linkedin.com/pub/ana-maria-carrano/3/396/5a4/" title="linked-in" target="_blank"><i class="fa fa-linkedin-square"></i></a>
+                </p>
+              </div>
+            </div><!-- end 4 -->
+            <div class="col-lg-4 col-md-4 col-sm-4">
+              <div class="staff-mem">
+                <img src="<%= asset_path('beachstrap/juergen.png') %>" class="img-responsive img-circle">
+                <h3>Juergen Fesslmeier</h3>
+                <p>Tech entrepreneur, co-founder, Software architect, product manager. Loves to simplify complexity, technology, business, design and life in general.
+                </p>
+                <p class="sn-links">
+                  <a href="//twitter.com/chinshr" title="twitter" target="_blank"><i class="fa fa-twitter"></i></a>
+                  <a href="//linkedin.com/in/fesslmeier/" title="linked-in" target="_blank"><i class="fa fa-linkedin-square"></i></a>
+                </p>
+              </div>
+            </div><!-- end 4 -->
+            <% if false %>
+            <div class="col-lg-4 col-md-4 col-sm-4">
+              <div class="staff-mem">
+                <img src="<%= asset_path('beachstrap/mara.png') %>" class="img-responsive img-circle">
+
+                <h3>Mara Behrens</h3>
+                <p>Creative director co-founder of ModeWalk, venture-backed e-commerce company recently sold to Moda Operandi. She had clients such as Smithsonian Museum and Stanford University, among others.
+                </p>
+                <p class="sn-links">
+                  <a href="#" title="twitter" target="_blank"><i class="fa fa-twitter"></i></a>
+                  <a href="//linkedin.com/in/marabehrens" title="linked-in" target="_blank"><i class="fa fa-linkedin-square"></i></a>
+                </p>
+              </div>
+            </div><!-- end 4 -->
+            <% end %>
+          </div><!-- end row -->
+
+          <% if false%>
+          <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-6">
+              <div class="staff-mem">
+                <img src="<%= asset_path('beachstrap/douglas.png') %>" class="img-responsive img-circle">
+                <h3>Douglas Gómez-Barrueta</h3>
+                <p>Journalist. Co-founder of Venezuela Decoded, a website to follow Venezuela’s crisis based on Twitter. Author of “Talla de Agua” (2013).
+                </p>
+                <p class="sn-links">
+                  <a href="//twitter.com/dougomez" title="twitter" target="_blank"><i class="fa fa-twitter"></i></a>
+                  <a href="#" title="linked-in" target="_blank"><i class="fa fa-linkedin-square"></i></a>
+                </p>
+              </div>
+            </div><!-- end 6 -->
+            <div class="col-lg-6 col-md-6 col-sm-6">
+              <div class="staff-mem">
+                <img src="<%= asset_path('beachstrap/mariana.png') %>" class="img-responsive img-circle">
+                <h3>Mariana Saiz</h3>
+                <p>Economist and Data Scientist. Launched Flexible Credits at BNP Paribas Personal. Research on income distribution and micro finance for UCA in Buenos Aires.
+                </p>
+                <p class="sn-links">
+                  <a href="//twitter.com/marianasaiz" title="twitter" target="_blank"><i class="fa fa-twitter"></i></a>
+                  <a href="//linkedin.com/pub/mariana-saiz/0/4b/42b" title="linked-in" target="_blank"><i class="fa fa-linkedin-square"></i></a>
+                </p>
+              </div>
+            </div><!-- end 6 -->
+          </div><!-- end row -->
+          <% end %>
+
+        </div><!-- end container -->
+      </div>
+
+      <!-- ========================= SIGN UP STRIP ================================ -->
+  <%#
+      <div id="signup">
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+              <h3>Sign up for the newsletter</h3>
+              <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip. </p>
+
+              <div class="row">
+                  <form role="form">
+                    <div class="col-lg-6 col-lg-offset-2 col-md-6 col-md-offset-2 col-sm-9   col-xs-12">
+                      <input type="email" class="form-control"  placeholder="Enter email">
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-3 col-xs-12"><button type="submit" class="btn btn-db">Sign up now!</button></div>
+                  </form>
+              </div>
+            </div>
+          </div><!-- end row -->
+
+        </div><!-- end container -->
+      </div><!-- end signup -->
+
+      <!-- ========================== CONTACT =========================== -->
+
+      <div id="contact">
+          <div class="container">
+            <div class="row">
+              <div class="col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2 col-sm-10 col-sm-offset-1">
+                <h2 class="">Contact Us</h2>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore. </p>
+                <form role="form">
+                      <p><input class="form-control" placeholder="Enter name"></p>
+                      <p><input class="form-control" placeholder="Enter email"></p>
+                      <p><textarea class="form-control" rows="3"></textarea></p>
+                      <p><button type="submit" class="btn btn-db">Send</button></p>
+                  </form>
+              </div>
+            </div><!-- end row -->
+          </div><!-- end container -->
+      </div><!-- end contact -->
+
+
+      <!-- ========================== BLOG =========================== -->
+      <div id="blog">
+      <div class="container">
+
+        <div class="row">
+          <div class="col-lg-12 col-md-12 col-sm-12">
+              <h2>Our Blog</h2>
+          </div>
+        </div><!-- end row -->
+
+        <div class="row">
+          <div class="col-lg-4 col-md-4 col-sm-4 post">
+              <h3>Post Title</h3>
+              <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore</p>
+              <div class="post-pic">
+                <img data-src="holder.js/370x240" class="img-responsive">
+              </div>
+
+                <p class="sn-links">
+                  <a href="#" title="twitter"><i class="fa fa-twitter"></i></a>
+                  <a href="#" title="facebook"><i class="fa fa-facebook"></i></a>
+                  <a href="#" title="linked-in"><i class="fa fa-linkedin-square"></i></a>
+                </p>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-4 post">
+              <h3>Post Title</h3>
+              <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore</p>
+              <div class="post-pic">
+                <img data-src="holder.js/370x240" class="img-responsive">
+              </div>
+
+                <p class="sn-links">
+                  <a href="#" title="twitter"><i class="fa fa-twitter"></i></a>
+                  <a href="#" title="facebook"><i class="fa fa-facebook"></i></a>
+                  <a href="#" title="linked-in"><i class="fa fa-linkedin-square"></i></a>
+                </p>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-4 post">
+              <h3>Post Title</h3>
+              <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore</p>
+              <div class="post-pic">
+                <img data-src="holder.js/370x240" class="img-responsive">
+              </div>
+              <p class="sn-links">
+                  <a href="#" title="twitter"><i class="fa fa-twitter"></i></a>
+                  <a href="#" title="facebook"><i class="fa fa-facebook"></i></a>
+                  <a href="#" title="linked-in"><i class="fa fa-linkedin-square"></i></a>
+                </p>
+            </div>
+            </div><!-- end row -->
+        </div><!-- end container -->
+      </div><!-- end blog -->
+  %>
+
+      <footer>
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+              <p>Copyright &copy; VOYZES, Inc., Record Your Life<sup>&reg;</sup> <%= Time.zone.now.year %>.&nbsp;&nbsp;All rights reserved.</p>
+            </div>
+            <div class="col-lg-5 col-md-5 col-sm-5 col-xs-12">
+              <p class="sn-links"><a href="//twitter.com/voyzes" title="twitter" target="_blank"><i class="fa fa-twitter"></i></a>
+              <a href="#" title="linked-in"><i class="fa fa-linkedin-square"></i></a></p>
+            </div>
+          </div>
+        </div>
+      </footer>
+
+    </div><!-- end content -->
+
+    <!-- JavaScripts
+    ================================================== -->
+    <%= javascript_include_tag "diecisiete" %>
+    <%= yield :javascript_includes %>
+    <div id="fb-root"></div>
+  </body>
+</html>
