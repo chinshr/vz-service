@@ -3,6 +3,8 @@ class User < ActiveRecord::Base
   include Model::User::Roles
   include Model::Uid
 
+  serialize :properties, User::Properties
+
   attr_accessor :force_registration_validation
   attr_accessor :skip_registration_validation
   attr_accessor :force_generate_access_token
@@ -137,6 +139,14 @@ class User < ActiveRecord::Base
 
   def pubsub_channel
     "vz-user-#{self.uid}"
+  end
+
+  def properties
+    plan_config_hash = (self.plan.try(:config) || {}).as_json
+    user_config_hash = (self[:properties].try(:[], :config) || {}).as_json
+    merged_config = plan_config_hash.deep_merge(user_config_hash) {|_k, v1, v2| v2.present? ? v2 : v1}
+    self[:properties][:config] = merged_config
+    self[:properties]
   end
 
   protected

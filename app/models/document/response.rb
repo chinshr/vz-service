@@ -16,7 +16,7 @@ class Document::Response
 
   collection_attribute :hypotheses, Document::Response::HypothesisCollection[Document::Response::Hypothesis], default: []
   collection_attribute :words, Document::Response::WordCollection[Document::Response::Word], default: []
-  complex_attribute :speaker_segment, Document::Response::SpeakerSegment
+  complex_attribute :speaker_segment, Document::Response::SpeakerSegment, default: {}
 
   def self.dump(values)
     values.to_hash

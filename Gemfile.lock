@@ -100,6 +100,7 @@ GEM
   remote: https://rubygems.org/
   specs:
     aasm (4.11.1)
+    ace-rails-ap (4.1.2)
     actionmailer (4.2.7.1)
       actionpack (= 4.2.7.1)
       actionview (= 4.2.7.1)
@@ -540,6 +541,7 @@ PLATFORMS
 
 DEPENDENCIES
   aasm (~> 4.11.1)
+  ace-rails-ap
   activeadmin!
   activerecord-deprecated_finders
   acts-as-taggable-on (~> 3.4)

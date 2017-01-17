@@ -4,8 +4,9 @@ ActiveAdmin.register User do
   scope :all
   scope :confirmed
 
-  permit_params :email, :city, :first_name, :last_name,
-    :initials, :username, :plan_id
+  permit_params :plan_id, :username, :first_name, :last_name, :initials, :email,
+    :lat, :lng, :time_zone, :address, :country_code, :city, :postal_code,
+    :region_code, :region_name, :avatar_url, :css_hex_color, :properties
 
   controller do
     def find_resource
@@ -34,13 +35,41 @@ ActiveAdmin.register User do
 
   show do |user|
     attributes_table do
-      User.column_names.each do |column|
+      User.column_names.reject {|n| ['properties'].include?(n) }.each do |column|
         row column
+      end
+      row :properties do |resource|
+        JSON.pretty_generate(resource.properties.as_json)
       end
       row :login_as do
         link_to "#{user.name}", login_as_admin_user_path(user.id), :target => '_blank', :class => "button"
       end
     end
+  end
+
+  form do |f|
+    f.inputs "User Details" do
+      f.input :plan
+      f.input :username
+      f.input :first_name
+      f.input :last_name
+      f.input :initials
+      f.input :email
+      f.input :lat
+      f.input :lng
+      # f.input :time_zone
+      f.input :address
+      f.input :country_code
+      f.input :city
+      f.input :postal_code
+      f.input :region_code
+      f.input :region_name
+      f.input :avatar_url
+      f.input :css_hex_color
+
+      f.input :properties, as: :text, input_html: {value: JSON.pretty_generate(f.object.properties.as_json), class: 'ace-editor' }
+    end
+    f.actions
   end
 
   # Allows admins to login as a user

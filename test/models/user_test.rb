@@ -228,4 +228,27 @@ class UserTest < ActiveSupport::TestCase
     User.update_subscription_plan(subscription)
     assert_equal subscription.plan, user.plan
   end
+
+  context "#properties" do
+    setup do
+      @user1 = FactoryGirl.create(:user)
+      @user2 = FactoryGirl.create(:user, :with_personal_plan)
+    end
+
+    should "get" do
+      assert_not_nil @user1.properties
+    end
+
+    should "get properties.config" do
+      assert_not_nil @user1.properties.config
+    end
+
+    should "config.transcription.engine nil" do
+      assert_nil @user1.properties.config.transcription.engine
+    end
+
+    should "config.transcription.engine inherited from plan" do
+      assert_equal "test_engine", @user2.properties.config.transcription.engine
+    end
+  end
 end
