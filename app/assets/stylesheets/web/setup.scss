@@ -1,12 +1,26 @@
 /* ====================== VARIABLES ========================= */
 
+$font-family: 'Lato', sans-serif;
+$btn-default-radius: 2px;
+
 $color-white: #fff;
-$color-orange: #3f6169; /* #F1784D; */
+$color-black: rgba(1,1,1,1);
+$color-orange: #3f6169;
 $color-light-blue: #4285f4;
 $color-blue: #5492ce;
 $color-dark-blue: #3D505F;
-$font-family: 'Lato', sans-serif;
-$btn-default-radius: 2px;
+
+// Accent colors
+$color-cyan-dark: #54828c;
+$color-cyan-light: #76b7c6;
+$color-cyan-dirty: #8f9da0;
+$color-cyan-dirty-light: #b1c2c6;
+$color-celeste: #99edff;
+$color-brown-light: #f2ab30;
+$color-brown: #bf9c60;
+$color-brown-dark: #998d82;
+$color-mustard: #c9cf23;
+$color-mustard-light: #c9cf23;
 
 /* ====================== MEDIA QUERIES HELPERs ========================= */
 // see: http://include-media.com/documentation/

@@ -11,7 +11,7 @@
 @import 'web/setup';
 
 body.pages {
-  background-color: #222327;
+  background-color: $color-black;
 
   .modal-dialog {
     margin: 0px;
@@ -44,8 +44,10 @@ body.pages {
   #main {
     #siri-wave {
       display: block;
-      height: 200%;
-      width: 150%;
+      height: 100%;
+      width: 100%;
+      margin-top: 85px;
+      overflow: hidden;
     }
 
     .cont-gradient {

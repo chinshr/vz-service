@@ -53,8 +53,8 @@ SiriWave9Curve.prototype._draw = function(sign) {
   var height = Math.abs(this._ypos(0));
 
   var gradient = ctx.createRadialGradient(xBase, yBase, height * 1.15, xBase, yBase, height * 0.3);
-  gradient.addColorStop(0, 'rgba(' + this.definition.color + ', 0.1)');
-  gradient.addColorStop(0.2, 'rgba(' + this.definition.color + ', 0.05)');
+  gradient.addColorStop(0, 'rgba(' + this.definition.color + ', 0.4)');
+  gradient.addColorStop(0.2, 'rgba(' + this.definition.color + ', 0.3)');
   ctx.fillStyle = gradient;
 
   ctx.lineTo(xInit, yBase);
