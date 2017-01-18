@@ -1,38 +1,17 @@
 /*
  *= require bootstrap
- *= require diecisiete/diecisiete-styles
  *= require font-awesome
  *= require lato
+ *= require web/page_header
+ *= require web/button
+ *= require diecisiete/diecisiete-styles
  *= require_self
  */
 
 @import 'web/setup';
 
 body.pages {
-  &.load-header-contrast {
-    header {
-      background-color: rgba(0, 0, 0, 0.7) !important;
-    }
-  }
-
-  &.selected-main-item {
-    header {
-      background-color: transparent;
-      @include transition(background-color .2s ease);
-
-      nav .navbar-nav li {
-        background-color: transparent !important;
-      }
-    }
-  }
-
-  h1, #our-team h2, ul.nav {
-    text-transform: uppercase;
-  }
-
-  ul.nav {
-    padding-left: 0;
-  }
+  background-color: #222327;
 
   .modal-dialog {
     margin: 0px;
@@ -63,14 +42,22 @@ body.pages {
   }
 
   #main {
+    #siri-wave {
+      display: block;
+      height: 200%;
+      width: 150%;
+    }
+
     .cont-gradient {
+      //border-top: 1px solid rgba(84,130,140, 0.1);
+      border-bottom: 1px solid rgba(84,130,140, 0.1);
       position: absolute;
       top: 230px;
       left: 0;
       right: 0;
       height: 170px;
-      background: transparent -webkit-linear-gradient(90deg, rgba(63, 98, 105, 0) 0%, rgba(63, 98, 105, 0.1) 50%, rgba(63, 98, 105, 0.6) 100%);
-      background: linear-gradient(90deg, rgba(63, 98, 105, 0) 0%, rgba(63, 98, 105, 0.1) 50%, rgba(63, 98, 105, 0.6) 100%);
+      background: transparent -webkit-linear-gradient(90deg, rgba(84, 130, 140, 0) 0%, rgba(84, 130, 140, 0.2) 50%, rgba(84, 130, 140, 0.6) 100%);
+      background: linear-gradient(90deg, rgba(84, 130, 140, 0) 0%, rgba(84, 130, 140, 0.2) 50%, rgba(84, 130, 140, 0.6) 100%);
       background-color: transparent;
     }
 
@@ -286,9 +273,6 @@ body.pages {
           }
         } /* .social-container */
       } /* .registration-form, .registration-success */
-
-      .registration-form {
-      }
 
       .registration-success {
         display: none;

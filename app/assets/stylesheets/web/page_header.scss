@@ -1,7 +1,6 @@
 @import 'web/setup';
 
 header.page-header {
-  /* background-color: rgba(21.255, 26.255, 40.255, 0.8); */
   background-color: #292d33;
   height: 70px;
   padding: 0;
@@ -245,6 +244,7 @@ header.page-header {
     }
 
     .navbar-tag:hover,
+    .navbar-tag:active,
     .navbar-tag:focus {
       color: $color-white;
       background-color: transparent;
