@@ -546,10 +546,12 @@ body.pages {
       }
 
       p {
-        -webkit-margin-before: 1em;
-        -webkit-margin-after: 1em;
-        -webkit-margin-start: 0px;
-        -webkit-margin-end: 0px;
+        margin-top: 1em;
+        margin-bottom: 1em;
+        // -webkit-margin-before: 1em;
+        // -webkit-margin-after: 1em;
+        // -webkit-margin-start: 0px;
+        // -webkit-margin-end: 0px;
         display: block;
         width: 100%;
         top: 38px;
@@ -565,6 +567,16 @@ body.pages {
         width: 840px;
         margin: auto;
         height: auto;
+      }
+
+      @include media('>=phone', '<tablet', 'portrait') {
+        h2 {
+          font-size: 30px;
+        }
+
+        p {
+          font-size: 17px;
+        }
       }
     }
 
