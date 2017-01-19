@@ -51,9 +51,9 @@
     var _this = this;
     this.didCarouselStart = true;
 
-    this.homeGalleryTimeout = setTimeout(function() {
+    _this.homeGalleryTimeout = setTimeout(function() {
       _this.changeSlide(2);
-      this.homeGalleryInterval = setInterval(function() {
+      _this.homeGalleryInterval = setInterval(function() {
         var nextAutomaticSlide;
         if (_this.currentSlide < $(_this.selector + " .slide").length) {
           nextAutomaticSlide = _this.currentSlide + 1;
@@ -71,34 +71,36 @@
   }
 
   Gallery.prototype.changeSlide = function(clickedObject) {
-    var newSlideNumber, selectorNewPosition;
+    var _this = this,
+      newSlideNumber,
+      selectorNewPosition;
     if ($(clickedObject).attr("class") == "item" || $(clickedObject).attr("class") == "dot-off") {
       newSlideNumber = $(clickedObject).attr("id").slice(-1);
     } else {
       newSlideNumber = clickedObject;
     }
 
-    $("#home-gallery-item-" + this.currentSlide).attr("class", "item");
+    $("#home-gallery-item-" + _this.currentSlide).attr("class", "item");
     $("#home-gallery-item-" + newSlideNumber).attr("class", "item-selected");
-    $("#home-gallery-dot-" + this.currentSlide).attr("class", "dot-off");
+    $("#home-gallery-dot-" + _this.currentSlide).attr("class", "dot-off");
     $("#home-gallery-dot-" + newSlideNumber).attr("class", "dot-on");
-    selectorNewPosition = 25 * (newSlideNumber - 1) + "%";
-    $(this.selector + " .selector").animate({"left": selectorNewPosition}, 400, "easeOutCubic");
 
-    $("#slide-" + this.currentSlide).fadeOut(200, function() {
-      $("#slide-" + this.currentSlide).hide();
+    selectorNewPosition = 33.3 * (newSlideNumber - 1) + "%";
+    $(_this.selector + " .selector").animate({"left": selectorNewPosition}, 400, "easeOutCubic");
+
+    $("#slide-" + _this.currentSlide).fadeOut(200, function() {
+      $("#slide-" + _this.currentSlide).removeClass("slide-selected");
+      $("#slide-" + _this.currentSlide).hide();
       $("#slide-" + newSlideNumber + " h2").hide();
       $("#slide-" + newSlideNumber + " p").hide();
+      $("#slide-" + newSlideNumber).addClass("slide-selected");
       $("#slide-" + newSlideNumber).show();
       $("#slide-" + newSlideNumber + " img").css({"top":30, "opacity":0});
       $("#slide-" + newSlideNumber + " img").delay(200).animate({"top":0, "opacity":1}, 350, "easeOutCubic");
       $("#slide-" + newSlideNumber + " h2").delay(200).fadeIn(350, "easeOutCubic");
-      if (newSlideNumber == 3) {
-        $("#slide-" + newSlideNumber + " p").delay(200).fadeIn(350, "easeOutCubic");
-      }
+      $("#slide-" + newSlideNumber + " p").delay(200).fadeIn(350, "easeOutCubic");
     });
-    this.currentSlide = newSlideNumber;
-    return this.currentSlide;
+    this.currentSlide = newSlideNumber
   }
 
   window.Gallery = Gallery;
