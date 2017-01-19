@@ -50,6 +50,14 @@ body.pages {
       overflow: hidden;
     }
 
+    .right-aligned {
+      height: 450px;
+    }
+
+    .center-aligned {
+      height: 450px;
+    }
+
     .cont-gradient {
       //border-top: 1px solid rgba(84,130,140, 0.1);
       border-bottom: 1px solid rgba(84,130,140, 0.1);
@@ -71,6 +79,77 @@ body.pages {
     }
 
     .actions {
+
+      .our-story-play {
+        margin: auto;
+        width: 248px;
+        height: 140px;
+        margin-top: 24px;
+        background: image-url('diecisiete/our-story-play.jpg');
+        cursor: pointer;
+        box-shadow: 0 20px 36px rgba(0,0,0,0.6);
+        border-radius: 4px;
+
+        .circle-block {
+          text-align: center;
+          height: 100%;
+          white-space: nowrap;
+        }
+
+        .circle-block:before {
+          content: '';
+          display: inline-block;
+          height: 100%;
+          vertical-align: middle;
+          // margin-right: -0.25em;
+        }
+
+        .circle-centered {
+          display: inline-block;
+          vertical-align: middle;
+          color: $color-white;
+          border-top-left: 10px solid rgba(93,141,153,.8);
+          border-bottom-right: 10px solid rgba(118,183,198,.8);
+          background-color: rgba(118,183,198,.8);
+          width: 100px;
+          height: 100px;
+          border-radius: 300px;
+        }
+
+        .i-block {
+          position: relative;
+          top: 0;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          text-align: center;
+          height: 100%;
+          white-space: nowrap;
+        }
+
+        .i-block:before {
+          content: '';
+          display: inline-block;
+          height: 100%;
+          vertical-align: middle;
+          // margin-right: -0.25em;
+        }
+
+        .i-centered {
+          display: inline-block;
+          vertical-align: middle;
+          font-size: 80px;
+          color: $color-white;
+          line-height: 100%;
+        }
+      }
+
+      @media (-webkit-min-device-pixel-ratio: 1.5), (min-resolution: 144dpi) {
+        .our-story-play {
+          background: image-url('diecisiete/our-story-play@2x.jpg');
+          background-size: 100%;
+        }
+      }
 
       .play-wrapper {
         display: inline;
@@ -331,83 +410,137 @@ body.pages {
     }
   } /* #main */
 
-  #home {
-    .container {
-      .row {
-        .text {
-          ul {
-            padding-left: 0;
-            list-style-type: none;
+  #gallery {
+    overflow: hidden;
+    width: 100%;
+    height: 500px;
+    position: relative;
+    background: image-url('diecisiete/home-gallery.jpg') repeat-x;
+    background-position: center;
+    background-size: cover;
+    background-color: $color-white;
 
-            li {
-              font-size: 20px;
-              margin: 20px 0;
-            }
-          }
+    .inner-shadow {
+      width: 100%;
+      height: 58px;
+      position: absolute;
+      z-index: 1000;
+      bottom: 0;
+      background: image-url('diecisiete/home-gallery-inner-shadow.png');
+    }
+
+    @media (-webkit-min-device-pixel-ratio: 1.5), (min-resolution: 144dpi) {
+      .home-gallery .inner-shadow {
+        background: image-url('diecisiete/home-gallery-inner-shadow@2x.png') repeat-x;
+        background-size: auto 100%;
+      }
+    }
+
+    .navigation {
+      max-width: 960px;
+      height: 68px;
+      position: relative;
+      z-index: 2;
+      margin: auto;
+
+      .item, .item-selected {
+        display: table;
+        width: 25%;
+        height: 100%;
+        float: left;
+        font-size: 16px;
+        color: #aaa;
+        cursor: pointer;
+
+        div {
+          display: table-cell;
+          text-align: center;
+          vertical-align: middle;
+          position: relative;
+          top: 2px;
+        }
+      } /* .item */
+
+      .item-selected {
+        font-weight: 700;
+        color: #444;
+        cursor: auto !important;
+      }
+
+      .selector {
+        width: 25%;
+        height: 1px;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        background: $color-cyan-light;
+      }
+    } /* .navigation */
+
+    .dots-navigation {
+      display: none;
+      width: 84px;
+      height: 44px;
+      position: relative;
+      z-index: 50;
+      margin: auto;
+      margin-top: 20px;
+
+      .dot-off {
+        width: 28px;
+        height: 44px;
+        float: left;
+        cursor: pointer;
+        background: url(images/dot-off.png);
+      }
+
+      @media (-webkit-min-device-pixel-ratio: 1.5), (min-resolution: 144dpi) {
+        .home-gallery .dots-navigation .dot-off {
+          background: url(images/dot-off@2x.png);
+          background-size: 100%;
         }
       }
-    }
-    .text {
-      padding-left: 50px;
-    }
-    .ipad {
-      padding: 0;
-      right: 0;
-    }
-  } /* #home */
 
-  #parallax {
-    h2 {
-      font-size: 30px;
-      font-weight: 300;
-      letter-spacing: 0px;
-      margin-top: 95px;
-    }
-  }
-
-  #work {
-    .caption {
-      p {
-        font-size: 18px;
-        line-height: 1.4em;
+      .dot-on {
+        width: 28px;
+        height: 44px;
+        float: left;
+        background: url(images/dot-on.png);
       }
-    }
 
-    button.btn-circle {
-      width: 130px;
-      height: 130px;
+      @media (-webkit-min-device-pixel-ratio: 1.5), (min-resolution: 144dpi) {
+        .home-gallery .dots-navigation .dot-on {
+          background: url(images/dot-on@2x.png);
+          background-size: 100%;
+        }
+      }
+    } /* .dots-navigation */
+
+    .slide {
+      display: xnone;
+      width: 100%;
+      position: absolute;
+      bottom: -4px;
       text-align: center;
-      padding: 20px 0;
-      font-size: 1.5em;
-      color: #fff;
-      line-height: 1.42;
-      border-radius: 100%;
-      background-color: #353535;
-      /*
-      background-image: -webkit-gradient(
-        linear, left top, left bottom, from(rgba(50,50,50,0.8)),
-        to(rgba(80,80,80,0.2)), color-stop(.5,#333333)
-      );
-      */
-      background: -webkit-linear-gradient(rgba(255, 255, 255, 1), rgba(52, 52, 52, 1)); /* For Safari 5.1 to 6.0 */
-      background: -o-linear-gradient(rgba(255, 255, 255, 1), rgba(52, 52, 52, 1)); /* For Opera 11.1 to 12.0 */
-      background: -moz-linear-gradient(rgba(255, 255, 255, 1), rgba(52, 52, 52, 1)); /* For Firefox 3.6 to 15 */
-      background: linear-gradient(rgba(200, 200, 200, 1), rgba(52, 52, 52, 1)); /* Standard syntax */
+      text-decoration: none;
 
-      i {
-        font-size: 2em;
-        margin: 0;
+      h2 {
+        display: block;
+        width: 90%;
+        margin: auto;
+        text-align: center;
+        font-weight: 300;
+        font-size: 40px;
+        color: #444;
+      }
+
+      img {
+        position: relative;
+        width: 840px;
+        margin: auto;
+        height: auto;
       }
     }
-  }
 
-  #our-team {
-    .staff-row {
-      margin-bottom: 50px;
-    }
-
-    .about-intro {
-      margin-bottom: 20px;
-    }
   }
-}
+} /* pages */

@@ -78,36 +78,70 @@
 
       <!-- background -->
       <div id="main">
-        <div id="xsiri-wave"></div>
         <div class="container">
-          <div class="row">
-            <div class="cont-gradient"><div id="siri-wave"></div></div>
+          <div class="right-aligned row">
+            <div class="cont-gradient">
+              <div id="siri-wave"></div>
+            </div>
+            <!-- right aligned -->
             <div class="col-lg-7 col-lg-offset-5 col-md-8 col-md-offset-4 col-sm-10 col-sm-offset-1 col-xs-12">
               <div class="cont-wrapper">
                 <p class="intro">Your conversations <br/>deserve a place to be found</p>
+              </div><!-- .cont-wrapper -->
+            </div><!-- .col -->
+          </div><!-- .right-aligned -->
+          <div class="center-aligned row">
+            <div class="col-lg-6 col-lg-offset-3 col-md-8 col-md-offset-2 col-sm-10 col-sm-offset-1 col-xs-12">
                 <div class="actions">
 
-                  <div class="our-story-play">
+                  <div class="our-story-play" data-href="https://www.youtube.com/watch?v=w2oLFpcMPlo">
+                    <div class="circle-block">
+                      <div class="circle-centered">
+                        <div class="i-block"><i class="i-centered fa fa-play-circle"></i></div>
+                      </div>
+                    </div>
                   </div>
 
-                  <div class="registration-success">
-                    <h4>Thanks for your interest. You will hear back from us shortly.</h4>
-                    <div class="social-container">
-                      <p>Spread the word:</p>
-                      <ul class="social-networks">
-                        <li class="facebook"><a class="fa fa-facebook" href="#" data-href=""></a></li>
-                        <li class="twitter"><a class="fa fa-twitter" href="#" data-href="" ></a></li>
-                        <li class="linkedin"><a class="fa fa-linkedin" href="#" data-href=""></a></li>
-                        <li class="email"><a class="fa fa-envelope" href="#" data-href=""></a></li>
-                      </ul><!-- .social-networks -->
-                    </div><!-- .social-container -->
-                  </div>
                 </div><!-- .actions -->
-              </div><!-- end cont wrapper -->
-            </div><!-- end 8 -->
-          </div><!-- .row -->
+            </div><!-- end cendered -->
+          </div><!-- .center-aligned .row -->
         </div><!-- .container -->
       </div><!-- #main -->
+
+      <!-- gallery -->
+      <div id="gallery">
+        <div class="inner-shadow"></div>
+        <div class="navigation">
+          <div id="home-gallery-item-1" class="item-selected"><div>Upload &amp; Store</div></div>
+          <div id="home-gallery-item-2" class="item"><div>Transcribe &amp; Extract</div></div>
+          <div id="home-gallery-item-3" class="item"><div>Edit &amp; Collaborate</div></div>
+          <div id="home-gallery-item-3" class="item"><div>Share &amp; Discover</div></div>
+          <div style="clear:both"></div>
+          <div class="selector" style="left: 0%;"></div>
+        </div>
+        <div class="bottom-line"></div>
+
+        <a href="#" id="slide-1" class="slide">
+          <h2 style="display: block;">Securely upload any audio or video file</h2>
+          <img data-src="<%= image_path("diecisiete/slide1.png") %>" src="<%= image_path("diecisiete/slide1.png") %>" style="top: 0px; opacity: 1;">
+        </a>
+
+        <a href="#" id="slide-2" class="slide" style="display: none;">
+          <h2 style="display: block;">Automatically transcribe and extract features.</h2>
+          <img data-src="<%= image_path("diecisiete/slide2.png") %>" src="<%= image_path("diecisiete/slide1.png") %>" style="top: 0px; opacity: 1;">
+        </a>
+
+        <a href="#" id="slide-3" class="slide" style="display: none;">
+          <h2 style="display: block;">Edit and Collaborate.</h2>
+          <p style="display: block;">On Android devices.</p>
+          <img data-src="<%= image_path("diecisiete/slide3.png") %>" src="<%= image_path("diecisiete/slide3.png") %>" style="top: 0px; opacity: 1;">
+        </a>
+
+        <a href="#" id="slide-4" class="slide" style="display: none;">
+          <h2 style="display: block;">Share and Discover.</h2>
+          <img data-src="<%= image_path("diecisiete/slide4.png") %>" src="<%= image_path("diecisiete/slide4.png") %>" style="top: 0px; opacity: 1;">
+        </a>
+      </div><!-- gallery -->
 
       <footer>
         <div class="container">
