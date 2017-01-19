@@ -420,6 +420,14 @@ body.pages {
     background-size: cover;
     background-color: $color-white;
 
+    .bottom-line {
+      width: 100%;
+      height: 1px;
+      position: absolute;
+      top: 67px;
+      background: rgba(0,0,0,0.05);
+    }
+
     .inner-shadow {
       width: 100%;
       height: 58px;
@@ -445,7 +453,7 @@ body.pages {
 
       .item, .item-selected {
         display: table;
-        width: 25%;
+        width: 33.3%;
         height: 100%;
         float: left;
         font-size: 16px;
@@ -468,7 +476,7 @@ body.pages {
       }
 
       .selector {
-        width: 25%;
+        width: 33.3%;
         height: 1px;
         position: absolute;
         bottom: 0;
@@ -517,21 +525,39 @@ body.pages {
     } /* .dots-navigation */
 
     .slide {
-      display: xnone;
+      display: none;
       width: 100%;
       position: absolute;
       bottom: -4px;
       text-align: center;
       text-decoration: none;
 
-      h2 {
+      &.slide-selected {
         display: block;
+      }
+
+      h2 {
         width: 90%;
         margin: auto;
         text-align: center;
         font-weight: 300;
         font-size: 40px;
         color: #444;
+      }
+
+      p {
+        -webkit-margin-before: 1em;
+        -webkit-margin-after: 1em;
+        -webkit-margin-start: 0px;
+        -webkit-margin-end: 0px;
+        display: block;
+        width: 100%;
+        top: 38px;
+        font-size: 20px;
+        color: #aaa;
+        text-align: center;
+        z-index: 10;
+        font-weight: 300;
       }
 
       img {
@@ -542,5 +568,5 @@ body.pages {
       }
     }
 
-  }
+  } /* #gallery */
 } /* pages */
