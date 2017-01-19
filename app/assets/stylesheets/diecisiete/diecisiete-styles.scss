@@ -185,13 +185,15 @@ header.page-header {
   background-size: cover;
   background-position: center;  /* Internet Explorer 7/8 */
   background-attachment: fixed;
-  @media only screen 
-    and (min-device-width : 768px) 
+
+  @media only screen
+    and (min-device-width : 768px)
     and (max-device-width : 1024px)  {
     background-attachment: scroll;
   }
-  @media only screen 
-    and (min-device-width : 375px) 
+
+  @media only screen
+    and (min-device-width : 375px)
     and (max-device-width : 667px) {
     background-attachment: scroll;
   }
@@ -200,7 +202,6 @@ header.page-header {
     position: relative;
     width: 100%;
     top: 230px;
-
   }
 
   p.intro {
@@ -218,7 +219,7 @@ header.page-header {
   p.btn-wrp {
     text-align: center;
   }
-}
+} /* #main */
 
 .c2a-button {
   color:#fff;
@@ -287,36 +288,194 @@ header.page-header {
     @include slideIn(translateX(50px));
   }
 
-}
+} /* #home */
 
-footer {
-  background-color: #222327;
-  padding:10px 0;
+/* ====================== PARALLAX ========================= */
+
+#parallax {
+  position: relative;
+  width: 100%;
+  background: image-url('diecisiete/parallax-background.jpg') no-repeat 50% 0 fixed;
+  background-size: cover;
+  padding-bottom: 85px;
+
+  h2 {
+    color: $color-white;
+    font-size: 30px;
+    font-weight: 300;
+    letter-spacing: 0px;
+    margin-top: 85px;
+    margin-bottom: 35px;
+    width: 100%;
+    text-align: center;
+    font-weight: 500;
+    font-size: 50px;
+    text-transform: uppercase;
+    text-shadow: 0px 1px 1px rgba(0,0,0,.5);
+  }
 
   p {
-    margin: 9px 0 0 0;
-    color: #fff;
-    font-size: 18px
+    color: $color-white;
+    max-width: 750px;
+    width: 90%;
+    margin: auto;
+    margin-top: 20px;
+    text-align: justify;
+    font-size: 24px;
+    line-height: 1.5em;
+    font-weight: 300;
+    text-shadow: 0px 1px 1px rgba(0,0,0,.5);
 
-  }
-
-  sup {
-    font-size: 9px;
-    top: -1em;
-  }
-
-  .sn-links {
-    margin: 0;
-    text-align: right;
-
-    a {
-      color: #fff;
+    b {
+      text-transform: uppercase;
+      font-weight: 400;
     }
-
   }
-
 }
 
+/* ====================== FOOTER ========================= */
+
+  footer {
+    background-color: $color-white;
+    overflow: hidden;
+    width: 100%;
+    margin-top: 0px;
+    padding: 20px 0;
+    border-top: 1px solid rgba(0,0,0,.08);
+    font-size: 16px;
+    font-weight: 400;
+    color: #aaa;
+
+    a {
+      color: #666;
+      text-decoration: none !important;
+
+      &:hover {
+        color: #999;
+      }
+    }
+
+    .wrapper {
+      max-width: 960px;
+      margin: auto;
+      padding-left: 20px;
+      padding-right: 20px;
+
+      .left {
+        float: left;
+        line-height: 2;
+
+        a {
+          margin-right: 14px;
+        }
+      } /* .left */
+
+      .left:first-child {
+        display: inline-block;
+        margin-right: 10px;
+
+        img {
+          width: 85px;
+          position: relative;
+          top: 4px;
+        }
+
+        h5 {
+          display: inline-block;
+          font-size: 14px;
+          width: 87px;
+          height: 15px;
+          color: #322f31;
+          text-align: left;
+          margin: 0 auto;
+          border: 0;
+        }
+
+        a.logo {
+          display: block;
+          background: image-url('voyzes-logo-gray-small.png') no-repeat;
+          text-indent: -3000px;
+          overflow: hidden;
+          text-decoration: none;
+          width: 87px;
+          height: 15px;
+        }
+
+        @media (-webkit-min-device-pixel-ratio: 1.5), (min-resolution: 144dpi) {
+          a.logo {
+            background: image-url('voyzes-logo-gray-small@2x.png') no-repeat;
+            background-size: 80px 15px !important;
+          }
+        }
+
+      } /* left:first-child */
+
+      .right {
+        float: right;
+        line-height: 2;
+        font-size: 15px;
+
+        span.copy {
+        }
+
+        a {
+          margin-left: 14px;
+        }
+      } /* .right */
+    } /* .wrapper */
+  } /* footer */
+
+  #cookie-law-bar {
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+    z-index: 9999;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    background: rgba(0,0,0,0.85);
+    text-align: center;
+    color: #fff;
+
+    .inner-wrapper {
+      max-width: 960px;
+      width: 95%;
+      margin: auto;
+    }
+
+    p {
+      font-size: 13px;
+      font-weight: 300;
+      float: left;
+      display: block;
+      margin-top: 5px !important;
+      margin-bottom: 5px !important;
+      -webkit-margin-before: 1em;
+      -webkit-margin-after: 1em;
+      -webkit-margin-start: 0px;
+      -webkit-margin-end: 0px;
+      max-width: 90%;
+    }
+
+    .button {
+      float: right;
+      width: 51px;
+      margin: auto;
+      margin-top: 3px;
+      font-size: 12px;
+      height: 30px;
+      line-height: 28px;
+      color: rgba(255, 255, 255, 0.8);
+      border-color: rgba(255, 255, 255, 0.4);
+      background-color: rgba(0,0,0,0);
+      font-weight: 600;
+
+      &:hover,
+      &:active {
+        color: rgba(255, 255, 255, 1);
+        border-color: rgba(255, 255, 255, 0.8);
+      }
+    }
+  } /* #cooky-law-bar */
 /* ==================================== MEDIA QUERIES ==================================== */
 
 /* Extra small devices (phones, up to 480px) */

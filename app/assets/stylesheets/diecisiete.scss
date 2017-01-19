@@ -581,4 +581,92 @@ body.pages {
     }
 
   } /* #gallery */
+
+  #parallax {
+  } /* #parallax */
+
+  #contact {
+    width: 100%;
+    padding-top: 45px;
+    padding-bottom: 60px;
+    background-color: #fafafa;
+
+    .social {
+      width: 132px;
+      height: 44px;
+      margin: auto;
+
+      a {
+        display: block;
+        width: 44px;
+        height: 44px;
+        float: left;
+        font-size: 30px;
+        color: #000;
+      }
+    } /* .social */
+
+    p {
+      font-size: 18px;
+      font-weight: 300;
+      color: #888;
+      text-align: center;
+      margin-top: 10px;
+      display: block;
+      -webkit-margin-before: 1em;
+      -webkit-margin-after: 1em;
+      -webkit-margin-start: 0px;
+      -webkit-margin-end: 0px;
+    }
+
+    .form {
+      display: none;
+      text-align: center;
+      max-width: 490px;
+      margin: auto;
+      margin-top: 0em;
+
+      input[type="text"], textarea {
+        width: 460px;
+        padding: 15px;
+        position: relative;
+        border: 0;
+        outline: none;
+        background: rgba(0,0,0,0.05);
+        border-radius: 4px;
+        font-size: 20px;
+        color: #666;
+        font-weight: 300;
+      }
+
+      textarea {
+        height: 100px;
+        xfont-size: 16px;
+        resize: none;
+      }
+
+      label {
+        display: block;
+        text-align: left;
+        font-size: 15px;
+        color: #666;
+        margin-bottom: 10px;
+      }
+    } /* .form */
+
+    .button {
+      display: block;
+      width: 140px;
+      overflow: hidden;
+      margin: auto;
+      margin-top: 16px;
+      background: $color-cyan-light;
+      border-color: $color-cyan-light;
+      color: rgba(240, 240, 240, 0.8);
+      font-size: 18px;
+      text-align: center;
+      cursor: pointer;
+    }
+
+  } /* #contact */
 } /* pages */

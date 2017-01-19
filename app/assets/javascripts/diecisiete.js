@@ -107,6 +107,7 @@
 })();
 
 $(function() {
+  // gallery
   var gallery = new Gallery({
     interval: 1400,
     interval: 3800,
@@ -114,6 +115,7 @@ $(function() {
   });
   gallery.start();
 
+  // siriwave
   var siriWave = new SiriWave({
     container: document.getElementById('siri-wave'),
     style: "ios9",
@@ -128,4 +130,26 @@ $(function() {
     ]
   });
   siriWave.start();
+
+  // parallax
+  var $window = $(window)
+  $window.scroll(function() {
+    var yPos = -($window.scrollTop() / $('#parallax').data('speed') - 180);
+    var coords = '50%' + yPos + 'px';
+    $('#parallax').css({
+      backgroundPosition: coords
+    });
+  });
+
+  // form
+  $("#contact .button-contact-us").on('click', function() {
+    $("#contact .form").show();
+    $("#contact .button-contact-us").hide();
+  });
+
+  // cookie-law-bar
+  $("#cookie-law-bar .button-cookie-law-bar").on('click', function() {
+    $("#cookie-law-bar").hide();
+  });
+
 });
