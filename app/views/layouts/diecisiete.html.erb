@@ -130,8 +130,8 @@
           <img data-src="<%= image_path("diecisiete/slide1.png") %>" src="<%= image_path("diecisiete/slide1.png") %>">
         </a>
         <a href="#" id="slide-2" class="slide" style="display: none;">
-          <h2>Transcribe and Edit</h2>
-          <p>Extract information</p>
+          <h2>Automatically transcribe and edit</h2>
+          <p>And extract information</p>
           <img data-src="<%= image_path("diecisiete/slide2.png") %>" src="<%= image_path("diecisiete/slide2.png") %>">
         </a>
         <a href="#" id="slide-3" class="slide" style="display: none;">
@@ -141,23 +141,75 @@
         </a>
       </div><!-- gallery -->
 
-      <footer>
+      <div id="parallax" data-speed="8" class="hidden-sm hidden-xs">
         <div class="container">
-          <div class="row">
-            <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
-              <p>Copyright &copy; VOYZES, Inc., Record Your Life<sup>&reg;</sup> <%= Time.zone.now.year %>.&nbsp;&nbsp;All rights reserved.</p>
+           <div class="row">
+            <div class="col-lg-8 col-lg-offset-2">
+              <h2>What we do</h2>
+              <p><b>VOYZ.ES</b> helps organize and automatically extract structured information from recordings.</p>
+              <p>Simultaniously collaborate with others on voice documents. Media producers and Universities use <b>VOYZ.ES</b> to team up on transcripts for their videos and podcasts.</p>
+              <p>Share all or portions of your conversations and harness your findings from in depth insights.</p>
+              <p><b>VOYZ.ES</b> employes the latest in neuronal network based ASR and NLP technology. It is continuously improving the quality of its transcripts for English, Spanish and soon, other languages.</p>
             </div>
-            <div class="col-lg-5 col-md-5 col-sm-5 col-xs-12">
-              <p class="sn-links"><a href="//twitter.com/voyzes" title="twitter" target="_blank"><i class="fa fa-twitter"></i></a>
-              <a href="#" title="linked-in"><i class="fa fa-linkedin-square"></i></a></p>
-            </div>
-          </div>
-        </div>
-      </footer>
+           </div>
+         </div>
+      </div><!-- parallax -->
 
+      <div id="contact">
+        <div class="social">
+          <a href="http://twitter.com/voyzes" title="Twitter" class="twitter"><i class="fa fa-twitter"></i></a>
+          <a href="http://facebook.com/voyzes" class="facebook"><i class="fa fa-facebook-official"></i></a>
+          <a href="http://linkedin.com/voyzes" class="linked-in"><i class="fa fa-linkedin-square"></i></a>
+          <div class="clear"></div>
+        </div><!-- .social -->
+
+        <p>If you have any feedback or suggestions</p>
+
+        <div class="form">
+          <form action="" method="post" enctype="multipart/form-data">
+            <input type="text" name="name" placeholder="Name*">
+            <br><br>
+
+            <input type="text" name="email" placeholder="Email*">
+            <br><br>
+
+            <textarea name="your_message" placeholder="Your message*"></textarea>
+            <br><br>
+
+            <input class="button" type="submit" value="Send" />
+          </form>
+        </div><!-- .form -->
+
+        <div class="button button-with-chrome button-contact-us">Contact us</div>
+      </div><!-- #contact -->
+
+      <footer>
+        <div class="wrapper">
+          <div class="left">
+            <h5><a class="logo" href="/">VOYZ.ES</a></h5>
+            <a href="/help">Help</a>
+            <a href="/careers">Careers</a>
+            <a href="/blog">Blog</a>
+            <a href="/newsroom">Newsroom</a>
+          </div><!-- .left -->
+          <div class="right">
+            <span class="copy">All rights reserved · VOYZES, Inc.</span>
+            <a id="footer-privacy" href="/terms/privacy-policy">Privacy</a><a href="/terms/terms-of-service">Terms of Service</a>
+          </div><!-- .right -->
+        </div><!-- .wrapper -->
+      </footer>
     </div><!-- #content -->
     <%= javascript_include_tag "diecisiete" %>
     <%= yield :javascript_includes %>
     <div id="fb-root"></div>
+
+
+    <div id="cookie-law-bar">
+      <div class="inner-wrapper">
+        <p>We use cookies to ensure that we give you the best experience on our website. If you continue to use this site we will assume that you are happy with it.</p>
+        <div class="button button-with-chrome button-cookie-law-bar">OK</div>
+        <div class="clear"></div>
+      </div><!-- .inner-wrapper -->
+    </div><!-- #cookie-law-bar -->
   </body>
 </html>
