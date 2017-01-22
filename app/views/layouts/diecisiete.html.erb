@@ -63,7 +63,9 @@
               <div id="main-navbar" class="navbar-block navbar-block-right">
                 <div class="button-set">
                   <a href="/pricing" title="Pricing" id="pricing-button" class="button button-chromeless button-pricing" type="button">Pricing</a>
+                  <% if false %>
                   <a href="/faqs" title="Frequently Asked Questions" id="faqs-button" class="button button-chromeless button-faqs" type="button">FAQs</a>
+                  <% end %>
                   <a href="<%= new_user_session_path %>" title="Sign in" id="sign-in-button" class="button button-with-chrome button-sign-in" type="button">Sign in</a>
                   <span class="button-set-divider"></span>
                   <a href="<%= new_user_registration_path %>" title="Join" id="sign-up-button" class="button button-with-chrome button-sign-up" type="button">Join</a>
@@ -85,26 +87,84 @@
             </div>
             <!-- right aligned -->
             <div class="col-lg-7 col-lg-offset-5 col-md-8 col-md-offset-4 col-sm-10 col-sm-offset-1 col-xs-12">
-              <div class="cont-wrapper">
-                <p class="intro">Your conversations <br/>deserve a place to be found</p>
+              <div class="content-wrapper">
+
+                <div class="intro" id="xtyped">
+                  <p>
+                    Your conversations<br/>
+                    <span id="typed"></span>
+                  </p>
+                </div>
+                <div id="typed-strings">
+                  <p>deserve a place to be found</p>
+                  <p>are encrypted and safe</p>
+                  <p>can easily be uploaded</p>
+                  <p>can be shared easily</p>
+                  <p>will be transcribed automatically</p>
+                  <p>will never be lost again</p>
+                </div>
+
+                <div class="actions">
+
+                  <div class="actions-left">
+                    <div class="our-story-play youtube">
+                      <div class="circle-block">
+                        <div class="circle-centered">
+                          <div class="i-block"><i class="i-centered fa fa-play-circle"></i></div>
+                        </div>
+                      </div>
+                    </div><!-- .our-story-play -->
+                  </div><!-- .actions-left -->
+
+
+                  <div class="actions-right">
+                    <div class="button-set">
+                      <a href="<%= new_user_registration_path %>" title="Join" id="sign-up-button" class="button button-with-chrome button-sign-up" type="button">Join for free</a>
+                      <a href="/pricing" title="More" id="more-button" class="button button-with-chrome button-more" type="button">Learn more</a>
+                    </div><!-- .button-set -->
+                    <p><sup>*</sup>No credit card required.</p>
+                    <div class="registration-form">
+                      <h4>Want to join?</h4>
+                      <%= form_for(@registration || Registration.new, {:url => web_registrations_path, :validate => true, :remote => true}) do |f| %>
+                        <div class="form-group">
+                          <div class="input-group">
+                            <%= f.email_field :email, :autofocus => "autofocus", :autocapitalize => "off", :autocomplete => "off", :autocorrect => "off", :spellcheck => false, :class => "form-control first", :placeholder => "Enter your email address to register", :"data-error-style" => "inline" %>
+                            <span type="submit" class="input-group-addon">
+                              <button class="btn btn-submit glyphicon glyphicon-arrow-right"></button>
+                            </span>
+                          </div>
+                        </div>
+                        <%= f.hidden_field :time_zone %>
+                        <% content_for :javascript_includes do %>
+                          <%= javascript_tag do %>
+                            $(function() {
+                              $("form input[name='registration[time_zone]']").val(jstz.determine_timezone().name());
+                            });
+                          <% end %>
+                        <% end %>
+                        <%#= f.submit "Notify me!", :class => "btn btn-lg btn-primary btn-block" %>
+                      <% end %>
+                    </div><!-- registration-form -->
+                    <div class="registration-success">
+                      <h4>Thanks for your interest. You will hear back from us shortly.</h4>
+                      <div class="social-container">
+                        <p>Spread the word:</p>
+                        <ul class="social-networks">
+                          <li class="facebook"><a class="fa fa-facebook" href="#" data-href=""></a></li>
+                          <li class="twitter"><a class="fa fa-twitter" href="#" data-href="" ></a></li>
+                          <li class="linkedin"><a class="fa fa-linkedin" href="#" data-href=""></a></li>
+                          <li class="email"><a class="fa fa-envelope" href="#" data-href=""></a></li>
+                        </ul><!-- .social-networks -->
+                      </div><!-- .social-container -->
+                    </div><!-- .registration-success -->
+                  </div><!-- .actions-right -->
+
+
+                </div><!-- .actions -->
+
               </div><!-- .cont-wrapper -->
             </div><!-- .col -->
           </div><!-- .right-aligned -->
-          <div class="center-aligned row">
-            <div class="col-lg-6 col-lg-offset-3 col-md-8 col-md-offset-2 col-sm-10 col-sm-offset-1 col-xs-12">
-                <div class="actions">
-
-                  <div class="our-story-play" data-href="https://www.youtube.com/watch?v=w2oLFpcMPlo">
-                    <div class="circle-block">
-                      <div class="circle-centered">
-                        <div class="i-block"><i class="i-centered fa fa-play-circle"></i></div>
-                      </div>
-                    </div>
-                  </div>
-
-                </div><!-- .actions -->
-            </div><!-- end cendered -->
-          </div><!-- .center-aligned .row -->
         </div><!-- .container -->
       </div><!-- #main -->
 
@@ -141,11 +201,11 @@
         </a>
       </div><!-- gallery -->
 
-      <div id="parallax" data-speed="8" class="hidden-sm hidden-xs">
+      <div id="parallax" data-speed="8">
         <div class="container">
            <div class="row">
-            <div class="col-lg-8 col-lg-offset-2">
-              <h2>What we do</h2>
+            <div class="col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2 col-sm-10 col-sm-offset-1 col-xs-12">
+              <h2>Deep insights. Unlimited.</h2>
               <p><b>VOYZ.ES</b> helps organize and automatically extract structured information from recordings.</p>
               <p>Simultaniously collaborate with others on voice documents. Media producers and Universities use <b>VOYZ.ES</b> to team up on transcripts for their videos and podcasts.</p>
               <p>Share all or portions of your conversations and harness your findings from in depth insights.</p>
@@ -187,10 +247,9 @@
         <div class="wrapper">
           <div class="left">
             <h5><a class="logo" href="/">VOYZ.ES</a></h5>
-            <a href="/help">Help</a>
-            <a href="/careers">Careers</a>
+            <a href="/faqs">Help</a>
+            <a href="/pricing">Pricing</a>
             <a href="/blog">Blog</a>
-            <a href="/newsroom">Newsroom</a>
           </div><!-- .left -->
           <div class="right">
             <span class="copy">All rights reserved · VOYZES, Inc.</span>
@@ -202,14 +261,5 @@
     <%= javascript_include_tag "diecisiete" %>
     <%= yield :javascript_includes %>
     <div id="fb-root"></div>
-
-
-    <div id="cookie-law-bar">
-      <div class="inner-wrapper">
-        <p>We use cookies to ensure that we give you the best experience on our website. If you continue to use this site we will assume that you are happy with it.</p>
-        <div class="button button-with-chrome button-cookie-law-bar">OK</div>
-        <div class="clear"></div>
-      </div><!-- .inner-wrapper -->
-    </div><!-- #cookie-law-bar -->
   </body>
 </html>

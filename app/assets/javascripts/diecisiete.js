@@ -20,6 +20,8 @@
 //= require lib/detect_timezone
 //= require lib/siriwave
 //= require lib/jquery.easing
+//= require lib/bootstrap.youtubepopup
+//= require lib/typed
 //= require helpers/common
 
 (function() {
@@ -131,6 +133,39 @@ $(function() {
   });
   siriWave.start();
 
+  // typed
+  $("#typed").typed({
+    //strings: ["Your conversations <br/>deserve a place to be found", "Your conversations <br/>are safe with us"],
+    stringsElement: $('#typed-strings'),
+    cursorChar: "|",
+    typeSpeed: 25,
+    backSpeed: 10,
+    backDelay: 2000,
+    startDelay: 200,
+    loop: true
+  });
+
+  // video
+  $(".youtube").YouTubeModal({
+    autoplay:1,
+    width:680,
+    height:380,
+    color: "#151a28",
+    controls: 0,
+    theme: "dark",
+    title: "Our Story",
+    youtubeId: "_1ZoXYADBgw"
+  });
+
+  $('.youtube').bind('show.YouTubeModal', function() {
+    VZ.trackEvent('home-page-play-video',
+      {action: 'click-play-video', name: 'Our story'},
+      function(event, data) {
+        // console.log(event, data);
+      }
+    );
+  });
+
   // parallax
   var $window = $(window)
   $window.scroll(function() {
@@ -148,8 +183,13 @@ $(function() {
   });
 
   // cookie-law-bar
-  $("#cookie-law-bar .button-cookie-law-bar").on('click', function() {
-    $("#cookie-law-bar").hide();
-  });
+  if (!VZ.getCookie('cookie-law-accepted')) {
+    $("body").append("<div id='cookie-law-bar'><div class='inner-wrapper'><p>We use cookies to ensure that we give you the best experience on our website. If you continue to use this site we will assume that you are fine with it.</p><div class='button button-with-chrome button-cookie-law-bar'>OK</div><div style='clear:both;'</div></div></div>");
+
+    $("#cookie-law-bar .button-cookie-law-bar").on('click', function() {
+      VZ.setCookie('cookie-law-accepted', 'true', 365);
+      $("#cookie-law-bar").hide();
+    });
+  }
 
 });

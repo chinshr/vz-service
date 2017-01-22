@@ -117,15 +117,16 @@ header.page-header {
   @include transition(background-color .2s ease);
 
   .navbar-tag {
-    // color: $color-cyan-light !important;
-    color: $color-brown-light !important;
+    color: $color-cyan-light !important;
+    // color: $color-brown-light !important;
+    font-weight: 400 !important;
   }
 
   .navbar-tag:hover,
   .navbar-tag:active,
   .navbar-tag:focus {
-    // color: $color-cyan-dark !important;
-    color: $color-brown !important;
+    color: $color-cyan-dark !important;
+    // color: $color-brown !important;
   }
 
   .button-chromeless {
@@ -198,20 +199,20 @@ header.page-header {
     background-attachment: scroll;
   }
 
-  .cont-wrapper {
+  .content-wrapper {
     position: relative;
     width: 100%;
     top: 230px;
   }
 
-  p.intro {
-    font-size:46px;
+  .intro {
+    font-size: 46px;
     line-height: 57px;
     letter-spacing: -1px;
     font-weight: 400;
-    padding:30px 0 30px 0px;
-    color:#fff;
-    margin-bottom:40px;
+    padding: 30px 0 30px 0px;
+    color: #fff;
+    margin-bottom: 40px;
     position: relative;
     text-shadow: 1px 2px 2px rgba(0.255, 0.255, 0.255, 0.5);
   }
@@ -319,7 +320,7 @@ header.page-header {
     max-width: 750px;
     width: 90%;
     margin: auto;
-    margin-top: 20px;
+    margin-top: 10px;
     text-align: justify;
     font-size: 24px;
     line-height: 1.5em;
@@ -331,151 +332,154 @@ header.page-header {
       font-weight: 400;
     }
   }
-}
+} /* #parallax */
 
 /* ====================== FOOTER ========================= */
 
-  footer {
-    background-color: $color-white;
-    overflow: hidden;
-    width: 100%;
-    margin-top: 0px;
-    padding: 20px 0;
-    border-top: 1px solid rgba(0,0,0,.08);
-    font-size: 16px;
-    font-weight: 400;
-    color: #aaa;
+footer {
+  background-color: $color-white;
+  overflow: hidden;
+  width: 100%;
+  margin-top: 0px;
+  padding: 20px 0;
+  border-top: 1px solid rgba(0,0,0,.08);
+  font-size: 16px;
+  font-weight: 400;
+  color: #aaa;
 
-    a {
-      color: #666;
-      text-decoration: none !important;
+  a {
+    color: #666;
+    text-decoration: none !important;
 
-      &:hover {
-        color: #999;
-      }
+    &:hover {
+      color: #999;
     }
+  }
 
-    .wrapper {
-      max-width: 960px;
-      margin: auto;
-      padding-left: 20px;
-      padding-right: 20px;
+  .wrapper {
+    max-width: 960px;
+    margin: auto;
+    padding-left: 20px;
+    padding-right: 20px;
 
-      .left {
-        float: left;
-        line-height: 2;
-
-        a {
-          margin-right: 14px;
-        }
-      } /* .left */
-
-      .left:first-child {
-        display: inline-block;
-        margin-right: 10px;
-
-        img {
-          width: 85px;
-          position: relative;
-          top: 4px;
-        }
-
-        h5 {
-          display: inline-block;
-          font-size: 14px;
-          width: 87px;
-          height: 15px;
-          color: #322f31;
-          text-align: left;
-          margin: 0 auto;
-          border: 0;
-        }
-
-        a.logo {
-          display: block;
-          background: image-url('voyzes-logo-gray-small.png') no-repeat;
-          text-indent: -3000px;
-          overflow: hidden;
-          text-decoration: none;
-          width: 87px;
-          height: 15px;
-        }
-
-        @media (-webkit-min-device-pixel-ratio: 1.5), (min-resolution: 144dpi) {
-          a.logo {
-            background: image-url('voyzes-logo-gray-small@2x.png') no-repeat;
-            background-size: 80px 15px !important;
-          }
-        }
-
-      } /* left:first-child */
-
-      .right {
-        float: right;
-        line-height: 2;
-        font-size: 15px;
-
-        span.copy {
-        }
-
-        a {
-          margin-left: 14px;
-        }
-      } /* .right */
-    } /* .wrapper */
-  } /* footer */
-
-  #cookie-law-bar {
-    width: 100%;
-    position: fixed;
-    bottom: 0;
-    z-index: 9999;
-    padding-top: 5px;
-    padding-bottom: 5px;
-    background: rgba(0,0,0,0.85);
-    text-align: center;
-    color: #fff;
-
-    .inner-wrapper {
-      max-width: 960px;
-      width: 95%;
-      margin: auto;
-    }
-
-    p {
-      font-size: 13px;
-      font-weight: 300;
+    .left {
       float: left;
-      display: block;
-      margin-top: 5px !important;
-      margin-bottom: 5px !important;
-      -webkit-margin-before: 1em;
-      -webkit-margin-after: 1em;
-      -webkit-margin-start: 0px;
-      -webkit-margin-end: 0px;
-      max-width: 90%;
-    }
+      line-height: 2;
 
-    .button {
-      float: right;
-      width: 51px;
-      margin: auto;
-      margin-top: 3px;
-      font-size: 12px;
-      height: 30px;
-      line-height: 28px;
-      color: rgba(255, 255, 255, 0.8);
-      border-color: rgba(255, 255, 255, 0.4);
-      background-color: rgba(0,0,0,0);
-      font-weight: 600;
-
-      &:hover,
-      &:active {
-        color: rgba(255, 255, 255, 1);
-        border-color: rgba(255, 255, 255, 0.8);
+      a {
+        margin-right: 14px;
       }
+    } /* .left */
+
+    .left:first-child {
+      display: inline-block;
+      margin-right: 10px;
+
+      img {
+        width: 85px;
+        position: relative;
+        top: 4px;
+      }
+
+      h5 {
+        display: inline-block;
+        font-size: 14px;
+        width: 87px;
+        height: 15px;
+        color: #322f31;
+        text-align: left;
+        margin: 0 auto;
+        border: 0;
+      }
+
+      a.logo {
+        display: block;
+        background: image-url('voyzes-logo-gray-small.png') no-repeat;
+        text-indent: -3000px;
+        overflow: hidden;
+        text-decoration: none;
+        width: 87px;
+        height: 15px;
+      }
+
+      @media (-webkit-min-device-pixel-ratio: 1.5), (min-resolution: 144dpi) {
+        a.logo {
+          background: image-url('voyzes-logo-gray-small@2x.png') no-repeat;
+          background-size: 80px 15px !important;
+        }
+      }
+
+    } /* left:first-child */
+
+    .right {
+      float: right;
+      line-height: 2;
+      font-size: 15px;
+
+      span.copy {
+      }
+
+      a {
+        margin-left: 14px;
+      }
+    } /* .right */
+  } /* .wrapper */
+} /* footer */
+
+#cookie-law-bar {
+  width: 100%;
+  position: fixed;
+  bottom: 0;
+  z-index: 9999;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  background: rgba(0,0,0,0.85);
+  text-align: center;
+  color: #fff;
+
+  .inner-wrapper {
+    max-width: 960px;
+    width: 95%;
+    margin: auto;
+  }
+
+  p {
+    font-size: 13px;
+    font-weight: 300;
+    float: left;
+    display: block;
+    margin-top: 5px !important;
+    margin-bottom: 5px !important;
+    -webkit-margin-before: 1em;
+    -webkit-margin-after: 1em;
+    -webkit-margin-start: 0px;
+    -webkit-margin-end: 0px;
+    max-width: 90%;
+  }
+
+  .button {
+    float: right;
+    width: 51px;
+    margin: auto;
+    margin-top: 3px;
+    font-size: 12px;
+    height: 30px;
+    line-height: 28px;
+    color: rgba(255, 255, 255, 0.8);
+    border-color: rgba(255, 255, 255, 0.4);
+    background-color: rgba(0,0,0,0);
+    font-weight: 600;
+    padding-left: 5px;
+    padding-right: 5px;
+
+    &:hover,
+    &:active {
+      color: rgba(255, 255, 255, 1);
+      border-color: rgba(255, 255, 255, 0.8);
     }
-  } /* #cooky-law-bar */
+  }
+} /* #cooky-law-bar */
+
 /* ==================================== MEDIA QUERIES ==================================== */
 
 /* Extra small devices (phones, up to 480px) */
@@ -486,42 +490,9 @@ header.page-header {
 }
 
 @media only screen and (min-width: 768px) and (max-width: 1023px) {
-  /* iPad Portrait */
-  header {
-    nav ul.nav {
-      font-size: 16px !important;
-
-      li {
-        padding-left: 10px !important;
-        padding-right: 10px !important;
-      }
-
-      li:nth-child(4) {
-      }
-    }
-  }
 }
 
 @media only screen and (min-width: 480px) and (max-width: 767px) {
-  header {
-    nav {
-      .navbar-collapse {
-        border: 0;
-        background-color: rgba(0, 0, 0, 0.7)
-      }
-
-      &.navbar-default {
-        ul.navbar-nav {
-          width: 100%;
-
-          li {
-            border-bottom: 1px solid transparent;
-          }
-        }
-      }
-    }
-  }
-
   h1 {
     font-size: 34px;
     line-height: 38px;
@@ -542,7 +513,7 @@ header.page-header {
     background-position-x: -100px;
 
     min-height: 600px;
-    .cont-wrapper {
+    .content-wrapper {
       top:110px;
     }
 
@@ -594,7 +565,6 @@ header.page-header {
   /* when menu is minimized */
   header {
     nav {
-      xbackground-color: rgba(55, 61, 68, 0.8) !important;
       .collapse {
       }
 
