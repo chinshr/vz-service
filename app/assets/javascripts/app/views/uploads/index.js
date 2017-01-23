@@ -79,11 +79,12 @@ App.Views.UploadsIndex = Backbone.View.extend({
       element = $('<div data-type="' + (model.attributes.id ? 'instance' : 'new-instance') + '"></div>').addClass(this.layout);
 
     if (!_.isEmpty(model.attributes)) {
-      if (model.attributes.editable) {
-        view = new App.Views.UploadsEditTile({model: model, parent: this});
-      } else {
-        view = new App.Views.UploadsShowTile({model: model, parent: this});
-      }
+      view = new App.Views.UploadsShowTile({model: model, parent: this});
+      // if (model.attributes.editable) {
+      //   view = new App.Views.UploadsEditTile({model: model, parent: this});
+      // } else {
+      //   view = new App.Views.UploadsShowTile({model: model, parent: this});
+      // }
       element.append(view.render().el);
 
       this.grid.imagesLoaded(function() {
@@ -185,6 +186,7 @@ App.Views.UploadsIndex = Backbone.View.extend({
   initSourceModal: function() {
     this.sourceModal = new App.Views.UploadsSourceModal({
       parent: this,
+      metadata: this.getUploadMetadata(),
       callbacks: {
         success: this.sourceModalSuccess
       }

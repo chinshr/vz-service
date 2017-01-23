@@ -10,8 +10,10 @@ App.Views.UploadsSourceModal = Backbone.View.extend({
     _.bindAll(this, "submit", "inputChange", "show", "hide", "destroy");
 
     this.parent    = options.parent;
+    this.metadata  = options.metadata || {};
     this.model     = new App.Models.Upload({
       locale: this.$("#file-locale").val() || "en-US",
+      metadata: this.metadata,
       type: "media_upload"
     });
     this.callbacks = options.callbacks || {};
