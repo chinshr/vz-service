@@ -99,10 +99,10 @@ module Model::MediaHelper
       if has_source_url? && !has_s3_source_url? && target.valid? && target.resolves?
         self.source_url = target.url
         self.file_type  = target.content_type if self.class.valid_media_content_type?(target.content_type)
-        # set metadata
-        hash = {}
-        hash['target']  = target.metadata unless target.metadata.blank?
-        self.metadata   = hash
+        # set 'target' in metadata
+        target_hash = {}
+        target_hash['target'] = target.metadata unless target.metadata.blank?
+        self.metadata = metadata.merge(target_hash)
       end
     end
 
