@@ -63,9 +63,7 @@
               <div id="main-navbar" class="navbar-block navbar-block-right">
                 <div class="button-set">
                   <a href="/pricing" title="Pricing" id="pricing-button" class="button button-chromeless button-pricing" type="button">Pricing</a>
-                  <% if false %>
-                  <a href="/faqs" title="Frequently Asked Questions" id="faqs-button" class="button button-chromeless button-faqs" type="button">FAQs</a>
-                  <% end %>
+                  <a href="/faqs" title="Frequently Asked Questions" id="faqs-button" class="button button-chromeless button-faqs" type="button">Help</a>
                   <a href="<%= new_user_session_path %>" title="Sign in" id="sign-in-button" class="button button-with-chrome button-sign-in" type="button">Sign in</a>
                   <span class="button-set-divider"></span>
                   <a href="<%= new_user_registration_path %>" title="Join" id="sign-up-button" class="button button-with-chrome button-sign-up" type="button">Join</a>
@@ -80,33 +78,35 @@
 
       <!-- background -->
       <div id="main">
+        <div class="credits"><i class="fa fa-camera"></i><a href="https://www.flickr.com/photos/andreannegermain/3657279001/in/photolist-6zbvCv-4Nyswd-e8pNeB-ah7VtK-qQnrdn-qC7VwB-aAhGN-ahaPRs-sv7Ay-ahaNrN-ahaR1h-pGyyg6-oab4aU-a5PQ74-5B5qmn-dTh3TK-QGksd-rqgJut-cT2rVj-smN3vg-9GWTqE-cAy57Q-aCiG9H-jF61mZ-bKDCW-8PXy5e-ow7sSt-6y3iZT-dAqy75-e2NmBD-85iojw-77K6QU-6Z4xYU-oNkq28-aEnCcR-skEP7j-iyuh9-APj9R-jMGeSQ-JCSDt-cisJVC-7CGHDr-jvGmpe-cygj3u-cpjCBY-kVCiyi-3jTmvE-psGrzQ-hGo273-izzc9E" target="_blank">Andréanne Germain</a></div>
         <div class="container">
           <div class="right-aligned row">
-            <div class="cont-gradient">
+            <div class="content-gradient">
               <div id="siri-wave"></div>
             </div>
             <!-- right aligned -->
             <div class="col-lg-7 col-lg-offset-5 col-md-8 col-md-offset-4 col-sm-10 col-sm-offset-1 col-xs-12">
               <div class="content-wrapper">
 
-                <div class="intro" id="xtyped">
+                <div class="intro">
                   <p>
                     Your conversations<br/>
-                    <span id="typed"></span>
+                    <span id="typed">deserve a place to be found</span>
                   </p>
                 </div>
                 <div id="typed-strings">
                   <p>deserve a place to be found</p>
-                  <p>are encrypted and safe</p>
-                  <p>can easily be uploaded</p>
+                  <p>are easily replayable</p>
+                  <p>are stored savely</p>
                   <p>can be shared easily</p>
-                  <p>will be transcribed automatically</p>
-                  <p>will never be lost again</p>
+                  <p>are transcribed automatically</p>
+                  <p>can be annotated collaboratively</p>
+                  <p>are never to be lost</p>
                 </div>
 
                 <div class="actions">
 
-                  <div class="actions-left">
+                  <div class="actions-stacked">
                     <div class="our-story-play youtube">
                       <div class="circle-block">
                         <div class="circle-centered">
@@ -116,13 +116,17 @@
                     </div><!-- .our-story-play -->
                   </div><!-- .actions-left -->
 
-
-                  <div class="actions-right">
-                    <div class="button-set">
-                      <a href="<%= new_user_registration_path %>" title="Join" id="sign-up-button" class="button button-with-chrome button-sign-up" type="button">Join for free</a>
+                  <div class="actions-stacked">
+                    <div class="button-set align-right">
                       <a href="/pricing" title="More" id="more-button" class="button button-with-chrome button-more" type="button">Learn more</a>
+                      <span class="button-set-divider"></span>
+                      <a href="<%= new_user_registration_path %>" title="Join" id="sign-up-button" class="button button-with-chrome button-sign-up" type="button">Join for free</a>
                     </div><!-- .button-set -->
-                    <p><sup>*</sup>No credit card required.</p>
+                    <% if false %>
+                    <div class="btw">
+                      <p>No credit card required</p>
+                    </div><!-- .btw -->
+                    <% end %>
                     <div class="registration-form">
                       <h4>Want to join?</h4>
                       <%= form_for(@registration || Registration.new, {:url => web_registrations_path, :validate => true, :remote => true}) do |f| %>

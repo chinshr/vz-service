@@ -36,6 +36,20 @@
 body.pages {
   background-color: $color-black;
 
+  header.page-header {
+    nav {
+      transition: top 0.1s ease-in-out;
+    }
+  }
+
+  header.page-header.nav-up {
+    top: -70px;
+
+    nav {
+      top: -70px;
+    }
+  }
+
   .modal-dialog {
     margin: 0px;
     width: auto;
@@ -65,6 +79,30 @@ body.pages {
   }
 
   #main {
+    .credits {
+      position: absolute;
+      right: 0;
+      bottom: -160px;
+      color: rgba(255,255,255,.4);
+      font-size: 12px;
+      font-weight: 300;
+      text-align: right;
+      margin: 0 15px;
+
+      i {
+        color: rgba(255,255,255,.25);
+        margin-right: 4px;
+      }
+
+      a {
+        color: rgba(255,255,255,.4);
+        text-decoration: none;
+        &:hover, &:active {
+          color: rgba(255,255,255,.5);
+        }
+      }
+    }
+
     #siri-wave {
       display: block;
       height: 100%;
@@ -81,11 +119,11 @@ body.pages {
       height: 450px;
     }
 
-    .cont-gradient {
+    .content-gradient {
       //border-top: 1px solid rgba(84,130,140, 0.1);
       border-bottom: 1px solid rgba(84,130,140, 0.1);
       position: absolute;
-      top: 230px;
+      top: 200px;
       left: 0;
       right: 0;
       height: 170px;
@@ -96,12 +134,22 @@ body.pages {
 
     .content-wrapper {
       position: relative;
-      top: 230px;
+      top: 200px;
       right: 50px;
       width: 100%;
     }
 
     .actions {
+
+      .actions-stacked {
+        display: block;
+        width: 100%;
+        margin: 25px 0 0 0;
+      }
+
+      .actions-stacked:first-child {
+        margin: 45px 0 0 0;
+      }
 
       .actions-left {
         display: inline;
@@ -118,6 +166,7 @@ body.pages {
       }
 
       .our-story-play {
+        // margin: 0 auto;
         margin-left: auto;
         width: 248px;
         height: 140px;
@@ -199,6 +248,7 @@ body.pages {
 
       .button-set {
         margin-left: 15px;
+        text-align: right;
 
         .button-with-chrome, .chromeless {
           color: rgba(255,255,255,.9) !important;
@@ -226,9 +276,22 @@ body.pages {
           background-color: transparent;
         }
 
+        .button-set-divider {
+          // border-right: 1px solid rgba(200, 200, 200, 0.25);
+          margin: 18px 8px 0 4px;
+          height: 30px;
+          display: inline-block;
+          vertical-align: top;
+        }
       } /* .button-set */
 
+      .btw {
+        display: block;
+        text-align: right;
+      }
+
       p {
+        display: block;
         color: $color-white;
         font-size: 15px;
         font-weight: 300;

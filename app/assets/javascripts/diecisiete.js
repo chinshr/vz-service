@@ -24,6 +24,7 @@
 //= require lib/typed
 //= require helpers/common
 
+/* Gallery */
 (function() {
   function Gallery(opts) {
     this.selector = opts.selector || "#gallery";
@@ -108,7 +109,64 @@
   window.Gallery = Gallery;
 })();
 
+/* ScrollHeader */
+(function() {
+  function ScrollHeader(opts) {
+    this.didScroll = false;
+    this.lastScrollTop = 0;
+    this.delta = opts.delta || 5;
+    this.interval = opts.interval || 250;
+    this.headerEl = $('header');
+    this.navbarHeight = this.headerEl.outerHeight();
+    this.scrollInterval = false;
+  }
+
+  ScrollHeader.prototype.start = function() {
+    var _this = this;
+
+    $(window).scroll(function(event) {
+      _this.didScroll = true;
+    });
+
+    _this.scrollInterval = setInterval(function() {
+      if (_this.didScroll) {
+        _this.hasScrolled();
+        _this.didScroll = false;
+      }
+    }, _this.interval);
+  }
+
+  ScrollHeader.prototype.hasScrolled = function() {
+    var st = $(window).scrollTop();
+
+    // make sure they scroll more than delta
+    if (Math.abs(this.lastScrollTop - st) <= this.delta) {
+      return;
+    }
+
+    // if they scrolled down and are past the navbar, add class .nav-up.
+    // This is necessary so you never see what is "behind" the navbar.
+    if (st > this.lastScrollTop && st > this.navbarHeight) {
+      // scroll Down
+      this.headerEl.removeClass('nav-down').addClass('nav-up');
+    } else {
+      // Scroll Up
+      if(st + $(window).height() < $(document).height()) {
+        this.headerEl.removeClass('nav-up').addClass('nav-down');
+      }
+    }
+
+    this.lastScrollTop = st;
+  }
+
+  window.ScrollHeader = ScrollHeader;
+})();
+
 $(function() {
+  // scroll header
+  var scrollHeader = new ScrollHeader({});
+  scrollHeader.start();
+
   // gallery
   var gallery = new Gallery({
     interval: 1400,
@@ -122,8 +180,8 @@ $(function() {
     container: document.getElementById('siri-wave'),
     style: "ios9",
     cover: true,
-    speed: 0.01,
-    frequency: 0.2,
+    speed: 0.02,
+    frequency: 10,
     amplitude: 0.7,
     definition: [
       { color: '84,130,140' },
@@ -140,7 +198,7 @@ $(function() {
     cursorChar: "|",
     typeSpeed: 25,
     backSpeed: 10,
-    backDelay: 2000,
+    backDelay: 1000,
     startDelay: 200,
     loop: true
   });
@@ -153,7 +211,7 @@ $(function() {
     color: "#151a28",
     controls: 0,
     theme: "dark",
-    title: "Our Story",
+    title: "VOYZ.ES &mdash; Our Story",
     youtubeId: "_1ZoXYADBgw"
   });
 
