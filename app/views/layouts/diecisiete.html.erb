@@ -49,33 +49,51 @@
   </head>
 
   <body data-spy="scroll" data-offset="70" data-target="#navigation" class="<%= dom_controller_class %> <%= dom_controller_action_class %> selected-main-item">
-    <div id="content">
-      <header class="page-header">
-        <div class="container">
-          <nav class="navbar navbar-default navbar-fixed-top" id="navigation" role="navigation">
-            <div class="container-fluid">
-              <div class="navbar-header">
-                <a id="logo" class="navbar-brand" href="/">VOYZ.ES</a>
-                <a class="navbar-tag" href="/">Record your Life</a>
-              </div><!-- .navbar-header -->
-
-              <!-- menu items -->
-              <div id="main-navbar" class="navbar-block navbar-block-right">
-                <div class="button-set">
+    <header class="page-header">
+      <div class="container">
+        <nav class="navbar navbar-default navbar-inverse navbar-fixed-top" id="navigation" role="navigation">
+          <div class="container-fluid">
+            <div class="navbar-header">
+              <a id="logo" class="navbar-brand" href="/">VOYZ.ES</a>
+              <a class="navbar-tag" href="/">Record your Life</a>
+            </div><!-- .navbar-header -->
+            <div id="slidemenu">
+              <ul class="nav navbar-nav">
+                <li>
+                  <div class="button-set">
+                    <a href="<%= new_user_session_path %>" title="Sign in" id="sign-in-button" class="button button-with-chrome button-sign-in" type="button">Sign in</a>
+                    <span class="button-set-divider"></span>
+                    <a href="<%= new_user_registration_path %>" title="Join" id="sign-up-button" class="button button-with-chrome button-sign-up" type="button">Join</a>
+                  </div><!-- .button-set -->
+                </li>
+                <li>
                   <a href="/pricing" title="Pricing" id="pricing-button" class="button button-chromeless button-pricing" type="button">Pricing</a>
+                </li>
+                <li>
                   <a href="/faqs" title="Frequently Asked Questions" id="faqs-button" class="button button-chromeless button-faqs" type="button">Help</a>
-                  <a href="<%= new_user_session_path %>" title="Sign in" id="sign-in-button" class="button button-with-chrome button-sign-in" type="button">Sign in</a>
-                  <span class="button-set-divider"></span>
-                  <a href="<%= new_user_registration_path %>" title="Join" id="sign-up-button" class="button button-with-chrome button-sign-up" type="button">Join</a>
-                </div><!-- .button-set -->
-              </div><!-- #main-navbar -->
-              <!-- end menu items -->
-
-            </div><!-- .container-fluid -->
-          </nav>
-        </div><!-- .container -->
-      </header>
-
+                </li>
+              </ul>
+            </div><!-- .slidemenu -->
+            <!-- menu items -->
+            <div id="main-navbar" class="navbar-block navbar-block-right">
+              <div class="button-set show-xs">
+                <a class="navbar-toggle">
+                  <span class="burger-menu">
+                </a>
+              </div>
+              <div class="button-set hidden-xs">
+                <a href="/pricing" title="Pricing" id="pricing-button" class="button button-chromeless button-pricing" type="button">Pricing</a>
+                <a href="/faqs" title="Frequently Asked Questions" id="faqs-button" class="button button-chromeless button-faqs" type="button">Help</a>
+                <a href="<%= new_user_session_path %>" title="Sign in" id="sign-in-button" class="button button-with-chrome button-sign-in" type="button">Sign in</a>
+                <span class="button-set-divider"></span>
+                <a href="<%= new_user_registration_path %>" title="Join" id="sign-up-button" class="button button-with-chrome button-sign-up" type="button">Join</a>
+              </div><!-- .button-set -->
+            </div><!-- #main-navbar -->
+          </div><!-- .container-fluid -->
+        </nav>
+      </div><!-- .container -->
+    </header>
+    <div id="content">
       <!-- background -->
       <div id="main">
         <div class="credits"><i class="fa fa-camera"></i><a href="https://www.flickr.com/photos/andreannegermain/3657279001/in/photolist-6zbvCv-4Nyswd-e8pNeB-ah7VtK-qQnrdn-qC7VwB-aAhGN-ahaPRs-sv7Ay-ahaNrN-ahaR1h-pGyyg6-oab4aU-a5PQ74-5B5qmn-dTh3TK-QGksd-rqgJut-cT2rVj-smN3vg-9GWTqE-cAy57Q-aCiG9H-jF61mZ-bKDCW-8PXy5e-ow7sSt-6y3iZT-dAqy75-e2NmBD-85iojw-77K6QU-6Z4xYU-oNkq28-aEnCcR-skEP7j-iyuh9-APj9R-jMGeSQ-JCSDt-cisJVC-7CGHDr-jvGmpe-cygj3u-cpjCBY-kVCiyi-3jTmvE-psGrzQ-hGo273-izzc9E" target="_blank">Andréanne Germain</a></div>
@@ -95,13 +113,15 @@
                   </p>
                 </div>
                 <div id="typed-strings">
-                  <p>deserve a place to be found</p>
+                  <p>are transcribed automatically</p>
+                  <p>can be edited collaboratively</p>
+                  <p>can be shared easily</p>
                   <p>are easily replayable</p>
                   <p>are stored savely</p>
-                  <p>can be shared easily</p>
-                  <p>are transcribed automatically</p>
-                  <p>can be annotated collaboratively</p>
+                  <p>can be annotated</p>
+                  <p>are encrypted</p>
                   <p>are never to be lost</p>
+                  <p>deserve a place to be found</p>
                 </div>
 
                 <div class="actions">
@@ -199,7 +219,7 @@
           <img data-src="<%= image_path("diecisiete/slide2.png") %>" src="<%= image_path("diecisiete/slide2.png") %>">
         </a>
         <a href="#" id="slide-3" class="slide" style="display: none;">
-          <h2>Collaborate and Discover</h2>
+          <h2>Collaborate and discover</h2>
           <p>&nbsp;</p>
           <img data-src="<%= image_path("diecisiete/slide3.png") %>" src="<%= image_path("diecisiete/slide3.png") %>">
         </a>
@@ -211,7 +231,7 @@
             <div class="col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2 col-sm-10 col-sm-offset-1 col-xs-12">
               <h2>Deep insights. Unlimited.</h2>
               <p><b>VOYZ.ES</b> helps organize and automatically extract structured information from recordings.</p>
-              <p>Simultaniously collaborate with others on voice documents. Media producers and Universities use <b>VOYZ.ES</b> to team up on transcripts for their videos and podcasts.</p>
+              <p>Simultaneously collaborate with others on voice documents. Media producers and Universities use <b>VOYZ.ES</b> to team up on transcripts for their videos and podcasts.</p>
               <p>Share all or portions of your conversations and harness your findings from in depth insights.</p>
               <p><b>VOYZ.ES</b> employes the latest in neuronal network based ASR and NLP technology. It is continuously improving the quality of its transcripts for English, Spanish and soon, other languages.</p>
             </div>
@@ -256,7 +276,7 @@
             <a href="/blog">Blog</a>
           </div><!-- .left -->
           <div class="right">
-            <span class="copy">All rights reserved · VOYZES, Inc.</span>
+            <span class="copy">&copy;&nbsp;<%= Time.zone.now.year %> VOYZES, Inc. · All rights reserved</span>
             <a id="footer-privacy" href="/terms/privacy-policy">Privacy</a><a href="/terms/terms-of-service">Terms of Service</a>
           </div><!-- .right -->
         </div><!-- .wrapper -->
