@@ -164,12 +164,24 @@ body.pricing, body.subscriptions, body.billings {
       font-size: 4em;
     }
 
-    p.price-small-text {
+    p.price-text {
       -webkit-font-smoothing: antialiased;
       color: #767676;
       text-align: center;
-      font-size: 28px;
+      font-size: 20px;
       font-weight: 300;
+    }
+
+    p.price-small-text {
+      font-size: 18px;
+    }
+
+    p.price-medium-text {
+      font-size: 22px;
+    }
+
+    p.price-large-text {
+      font-size: 28px;
     }
 
     .btn-plan {
