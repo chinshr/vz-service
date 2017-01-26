@@ -917,10 +917,10 @@ body.pages {
   #benefits {
     position: relative;
     width: 100%;
-    // background-size: cover;
-    // background: -webkit-linear-gradient(281deg, #54828c, #76b7c6);
-    // background: linear-gradient(169deg, #54828c, #76b7c6);
-    // background-color: #54828c;
+    background-size: cover;
+    background: -webkit-linear-gradient(281deg, #54828c, #76b7c6);
+    background: linear-gradient(169deg, #54828c, #76b7c6);
+    background-color: #54828c;
     padding-bottom: 65px;
     overflow: hidden;
 
@@ -930,8 +930,6 @@ body.pages {
       left: 0;
       width: 120%;
       height: 120%;
-      // filter: blur(5px);
-      // filter: hue-rotate(25deg);
       margin: -25px -50px -50px -25px;
       background-position: center;  /* Internet Explorer 7/8 */
       background-attachment: scroll; /* iOS resizing fix */
