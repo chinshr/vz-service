@@ -384,7 +384,7 @@ $(function() {
   });
 
   // parallax
-  if ($('.parallax').length > 0) {
+  if (false && $('.parallax').length > 0) {
     var $window = $(window),
       $parallax = $('.parallax');
     $window.scroll(function() {
