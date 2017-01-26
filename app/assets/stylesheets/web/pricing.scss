@@ -345,6 +345,7 @@ body.pricing, body.subscriptions, body.billings {
 
     h2 {
       font-size: 2em;
+      overflow: hidden;
     }
 
     @media only screen and (min-width: 0px) and (max-width: 479px) {
@@ -361,7 +362,7 @@ body.pricing, body.subscriptions, body.billings {
 
     @media only screen and (min-width: 768px) {
       h2 {
-        font-size: 2.8em;
+        font-size: 2.4em;
       }
     }
 
