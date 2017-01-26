@@ -5,45 +5,50 @@ $color-feature-band-bright-bg-color: #fff;
 $color-feature-band-dark-bg-color: #f4f4f4;
 $price-bg-color: #fff;
 
-$price-one-color: #ffd500;
-$price-one-bg-color: #512884;
-$price-one-text-color: #fbd707;
-$price-one-feature-text-color: #512884;
-$price-one-another-color: #817d94;
-$price-one-btn-bg-color: #f7d30b;
-$price-one-btn-border-color: #ecc908;
+$price-one-color: #b9db69; // #ffd500;
+$price-one-bg-color: #8ba9ac; // #512884;
+$price-one-text-color: #170b17; // #fbd707;
+$price-one-feature-text-color: #888; // #512884;
+$price-one-feature-bg-color: #5e919c;
+$price-one-another-color: #170b17; // #817d94;
+$price-one-btn-bg-color: #b9db69; // #f7d30b;
+$price-one-btn-border-color: #b9db69; // #ecc908;
 
-$price-two-color: #fd6e70;
-$price-two-bg-color: #2b2b33;
-$price-two-text-color: #fe6d72;
-$price-two-feature-text-color: #fa6e6f;
-$price-two-another-color: #8c8c94;
-$price-two-btn-bg-color: #fa6e6f;
-$price-two-btn-border-color: #e55c5c;
+$price-two-color: #769249; // #fd6e70;
+$price-two-bg-color: #8ba9ac; // #2b2b33;
+$price-two-text-color: #170b17; // #fe6d72;
+$price-two-feature-text-color: #888; // #fa6e6f;
+$price-two-feature-bg-color: #5e919c;
+$price-two-another-color: #170b17; // #8c8c94;
+$price-two-btn-bg-color: #769249; // #fa6e6f;
+$price-two-btn-border-color: #769249; // #e55c5c;
 
-$price-three-color: #028f87;
-$price-three-bg-color: #04dbdd;
-$price-three-text-color: #018f90;
-$price-three-feature-text-color: #04dbdd;
-$price-three-another-color: #9cf7f8;
-$price-three-btn-bg-color: #04dbdd;
-$price-three-btn-border-color: #04c1c4;
+$price-three-color: #516422;  // #028f87;
+$price-three-bg-color: #8ba9ac; // #04dbdd;
+$price-three-text-color: #170b17; // #018f90;
+$price-three-feature-text-color: #888; // #04dbdd;
+$price-three-feature-bg-color: #5e919c;
+$price-three-another-color: #170b17; // #9cf7f8;
+$price-three-btn-bg-color: #516422;  // #04dbdd;
+$price-three-btn-border-color: #516422; // #04c1c4;
 
-$price-four-color: #ffd500;
-$price-four-bg-color: #512884;
-$price-four-text-color: #fbd707;
-$price-four-feature-text-color: #512884;
-$price-four-another-color: #817d94;
-$price-four-btn-bg-color: #f7d30b;
-$price-four-btn-border-color: #f7d30b;
+$price-four-color: #b9db69; // #ffd500;
+$price-four-bg-color: #8ba9ac; // #512884;
+$price-four-text-color: #170b17; // #fbd707;
+$price-four-feature-text-color: #888; // #512884;
+$price-four-feature-bg-color: #5e919c;
+$price-four-another-color: #170b17; // #817d94;
+$price-four-btn-bg-color: #b9db69; // #f7d30b;
+$price-four-btn-border-color: #b9db69; // #f7d30b;
 
-$price-five-color: #fd6e70;
-$price-five-bg-color: #2b2b33;
-$price-five-text-color: #fe6d72;
-$price-five-feature-text-color: #fa6e6f;
-$price-five-another-color: #8c8c94;
-$price-five-btn-bg-color: #fa6e6f;
-$price-five-btn-border-color: #fa6e6f;
+$price-five-color: #516422;  // #fd6e70;
+$price-five-bg-color: #8ba9ac; // #2b2b33;
+$price-five-text-color: #170b17; // #fe6d72;
+$price-five-feature-text-color: #888; // #fa6e6f;
+$price-five-feature-bg-color: #5e919c;
+$price-five-another-color: #170b17; // #8c8c94;
+$price-five-btn-bg-color: #516422; // #fa6e6f;
+$price-five-btn-border-color: #516422; // #fa6e6f;
 
 body.pricing, body.subscriptions, body.billings {
 
@@ -108,12 +113,13 @@ body.pricing, body.subscriptions, body.billings {
       margin-top: 65px;
       font-size: 3.5em;
       color: #2b3645;
-      font-weight: 800;
+      font-weight: 700;
+      text-transform: uppercase;
     }
 
     h3 {
       color: #404042;
-      font-size: 1.5em;
+      font-size: 30px;
       text-decoration: none;
       font-weight: 700;
     }
@@ -130,7 +136,7 @@ body.pricing, body.subscriptions, body.billings {
 
     .price-lead {
       margin-top: 0;
-      margin-bottom: 30px;
+      margin-bottom: 70px;
       text-align: center;
     }
 
@@ -144,13 +150,13 @@ body.pricing, body.subscriptions, body.billings {
     p.price-alt-lead {
       -webkit-font-smoothing: antialiased;
       font-size: 28px;
-      font-weight: 400;
-      color: #767676;
+      font-weight: 300;
+      color: #888;
       text-align: center;
     }
 
     .asterisk {
-      color: #767676;
+      color: #ccc;
       font-size: 0.8em;
     }
 
@@ -160,10 +166,10 @@ body.pricing, body.subscriptions, body.billings {
 
     p.price-small-text {
       -webkit-font-smoothing: antialiased;
-      font-size: 1.5em;
-      font-weight: 400;
       color: #767676;
       text-align: center;
+      font-size: 28px;
+      font-weight: 300;
     }
 
     .btn-plan {
@@ -178,17 +184,31 @@ body.pricing, body.subscriptions, body.billings {
       height: 49px;
     }
 
-    .btn-plan-free {
-      background-color: #6cc644;
-      border-color: #55ae2e;
+    .button-plan {
+      display: inline-block;
+      font-size: 20px;
+      padding: 0 25px;
+      border-width: 2px;
+      border-radius: 300px;
+      color: #fff;
+      line-height: 42px;
+      vertical-align: middle;
+      height: 49px;
+    }
+
+    .button-plan-free {
+      color: #fff;
+      background-color: #92b53e;
+      border-color: #92b53e;
       font-size: 22px;
       line-height: 48px;
       height: 53px;
     }
 
-    .btn-plan-free:hover, .btn-plan-free:active {
-      color: #eee;
-      background-color: #55ae2e;
+    .button-plan-free:hover,
+    .button-plan-free:active {
+      background-color: #728d30;
+      border-color: #728d30;
     }
 
 /*
@@ -306,23 +326,13 @@ body.pricing, body.subscriptions, body.billings {
     margin-right: 0;
   }
 
-  .price-value h2 a,
-  .price-value.one h3 a,
-  .price-value.two h3 a,
-  .price-value.three h4 a,
-  .price-value.four h4 a,
-  .price-value.five h4 a {
+  .price-value h2 {
     font-size: 1.2em;
-    color:#fff;
   }
 
-  .price-value,
-  .price-value.two,
-  .price-value.three
-  .price-value.four
-  .price-value.five {
+  .price-value {
     padding: 2.8em 1.8em 2em;
-    border-bottom: 2px;
+    border-bottom: 5px;
     border-top-left-radius:0.7em;
     -webkit-border-top-left-radius:0.7em;
     -o-border-top-left-radius: 0.7em;
@@ -332,31 +342,57 @@ body.pricing, body.subscriptions, body.billings {
     -o-border-top-right-radius:0.7em;
     -moz-border-top-left-radius: 0.7em;
     position: relative;
+
+    h2 {
+      font-size: 2em;
+    }
+
+    @media only screen and (min-width: 0px) and (max-width: 479px) {
+      h2 {
+        font-size: 2em;
+      }
+    }
+
+    @media only screen and (min-width: 480px) and (max-width: 767px) {
+      h2 {
+        font-size: 2.4em;
+      }
+    }
+
+    @media only screen and (min-width: 768px) {
+      h2 {
+        font-size: 2.8em;
+      }
+    }
+
+    h2 a {
+      color: #fff;
+    }
   }
 
   .price-value.one {
     background: $price-one-bg-color;
-    border-bottom: 2px solid $price-one-color;
+    border-bottom: 5px solid $price-one-color;
   }
 
   .price-value.two {
     background: $price-two-bg-color;
-    border-bottom: 2px solid $price-two-color;
+    border-bottom: 5px solid $price-two-color;
   }
 
   .price-value.three {
     background: $price-three-bg-color;
-    border-bottom: 2px solid $price-three-color;
+    border-bottom: 5px solid $price-three-color;
   }
 
   .price-value.four {
     background: $price-one-bg-color;
-    border-bottom:2px solid $price-one-color;
+    border-bottom: 5px solid $price-one-color;
   }
 
   .price-value.five {
     background: $price-two-bg-color;
-    border-bottom: 2px solid $price-two-color;
+    border-bottom: 5px solid $price-two-color;
   }
 
   .price-value ul,
@@ -367,6 +403,7 @@ body.pricing, body.subscriptions, body.billings {
   .pricing-grid5 ul {
     padding: 0;
   }
+
   .price-value ul li,
   .pricing-grid1,
   .pricing-grid2 ul li,
@@ -478,42 +515,47 @@ body.pricing, body.subscriptions, body.billings {
     box-shadow: 3px -4px 13px 3px rgba(0,0,0,0.75);
   }
   .sale-box.one.sale-box span.on_sale {
-    background: #ffd400;
+    background-color: $price-one-feature-bg-color;
   }
   .sale-box.two.sale-box span.on_sale {
-    background: #fa6e6f;
+    background-color: $price-two-feature-bg-color;
   }
   .sale-box.three.sale-box span.on_sale {
-    background: #05aea7;
+    background-color: $price-three-feature-bg-color;
   }
   .sale-box.four.sale-box span.on_sale {
-    background: #ffd400;
+    background-color: $price-four-feature-bg-color;
   }
   .sale-box.five.sale-box span.on_sale {
-    background: #fa6e6f;
+    background-color: $price-five-feature-bg-color;
   }
 
-  .pricing-grid1 ul li a,
-  .pricing-grid2 ul li a,
-  .pricing-grid3 ul li a,
-  .pricing-grid4 ul li a,
-  .pricing-grid5 ul li a {
-    color: $color-feature-band-color;
-    background-color: $color-feature-band-bright-bg-color;
-    font-size: 15px;
-    text-align: center;
-    display: block;
-    padding: 16px 0;
-    text-decoration: none;
-    font-weight: 400;
+  .pricing-grid {
+    ul {
+      li {
+        a {
+          color: $color-feature-band-color;
+          background-color: $color-feature-band-bright-bg-color;
+          font-size: 15px;
+          text-align: center;
+          display: block;
+          padding: 16px 0;
+          text-decoration: none;
+          font-weight: 400;
+        }
+
+        p {
+          font-size: 16px;
+          margin: 5px 0;
+        }
+      }
+
+      li.whyt a {
+        background: $color-feature-band-dark-bg-color;
+      }
+    }
   }
-  .pricing-grid1 ul li.whyt a,
-  .pricing-grid2 ul li.whyt a,
-  .pricing-grid3 ul li.whyt a,
-  .pricing-grid4 ul li.whyt a,
-  .pricing-grid5 ul li.whyt a {
-    background: $color-feature-band-dark-bg-color;
-  }
+
   .pricing-grid1:hover div.price-bg ul li a,
   .pricing-grid1:hover div.price-value h3 a {
     color: $price-one-feature-text-color;
@@ -554,19 +596,19 @@ body.pricing, body.subscriptions, body.billings {
     display: block;
   }
   .cart1 {
-    border-bottom: 2px solid $price-one-color;
+    border-bottom: 5px solid $price-one-color;
   }
   .cart2 {
-    border-bottom: 2px solid $price-two-color;
+    border-bottom: 5px solid $price-two-color;
   }
   .cart3 {
-    border-bottom: 2px solid $price-three-color;
+    border-bottom: 5px solid $price-three-color;
   }
   .cart4 {
-    border-bottom: 2px solid $price-four-color;
+    border-bottom: 5px solid $price-four-color;
   }
   .cart5 {
-    border-bottom: 2px solid $price-five-color;
+    border-bottom: 5px solid $price-five-color;
   }
 
   .cart {
@@ -585,7 +627,7 @@ body.pricing, body.subscriptions, body.billings {
       outline: none;
     }
 
-    .btn-plan {
+    .button-plan {
       display: inline-block;
       font-size: 20px;
       padding: 0 25px;
@@ -595,6 +637,13 @@ body.pricing, body.subscriptions, body.billings {
       line-height: 42px;
       vertical-align: middle;
       height: 49px;
+
+      &:hover,
+      &:active {
+        color: #eee;
+        background-color: #728d30;
+        border-color: #728d30;
+      }
     }
   }
 
@@ -691,9 +740,9 @@ body.pricing, body.subscriptions, body.billings {
   .payment-online-form-left input[type="text"]:hover{
     border-color:#fa6e6f;
   }
-  .text-box-dark{
+  .text-box-dark {
   }
-  .text-box-light{
+  .text-box-light {
     background: url(http://preview.w3layouts.com/demos/flat_pricing_tables_design/web/images/calender.png) no-repeat 95% 50%;
     cursor:pointer;
     position: relative;
@@ -1197,21 +1246,8 @@ body.pricing, body.subscriptions, body.billings {
       font-size: 15px;
     }
 
-    .price-value,
-    .price-value.two,
-    .price-value.three,
-    .price-value.four,
-    .price-value.five {
+    .price-value {
       padding: 2em 0 1em 0;
-    }
-
-    .price-value h2 a,
-    .price-value.one h3 a,
-    .price-value.two h3 a,
-    .price-value.three h3 a,
-    .price-value.four h3 a,
-    .price-value.five h3 a {
-      font-size: 1.6em;
     }
 
     .price-head h1 {

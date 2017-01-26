@@ -13,40 +13,39 @@
           <a class="navbar-tag" href="/">Record your Life</a>
           <% end %>
         </div><!-- .navbar-header -->
-
+        <div id="slidemenu">
+          <ul class="nav navbar-nav">
+            <li>
+              <div class="button-set">
+                <%= render "web/session_buttons", slide_menu: true %>
+              </div><!-- .button-set -->
+            </li>
+            <li>
+              <a href="/pricing" title="Pricing" id="pricing-button" class="button button-chromeless button-pricing" type="button">Pricing</a>
+            </li>
+            <li>
+              <a href="/faqs" title="Frequently Asked Questions" id="faqs-button" class="button button-chromeless button-faqs" type="button">Help</a>
+            </li>
+          </ul>
+        </div><!-- .slidemenu -->
         <div id="main-navbar" class="navbar-block navbar-block-right">
           <% if false %>
+          <!-- search -->
           <div class="input-group hidden-xs predictive-search">
             <button class="button button-chromeless button-inline button-with-icon is-in-site-nav-bar button-with-svg-icon" title="Click to start typing a search term" aria-label="Click to start typing a search term" data-action="focus-search-input">
               <span class="icon icon-search icon-size-25px fa fa-search">
               </span>
             </button>
             <input class="predictive-search-input text-input text-input-rounded text-input-transparent text-input-light-text" type="search" placeholder="Search">
-          </div><!-- .input-group -->
+          </div><!-- .search .input-group -->
           <% end %>
-          <% if current_user %>
           <div class="button-set">
-            <% unless request.env['PATH_INFO'].match(/dashboard/) %>
-            <!-- upload button -->
-            <a href="/dashboard" title="Upload" id="upload-button" class="button button-with-chrome button-upload" type="button">Upload</a>
-            <span class="button-set-divider"></span>
-            <% end %>
-            <!-- profile -->
-            <button class="button button-circle button-borderless button-box-shadow-border button-with-chrome button-popover is-in-site-nav-bar user-actions" data-placement="bottom" data-target="profile-popover-template" data-popover-id="profile-popover" data-popover-class="dropdown-popover profile-popover">
-              <div class="avatar">
-                <img src="<%= avatar_url(current_user) %>" class="avatar-image avatar-image-smaller" style="background-color: <%= current_user.css_hex_color %>;" alt="<%= current_user.name %>">
-              </div>
-            </button>
+            <%= render "web/session_buttons" %>
+            <%#= render "web/profile_button" %>
+            <a class="navbar-toggle pull-right-with-left-margin show-xs">
+              <span class="burger-menu">
+            </a><!-- .navbar-toggle -->
           </div><!-- .button-set -->
-          <% else %>
-          <div class="button-set">
-            <% if false %>
-            <a class="button button-with-chrome is-in-site-nav-bar" href="<%= new_user_registration_path %>" data-action-source="sign-up-prompt" data-action-source="nav_signup">Sign up</a>
-            <% end %>
-            <a class="button button-primary button-with-chrome accent-color-border-normal accent-color-text-normal is-in-site-nav-bar" href="<%= new_user_session_path %>" data-action="sign-in-prompt" data-redirect="" data-action-source="nav_signin">Sign in</a>
-          </div><!-- .button-set -->
-          <% end %>
-
         </div><!-- .navbar-block .navbar-block-right -->
       </div><!-- container-fluid -->
     </nav><!-- .navbar .navbar-default .navbar-fixed-top -->

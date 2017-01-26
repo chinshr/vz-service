@@ -215,13 +215,13 @@ header.page-header {
       padding-right: 0;
     }
 
-    .navbar-toggle {
-      margin-top: 18px;
-    }
-    .navbar-toggle:hover,
-    .navbar-toggle:focus {
-      xbackground-color: rgba(55, 61, 68, 0.8);
-    }
+    // .navbar-toggle {
+    //   margin-top: 18px;
+    // }
+    // .navbar-toggle:hover,
+    // .navbar-toggle:focus {
+    //   xbackground-color: rgba(55, 61, 68, 0.8);
+    // }
 
     .navbar-brand {
       width: 115px;
@@ -398,9 +398,239 @@ header.page-header {
  }
 }
 
+/*--- SlideMenu.js ---*/
+body {
+  .slide-active {
+    overflow-x: hidden
+  }
+
+  .no-margin-top {
+    margin-top: 0px!important
+  }
+
+  .navbar-toggle {
+    cursor: pointer;
+    position: relative;
+    line-height: 0;
+    float: left;
+    margin: 10px 0 !important;
+    width: 30px;
+    height: 40px;
+    padding: 10px 0 0 0;
+    border: 0;
+    background: transparent;
+    overflow-x: hidden;
+    z-index: 3;
+    border-radius: 0;
+
+    &.pull-right-with-left-margin {
+      float: right;
+      margin-left: 10px !important;
+    }
+
+    &:hover,
+    &:active {
+      background: transparent !important;
+    }
+
+    &.slide-active .burger-menu {
+      background-color: transparent;
+    }
+
+    &.slide-active .burger-menu:before,
+    &.slide-active .burger-menu:after {
+      top: 0;
+    }
+
+    &.slide-active .burger-menu:before {
+      transform: rotate(315deg);
+    }
+
+    &.slide-active .burger-menu:after {
+      transform: rotate(-315deg);
+    }
+
+    .burger-menu,
+    .burger-menu:before,
+    .burger-menu:after {
+      cursor: pointer;
+      height: 3px;
+      width: 23px;
+      background: white;
+      position: absolute;
+      display: block;
+      content: '';
+      transition: all 250ms ease-in-out;
+    }
+
+    .burger-menu:before {
+      top: -10px;
+    }
+
+    .burger-menu:after {
+      bottom: -10px;
+    }
+  }
+
+  .navbar-toggle > .icon-bar {
+    width: 100%;
+    display: block;
+    height: 3px;
+    margin: 5px 0 0 0;
+  }
+
+  .navbar-toggle.slide-active .icon-bar {
+    background: orange;
+  }
+
+  .navbar-header {
+    position: relative;
+  }
+
+  #content {
+    position: relative;
+    padding-top: 0;
+    right: 0;
+  }
+
+  // todo
+  .navbar.navbar-fixed-top.slide-active {
+    position: relative;
+  }
+
+  @media (max-width:767px) {
+    header.page-header {
+      .container {
+        margin: 0;
+        padding: 0 !important;
+      }
+
+      .navbar-header {
+        margin: 0 auto;
+        padding: 0 0 0 15px;
+      }
+
+      &.slide-active {
+        // position: absolute;
+        // width: 245px; // 50%;
+        // top: -1px;
+        // z-index: 1000;
+      }
+
+      #slidemenu {
+        background: transparent;
+        right: -100%;
+        width: 245px; // 50%;
+        min-width: 0;
+        position: absolute;
+        padding-left: 0;
+        z-index: 2;
+        top: 0px;
+        margin: 0;
+
+        ul.nav {
+          min-width: 0;
+          width: 100%;
+          margin: 0;
+          margin-left: 5px;
+          text-transform: none;
+          padding-top: 0;
+
+          .dropdown-menu li a {
+            min-width: 0;
+            // width: 80%;
+            white-space: normal;
+          }
+
+          li:first-child {
+            height: 70px;
+          }
+
+          li {
+            height: 50px;
+          }
+        }
+
+        .nav > li {
+          position: relative;
+          display: block;
+          clear:both;
+        }
+      } /* #slidemenu */
+
+      /* this is behind the navigation but the navigation is not inside it so that the navigation is accessible and scrolls*/
+      #navbar-height-col {
+        position: fixed;
+        top: 0;
+        height: 100%;
+        width: 245px; // 50%;
+        right: -245px; // -50%;
+        background: #111;
+        z-index: 1000;
+      }
+
+      .navbar-inverse #navbar-height-col {
+        z-index: 1;
+        border: 0;
+      }
+    } /* header.page-header */
+  }
+
+  @media (min-width:768px) {
+    #content {
+      left: 0 !important;
+    }
+
+    .navbar-fixed-top.slide-active {
+      position: fixed;
+    }
+
+    .navbar-header {
+      left: 0 !important;
+    }
+
+    header.page-header {
+      #slidemenu {
+        display: none;
+
+        &.slide-active {
+
+        }
+      }
+    }
+  }
+  // ---
+} /* body .pages */
+
 header.page-header {
   #logo {
     background: image-url('voyzes-logo-110x70.png') no-repeat 0 0;
+  }
+
+  .navbar-tag {
+    color: $color-cyan-light !important;
+    font-weight: 400 !important;
+  }
+
+  .navbar-tag:hover,
+  .navbar-tag:active,
+  .navbar-tag:focus {
+    color: $color-cyan-dark !important;
+  }
+
+  #sign-up-button {
+    border-color: $color-mustard !important;
+    background-color: $color-mustard;
+    color: #color-white;
+    font-weight: 600 !important;
+  }
+
+  #sign-in-button {
+    color: rgba(255,255,255,.9) !important;
+
+    &:hover {
+      color: rgba(255,255,255,.99) !important;
+    }
   }
 }
 

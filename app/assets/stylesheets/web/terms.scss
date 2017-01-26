@@ -1,6 +1,4 @@
 body.terms, body.pages {
-  xbackground-color: #fff;
-
   /* Remove media query */
   .navbar-header {
     float: left;
@@ -53,7 +51,13 @@ body.terms, body.pages {
       height: 120px;
       position: relative;
       overflow: hidden;
-    }
+
+      @media only screen and (min-width: 0px) and (max-width: 479px) {
+        h1 {
+          font-size: 30px;
+        }
+      }
+    } /* .hero-inner */
   }
 
   .hero-plain {
@@ -85,6 +89,7 @@ body.terms, body.pages {
         margin-top: 1.6em;
         margin-bottom: 20px;
         font-weight: bold;
+        line-height: 1.3em;
 
         &:first-child {
           margin-top: 0;

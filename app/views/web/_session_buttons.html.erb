@@ -1,0 +1,21 @@
+<%
+  slide_menu ||= false
+%>
+<% if current_user %>
+  <% if slide_menu %>
+    <%= render "web/upload_button", with_divider: false, html: {class: ""} %>
+  <% else %>
+    <%= render "web/upload_button", with_divider: true, html: {class: "hidden-xs"} %>
+    <%= render "web/profile_button" %>
+  <% end %>
+<% else %>
+  <% if slide_menu %>
+  <a href="<%= new_user_session_path %>" title="Sign in" id="sign-in-button" class="button button-with-chrome button-sign-in" type="button">Sign in</a>
+  <span class="button-set-divider"></span>
+  <a href="<%= new_user_registration_path %>" title="Join" id="sign-up-button" class="button button-with-chrome button-sign-up" type="button">Join</a>
+  <% else %>
+  <a href="<%= new_user_session_path %>" title="Sign in" id="sign-in-button" class="button button-with-chrome button-sign-in hidden-xs" type="button">Sign in</a>
+  <span class="button-set-divider hidden-xs"></span>
+  <a href="<%= new_user_registration_path %>" title="Join" id="sign-up-button" class="button button-with-chrome button-sign-up hidden-xs" type="button">Join</a>
+  <% end %>
+<% end %>
