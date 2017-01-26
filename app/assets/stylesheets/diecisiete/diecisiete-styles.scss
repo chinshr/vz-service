@@ -182,17 +182,22 @@ header.page-header {
   position: relative;
   width: 100%;
   overflow: hidden;
+  background-color: #111;
 
   .background-image {
     height: 747px;
     overflow: hidden;
-    background: image-url('diecisiete/home-background-50x33.jpg') 0 0 no-repeat fixed;
+    background-image: image-url('diecisiete/home-background-50x33.jpg');
+    background-image: url(data:image/jpeg;base64,/9j/4QAYRXhpZgAASUkqAAgAAAAAAAAAAAAAAP/sABFEdWNreQABAAQAAAA8AAD/4QMtaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wLwA8P3hwYWNrZXQgYmVnaW49Iu+7vyIgaWQ9Ilc1TTBNcENlaGlIenJlU3pOVGN6a2M5ZCI/PiA8eDp4bXBtZXRhIHhtbG5zOng9ImFkb2JlOm5zOm1ldGEvIiB4OnhtcHRrPSJBZG9iZSBYTVAgQ29yZSA1LjMtYzAxMSA2Ni4xNDU2NjEsIDIwMTIvMDIvMDYtMTQ6NTY6MjcgICAgICAgICI+IDxyZGY6UkRGIHhtbG5zOnJkZj0iaHR0cDovL3d3dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyI+IDxyZGY6RGVzY3JpcHRpb24gcmRmOmFib3V0PSIiIHhtbG5zOnhtcD0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wLyIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bXA6Q3JlYXRvclRvb2w9IkFkb2JlIFBob3Rvc2hvcCBDUzYgKE1hY2ludG9zaCkiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6RkNGRUM3NDJEQjkwMTFFNjk0Rjk5RjVGMTUyRDlCNDgiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6RkNGRUM3NDNEQjkwMTFFNjk0Rjk5RjVGMTUyRDlCNDgiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDowOEYwOTEwOURCNTcxMUU2OTRGOTlGNUYxNTJEOUI0OCIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDowOEYwOTEwQURCNTcxMUU2OTRGOTlGNUYxNTJEOUI0OCIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/Pv/uAA5BZG9iZQBkwAAAAAH/2wCEAAYEBAQFBAYFBQYJBgUGCQsIBgYICwwKCgsKCgwQDAwMDAwMEAwODxAPDgwTExQUExMcGxsbHB8fHx8fHx8fHx8BBwcHDQwNGBAQGBoVERUaHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fH//AABEIABAAGQMBEQACEQEDEQH/xAB7AAADAQAAAAAAAAAAAAAAAAAFBgcEAQADAQEBAAAAAAAAAAAAAAABAwQCAAUQAAEEAQMBBAsAAAAAAAAAAAIBEQMEBQASBiExQSIUUWGBkcHhMqITFlYRAAICAQEHBQAAAAAAAAAAAAECABEDIfAxQVFxEjKhIlITBP/aAAwDAQACEQMRAD8AhXFcfYscmqU0MNssqJIBq+6IXPoi9/hb26gzMCpO1xeJgWqMfNMdkcXxS4V+/GVuXIpYgjgEhQo5E8QKrdqdG9SaTgouBXCVv4wDxrATXcQeQyGRhpY2RTjiiU0Q3Jdjq7qIbn7uunZmAah5CRMou4X/AFDD/wBVH9+h95+MNjmPWCatazWzOOy1OEzsVrIlIgCREUQr42RO3aLvrAfRlO4zvzk3VRw5VcizyBxkBXzF+YJalolX8IJGJEBoyOqF2ELP1fSMBK+7gJe6qdBJdVxuUSWeM9oQ15CGV+o7hf6U+OvQfItDmZDkYDrNXk5/Svu+Wtd0HdP/2Q==);
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    filter: blur(20px);
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
     background-size: cover;
     background-position: center;  /* Internet Explorer 7/8 */
-    background-attachment: fixed;
+    background-attachment: scroll; /* iOS resizing fix */
     position: absolute;
     width: 100%;
     height: 100%;
@@ -539,158 +544,12 @@ footer {
 }
 
 @media only screen and (min-width: 480px) and (max-width: 767px) {
-  h1 {
-    font-size: 34px;
-    line-height: 38px;
-  }
-
-  h2 {
-    font-size: 28px;
-    line-height: 32px;
-  }
-
-  h3 {
-    font-size: 22px;
-    line-height:26px;
-  }
-
-  #main {
-    background-attachment: scroll;
-    background-position-x: -100px;
-
-    min-height: 600px;
-    .content-wrapper {
-      top:110px;
-    }
-
-    p.intro {
-      text-align: center;
-    }
-  }
-
-  #home {
-    padding-top:30px;
-    padding-top:80px;
-    padding-bottom: 0;
-    height:100%;
-    margin-bottom:0;
-
-    .ipad{
-      position: relative;
-      right: -10px;
-      overflow: hidden;
-    }
-
-    .ipad img {
-      position: relative;
-      opacity: 0;
-      right: 500px;
-      @include transition(all 1s ease);
-    }
-
-    .ipad.anim img {
-      opacity: 1;
-      @include slideIn(translateX(500px));
-    }
-
-    .text {
-      position: relative;
-      opacity: 0;
-      left:-50px;
-      @include transition(all 1.5s ease);
-    }
-
-    .text.anim {
-      opacity: 1;
-      @include slideIn(translateX(50px));
-    }
-  }
 }
 
-@media only screen and (min-width: 0px) and (max-width: 768px){
-  // /* when menu is minimized */
-  // header {
-  //   nav {
-
-  //     ul.nav {
-  //       li {
-  //         padding: 15px !important;
-  //         height: auto !important;
-
-  //         a {
-  //           border: 0 !important;
-  //         }
-  //         position: relative !important;
-  //         display: block !important;
-  //       }
-  //     }
-
-  //     &.navbar-default {
-  //       ul.navbar-nav {
-  //         width: 100%;
-
-  //         li {
-  //           border-bottom: 1px solid transparent;
-  //         }
-  //       }
-  //     }
-
-  //   }
-  // }
+@media only screen and (min-width: 0px) and (max-width: 768px) {
 }
 
-@media only screen and (min-width: 0px) and (max-width: 479px){
-  // /* iPhone Portrait */
-  // header {
-  //   min-height:50px;
-
-  //   nav {
-  //     .navbar-collapse {
-  //       border: 0;
-  //       background-color: rgba(0, 0, 0, 0.7)
-  //     }
-  //   }
-
-  //   nav ul.nav {
-  //     li {
-  //       position: relative !important;
-  //       display: block !important;
-  //     }
-  //   }
-
-  //   h1#logo {
-  //     position: relative;
-  //     top:-6px;
-  //   }
-
-  //   a.mini-nav {
-  //     position: relative;
-  //     top:-8px;
-  //     /*  line-height: 0; */
-  //   }
-  // }
-
-  // #main {
-  //   min-height:500px !important;
-
-  //   .cont-wrapper{
-  //     top:100px;
-  //   }
-
-  //   p.intro {
-  //     text-align: center;
-  //     font-size:32px;
-  //     line-height:38px;
-  //   }
-  // }
-
-  // .btn-db {
-  //   margin-top:10px;
-  // }
-
-  // footer p, footer .sn-links {
-  //   text-align: center;
-  // }
+@media only screen and (min-width: 0px) and (max-width: 479px) {
 }
 
 @media (max-width:768px) {
@@ -698,9 +557,4 @@ footer {
 
 /* Small devices (tablets, 768px and up) */
 @media (min-width: 768px) {
-  // #home {
-  //   .text {
-  //     top: 0;
-  //   }
-  // }
 }
