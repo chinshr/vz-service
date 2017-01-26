@@ -1,0 +1,9 @@
+<%
+  with_divider ||= false
+  html ||= {}
+%>
+<% unless request.env['PATH_INFO'].match(/dashboard/) %>
+<!-- upload button -->
+<a href="/dashboard" title="Upload" id="upload-button" class="button button-with-chrome button-upload <%= html.try(:[], :class) %>" type="button">Upload</a><!-- .button-upload -->
+<span class="button-set-divider <%= html.try(:[], :class) %>"></span>
+<% end %>

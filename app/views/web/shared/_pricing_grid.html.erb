@@ -17,7 +17,7 @@
         <lable>&nbsp;</lable>
         <% end %>
       </h5>
-      <% if show_highlight && plan.highlight %>
+      <% if show_highlight && plan.highlight.present? %>
       <div class="sale-box <%= plan_human_order(index) %>">
         <span class="on_sale title_shop"><%= plan_highlight(plan) %></span>
       </div>
@@ -34,7 +34,7 @@
       </ul>
       <% end %>
       <div class="cart cart<%= plan_order(index) %>">
-        <%= button_to_account_plan_sign_up_or_change(plan, {disabled: !plan.enabled?, confirm: true}, {class: "btn btn-plan"}) %>
+        <%= button_to_account_plan_sign_up_or_change(plan, {disabled: !plan.enabled?, confirm: true}, {class: "button button-with-chrome button-plan"}) %>
       </div><!-- .cart -->
     </div><!-- .price-bg -->
   </div><!-- .pricing-grid -->

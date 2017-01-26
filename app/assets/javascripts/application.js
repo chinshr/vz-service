@@ -46,6 +46,7 @@
 //= require helpers/alert
 //= require helpers/confirm
 //= require helpers/popover
+//= require helpers/slide_menu
 //= require web/documents
 //= require web/account/account_application
 //= require app/app
@@ -72,3 +73,15 @@ $.rails.allowAction = function(link){
 
   return false;
 }
+
+$(function() {
+  // slide menu
+  if ($('.navbar-toggle').length > 0) {
+    new SlideMenu({
+      menuWidth: "245px",
+      menuNeg: "-245px",
+      slideWidth: "245px",
+      slideNeg: "-245px"
+    }).start();
+  }
+});
