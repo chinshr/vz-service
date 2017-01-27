@@ -167,6 +167,7 @@ class Upload::MediaUploadTest < ActiveSupport::TestCase
     should delegate :description=, to: :ingest, allow_nil: true
 
     should "delegate :description" do
+      @upload.ingest.document.description = "test_description"
       assert_equal @upload.ingest.document.description, @upload.description
     end
 
@@ -235,7 +236,8 @@ class Upload::MediaUploadTest < ActiveSupport::TestCase
 
     should delegate :published_path, to: :document
     should "delegate :published_path, to: :document" do
-      assert_equal @upload.ingest.document.published_path, @upload.published_path
+      assert_nil @upload.published_path
+      assert_nil @upload.ingest.document.published_path
     end
 
     should delegate :images, to: :document

@@ -4,7 +4,7 @@ class UploadTest < ActiveSupport::TestCase
   context "class" do
     context "#class_name_from_content_type_for" do
       should "unknown type" do
-        assert_equal nil, Upload.class_name_from_content_type_for("foo/bar")
+        assert_nil Upload.class_name_from_content_type_for("foo/bar")
       end
 
       should "Upload::MediaUpload from audio" do
@@ -48,6 +48,7 @@ class UploadTest < ActiveSupport::TestCase
 
     should delegate :origin_url, to: :ingest
     should "delegate :origin_url, to: :ingest" do
+      @upload.ingest.origin_url = "http://origin.url.example.com"
       assert_equal @upload.ingest.origin_url, @upload.origin_url
     end
 
@@ -95,6 +96,7 @@ class UploadTest < ActiveSupport::TestCase
     should delegate :user=, to: :ingest
 
     should "delegate :user" do
+      @upload.user = FactoryGirl.build(:user)
       assert_equal @upload.ingest.user, @upload.user
     end
 
@@ -177,8 +179,8 @@ class UploadTest < ActiveSupport::TestCase
     end
 
     should "#none_of_types" do
-      assert_equal nil, Upload.none_of_types("media_upload").first
-      assert_equal nil, Upload.none_of_types("Upload::MediaUpload").first
+      assert_nil Upload.none_of_types("media_upload").first
+      assert_nil Upload.none_of_types("Upload::MediaUpload").first
     end
 
     context "aasm scopes" do

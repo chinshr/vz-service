@@ -305,7 +305,7 @@ class Ingest::ServerTest < ActiveSupport::TestCase
       should "not find server without workers" do
         server = FactoryGirl.create(:cpw_ingest_server, max_workers: 1, aasm_state: "enabled")
         worker = Ingest::Worker.create(worker_name: "foobar", ingest: FactoryGirl.create(:media_ingest_as_audio), server: server)
-        assert_equal nil, Ingest::Server.without_workers.first
+        assert_nil Ingest::Server.without_workers.first
       end
     end
 
@@ -322,13 +322,13 @@ class Ingest::ServerTest < ActiveSupport::TestCase
       should "not find server with 'created' workers" do
         server = FactoryGirl.create(:cpw_ingest_server, max_workers: 1, aasm_state: "enabled")
         worker = FactoryGirl.create(:ingest_worker, server: server)
-        assert_equal nil, Ingest::Server.without_busy_workers.first
+        assert_nil Ingest::Server.without_busy_workers.first
       end
 
       should "not find server with 'running' workers" do
         server = FactoryGirl.create(:cpw_ingest_server, max_workers: 1, aasm_state: "enabled")
         worker = FactoryGirl.create(:ingest_worker, :running, {server: server})
-        assert_equal nil, Ingest::Server.without_busy_workers.first
+        assert_nil Ingest::Server.without_busy_workers.first
       end
 
       should "find server with 'finished' workers" do

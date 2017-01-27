@@ -5,8 +5,6 @@ class User < ActiveRecord::Base
 
   serialize :properties, User::Properties
 
-  attr_accessor :force_registration_validation
-  attr_accessor :skip_registration_validation
   attr_accessor :force_generate_access_token
   attr_writer :confirmation_validation
 
@@ -37,14 +35,15 @@ class User < ActiveRecord::Base
   acts_as_tagger
   friendly_id :username, use: [:slugged, :history]
 
-  validates :email, presence: true, email_format: true #, uniqueness: true
-  validates :email, registration: true, on: :create, if: :should_perform_registration_validation?
+  validates :email, presence: true, email_format: true, uniqueness: true
   validates :username, presence: true, uniqueness: true, length: { minimum: 2, maximum: 40 }, username_format: true, if: :confirmed_or_confirmation_validation?
-  validates :first_name, presence: true, length: { minimum: 1, maximum: 125 }, if: :confirmed_or_confirmation_validation?
-  validates :last_name, presence: true, length: { minimum: 1, maximum: 125 }, if: :confirmed_or_confirmation_validation?
+  validates :name, presence: true, length: { minimum: 1, maximum: 125 }, if: :confirmed_or_confirmation_validation?
   validates :description, length: { maximum: 240 }
 
-  scope :confirmed, lambda { where("users.confirmed_at IS NOT NULL") }
+  scope :confirmed, -> { where("users.confirmed_at IS NOT NULL") }
+  scope :unconfirmed, -> { where("users.confirmed_at IS NULL") }
+  scope :approved, -> { where({approved: true}) }
+  scope :unapproved, -> { where({approved: false}) }
 
   before_validation :downcase_email, on: :create
   before_save :geocode, if: :has_ip_address?, unless: :geocoded?
@@ -61,7 +60,17 @@ class User < ActiveRecord::Base
         user.update_column(:plan_id, subscription.plan_id)
       end
     end
-  end
+
+    def send_reset_password_instructions(attributes = {})
+      recoverable = find_or_initialize_with_errors(reset_password_keys, attributes, :not_found)
+      if !recoverable.approved?
+        recoverable.errors[:base] << I18n.t("devise.failure.not_approved")
+      elsif recoverable.persisted?
+        recoverable.send_reset_password_instructions
+      end
+      recoverable
+    end
+  end # class methods
 
   def password_required?
     # previous = !persisted? || !password.nil? || !password_confirmation.nil?
@@ -92,7 +101,11 @@ class User < ActiveRecord::Base
   end
 
   def name
-    [first_name, last_name].reject(&:blank?).join(" ")
+    if [first_name, last_name].all?(&:blank?)
+      self[:name]
+    else
+      [self[:first_name], self[:last_name]].reject(&:blank?).join(" ")
+    end
   end
 
   def name_and_username
@@ -149,6 +162,18 @@ class User < ActiveRecord::Base
     self[:properties]
   end
 
+  def active_for_authentication?
+    super && approved?
+  end
+
+  def inactive_message
+    if !approved?
+      :not_approved
+    else
+      super # Use whatever other message
+    end
+  end
+
   protected
 
   def https?
@@ -161,11 +186,6 @@ class User < ActiveRecord::Base
 
   def ip_address
     current_sign_in_ip || last_sign_in_ip
-  end
-
-  def should_perform_registration_validation?
-    return false if !!skip_registration_validation
-    !Rails.env.test? || @force_registration_validation
   end
 
   def should_generate_new_friendly_id?

@@ -74,7 +74,7 @@ class TrackTest < ActiveSupport::TestCase
       end
 
       should "return nil with nil URL" do
-        assert_equal nil, Track.s3_url_to_key(nil)
+        assert_nil Track.s3_url_to_key(nil)
       end
     end
 

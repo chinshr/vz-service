@@ -36,13 +36,13 @@ class Ingest::WorkerTest < ActiveSupport::TestCase
       assert_equal Ingest::MediaIngest::HarvestWorker, worker.worker_class
 
       worker = Ingest::Worker.new(worker_name: nil)
-      assert_equal nil, worker.worker_class
+      assert_nil worker.worker_class
 
       worker = Ingest::Worker.new(worker_name: "")
-      assert_equal nil, worker.worker_class
+      assert_nil worker.worker_class
 
       worker = Ingest::Worker.new(worker_name: "Foobar")
-      assert_equal nil, worker.worker_class
+      assert_nil worker.worker_class
     end
 
     context "#related_ingest_stage" do

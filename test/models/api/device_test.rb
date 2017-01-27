@@ -68,7 +68,7 @@ class Api::DeviceTest < ActiveSupport::TestCase
       end
 
       should "return nothing with incorrect uid" do
-        assert_equal nil, Api::Device.uid("foobarbaz").first
+        assert_nil Api::Device.uid("foobarbaz").first
       end
     end
 
@@ -99,7 +99,7 @@ class Api::DeviceTest < ActiveSupport::TestCase
       end
 
       should "return nothing with incorrect user id" do
-        assert_equal nil, Api::Device.any_of_user_ids(@other_user.id).first
+        assert_nil Api::Device.any_of_user_ids(@other_user.id).first
       end
     end
 
@@ -123,7 +123,7 @@ class Api::DeviceTest < ActiveSupport::TestCase
       end
 
       should "should return nothing with incorrect plaform id" do
-        assert_equal nil, Api::Device.any_of_platform_ids("-1").first
+        assert_nil Api::Device.any_of_platform_ids("-1").first
       end
     end
   end

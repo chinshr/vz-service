@@ -254,7 +254,7 @@ class Api::AuthorizationTest < ActionDispatch::IntegrationTest
         delete "/api/authorize/user", params
         assert_response :success
         # assert_response_attributes("code" => Api::Code::SUCCESS)
-        assert_equal nil, @client_access.reload.user
+        assert_nil @client_access.reload.user
         assert_equal Api::ClientAccess::ACCESS_STATUS_CLIENT, @client_access.reload.access_status
       end
 

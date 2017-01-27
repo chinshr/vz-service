@@ -1,7 +1,7 @@
 <% if resource && !resource.errors.empty? %>
   <%
     type     ||= :javascript
-    messages = resource.errors.full_messages.join(", ")
+    messages = resource.errors.full_messages.uniq.join(", ")
   %>
   <% if type == :javascript %>
     <%
@@ -28,7 +28,7 @@
 
   <% elsif type == :html %>
     <%
-      messages = resource.errors.full_messages.map { |msg| content_tag(:li, msg) }.join
+      messages = resource.errors.full_messages.map {|msg| content_tag(:li, msg)}.join
       sentence = I18n.t("errors.messages.not_saved",
         :count    => resource.errors.count,
         :resource => resource.class.model_name.human.downcase)
