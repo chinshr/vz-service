@@ -74,16 +74,20 @@ $(function() {
   });
 
   // typed
-  $("#typed").typed({
-    //strings: ["Your conversations <br/>deserve a place to be found", "Your conversations <br/>are safe with us"],
-    stringsElement: $('#typed-strings'),
-    cursorChar: "|",
-    typeSpeed: 0,
-    backSpeed: 0,
-    backDelay: 3500,
-    startDelay: 6000,
-    loop: true
-  });
+  setTimeout(function() {
+    $("#typed").typed({
+      //strings: ["Your conversations <br/>deserve a place to be found", "Your conversations <br/>are safe with us"],
+      stringsElement: $('#typed-strings'),
+      cursorChar: "|",
+      showCursor: true,
+      typeSpeed: 0,
+      backSpeed: 0,
+      backDelay: 3500,
+      startDelay: 0, // 6000,
+      loop: true,
+      shuffle: false
+    });
+  }, 6000);
 
   // video
   $(".youtube").YouTubeModal({
