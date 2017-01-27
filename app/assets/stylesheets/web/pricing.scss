@@ -184,18 +184,6 @@ body.pricing, body.subscriptions, body.billings {
       font-size: 28px;
     }
 
-    .btn-plan {
-      display: inline-block;
-      font-size: 20px;
-      padding: 0 25px;
-      border-width: 2px;
-      border-radius: 300px;
-      color: #fff;
-      line-height: 42px;
-      vertical-align: middle;
-      height: 49px;
-    }
-
     .button-plan {
       display: inline-block;
       font-size: 20px;
@@ -607,7 +595,15 @@ body.pricing, body.subscriptions, body.billings {
   .cart {
     padding: 2.7em 0em 2.7em;
     display: block;
+
+    .btn.disabled,
+    .btn[disabled] {
+      pointer-events: none;
+      background-color: #afafaf;
+      border-color: #afafaf;
+    }
   }
+
   .cart1 {
     border-bottom: 5px solid $price-one-color;
   }
