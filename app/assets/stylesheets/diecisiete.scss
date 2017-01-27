@@ -11,6 +11,8 @@
 @import 'web/setup';
 
 body.pages {
+  background: -webkit-linear-gradient(281deg, $color-black, $color-white);
+  background: linear-gradient(169deg, $color-black, $color-white);
   background-color: $color-black;
 
   /*--- typed.js ---*/
@@ -918,8 +920,8 @@ body.pages {
     position: relative;
     width: 100%;
     background-size: cover;
-    background: -webkit-linear-gradient(281deg, #54828c, #76b7c6);
-    background: linear-gradient(169deg, #54828c, #76b7c6);
+    background: -webkit-linear-gradient(180deg, #54828c, #76b7c6);
+    background: linear-gradient(180deg, #54828c, #76b7c6);
     background-color: #54828c;
     padding-bottom: 65px;
     overflow: hidden;
