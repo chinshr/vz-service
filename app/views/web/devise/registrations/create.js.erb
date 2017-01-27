@@ -1,2 +1,7 @@
-<% flash[:notice] = "Sign up successful. Check your email inbox for confirmation instructions." %>
-document.location = "<%= new_user_session_url %>";
+<% if resource.persisted? %>
+  <% flash[:notice] = "Sign up successful. Check your email inbox for confirmation instructions." %>
+  document.location = "<%= new_user_session_url %>";
+<% else %>
+  <%= render "web/shared/devise_errors" %>
+  $("form").find("button[type=submit]").button("reset");
+<% end %>
