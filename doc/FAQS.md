@@ -23,3 +23,15 @@ We use the best speech technology available today, but know that we cannot be th
 ## Do we support speaker segmentation?
 
 Yes, VOYZ.ES provides speaker segmentation.
+
+## What are the limitations of the free plan?
+
+Our free plan is currently limited to 10 minutes per media and comes with standard transcription quality. For longer files, higher transcription quality and private media documents, see our [pricing page](/pricing).
+
+## What is the difference between private, limited and public media documents?
+
+Public media documents are visible to every registered user. Private media documents are only accessible to you. Limited visibility means that documents can be shared by exchanging a link (URL). Private and limited documents are not indexed by search engines.
+
+## How can I talk to a VOYZ.ES representative?
+
+You can contact our support at [support@voyz.es](mailto:support@voyz.es).
