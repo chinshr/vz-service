@@ -28,6 +28,7 @@
 //= require helpers/slide_menu
 //= require helpers/gallery
 //= require helpers/scroll_header
+//= require helpers/scroll_top
 
 $(function() {
   // enhance images
@@ -41,22 +42,12 @@ $(function() {
   scrollHeader.start();
 
   // slide menu
-  if ($('.navbar-toggle').length > 0) {
-    new SlideMenu({
-      menuWidth: "245px",
-      menuNeg: "-245px",
-      slideWidth: "245px",
-      slideNeg: "-245px"
-    }).start();
-  }
-
-  // gallery
-  var gallery = new Gallery({
-    interval: 1400,
-    interval: 3800,
-    slides: 3
+  SlideMenu.load({
+    menuWidth: "245px",
+    menuNeg: "-245px",
+    slideWidth: "245px",
+    slideNeg: "-245px"
   });
-  gallery.start();
 
   // siriwave
   var siriWave = new SiriWave({
@@ -67,12 +58,20 @@ $(function() {
     frequency: 10,
     amplitude: 0.7,
     definition: [
-      { color: '84,130,140' },
-      { color: '118,183,198' },
-      { color: '153,237,255' }
+      {color: '84,130,140'},
+      {color: '118,183,198'},
+      {color: '153,237,255'}
     ]
   });
   siriWave.start();
+
+  // gallery
+  ScrollTop.load({top: 200}, function() {
+    Gallery.load({
+      slides: 3,
+      interval: 3800
+    });
+  });
 
   // typed
   $("#typed").typed({
@@ -137,7 +136,9 @@ $(function() {
   }
 
   // particles
-  particlesJS.load('particles', 'assets/config/benefits-particles.json', function() {
+  ScrollTop.load({top: 500}, function() {
+    particlesJS.load('particles', 'assets/config/benefits-particles.json', function() {
+    });
   });
 
 });

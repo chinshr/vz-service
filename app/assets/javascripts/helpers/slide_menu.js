@@ -2,6 +2,7 @@
 
 (function() {
   function SlideMenu(opts) {
+    if (!opts) opts = {};
     this.toggler = opts.toggler || '.navbar-toggle';
     this.pagewrapper = opts.pagewrapper || '#content';
     this.navigationWrapper = opts.navigationWrapper || '.navbar-header';
@@ -10,6 +11,15 @@
     this.slideWidth = opts.slideWidth || '80%';
     this.slideNeg = opts.slideNeg || '-80%';
   }
+
+  SlideMenu.load = function(opts) {
+    var slideMenu;
+    if ($('.navbar-toggle').length > 0) {
+      slideMenu = new SlideMenu(opts);
+      slideMenu.start();
+    }
+    return slideMenu;
+  };
 
   SlideMenu.prototype.start = function() {
     var _this = this;

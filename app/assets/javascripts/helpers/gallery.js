@@ -2,6 +2,7 @@
 
 (function() {
   function Gallery(opts) {
+    if (!opts) opts = {}
     this.selector = opts.selector || "#gallery";
     this.delay = opts.delay || 1400;
     this.interval = opts.interval || 3000;
@@ -16,6 +17,12 @@
     this.bind();
   }
 
+  Gallery.load = function(opts) {
+    var gallery = new Gallery(opts);
+    gallery.start();
+    return gallery;
+  };
+
   Gallery.prototype.bind = function() {
     var _this = this;
     $(_this.selector).on("click", ".item, .dot-off", function() {
@@ -23,7 +30,7 @@
       _this.stop();
       _this.changeSlide($(this));
     });
-  }
+  };
 
   Gallery.prototype.start = function() {
     var _this = this;
@@ -41,12 +48,12 @@
         _this.changeSlide(nextAutomaticSlide);
       }, _this.interval);
     }, _this.delay);
-  }
+  };
 
   Gallery.prototype.stop = function() {
     clearTimeout(this.homeGalleryTimeout);
     clearInterval(this.homeGalleryInterval);
-  }
+  };
 
   Gallery.prototype.changeSlide = function(clickedObject) {
     var _this = this,
@@ -79,7 +86,7 @@
       $("#slide-" + newSlideNumber + " p").delay(200).fadeIn(350, "easeOutCubic");
     });
     this.currentSlide = newSlideNumber
-  }
+  };
 
   window.Gallery = Gallery;
 })();
