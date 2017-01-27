@@ -6,6 +6,7 @@ class Web::Devise::RegistrationsController < Devise::RegistrationsController
 
   before_action :find_plan, only: [:new, :create]
   before_action :cancel_subscription, only: [:destroy]
+  before_action :check_captcha, only: [:create], if: :requires_captcha?
 
   def new
     build_resource({})
@@ -15,7 +16,7 @@ class Web::Devise::RegistrationsController < Devise::RegistrationsController
   end
 
   def create
-    build_resource(sign_up_params)
+    build_resource(sign_up_params) unless resource
 
     resource.save
     yield resource if block_given?
@@ -54,4 +55,17 @@ class Web::Devise::RegistrationsController < Devise::RegistrationsController
     params.require(:user).permit(:email, :time_zone, :plan_id)
   end
 
+  private
+
+  def requires_captcha?
+    !@plan
+  end
+  helper_method :requires_captcha?
+
+  def check_captcha
+    build_resource(sign_up_params) unless self.resource.present?
+    unless verify_recaptcha(model: resource, attribute: :captcha)
+      respond_with_navigational(resource) { render :new }
+    end
+  end
 end

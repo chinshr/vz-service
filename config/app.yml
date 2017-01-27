@@ -19,6 +19,9 @@ defaults: &defaults
   STRIPE_API_KEY: <%= ENV.fetch("STRIPE_API_KEY", "sk_test_1wq0EmNfTbJ92Co2bBRpVe26") %>
   STRIPE_PUBLISHABLE_KEY: <%= ENV.fetch("STRIPE_PUBLISHABLE_KEY", "pk_test_Om7g3u90n6YSK8rMbbiBK0MB") %>
 
+  RECAPTCHA_SITE_KEY: <%= ENV.fetch("RECAPTCHA_SITE_KEY", "6LfFWhMUAAAAAMYUKlWKj4UQUwpIkwznFcHkc21l") %>
+  RECAPTCHA_SECRET_KEY: <%= ENV.fetch("RECAPTCHA_SECRET_KEY", "6LfFWhMUAAAAAL_kIfh9WGm81QuTYR1X8wV74__O") %>
+
 development:
   <<: *defaults
   S3_INBOUND_BUCKET: <%= ENV.fetch('S3_INBOUND_BUCKET', "vz-dev-dropbox") %>

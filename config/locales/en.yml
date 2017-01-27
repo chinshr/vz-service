@@ -22,6 +22,10 @@
 en:
   hello: "Hello world"
 
+  recaptcha:
+      errors:
+        verification_failed: 'verification failed'
+
   devise:
     registrations:
       user:

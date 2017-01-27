@@ -9,7 +9,14 @@
       },
       align: "right",
       delay: 5000,
+      className: 'error'
     }
   %>
-  $.notify('<%= messages %>', 'info', <%= raw(notifier_options.to_json) %>);
+  $(".form-group-captcha").removeClass("has-error");
+  $(".form-group-captcha .help-block").remove();
+  <% if resource.errors[:captcha] %>
+    $(".form-group-captcha").addClass("has-error").append('<p class="help-block"><%= resource.errors[:captcha].join %></p>');
+  <% else %>
+  <% end %>
+  $.notify('<%= messages %>', 'danger', <%= raw(notifier_options.to_json) %>);
 <% end %>
