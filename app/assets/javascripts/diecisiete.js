@@ -130,11 +130,11 @@ $(function() {
   });
 
   // cookie-law-bar
-  if (!VZ.getCookie('cookie-law-accepted')) {
+  if (!VZ.getCookie('vz-cookie-law-accepted')) {
     $("body").append("<div id='cookie-law-bar'><div class='inner-wrapper'><p>We use cookies to ensure that we give you the best experience on our website. If you continue to use this site we will assume that you are fine with it.</p><div class='button button-with-chrome button-cookie-law-bar'>OK</div><div style='clear:both;'</div></div></div>");
 
     $("#cookie-law-bar .button-cookie-law-bar").on('click', function() {
-      VZ.setCookie('cookie-law-accepted', 'true', 365);
+      VZ.setCookie('vz-cookie-law-accepted', 'true', 365);
       $("#cookie-law-bar").hide();
     });
   }
