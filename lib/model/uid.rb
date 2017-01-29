@@ -39,7 +39,9 @@ module Model::Uid
 
   module InstanceMethods
     def generate_uid
-      begin; self.uid = self.class.generate_uid; end while self.class.where(:uid => uid).present?
+      begin
+        self.uid = self.class.generate_uid
+      end while self.class.where(:uid => uid).present?
     end
 
     def generate_uid_unless_present

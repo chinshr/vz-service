@@ -15,7 +15,7 @@ class MessageTest < ActiveSupport::TestCase
 
   should "infer locale from message text" do
     m = Message.new(subject: "New Recording")
-    assert_equal nil, m.locale
+    assert_nil m.locale
 
     m = Message.new(subject: "This is a new recording")
     assert_equal "en", m.locale

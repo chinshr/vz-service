@@ -298,9 +298,9 @@ class EmailProcessorTest < ActiveSupport::TestCase
     assert_equal "en-US", EmailProcessor.new(@email).send(:extract_locale_from_email_address, [{email: "my+en@voyz.es"}])
     assert_equal "en-US", EmailProcessor.new(@email).send(:extract_locale_from_email_address, [{email: "my+en_US@voyz.es"}])
     assert_equal "es-ES", EmailProcessor.new(@email).send(:extract_locale_from_email_address, [{email: "my+es@voyz.es"}])
-    assert_equal nil, EmailProcessor.new(@email).send(:extract_locale_from_email_address, [{email: "my@voyz.es"}])
-    assert_equal nil, EmailProcessor.new(@email).send(:extract_locale_from_email_address, nil)
-    assert_equal nil, EmailProcessor.new(@email).send(:extract_locale_from_email_address, [])
+    assert_nil EmailProcessor.new(@email).send(:extract_locale_from_email_address, [{email: "my@voyz.es"}])
+    assert_nil EmailProcessor.new(@email).send(:extract_locale_from_email_address, nil)
+    assert_nil EmailProcessor.new(@email).send(:extract_locale_from_email_address, [])
   end
 
   context "extract locale from directive" do
@@ -331,12 +331,12 @@ class EmailProcessorTest < ActiveSupport::TestCase
 
     should "{d} -> nil" do
       @email.stubs(:body).returns("{d}")
-      assert_equal nil, EmailProcessor.new(@email).send(:extract_locale_from_directive)
+      assert_nil EmailProcessor.new(@email).send(:extract_locale_from_directive)
     end
 
     should "{aufbauen-usbekistan} -> nil" do
       @email.stubs(:body).returns("{aufbauen-usbekistan}")
-      assert_equal nil, EmailProcessor.new(@email).send(:extract_locale_from_directive)
+      assert_nil EmailProcessor.new(@email).send(:extract_locale_from_directive)
     end
   end
 

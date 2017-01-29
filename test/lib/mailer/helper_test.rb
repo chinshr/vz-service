@@ -19,9 +19,9 @@ class Mailer::HelperTest < ActiveSupport::TestCase
     assert_equal "en", Mailer::Helper.locale_from_email_address("my+en@voyz.es")
     assert_equal "en-US", Mailer::Helper.locale_from_email_address("my+en_US@voyz.es")
     assert_equal "es", Mailer::Helper.locale_from_email_address("my+es@voyz.es")
-    assert_equal nil, Mailer::Helper.locale_from_email_address("my@voyz.es")
-    assert_equal nil, Mailer::Helper.locale_from_email_address("")
-    assert_equal nil, Mailer::Helper.locale_from_email_address(nil)
+    assert_nil Mailer::Helper.locale_from_email_address("my@voyz.es")
+    assert_nil Mailer::Helper.locale_from_email_address("")
+    assert_nil Mailer::Helper.locale_from_email_address(nil)
   end
 
 end

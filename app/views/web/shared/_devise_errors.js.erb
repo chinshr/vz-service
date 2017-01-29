@@ -1,6 +1,6 @@
 <% if resource && !resource.errors.empty? %>
   <%
-    messages = resource.errors.full_messages.join(", ")
+    messages = resource.errors.full_messages.uniq.join(", ")
     notifier_options ||= {
       customClass: "#{dom_controller_class} #{dom_controller_action_class}",
       offset: {

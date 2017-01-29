@@ -1,1 +1,5 @@
-document.location = "<%= web_dashboard_url %>";
+<% if resource.active_for_authentication? && signed_in?(:user) %>
+document.location = "<%= after_sign_in_path_for(resource) %>";
+<% else %>
+document.location = "<%= after_confirmation_path_for(:user, resource) %>";
+<% end %>

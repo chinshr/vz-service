@@ -94,6 +94,11 @@ namespace :deploy do
           end
         end
       end
+
+      desc 'Approve all existing users'
+      task :approve_all_existing_users => :environment do
+        User.unapproved.where("users.created_at <= ?", Time.parse("2017/1/27")).update_all({approved: true})
+      end
     end
 
     namespace :ingest do

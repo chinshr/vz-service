@@ -9,12 +9,13 @@
       data: { username: element.val() },
       // async *must* be false
       async: false
-    }).status == 422) {
+    }).status === 422) {
       return options.message;
     }
   }
 
   $(function() {
+    $("input[readonly]").attr("readonly", null); // .blur().focus();
     $("form").on('submit', function(e) {
       $(this).find("button[type=submit]").button("loading");
     });
@@ -26,45 +27,40 @@
 <%= render "web/shared/devise_errors" %>
 
 <div class="container-fluid content-primary">
-  <%#= render "devise/shared/login_quote" %>
-
   <div class="tile form-tile animated fadeInUp">
-    <%= form_for(resource, {:as => resource_name, :url => confirmation_path(resource_name), validate: true, remote: true, method: :put,
-        html: {class: "form-signin panel animated fade-in-up"}}) do |f| %>
+    <%= form_for(resource, {:as => resource_name, :url => confirmation_path(resource), validate: true, remote: true, method: :put,
+        html: {class: "form-signin panel animated fade-in-up", autocomplete: "off"}}) do |f| %>
       <div class="panel-heading">
         <h1 class="logo"><a class="signup-brand" href="/">Confirm your account with VOYZ.ES</a></h1>
         <p>You're almost done...</p>
       </div>
       <div class="panel-body">
-        <div class="form-group form-group-first-last-name clearfix">
-          <div class="col-md-6 form-horizontal left">
-          <%= f.label :first_name, "First Name" %>
-          <%= f.text_field :first_name, :class => "form-control first", :autofocus => "autofocus", :autocapitalize => "on", :autocomplete => "off", :autocorrect => "off", :spellcheck => false, :placeholder => "Enter first name", :validate => true, :"data-error-style" => "inline" %>
-          </div>
-
-          <div class="col-md-6 form-horizontal right">
-          <%= f.label :last_name, "Last Name" %>
-          <%= f.text_field :last_name, :class => "form-control first", :autocapitalize => "on", :autocomplete => "off", :autocorrect => "off", :spellcheck => false, :placeholder => "Enter last name", :validate => true, :"data-error-style" => "inline" %>
-          </div>
-        </div><!-- from-group-first-last-name -->
+        <div class="form-group form-group-name">
+          <%= f.label :name, "Name", :class => "sr-only" %>
+          <div class="input-group">
+            <span class="input-group-addon input-group-email-addon"><i class="fa fa-user"></i></span>
+            <%= f.text_field :name, :class => "form-control name", :autofocus => "autofocus", :autocapitalize => "on", :autocomplete => "off", :autocorrect => "off", :spellcheck => false, :placeholder => "Your name, e.g. Joe Smith", :validate => true, :"data-error-style" => "inline" %>
+          </div><!-- .input-group -->
+        </div><!-- .form-group .from-group-name -->
 
         <div class="form-group form-group-username">
-          <%= f.label :username, "Username" %>
-          <%= f.text_field :username, :class => "form-control", :autocomplete => "off", :placeholder => "Enter username", :validate => true, :"data-error-style" => "inline" %>
-        </div><!-- from-group-username -->
+          <%= f.label :username, "Username", :class => "sr-only" %>
+          <div class="input-group">
+            <span class="input-group-addon input-group-email-addon"><i class="fa fa-at"></i></span>
+            <%= f.text_field :username, :readonly => "", :class => "form-control", :autocomplete => "off", :placeholder => "Your username", :validate => true, :"data-error-style" => "inline" %>
+          </div><!-- .input-group -->
+        </div><!-- .form-group .from-group-username -->
 
         <div class="form-group form-group-password">
-          <%= f.label :password, "Password" %>
-          <%= f.password_field :password, :class => "form-control", :autocomplete => "off", :placeholder => "Enter password", :validate => true, :"data-error-style" => "inline" %>
+          <%= f.label :password, "Password", :class => "sr-only" %>
+          <div class="input-group">
+            <span class="input-group-addon input-group-email-addon"><i class="fa fa-key"></i></span>
+            <%= f.password_field :password, :class => "form-control", :readonly => "", :autocomplete => "off", :placeholder => "Choose a password", :validate => false, :"data-error-style" => "inline" %>
+          </div><!-- .input-group -->
         </div><!-- from-group-password -->
 
-        <div class="form-group form-group-password-confirmation">
-          <%= f.label :password_confirmation, "Password confirmation" %>
-          <%= f.password_field :password_confirmation, :class => "form-control", :autocomplete => "off", :placeholder => "Repeat password", :validate => true, :"data-error-style" => "inline" %>
-        </div><!-- from-group-password-confirmation -->
-
+        <%= hidden_field_tag :password, "" %>
         <%= hidden_field_tag :confirmation_token, @confirmation_token %>
-
       </div>
       <div class="panel-footer">
         <button class="btn btn-lg btn-primary btn-block" type="submit" data-loading-text="Finishing...">Finish</button>

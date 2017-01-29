@@ -203,17 +203,17 @@ class Ingest::MediaIngestTest < ActiveSupport::TestCase
       assert_equal :harvest_stage, ingest.send(:stage_after, :"begin_stage")
       assert_equal :archive_stage, ingest.send(:stage_after, "split")
       assert_equal :archive_stage, ingest.send(:stage_after, "split_stage")
-      assert_equal nil, ingest.send(:stage_after, "end_stage")
-      assert_equal nil, ingest.send(:stage_after, nil)
+      assert_nil ingest.send(:stage_after, "end_stage")
+      assert_nil ingest.send(:stage_after, nil)
     end
 
     should "return #stage_before" do
       ingest = Ingest::MediaIngest.new
-      assert_equal nil, ingest.send(:stage_before, :"begin_stage")
+      assert_nil ingest.send(:stage_before, :"begin_stage")
       assert_equal :transcode_stage, ingest.send(:stage_before, "split")
       assert_equal :transcode_stage, ingest.send(:stage_before, "split_stage")
       assert_equal :archive_stage, ingest.send(:stage_before, :"end_stage")
-      assert_equal nil, ingest.send(:stage_before, nil)
+      assert_nil ingest.send(:stage_before, nil)
     end
 
     should "include stage machine events" do
@@ -447,7 +447,7 @@ class Ingest::MediaIngestTest < ActiveSupport::TestCase
   context "#rewind_stage" do
     should "not from begin_stage" do
       ingest = FactoryGirl.create(:media_ingest_as_audio, aasm_stage: "begin_stage")
-      assert_equal nil, ingest.send(:rewind_stage)
+      assert_nil ingest.send(:rewind_stage)
     end
 
     should "to 'begin_stage' from stopped 'transcode_stage'" do
@@ -466,7 +466,7 @@ class Ingest::MediaIngestTest < ActiveSupport::TestCase
 
     should "not from 'end_stage'" do
       ingest = FactoryGirl.create(:media_ingest_as_audio, aasm_stage: "end_stage")
-      assert_equal nil, ingest.send(:rewind_stage)
+      assert_nil ingest.send(:rewind_stage)
     end
   end
 

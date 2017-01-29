@@ -32,6 +32,9 @@ en:
         updated: "Successfully updated."
         not_updated: "Changes were not saved."
         update_needs_confirmation: "Confirmation password required."
+        signed_up_but_not_approved: "You have signed up successfully, but your account has not been activated by our staff, yet."
+    failure:
+      not_approved: "Your account has not been activated by our staff, yet. Please try again later."
 
   pricing:
     plan_intervals:

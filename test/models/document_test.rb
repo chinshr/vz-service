@@ -516,7 +516,7 @@ class DocumentTest < ActiveSupport::TestCase
     should "parse uid" do
       assert_equal "37fc59fc-ac05-4a1f-9b72-b94f17f00f2d", Document.parse_segment_uid(@old_segment)
       assert_equal "37fc59fc-ac05-4a1f-9b72-b94f17f00f2d", Document.parse_segment_uid(@new_segment)
-      assert_equal nil, Document.parse_segment_uid(nil)
+      assert_nil Document.parse_segment_uid(nil)
     end
 
     should "parse time" do
@@ -524,7 +524,7 @@ class DocumentTest < ActiveSupport::TestCase
       assert_equal [0.02, 3.3], Document.parse_segment_time(@new_segment)
       assert_equal [1.0, 2.0], Document.parse_segment_time("37f+t1-2")
       assert_equal [1.0, 2.0], Document.parse_segment_time("37f-t1-2")
-      assert_equal nil, Document.parse_segment_time("no-time")
+      assert_nil Document.parse_segment_time("no-time")
     end
 
     should "parse score" do
@@ -532,14 +532,14 @@ class DocumentTest < ActiveSupport::TestCase
       assert_equal 0.75, Document.parse_segment_score(@new_segment)
       assert_equal 0.33, Document.parse_segment_score("37f+t0_02-3_3+s0_33")
       assert_equal 0.33, Document.parse_segment_score("37f-t0_02-3_3-s0_33")
-      assert_equal nil, Document.parse_segment_score("no-score#aaa")
+      assert_nil Document.parse_segment_score("no-score#aaa")
     end
 
     should "parse profile" do
       assert_equal "123456", Document.parse_segment_profile(@old_segment)
       assert_equal "123456", Document.parse_segment_profile(@new_segment)
       assert_equal "abcdef", Document.parse_segment_profile("123+pabcdef+cccc")
-      assert_equal nil, Document.parse_segment_profile("noprofile+caaa+t1-2")
+      assert_nil Document.parse_segment_profile("noprofile+caaa+t1-2")
     end
 
     should "parse color" do
@@ -549,7 +549,7 @@ class DocumentTest < ActiveSupport::TestCase
       assert_equal "rgba(45,23,89,0.2)", Document.parse_segment_color("37f-t0_02-3_3-s0_75-crgba(45,23,89,0.2)")
       assert_equal "ccc", Document.parse_segment_color("37f+t0_02-3_3+s0_75+cccc")
       assert_equal "ccc", Document.parse_segment_color("37f-t0_02-3_3-s0_75-cccc")
-      assert_equal nil, Document.parse_segment_color("nocolor^1-2")
+      assert_nil Document.parse_segment_color("nocolor^1-2")
     end
   end
 
@@ -572,8 +572,7 @@ class DocumentTest < ActiveSupport::TestCase
         @document.rich_text["ops"][0]["attributes"]["segment"]
       assert_equal "c5be975a-037a-4218-b54b-cc421a222fbe-t3_78-7_05-s0_500",
         @document.rich_text["ops"][2]["attributes"]["segment"]
-      assert_equal nil,
-        @document.rich_text["ops"][3]["attributes"]["background"]
+      assert_nil @document.rich_text["ops"][3]["attributes"]["background"]
     end
   end
 
@@ -604,7 +603,7 @@ class DocumentTest < ActiveSupport::TestCase
 
       should "be same as #meta_title if description is empty" do
         @document.description = nil
-        assert_equal nil, @document.meta_description
+        assert_nil @document.meta_description
       end
 
     end
@@ -615,12 +614,12 @@ class DocumentTest < ActiveSupport::TestCase
 
     context "#published_url" do
       should "unset privacy should return nil" do
-        assert_equal nil, @document.published_url
+        assert_nil @document.published_url
       end
 
       should "private unpublished should return nil" do
         @document.update_attributes(privacy: "private")
-        assert_equal nil, @document.published_url
+        assert_nil @document.published_url
       end
 
       should "published should return published url" do
@@ -632,7 +631,7 @@ class DocumentTest < ActiveSupport::TestCase
     context "#canonical_url" do
       should "unset privacy should return nil" do
         @document.privacy = []
-        assert_equal nil, @document.canonical_url
+        assert_nil @document.canonical_url
       end
 
       should "private unpublished should return document url" do
@@ -812,7 +811,7 @@ class DocumentTest < ActiveSupport::TestCase
 
     should "be nil when unpublished" do
       document = FactoryGirl.create(:document, aasm_state: "unpublished")
-      assert_equal nil, document.published_path
+      assert_nil document.published_path
     end
 
   end

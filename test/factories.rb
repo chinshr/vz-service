@@ -1,6 +1,7 @@
 FactoryGirl.define do
 
   factory :media_upload_as_audio, :class => "Upload::MediaUpload" do
+    association :user
     sequence(:source_url) {|n| "http://s3.amazonaws.com/vz-test-dropbox/sample-#{n}.m4a"}
     sequence(:file_name) {|n| "sample-#{n}.m4a"}
     file_type "audio/x-m4a"
@@ -12,6 +13,7 @@ FactoryGirl.define do
   end
 
   factory :media_upload_as_video, :class => "Upload::MediaUpload" do
+    association :user
     sequence(:source_url) {|n| "http://s3.amazonaws.com/vz-test-dropbox/sample-video-#{n}.mp4"}
     sequence(:file_name) {|n| "sample-video-#{n}.mp4"}
     file_type "video/mp4"
@@ -251,10 +253,23 @@ FactoryGirl.define do
     sequence(:first_name) {|n| "first-name-#{n}"}
     sequence(:last_name) {|n| "last-name-#{n}"}
     confirmed_at Time.zone.now - 1.day
+    approved true
     current_sign_in_ip "95.63.14.59"
+
+    trait :confirmed do
+      confirmed_at Time.zone.now - 1.day
+    end
 
     trait :unconfirmed do
       confirmed_at nil
+    end
+
+    trait :approved do
+      approved true
+    end
+
+    trait :unapproved do
+      approved false
     end
 
     trait :with_personal_plan do

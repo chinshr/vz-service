@@ -22,8 +22,7 @@ class UserTest < ActiveSupport::TestCase
       user = User.new(:confirmed_at => Time.zone.now)
       assert_equal true, user.confirmed?
       assert_equal false, user.valid?
-      assert_equal true, user.errors[:first_name].include?("can't be blank")
-      assert_equal true, user.errors[:last_name].include?("can't be blank")
+      assert_equal true, user.errors[:name].include?("can't be blank")
       assert_equal true, user.errors[:username].include?("invalid format")
       assert_equal true, user.errors[:username].include?("is too short (minimum is 2 characters)")
     end
@@ -42,10 +41,8 @@ class UserTest < ActiveSupport::TestCase
 
     should validate_presence_of :username
     should validate_length_of(:username).is_at_least(2).is_at_most(40)
-    should validate_presence_of :first_name
-    should validate_length_of(:first_name).is_at_least(1).is_at_most(125)
-    should validate_presence_of :last_name
-    should validate_length_of(:last_name).is_at_least(1).is_at_most(125)
+    should validate_presence_of :name
+    should validate_length_of(:name).is_at_least(1).is_at_most(125)
     should validate_length_of(:description).is_at_most(240)
   end
 
@@ -57,15 +54,22 @@ class UserTest < ActiveSupport::TestCase
     assert_not_nil user.region_code
   end
 
-  should "have name" do
-    user = FactoryGirl.create(:user, first_name: "Jürgen", last_name: "Feßlmeier")
-    assert_equal "Jürgen Feßlmeier", user.name
+  context "#name" do
+    should "from name" do
+      user = FactoryGirl.build(:user, name: "Joe Smith", first_name: nil, last_name: nil)
+      assert_equal "Joe Smith", user.name
+    end
 
-    user.attributes = {first_name: "Jürgen", last_name: nil}
-    assert_equal "Jürgen", user.name
+    should "from first_name + last_name" do
+      user = FactoryGirl.build(:user, first_name: "Jürgen", last_name: "Feßlmeier")
+      assert_equal "Jürgen Feßlmeier", user.name
 
-    user.attributes = {first_name: nil, last_name: nil}
-    assert_equal "", user.name
+      user.attributes = {first_name: "Jürgen", last_name: nil}
+      assert_equal "Jürgen", user.name
+
+      user.attributes = {first_name: nil, last_name: nil}
+      assert_nil user.name
+    end
   end
 
   should "have #name_and_username" do
@@ -98,43 +102,6 @@ class UserTest < ActiveSupport::TestCase
   should "have pubsub_channel" do
     user = FactoryGirl.create(:user)
     assert_not_nil user.pubsub_channel
-  end
-
-  context "user registration" do
-    should "not be valid without previous registration" do
-      user = FactoryGirl.build(:user, first_name: "Jürgen", last_name: "Feßlmeier", email: "juergen@example.com")
-      user.force_registration_validation = true
-      assert_equal false, user.valid?, "should not be valid"
-    end
-
-    should "skip registration" do
-      user = FactoryGirl.build(:user, first_name: "Jürgen", last_name: "Feßlmeier", email: "juergen@example.com")
-      user.skip_registration_validation = true
-      assert_equal true, user.valid?, "should be valid"
-    end
-
-    should "not be valid with pending registration" do
-      registration = FactoryGirl.build(:registration, email: "Juergen@Example.com")
-      user = FactoryGirl.build(:user, first_name: "J", last_name: "F", email: "juergen@example.com")
-      user.force_registration_validation = true
-      assert_equal false, user.valid?, "should not be valid"
-    end
-
-    should "not be valid with declined registration" do
-      registration = FactoryGirl.build(:registration, email: "juergen@example.com")
-      assert_equal true, registration.decline!
-      user = FactoryGirl.build(:user, first_name: "J", last_name: "F", email: "juergen@example.com")
-      user.force_registration_validation = true
-      assert_equal false, user.valid?, "should not be valid"
-    end
-
-    should "be valid with accepted registration" do
-      registration = FactoryGirl.build(:registration, email: "Juergen@Example.com")
-      assert_equal true, registration.accept!
-      user = User.new({first_name: "J", last_name: "F", email: "juerGen@exAmple.com"})
-      user.force_registration_validation = true
-      assert_equal true, user.valid?, "should be valid"
-    end
   end
 
   context "roles" do
@@ -205,9 +172,9 @@ class UserTest < ActiveSupport::TestCase
 
   context "scopes" do
     setup do
-      @backend   = FactoryGirl.create(:user, roles: :backend, confirmed_at: nil)
-      @user      = FactoryGirl.create(:user, roles: :user)
-      @developer = FactoryGirl.create(:user, roles: :developer, confirmed_at: nil)
+      @backend   = FactoryGirl.create(:user, :unconfirmed, :unapproved, roles: :backend)
+      @user      = FactoryGirl.create(:user, :confirmed, :approved, roles: :user)
+      @developer = FactoryGirl.create(:user, :unconfirmed, :approved, roles: :developer)
     end
 
     should "#any_of_roles" do
@@ -218,6 +185,18 @@ class UserTest < ActiveSupport::TestCase
 
     should "#confirmed" do
       assert_equal [@user].to_set, User.confirmed.to_set
+    end
+
+    should "#unconfirmed" do
+      assert_equal [@backend, @developer].to_set, User.unconfirmed.to_set
+    end
+
+    should "#approved" do
+      assert_equal [@user, @developer].to_set, User.approved.to_set
+    end
+
+    should "#unapproved" do
+      assert_equal [@backend].to_set, User.unapproved.to_set
     end
   end
 

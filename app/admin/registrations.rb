@@ -30,7 +30,7 @@ ActiveAdmin.register Registration do
       links += link_to I18n.t('active_admin.delete'), resource_path(resource),
         :method => :delete, :class => "member_link delete_link", :confirm => "Are you really really really sure?"
       (resource.events - []).each do |event|
-        links += link_to event.to_s.humanize, switch_admin_registration_path(resource, params.merge(event: event)),
+        links += link_to event.to_s.humanize, switch_admin_registration_path(resource, params.merge(event: event).symbolize_keys),
           class: "member_link view_link button", confirm: "Really want to #{event.to_s.humanize.downcase}?"
       end
       links

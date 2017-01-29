@@ -15,8 +15,10 @@ Voyzes::Application.routes.draw do
     :sign_up => 'sign-up',
     :sign_out => 'sign-out'
   }
+
   devise_scope :user do
     put "/users/confirmation" => "web/devise/confirmations#update", :as => :update_user_confirmation
+    get '/dashboard' => 'web/account/dashboards#show', as: :user_root # creates user_root_path for signed_in_root_path
   end
 
   # sidekiq
@@ -28,7 +30,7 @@ Voyzes::Application.routes.draw do
   # payola
   mount Payola::Engine => '/payola', as: :payola
 
-  # site
+  # site root
   root 'web/pages#index'
 
   # new home page
