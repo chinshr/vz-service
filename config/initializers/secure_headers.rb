@@ -48,9 +48,9 @@ SecureHeaders::Configuration.default do |config|
   #   report_uri: %w(https://report-uri.io/example-csp)
   # }
   # This is available only from 3.5.0; use the `report_only: true` setting for 3.4.1 and below.
-  config.csp_report_only = {
-    default_src: %w('self')
-  }
+  # config.csp_report_only = {
+  #   default_src: %w('self')
+  # }
   # config.csp_report_only = config.csp.merge({
   #   img_src: %w(somewhereelse.com),
   #   report_uri: %w(https://report-uri.io/example-csp-report-only)
