@@ -2,10 +2,6 @@ class Web::PagesController < Web::ApplicationController
   before_action :set_cache_headers, only: [:index]
 
   def index
-    render :layout => "beachstrap"
-  end
-
-  def diecisiete
     render :layout => "diecisiete"
   end
 
