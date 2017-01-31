@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170128182558) do
+ActiveRecord::Schema.define(version: 20170131222030) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -354,19 +354,20 @@ ActiveRecord::Schema.define(version: 20170128182558) do
   add_index "ingests", ["upload_id"], name: "index_ingests_on_upload_id", using: :btree
 
   create_table "messages", force: :cascade do |t|
-    t.string   "uid",        limit: 255, null: false
-    t.string   "from",       limit: 255
+    t.string   "uid",         limit: 255, null: false
+    t.string   "from",        limit: 255
     t.text     "to"
     t.text     "cc"
-    t.string   "reply_to",   limit: 255
-    t.string   "subject",    limit: 255
+    t.string   "reply_to",    limit: 255
+    t.string   "subject",     limit: 255
     t.text     "html"
     t.text     "text"
-    t.string   "type",       limit: 255
+    t.string   "type",        limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "sender_id"
     t.text     "body"
+    t.string   "sender_name"
   end
 
   add_index "messages", ["sender_id"], name: "index_messages_on_sender_id", using: :btree

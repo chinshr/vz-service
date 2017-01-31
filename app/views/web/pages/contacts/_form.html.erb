@@ -1,0 +1,28 @@
+<div class="contact-form">
+<%= form_for(@contact || ::Message::Contact.new, {:url => web_pages_contacts_path, :validate => true, :remote => true}) do |f| %>
+  <div class="form-group form-group-sender-name">
+    <div class="input-group">
+      <%= f.text_field :sender_name, :validate => true, :autofocus => "autofocus", :autocapitalize => "off", :autocomplete => "off", :autocorrect => "off", :spellcheck => false, :class => "form-control first", :placeholder => "Name", :"data-error-style" => "inline" %>
+    </div><!-- .input-group -->
+  </div><!-- .form-group -->
+  <div class="form-group from-group-from">
+    <div class="input-group">
+      <%= f.email_field :from, :validate => true, :autofocus => "autofocus", :autocapitalize => "off", :autocomplete => "off", :autocorrect => "off", :spellcheck => false, :class => "form-control", :placeholder => "Email", :"data-error-style" => "inline" %>
+    </div><!-- .input-group -->
+  </div><!-- .form-group -->
+  <div class="form-group from-group-body">
+    <div class="input-group">
+      <%= f.text_area :body, :validate => true, :autocapitalize => "off", :autocomplete => "off", :autocorrect => "on", :spellcheck => true, :class => "form-control", :placeholder => "Your message", :"data-error-style" => "inline" %>
+    </div><!-- .input-group -->
+  </div><!-- .form-group -->
+  <div class="form-group form-group-captcha">
+    <div class="input-group">
+      <%= recaptcha_tags hl: I18n.locale_language %>
+    </div><!-- .input-group -->
+  </div><!-- .form-group -->
+  <input class="button button-contact-submit" type="submit" value="Send" />
+<% end %>
+</div><!-- .contact-form -->
+<div class="contact-form-success">
+  <p>Thanks for your interest. Someone from our team will be in touch with you shortly.</p>
+</div><!-- .contact-form-success -->

@@ -51,6 +51,9 @@ Voyzes::Application.routes.draw do
     # pages
     get '/pricing' => "pages#pricing"
     get '/faqs' => "pages#faqs"
+    namespace :pages do
+      resources :contacts, only: [:create]
+    end
 
     # terms
     get '/terms/privacy-policy' => "terms#privacy_policy"

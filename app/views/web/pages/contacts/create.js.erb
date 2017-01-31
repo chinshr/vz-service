@@ -1,0 +1,8 @@
+$(".form-group-captcha").removeClass("has-error");
+$(".form-group-captcha .help-block").remove();
+<% if @contact.persisted? %>
+$("#contact .contact-form").fadeOut("fast");
+$("#contact .contact-form-success").fadeIn("fast");
+<% elsif @contact.errors[:captcha] %>
+  $(".form-group-captcha").addClass("has-error").append('<p class="help-block"><%= @contact.errors[:captcha].join %></p>');
+<% end %>

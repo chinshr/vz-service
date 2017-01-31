@@ -1,0 +1,34 @@
+<div class="registration-form">
+  <h4>Want to join?</h4>
+  <%= form_for(@registration || Registration.new, {:url => web_registrations_path, :validate => true, :remote => true}) do |f| %>
+    <div class="form-group">
+      <div class="input-group">
+        <%= f.email_field :email, :autofocus => "autofocus", :autocapitalize => "off", :autocomplete => "off", :autocorrect => "off", :spellcheck => false, :class => "form-control first", :placeholder => "Enter your email address to register", :"data-error-style" => "inline" %>
+        <span type="submit" class="input-group-addon">
+          <button class="btn btn-submit glyphicon glyphicon-arrow-right"></button>
+        </span>
+      </div>
+    </div>
+    <%= f.hidden_field :time_zone %>
+    <% content_for :javascript_includes do %>
+      <%= javascript_tag do %>
+        $(function() {
+          $("form input[name='registration[time_zone]']").val(jstz.determine_timezone().name());
+        });
+      <% end %>
+    <% end %>
+    <%#= f.submit "Notify me!", :class => "btn btn-lg btn-primary btn-block" %>
+  <% end %>
+</div><!-- .registration-form -->
+<div class="registration-success">
+  <h4>Thanks for your interest. You will hear back from us shortly.</h4>
+  <div class="social-container">
+    <p>Spread the word:</p>
+    <ul class="social-networks">
+      <li class="facebook"><a class="fa fa-facebook" href="#" data-href=""></a></li>
+      <li class="twitter"><a class="fa fa-twitter" href="#" data-href="" ></a></li>
+      <li class="linkedin"><a class="fa fa-linkedin" href="#" data-href=""></a></li>
+      <li class="email"><a class="fa fa-envelope" href="#" data-href=""></a></li>
+    </ul><!-- .social-networks -->
+  </div><!-- .social-container -->
+</div><!-- .registration-success -->

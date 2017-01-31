@@ -7,10 +7,9 @@ ClientSideValidations.validators.local["email_format"] = function(element, optio
 
 ClientSideValidations.formBuilders['ActionView::Helpers::FormBuilder'] = {
   add: function(element, settings, message) {
-    if (message && message.length >0) {
+    if (message && message.length > 0) {
       message = message[0].toUpperCase() + message.slice(1);
     }
-
     if (element.data('error-style') === 'tooltip') {
       var position = element.data('tooltip-position') || 'right'
       element.tooltip({

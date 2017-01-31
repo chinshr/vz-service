@@ -17,7 +17,6 @@
 //= require lib/bootstrap
 //= require lib/rails.validations
 //= require lib/rails.validations.bootstrap
-//= require lib/detect_timezone
 //= require lib/siriwave
 //= require lib/jquery.easing
 //= require lib/bootstrap.youtubepopup
@@ -125,7 +124,8 @@ $(function() {
 
   // contact form
   $("#contact .button-contact-us").on('click', function() {
-    $("#contact .form").show();
+    $("#contact .contact-form").fadeIn("fast");
+    $("#contact .contact-form form").resetClientSideValidations();
     $("#contact .button-contact-us").hide();
   });
 
