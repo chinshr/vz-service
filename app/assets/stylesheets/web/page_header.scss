@@ -16,6 +16,18 @@ header.page-header {
     padding: 0;
     text-indent: -9999px;
     background: image-url('voyzes-logo-110x70.png') no-repeat 0 0;
+
+    .beta-label {
+      position: relative;
+      top: 2px;
+      left: 10017px;
+      background-color: $color-cyan-dark;
+      color: #ddd;
+      font-size: 10px;
+      padding: 2px 4px;
+      border-radius: 300px;
+      font-weight: 300;
+    }
   }
 
   nav {
