@@ -1,6 +1,7 @@
 ActiveAdmin.register Registration do
   scope :all
   scope :recent
+  scope :pending
   scope :accepted
   scope :declined
   permit_params :email, :locale, :first_name, :last_name,
