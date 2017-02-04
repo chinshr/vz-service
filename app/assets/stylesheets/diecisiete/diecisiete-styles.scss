@@ -68,18 +68,6 @@ p {
   margin-bottom:32px;
 }
 
-.form-control {
-  border-radius: 0;
-  border:1px solid #ccc;
-  @include transition;
-  padding:20px;
-  box-sizing: border-box;
-  &:focus{
-    background-color:#eee;
-    box-shadow: none;
-  }
-}
-
 .btn-db {
   background-color: $color-dark-blue;
   color: #fff;

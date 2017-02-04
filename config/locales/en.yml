@@ -95,6 +95,10 @@ en:
       messages:
         registration: "has not yet been accepted to the beta program"
       models:
+        message/contact:
+          attributes:
+            from:
+              email_format: "invalid format"
         upload:
           attributes:
             file_name:

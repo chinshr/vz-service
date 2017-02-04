@@ -245,6 +245,11 @@ FactoryGirl.define do
     to "inbound@example.com"
   end
 
+  factory :contact_message, :class => "Message::Contact", :parent => :message do
+    body "Why is the world round?"
+    sender_name "Question Name"
+  end
+
   factory :user do
     sequence(:email) {|n| "test-#{n}@example.com"}
     sequence(:username) {|n| "user#{n}"}
