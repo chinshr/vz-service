@@ -13,7 +13,7 @@ if Rails.env.production?
     :cache     => REDIS,
     :use_https => true,
     :google    => {
-      :api_key => "AIzaSyBFNbBpOsfzZ2-60jchxzgkwa9YkEK5z8E"
+      :api_key => "AIzaSyBVb7VlLtjPfI7JXqdxLJlgD-44ZUWO_so"
     },
     :ip_lookup => :geoip2,
     :geoip2 => {
