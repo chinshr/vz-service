@@ -17,7 +17,7 @@ class Web::PagesController < Web::ApplicationController
 
   def set_cache_headers
     if Rails.env.production?
-      last_modified = File.mtime("#{Rails.root}/app/views/web/pages/diecisiete.html.erb")
+      last_modified = File.mtime("#{Rails.root}/app/views/layouts/diecisiete.html.erb")
       fresh_when last_modified: last_modified , public: true, etag: last_modified
       expires_in rack_cache_time, public: true
     end
