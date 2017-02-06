@@ -15,7 +15,11 @@ if Rails.env.production?
     :google    => {
       :api_key => "AIzaSyBVb7VlLtjPfI7JXqdxLJlgD-44ZUWO_so"
     },
-    :ip_lookup => :geoip2,
+    # :ip_lookup => :geoip2,
+    :ip_lookup => :maxmind_local,
+    :maxmind_local => {
+      file: File.join(Rails.root, 'lib', 'assets', 'GeoLiteCity.dat')
+    },
     :geoip2 => {
       lib: 'maxminddb',
       file: File.join(Rails.root, 'lib', 'assets', 'GeoLite2-Country.mmdb')
@@ -24,10 +28,9 @@ if Rails.env.production?
 else
   Geocoder.configure({
     :timeout => 2,
-    :ip_lookup => :geoip2,
-    :geoip2 => {
-      lib: 'maxminddb',
-      file: File.join(Rails.root, 'lib', 'assets', 'GeoLite2-Country.mmdb')
+    :ip_lookup => :maxmind_local,
+    :maxmind_local => {
+      file: File.join(Rails.root, 'lib', 'assets', 'GeoLiteCity.dat')
     }
   })
 end
