@@ -33,10 +33,10 @@ class EmailProcessor
       # post-process
       if message && message.attachments.length > 0 && message.valid?
         message.save
-        EmailProcessorMailer.valid_message(message).deliver_later
+        Message::EmailProcessorMailer.valid_message(message).deliver_later
         Rails.logger.info "EmailProcessor: Message and attachments were successfully received."
       else
-        EmailProcessorMailer.invalid_message(message).deliver_later if message && !message.valid?
+        Message::EmailProcessorMailer.invalid_message(message).deliver_later if message && !message.valid?
 
         Rails.logger.error "EmailProcessor: Oops, no user was built." if !user
         Rails.logger.error "EmailProcessor: Oops, the user cannot be saved." if user && user.new_record?

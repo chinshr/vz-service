@@ -1,4 +1,4 @@
-class EmailProcessorMailer < ApplicationMailer
+class Message::EmailProcessorMailer < ApplicationMailer
   default from: "no-reply@voyz.es"
   # default reply_to: "my@voyz.es"
 
@@ -16,5 +16,4 @@ class EmailProcessorMailer < ApplicationMailer
       bcc: APP_CONFIG['ADMIN_EMAIL_ADDRESSES']
     )
   end
-
 end
