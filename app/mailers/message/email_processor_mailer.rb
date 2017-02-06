@@ -5,7 +5,7 @@ class Message::EmailProcessorMailer < ApplicationMailer
   def invalid_message(message)
     @message = message
     mail(to: message.sender.email,
-      subject: "Sorry, your message cannot be processed.",
+      subject: "Sorry, your message cannot be processed",
       bcc: APP_CONFIG['ADMIN_EMAIL_ADDRESSES'])
   end
 

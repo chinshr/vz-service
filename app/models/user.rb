@@ -48,6 +48,7 @@ class User < ActiveRecord::Base
   before_validation :downcase_email, on: :create
   before_save :geocode, if: :has_ip_address?, unless: :geocoded?
   before_save :reverse_geocode, if: :geocoded?
+  after_commit :send_admin_mail, on: :create
 
   class << self
 
@@ -198,4 +199,7 @@ class User < ActiveRecord::Base
     self.email = email.downcase if email.present?
   end
 
+  def send_admin_mail
+    User::AdminMailer.new_user_waiting_for_approval(self).deliver_later unless approved?
+  end
 end

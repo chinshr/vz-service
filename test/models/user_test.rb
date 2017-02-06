@@ -2,7 +2,7 @@ require 'test_helper'
 
 class UserTest < ActiveSupport::TestCase
   setup do
-    # WebMock.allow_net_connect!
+    ActionMailer::Base.deliveries.clear
     stub_request(:get, "http://freegeoip.net/json/95.63.14.59").
       with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Ruby'}).
       to_return(:status => 200, :body => "{\"ip\":\"95.63.14.59\",\"country_code\":\"ES\",\"country_name\":\"Spain\",\"region_code\":\"29\",\"region_name\":\"Madrid\",\"city\":\"Madrid\",\"zipcode\":\"28010\",\"latitude\":40.4306,\"longitude\":-3.6933,\"metro_code\":\"\",\"area_code\":\"\"}\n", :headers => {})
@@ -228,6 +228,12 @@ class UserTest < ActiveSupport::TestCase
 
     should "config.transcription.engine inherited from plan" do
       assert_equal "test_engine", @user2.properties.config.transcription.engine
+    end
+  end
+
+  should "deliver admin mail" do
+    assert_enqueued_with(job: ActionMailer::DeliveryJob) do
+      FactoryGirl.create(:user, :unapproved)
     end
   end
 end
