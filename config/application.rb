@@ -25,8 +25,10 @@ module Voyzes
     # config.autoload_paths += Dir["#{config.root}/lib/**/"]
 
     # Filter passwords
-    config.filter_parameters += [:password]
+    config.filter_parameters += [:password, :card_number, :card_cvc]
 
     config.active_record.raise_in_transactional_callbacks = true
+
+    config.middleware.use Rack::Deflater
   end
 end
