@@ -64,7 +64,7 @@
 
   <!-- JavaScripts
   ================================================== -->
-  <%= javascript_include_tag "application", async: Rails.env.production? %>
+  <%= javascript_include_tag "application" %>
   <%= javascript_tag do %>
     if (typeof(App) !== 'undefined') {
       <% if signed_in? -%>
@@ -73,7 +73,7 @@
     }
   <% end %>
   <%= yield :javascript_includes %>
-  <%= javascript_include_tag "web/drift.js", async: true %>
+  <%= javascript_include_tag "web/drift.js" %>
   <div id="fb-root"></div>
 </body>
 </html>
