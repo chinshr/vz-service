@@ -135,7 +135,7 @@
 
                   <div class="actions-stacked">
                     <div class="button-set align-right">
-                      <a href="/pricing" title="Additional plans" id="more-button" class="button button-with-chrome button-more" type="button">Pricing</a>
+                      <a href="/pricing" title="Additional plans" id="more-button" class="button button-with-chrome button-more button-pricing" type="button">Pricing</a>
                       <span class="button-set-divider"></span>
                       <a href="<%= new_user_registration_path %>" title="Join" id="sign-up-button" class="button button-with-chrome button-sign-up" type="button">Join for free<sup>*</sup></a>
                     </div><!-- .button-set -->
@@ -226,12 +226,12 @@
         <div class="wrapper">
           <div class="left">
             <h5><a class="logo" href="/">VOYZ.ES</a></h5>
-            <a href="/faqs">Help</a>
-            <a href="/pricing">Pricing</a>
+            <a href="/faqs" class="button-faqs">Help</a>
+            <a href="/pricing" class="button-pricing">Pricing</a>
           </div><!-- .left -->
           <div class="right">
             <span class="copy">&copy;&nbsp;<%= Time.zone.now.year %> VOYZES, Inc. · All rights reserved</span>
-            <a id="footer-privacy" href="/terms/privacy-policy">Privacy</a><a href="/terms/terms-of-service">Terms of Service</a>
+            <a id="footer-privacy" class="button-privacy-policy" href="/terms/privacy-policy">Privacy</a><a href="/terms/terms-of-service" class="button-terms-of-service">Terms of Service</a>
           </div><!-- .right -->
         </div><!-- .wrapper -->
       </footer>

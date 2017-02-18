@@ -52,32 +52,44 @@ var VZ = (function() {
 
   var trackingCodes = getCookie("trackingCodes") ? JSON.parse(getCookie("trackingCodes")) : false;
 
-  // Google tracker
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', config.google.analyticsId]);
-  _gaq.push(['_trackPageview']);
-
+  // Google Analytics
   (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    window.ga = window.ga || function() {(ga.q = ga.q || []).push(arguments)}; ga.l =+ new Date;
+    ga('create', config.google.analyticsId, 'auto');
+    if (!isProduction) {
+      ga('set', 'sendHitTask', null);
+      window.ga_debug = {trace: true};
+    }
+    ga('send', 'pageview');
+
+    // insert async script
+    var gas = document.createElement('script');
+    gas.type = 'text/javascript';
+    gas.async = true;
+    gas.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'www.google-analytics.com/analytics.js';
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gas, s);
   })();
 
-  var trackEvent = function trackEvent(name, data, callback) {
-    <% if Rails.env.production? %>
-    if (_gat) {
+  var trackEvent = function trackEvent(category, data, callback) {
+    if (ga) {
       // Google track event
       // https://developers.google.com/analytics/devguides/collection/gajs/eventTrackerGuide
-      var tracker  = _gat._getTracker(config.google.analyticsId);
-      var category = name;
-      var action   = data['action'] || "unknown-action";
-      var label    = data['name'];
+      var eventCategory = category;
+      var eventAction   = data['action'] || "unknown-action";
+      var eventLabel    = data['label'];
+      var eventValue    = data['value'];
       // _gaq.push(['_trackEvent', category, action, label]);
-      tracker._trackEvent(category, action, label);
+      ga("send", {
+        hitType: 'event',
+        eventCategory: eventCategory,
+        eventAction: eventAction,
+        eventLabel: eventLabel,
+        eventValue: eventValue
+      });
     }
-    <% end %>
     if (callback) {
-      callback(name, data);
+      callback(category, data);
     }
     return data;
   };

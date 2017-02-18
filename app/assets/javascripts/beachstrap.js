@@ -40,12 +40,12 @@ $(function() {
       }
       $('body').addClass(event.target.id);
 
-      VZ.trackEvent('home-page-scroll',
-        {action: 'scroll-to-' + event.target.id, name: event.target.id},
-        function(event, data) {
+      VZ.trackEvent('home-page-scroll', {
+        action: 'scroll-to-' + event.target.id,
+        name: event.target.id
+      }, function(event, data) {
           // console.log(event, data);
-        }
-      );
+      });
 
     }
   });

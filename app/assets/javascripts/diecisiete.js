@@ -101,12 +101,11 @@ $(function() {
   });
 
   $('.youtube').bind('show.YouTubeModal', function() {
-    VZ.trackEvent('home-page-play-video',
-      {action: 'click-play-video', name: 'Our story'},
-      function(event, data) {
-        // console.log(event, data);
-      }
-    );
+    VZ.trackEvent('home-video', {
+      action: 'show', label: 'Our story'
+    }, function(event, data) {
+      // console.log(event, data);
+    });
   });
 
   // parallax
@@ -142,6 +141,61 @@ $(function() {
   // particles
   ScrollTop.load({top: 500}, function() {
     particlesJS.load('particles', 'assets/config/benefits-particles.json', function() {
+    });
+  });
+
+  // events
+  $(".button-sign-up").on('click', function(event) {
+    VZ.trackEvent('home-sign-up', {
+      action: 'click',
+      label: event.target.href
+    }, function(category, data) {
+      // console.log(category, data);
+    });
+  });
+
+  $(".button-pricing").on('click', function(event) {
+    VZ.trackEvent('home-pricing', {
+      action: 'click',
+      label: event.target.href
+    }, function(category, data) {
+      // console.log(category, data);
+    });
+  });
+
+  $(".button-faqs").on('click', function(event) {
+    VZ.trackEvent('home-faqs', {
+      action: 'click',
+      label: event.target.href
+    }, function(category, data) {
+      // console.log(category, data);
+    });
+  });
+
+  $(".button-faqs").on('click', function(event) {
+    VZ.trackEvent('home-faqs', {
+      action: 'click',
+      label: event.target.href
+    }, function(category, data) {
+      // console.log(category, data);
+    });
+  });
+
+  $(".button-privacy-policy").on('click', function(event) {
+    VZ.trackEvent('home-privacy-policy', {
+      action: 'click',
+      label: event.target.href
+    }, function(category, data) {
+      // console.log(category, data);
+    });
+  });
+
+  $(".button-terms-of-service").on('click', function(event) {
+    VZ.trackEvent('home-terms-of-service', {
+      action: 'click',
+      label: event.target.href
+    }, function(category, data) {
+      // console.log(category, data);
     });
   });
 
