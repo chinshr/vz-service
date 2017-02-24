@@ -15,7 +15,7 @@ header.page-header {
     margin: 0;
     padding: 0;
     text-indent: -9999px;
-    background: image-url('voyzes-logo-110x70.png') no-repeat 0 0;
+    background: asset-data-url('voyzes-logo-110x70.png') no-repeat 0 0;
 
     .beta-label {
       position: relative;
@@ -616,7 +616,7 @@ body {
 
 header.page-header {
   #logo {
-    background: image-url('voyzes-logo-110x70.png') no-repeat 0 0;
+    background: asset-data-url('voyzes-logo-110x70.png') no-repeat 0 0;
   }
 
   .navbar-tag {
