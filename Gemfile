@@ -144,4 +144,3 @@ gem 'rails-i18n', '~> 4.0.0'
 gem 'ace-rails-ap'
 gem 'recaptcha', require: "recaptcha/rails"
 gem 'secure_headers'
-gem 'sprockets-image_compressor'
