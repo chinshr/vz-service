@@ -1,0 +1,28 @@
+nice: 20
+threads: 5
+verbose: false
+
+advpng:
+  level: 4
+svgo: false
+gifsicle:
+  interlace: false
+  level: 2
+jpegoptim:
+  allow_lossy: false
+  strip: all
+jpegrecompress:
+  allow_lossy: true
+  quality: 2
+jpegtran:
+  progressive: true
+optipng:
+  level: 5
+  strip: true
+pngcrush:
+  brute: true
+pngout: false
+pngquant:
+  allow_lossy: true
+  quality: !ruby/range 0..100
+  speed: 3
