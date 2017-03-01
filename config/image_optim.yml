@@ -24,5 +24,5 @@ pngcrush:
 pngout: false
 pngquant:
   allow_lossy: true
-  quality: !ruby/range 0..100
+  quality: !ruby/range 65..80
   speed: 3
