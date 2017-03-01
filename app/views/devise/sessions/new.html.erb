@@ -29,20 +29,26 @@
         :html => {:class => "form-signin panel"}}) do |f| %>
       <div class="panel-heading">
         <h1 class="logo"><a class="signup-brand" href="/">Login to VOYZ.ES</a></h1>
-        <p>Welcome back!</p>
+        <p>Sign in to your account</p>
       </div>
       <div class="panel-body">
         <div class="form-group">
           <%= f.label :email, "Email address", :class => "sr-only" %>
-          <%= f.email_field :email, :autofocus => "autofocus", :autocapitalize => "off", :autocomplete => "new-user-session", :autocorrect => "off", :spellcheck => false, :class => "form-control first", :placeholder => "Enter email address" %>
-        </div>
+          <div class="input-group">
+            <span class="input-group-addon input-group-email-addon"><i class="fa fa-user"></i></span>
+            <%= f.email_field :email, :autofocus => "autofocus", :autocapitalize => "off", :autocomplete => "new-user-session", :autocorrect => "off", :spellcheck => false, :class => "form-control first", :placeholder => "Email address" %>
+          </div><!-- .input-group -->
+        </div><!-- .form-group -->
         <div class="form-group">
           <%= f.label :password, "Password", :class => "sr-only" %>
-          <%= f.password_field :password, :class => "form-control last", :placeholder => "Enter password", autocomplete: "new-user-session" %>
-        </div>
+          <div class="input-group">
+            <span class="input-group-addon input-group-password-addon"><i class="fa fa-lock"></i></span>
+            <%= f.password_field :password, :class => "form-control last", :placeholder => "Password", autocomplete: "new-user-session" %>
+          </div><!-- .input-group -->
+        </div><!-- .form-group -->
 
         <% if devise_mapping.rememberable? -%>
-          <label class="checkbox"><%= f.check_box :remember_me %> <%= f.label :remember_me %></label>
+          <label class="checkbox sr-only"><%= f.check_box :remember_me, {checked: true} %> <%= f.label(:remember_me, :class => "sr-only") %></label><!-- .checkbox -->
         <% end -%>
       </div>
       <div class="panel-footer">

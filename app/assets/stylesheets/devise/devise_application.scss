@@ -8,8 +8,13 @@ body.devise, body.confirmations, body.payment-methods {
   }
 
   .input-group {
+    .input-group-addon {
+      background-color: #fff;
+    }
+
     .fa {
       min-width: 18px;
+      font-size: 16px;
     }
   }
 
@@ -90,6 +95,8 @@ body.devise, body.confirmations, body.payment-methods {
 
       input {
         font: inherit;
+        font-size: 15px;
+        height: 40px;
       }
     }
 
