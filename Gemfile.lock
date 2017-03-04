@@ -288,6 +288,10 @@ GEM
     heroku-api (0.4.2)
       excon (~> 0.45)
       multi_json (~> 1.8)
+    heroku_rails_deflate (1.0.3)
+      actionpack (>= 3.2.13)
+      activesupport (>= 3.2.13)
+      rack (>= 1.4.5)
     hitimes (1.2.3)
     htmlentities (4.3.4)
     http-cookie (1.0.2)
@@ -599,6 +603,7 @@ DEPENDENCIES
   gmaps4rails
   griddler!
   groupdate
+  heroku_rails_deflate
   humanize
   image_optim_pack
   image_optim_rails
