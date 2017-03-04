@@ -34,17 +34,13 @@
       <div class="panel-body">
         <div class="form-group">
           <%= f.label :email, "Email address", :class => "sr-only" %>
-          <div class="input-group">
-            <span class="input-group-addon input-group-email-addon"><i class="fa fa-user"></i></span>
-            <%= f.email_field :email, :autofocus => "autofocus", :autocapitalize => "off", :autocomplete => "new-user-session", :autocorrect => "off", :spellcheck => false, :class => "form-control first", :placeholder => "Email address" %>
-          </div><!-- .input-group -->
+          <span class="input-icon input-icon-email"><i class="fa fa-user"></i></span>
+          <%= f.email_field :email, :autofocus => "autofocus", :autocapitalize => "off", :autocomplete => "new-user-session", :autocorrect => "off", :spellcheck => false, :class => "form-control first form-control-with-input-icon", :placeholder => "Email address" %>
         </div><!-- .form-group -->
         <div class="form-group">
           <%= f.label :password, "Password", :class => "sr-only" %>
-          <div class="input-group">
-            <span class="input-group-addon input-group-password-addon"><i class="fa fa-lock"></i></span>
-            <%= f.password_field :password, :class => "form-control last", :placeholder => "Password", autocomplete: "new-user-session" %>
-          </div><!-- .input-group -->
+          <span class="input-icon input-icon-password"><i class="fa fa-lock"></i></span>
+          <%= f.password_field :password, :class => "form-control last form-control-with-input-icon", :placeholder => "Password", autocomplete: "new-user-session" %>
         </div><!-- .form-group -->
 
         <% if devise_mapping.rememberable? -%>
