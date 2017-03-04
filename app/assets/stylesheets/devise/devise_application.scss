@@ -260,6 +260,7 @@ body.devise, body.confirmations, body.payment-methods {
       &:active {
         border-color: $color-cyan-dark;
         background-color: $color-cyan-dark;
+        background-image: none;
       }
     }
 
