@@ -30,5 +30,10 @@ module Voyzes
     config.active_record.raise_in_transactional_callbacks = true
 
     config.middleware.use Rack::Deflater
+    initializer "app.hack" do |app|
+      # removes Rack::Deflator as added with heroku_rails_deflate.
+      # Reasoning, see http://www.oak.homeunix.org/~marcel/blog/2015/03/25/keep-alives-with-rails-on-heroku
+      # app.config.middleware.delete 'Rack::Deflater'
+    end
   end
 end
