@@ -24,8 +24,9 @@
       </div>
       <div class="panel-body">
         <div class="form-group">
-          <%= f.label :email, "Email address" %>
-          <%= f.email_field :email, :autofocus => "autofocus", :autocapitalize => "off", :autocomplete => "off", :autocorrect => "off", :spellcheck => false, :class => "form-control first last", :placeholder => "Enter email address" %>
+          <%= f.label :email, "Email address", :class => "sr-only" %>
+          <span class="input-icon input-icon-email"><i class="fa fa-user"></i></span>
+          <%= f.email_field :email, :autofocus => "autofocus", :autocapitalize => "off", :autocomplete => "off", :autocorrect => "off", :spellcheck => false, :class => "form-control first last form-control-with-input-icon", :placeholder => "Email address" %>
         </div>
       </div>
       <div class="panel-footer">
