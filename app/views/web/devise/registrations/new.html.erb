@@ -68,15 +68,13 @@
         <div class="alert alert-danger payola-payment-error"></div>
         <div class="form-group">
           <%= f.label :email, "Email address", :class => "sr-only" %>
-          <div class="input-group">
-            <span class="input-group-addon input-group-email-addon"><i class="fa fa-envelope"></i></span>
-            <%= f.email_field :email, :autofocus => "autofocus", :autocapitalize => "off", :autocomplete => "off", :autocorrect => "off", :spellcheck => false, :class => "form-control", :placeholder => "Enter email address", :validate => true, data: {"error-style": "inline", payola: 'email'} %>
-          </div><!-- .input-group -->
+          <span class="input-icon input-icon-email"><i class="fa fa-envelope"></i></span>
+          <%= f.email_field :email, :autofocus => "autofocus", :autocapitalize => "off", :autocomplete => "off", :autocorrect => "off", :spellcheck => false, :class => "form-control form-control-with-input-icon", :placeholder => "Enter email address", :validate => true, data: {"error-style": "inline", payola: 'email'} %>
         </div><!-- .form-group -->
         <% if requires_captcha? %>
         <div class="form-group form-group-captcha">
           <div class="input-group">
-            <%= recaptcha_tags size: 'compact', hl: I18n.locale_language %>
+            <%= recaptcha_tags size: 'xcompact', hl: I18n.locale_language %>
           </div><!-- .input-group -->
         </div><!-- .form-group -->
         <% end %>
