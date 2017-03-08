@@ -1,6 +1,6 @@
 <% if resource && !resource.errors.empty? %>
   <%
-    messages = resource.errors.full_messages.uniq.join(", ")
+    style            ||= :notify
     notifier_options ||= {
       customClass: "#{dom_controller_class} #{dom_controller_action_class}",
       offset: {
@@ -12,11 +12,26 @@
       className: 'error'
     }
   %>
-  $(".form-group-captcha").removeClass("has-error");
-  $(".form-group-captcha .help-block").remove();
+  $(".form-group-captcha")
+    .removeClass("has-error")
+    .remove(".help-block");
   <% if resource.errors[:captcha] %>
-    $(".form-group-captcha").addClass("has-error").append('<p class="help-block"><%= resource.errors[:captcha].join %></p>');
-  <% else %>
+    $(".form-group-captcha")
+      .addClass("has-error")
+      .append('<p class="help-block"><%= resource.errors[:captcha].join.humanize %></p>');
   <% end %>
-  $.notify('<%= messages %>', 'danger', <%= raw(notifier_options.to_json) %>);
+
+  <% if style == :alert %>
+    <%
+      messages = resource.errors.full_messages.uniq.map {|msg| content_tag(:li, msg)}.join
+      sentence = I18n.t("errors.messages.fill_all_required_fields")
+    %>
+    $(".alert")
+      .html("")
+      .append('<%= sentence.html_safe %>')
+      .append('<ul><%= messages.html_safe %></ul>')
+      .fadeIn();
+  <% else %>
+    $.notify('<%= resource.errors.full_messages.uniq.join(", ") %>', 'danger', <%= raw(notifier_options.to_json) %>);
+  <% end %>
 <% end %>

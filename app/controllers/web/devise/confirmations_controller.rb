@@ -73,7 +73,7 @@ class Web::Devise::ConfirmationsController < ::Devise::ConfirmationsController
   end
 
   def user_params
-    params.require(:user).permit(:password, :name, :username)
+    params.require(:user).permit(([:password, :password_confirmation] + User::SIGNUP_ATTRIBUTES).uniq)
   end
 
   private

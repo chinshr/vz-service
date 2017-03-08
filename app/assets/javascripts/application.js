@@ -23,6 +23,7 @@
 //= require lib/bootstrap
 //= require lib/rails.validations
 //= require lib/rails.validations.bootstrap
+//= require lib/rails.validations.custom_validators
 //= require lib/detect_timezone
 //= require lib/jquery.query
 //= require lib/imagesloaded
@@ -31,6 +32,7 @@
 //= require lib/jquery.fileupload
 //= require lib/jquery.creditCardValidator
 //= require lib/vanillaTextMask
+//= require lib/particles
 //= require underscore
 //= require backbone
 //= require payola

@@ -12,7 +12,7 @@
   }), t.load = function(t) {
     var e, n, o, i;
     e = 3e5, i = Math.ceil(new Date() / e) * e, o = document.createElement("script"),
-    o.type = "text/javascript", o.async = !0, o.crossorigin = "anonymous", o.src = "https://js.driftt.com/include/" + i + "/" + t + ".js",
+    o.type = "text/javascript", o.async = !0, o.defer = !0, o.crossorigin = "anonymous", o.src = "https://js.driftt.com/include/" + i + "/" + t + ".js",
     n = document.getElementsByTagName("script")[0], n.parentNode.insertBefore(o, n);
   });
 }();

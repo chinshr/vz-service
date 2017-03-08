@@ -38,7 +38,8 @@ module Web::ApplicationHelper
     ["First learn the meaning of what you say, and then speak.", "Epictetus"],
     ["We must accept finite disappointment, but never lose infinite hope.", "Martin Luther King Jr."],
     ["Our lives begin to end the day we become silent about things that matter.", "Martin Luther King Jr."],
-    ["If I cannot do great things, I can do small things in a great way.", "Martin Luther King Jr."]
+    ["If I cannot do great things, I can do small things in a great way.", "Martin Luther King Jr."],
+    ["The first casualty of War is Truth.", "Hiram Warren Johnson"]
   ]
 
   def markdown(text)
@@ -220,11 +221,43 @@ module Web::ApplicationHelper
     end
   end
 
-  def plan_split_features(plan)
-    re = /([\n\n]+)|([\r\n]+)/
-    features = plan.features.to_s.split(re).map {|e| e.gsub(re, "")}.reject(&:blank?)
+  def plan_split_features(plan_or_plan_id)
+    features = []
+    plan_id  = plan_or_plan_id.is_a?(Plan) ? plan_or_plan_id.stripe_id : plan_or_plan_id
+
+    if plan_features_from_translations?(plan_id)
+      features = plan_features_from_translations(plan_id)
+    elsif plan_or_plan_id.is_a?(Plan)
+      re = /([\n\n]+)|([\r\n]+)/
+      features = plan.features.to_s.split(re).map {|e| e.gsub(re, "")}.reject(&:blank?)
+    end
     features.map {|e| yield e} if block_given?
     features
+  end
+
+  def plan_features_from_translations?(plan_id)
+    !!I18n.t!("pricing.plan_features.#{plan_id}.feature_1")
+  rescue I18n::MissingTranslationData
+    false
+  end
+
+  def plan_features_from_translations(plan_id)
+    features, index = [], 1
+    while true
+      begin
+        features << I18n.t!("pricing.plan_features.#{plan_id}.feature_#{index}")
+        index += 1
+      rescue I18n::MissingTranslationData
+        break
+      end
+    end
+    features
+  end
+
+  def plan_features_as_sentence(plan)
+    features = plan_split_features(plan)
+    features = features.map {|f| f[0].downcase + f[1..-1]}
+    features.to_sentence
   end
 
   def month_collection_for_select
@@ -367,5 +400,9 @@ module Web::ApplicationHelper
 
   def sale_payment_method_description(sale)
     %(<i class="fa fa-credit-card fa-right-padding"></i>#{sale_payment_type(sale)} ending in #{sale.card_last4}).html_safe
+  end
+
+  def form_label_required(name)
+    "#{name}#{'<sup class="required" title="Required">*</sup>'}".html_safe
   end
 end

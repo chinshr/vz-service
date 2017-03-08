@@ -1,11 +1,10 @@
 <%
   use_card_expiration_select ||= false
+  display_card_form_label ||= false
 %>
 <% content_for :javascript_includes do %>
   <%= render 'web/shared/payment_method_card_header' %>
-
   <%= javascript_tag do %>
-
   $(function() {
     var cardNumberMask = [/\d/, /\d/, /\d/, /\d/, ' ', /\d/, /\d/, /\d/, /\d/, ' ', /\d/, /\d/, /\d/, /\d/, ' ', /\d/, /\d/, /\d/, /\d/, ' '];
     var cardNumberInput = document.querySelector('#card_number');
@@ -26,22 +25,21 @@
   <% end %>
 <% end %>
 <div class="form-group from-group-card-number clearfix">
-  <%= label_tag :card_number, "Card Number", :class => "sr-only" %>
-  <div class="input-group">
-    <span class="input-group-addon input-group-subscription-number-group-addon"><i class="fa fa-credit-card"></i></span>
-    <%= text_field_tag :card_number, nil, :name => nil, :type => "tel", :autofocus => "autofocus", :autocapitalize => "off", :autocomplete => "cc-number", :autocorrect => "off", :spellcheck => false, :class => "form-control first", :placeholder => "Card number", data: {stripe: "number"} %>
-  </div>
+  <%= label_tag :card_number, form_label_required("Card number"),
+    :class => "#{display_card_form_label ? '' : 'sr-only'}" %>
+  <span class="input-icon input-icon-card-number <%= display_card_form_label ? ' input-icon-with-label' : '' %>"><i class="fa fa-credit-card"></i></span>
+  <%= text_field_tag :card_number, nil, :name => nil, :type => "tel", :autofocus => "autofocus", :autocapitalize => "off", :autocomplete => "cc-number", :autocorrect => "off", :spellcheck => false, :class => "form-control first form-control-with-input-icon", :placeholder => "Card number", data: {stripe: "number"} %>
 </div><!-- .from-group-card-number -->
 <div class="form-group form-group-expiration-date-cvv clearfix">
-  <div class="col-md-3 form-horizontal left">
+  <div class="col-md-3 col-sm-3 form-horizontal form-input-card-exp-month left">
   <%= label_tag :card_exp_month, "Expiration Month", :class => "sr-only" %>
   <% if use_card_expiration_select %>
-    <%= select_month nil, {use_two_digit_numbers: true}, {:name => nil, :class => "form-control col-sm-2", data: { stripe: 'exp_month' } } %>
+    <%= select_month nil, {use_two_digit_numbers: true}, {:name => nil, :class => "form-control", data: { stripe: 'exp_month' } } %>
   <% else %>
     <%= text_field_tag :card_exp_month, nil, :name => nil, :type => "tel", :maxlength => 2, :autofocus => "autofocus", :autocapitalize => "off", :autocomplete => "cc-number", :autocorrect => "off", :spellcheck => false, :class => "form-control first", :placeholder => "MM", data: {stripe: "exp_month"} %>
   <% end %>
   </div>
-  <div class="col-md-4 form-horizontal left">
+  <div class="col-md-4 col-sm-4 form-horizontal form-input-card-exp-year left">
   <%= label_tag :card_exp_year, "Expiration Year", :class => "sr-only" %>
   <% if use_card_expiration_select %>
     <%= select_year nil, {start_year: Date.today.year, end_year: Date.today.year + 10}, {:name => nil, :class => "form-control col-sm-2", data: { stripe: 'exp_year'}} %>
@@ -49,7 +47,7 @@
     <%= text_field_tag :card_exp_year, nil, :name => nil, :type => "tel", :maxlength => 4, :autofocus => "autofocus", :autocapitalize => "off", :autocomplete => "cc-number", :autocorrect => "off", :spellcheck => false, :class => "form-control", :placeholder => "YYYY", data: {stripe: "exp_year"} %>
   <% end %>
   </div>
-  <div class="col-md-5 form-horizontal right">
+  <div class="col-md-5 col-sm-5 form-horizontal form-input-card-cvc right">
     <%= label_tag :card_cvc, "CVC", :class => "sr-only" %>
     <%= text_field_tag :card_cvc, nil, :name => nil, :type => "tel", :autocapitalize => "off", :autocomplete => "off", :autocorrect => "off", :spellcheck => false, :class => "form-control", :placeholder => "CVC", data: {stripe: "cvc"} %>
   </div>

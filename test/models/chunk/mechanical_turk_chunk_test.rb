@@ -168,33 +168,33 @@ class Chunk::MechanicalTurkChunkTest < ActiveSupport::TestCase
         chunk.reload.processing_status
     end
 
-    should "#process_hits" do
-      turkee_task1 = FactoryGirl.create(:turkee_task)
-      turkee_task2 = FactoryGirl.create(:turkee_task)
-      chunk0 = FactoryGirl.create(:chunk_pocketsphinx)
-      RTurk::Hit.stubs(:create).returns(CreateHit.new(1, "http"))
-      Chunk::MechanicalTurkChunk.create_hit(chunk0)
+    # should "#process_hits" do
+    #   turkee_task1 = FactoryGirl.create(:turkee_task)
+    #   turkee_task2 = FactoryGirl.create(:turkee_task)
+    #   chunk0 = FactoryGirl.create(:chunk_pocketsphinx)
+    #   RTurk::Hit.stubs(:create).returns(CreateHit.new(1, "http"))
+    #   Chunk::MechanicalTurkChunk.create_hit(chunk0)
 
-      Turkee::TurkeeTask.stubs(:unprocessed_hits).returns([])
-      Turkee::TurkeeTask.stubs(:map_imported_values).returns([Chunk::MechanicalTurkChunk,
-        {"chunk_mechanical_turk_chunk" => {"text" => "I like pickles",
-          "document_id" => chunk0.id, "position" => chunk0.position, "offset" => chunk0.offset,
-          "turkee_task_id" => chunk0.turkee_task_id}}])
+    #   Turkee::TurkeeTask.stubs(:unprocessed_hits).returns([])
+    #   Turkee::TurkeeTask.stubs(:map_imported_values).returns([Chunk::MechanicalTurkChunk,
+    #     {"chunk_mechanical_turk_chunk" => {"text" => "I like pickles",
+    #       "document_id" => chunk0.id, "position" => chunk0.position, "offset" => chunk0.offset,
+    #       "turkee_task_id" => chunk0.turkee_task_id}}])
 
-      assignment = Struct.new("Assignment", :id, :status, :worker_id) do
-        def reject!(msg); @reject = msg; end
-        def approve!(msg); @approve = msg; end
-      end.new("2", "Submitted", "8")
-      RTurk::Hit.any_instance.stubs(:assignments).returns([assignment])
+    #   assignment = Struct.new("Assignment", :id, :status, :worker_id) do
+    #     def reject!(msg); @reject = msg; end
+    #     def approve!(msg); @approve = msg; end
+    #   end.new("2", "Submitted", "8")
+    #   RTurk::Hit.any_instance.stubs(:assignments).returns([assignment])
 
-      assert_difference "Chunk::MechanicalTurkChunk.count", 1 do
-        Chunk::MechanicalTurkChunk.process_hits
-        mtc = Chunk::MechanicalTurkChunk.last
-        # assert_equal chunk0, mtc.document
-        # assert_equal chunk0.position, mtc.position
-        # assert_equal chunk0.offset, mtc.offset
-      end
-    end
+    #   assert_difference "Chunk::MechanicalTurkChunk.count", 1 do
+    #     Chunk::MechanicalTurkChunk.process_hits
+    #     mtc = Chunk::MechanicalTurkChunk.last
+    #     # assert_equal chunk0, mtc.document
+    #     # assert_equal chunk0.position, mtc.position
+    #     # assert_equal chunk0.offset, mtc.offset
+    #   end
+    # end
   end
 end
 

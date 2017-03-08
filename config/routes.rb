@@ -5,20 +5,32 @@ Voyzes::Application.routes.draw do
   devise_for :admin_users, ActiveAdmin::Devise.config
   ActiveAdmin.routes(self)
 
-  # user devise
-  devise_for :users, :controllers => {
-    :registrations => 'web/devise/registrations',
-    :confirmations => 'web/devise/confirmations'
-  },
-  :path_names => {
-    :sign_in => 'sign-in',
-    :sign_up => 'sign-up',
-    :sign_out => 'sign-out'
-  }
+  # users devise
+  devise_for :users,
+    :controllers => {
+      :registrations => 'web/devise/registrations',
+      :confirmations => 'web/devise/confirmations',
+      :passwords => 'web/devise/passwords',
+      :unlocks => 'web/devise/unlocks',
+      :sessions => 'web/devise/sessions'
+    },
+    :path_names => {
+      :sign_in => 'sign-in',
+      :sign_up => 'join',
+      :sign_out => 'sign-out'
+    },
+    :skip => [:registrations]
 
   devise_scope :user do
-    put "/users/confirmation" => "web/devise/confirmations#update", :as => :update_user_confirmation
+    put "/users/confirmation" => "web/devise/confirmations#update", as: :update_user_confirmation
     get '/dashboard' => 'web/account/dashboards#show', as: :user_root # creates user_root_path for signed_in_root_path
+    # manually adding routes that were skipped previously
+    get '/users/join' => 'web/devise/registrations#new', as: :new_user_registration
+    get '/users/cancel' => 'web/devise/registrations#cancel', as: :cancel_user_registration
+    post '/users' => 'web/devise/registrations#create', as: :user_registration
+    patch '/users(.:format)' => 'web/devise/registrations#update'
+    put '/users(.:format)' => 'web/devise/registrations#update'
+    delete '/users(.:format)' => 'web/devise/registrations#destroy'
   end
 
   # sidekiq

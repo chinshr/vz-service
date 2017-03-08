@@ -23,48 +23,60 @@
 
   <% end %>
 <% end %>
-
 <%= render "web/shared/devise_errors" %>
+<div class="container-fluid content-primary page-wrap gradient-primary">
+  <div class="confirmation-content">
+    <div class="tile form-tile animated fadeInUp">
+      <%= form_for(resource, {:as => resource_name, :url => confirmation_path(resource), validate: true, remote: true, method: :put,
+          html: {class: "form-signin panel animated fade-in-up", autocomplete: "off"}}) do |f| %>
+        <!-- prevent unwanted autocomplete in Chrome -->
+        <input style="display:none">
+        <input type="password" style="display:none">
+        <div class="panel-heading">
+          <h1 class="logo"><a class="signup-brand" href="/">Confirm your account with VOYZ.ES</a></h1>
+          <p>You're almost done...</p>
+        </div>
+        <div class="panel-body">
 
-<div class="container-fluid content-primary">
-  <div class="tile form-tile animated fadeInUp">
-    <%= form_for(resource, {:as => resource_name, :url => confirmation_path(resource), validate: true, remote: true, method: :put,
-        html: {class: "form-signin panel animated fade-in-up", autocomplete: "off"}}) do |f| %>
-      <div class="panel-heading">
-        <h1 class="logo"><a class="signup-brand" href="/">Confirm your account with VOYZ.ES</a></h1>
-        <p>You're almost done...</p>
-      </div>
-      <div class="panel-body">
-        <div class="form-group form-group-name">
-          <%= f.label :name, "Name", :class => "sr-only" %>
-          <div class="input-group">
-            <span class="input-group-addon input-group-email-addon"><i class="fa fa-user"></i></span>
-            <%= f.text_field :name, :class => "form-control name", :autofocus => "autofocus", :autocapitalize => "on", :autocomplete => "off", :autocorrect => "off", :spellcheck => false, :placeholder => "Your name, e.g. Joe Smith", :validate => true, :"data-error-style" => "inline" %>
-          </div><!-- .input-group -->
-        </div><!-- .form-group .from-group-name -->
+          <% if User::SIGNUP_ATTRIBUTES.include?(:name) && resource.name.blank? %>
+          <div class="form-group form-group-name">
+            <%= f.label :name, form_label_required("Full name"), :class => "xsr-only" %>
+            <%= f.text_field :name, :class => "form-control name", :autofocus => "autofocus", :autocapitalize => "on", :autocomplete => "off", :autocorrect => "off", :spellcheck => false, :placeholder => "Full name", :validate => true, :"data-error-style" => "inline" %>
+          </div><!-- .form-group .from-group-name -->
+          <% end %>
 
-        <div class="form-group form-group-username">
-          <%= f.label :username, "Username", :class => "sr-only" %>
-          <div class="input-group">
-            <span class="input-group-addon input-group-email-addon"><i class="fa fa-at"></i></span>
-            <%= f.text_field :username, :readonly => "", :class => "form-control", :autocomplete => "off", :placeholder => "Your username", :validate => true, :"data-error-style" => "inline" %>
-          </div><!-- .input-group -->
-        </div><!-- .form-group .from-group-username -->
+          <% if User::SIGNUP_ATTRIBUTES.include?(:first_name) && resource.first_name.blank? %>
+          <div class="form-group form-group-first-name">
+            <%= f.label :first_name, form_label_required("First name"), :class => "xsr-only" %>
+            <%= f.text_field :first_name, :class => "form-control first-name", :autofocus => "autofocus", :autocapitalize => "on", :autocomplete => "off", :autocorrect => "off", :spellcheck => false, :placeholder => "First name", :validate => true, :"data-error-style" => "inline" %>
+          </div><!-- .form-group .from-group-first-name -->
+          <% end %>
 
-        <div class="form-group form-group-password">
-          <%= f.label :password, "Password", :class => "sr-only" %>
-          <div class="input-group">
-            <span class="input-group-addon input-group-email-addon"><i class="fa fa-key"></i></span>
-            <%= f.password_field :password, :class => "form-control", :readonly => "", :autocomplete => "off", :placeholder => "Choose a password", :validate => false, :"data-error-style" => "inline" %>
-          </div><!-- .input-group -->
-        </div><!-- from-group-password -->
+          <% if User::SIGNUP_ATTRIBUTES.include?(:last_name) && resource.last_name.blank? %>
+          <div class="form-group form-group-last-name">
+            <%= f.label :last_name, form_label_required("Last name"), :class => "xsr-only" %>
+            <%= f.text_field :last_name, :class => "form-control last-name", :autofocus => "autofocus", :autocapitalize => "on", :autocomplete => "off", :autocorrect => "off", :spellcheck => false, :placeholder => "Last name", :validate => true, :"data-error-style" => "inline" %>
+          </div><!-- .form-group .from-group-last-name -->
+          <% end %>
 
-        <%= hidden_field_tag :password, "" %>
-        <%= hidden_field_tag :confirmation_token, @confirmation_token %>
-      </div>
-      <div class="panel-footer">
-        <button class="btn btn-lg btn-primary btn-block" type="submit" data-loading-text="Finishing...">Finish</button>
-      </div>
-    <% end %>
-  </div><!-- form-tile -->
-</div><!-- content-primary -->
+          <% if User::SIGNUP_ATTRIBUTES.include?(:username) && resource.username.blank? %>
+          <div class="form-group form-group-username">
+            <%= f.label :username, form_label_required("Username"), :class => "xsr-only" %>
+            <%= f.text_field :username, :class => "form-control", :autocomplete => "off", :placeholder => "Your username", :validate => true, :"data-error-style" => "inline" %>
+          </div><!-- .form-group .from-group-username -->
+          <% end %>
+
+          <div class="form-group form-group-password">
+            <%= f.label :password, form_label_required("Password"), :class => "xsr-only" %>
+            <%= f.password_field :password, :class => "form-control", :autocomplete => "off", :placeholder => "Choose a password", :validate => false, :"data-error-style" => "inline" %>
+          </div><!-- from-group-password -->
+
+          <%= hidden_field_tag :confirmation_token, @confirmation_token %>
+        </div>
+        <div class="panel-footer">
+          <button class="btn btn-lg btn-primary btn-block" type="submit" data-loading-text="Finishing...">Finish</button>
+        </div>
+      <% end %>
+    </div><!-- .form-tile -->
+  </div><!-- .confirmation-content -->
+</div><!-- .content-primary -->

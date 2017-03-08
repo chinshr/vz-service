@@ -1,26 +1,26 @@
-<%#  Resend confirmation %>
-<% page_title "Resend confirmation" %>
+<%# Forgot password? %>
+<%= page_title "Recover password"%>
 <%= render "web/shared/devise_errors" %>
 <% content_for :javascript_includes do %>
-
   <%= javascript_tag do %>
+
   $(function() {
-    $("form").find("button[type=submit]").button("reset");
     $("form").on('submit', function(e) {
       $(this).find("button[type=submit]").button("loading");
     });
   });
+
   <% end %>
 <% end %>
 
 <div class="container-fluid content-primary page-wrap gradient-primary">
-  <div class="confirmation-content">
+  <div class="password-content">
     <div class="tile form-tile animated fadeInUp">
-      <%= form_for(resource, :as => resource_name, :url => confirmation_path(resource_name),
-          :html => {:method => :post, :class => "form-signup  panel animated fade-in-up"}) do |f| %>
+      <%= form_for(resource, :as => resource_name, :url => password_path(resource_name),
+        :html => {:method => :post, :class => "form-signup  panel animated fade-in-up"}) do |f| %>
         <div class="panel-heading">
-          <h1 class="logo"><a class="signup-brand" href="/">Resend confirmation email.</a></h1>
-          <p>Enter your email address to resend confirmation instructions</p>
+          <h1 class="logo"><a class="signup-brand" href="/">Forgot your password?</a></h1>
+          <p>Enter your email address below and we'll send you a link to reset your password.</p>
         </div>
         <div class="panel-body">
           <div class="form-group">
@@ -30,15 +30,15 @@
           </div>
         </div>
         <div class="panel-footer">
-          <button class="btn btn-lg btn-primary btn-block" type="submit" data-loading-text="Resending confirmation...">Resend Confirmation</button>
+          <button class="btn btn-lg btn-primary btn-block" type="submit" data-loading-text="Recovering password...">Recover Password</button>
         </div>
       <% end %>
-    </div><!-- form-tile -->
+    </div><!-- .tile .form-tile -->
 
     <div class="text-small text-center text-light text-translucent">
       If you don't receive any instruction email from us, <br />try to unblock VOYZ.ES in your email spam settings.
-    </div>
+    </div><!-- .text-small -->
 
     <%= render "web/devise/links" %>
-  </div><!-- .confirmation-content -->
-</div><!-- content-primary -->
+  </div><!-- .password-content -->
+</div><!-- .content-primary -->

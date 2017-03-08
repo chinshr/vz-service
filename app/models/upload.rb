@@ -68,11 +68,6 @@ class Upload < ActiveRecord::Base
       ObjectSpace.each_object(Class).select { |klass| klass < self }
     end
 
-    def class_name_from_content_type_for(file_type)
-      upload_class = descendants.find {|uc| uc.respond_to?(:accepted_file_type?) && uc.send(:accepted_file_type?, file_type)}
-      upload_class.name if upload_class
-    end
-
     # Type casts to the class specified in :type parameter
     #
     # E.g.

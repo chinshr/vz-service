@@ -3,8 +3,31 @@
 body.devise, body.confirmations, body.payment-methods {
   background-color: $color-white;
 
-  .alert:empty {
-    display: none;
+  .alert {
+    ul {
+      margin: 0 0 30px 0;
+      padding-left: 30px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+
+    &:empty {
+      display: none;
+    }
+  }
+
+  .has-error {
+    .help-block,
+    .control-label,
+    .radio,
+    .checkbox,
+    .radio-inline,
+    .checkbox-inline {
+      color: #d64242;
+      font-size: 14px;
+    }
   }
 
   .form-group {
@@ -50,7 +73,17 @@ body.devise, body.confirmations, body.payment-methods {
       background-image: -webkit-linear-gradient(bottom,rgba(212,212,212,0) 0,#d4d4d4 30%,#d4d4d4 70%,rgba(212,212,212,0) 100%);
       background-image: linear-gradient(to top,rgba(212,212,212,0) 0,#d4d4d4 30%,#d4d4d4 70%,rgba(212,212,212,0) 100%);
     }
+
+    &.input-icon-with-label {
+    margin-top: 3px !important;
+    }
   } /* .input-icon */
+
+  sup.required {
+    color: #d64242;
+    font-size: 95%;
+    top: -2px;
+  }
 
   input:-webkit-autofill {
     box-shadow: inset 0 1px 2px rgba(203,203,210,0.4), inset 0 0 10px 1000px #fffedb;
@@ -72,8 +105,8 @@ body.devise, body.confirmations, body.payment-methods {
     background-image: none;
     border: 1px solid #cbcbd2;
     border-radius: 4px;
-    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
-    box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
+    // -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
+    // box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
     -webkit-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
     -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
     transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
@@ -91,18 +124,45 @@ body.devise, body.confirmations, body.payment-methods {
     padding-left: 50px;
   }
 
+  .form-input-card-exp-month,
+  .form-input-card-exp-year {
+    @media only screen and (min-width: 0px) and (max-width: 768px) {
+      padding-right: 0;
+      padding-bottom: 15px;
+    }
+  }
+
+  .form-input-card-cvc {
+  }
+
   .subscription-plan-name,
   .subscription-plan-price,
   .subscription-plan-interval {
     font-weight: 600;
   }
 
-  .content-primary {
-    padding: 60px 10px 0 10px;
+  .gradient-primary {
+    width: 100%;
+    background-size: cover;
     background: -webkit-linear-gradient(281deg, #3f6169, #55dcfc);
     background: linear-gradient(169deg, #3f6169, #55dcfc);
     background-color: #3f6169;
-    width: 100%;
+    // background: -webkit-linear-gradient(169deg, #54828c, #76b7c6);
+    // background: linear-gradient(169deg, #54828c, #76b7c6);
+    // background-color: #54828c;
+  }
+
+  .page-wrap {
+    min-height: 100%;
+    margin-bottom: -170px;
+  }
+
+  .content-primary {
+    padding: 60px 10px 0 10px;
+    // background: -webkit-linear-gradient(281deg, #3f6169, #55dcfc);
+    // background: linear-gradient(169deg, #3f6169, #55dcfc);
+    // background-color: #3f6169;
+    // width: 100%;
 
     .login-quote {
       margin: 10px 0 25px;
@@ -211,6 +271,10 @@ body.devise, body.confirmations, body.payment-methods {
             text-indent: -3000px;
             overflow: hidden;
             text-decoration: none;
+            @media only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 2/1), only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min-device-pixel-ratio: 2) {
+              background: image-url('voyzes-logo-dark@2x.png') no-repeat !important;
+              background-size: 108px 20px !important;
+            }
           }
         }
       } /* .panel-heading */
@@ -322,44 +386,75 @@ body.devise, body.confirmations, body.payment-methods {
   footer.nav-footer {
     display: block;
     text-align: center;
-    margin: 60px 0;
+    margin: auto;
+    width: 100%;
+    max-width: 430px;
+    height: 170px;
+    padding: 25px 0;
+    // hairline above
+    background: -webkit-linear-gradient(90deg,rgba(255,255,255,0) 0,rgba(255,255,255,0.2) 50%,rgba(255,255,255,0) 100%);
+    background: linear-gradient(90deg,rgba(255,255,255,0) 0,rgba(255,255,255,0.2) 50%,rgba(255,255,255,0) 100%);
+    background-size: 100% 1px;
+    background-repeat: no-repeat;
 
-    h5 {
-      font-size: 14px;
-      width: 87px;
-      height: 15px;
-      color: #322f31;
-      text-align: left;
-      margin: 0 auto 10px;
-      border: 0;
+    a {
+      display: block;
+      overflow: hidden;
+      color: rgba(255,255,255,0.4);
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      font-size: 12px;
 
-      a {
-        display: block;
-        background: image-url('voyzes-logo-gray-small.png') no-repeat;
-        text-indent: -3000px;
+      span.footer-logo {
+        display: inline-block;
+        width: 70px;
+        height: 35px;
+        text-align: center;
+        margin: 0 3px -7px;
+        background: image-url('voyzes-logo-110x70.png') no-repeat;
         overflow: hidden;
-        text-decoration: none;
-        width: 87px;
-        height: 15px;
-      }
+
+        @media only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 2/1), only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min-device-pixel-ratio: 2) {
+          background-size: 70px auto;
+          background-image: image-url('voyzes-logo-110x70@2x.png');
+        }
+
+        &:before {
+          content: "";
+          display: block;
+          width: 0;
+          height: 100%;
+        }
+      } /* .footer-logo */
     }
 
-    ul {
-      list-style-type: none;
+    ul.links {
+      list-style: none;
       padding: 0;
-      margin: 0;
+      margin-top: 40px;
       text-align: center;
 
       li {
-        display: inline;
+        display: inline-block;
         margin: 0 5px;
-        font-size: 14px;
-        line-height: 1.4em;
+      }
 
-        a {
-          font-weight: 700;
-          color: $color-orange;
-        }
+      li, a {
+        font-size: 14px;
+        font-weight: bold;
+        color: rgba(255,255,255,0.6);
+        letter-spacing: 0;
+        text-decoration: none;
+        text-transform: none;
+      }
+
+      a {
+        display: inline;
+      }
+
+      a:hover {
+        color: rgba(255,255,255,0.8);
       }
     }
 
@@ -368,36 +463,269 @@ body.devise, body.confirmations, body.payment-methods {
 
 }
 
-/* for high resolution display */
-@media only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 2/1), only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min-device-pixel-ratio: 2) {
-
-  body.devise, body.confirmations {
-    .content-primary {
-      .panel {
-        .panel-heading {
-          .logo {
-            a.signup-brand {
-              background: image-url('voyzes-logo-dark@2x.png') no-repeat !important;
-              background-size: 108px 20px !important;
-            }
-          }
-        }
-      }
-    }
+body.sessions {
+  .signin-content {
+    margin-bottom: 250px;
   }
 
-  footer.nav-footer {
-    h5 {
-      a {
-        background: image-url('voyzes-logo-gray-small@2x.png') no-repeat 0 0 !important;
-        background-size: 80px 15px !important;
-      }
-    }
-  }
-}
-
-body.sessions.new {
   .content-primary {
     padding-top: 30px;
   }
 }
+
+body.passwords {
+  .password-content {
+    margin-bottom: 250px;
+  }
+}
+
+body.confirmations {
+  .confirmation-content {
+    margin-bottom: 250px;
+  }
+}
+
+body.registrations.new {
+  .container-fluid {
+    padding: 0 20px;
+  }
+
+  #particles {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1;
+  }
+
+  .signup-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    margin-bottom: 225px;
+  }
+
+  .header-main {
+    padding: 90px 0 35px;
+    position: relative;
+    color: white;
+
+    a.header-logo {
+      width: 150px;
+      height: 70px;
+      display: block;
+      position: absolute;
+      left: 45px;
+      top: 20px;
+      background: no-repeat 0 0;
+      background-image: asset-url('voyzes-logo-110x70.png');
+      background-size: 110px 70px;
+
+      @media only screen and (min-width: 0px) and (max-width: 767px) {
+        top: 10px;
+      }
+    }
+
+
+    @media only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 2/1), only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min-device-pixel-ratio: 2) {
+      a.header-logo {
+        background-image: asset-url('voyzes-logo-110x70@2x.png');
+      }
+    }
+
+    h2 {
+      max-width: 450px;
+      margin: 0 auto;
+      text-align: center;
+      color: white;
+      font-size: 30px;
+      font-weight: 400;
+      line-height: 1.4em;
+      text-transform: uppercase;
+    }
+
+    .header-login {
+      position: absolute;
+      right: 45px;
+      top: 20px;
+      margin: 10px 0;
+
+      @media only screen and (min-width: 0px) and (max-width: 767px) {
+        top: 15px;
+      }
+
+      span {
+        font-size: 16px;
+        font-weight: 400;
+
+        @media only screen and (min-width: 0px) and (max-width: 767px) {
+          display: none;
+        }
+      }
+
+      .button-sign-in, a.button-sign-in {
+        top: -2px;
+        font-size: 16px;
+        font-weight: 600;
+        vertical-align: middle;
+        border-color: rgba(255,255,255,0.4);
+        color: rgba(255,255,255,0.8);
+      }
+    } /* .header-login */
+  } /* .header-main */
+
+  .signup-panel {
+    padding: 45px;
+    margin-bottom: 25px;
+    background: white;
+    display: block;
+    z-index: 10;
+
+    &:after {
+      content: "";
+      display: table;
+      clear: both;
+    }
+
+    .page-body {
+      width: calc(100% - 360px);
+      padding-right: 30px;
+      float: left;
+
+      @media only screen and (min-width: 0px) and (max-width: 767px) {
+        width: 100%;
+      }
+    } /* .page-body */
+
+    .benefits {
+      h3 {
+        font-size: 24px;
+        color: $color-cyan-dark;
+        line-height: 1.4em;
+        font-weight: 400;
+      }
+
+      p:not(.full-width) {
+        max-width: 600px;
+      }
+
+      p {
+        margin: 0;
+        margin-bottom: 30px;
+        font-size: 14px;
+      }
+    } /* .benefits */
+
+    .page-sidebar {
+      float: left;
+      width: 360px;
+
+      @media only screen and (min-width: 0px) and (max-width: 767px) {
+        width: 100%;
+      }
+
+      .signup :last-child {
+          margin-bottom: 0;
+      }
+
+      sup.required {
+        color: #d64242;
+        font-size: 95%;
+        top: -2px;
+      }
+
+      input, select {
+        font: inherit;
+        font-size: 14px;
+        height: 42px;
+      }
+
+      .btn-primary {
+        font-size: 18px;
+        padding-top: 8px;
+        padding-bottom: 8px;
+
+        @media only screen and (min-width: 0px) and (max-width: 468px) {
+          font-size: 16px;
+        }
+      }
+
+      .alert {
+        margin: 10px auto;
+        border: 1px solid #d3d3d3;
+        border-radius: 6px;
+        background: #f9f9fb;
+        padding: 10px 15px;
+      }
+
+      .alert.alert-error {
+        color: white;
+        background: #d64242;
+        border-color: #d12d2d;
+      }
+
+      .form-signup {
+        padding: 30px;
+        background: #f9f9fb;
+        border: 1px solid #e4e4e7;
+        border-radius: 5px;
+      }
+
+      .form-horizontal {
+        padding-left: 0;
+      }
+
+      .form-horizontal.right {
+        padding-right: 0;
+      }
+
+    } /* .page-sidebar */
+
+  } /* .signup-content */
+
+  // http://stackoverflow.com/questions/27713505/recaptcha-api-v2-styling
+  .recaptcha-wrap {
+    position: relative;
+    height: 76px;
+    padding: 1px 0 0 1px;
+  }
+
+  .recaptcha-wrap:after {
+    content:'';
+    display: block;
+    height: 2px;
+    width: 100%;
+    top: -1px;
+    left: 0px;
+    position: absolute;
+  }
+
+  // Hides left border
+  .recaptcha-wrap:before {
+    content:'';
+    display: block;
+    height: 100%;
+    width: 0px;
+    top: 0;
+    position: absolute;
+    z-index: 1;
+  }
+
+  .g-recaptcha {
+    position: relative;
+    width: 100%;
+    background: #f9f9f9;
+    overflow: hidden;
+  }
+
+  .g-recaptcha > * {
+    float: left;
+    right: 0;
+    margin: -1px -3px -8px; /* remove borders */
+  }
+
+  .rc-anchor {
+    border: 0 !important;
+    box-shadow: none !important;
+  }
+} /* body.registrations.new */

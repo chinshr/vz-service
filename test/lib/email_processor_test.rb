@@ -12,6 +12,13 @@ class EmailProcessorTest < ActiveSupport::TestCase
     @email.stubs(:from).returns(nil)
   end
 
+  teardown do
+    User.destroy_all
+    Upload.destroy_all
+    Message.destroy_all
+    ActionMailer::Base.deliveries.clear
+  end
+
   context "process_source_urls" do
     setup do
       @params = {
@@ -126,8 +133,7 @@ class EmailProcessorTest < ActiveSupport::TestCase
       }
     end
 
-    unless ENV["CI_CODESHIP"]
-      # does not run on CodeShip CI due to mime type detection
+    context "exclude Codeship" do
       should "process message with attachments, signup user and send notifications" do
         assert_difference "User.count", 1 do
           assert_difference "Message.count", 1 do
@@ -146,8 +152,9 @@ class EmailProcessorTest < ActiveSupport::TestCase
 
       should "humanize audio file as upload title if no subject given" do
         @params.delete(:subject)
+        p = nil
         normalized_params(@params).each do |p|
-          Griddler::Email.new(p).process
+          p = Griddler::Email.new(p).process
         end
         assert_equal "Sample Recording 1", Upload::MediaUpload.last.title
       end
@@ -272,8 +279,7 @@ class EmailProcessorTest < ActiveSupport::TestCase
           end
         end
       end
-
-    end
+    end unless ENV["CI_CODESHIP"]
   end
 
   context "#extract_locale" do

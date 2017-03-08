@@ -3,6 +3,8 @@ class User < ActiveRecord::Base
   include Model::User::Roles
   include Model::Uid
 
+  SIGNUP_ATTRIBUTES = [:email, :name, :username]
+
   serialize :properties, User::Properties
 
   attr_accessor :force_generate_access_token
@@ -36,9 +38,15 @@ class User < ActiveRecord::Base
   friendly_id :username, use: [:slugged, :history]
 
   validates :email, presence: true, email_format: true, uniqueness: true
-  validates :username, presence: true, uniqueness: true, length: { minimum: 2, maximum: 40 }, username_format: true, if: :confirmed_or_confirmation_validation?
-  validates :name, presence: true, length: { minimum: 1, maximum: 125 }, if: :confirmed_or_confirmation_validation?
-  validates :description, length: { maximum: 240 }
+  validates :first_name, presence: true, length: { minimum: 2, maximum: 125 },
+    name_format: true, if: :should_validate_first_name?
+  validates :last_name, presence: true, length: { minimum: 2, maximum: 125 },
+    name_format: true, if: :should_validate_last_name?
+  validates :name, presence: true, length: { minimum: 2, maximum: 250 },
+    name_format: true, if: :should_validate_name?
+  validates :username, presence: true, uniqueness: true, length: { minimum: 2, maximum: 40 },
+    username_format: true, if: :should_validate_username?
+  validates :description, length: { maximum: 240 }, if: :should_validate_description?
 
   scope :confirmed, -> { where("users.confirmed_at IS NOT NULL") }
   scope :unconfirmed, -> { where("users.confirmed_at IS NULL") }
@@ -101,12 +109,17 @@ class User < ActiveRecord::Base
     confirmed? || confirmation_validation?
   end
 
+  def upstream_validation=(value)
+    @upstream_validation = !!value
+  end
+
+  def upstream_validation?
+    !!@upstream_validation
+  end
+
   def name
-    if [first_name, last_name].all?(&:blank?)
-      self[:name]
-    else
-      [self[:first_name], self[:last_name]].reject(&:blank?).join(" ")
-    end
+    joined_list = [self[:first_name], self[:last_name]].reject(&:blank?)
+    joined_list.empty? ? self[:name] : joined_list.join(" ")
   end
 
   def name_and_username
@@ -119,7 +132,13 @@ class User < ActiveRecord::Base
 
   def initials
     self[:initials] || begin
-      [first_name.try(:[], 0), last_name.try(:[], 0)].reject(&:blank?).join.upcase
+      result = ""
+      if first_name.present? || last_name.present?
+        result = [first_name.try(:[], 0), last_name.try(:[], 0)].reject(&:blank?).join.upcase
+      elsif self.name.present?
+        result = name.split.map {|n| n.try(:[], 0)}.reject(&:blank?).join.upcase
+      end
+      result
     end
   end
 
@@ -200,6 +219,30 @@ class User < ActiveRecord::Base
   end
 
   def send_admin_mail
-    User::AdminMailer.new_user_waiting_for_approval(self).deliver_later unless approved?
+    if approved?
+      User::AdminMailer.new_user_signup(self).deliver_later
+    else
+      User::AdminMailer.new_user_waiting_for_approval(self).deliver_later
+    end
+  end
+
+  def should_validate_first_name?
+    SIGNUP_ATTRIBUTES.include?(:first_name) && (upstream_validation? || confirmation_validation? || confirmed?)
+  end
+
+  def should_validate_last_name?
+    SIGNUP_ATTRIBUTES.include?(:last_name) && (upstream_validation? || confirmation_validation? || confirmed?)
+  end
+
+  def should_validate_name?
+    SIGNUP_ATTRIBUTES.include?(:name) && (upstream_validation? || confirmation_validation? || confirmed?)
+  end
+
+  def should_validate_username?
+    SIGNUP_ATTRIBUTES.include?(:username) && (upstream_validation? || confirmation_validation? || confirmed?)
+  end
+
+  def should_validate_description?
+    confirmation_validation? || confirmed?
   end
 end

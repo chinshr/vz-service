@@ -4,6 +4,6 @@ $(".form-group-captcha .help-block").remove();
   <% flash[:notice] = "Sign up successful. Check your email inbox for confirmation instructions." %>
   document.location = "<%= new_user_session_url %>";
 <% else %>
-  <%= render "web/shared/devise_errors" %>
+  <%= render "web/shared/devise_errors", style: :alert %>
   $("form").find("button[type=submit]").button("reset");
 <% end %>

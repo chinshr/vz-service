@@ -2,11 +2,10 @@
 
   $(function() {
     var cardNumberEl = $('#card_number');
-
     if (cardNumberEl.size() !== 0) {
       cardNumberEl.validateCreditCard(function(result) {
-        var cardClass = "fa-credit-card-alt",
-          defaultCardClass = "fa-credit-card-alt";
+        var cardClass = "fa-credit-card",
+          defaultCardClass = "fa-credit-card";
         if (result.card_type && result.card_type.name) {
           switch(result.card_type.name) {
             case 'visa':
@@ -30,7 +29,7 @@
               cardClass = defaultCardClass;
           }
         }
-        $(".input-group-subscription-number-group-addon i")
+        $(".input-icon-card-number i")
           .removeClass()
           .addClass("fa " + cardClass);
       });

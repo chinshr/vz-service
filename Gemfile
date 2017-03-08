@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
-ruby '2.2.3'
+ruby '2.3.3'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.2.7.1'
@@ -71,8 +71,6 @@ end
 gem 'modernizr-rails'
 gem 'aws-sdk-v1'
 gem 'backbone-on-rails'
-# gem 'backbone-support'
-# gem 'backbone-validation-rails'
 gem 'eco'
 gem 'ejs'
 gem 'rabl'
