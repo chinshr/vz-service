@@ -147,3 +147,5 @@ gem 'recaptcha', require: "recaptcha/rails"
 gem 'secure_headers'
 gem 'image_optim_rails'
 gem 'image_optim_pack'
+gem 'loadcss-rails', '~> 1.2.0'
+gem 'critical-path-css-rails', '~> 0.4.0'
