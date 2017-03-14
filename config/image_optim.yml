@@ -9,11 +9,11 @@ gifsicle:
   interlace: false
   level: 2
 jpegoptim:
-  allow_lossy: false
+  allow_lossy: true
   strip: all
 jpegrecompress:
   allow_lossy: true
-  quality: 2
+  quality: 1
 jpegtran:
   progressive: true
 optipng:
