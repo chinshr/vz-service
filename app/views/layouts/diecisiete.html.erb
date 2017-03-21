@@ -15,9 +15,15 @@
 
     <link rel="dns-prefetch" href="//fonts.googleapis.com">
 
-    <!-- Bootstrap core CSS -->
+    <% if Rails.env.development? %>
     <%= stylesheet_link_tag "diecisiete" %>
-
+    <% else %>
+    <style><%= CriticalPathCss.fetch(request.path) %></style>
+    <link rel="preload" href="<%= stylesheet_path('diecisiete') %>" as="style" onload="this.rel='stylesheet'">
+    <noscript>
+      <link rel="stylesheet" href="<%= stylesheet_path('diecisiete') %>">
+    </noscript>
+    <% end %>
     <!-- Add modernizr -->
     <%= javascript_include_tag :modernizr %>
 
@@ -237,6 +243,9 @@
       </footer>
     </div><!-- #content -->
     <%= javascript_include_tag "diecisiete" %>
+    <%= javascript_tag do %>
+      loadCSS("<%= stylesheet_path('diecisiete') %>");
+    <% end unless Rails.env.development? %>
     <%= yield :javascript_includes %>
     <%= javascript_include_tag "web/drift.js" %>
     <div id="fb-root"></div>

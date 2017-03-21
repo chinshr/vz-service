@@ -14,6 +14,9 @@
 //= require jquery_ujs
 //= require jquery-ui/core
 //= require jquery-ui/widget
+//= require loadCSS
+//= require cssrelpreload
+//= require onloadCSS
 //= require lib/bootstrap
 //= require lib/rails.validations
 //= require lib/rails.validations.bootstrap
