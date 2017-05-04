@@ -255,8 +255,8 @@ FactoryGirl.define do
     sequence(:username) {|n| "user#{n}"}
     password "password"
     password_confirmation "password"
-    sequence(:first_name) {|n| "first-name-#{n}"}
-    sequence(:last_name) {|n| "last-name-#{n}"}
+    sequence(:first_name) {|n| "First name #{(0...8).map { (65 + rand(26)).chr }.join}"}
+    sequence(:last_name) {|n| "Last name #{(0...8).map { (65 + rand(26)).chr }.join}"}
     confirmed_at Time.zone.now - 1.day
     approved true
     current_sign_in_ip "95.63.14.59"

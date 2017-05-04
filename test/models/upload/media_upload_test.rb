@@ -282,10 +282,6 @@ class Upload::MediaUploadTest < ActiveSupport::TestCase
 
   context "audio upload" do
     context "class" do
-      should "#class_name_from_content_type_for" do
-        assert_equal "Upload::MediaUpload", Upload.class_name_from_content_type_for("audio/mp3")
-      end
-
       should "#accepted_file_type?" do
         assert_equal true, Upload::MediaUpload.accepted_file_type?("audio/x-m4a")
         assert_equal false, Upload::MediaUpload.accepted_file_type?("foo/bar")
@@ -366,10 +362,6 @@ class Upload::MediaUploadTest < ActiveSupport::TestCase
 
   context "video upload" do
     context "class" do
-      should "#class_name_from_content_type_for" do
-        assert_equal "Upload::MediaUpload", Upload.class_name_from_content_type_for("video/mp4")
-      end
-
       should "#accepted_file_type?" do
         assert_equal true, Upload::MediaUpload.accepted_file_type?("video/mp4")
         assert_equal false, Upload::MediaUpload.accepted_file_type?("foo/bar")

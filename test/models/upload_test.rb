@@ -1,22 +1,6 @@
 require 'test_helper'
 
 class UploadTest < ActiveSupport::TestCase
-  context "class" do
-    context "#class_name_from_content_type_for" do
-      should "unknown type" do
-        assert_nil Upload.class_name_from_content_type_for("foo/bar")
-      end
-
-      should "Upload::MediaUpload from audio" do
-        assert_equal "Upload::MediaUpload", Upload.class_name_from_content_type_for("audio/mpeg")
-      end
-
-      should "Upload::MediaUpload from video" do
-        assert_equal "Upload::MediaUpload", Upload.class_name_from_content_type_for("video/mpeg")
-      end
-    end
-  end
-
   context "associations" do
     should belong_to(:user)
     should have_one(:ingest)

@@ -1,0 +1,109 @@
+<%# Sign up %>
+<% page_title "Sign up" %>
+<% content_for :javascript_includes do %>
+  <% if @plan.present? %>
+    <%= render 'payola/transactions/stripe_header' %>
+  <% end %>
+  <%= javascript_tag do %>
+
+  window.ClientSideValidations.validators.remote['registration'] = function(element, options) {
+    if ($.ajax({
+      url: '/validators/registration',
+      data: { id: element.val() },
+      // async *must* be false
+      async: false
+    }).status == 404) {
+      return options.message;
+    }
+  }
+
+  $(function() {
+    $("form input[name='user[time_zone]']").val(jstz.determine_timezone().name());
+    $("form").find("button[type=submit]").button("reset");
+    <% if @plan.blank? %>
+    $("form").on('submit', function(e) {
+      $(this).find("button[type=submit]").button("loading");
+    });
+    <% end %>
+  });
+
+  <% end %>
+<% end %>
+
+<%
+  use_card_expiration_select = true
+  form_html_options = if @plan && resource.plan
+    {
+      role: 'form',
+      class: 'form-signup panel animated fade-in-up payola-onestep-subscription-form',
+      'data-payola-base-path': payola_path,
+      'data-payola-plan-type': resource.plan.plan_class,
+      'data-payola-plan-id': resource.plan.uid
+    }
+  else
+    {
+      role: 'form',
+      class: 'form-signup panel animated fade-in-up'
+    }
+  end
+%>
+<%= render "web/shared/devise_errors" %>
+<div class="container-fluid content-primary">
+  <div class="tile form-tile animated fadeInUp">
+    <%= form_for(resource, {as: resource_name, url: user_registration_path(resource), validate: true, remote: true, html: form_html_options}) do |f| %>
+      <div class="panel-heading">
+        <% if @plan %>
+        <h1 class="logo">
+          <a class="signup-brand" href="/">Sign up for your <%= plan_name(@plan) %> plan here. All we need is your valid email address and credit card to get you started.</a>
+        </h1>
+        <p>Sign up for your <span class="subscription-plan-name"><%= plan_name(@plan) %></span> plan at <span class="subscription-plan-price"><%= plan_price(@plan) %></span><span class="subscription-plan-interval">/<%= plan_interval(@plan) %></span>. You need a valid email address and credit card to get started.</p>
+        <% else %>
+        <h1 class="logo">
+          <a class="signup-brand" href="/">Sign up for your Free plan here. All we need is your email address.</a>
+        </h1>
+        <p>Sign up for your <span class="subscription-plan-name">Free</span> plan. Your email address is enough to get you started.</p>
+        <% end %>
+      </div><!-- .panel-heading -->
+      <div class="panel-body">
+        <div class="alert alert-danger payola-payment-error"></div>
+        <div class="form-group">
+          <%= f.label :email, "Email address", :class => "sr-only" %>
+          <span class="input-icon input-icon-email"><i class="fa fa-envelope"></i></span>
+          <%= f.email_field :email, :autofocus => "autofocus", :autocapitalize => "off", :autocomplete => "off", :autocorrect => "off", :spellcheck => false, :class => "form-control form-control-with-input-icon", :placeholder => "Enter email address", :validate => true, data: {"error-style": "inline", payola: 'email'} %>
+        </div><!-- .form-group -->
+        <% if requires_captcha? %>
+        <div class="form-group form-group-captcha">
+          <div class="input-group">
+            <%= recaptcha_tags size: 'xcompact', hl: I18n.locale_language %>
+          </div><!-- .input-group -->
+        </div><!-- .form-group -->
+        <% end %>
+        <div class="form-group form-group-time-zone sr-only">
+          <%= f.label :time_zone, :class => "sr-only" %>
+          <%= f.hidden_field :time_zone %>
+        </div><!-- .form-group-time-zone -->
+        <% if @plan %>
+          <%= render "web/account/payment_methods/card_fields", use_card_expiration_select: use_card_expiration_select %>
+        <% end %>
+      </div><!-- .panel-body -->
+      <div class="panel-footer">
+        <% if @plan %>
+        <button class="btn btn-lg btn-primary btn-block" type="submit" data-loading-text="Signing up...">Continue</button>
+        <% else %>
+        <button class="btn btn-lg btn-primary btn-block" type="submit" data-loading-text="Signing up...">Continue</button>
+        <% end %>
+      </div><!-- .panel-footer -->
+    <% end %>
+  </div><!-- form-tile -->
+
+  <% if @plan %>
+  <div class="text-small text-center text-light text-translucent">
+    By clicking Continue, you agree to the <br />VOYZ.ES <a href="/terms/terms-of-service">Terms of Service</a> and <a href="/terms/privacy-policy">Privacy Policy</a>.
+  </div>
+  <% else %>
+  <div class="text-small text-center text-light text-translucent">
+    By clicking Continue, you agree to the <br />VOYZ.ES <a href="/terms/terms-of-service">Terms of Service</a> and <a href="/terms/privacy-policy">Privacy Policy</a>.
+  </div>
+  <% end %>
+  <%= render "devise/shared/links" %>
+</div><!-- content-primary -->

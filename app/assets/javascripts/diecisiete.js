@@ -140,7 +140,7 @@ $(function() {
 
   // particles
   ScrollTop.load({top: 500}, function() {
-    particlesJS.load('particles', 'assets/config/benefits-particles.json', function() {
+    particlesJS.load('particles', '/assets/config/particles.json', function() {
     });
   });
 

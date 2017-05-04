@@ -1,0 +1,19 @@
+/* Custom validators */
+
+ClientSideValidations.validators.local["email_format"] = function(element, options) {
+  if (!<%= Regexp.new(EmailFormatValidator::REGEXPJS).inspect %>.test(element.val())) {
+    return options.message;
+  }
+}
+
+ClientSideValidations.validators.local["username_format"] = function(element, options) {
+  if (!<%= Regexp.new(UsernameFormatValidator::REGEXPJS).inspect %>.test(element.val())) {
+    return options.message;
+  }
+}
+
+ClientSideValidations.validators.local["name_format"] = function(element, options) {
+  if (!<%= Regexp.new(NameFormatValidator::REGEXPJS).inspect %>.test(element.val())) {
+    return options.message;
+  }
+}

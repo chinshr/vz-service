@@ -1,6 +1,6 @@
 @import 'web/setup';
 
-$color-feature-band-color: #c7c4c4;
+$color-feature-band-color: #a7a4a4;
 $color-feature-band-bright-bg-color: #fff;
 $color-feature-band-dark-bg-color: #f4f4f4;
 $price-bg-color: #fff;
@@ -540,9 +540,9 @@ body.pricing, body.subscriptions, body.billings {
           font-size: 15px;
           text-align: center;
           display: block;
-          padding: 16px 0;
+          padding: 10px 10px;
           text-decoration: none;
-          font-weight: 400;
+          font-weight: 300;
         }
 
         p {

@@ -16,16 +16,139 @@ class UserTest < ActiveSupport::TestCase
   end
 
   context "validations" do
-    subject { User.new(:confirmed_at => Time.zone.now) }
+    context "upstream signup" do
+      subject { User.new(:upstream_validation => true) }
 
-    should "validate_presence_of :first_name, :last_name, :username if confirmed?" do
-      user = User.new(:confirmed_at => Time.zone.now)
-      assert_equal true, user.confirmed?
-      assert_equal false, user.valid?
-      assert_equal true, user.errors[:name].include?("can't be blank")
-      assert_equal true, user.errors[:username].include?("invalid format")
-      assert_equal true, user.errors[:username].include?("is too short (minimum is 2 characters)")
-    end
+      should "be upstream_validation" do
+        assert_equal false, subject.confirmed?
+        assert_equal false, subject.confirmation_validation?
+        assert_equal false, subject.confirmed_or_confirmation_validation?
+        assert_equal true, subject.upstream_validation?
+        assert_equal false, subject.valid?
+      end
+
+      context "#name" do
+        should "#should_validate_name?" do
+          assert_equal true, subject.send(:should_validate_name?)
+        end
+
+        should validate_presence_of :name
+        should validate_length_of(:name).is_at_least(2).is_at_most(250)
+
+        context "validates format" do
+          subject { FactoryGirl.build(:user, upstream_validation: true, first_name: nil, last_name: nil) }
+
+          should "accepts alphabetical and space characters" do
+            subject.name = "Juergen Fesslmeier"
+            assert_equal true, subject.valid?
+
+            subject.name = "Juergen1 Fesslmeier2"
+            assert_equal false, subject.valid?
+
+            subject.name = "Juergen\njavascript:alert(0)"
+            assert_equal false, subject.valid?
+          end
+        end
+
+      end if User::SIGNUP_ATTRIBUTES.include?(:name)
+
+      context "#first_name" do
+        should "#should_validate_first_name?" do
+          assert_equal true, subject.send(:should_validate_first_name?)
+        end
+
+        should validate_presence_of :first_name
+        should validate_length_of(:first_name).is_at_least(2).is_at_most(125)
+      end if User::SIGNUP_ATTRIBUTES.include?(:first_name)
+
+      context "#last_name" do
+        should "#should_validate_last_name?" do
+          assert_equal true, subject.send(:should_validate_last_name?)
+        end
+
+        should validate_presence_of :last_name
+        should validate_length_of(:last_name).is_at_least(2).is_at_most(125)
+      end if User::SIGNUP_ATTRIBUTES.include?(:last_name)
+
+      context "#username" do
+        should "#should_validate_username?" do
+          assert_equal true, subject.send(:should_validate_username?)
+        end
+
+        should validate_presence_of :username
+        should validate_length_of(:username).is_at_least(2).is_at_most(40)
+
+        context "validates format" do
+          subject { FactoryGirl.build(:user, upstream_validation: true) }
+
+          should "validate format" do
+            subject.username = "jf_01"
+            assert_equal true, subject.valid?
+
+            subject.username = "yo-1"
+            assert_equal false, subject.valid?
+
+            subject.username = "jf\njavascript:alert(0)"
+            assert_equal false, subject.valid?
+          end
+        end
+      end if User::SIGNUP_ATTRIBUTES.include?(:username)
+    end  # upstream validations
+
+    context "confirmed user" do
+      subject { User.new(:confirmed_at => Time.zone.now) }
+
+      should "not be upstream_validation" do
+        assert_equal true, subject.confirmed?
+        assert_equal false, subject.confirmation_validation?
+        assert_equal true, subject.confirmed_or_confirmation_validation?
+        assert_equal false, subject.upstream_validation?
+      end
+
+      should "not be valid" do
+        assert_equal true, subject.confirmed?
+        assert_equal true, subject.confirmed_or_confirmation_validation?
+        assert_equal false, subject.valid?
+      end
+
+      context "#name" do
+        should "#should_validate_name?" do
+          assert_equal true, subject.send(:should_validate_name?)
+        end
+
+        should validate_presence_of :name
+        should validate_length_of(:name).is_at_least(2).is_at_most(250)
+      end if User::SIGNUP_ATTRIBUTES.include?(:name)
+
+      context "#first_name" do
+        should "#should_validate_first_name?" do
+          assert_equal true, subject.send(:should_validate_first_name?)
+        end
+
+        should validate_presence_of :first_name
+        should validate_length_of(:first_name).is_at_least(2).is_at_most(125)
+      end if User::SIGNUP_ATTRIBUTES.include?(:first_name)
+
+      context "#last_name" do
+        should "#should_validate_last_name?" do
+          assert_equal true, subject.send(:should_validate_last_name?)
+        end
+
+        should validate_presence_of :last_name
+        should validate_length_of(:last_name).is_at_least(2).is_at_most(125)
+      end if User::SIGNUP_ATTRIBUTES.include?(:last_name)
+
+      context "#username" do
+        should "#should_validate_username?" do
+          assert_equal true, subject.send(:should_validate_username?)
+        end
+
+        should validate_presence_of :username
+        should validate_length_of(:username).is_at_least(2).is_at_most(40)
+      end if User::SIGNUP_ATTRIBUTES.include?(:username)
+
+      should validate_length_of(:description).is_at_most(240)
+    end # confirmed user
 
     should "not downcase empty email address" do
       user = User.new(:email => nil)
@@ -34,16 +157,10 @@ class UserTest < ActiveSupport::TestCase
     end
 
     should "downcase email address" do
-      user = User.new(:email => "TeST@ExAMplE.cOM")
+      user = User.new(:email => "TeST@ExAMplE.cOM", first_name: "Te", last_name: "St", username: "test")
       assert_equal true, user.valid?
       assert_equal "test@example.com", user.email
     end
-
-    should validate_presence_of :username
-    should validate_length_of(:username).is_at_least(2).is_at_most(40)
-    should validate_presence_of :name
-    should validate_length_of(:name).is_at_least(1).is_at_most(125)
-    should validate_length_of(:description).is_at_most(240)
   end
 
   should "geocode and reverse geocode" do
@@ -83,15 +200,31 @@ class UserTest < ActiveSupport::TestCase
     assert_equal "@jf", user.name_and_username
   end
 
-  should "have initials" do
-    user = User.new(first_name: "jürgen", last_name: "feßlmeier")
-    assert_equal "JF", user.initials
+  context "initials" do
+    should "generate from first_name and last_name" do
+      user = User.new(first_name: "jürgen", last_name: "feßlmeier")
+      assert_equal "JF", user.initials
 
-    user = User.new(first_name: "jürgen")
-    assert_equal "J", user.initials
+      user = User.new(first_name: "jürgen")
+      assert_equal "J", user.initials
 
-    user = User.new
-    assert_equal "", user.initials
+      user = User.new
+      assert_equal "", user.initials
+    end
+
+    should "generate from name" do
+      user = User.new(name: "jürgen fesslmeier")
+      assert_equal "JF", user.initials
+
+      user = User.new(name: "jürgen")
+      assert_equal "J", user.initials
+
+      user = User.new(name: "jürgenfesslmeier")
+      assert_equal "J", user.initials
+
+      user = User.new
+      assert_equal "", user.initials
+    end
   end
 
   should "have css_rgb" do
@@ -231,9 +364,17 @@ class UserTest < ActiveSupport::TestCase
     end
   end
 
-  should "deliver admin mail" do
-    assert_enqueued_with(job: ActionMailer::DeliveryJob) do
-      FactoryGirl.create(:user, :unapproved)
+  context "admin mailer" do
+    should "delivers 'new user signed up'" do
+      assert_enqueued_with(job: ActionMailer::DeliveryJob) do
+        FactoryGirl.create(:user, :approved)
+      end
+    end
+
+    should "delivers 'needs approval'" do
+      assert_enqueued_with(job: ActionMailer::DeliveryJob) do
+        FactoryGirl.create(:user, :unapproved)
+      end
     end
   end
 end

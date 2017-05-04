@@ -26,6 +26,10 @@ en:
       errors:
         verification_failed: 'verification failed'
 
+  errors:
+    messages:
+      fill_all_required_fields: "Please fill in all required fields:"
+
   devise:
     registrations:
       user:
@@ -43,6 +47,25 @@ en:
     plan_highlight:
       popular: "Popular"
       coming_soon: "Soon"
+    plan_features:
+      free:
+        feature_1: "Unlimited public media documents"
+        feature_2: "45 minutes of automatic transcription per month"
+        feature_3: "Standard quality transcripts"
+      personal_month:
+        feature_1: "150 minutes of ASR transcription per month"
+        feature_2: "Standard quality transcripts"
+        feature_3: "Private and public media storage"
+      professional_month:
+        feature_1: "10 hours ASR transcription per month"
+        feature_2: "High quality transcripts"
+        feature_3: "Private and public storage"
+      team_month:
+        feature_1: "45 hours ASR transcription per month"
+        feature_2: "High quality transcripts"
+        feature_3: "Private and public storage"
+        feature_4: "3 users per team, $7 per additional user (up to 5 users)"
+        feature_5: "Team access to the private storage"
 
   lib:
     model:
@@ -114,9 +137,15 @@ en:
           attributes:
             email:
               register_email: "has not registered"
-              email_format: "invalid format"
+              email_format: "invalid email format"
             username:
-              username_format: "invalid format"
+              username_format: "invalid format (alphanumerical characters only)"
+            name:
+              name_format: "invalid format (alphabetical characters only)"
+            first_name:
+              name_format: "invalid format (alphabetical characters only)"
+            last_name:
+              name_format: "invalid format (alphabetical characters only)"
         registration:
           attributes:
             email:

@@ -5,19 +5,17 @@ class Web::Devise::RegistrationsController < Devise::RegistrationsController
   respond_to :html, :js
 
   before_action :find_plan, only: [:new, :create]
-  before_action :cancel_subscription, only: [:destroy]
   before_action :check_captcha, only: [:create], if: :requires_captcha?
 
   def new
-    build_resource({})
+    build_resource({upstream_validation: true})
     resource.plan = @plan if @plan.present?
     yield resource if block_given?
     respond_with self.resource
   end
 
   def create
-    build_resource(sign_up_params) unless resource
-
+    build_resource(signup_params) unless resource
     resource.save
     yield resource if block_given?
     if resource.persisted?
@@ -49,10 +47,23 @@ class Web::Devise::RegistrationsController < Devise::RegistrationsController
     end
   end
 
+  # DELETE /resource
+  def destroy
+    cancel_subscription if find_subscription
+    resource.destroy
+    Devise.sign_out_all_scopes ? sign_out : sign_out(resource_name)
+    set_flash_message! :notice, :destroyed
+    yield resource if block_given?
+    respond_with_navigational(resource){ redirect_to after_sign_out_path_for(resource_name) }
+  end
+
   protected
 
-  def sign_up_params
-    params.require(:user).permit(:email, :time_zone, :plan_id)
+  def signup_params
+    params.require(:user).permit(([:email, :time_zone, :plan_id] + User::SIGNUP_ATTRIBUTES).uniq).tap do |whitelisted|
+      whitelisted[:approved]            = true
+      whitelisted[:upstream_validation] = true
+    end
   end
 
   private
@@ -63,7 +74,7 @@ class Web::Devise::RegistrationsController < Devise::RegistrationsController
   helper_method :requires_captcha?
 
   def check_captcha
-    build_resource(sign_up_params) unless self.resource.present?
+    build_resource(signup_params) unless self.resource.present?
     unless verify_recaptcha(model: resource, attribute: :captcha)
       respond_with_navigational(resource) { render :new }
     end

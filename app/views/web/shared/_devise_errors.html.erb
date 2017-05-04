@@ -1,37 +1,50 @@
 <% if resource && !resource.errors.empty? %>
   <%
     type     ||= :javascript
-    messages = resource.errors.full_messages.uniq.join(", ")
+    style    ||= :notify
   %>
   <% if type == :javascript %>
-    <%
-      notifier_options ||= {
-        customClass: "#{dom_controller_class} #{dom_controller_action_class}",
-        offset: {
-          from: "top",
-          amount: 10
-        },
-        align: "right",
-        delay: 5000,
-      }
-    %>
-
-    <%= content_for :javascript_includes do %>
-      <%= javascript_tag do %>
-
-        $(function() {
-          $.notify('<%= messages %>', 'info', <%= raw(notifier_options.to_json) %>);
-        });
-
+    <% if style == :alert %>
+      <%
+        messages = resource.errors.full_messages.map {|msg| content_tag(:li, msg)}.join
+        sentence = I18n.t("errors.messages.fill_all_required_fields")
+      %>
+      <%= content_for :javascript_includes do %>
+        <%= javascript_tag do %>
+          $(function() {
+            $(".alert")
+              .html("")
+              .append('<%= sentence.html_safe %>')
+              .append('<ul><%= messages.html_safe %></ul>')
+              .fadeIn();
+          });
+        <% end %>
+      <% end %>
+    <% else %>
+      <%
+        messages = resource.errors.full_messages.uniq.join(", ")
+        notifier_options ||= {
+          customClass: "#{dom_controller_class} #{dom_controller_action_class}",
+          offset: {
+            from: "top",
+            amount: 10
+          },
+          align: "right",
+          delay: 5000,
+        }
+      %>
+      <%= content_for :javascript_includes do %>
+        <%= javascript_tag do %>
+          $(function() {
+            $.notify('<%= messages %>', 'info', <%= raw(notifier_options.to_json) %>);
+          });
+        <% end %>
       <% end %>
     <% end %>
-
   <% elsif type == :html %>
     <%
       messages = resource.errors.full_messages.map {|msg| content_tag(:li, msg)}.join
-      sentence = I18n.t("errors.messages.not_saved",
-        :count    => resource.errors.count,
-        :resource => resource.class.model_name.human.downcase)
+      sentence = I18n.t("errors.messages.fill_all_required_fields")
     %>
 
     <% content_for :header do %>
@@ -40,9 +53,7 @@
         <div class="alert alert-danger">
           <button type="button" class="close" data-dismiss="alert">×</button>
           <h2><%= sentence.html_safe %></h2>
-          <ul>
-          <%= messages.html_safe %>
-          </ul>
+          <ul><%= messages.html_safe %></ul>
         </div>
       </div>
     </div>

@@ -255,6 +255,9 @@ Devise.setup do |config|
   # so you need to do it manually. For the users scope, it would be:
   # config.omniauth_path_prefix = '/my_engine/users/auth'
 
+  # Parent mailer
   config.parent_mailer = "ApplicationMailer"
 
+  # Send a notification email when the user's password is changed
+  config.send_password_change_notification = true
 end

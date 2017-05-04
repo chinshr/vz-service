@@ -57,7 +57,7 @@
 
 <p><b>Note:</b> This action cannot be undone.</p>
 <div class="form-group action">
-  <%= button_to "Delete Account", "url", :data => {confirm: "Are you sure?" }, :class => "btn btn-primary btn-danger", :method => :delete %>
+  <%= button_to "Delete Account", "/users", :data => {confirm: "Are you sure?" }, :class => "btn btn-primary btn-danger", :method => :delete %>
 </div>
 
 <p>Do you want to talk to someone before you go? <%= mail_to("support@voyz.es", "Contact us", subject: "Help with account cancellation")%>, we would love to hear your thoughts.</p>

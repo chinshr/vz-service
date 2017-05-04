@@ -23,13 +23,12 @@ class EmailProcessor
 
   def process_email
     if has_processable_content?
-      @user    = find_or_initialize_user_from_email_sender
-      @message = build_message
+      self.user = find_or_initialize_user_from_email_sender
+      self.message = build_message
 
       # process
       process_attachments if has_attachments?
       process_source_urls if has_source_urls?
-
       # post-process
       if message && message.attachments.length > 0 && message.valid?
         message.save
@@ -47,9 +46,6 @@ class EmailProcessor
     else
       Rails.logger.warn "EmailProcessor: Received email from #{email.from}, but without processable sources."
     end
-  # rescue Exception => ex
-  #   log_exception(ex)
-  ensure
   end
 
   def process_source_urls
@@ -67,9 +63,9 @@ class EmailProcessor
   def process_attachments
     email.attachments.each do |attached_file|
       content_type = mime_type(attached_file.tempfile.path) || attached_file.content_type
-      if upload_class_name = Upload.class_name_from_content_type_for(content_type)
+      if Upload::MediaUpload.accepted_media_file_type?(content_type)
         key    = Upload.generate_object_name
-        upload = with message.attachments.build(:type => upload_class_name) do |upload|
+        upload = with message.attachments.build(type: "Upload::MediaUpload") do |upload|
           upload.user        = user
           upload.title       = if email.subject.blank?
             Upload::MediaUpload::humanize_path(attached_file.original_filename)
