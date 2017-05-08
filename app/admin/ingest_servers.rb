@@ -45,10 +45,20 @@ ActiveAdmin.register Ingest::Server do
       links = ""
       links += link_to I18n.t('active_admin.view'), resource_path(resource), :class => "member_link view_link"
       (resource.aasm(:default).events(permitted: true).map(&:name) - []).each do |event|
-        links += link_to event.to_s.humanize, switch_admin_ingest_worker_path(resource, params.merge(:event => event)),
+        links += link_to event.to_s.humanize, switch_admin_ingest_server_path(resource, params.merge(:event => event)),
           :class => "member_link view_link button", :confirm => "Really want to #{event.to_s.humanize.downcase}?"
       end
       links.html_safe
     end
+  end
+
+  member_action :switch do
+    resource = Ingest::Server.find(params[:id])
+    resource.send(:"#{params[:event]}!")
+    params.delete(:controller)
+    params.delete(:action)
+    params.delete(:event)
+    params.delete(:id)
+    redirect_to admin_ingest_servers_path(params)
   end
 end

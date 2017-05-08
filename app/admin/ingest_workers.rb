@@ -41,7 +41,7 @@ ActiveAdmin.register Ingest::Worker do
       links = ""
       links += link_to I18n.t('active_admin.view'), resource_path(resource), :class => "member_link view_link"
       resource.aasm(:default).events(permitted: true).map(&:name).each do |event|
-        links += link_to event.to_s.humanize, switch_admin_ingest_path(resource, params.merge(:event => event)),
+        links += link_to event.to_s.humanize, switch_admin_ingest_worker_path(resource, params.merge(:event => event)),
           :class => "member_link view_link button", :confirm => "Really want to #{event.to_s.humanize.downcase}?"
       end
       links.html_safe
@@ -55,7 +55,7 @@ ActiveAdmin.register Ingest::Worker do
     params.delete(:action)
     params.delete(:event)
     params.delete(:id)
-    redirect_to admin_ingest_worers_path(params)
+    redirect_to admin_ingest_workers_path(params)
   end
 
 end
