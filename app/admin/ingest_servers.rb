@@ -30,12 +30,14 @@ ActiveAdmin.register Ingest::Server do
     column :type do |resource|
       link_to(resource.type, resource_path(resource))
     end
-    column :name
     column :state do |resource|
       resource_state_status_tag(resource)
     end
     column :instance_id
     column :instance_type
+    column :workers do |resource|
+      resource.workers.count
+    end
     column :max_workers
     column :enabled_at
     column :disabled_at
