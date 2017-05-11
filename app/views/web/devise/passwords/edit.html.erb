@@ -1,31 +1,30 @@
-<%#  Change password %>
+<%= page_title "Change password"%>
 <%= render "web/shared/devise_errors" %>
-
-<div class="container-fluid content-primary">
-  <div class="tile form-tile animated fadeInUp">
-    <%= form_for(resource, :as => resource_name, :url => password_path(resource_name), 
-      :html => {:method => :put, :class => "form-signup panel animated fade-in-up"}) do |f| %>
-      <div class="panel-heading">
-        <h1 class="logo"><a class="signup-brand" href="/">Forgot your password?</a></h1>
-        <p>You can now savely change your password.</p>
-      </div>
-      <div class="panel-body">
-        <div class="form-group">
-          <%= f.label :password, "New Password" %>
-          <%= f.password_field :password, :class => "form-control first", :placeholder => "Password", :autocomplete => "off" %>
+<div class="container-fluid content-primary page-wrap gradient-primary">
+  <div class="password-content">
+    <div class="tile form-tile animated fadeInUp">
+      <%= form_for(resource, :as => resource_name, :url => password_path(resource_name),:html => {:method => :put, :class => "form-signup panel animated fade-in-up"}) do |f| %>
+        <div class="panel-heading">
+          <h1 class="logo"><a class="signup-brand" href="/">Forgot your password?</a></h1>
+          <p>You can now savely change your password.</p>
         </div>
+        <div class="panel-body">
+          <div class="form-group">
+            <%= f.label :password, "New Password" %>
+            <%= f.password_field :password, :class => "form-control first", :placeholder => "Password", :autocomplete => "off" %>
+          </div>
 
-        <div class="form-group">
-          <%= f.label :password_confirmation, "Confirm New Password" %>
-          <%= f.password_field :password_confirmation, :class => "form-control last", :placeholder => "Password Confirmation", :autocomplete => "off" %>
+          <div class="form-group">
+            <%= f.label :password_confirmation, "Confirm New Password" %>
+            <%= f.password_field :password_confirmation, :class => "form-control last", :placeholder => "Password Confirmation", :autocomplete => "off" %>
+          </div>
+          <%= f.hidden_field :reset_password_token %>
         </div>
-        <%= f.hidden_field :reset_password_token %>
-      </div>
-      <div class="panel-footer">
-        <button class="btn btn-lg btn-primary btn-block" type="submit">Change Password</button>
-      </div>
-    <% end %>
-  </div><!-- form-tile -->
-
-  <%= render "web/devise/links" %>
-</div><!-- content-primary -->
+        <div class="panel-footer">
+          <button class="btn btn-lg btn-primary btn-block" type="submit">Change Password</button>
+        </div>
+      <% end %>
+    </div><!-- .form-tile -->
+    <%= render "web/devise/links" %>
+  </div><!-- .password-content -->
+</div><!-- .content-primary -->
