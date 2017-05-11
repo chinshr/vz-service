@@ -24,6 +24,8 @@ class Ingest < ActiveRecord::Base
     finished: STATE_FINISHED,  restarting: STATE_RESTARTING
   }
 
+  serialize :metadata, Ingest::Metadata
+
   delegate :track, to: :document, allow_nil: true  # document's master track
   delegate :track=, to: :document, allow_nil: true # dito
 

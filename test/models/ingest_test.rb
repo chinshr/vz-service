@@ -545,4 +545,26 @@ class IngestTest < ActiveSupport::TestCase
     assert_equal true, media_ingest.send(:has_upload?)
     assert_equal false, Ingest::ImageIngest.new.send(:has_upload?)
   end
+
+  context "#metadata" do
+    setup { @ingest = FactoryGirl.create(:media_ingest_as_audio) }
+
+    should "traverse" do
+      assert_not_nil @ingest.metadata
+      assert_equal "Ingest::Metadata", @ingest.metadata.class.name
+      assert_equal "Ingest::Metadata::Config", @ingest.metadata.config.class.name
+      assert_equal "Ingest::Metadata::Config::Transcription", @ingest.metadata.config.transcription.class.name
+      assert_nil @ingest.metadata.config.transcription.engine
+      assert_nil @ingest.metadata.config.transcription.quality
+    end
+
+    should "set" do
+      @ingest.metadata.config.transcription.engine = "test-engine"
+      @ingest.metadata.config.transcription.quality = "high"
+      assert_equal true, @ingest.save
+      @ingest.reload
+      assert_equal "test-engine", @ingest.metadata.config.transcription.engine
+      assert_equal "high", @ingest.metadata.config.transcription.quality
+    end
+  end
 end

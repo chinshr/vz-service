@@ -101,8 +101,8 @@ class UploadTest < ActiveSupport::TestCase
     end
 
     should "delegate :metadata=" do
-      @upload.metadata = {"target" => {"key" => "value"}}
-      assert_equal({"target" => {"key" => "value"}}, @upload.metadata)
+      @upload.metadata.target = {"key" => "value"}
+      assert_equal({"key" => "value"}, @upload.metadata.target)
     end
 
     should delegate :events, to: :ingest

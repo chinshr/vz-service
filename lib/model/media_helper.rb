@@ -97,12 +97,9 @@ module Model::MediaHelper
 
     def set_media_attributes_from_target
       if has_source_url? && !has_s3_source_url? && target.valid? && target.resolves?
-        self.source_url = target.url
-        self.file_type  = target.content_type if self.class.valid_media_content_type?(target.content_type)
-        # set 'target' in metadata
-        target_hash = {}
-        target_hash['target'] = target.metadata unless target.metadata.blank?
-        self.metadata = metadata.merge(target_hash)
+        self.source_url      = target.url
+        self.file_type       = target.content_type if self.class.valid_media_content_type?(target.content_type)
+        self.metadata.target = target.metadata unless target.metadata.blank?
       end
     end
 
