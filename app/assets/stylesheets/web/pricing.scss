@@ -1,6 +1,6 @@
 @import 'web/setup';
 
-$color-feature-band-color: #a7a4a4;
+$color-feature-band-color: #516070;
 $color-feature-band-bright-bg-color: #fff;
 $color-feature-band-dark-bg-color: #f4f4f4;
 $price-bg-color: #fff;
@@ -150,7 +150,7 @@ body.pricing, body.subscriptions, body.billings {
     p.price-alt-lead {
       -webkit-font-smoothing: antialiased;
       font-size: 28px;
-      font-weight: 300;
+      font-weight: 400;
       color: #888;
       text-align: center;
     }
@@ -169,7 +169,7 @@ body.pricing, body.subscriptions, body.billings {
       color: #767676;
       text-align: center;
       font-size: 20px;
-      font-weight: 300;
+      font-weight: 400;
     }
 
     p.price-small-text {
@@ -542,7 +542,6 @@ body.pricing, body.subscriptions, body.billings {
           display: block;
           padding: 10px 10px;
           text-decoration: none;
-          font-weight: 300;
         }
 
         p {
