@@ -1,4 +1,4 @@
-class ::Ingest::Worker < ActiveRecord::Base
+class ::Ingest::Worker < ApplicationRecord
   include AASM
   include Model::AASM::Support
   include Model::Filter

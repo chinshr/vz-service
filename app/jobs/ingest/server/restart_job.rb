@@ -1,4 +1,4 @@
-class Ingest::Server::RestartJob < ActiveJob::Base
+class Ingest::Server::RestartJob < ApplicationJob
   include Job::Helper
   queue_as :default
 

@@ -1,4 +1,4 @@
-class Api::ClientAccess < ActiveRecord::Base
+class Api::ClientAccess < ApplicationRecord
   self.table_name = "api_client_accesses"
   include Model::Uid
   include AASM

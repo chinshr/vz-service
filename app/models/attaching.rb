@@ -1,4 +1,4 @@
-class Attaching < ActiveRecord::Base
+class Attaching < ApplicationRecord
   belongs_to :message
   belongs_to :upload
 end

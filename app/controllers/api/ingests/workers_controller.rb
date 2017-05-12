@@ -65,13 +65,13 @@ class Api::Ingests::WorkersController < Api::ApplicationController
 
   def create_params
     params.require(:worker).permit(policy(:"ingest/worker").permitted_attributes(action_name)).merge(ingest: @ingest).tap do |whitelisted|
-      whitelisted[:messages] = params[:worker][:messages] if params[:worker][:messages]
+      whitelisted[:messages] = params[:worker][:messages].as_json if params[:worker][:messages]
     end
   end
 
   def update_params
     params.require(:worker).permit(policy(:"ingest/worker").permitted_attributes(action_name)).tap do |whitelisted|
-      whitelisted[:messages] = params[:worker][:messages] if params[:worker][:messages]
+      whitelisted[:messages] = params[:worker][:messages].as_json if params[:worker][:messages]
     end
   end
 

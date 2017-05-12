@@ -1,4 +1,4 @@
-class Document::CleanSegmentsJob < ActiveJob::Base
+class Document::CleanSegmentsJob < ApplicationJob
   queue_as :default
 
   def perform(document_id)

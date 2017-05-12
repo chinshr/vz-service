@@ -1,6 +1,6 @@
 class Web::Account::PaymentMethodsController < Web::Account::ApplicationController
-  before_filter :find_plan, only: [:new]
-  before_filter :find_subscription, only: [:update]
+  before_action :find_plan, only: [:new]
+  before_action :find_subscription, only: [:update]
 
   # [GET] /account/billing/payment_method/new(.:format)
   def new

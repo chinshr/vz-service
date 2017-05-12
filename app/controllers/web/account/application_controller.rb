@@ -2,9 +2,9 @@ class Web::Account::ApplicationController < Web::ApplicationController
   include Payola::StatusBehavior
   include PaymentBehavior
 
-  before_filter :authenticate_user!
-  before_filter :redirect_to_dashboard
-  after_filter :flash_to_headers
+  before_action :authenticate_user!
+  before_action :redirect_to_dashboard
+  after_action :flash_to_headers
 
   def index
     redirect_to web_dashboard_path, status: :moved_permanently

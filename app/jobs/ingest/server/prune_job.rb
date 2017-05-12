@@ -1,4 +1,4 @@
-class Ingest::Server::PruneJob < ActiveJob::Base
+class Ingest::Server::PruneJob < ApplicationJob
   queue_as :default
 
   def perform

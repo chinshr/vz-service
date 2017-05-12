@@ -1,4 +1,4 @@
-class Image < ActiveRecord::Base
+class Image < ApplicationRecord
   include Model::Filter
   include Model::Uid
   include Model::CDN

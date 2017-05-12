@@ -7,7 +7,7 @@ class Web::ProfilesControllerTest < ActionController::TestCase
     end
 
     should "be found" do
-      get :show, :id => "@#{@user.username}"
+      get :show, params: {:id => "@#{@user.username}"}
       assert_response :success
     end
 

@@ -1,4 +1,4 @@
-class Ingest::Server::StopJob < ActiveJob::Base
+class Ingest::Server::StopJob < ApplicationJob
   include Job::Helper
   queue_as :default
 

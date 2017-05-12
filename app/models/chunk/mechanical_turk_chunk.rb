@@ -103,8 +103,7 @@ class Chunk::MechanicalTurkChunk < ::Chunk
     protected
 
     def hit_form_url(document)
-      app  = ActionDispatch::Integration::Session.new(Rails.application)
-      path = app.send :new_web_mechanical_turk_document_chunk_path, document.uid
+      path = Rails.application.routes.url_helpers.send :new_web_mechanical_turk_document_chunk_path, document.uid
       url  = turk_host + path
     end
 

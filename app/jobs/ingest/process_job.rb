@@ -1,4 +1,4 @@
-class Ingest::ProcessJob < ActiveJob::Base
+class Ingest::ProcessJob < ApplicationJob
   include Job::Helper
 
   queue_as :default

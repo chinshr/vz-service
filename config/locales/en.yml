@@ -77,6 +77,8 @@ en:
           access_forbidden: "access forbidden"
           not_found: "not found"
           request_timeout: "request timeout"
+      filter:
+        argument_error: "filter argument error"
 
   payola:
     cards:

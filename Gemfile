@@ -2,9 +2,10 @@ source 'https://rubygems.org'
 ruby '2.3.3'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '4.2.7.1'
-gem 'activerecord-deprecated_finders', require: 'active_record/deprecated_finders'
+gem 'rails', '5.0.2'
 gem 'responders', '~> 2.0'
+gem 'rails-controller-testing'  # Rails 5 upgrade
+# gem 'activemodel-serializers-xml'  # Rails 5 upgrade
 
 # Use postgresql as the database for Active Record
 gem 'pg'
@@ -46,6 +47,7 @@ end
 group :development do
   gem 'web-console', '~> 2.0'
   gem 'brakeman', require: false
+  gem 'spring'
 end
 
 group :test do
@@ -54,13 +56,12 @@ group :test do
   gem 'shoulda-context'
   gem 'shoulda-matchers'
   gem 'factory_girl_rails'
-  gem 'minitest'
+  gem 'minitest', "5.10.1"
   gem 'simplecov', require: false
-  gem 'test_after_commit'
   gem 'webmock'
   gem 'timecop'
   gem 'wisper-minitest', require: false
-  gem 'codeclimate-test-reporter', require: nil
+  gem 'codeclimate-test-reporter', "~> 1.0.0"
 end
 
 group :production do
@@ -88,7 +89,7 @@ gem 'devise', '~> 4.1'
 gem 'inherited_resources', git: 'https://github.com/activeadmin/inherited_resources'
 gem 'activeadmin', git: 'https://github.com/activeadmin/activeadmin' # '~> 1.0.0.pre2'
 gem 'ransack', git: 'https://github.com/activerecord-hackery/ransack'
-gem 'kaminari', git: 'https://github.com/amatsuda/kaminari', branch: '0-17-stable'
+gem 'kaminari', git: 'https://github.com/amatsuda/kaminari'#, branch: '0-17-stable'
 gem 'formtastic', git: 'https://github.com/justinfrench/formtastic'
 gem 'draper'
 
@@ -107,7 +108,7 @@ gem 'psych'
 gem 'gingerice'
 gem 'redcarpet'
 gem 'coderay'
-gem 'acts-as-taggable-on', '~> 3.4'
+gem 'acts-as-taggable-on', '~> 4.0'
 gem 'pundit'
 gem 'rack-reverse-proxy', require: "rack/reverse_proxy"
 gem 'rack-cors', require: 'rack/cors'
@@ -118,16 +119,16 @@ gem 'merriweather-rails'
 gem 'dalli'
 gem 'rack-cache'
 gem 'kgio'
-gem 'turkee', git: 'https://github.com/chinshr/turkee.git', branch: 'master'
+gem 'turkee', git: 'https://github.com/chinshr/turkee.git'#, branch: 'master'
 gem 'paper_trail', '~> 4'
 gem 'friendly_id', '~> 5.1.0'
 gem 'clockwork', '~> 1.2.0'
-gem 'pubnub', '~> 3.7.9'
+gem 'pubnub', '~> 4.0.22'
 gem 'metainspector'
 gem 'srt'
 gem 'mini_magick'
 gem 'wisper', '~> 1.6.1'
-gem 'paranoia', '~> 2.0'
+gem 'paranoia', '~> 2.2'
 gem 'rails_autolink'
 gem 'chartkick'
 gem 'groupdate'

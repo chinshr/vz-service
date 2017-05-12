@@ -3,7 +3,7 @@ require 'mini_magick'
 # CDN: http://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/private-content-task-list.html
 # ImageMagick: http://www.imagemagick.org/Usage/resize/#shrink
 
-class Ingest::ImageIngest::ProcessJob < ActiveJob::Base
+class Ingest::ImageIngest::ProcessJob < ApplicationJob
   include Job::Helper
 
   queue_as :default

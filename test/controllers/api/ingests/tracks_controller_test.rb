@@ -25,7 +25,7 @@ class Api::Ingests::TracksControllerTest < ActionController::TestCase
 
   context "POST /api/ingests/:ingest_id/tracks.json" do
     should "#create document master track" do
-      sign_in :user, @user2
+      sign_in @user2, scope: :user
 
       assert_not_nil old_segment_count = Segment.count
       assert_not_nil old_track_count   = Track.count
@@ -38,7 +38,7 @@ class Api::Ingests::TracksControllerTest < ActionController::TestCase
 
       assert_enqueued_with(job: Track::DeleteJob) do
 
-        post :create, ingest_id: @ingest.id, track: {
+        post :create, params: {ingest_id: @ingest.id, track: {
           s3_url: @s3_url, s3_mp3_url: @s3_mp3_url,
           s3_waveform_json_url: @s3_waveform_json_url,
           ingest_iteration: @ingest.iteration,
@@ -46,7 +46,7 @@ class Api::Ingests::TracksControllerTest < ActionController::TestCase
           start_at: start_at,
           end_at: end_at,
           type: "document_track"
-        }, format: :json
+        }, format: :json}
         assert_response :success
         assert_attributes response_body["track"]
         assert_equal @s3_url, response_body["track"]["s3_url"]
@@ -71,22 +71,22 @@ class Api::Ingests::TracksControllerTest < ActionController::TestCase
     end
 
     should "be unauthorized without user" do
-      post :create, ingest_id: @ingest.id, format: :json
+      post :create, params: {ingest_id: @ingest.id, format: :json}
       assert_response :unauthorized
     end
 
     should "be unauthorized without backend user" do
-      sign_in :user, @user1
-      post :create, ingest_id: @ingest.id, format: :json
+      sign_in @user1, scope: :user
+      post :create, params: {ingest_id: @ingest.id, format: :json}
       assert_response :unauthorized
     end
   end
 
   context "PUT /api/ingests/:ingest_id/tracks/:id.json" do
     should "#update ingest/document master track" do
-      sign_in :user, @user2
-      put :update, ingest_id: @ingest.id, id: @t0.id, track: {
-        s3_url: "http://update_t0", s3_mp3_url: "http://update_t0.128.mp3"}, format: :json
+      sign_in @user2, scope: :user
+      put :update, params: {ingest_id: @ingest.id, id: @t0.id, track: {
+        s3_url: "http://update_t0", s3_mp3_url: "http://update_t0.128.mp3"}, format: :json}
       assert_response :success
       assert_attributes response_body["track"]
       assert_equal "http://update_t0", response_body["track"]["s3_url"]
@@ -94,21 +94,21 @@ class Api::Ingests::TracksControllerTest < ActionController::TestCase
     end
 
     should "be unauthorized without user" do
-      put :update, ingest_id: @ingest.id, id: @t0.id, format: :json
+      put :update, params: {ingest_id: @ingest.id, id: @t0.id, format: :json}
       assert_response :unauthorized
     end
 
     should "be unauthorized without backend user" do
-      sign_in :user, @user1
-      put :update, ingest_id: @ingest.id, id: @t0.id, format: :json
+      sign_in @user1, scope: :user
+      put :update, params: {ingest_id: @ingest.id, id: @t0.id, format: :json}
       assert_response :unauthorized
     end
   end
 
   context "GET /api/ingests/:ingest_id/tracks.json" do
     should "get index" do
-      sign_in :user, @user2
-      get :index, :ingest_id => @ingest.id, :any_of_types => ["document_track"], format: :json
+      sign_in @user2, scope: :user
+      get :index, params: {:ingest_id => @ingest.id, :any_of_types => ["document_track"], format: :json}
       assert_response :success
       assert_equal 1, response_body["tracks"].size
       track = Track.find(response_body["tracks"].first["id"])
@@ -116,56 +116,56 @@ class Api::Ingests::TracksControllerTest < ActionController::TestCase
     end
 
     should "be unauthorized without user" do
-      get :index, :ingest_id => @ingest.id, format: :json
+      get :index, params: {:ingest_id => @ingest.id, format: :json}
       assert_response :unauthorized
     end
 
     should "be unauthorized without backend user" do
-      sign_in :user, @user1
-      get :index, :ingest_id => @ingest.id, format: :json
+      sign_in @user1, scope: :user
+      get :index, params: {:ingest_id => @ingest.id, format: :json}
       assert_response :unauthorized
     end
   end
 
   context "GET /api/ingests/:ingest_id/tracks/:id.json" do
     should "get show" do
-      sign_in :user, @user2
-      get :show, :ingest_id => @ingest.id, :id => @t0.id, format: :json
+      sign_in @user2, scope: :user
+      get :show, params: {:ingest_id => @ingest.id, :id => @t0.id, format: :json}
       assert_response :success
       assert_attributes response_body["track"]
     end
 
     should "be unauthorized without user" do
-      get :show, :ingest_id => @ingest.id, :id => @t0.id, format: :json
+      get :show, params: {:ingest_id => @ingest.id, :id => @t0.id, format: :json}
       assert_response :unauthorized
     end
 
     should "be unauthorized without backend user" do
-      sign_in :user, @user1
-      get :show, :ingest_id => @ingest.id, :id => @t0.id, format: :json
+      sign_in @user1, scope: :user
+      get :show, params: {:ingest_id => @ingest.id, :id => @t0.id, format: :json}
       assert_response :unauthorized
     end
   end
 
   context "DELETE /api/ingests/:ingest_id/tracks/:id.json" do
     should "#delete" do
-      sign_in :user, @user2
+      sign_in @user2, scope: :user
       assert_enqueued_with(job: Track::DeleteJob) do
       #assert_difference "Track.count", -1 do
-        delete :destroy, :ingest_id => @ingest.id, :id => @t0.id, format: :json
+        delete :destroy, params: {:ingest_id => @ingest.id, :id => @t0.id, format: :json}
         assert_response :success
         assert_response_body_attributes_with "track"
       end
     end
 
     should "be unauthorized without user" do
-      delete :destroy, :ingest_id => @ingest.id, :id => @t0.id, format: :json
+      delete :destroy, params: {:ingest_id => @ingest.id, :id => @t0.id, format: :json}
       assert_response :unauthorized
     end
 
     should "be unauthorized without backend user" do
-      sign_in :user, @user1
-      delete :destroy, :ingest_id => @ingest.id, :id => @t0.id, format: :json
+      sign_in @user1, scope: :user
+      delete :destroy, params: {:ingest_id => @ingest.id, :id => @t0.id, format: :json}
       assert_response :unauthorized
     end
   end

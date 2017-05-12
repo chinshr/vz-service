@@ -1,4 +1,4 @@
-class Api::Platform < ActiveRecord::Base
+class Api::Platform < ApplicationRecord
   self.table_name = "api_platforms"
   include Model::Filter
   include Model::Uid

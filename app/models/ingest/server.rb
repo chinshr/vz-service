@@ -1,4 +1,4 @@
-class Ingest::Server < ActiveRecord::Base
+class Ingest::Server < ApplicationRecord
   include AASM
   include Model::AASM::Support
   include Model::Uid

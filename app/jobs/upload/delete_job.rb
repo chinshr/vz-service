@@ -1,4 +1,4 @@
-class Upload::DeleteJob < ActiveJob::Base
+class Upload::DeleteJob < ApplicationJob
   include Job::Helper
   queue_as :default
 

@@ -28,7 +28,7 @@ class Api::DocumentsControllerTest < ActionController::TestCase
 
   context "GET /api/documents" do
     should "all public documents when not signed in" do
-      get :index, format: :json
+      get :index, params: {format: :json}
       assert_response :success
       assert response_body.has_key?("documents"), "should have root"
       assert_equal 1, response_body["documents"].size, "should only return public documents"
@@ -36,8 +36,8 @@ class Api::DocumentsControllerTest < ActionController::TestCase
     end
 
     should "all public and user's private documents when signed in" do
-      sign_in :user, @user2
-      get :index, format: :json
+      sign_in @user2, scope: :user
+      get :index, params: {format: :json}
       assert_response :success
       assert response_body.has_key?("documents"), "should have root"
       assert_equal 2, response_body["documents"].size, "should only return public documents"
@@ -47,15 +47,15 @@ class Api::DocumentsControllerTest < ActionController::TestCase
 
   context "GET /api/documents/count" do
     should "count public documents when no user is signed in" do
-      get :count, format: :json
+      get :count, params: {format: :json}
       assert_response :success
       assert response_body.has_key?("count"), "should have root"
       assert_equal Document.with_privacy("public").count, response_body["count"], "should have count"
     end
 
     should "count public and user's private documents when user is signed in" do
-      sign_in :user, @user2
-      get :count, format: :json
+      sign_in @user2, scope: :user
+      get :count, params: {format: :json}
       assert_response :success
       assert response_body.has_key?("count"), "should have root"
       assert_equal Document.viewable_by_user(@user2).count, response_body["count"], "should have count"
@@ -64,7 +64,7 @@ class Api::DocumentsControllerTest < ActionController::TestCase
 
   context "GET /api/documents/:id" do
     should "not get private document when not signed in" do
-      get :show, :id => @document2, format: :json
+      get :show, params: {:id => @document2, format: :json}
       assert_response :unauthorized
     end
 
@@ -74,14 +74,14 @@ class Api::DocumentsControllerTest < ActionController::TestCase
       end
 
       should "get owners private document when signed in as owner" do
-        sign_in :user, @user2
-        get :show, :id => @document2, format: :json
+        sign_in @user2, scope: :user
+        get :show, params: {:id => @document2, format: :json}
         assert_response :success
       end
 
       should "not get private document when not signed in as owner" do
-        sign_in :user, @user1
-        get :show, :id => @document2, format: :json
+        sign_in @user1, scope: :user
+        get :show, params: {:id => @document2, format: :json}
         assert_response :unauthorized
       end
     end
@@ -95,7 +95,7 @@ class Api::DocumentsControllerTest < ActionController::TestCase
         should "#get when unpublished, viewable" do
           @document2.update_attributes(accessibility: [:view])
           assert_equal false, @document2.published?
-          get :show, :id => @document2, format: :json
+          get :show, params: {:id => @document2, format: :json}
           assert_response :success
           assert_response_body_attributes_with "document"
           assert_equal 0, response_body['document']['status']
@@ -105,7 +105,7 @@ class Api::DocumentsControllerTest < ActionController::TestCase
         should "#get when published, no accessibility" do
           @document2.update_attributes(accessibility: [])
           assert_equal true, @document2.publish!
-          get :show, :id => @document2, format: :json
+          get :show, params: {:id => @document2, format: :json}
           assert_response :success
           assert_response_body_attributes_with "document"
           assert_equal 1, response_body['document']['status']
@@ -115,21 +115,21 @@ class Api::DocumentsControllerTest < ActionController::TestCase
 
       context "signed-in" do
         should "get owners public document when signed in as owner" do
-          sign_in :user, @user2
-          get :show, :id => @document2, format: :json
+          sign_in @user2, scope: :user
+          get :show, params: {:id => @document2, format: :json}
           assert_response :success
         end
 
         should "not get public document whithout accessibility" do
-          sign_in :user, @user1
-          get :show, :id => @document2, format: :json
+          sign_in @user1, scope: :user
+          get :show, params: {:id => @document2, format: :json}
           assert_response :unauthorized
         end
 
         should "get public document when viewable" do
           @document2.update_attributes(accessibility: [:view])
-          sign_in :user, @user1
-          get :show, :id => @document2, format: :json
+          sign_in @user1, scope: :user
+          get :show, params: {:id => @document2, format: :json}
           assert_response :success
         end
       end
@@ -141,21 +141,21 @@ class Api::DocumentsControllerTest < ActionController::TestCase
       end
 
       should "get owners unlisted document when signed in as owner" do
-        sign_in :user, @user2
-        get :show, :id => @document2, format: :json
+        sign_in @user2, scope: :user
+        get :show, params: {:id => @document2, format: :json}
         assert_response :success
       end
 
       should "not get unlisted document whithout accessibility" do
-        sign_in :user, @user1
-        get :show, :id => @document2, format: :json
+        sign_in @user1, scope: :user
+        get :show, params: {:id => @document2, format: :json}
         assert_response :unauthorized
       end
 
       should "get unlisted document when viewable" do
         @document2.update_attributes(accessibility: [:view])
-        sign_in :user, @user1
-        get :show, :id => @document2, format: :json
+        sign_in @user1, scope: :user
+        get :show, params: {:id => @document2, format: :json}
         assert_response :success
       end
     end
@@ -166,8 +166,8 @@ class Api::DocumentsControllerTest < ActionController::TestCase
       html_content = "<p>Es el contenido.</p>"
       text_content = "Es el contenido."
       rich_text_content = {"startLength"=>0, "endLength"=>15, "ops"=>[{"value"=>"Es el contenido.", "attributes"=>{"italic"=>true}}]}
-      sign_in :user, @user2
-      put :update, {:id => @document2.id, :document => {
+      sign_in @user2, scope: :user
+      put :update, params: {:id => @document2.id, :document => {
         title: "La fiesta!",
         description: "Entrevista en la fiesta.",
         tag_list: ["entrevista", "fiesta"],
@@ -195,9 +195,9 @@ class Api::DocumentsControllerTest < ActionController::TestCase
       html_content = "<p>Es el contenido.</p>"
       text_content = "Es el contenido."
       rich_text_content = {"startLength"=>0, "endLength"=>15, "ops"=>[{"value"=>"Es el contenido.", "attributes"=>{"italic"=>true}}]}
-      sign_in :user, @user1
+      sign_in @user1, scope: :user
       @document2.update_attributes(accessibility: ["edit"])
-      put :update, {:id => @document2.id, :document => {
+      put :update, params: {:id => @document2.id, :document => {
         title: "La fiesta!",
         description: "Entrevista en la fiesta.",
         tag_list: ["entrevista", "fiesta"],
@@ -221,27 +221,27 @@ class Api::DocumentsControllerTest < ActionController::TestCase
     end
 
     should "NOT update when no user is signed in " do
-      put :update, {:id => @document1.id, :document => {:title => "No autorizado!"}, format: :json}
+      put :update, params: {:id => @document1.id, :document => {:title => "No autorizado!"}, format: :json}
       assert_response :unauthorized
     end
 
     should "NOT update public document when user 2 is signed in" do
-      sign_in :user, @user2
-      put :update, {:id => @document1.id, :document => {:title => "No autorizado!"}, format: :json}
+      sign_in @user2, scope: :user
+      put :update, params: {:id => @document1.id, :document => {:title => "No autorizado!"}, format: :json}
       assert_response :unauthorized
     end
 
     should "NOT update user 2's private document when user 1 is signed in" do
-      sign_in :user, @user1
-      put :update, {:id => @document2.id, :document => {:title => "No autorizado!"}, format: :json}
+      sign_in @user1, scope: :user
+      put :update, params: {:id => @document2.id, :document => {:title => "No autorizado!"}, format: :json}
       assert_response :unauthorized
     end
 
     should "not publish private document" do
-      sign_in :user, @user2
+      sign_in @user2, scope: :user
       assert_equal true, @document2.privacy_private?
       assert_equal 0, @document2.status
-      put :update, {:id => @document2.id, :document => {
+      put :update, params: {:id => @document2.id, :document => {
         event: "publish",
         html: "<p>Published content.</p>"
       }, format: :json}
@@ -249,9 +249,9 @@ class Api::DocumentsControllerTest < ActionController::TestCase
     end
 
     should "publish public document" do
-      sign_in :user, @user1
+      sign_in @user1, scope: :user
       assert_equal true, @document1.unpublish!
-      put :update, {:id => @document1.id, :document => {
+      put :update, params: {:id => @document1.id, :document => {
         event: "publish",
         html: "<p>Published content.</p>"
       }, format: :json}
@@ -265,25 +265,25 @@ class Api::DocumentsControllerTest < ActionController::TestCase
 
   context "DELETE /api/documents/:id" do
     should "destroy user 2's document when signed in as user 2" do
-      sign_in :user, @user2
+      sign_in @user2, scope: :user
       assert_difference 'Document.count', -1 do
-        delete :destroy, {id: @document2, format: :json}
+        delete :destroy, params: {id: @document2, format: :json}
         assert_response :success
         assert_response_body_attributes_with "document", nil, :assert_entity_attributes
       end
     end
 
     should "NOT destroy user 1's public document when signed in as user 2" do
-      sign_in :user, @user2
+      sign_in @user2, scope: :user
       assert_no_difference 'Document.count' do
-        delete :destroy, {id: @document1, format: :json}
+        delete :destroy, params: {id: @document1, format: :json}
         assert_response :unauthorized
       end
     end
 
     should "NOT destroy when not signed in" do
       assert_no_difference 'Document.count' do
-        delete :destroy, {id: @document1, format: :json}
+        delete :destroy, params: {id: @document1, format: :json}
         assert_response :unauthorized
       end
     end

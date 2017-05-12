@@ -25,3 +25,7 @@ def resource_status_tag(state)
   }
   status_tag(state.to_s, colors[state.to_sym]) if state.present?
 end
+
+def switch_params
+  params.permit([:page, :order, :scope]).to_h
+end

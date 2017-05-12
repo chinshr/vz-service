@@ -1,4 +1,4 @@
-class Image::ImageFormat < ActiveRecord::Base
+class Image::ImageFormat < ApplicationRecord
   include Model::Filter
   include Model::Uid
 

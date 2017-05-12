@@ -1,4 +1,4 @@
-class Track < ActiveRecord::Base
+class Track < ApplicationRecord
   include Model::Filter
   include Model::Uid
 
@@ -34,7 +34,7 @@ class Track < ActiveRecord::Base
     #   Track.create(:type => "Track::DocumentTrack", ...) -> Track::DocumentTrack
     #
     def new_with_cast(*a, &b)
-      if (h = a.first).is_a? Hash and (type = h[:type] || h['type']) and
+      if ((h = a.first).is_a?(Hash) || h.is_a?(ActionController::Parameters)) and (type = h[:type] || h['type']) and
         (k = type.class == Class ? type : promote_track_class_for(type, h)) != self
         raise NameError, "unknown type for Track" if !k || !(k < self)
         instance = k.new(*a, &b)

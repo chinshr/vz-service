@@ -1,4 +1,5 @@
 require "core_ext/i18n/locale"
+require "core_ext/active_support/big_decimal"
 
 # ==with
 #

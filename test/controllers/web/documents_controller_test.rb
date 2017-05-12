@@ -17,33 +17,33 @@ class Web::DocumentsControllerTest < ActionController::TestCase
         end
 
         should "load without user session" do
-          get :show, :id => @document.slug
+          get :show, params: {:id => @document.slug}
           assert_response :redirect
           assert_match Regexp.new("http://test.host/@#{@document.user.username}/#{@document.slug}"), @response.redirect_url
         end
 
         should "load with document's signed in user" do
           sign_in @document.user
-          get :show, :id => @document.slug
+          get :show, params: {:id => @document.slug}
           assert_response :success
         end
 
         should "load with other signed in user should redirect to published page" do
           sign_in FactoryGirl.create(:user)
-          get :show, :id => @document.slug
+          get :show, params: {:id => @document.slug}
           assert_response :redirect
           assert_match Regexp.new("http://test.host/@#{@document.user.username}/#{@document.slug}"), @response.redirect_url
         end
 
         should "load mp3 and redirect to S3 url" do
           sign_in @document.user
-          get :show, id: @document.slug, format: "mp3"
+          get :show, params: {id: @document.slug, format: "mp3"}
           assert_response :redirect
         end
 
         should "load and render srt" do
           sign_in @document.user
-          get :show, id: @document.slug, format: "srt"
+          get :show, params: {id: @document.slug, format: "srt"}
           assert_response :success
           assert_template "show"
         end
@@ -59,18 +59,18 @@ class Web::DocumentsControllerTest < ActionController::TestCase
 
       should "load with document's user" do
         sign_in @document.user
-        get :show, :id => @document.slug
+        get :show, params: {:id => @document.slug}
         assert_response :success
       end
 
       should "redirect to sign in without user session" do
-        get :show, :id => @document.slug
+        get :show, params: {:id => @document.slug}
         assert_response :redirect
       end
 
       should "raise unauthorized with other signed in user" do
         sign_in FactoryGirl.create(:user)
-        get :show, :id => @document.slug
+        get :show, params: {:id => @document.slug}
         assert_response :unauthorized
       end
     end
@@ -92,18 +92,18 @@ class Web::DocumentsControllerTest < ActionController::TestCase
 
         should "be editable by owner" do
           sign_in @document.user
-          get :edit, :id => @document.slug
+          get :edit, params: {:id => @document.slug}
           assert_response :success
         end
 
         should "redirect to sign in without user session" do
-          get :edit, :id => @document.slug
+          get :edit, params: {:id => @document.slug}
           assert_response :redirect
         end
 
         should "not be editable by anyone else" do
           sign_in FactoryGirl.create(:user)
-          get :edit, :id => @document.slug
+          get :edit, params: {:id => @document.slug}
           assert_response :unauthorized
         end
       end
@@ -117,23 +117,21 @@ class Web::DocumentsControllerTest < ActionController::TestCase
 
         should "be editable by owner" do
           sign_in @document.user
-          get :edit, :id => @document.slug
+          get :edit, params: {:id => @document.slug}
           assert_response :success
         end
 
         should "not be editable by anonymous user" do
-          get :edit, :id => @document.slug
+          get :edit, params: {:id => @document.slug}
           assert_response :redirect
         end
 
         should "be editable by any user" do
           sign_in FactoryGirl.create(:user)
-          get :edit, :id => @document.slug
+          get :edit, params: {:id => @document.slug}
           assert_response :success
         end
       end
     end
-
   end
-
 end
