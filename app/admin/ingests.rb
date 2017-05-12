@@ -86,7 +86,9 @@ ActiveAdmin.register Ingest do
       row :source_url
       row :origin_url
 
-      row :metadata
+      row :metadata do |resource|
+        JSON.pretty_generate(resource.metadata.as_json)
+      end
       row :messages
 
       # workers

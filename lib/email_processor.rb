@@ -56,6 +56,7 @@ class EmailProcessor
         upload.locale                 = extract_locale
         upload.privacy                = :private
         upload.use_source_annotations = extract_use_source_annotations
+        upload.metadata.config        = user.properties.config
       end
     end
   end
@@ -66,19 +67,20 @@ class EmailProcessor
       if Upload::MediaUpload.accepted_media_file_type?(content_type)
         key    = Upload.generate_object_name
         upload = with message.attachments.build(type: "Upload::MediaUpload") do |upload|
-          upload.user        = user
-          upload.title       = if email.subject.blank?
+          upload.user            = user
+          upload.title           = if email.subject.blank?
             Upload::MediaUpload::humanize_path(attached_file.original_filename)
           else
             email.subject.titleize
           end
-          upload.description = email.body
-          upload.file_name   = attached_file.original_filename
-          upload.file_size   = attached_file.tempfile.size
-          upload.file_type   = content_type
-          upload.locale      = extract_locale
-          upload.privacy     = [:private]
-          upload.source_url  = "#{APP_CONFIG['S3_URL']}/#{APP_CONFIG['S3_INBOUND_BUCKET']}/#{key}"
+          upload.description     = email.body
+          upload.file_name       = attached_file.original_filename
+          upload.file_size       = attached_file.tempfile.size
+          upload.file_type       = content_type
+          upload.locale          = extract_locale
+          upload.privacy         = [:private]
+          upload.source_url      = "#{APP_CONFIG['S3_URL']}/#{APP_CONFIG['S3_INBOUND_BUCKET']}/#{key}"
+          upload.metadata.config = user.properties.config
         end
 
         if upload.valid?

@@ -87,6 +87,7 @@ class EmailProcessorTest < ActiveSupport::TestCase
     end
 
     should "process message with source url in body" do
+      @user = FactoryGirl.create(:user, :with_personal_plan, :email => "raj@example.com")
       stub_request(:get, "https://www.youtube.com/watch?v=aORId5oBmCM").
         with(:headers => {'Accept'=>'*/*'}).
         to_return(:status => 200, :body => '<html><head><title>Foo title</title><meta name="description" content="Bar description"><meta name="keywords" content="foo, bar, baz..., ..."></head></html>', :headers => {})
@@ -97,19 +98,23 @@ class EmailProcessorTest < ActiveSupport::TestCase
       url1 = "https://www.youtube.com/watch?v=aORId5oBmCM"
       url2 = "https://www.vimeo.com/161138879"
       body = "Check this #{url1} that I found inside #{url2}."
-      assert_difference "User.count", 1 do
+      assert_no_difference "User.count" do
         assert_difference "Message.count", 1 do
           assert_difference "Upload.count", 2 do
             assert_enqueued_with(job: ActionMailer::DeliveryJob) do
               normalized_params(params({text: body})).each do |p|
-                Griddler::Email.new(p).process
+                processor = Griddler::Email.new(p).process
+                assert_equal url1, processor.message.attachments[0].source_url
+                assert_equal false, processor.message.attachments[0].use_source_annotations
+                assert_equal url2, processor.message.attachments[1].source_url
+                assert_equal false, processor.message.attachments[1].use_source_annotations
+                assert_equal @user.properties.config.transcription.engine,
+                  processor.message.attachments[0].metadata.config.transcription.engine
               end
             end
           end
         end
       end
-      assert_equal [url2, url1], Upload.order(created_at: :desc).limit(2).map(&:source_url)
-      assert_equal false, Upload.last.use_source_annotations
     end
   end
 
@@ -186,23 +191,24 @@ class EmailProcessorTest < ActiveSupport::TestCase
       end
 
       should "process message with attachments, send notification" do
-        FactoryGirl.create(:user, :email => "raj@example.com")
+        @user = FactoryGirl.create(:user, :with_personal_plan, :email => "raj@example.com")
         ActionMailer::Base.deliveries.clear
 
         perform_enqueued_jobs do
-
           assert_difference "User.count", 0 do
             assert_difference "Message.count", 1 do
               assert_difference "Upload.count", 1 do
                 assert_difference "ActionMailer::Base.deliveries.size", 1 do
                   normalized_params(@params).each do |p|
-                    Griddler::Email.new(p).process
+                    processor = Griddler::Email.new(p).process
+                    assert_equal @user.email, processor.user.email
+                    assert_equal @user.properties.config.transcription.engine,
+                      processor.message.attachments.first.metadata.config.transcription.engine
                   end
                 end
               end
             end
           end
-
         end
       end
 

@@ -18,8 +18,7 @@ class Api::Account::UploadsControllerTest < ActionController::TestCase
               :file_size => 225284,
               :locale => "en-UK",
               :privacy => "private",
-              :accessibility => "edit",
-              :metadata => {"te_name" => "pocketsphinx"}
+              :accessibility => "edit"
             }, format: :json
             assert_response :success
             assert_response_body_attributes_with "upload"
@@ -35,7 +34,6 @@ class Api::Account::UploadsControllerTest < ActionController::TestCase
             assert_equal "en-UK", upload.locale
             assert_equal ["private"], upload.privacy
             assert_equal ["edit"], upload.accessibility
-            assert_equal({"te_name"=>"pocketsphinx"}, upload.metadata)
             assert_equal 0, upload.progress
             assert_equal :starting, upload.state
           end
