@@ -36,7 +36,7 @@
                   <span class="input-group-addon"><i class="fa fa-clipboard copy-email-to-clipboard" data-toggle="tooltip" title="Copy to clipboard" data-placement="bottom" data-copied-title="Copied!"></i></span>
                 </div>
             </li>
-            <li class="step help">
+            <li class="step help success">
               Having trouble? See our <a target="_blank" href="/faqs">Help</a> or <a href="mailto:support@voyz.es">Contact us</a>.
             </li>
           </ol>
