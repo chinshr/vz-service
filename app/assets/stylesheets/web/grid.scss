@@ -73,15 +73,14 @@
     .form-group-locale {
       select {
         background-color: transparent;
-        //-webkit-appearance: none;
-        //-moz-appearance: none;
         color: #333;
         font-size: 13px;
         height: 35px;
-        padding: 0 5px;
+        margin: 5px auto 0 auto;
 
         color: rgba(66,133,244,1);
         border-color: rgba(66,133,244,1);
+
 
         &:hover,
         &:active,
@@ -107,10 +106,6 @@
 
   .initially-hidden {
     // display: none;
-  }
-
-  input, select, .select2-drop, .select2-result-label {
-    xfont-family: "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
   }
 
   .col-xs-1, .col-sm-1, .col-md-1, .col-lg-1, .col-xs-2, .col-sm-2, .col-md-2, .col-lg-2, .col-xs-3, .col-sm-3, .col-md-3, .col-lg-3, .col-xs-4, .col-sm-4, .col-md-4, .col-lg-4, .col-xs-5, .col-sm-5, .col-md-5, .col-lg-5, .col-xs-6, .col-sm-6, .col-md-6, .col-lg-6, .col-xs-7, .col-sm-7, .col-md-7, .col-lg-7, .col-xs-8, .col-sm-8, .col-md-8, .col-lg-8, .col-xs-9, .col-sm-9, .col-md-9, .col-lg-9, .col-xs-10, .col-sm-10, .col-md-10, .col-lg-10, .col-xs-11, .col-sm-11, .col-md-11, .col-lg-11, .col-xs-12, .col-sm-12, .col-md-12, .col-lg-12 {
@@ -1006,9 +1001,10 @@
         }
 
         .button-upload {
-          margin: 10px auto 0 auto;
+          margin: 5px auto 10px auto;
           display: block;
           min-width: 120px;
+          max-width: 220px;
           color: rgba(66,133,244,1);
           border-color: rgba(66,133,244,1);
 
@@ -1027,6 +1023,8 @@
 
         .input-group {
           margin: 10px 0;
+          max-width: 220px;
+          margin: 5px auto 10px auto;
 
           .form-control,
           .input-group-addon {
@@ -1034,6 +1032,14 @@
             background: rgba(0,0,0,0);
             color: rgba(66,133,244,1);
             border-color: rgba(66,133,244,1);
+
+            &:first-child {
+              padding-right: 5px;
+            }
+
+            &:last-child {
+              padding-left: 5px;
+            }
 
             &:hover,
             &:active,
@@ -1045,6 +1051,10 @@
           }
 
           .form-control {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+
             outline: none !important;
             border-right: none;
             border-left: none;
@@ -1918,6 +1928,37 @@ ol.steps {
         border-color: #e06158;
       }
     }
-  }
+  } /* li.step */
+} /* ol.steps */
 
+body.dashboards {
+  .tooltip {
+    font-weight: bold;
+
+    .tooltip-inner {
+      background-color: #292d33;
+      padding: 6px 10px;
+      /* wrap spaces */
+      // white-space:pre-wrap;
+      /* don't break spaces */
+      white-space:pre;
+      max-width:none;
+    }
+
+    &.top .tooltip-arrow {
+      border-top-color: #292d33;
+    }
+
+    &.right .tooltip-arrow {
+      border-right-color: rgba(41, 45, 51, 0.9);
+    }
+
+    &.bottom .tooltip-arrow {
+      border-bottom-color: #292d33;
+    }
+
+    &.left .tooltip-arrow {
+      border-left-color: #292d33;
+    }
+  } /* .tooltip */
 }

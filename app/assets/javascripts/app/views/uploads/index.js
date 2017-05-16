@@ -56,7 +56,9 @@ App.Views.UploadsIndex = Backbone.View.extend({
       _this.initSourceModal();
       _this.initMailTo();
       _this.initImageUploadInput();
-      $('[data-toggle="tooltip"]').tooltip();
+      $('[data-toggle="tooltip"]').tooltip({
+        container: 'body'
+      });
     });
 
     return this;

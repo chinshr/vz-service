@@ -22,16 +22,16 @@
               <div class="form-group form-group-file-upload">
                 <label>Upload media...</label>
                 <!-- File upload -->
-                <button id="upload-files" class="button button-with-chrome button-upload button-upload-files"><i class="fa fa-hdd-o"></i>Local...</button>
+                <button id="upload-files" class="button button-with-chrome button-upload button-upload-files"><i data-toggle="tooltip" title="Upload your media file from your computer" class="fa fa-hdd-o"></i>Local...</button>
                 <label for="files" class="control-label hidden">Upload</label>
                 <input type="file" class="upload-files-input" name="files[]" multiple />
                 <!-- Source URL -->
-                <button id="upload-source" class="button button-with-chrome button-upload button-upload-source" xdata-target="#upload-source-modal" data-toggle="modal"><i class="fa fa-external-link"></i>Source...</button>
+                <button id="upload-source" class="button button-with-chrome button-upload button-upload-source" xdata-target="#upload-source-modal" data-toggle="modal"><i data-toggle="tooltip" title="Provide a source link to your media file" class="fa fa-external-link"></i>Source...</button>
                 <!-- Drop files -->
                 <div class="button button-with-chrome button-upload upload-drop-files-here">Drop files here...</div>
                 <!-- Email link -->
                 <div class = "input-group upload-email-input-group">
-                  <span class="input-group-addon"><i data-toggle="tooltip" title="Email your media files as attachments" class="fa fa-envelope-o"></i></span>
+                  <span class="input-group-addon"><i data-toggle="tooltip" title="Email your media file as attachment" class="fa fa-envelope-o"></i></span>
                   <input type="text" class="form-control email-file-link" placeholder="email" value="my@voyz.es">
                   <span class="input-group-addon"><i class="fa fa-clipboard copy-email-to-clipboard" data-toggle="tooltip" title="Copy to clipboard" data-placement="bottom" data-copied-title="Copied!"></i></span>
                 </div>
