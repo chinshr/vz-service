@@ -1052,6 +1052,8 @@
             padding-right: 0;
             outline: none;
             height: 37px;
+            -webkit-box-shadow: none !important;
+            box-shadow: none !important;
 
             &:hover,
             &:active,
@@ -1059,8 +1061,6 @@
               outline-width: 0;
               outline: none;
               border-color: rgba(66,133,244,1);
-              -webkit-box-shadow: none;
-              box-shadow: none;
             }
           }
 
