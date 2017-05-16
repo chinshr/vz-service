@@ -3,42 +3,46 @@
   <div id="upload-grid-item" data-type="zdropbox" class="grid-item initially-hidden col-lg-2 col-md-3 col-sm-6 col-xs-12">
     <div id="upload-tile" class="tile upload-tile">
       <p class="number">-999</p>
-      <div id="drop-box" class="panel upload-panel">
-        <div class="panel-heading">
-          <h3>Drop files here...</h3>
-          <div class="upload-panel-separator">&mdash; or &mdash;</div>
-        </div><!-- panel-heading -->
-        <div class="panel-body">
-          <div class="form-group form-group-file-upload">
-            <!-- File upload -->
-            <button id="files-proxy" class="btn btn-primary btn-lg btn-upload btn-upload-file"><i class="fa fa-cloud-upload"></i>&nbsp;Upload...</button>
-            <label for="files" class="control-label hidden">Upload</label>
-            <input type="file" class="upload-files-input" name="files[]" multiple />
-            <!-- Source URL -->
-            <button id="upload-source" class="btn btn-primary btn-lg btn-upload btn-upload-source" xdata-target="#upload-source-modal" data-toggle="modal"><i class="fa fa-external-link-square"></i>&nbsp;Source...</button>
-            <!-- Email link -->
-            <div class="upload-panel-separator">&mdash; or &mdash;</div>
-            <div class="email-file-upload-holder">mail to <a class="email-file-link" href="mailto:my@voyz.es?subject=Document title&body=—%0DAttach all your audio files you want transcribed for English United States {en-US}." class="xbtn btn-link btn-upload-email">my@voyz.es</a></div>
-          </div><!-- .form-group-file-upload -->
 
-          <div class="form-group form-group-locale">
-            <label class="hidden" for="disabledSelect">Audio language</label>
-            <select data-placeholder="Choose a Language..." id="file-locale" class="form-control input-sm input-single-searchable">
-              <option value="en-US">English United States</option>
-              <option value="en-GB">English Great Britain</option>
-              <option value="es-ES">Spanish International</option>
-  <!--
-              <option value="de-DE" disabled>German Germany</option>
-              <option value="fr-FR" disabled>French France</option>
-              <option value="it-IT" disabled>Italian Italy</option>
-              <option value="es-MX" disabled>Spanish Mexico</option>
-              <option value="es-AR" disabled>Spanish Argentina</option>
-              <option value="es-VE" disabled>Spanish Venezuela</option>
-  -->
-            </select>
-          </div><!-- .form-group-locale -->
+      <div id="drop-box" class="panel upload-panel">
+        <div class="panel-body">
+          <ol class="steps">
+            <li class="step enabled select-language-step">
+              <div class="form-group form-group-locale">
+                <label class="xhidden" for="disabledSelect">Select language...</label>
+                <select data-placeholder="Choose a Language..." id="file-locale" class="form-control input-sm input-single-searchable">
+                  <option value="" selected>Select language...</option>
+                  <option value="en-US">English United States</option>
+                  <option value="en-GB">English Great Britain</option>
+                  <option value="es">Spanish International</option>
+                </select>
+              </div><!-- .form-group-locale -->
+            </li>
+            <li class="step disabled select-upload-type-step">
+              <div class="form-group form-group-file-upload">
+                <label>Upload media...</label>
+                <!-- File upload -->
+                <button id="upload-files" class="button button-with-chrome button-upload button-upload-files"><i class="fa fa-hdd-o"></i>Local...</button>
+                <label for="files" class="control-label hidden">Upload</label>
+                <input type="file" class="upload-files-input" name="files[]" multiple />
+                <!-- Source URL -->
+                <button id="upload-source" class="button button-with-chrome button-upload button-upload-source" xdata-target="#upload-source-modal" data-toggle="modal"><i class="fa fa-external-link"></i>Source...</button>
+                <!-- Drop files -->
+                <div class="button button-with-chrome button-upload upload-drop-files-here">Drop files here...</div>
+                <!-- Email link -->
+                <div class = "input-group upload-email-input-group">
+                  <span class="input-group-addon"><i data-toggle="tooltip" title="Email your media files as attachments" class="fa fa-envelope-o"></i></span>
+                  <input type="text" class="form-control email-file-link" placeholder="email" value="my@voyz.es">
+                  <span class="input-group-addon"><i class="fa fa-clipboard copy-email-to-clipboard" data-toggle="tooltip" title="Copy to clipboard" data-placement="bottom" data-copied-title="Copied!"></i></span>
+                </div>
+            </li>
+            <li class="step help">
+              Having trouble? See our <a target="_blank" href="/faqs">Help</a> or <a href="mailto:support@voyz.es">Contact us</a>.
+            </li>
+          </ol>
         </div><!-- .panel-body -->
-      </div><!-- .upload-panel -->
+      </div><!-- #drop-box .upload-panel -->
+
     </div><!-- #upload-tile .upload-tile -->
   </div><!-- .grid-item -->
 </div><!-- #file-upload-grid .browser-grid .upload-grid -->
