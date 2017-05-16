@@ -9,7 +9,8 @@ App.Views.UploadsIndex = Backbone.View.extend({
     'mouseenter #drop-box': 'addHover',
     'mouseleave #drop-box': 'removeHover',
     'change #file-locale': 'initMailTo',
-    'click button#upload-source': 'openSourceModal'
+    'click button#upload-source': 'openSourceModal',
+    'click .copy-email-to-clipboard': 'copyEmailToClipboard'
   },
 
   initialize: function(options) {
@@ -55,6 +56,7 @@ App.Views.UploadsIndex = Backbone.View.extend({
       _this.initSourceModal();
       _this.initMailTo();
       _this.initImageUploadInput();
+      $('[data-toggle="tooltip"]').tooltip();
     });
 
     return this;
@@ -324,18 +326,24 @@ App.Views.UploadsIndex = Backbone.View.extend({
   initMailTo: function() {
     var emailAddress = "my@voyz.es",
       locale = $("#file-locale").val().toLowerCase();
+
+    // enable / disable step
+    if (_.isEmpty(locale)) {
+      this.$('.select-upload-type-step').addClass("disabled").removeClass("enabled");
+    } else {
+      this.$('.select-upload-type-step').addClass("enabled").removeClass("disabled");
+    }
+
     // locale
-    if (locale === "en" || locale === "en-us") {
+    if (locale === "en" || locale === "en-us" || _.isEmpty(locale)) {
       locale = "";
-    } else if (locale.indexOf("-") !== -1) {
-      locale = locale.split("-")[0];
     }
     // email address
     if (locale && locale.length >= 0) {
       emailAddress = "my+" + locale + "@voyz.es";
     }
-    this.$('.email-file-link').text(emailAddress);
-    this.$('.email-file-link').attr('href', this.mailtoHref(locale, emailAddress));
+    this.$('.email-file-link')
+      .attr('value', emailAddress);
   },
 
   mailtoHref: function(locale, emailAddress) {
@@ -538,7 +546,7 @@ App.Views.UploadsIndex = Backbone.View.extend({
     var _this = this,
       input = this.$('input.upload-files-input:file');
 
-    this.$('.btn-upload-file').each(function () {
+    this.$('#upload-files').each(function () {
       var button = $(this);
       // input.after(clone).detach();
       // $.cleanData(input.unbind('remove'));
@@ -564,6 +572,24 @@ App.Views.UploadsIndex = Backbone.View.extend({
           clone.click();
         });
     });
+  },
+
+  copyEmailToClipboard: function(event) {
+    var el = $(event.currentTarget),
+      input = el.parent().parent().find('input'),
+      value = input.attr('value'),
+      originalTitle = el.attr('data-original-title');
+
+    event.originalEvent.preventDefault();
+    input.select();
+    document.execCommand("copy");
+    el.attr('data-original-title', el.data('copiedTitle'));
+    el.on('hidden.bs.tooltip', function () {
+      el.attr('data-original-title', originalTitle);
+    })
+    setTimeout(function() {
+      el.tooltip('show');
+    }, 10);
   }
 
 });
