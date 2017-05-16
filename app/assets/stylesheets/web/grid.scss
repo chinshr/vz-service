@@ -998,7 +998,7 @@
       }
 
       .form-group-file-upload {
-        margin: 0 0 40px 0;
+        margin: 0 0 20px 0;
 
         .upload-files-input, #files {
           position: absolute;
@@ -1875,9 +1875,6 @@ ol.steps {
 
     &:after {
       opacity: 0;
-      transition: opacity .25s ease-in-out, background .25s ease-in-out;
-      -moz-transition: opacity .25s ease-in-out, background .25s ease-in-out;
-      -webkit-transition: opacity .25s ease-in-out, background .25s ease-in-out;
     }
 
     &.disabled {
