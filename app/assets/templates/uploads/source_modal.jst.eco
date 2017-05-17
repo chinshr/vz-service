@@ -15,37 +15,19 @@
         </div>
         <!-- Modal Body -->
         <div class="modal-body">
-          <div class="form-group">
+          <div class="form-group form-group-source-url">
             <label for="input-source-url">Source URL</label>
             <input type="url" class="form-control" id="input-source-url" placeholder="Enter media link" name="upload[source_url]" value="<%= @source_url %>" data-error-style="xinline" data-tooltip-position="bottom"/>
-          </div>
-
-          <div class="help-block">We accept media files to be uploaded from Web locations including Cloud services, like <a href="#">Dropbox</a>, <a href="#">Google Drive</a> and <a href="#">many others</a>.</div>
-
-          <div class="form-group form-group-locale">
-
-            <label for="file-locale">Language</label>
-            <select data-placeholder="Choose a Language..." id="file-locale" name="upload[locale]" class="form-control input-sm input-single-searchable">
-              <option value="en-US">English United States</option>
-              <option value="en-GB">English Great Britain</option>
-              <option value="es-ES">Spanish International</option>
-  <!--
-              <option value="de-DE" disabled>German Germany</option>
-              <option value="fr-FR" disabled>French France</option>
-              <option value="it-IT" disabled>Italian Italy</option>
-              <option value="es-MX" disabled>Spanish Mexico</option>
-              <option value="es-AR" disabled>Spanish Argentina</option>
-              <option value="es-VE" disabled>Spanish Venezuela</option>
-  -->
-            </select>
-          </div><!-- .form-group-locale -->
-
-          <div class="checkbox">
+          </div><!-- .form-group -->
+          <div class="form-group form-group-source-annotations checkbox">
             <label>
               <input type="hidden" name="upload[use_source_annotations]" value="<%= @use_source_annotations %>" />
               <input type="checkbox" name="upload[use_source_annotations]" value="1" /> Use annotations if available
             </label>
-          </div>
+          </div><!-- .form-group -->
+          <div class="form-group form-group-help">
+            <div class="help-block">We accept media files to be uploaded from Web locations including Cloud services, like <a href="#">Dropbox</a>, <a href="#">Google Drive</a> and <a href="/faqs" target="_blank">many others</a>.</div>
+          </div><!-- .form-group -->
         </div>
         <!-- Modal Footer -->
         <div class="modal-footer">

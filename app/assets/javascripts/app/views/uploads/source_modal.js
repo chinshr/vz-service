@@ -12,7 +12,7 @@ App.Views.UploadsSourceModal = Backbone.View.extend({
     this.parent    = options.parent;
     this.metadata  = options.metadata || {};
     this.model     = new App.Models.Upload({
-      locale: this.$("#file-locale").val() || "en-US",
+      locale: this.parent.locale || "en-US",
       metadata: this.metadata,
       type: "media_upload"
     });
@@ -47,8 +47,7 @@ App.Views.UploadsSourceModal = Backbone.View.extend({
         return data[key[1]] = n['value'];
       }
     });
-
-    this.model.set(data, { validate: true });
+    this.model.set(data, {validate: true});
     if (this.model.isValid()) {
       this.$('button[type="submit"]').button("loading");
       return this.model.sync('create', this.model, {
@@ -105,6 +104,7 @@ App.Views.UploadsSourceModal = Backbone.View.extend({
   },
 
   show: function() {
+    this.model.set({locale: this.parent.locale});
     if (this.$el.length !== 0) {
       this.holder.modal('show');
     }

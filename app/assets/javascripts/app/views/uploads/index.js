@@ -8,7 +8,7 @@ App.Views.UploadsIndex = Backbone.View.extend({
     'drop #drop-box': 'dropFiles',
     'mouseenter #drop-box': 'addHover',
     'mouseleave #drop-box': 'removeHover',
-    'change #file-locale': 'initMailTo',
+    'change #file-locale': 'setLocale',
     'click button#upload-source': 'openSourceModal',
     'click .copy-email-to-clipboard': 'copyEmailToClipboard'
   },
@@ -17,7 +17,7 @@ App.Views.UploadsIndex = Backbone.View.extend({
     _.bindAll(this, "initSourceModal", "initUnload",
       "initDropTarget", "addHover", "removeHover", "trigger",
       "addOne", "addAll", "renderCollection", "addFiles", "dropFiles",
-      "dropzone", "uploadToS3", "initMailTo",
+      "dropzone", "uploadToS3", "setLocale",
       "refreshUploadCallback", "refreshLayout", "sourceModalSuccess",
       "initPlayer", "initInfiniteScroll", "fetchCollection", "processRefreshUpload");
 
@@ -54,7 +54,7 @@ App.Views.UploadsIndex = Backbone.View.extend({
       _this.initDropTarget();
       _this.initUnload();
       _this.initSourceModal();
-      _this.initMailTo();
+      _this.setLocale();
       _this.initImageUploadInput();
       $('[data-toggle="tooltip"]').tooltip({
         container: 'body'
@@ -325,27 +325,29 @@ App.Views.UploadsIndex = Backbone.View.extend({
     });
   },
 
-  initMailTo: function() {
+  setLocale: function() {
     var emailAddress = "my@voyz.es",
-      locale = $("#file-locale").val().toLowerCase();
+      emailLocale = "";
+
+    this.locale = $("#file-locale").val();
+    emailLocale = (this.locale || "").toLowerCase();
 
     // enable / disable step
-    if (_.isEmpty(locale)) {
+    if (_.isEmpty(this.locale)) {
       this.$('.select-upload-type-step').addClass("disabled").removeClass("enabled");
     } else {
       this.$('.select-upload-type-step').addClass("enabled").removeClass("disabled");
     }
 
-    // locale
-    if (locale === "en" || locale === "en-us" || _.isEmpty(locale)) {
-      locale = "";
+    // email locale
+    if (this.locale === "en" || this.locale === "en-US" || _.isEmpty(this.locale)) {
+      emailLocale = "";
     }
     // email address
-    if (locale && locale.length >= 0) {
-      emailAddress = "my+" + locale + "@voyz.es";
+    if (emailLocale && emailLocale.length >= 0) {
+      emailAddress = "my+" + emailLocale + "@voyz.es";
     }
-    this.$('.email-file-link')
-      .attr('value', emailAddress);
+    this.$('.email-file-link').attr('value', emailAddress);
   },
 
   mailtoHref: function(locale, emailAddress) {
@@ -374,7 +376,7 @@ App.Views.UploadsIndex = Backbone.View.extend({
   },
 
   openSourceModal: function() {
-    this.sourceModal.render().show();
+    this.sourceModal.render().show({locale: this.locale});
   },
 
   initIsotope: function() {
