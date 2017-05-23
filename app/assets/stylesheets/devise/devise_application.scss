@@ -226,7 +226,7 @@ body.devise, body.confirmations, body.payment-methods {
       border: 0;
       max-width: 430px;
 
-      input {
+      input, select {
         font: inherit;
         font-size: 16px;
         height: 45px;
@@ -333,6 +333,13 @@ body.devise, body.confirmations, body.payment-methods {
       border: 2px solid #fff;
       background: transparent;
       text-shadow: none;
+
+      &:hover,
+      &:active {
+        border-color: #fff;
+        background-color: transparent;
+        background-image: none;
+      }
     }
 
     .btn-simple {
@@ -481,6 +488,12 @@ body.passwords {
 
 body.confirmations {
   .confirmation-content {
+    margin-bottom: 250px;
+  }
+}
+
+body.payment-methods {
+  .payment-methods-content {
     margin-bottom: 250px;
   }
 }

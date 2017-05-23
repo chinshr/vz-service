@@ -25,39 +25,41 @@
   });
   <% end %>
 <% end %>
-<div class="container-fluid content-primary">
-  <div class="tile form-tile animated fadeInUp">
-    <%= form_for(@subscription, {url: form_url, validate: true, html: form_html_options}) do |f| %>
-      <div class="panel-heading">
-        <% if use_action == :create_subscription %>
-        <h1 class="logo">
-          <a class="signup-brand" href="/">Upgrade to your <%= plan_name(@plan) %> plan here. All we need is your valid credit card to get you started.</a>
-        </h1>
-        <p>Start your <span class="subscription-plan-name"><%= plan_name(@plan) %></span> plan at <span class="subscription-plan-price"><%= plan_price(@plan) %></span><span class="subscription-plan-interval">/<%= plan_interval(@plan) %></span>. You need a valid credit card to begin.</p>
-        <% else %>
-        <h1 class="logo">
-          <a class="signup-brand" href="/">Update credit card information.</a>
-        </h1>
-        <p>Update your credit card.</p>
-        <% end %>
-      </div><!-- .panel-heading -->
-      <div class="panel-body">
-        <div class="alert alert-danger payola-payment-error"></div>
-        <%= hidden_field_tag :card_email, current_user.email, :name => nil, data: {payola: 'email'} %>
-        <% if @plan %>
-          <%= render "card_fields", use_card_expiration_select: use_card_expiration_select %>
-        <% end %>
-      </div><!-- .panel-body -->
-      <div class="panel-footer">
-        <% if use_action == :create_subscription %>
-        <button class="btn btn-lg btn-primary btn-block" type="submit" data-loading-text="Creating...">Start subscription</button>
-        <% else %>
-        <button class="btn btn-lg btn-primary btn-block" type="submit" data-loading-text="Updating...">Update Card</button>
-        <% end %>
-      </div><!-- .panel-footer -->
-    <% end %>
-  </div><!-- form-tile -->
-  <div class="tile form-signin-links">
-    <a class="btn btn-primary btn-lg btn-plain btn-block btn-rounded btn-transparent" href="<%= url_for(:back) %>">Back</a><br>
-  </div>
-</div><!-- content-primary -->
+<div class="container-fluid content-primary page-wrap gradient-primary">
+  <div class="payment-methods-content">
+    <div class="tile form-tile animated fadeInUp">
+      <%= form_for(@subscription, {url: form_url, validate: true, html: form_html_options}) do |f| %>
+        <div class="panel-heading">
+          <% if use_action == :create_subscription %>
+          <h1 class="logo">
+            <a class="signup-brand" href="/">Upgrade to your <%= plan_name(@plan) %> plan here. All we need is your valid credit card to get you started.</a>
+          </h1>
+          <p>Start your <span class="subscription-plan-name"><%= plan_name(@plan) %></span> plan at <span class="subscription-plan-price"><%= plan_price(@plan) %></span><span class="subscription-plan-interval">/<%= plan_interval(@plan) %></span></p>
+          <% else %>
+          <h1 class="logo">
+            <a class="signup-brand" href="/">Update credit card information</a>
+          </h1>
+          <p>Update your credit card information</p>
+          <% end %>
+        </div><!-- .panel-heading -->
+        <div class="panel-body">
+          <div class="alert alert-danger payola-payment-error"></div>
+          <%= hidden_field_tag :card_email, current_user.email, :name => nil, data: {payola: 'email'} %>
+          <% if @plan %>
+            <%= render "card_fields", use_card_expiration_select: use_card_expiration_select %>
+          <% end %>
+        </div><!-- .panel-body -->
+        <div class="panel-footer">
+          <% if use_action == :create_subscription %>
+          <button class="btn btn-lg btn-primary btn-block" type="submit" data-loading-text="Creating...">Start subscription</button>
+          <% else %>
+          <button class="btn btn-lg btn-primary btn-block" type="submit" data-loading-text="Updating...">Update Card</button>
+          <% end %>
+        </div><!-- .panel-footer -->
+      <% end %>
+    </div><!-- form-tile -->
+    <div class="tile form-signin-links">
+      <a class="btn btn-primary btn-lg btn-plain btn-block btn-rounded btn-transparent" href="<%= url_for(:back) %>">Back</a><br>
+    </div><!-- .form-signin-links -->
+  </div><!-- .payment-methods-content -->
+</div><!-- .content-primary -->
