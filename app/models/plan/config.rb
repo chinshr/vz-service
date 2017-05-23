@@ -3,9 +3,9 @@ class Plan::Config
 
   VERSION = "1.0.0"
 
-  # attribute :version, String, default: :current_version, lazy: true
+  attribute :version, String, default: :current_version, lazy: true
   complex_attribute :transcription, Plan::Config::Transcription, default: {}
-  complex_attribute :quotas, Plan::Config::Quotas, default: {}
+  collection_attribute :quotas, Plan::Config::QuotaCollection[Plan::Config::Quota], default: []
 
   def self.dump(values)
     values = values.is_a?(String) ? JSON.parse(values) : values

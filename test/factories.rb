@@ -286,7 +286,7 @@ FactoryGirl.define do
             "length_per_media": 3600
           },
           "transcription": {
-            "engine": "test_engine"
+            "engine": "test_personal_engine"
           }
         }
       })
@@ -523,6 +523,7 @@ FactoryGirl.define do
 
   factory :plan do
     sequence(:name) {|n| "plan-name-#{n}"}
+    sequence(:key) {|n| "plan_name_#{n}"}
     amount 995
     interval 'month'
     sequence(:stripe_id) {|n| "stripe-id-#{n}"}
@@ -554,6 +555,18 @@ FactoryGirl.define do
     trait :without_stripe do
       create_stripe false
     end
+
+    trait :with_config do
+      config({
+        "quotas": {
+          "uploads_per_month": 5,
+          "length_per_media": 3600
+        },
+        "transcription": {
+          "engine": "test_plan_engine"
+        }
+      })
+    end
   end
 
   factory :sale, :class => "Payola::Sale" do
@@ -584,6 +597,10 @@ FactoryGirl.define do
     currency 'usd'
     quantity 1
     stripe_id 'sub_123456'
+
+    trait :with_plan_config do
+      association :plan, factory: [:plan, :with_config]
+    end
   end
 
 end

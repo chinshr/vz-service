@@ -221,31 +221,31 @@ module Web::ApplicationHelper
     end
   end
 
-  def plan_split_features(plan_or_plan_id)
+  def plan_split_features(plan_or_plan_key)
     features = []
-    plan_id  = plan_or_plan_id.is_a?(Plan) ? plan_or_plan_id.stripe_id : plan_or_plan_id
+    plan_key = plan_or_plan_key.is_a?(Plan) ? plan_or_plan_key.key : plan_or_plan_key
 
-    if plan_features_from_translations?(plan_id)
-      features = plan_features_from_translations(plan_id)
+    if plan_features_from_translations?(plan_key)
+      features = plan_features_from_translations(plan_key)
     elsif plan_or_plan_id.is_a?(Plan)
       re = /([\n\n]+)|([\r\n]+)/
-      features = plan.features.to_s.split(re).map {|e| e.gsub(re, "")}.reject(&:blank?)
+      features = plan_or_plan_id.features.to_s.split(re).map {|e| e.gsub(re, "")}.reject(&:blank?)
     end
     features.map {|e| yield e} if block_given?
     features
   end
 
-  def plan_features_from_translations?(plan_id)
-    !!I18n.t!("pricing.plan_features.#{plan_id}.feature_1")
+  def plan_features_from_translations?(plan_key)
+    !!I18n.t!("pricing.plan_features.#{plan_key}.feature_1")
   rescue I18n::MissingTranslationData
     false
   end
 
-  def plan_features_from_translations(plan_id)
+  def plan_features_from_translations(plan_key)
     features, index = [], 1
     while true
       begin
-        features << I18n.t!("pricing.plan_features.#{plan_id}.feature_#{index}")
+        features << I18n.t!("pricing.plan_features.#{plan_key}.feature_#{index}")
         index += 1
       rescue I18n::MissingTranslationData
         break
@@ -310,8 +310,10 @@ module Web::ApplicationHelper
 
   def button_to_cancel_subscription(body, html_options = {})
     url = web_account_billing_subscription_path
+    html_options[:"data-loading-text"] ||= "Processing..."
+
     capture do
-      form_for current_subscription, as: 'subscription', url: url, html: {method: :delete, role: 'form'} do |f|
+      form_for current_subscription, as: 'subscription', url: url, html: {method: :delete, role: 'form', onsubmit: %($(this).find(":submit").button("loading");)} do |f|
         hidden_field_tag(:guid, current_subscription.guid) +
         f.submit(body, html_options)
       end
@@ -323,6 +325,7 @@ module Web::ApplicationHelper
     show_account = !!options[:show_account]
     html_options[:class] ||= "btn popup-with-zoom-anim"
     html_options[:disabled] ||= 'disabled' if options[:disabled]
+    html_options[:"data-loading-text"] ||= "Processing..."
 
     if current_subscription.nil?
       if current_user
@@ -353,7 +356,7 @@ module Web::ApplicationHelper
       end
       # form
       capture do
-        form_for current_subscription, as: 'subscription', url: url, html: {method: form_method, role: 'form'} do |f|
+        form_for current_subscription, as: 'subscription', url: url, html: {method: form_method, role: 'form', onsubmit: %($(this).find(":submit").button("loading");)} do |f|
           hidden_field_tag(:plan_id, plan.uid) +
           hidden_field_tag(:plan_class, plan.plan_class) +
           hidden_field_tag(:quantity, 1) +

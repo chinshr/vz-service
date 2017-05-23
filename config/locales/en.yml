@@ -50,18 +50,18 @@ en:
     plan_features:
       free:
         feature_1: "Unlimited public media documents"
-        feature_2: "45 minutes of automatic transcription per month"
-        feature_3: "Standard quality transcripts"
+        feature_2: "30 minutes of automatic transcription per month"
+        feature_3: "Standard quality machine transcripts"
       personal_month:
-        feature_1: "150 minutes of ASR transcription per month"
-        feature_2: "Standard quality transcripts"
+        feature_1: "2 hours of automatic transcription per month"
+        feature_2: "Standard quality machine transcripts"
         feature_3: "Private and public media storage"
       professional_month:
-        feature_1: "10 hours ASR transcription per month"
+        feature_1: "10 hours of automatic transcription per month"
         feature_2: "High quality transcripts"
         feature_3: "Private and public storage"
       team_month:
-        feature_1: "45 hours ASR transcription per month"
+        feature_1: "45 hours of automatic transcription per month"
         feature_2: "High quality transcripts"
         feature_3: "Private and public storage"
         feature_4: "3 users per team, $7 per additional user (up to 5 users)"

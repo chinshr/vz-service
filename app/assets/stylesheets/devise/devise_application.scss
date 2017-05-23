@@ -18,6 +18,12 @@ body.devise, body.confirmations, body.payment-methods {
     }
   }
 
+  .alert-danger {
+    color: white;
+    background-color: #d64242;
+    border-color: #d12d2d;
+  }
+
   .has-error {
     .help-block,
     .control-label,

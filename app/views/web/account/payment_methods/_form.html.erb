@@ -9,19 +9,20 @@
     class: 'form-signup panel animated fade-in-up payola-onestep-subscription-form',
     'data-payola-base-path': payola_path,
     'data-payola-plan-type': @subscription.plan.plan_class,
-    'data-payola-plan-id': @subscription.plan.id
+    'data-payola-plan-id': @subscription.plan.id,
+    onsubmit: "event.preventDefault(); canProceed();"
   }
 %>
+<%= javascript_tag do %>
+  function canProceed() { return false; };
+<% end %>
 <% content_for :javascript_includes do %>
   <%= render 'payola/transactions/stripe_header' %>
   <%= javascript_tag do %>
   $(function() {
-    $("form").find("button[type=submit]").button("reset");
-/*
-    $("form").on('submit', function(e) {
-      $(this).find("button[type=submit]").button("loading");
-    });
-*/
+    $("form").find("button[type=submit]")
+      .button("reset")
+      .removeClass("disabled");
   });
   <% end %>
 <% end %>
@@ -51,9 +52,9 @@
         </div><!-- .panel-body -->
         <div class="panel-footer">
           <% if use_action == :create_subscription %>
-          <button class="btn btn-lg btn-primary btn-block" type="submit" data-loading-text="Creating...">Start subscription</button>
+          <button class="btn btn-lg btn-primary btn-block disabled" type="submit" data-loading-text="Processing...">Start subscription</button>
           <% else %>
-          <button class="btn btn-lg btn-primary btn-block" type="submit" data-loading-text="Updating...">Update Card</button>
+          <button class="btn btn-lg btn-primary btn-block disabled" type="submit" data-loading-text="Processing...">Update Card</button>
           <% end %>
         </div><!-- .panel-footer -->
       <% end %>

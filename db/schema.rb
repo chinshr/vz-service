@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170131222030) do
+ActiveRecord::Schema.define(version: 20170525220429) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -112,6 +112,12 @@ ActiveRecord::Schema.define(version: 20170131222030) do
 
   add_index "api_platforms", ["aasm_state"], name: "index_api_platforms_on_aasm_state", using: :btree
   add_index "api_platforms", ["uid"], name: "index_api_platforms_on_uid", unique: true, using: :btree
+
+  create_table "ar_internal_metadata", primary_key: "key", force: :cascade do |t|
+    t.string   "value"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "attachings", force: :cascade do |t|
     t.integer  "message_id"
@@ -488,6 +494,7 @@ ActiveRecord::Schema.define(version: 20170131222030) do
     t.datetime "created_at",                    null: false
     t.datetime "updated_at",                    null: false
     t.jsonb    "config",        default: {},    null: false
+    t.string   "key"
   end
 
   add_index "plans", ["config"], name: "index_plans_on_config", using: :gin
@@ -565,8 +572,15 @@ ActiveRecord::Schema.define(version: 20170131222030) do
     t.datetime "created_at"
   end
 
+  add_index "taggings", ["context"], name: "index_taggings_on_context", using: :btree
   add_index "taggings", ["tag_id", "taggable_id", "taggable_type", "context", "tagger_id", "tagger_type"], name: "taggings_idx", unique: true, using: :btree
+  add_index "taggings", ["tag_id"], name: "index_taggings_on_tag_id", using: :btree
   add_index "taggings", ["taggable_id", "taggable_type", "context"], name: "index_taggings_on_taggable_id_and_taggable_type_and_context", using: :btree
+  add_index "taggings", ["taggable_id", "taggable_type", "tagger_id", "context"], name: "taggings_idy", using: :btree
+  add_index "taggings", ["taggable_id"], name: "index_taggings_on_taggable_id", using: :btree
+  add_index "taggings", ["taggable_type"], name: "index_taggings_on_taggable_type", using: :btree
+  add_index "taggings", ["tagger_id", "tagger_type"], name: "index_taggings_on_tagger_id_and_tagger_type", using: :btree
+  add_index "taggings", ["tagger_id"], name: "index_taggings_on_tagger_id", using: :btree
 
   create_table "tags", force: :cascade do |t|
     t.string  "name",           limit: 255
@@ -703,10 +717,12 @@ ActiveRecord::Schema.define(version: 20170131222030) do
     t.jsonb    "properties",                                                  default: {},    null: false
     t.boolean  "approved",                                                    default: false, null: false
     t.string   "name"
+    t.datetime "deleted_at"
   end
 
   add_index "users", ["approved"], name: "index_users_on_approved", using: :btree
   add_index "users", ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true, using: :btree
+  add_index "users", ["deleted_at"], name: "index_users_on_deleted_at", using: :btree
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
   add_index "users", ["lat"], name: "index_users_on_lat", using: :btree
   add_index "users", ["lng"], name: "index_users_on_lng", using: :btree

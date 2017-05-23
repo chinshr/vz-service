@@ -27,7 +27,7 @@
       <% if show_details %>
       <ul>
       <% plan_split_features(plan).each do |feature| %>
-        <li class="<%= cycle('whyt', '') %>">
+        <li class="<%= cycle('whyt', '', name: plan.key) %>">
           <a href="#"><%= markdown(feature) %></a>
         </li>
       <% end %>
@@ -48,7 +48,7 @@
         <form>
           <h4><span class="shipping"> </span>Shipping</h4>
           <ul>
-            <li><input class="text-box-dark" type="text" value="Frist Name" onfocus="this.value = '';" onblur="if (this.value == '') {this.value = 'Frist Name';}"></li>
+            <li><input class="text-box-dark" type="text" value="Frist Name" onfocus="this.value = '';" onblur="if (this.value == '') {this.value = 'First Name';}"></li>
             <li><input class="text-box-dark" type="text" value="Last Name" onfocus="this.value = '';" onblur="if (this.value == '') {this.value = 'Last Name';}"></li>
           </ul>
           <ul>
@@ -68,7 +68,6 @@
             <label for="3" name="demo_lbl_1" class="css-label1"> </label>
             <a class="visa" href="#"> </a>
             </span>
-
           </li>
           <li>
             <span class="col_checkbox">

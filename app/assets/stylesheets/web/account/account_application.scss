@@ -299,9 +299,7 @@ body.account {
       background-color: #fff;
 
       @media (min-width: 768px) {
-        padding-top: 30px;
-        padding-right: 40px;
-        padding-left: 40px;
+        padding: 30px 40px;
       }
 
       h1.page-header {
@@ -342,6 +340,28 @@ body.account {
         a.btn.btn-primary,
         input.btn.btn-primary {
           font-size: 20px;
+        }
+
+        .btn-primary {
+          background-color: #4285f4;
+          border-color: #4285f4;
+
+          &:active,
+          &:hover {
+            background-color: #3276b1;
+            border-color: #3276b1;
+          }
+        }
+
+        .btn-danger {
+          background-color: #d2322d;
+          border-color: #d2322d;
+
+          &:active,
+          &:hover {
+            background-color: #ac2925;
+            border-color: #ac2925;
+          }
         }
 
         input, select {

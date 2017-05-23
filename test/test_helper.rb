@@ -2,10 +2,8 @@ ENV["RAILS_ENV"] ||= "test"
 ENV["PUBNUB_DISABLED"] ||= "true"
 ENV["CODECLIMATE_REPO_TOKEN"] ||= "131d67864fbd157df1e2a2745c5d9a1bbed1783706ff91f1178a5913ba5013eb"
 
-# require 'simplecov'
-# SimpleCov.start
-require 'codeclimate-test-reporter'
-CodeClimate::TestReporter.start
+require 'simplecov'
+SimpleCov.start
 
 require File.expand_path('../../config/environment', __FILE__)
 require 'rails/test_help'

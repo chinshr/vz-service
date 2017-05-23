@@ -333,12 +333,36 @@ class UserTest < ActiveSupport::TestCase
     end
   end
 
-  should "#update_subscription_plan" do
-    user = FactoryGirl.create(:user)
-    subscription = FactoryGirl.create(:subscription, owner: user)
-    assert_nil user.plan
-    User.update_subscription_plan(subscription)
-    assert_equal subscription.plan, user.plan
+  context "#update_subscription_plan" do
+    should "create" do
+      user = FactoryGirl.create(:user)
+      subscription = FactoryGirl.create(:subscription, :with_plan_config, owner: user)
+      assert_nil user.plan
+      assert_nil user.properties.config.transcription.engine
+      User.update_subscription_plan(subscription)
+      assert_equal subscription.plan, user.plan
+      assert_equal "test_plan_engine", user.properties.config.transcription.engine
+    end
+
+    should "update" do
+      user = FactoryGirl.create(:user, :with_personal_plan)
+      subscription = FactoryGirl.create(:subscription, :with_plan_config, owner: user)
+      assert_not_nil user.plan
+      assert_equal "test_personal_engine", user.properties.config.transcription.engine
+      User.update_subscription_plan(subscription)
+      assert_equal subscription.plan, user.plan
+      assert_equal "test_plan_engine", user.properties.config.transcription.engine
+    end
+
+    should "cancel" do
+      user = FactoryGirl.create(:user, :with_personal_plan)
+      subscription = FactoryGirl.create(:subscription, owner: user)
+      assert_not_nil user.plan
+      assert_equal "test_personal_engine", user.properties.config.transcription.engine
+      User.update_subscription_plan(subscription, cancel: true)
+      assert_nil user.plan
+      assert_nil user.properties.config.transcription.engine
+    end
   end
 
   context "#properties" do
@@ -360,21 +384,36 @@ class UserTest < ActiveSupport::TestCase
     end
 
     should "config.transcription.engine inherited from plan" do
-      assert_equal "test_engine", @user2.properties.config.transcription.engine
+      assert_equal "test_personal_engine", @user2.properties.config.transcription.engine
     end
   end
 
-  context "admin mailer" do
+  context "admin notification on create" do
+    setup do
+      @mailer = mock("mailer")
+      @mailer.stubs(:deliver_later)
+    end
+
     should "delivers 'new user signed up'" do
-      assert_enqueued_with(job: ActionMailer::DeliveryJob) do
-        FactoryGirl.create(:user, :approved)
-      end
+      User::AdminMailer.expects(:new_user_signup).once.returns(@mailer)
+      User::AdminMailer.expects(:new_user_waiting_for_approval).never
+      FactoryGirl.create(:user, :approved)
     end
 
     should "delivers 'needs approval'" do
-      assert_enqueued_with(job: ActionMailer::DeliveryJob) do
-        FactoryGirl.create(:user, :unapproved)
-      end
+      User::AdminMailer.expects(:new_user_waiting_for_approval).once.returns(@mailer)
+      User::AdminMailer.expects(:new_user_signup).never
+      FactoryGirl.create(:user, :unapproved)
+    end
+
+    should "skip admin notification" do
+      User::AdminMailer.expects(:new_user_signup).never
+      User::AdminMailer.expects(:new_user_waiting_for_approval).never
+
+      user = FactoryGirl.build(:user, :approved)
+      user.skip_admin_notification!
+      assert_equal false, user.send(:send_admin_notification?)
+      user.save
     end
   end
 end
