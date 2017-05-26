@@ -81,8 +81,6 @@ personal_month_1500 = Plan.where(stripe_id: 'personal_month_1500').first_or_init
   p.visible       = true
   p.create_stripe = true
   p.config.transcription.quality = "high"
-  p.config.quotas.minutes_per_user = 120
-  p.config.quotas.minutes_per_user_interval = 'month'
 end
 personal_month_1500.save! if personal_month_1500.changed?
 
