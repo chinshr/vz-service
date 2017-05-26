@@ -16,14 +16,18 @@ class Web::Devise::RegistrationsController < Devise::RegistrationsController
 
   def create
     build_resource(signup_params) unless resource
+    resource.skip_confirmation_notification! if @plan.present?
+    resource.skip_admin_notification! if @plan.present?
     resource.save
+
     yield resource if block_given?
+
     if resource.persisted?
       if resource.active_for_authentication?
         set_flash_message :notice, :signed_up if is_flashing_format?
         sign_up(resource_name, resource)
         if @plan.present?
-          create_subscription(resource)
+          create_subscription
         else
           respond_with resource, location: after_sign_up_path_for(resource)
         end
@@ -49,12 +53,12 @@ class Web::Devise::RegistrationsController < Devise::RegistrationsController
 
   # DELETE /resource
   def destroy
-    cancel_subscription if find_subscription
+    cancel_subscription(nil, {at_period_end: false}) if find_subscription
     resource.destroy
     Devise.sign_out_all_scopes ? sign_out : sign_out(resource_name)
     set_flash_message! :notice, :destroyed
     yield resource if block_given?
-    respond_with_navigational(resource){ redirect_to after_sign_out_path_for(resource_name) }
+    respond_with_navigational(resource) { redirect_to after_sign_out_path_for(resource_name) }
   end
 
   protected

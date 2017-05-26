@@ -21,7 +21,13 @@ ActiveAdmin.register Payola::Subscription, as: "Subscription" do
     column :id do |resource|
       link_to(resource.id, "subscriptions/#{resource.id}")
     end
-    column :email
+    column :email do |resource|
+      if resource.owner.present?
+        link_to(resource.email, admin_user_path(resource.owner.id))
+      else
+        resource.email
+      end
+    end
     column :plan
     column :guid
     column :amount do |resource|

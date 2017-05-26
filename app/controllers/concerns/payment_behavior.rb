@@ -13,9 +13,10 @@ module PaymentBehavior
     confirm_subscription_with_message(t('payola.subscriptions.plan_updated'))
   end
 
-  def cancel_subscription(redirect_url = web_account_billing_path)
-    Payola::CancelSubscription.call(@subscription, at_period_end: true)
-    redirect_to redirect_url, notice: t('payola.subscriptions.plan_canceled')
+  def cancel_subscription(redirect_url = web_account_billing_path, options = {})
+    options = {at_period_end: true}.merge(options)
+    Payola::CancelSubscription.call(@subscription, options)
+    redirect_to redirect_url, notice: t('payola.subscriptions.plan_canceled') if redirect_url
   end
 
   def confirm_subscription_with_message(message)
@@ -26,17 +27,29 @@ module PaymentBehavior
     end
   end
 
-  def confirm_subscription_status_with_message(message)
+  def confirm_subscription_status_with_message(message, redirect_url = web_account_billing_path)
     errors  = ([@subscription.error.presence] + @subscription.errors.full_messages).compact.to_sentence
     as_json = {
       guid:   @subscription.guid,
       status: @subscription.state,
       error:  errors.presence
     }
-    if @subscription.errors.empty?
-      render json: as_json, status: 200, notice: message
-    else
-      render json: as_json, status: 400, alert: errors
+
+    respond_to do |format|
+      format.html {
+        if @subscription.errors.empty?
+          redirect_to redirect_url, notice: message
+        else
+          redirect_to redirect_url, alert: errors
+        end
+      }
+      format.js {
+        if @subscription.errors.empty?
+          render json: as_json, status: 200, notice: message
+        else
+          render json: as_json, status: 400, alert: errors
+        end
+      }
     end
   end
 

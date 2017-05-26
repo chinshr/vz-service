@@ -71,52 +71,58 @@ end
 
 # Subscription plans
 
-personal_plan = Plan.where(name: 'Personal').first_or_initialize do |p|
-  p.amount        = 900
+personal_month_1500 = Plan.where(stripe_id: 'personal_month_1500').first_or_initialize do |p|
+  p.name          = "Personal"
+  p.key           = "personal_month"
+  p.amount        = 1500
   p.interval      = 'month'
-  p.stripe_id     = 'personal_month'
-  p.features      = ['5 media per month', 'Up to 30 min. per media', 'Normal quality', '1 User'].join("\n\n")
   p.display_order = 10
   p.enabled       = true
   p.visible       = true
   p.create_stripe = true
+  p.config.transcription.quality = "high"
+  p.config.quotas.minutes_per_user = 120
+  p.config.quotas.minutes_per_user_interval = 'month'
 end
-personal_plan.save!
+personal_month_1500.save! if personal_month_1500.changed?
 
-professional_plan = Plan.where(name: 'Professional').first_or_initialize do |p|
-  p.amount        = 3500
+professional_month_4000 = Plan.where(stripe_id: 'professional_month_4000').first_or_initialize do |p|
+  p.name          = "Professional"
+  p.key           = "professional_month"
+  p.amount        = 4000
   p.interval      = 'month'
-  p.stripe_id     = 'professional_month'
-  p.features      = ['10 media per month', 'Up to 60 min. per media', 'High quality', '1 User'].join("\n\n")
   p.display_order = 20
   p.highlight     = "popular"
   p.enabled       = true
   p.visible       = true
   p.create_stripe = true
+  p.config.transcription.quality = "highest"
 end
-professional_plan.save!
+professional_month_4000.save! if professional_month_4000.changed?
 
-team_plan = Plan.where(name: 'Team').first_or_initialize do |p|
-  p.amount        = 9500
+team_month_9900 = Plan.where(stripe_id: "team_month_9900").first_or_initialize do |p|
+  p.name          = "Team"
+  p.key           = "team_month"
+  p.amount        = 9900
   p.interval      = 'month'
-  p.stripe_id     = 'team_month'
-  p.features      = ['10 media per month/user', 'Up to 60 min. per media', 'Highest quality', '3 Users'].join("\n\n")
   p.display_order = 30
   p.highlight     = "coming_soon"
   p.enabled       = false
   p.visible       = true
   p.create_stripe = true
+  p.config.transcription.quality = "highest"
 end
-team_plan.save!
+team_month_9900.save! if team_month_9900.changed?
 
-enterprise_plan = Plan.where(name: 'Enterprise').first_or_initialize do |p|
+enterprise_month_99500 = Plan.where(stripe_id: 'enterprise_month_99500').first_or_initialize do |p|
+  p.name          = "Enterprise"
+  p.key           = "enterprise_month"
   p.amount        = 99500
   p.interval      = 'month'
-  p.stripe_id     = 'enterprise_month'
-  p.features      = ['20 media per month', 'Up to 90 min. per media', 'Highest quality', '10 Users'].join("\n\n")
   p.display_order = 40
   p.enabled       = false
   p.visible       = false
   p.create_stripe = false
+  p.config.transcription.quality = "highest"
 end
-enterprise_plan.save!
+enterprise_month_99500.save! if enterprise_month_99500.changed?

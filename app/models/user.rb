@@ -36,6 +36,7 @@ class User < ActiveRecord::Base
 
   acts_as_tagger
   friendly_id :username, use: [:slugged, :history]
+  acts_as_paranoid
 
   validates :email, presence: true, email_format: true, uniqueness: true
   validates :first_name, presence: true, length: { minimum: 2, maximum: 125 },
@@ -56,7 +57,7 @@ class User < ActiveRecord::Base
   before_validation :downcase_email, on: :create
   before_save :geocode, if: :has_ip_address?, unless: :geocoded?
   before_save :reverse_geocode, if: :geocoded?
-  after_commit :send_admin_mail, on: :create
+  after_commit :send_on_create_admin_notification, on: :create, if: :send_admin_notification?
 
   class << self
 
@@ -64,9 +65,17 @@ class User < ActiveRecord::Base
       SecureRandom.uuid
     end
 
-    def update_subscription_plan(subscription)
+    def update_subscription_plan(subscription, options = {})
       if user = subscription.owner
-        user.update_column(:plan_id, subscription.plan_id)
+        if options.try(:[], :cancel)
+          user.plan_id           = nil
+          user.properties.config = Plan::Config.new
+          user.save(validate: false)
+        elsif subscription.plan_id
+          user.plan_id           = subscription.plan_id
+          user.properties.config = subscription.plan.config
+          user.save(validate: false)
+        end
       end
     end
 
@@ -194,6 +203,19 @@ class User < ActiveRecord::Base
     end
   end
 
+  def skip_admin_notification!
+    @skip_admin_notification = true
+  end
+
+  def send_on_create_admin_notification
+    if approved?
+      User::AdminMailer.new_user_signup(self).deliver_later
+    else
+      User::AdminMailer.new_user_waiting_for_approval(self).deliver_later
+    end
+  end
+  alias_method :send_admin_notification, :send_on_create_admin_notification
+
   protected
 
   def https?
@@ -212,18 +234,14 @@ class User < ActiveRecord::Base
     new_record? || slug.blank? || !!changes[:username]
   end
 
+  def send_admin_notification?
+    !@skip_admin_notification
+  end
+
   private
 
   def downcase_email
     self.email = email.downcase if email.present?
-  end
-
-  def send_admin_mail
-    if approved?
-      User::AdminMailer.new_user_signup(self).deliver_later
-    else
-      User::AdminMailer.new_user_waiting_for_approval(self).deliver_later
-    end
   end
 
   def should_validate_first_name?

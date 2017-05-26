@@ -1,5 +1,5 @@
 ActiveAdmin.register Plan do
-  permit_params :name, :stripe_id, :amount, :interval, :features,
+  permit_params :name, :key, :stripe_id, :amount, :interval, :features,
     :highlight, :display_order, :enabled, :visible, :create_stripe,
     :config
 
@@ -15,6 +15,7 @@ ActiveAdmin.register Plan do
     column :name do |resource|
       link_to(resource.name, resource_path(resource))
     end
+    column :key
     column :stripe_id
     column :interval
     column :amount
@@ -32,6 +33,7 @@ ActiveAdmin.register Plan do
       row :id
       row :uid
       row :name
+      row :key
       row :stripe_id
       row :interval
       row :amount
@@ -52,6 +54,7 @@ ActiveAdmin.register Plan do
   form do |f|
     f.inputs "Plan Details" do
       f.input :name
+      f.input :key
       f.input :stripe_id
       f.input :interval
       f.input :amount

@@ -5,20 +5,20 @@
 <h1 class="page-header">Billing Overview</h1>
 
 <% if current_subscription.present? && current_subscription.persisted? %>
-<p>
-  <i class="fa fa-credit-card fa-right-padding"></i><span class="subscription-payment-type"><%= subscription_payment_type(current_subscription) %></span> card on file ending in <span class="subscription-card-number"><%= subscription_card_number(current_subscription) %></span>, expiring <span class="subscription-card-expiration"><%= subscription_card_expiration(current_subscription) %></span>.
-</p>
-<p>
-  <i class="fa fa-calendar fa-right-padding"></i>You are paying <span class="subscription-price"><%= subscription_price(current_subscription) %></span> per <span class="subscription-plan-interval"><%= subscription_plan_interval(current_subscription) %></span> for a <span class="subscription-plan-name"><%= subscription_plan_name(current_subscription) %></span>,&nbsp;<%= subscription_plan_user_seats(current_subscription) %> license.
-  <% if current_subscription.cancel_at_period_end %>
-  You canceled, your last payment is due on <span class="subscription-next-payment-due-on"><%= subscription_next_payment_due_on(current_subscription) %></span>.
-  <% else %>
-  Next payment due on <span class="subscription-next-payment-due-on"><%= subscription_next_payment_due_on(current_subscription) %></span>.
-  <% end %>
-</p>
-<div class="form-group action">
-  <a class="btn btn-primary" href="<%= web_account_billing_payment_method_path %>">Update Credit Card</a>
-</div>
+  <p>
+    <i class="fa fa-credit-card fa-right-padding"></i><span class="subscription-payment-type"><%= subscription_payment_type(current_subscription) %></span> card on file ending in <span class="subscription-card-number"><%= subscription_card_number(current_subscription) %></span>, expiring <span class="subscription-card-expiration"><%= subscription_card_expiration(current_subscription) %></span>.
+  </p>
+  <p>
+    <i class="fa fa-calendar fa-right-padding"></i>You are paying <span class="subscription-price"><%= subscription_price(current_subscription) %></span> per <span class="subscription-plan-interval"><%= subscription_plan_interval(current_subscription) %></span> for a <span class="subscription-plan-name"><%= subscription_plan_name(current_subscription) %></span>,&nbsp;<%= subscription_plan_user_seats(current_subscription) %> license.
+    <% if current_subscription.cancel_at_period_end %>
+    You canceled, your last payment is due on <span class="subscription-next-payment-due-on"><%= subscription_next_payment_due_on(current_subscription) %></span>.
+    <% else %>
+    Next payment due on <span class="subscription-next-payment-due-on"><%= subscription_next_payment_due_on(current_subscription) %></span>.
+    <% end %>
+  </p>
+  <div class="form-group action">
+    <a class="btn btn-primary" href="<%= web_account_billing_payment_method_path %>">Update Credit Card</a>
+  </div>
 <% else %>
 <p><i class="fa fa-calendar fa-right-padding"></i>You are currently on the <span class="subscription-plan-name">Free</span> plan.</p>
 <% end %>
