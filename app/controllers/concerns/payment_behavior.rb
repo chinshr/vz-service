@@ -17,6 +17,9 @@ module PaymentBehavior
     options = {at_period_end: true}.merge(options)
     Payola::CancelSubscription.call(@subscription, options)
     redirect_to redirect_url, notice: t('payola.subscriptions.plan_canceled') if redirect_url
+  rescue Stripe::StripeError => e
+    Rails.logger.error e.message
+    Rails.logger.error e.backtrace.join("\n")
   end
 
   def confirm_subscription_with_message(message)
