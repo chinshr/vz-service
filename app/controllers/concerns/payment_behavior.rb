@@ -35,6 +35,9 @@ module PaymentBehavior
       error:  errors.presence
     }
 
+    # Note: force mime format to json if request type empty
+    request.format = Mime::Type.new(:json) unless request.format.to_sym
+
     respond_to do |format|
       format.html {
         if @subscription.errors.empty?
@@ -43,7 +46,7 @@ module PaymentBehavior
           redirect_to redirect_url, alert: errors
         end
       }
-      format.js {
+      format.json {
         if @subscription.errors.empty?
           render json: as_json, status: 200, notice: message
         else
