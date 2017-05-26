@@ -9,7 +9,7 @@
           <ol class="steps">
             <li class="step enabled select-language-step">
               <div class="form-group form-group-locale">
-                <label class="xhidden" for="disabledSelect">Select language...</label>
+                <label class="xhidden" for="disabledSelect">Media language...</label>
                 <select data-placeholder="Choose a Language..." id="file-locale" class="form-control input-sm input-single-searchable">
                   <option value="" selected>Select language...</option>
                   <option value="en-US">English United States</option>
