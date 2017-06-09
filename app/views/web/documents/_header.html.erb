@@ -9,7 +9,7 @@
     <nav class="navbar navbar-default" id="navigation" role="navigation">
       <div id="brand-navbar" class="navbar-header">
         <a href="#" class="media-image media-image-thumb">
-          <span class="thumb thumb-video thumb-crop-top play-pause thumb-play-pause xthumb-autoplay xplay sticky" data-action="toggle-play-pause">
+          <span title="<%= key_cmd(:play, 'Esc') %>" class="thumb thumb-video thumb-crop-top play-pause thumb-play-pause xthumb-autoplay xplay sticky" data-action="toggle-play-pause" data-toggle="tooltip" data-placement="bottom">
             <!-- image -->
             <span class="thumb-sizer">
               <span class="thumb-tugger">
@@ -17,7 +17,6 @@
                 <span class="thumb-aligner"></span>
               </span>
             </span>
-
             <!-- loading -->
             <div class="loading spinner"></div>
           </span>  <!-- thumb -->

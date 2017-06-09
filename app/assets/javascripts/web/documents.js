@@ -37,7 +37,7 @@ $(document).ready(function() {
     // tooltips not working on iOS
     // https://github.com/twbs/bootstrap/issues/16028
   } else {
-    $('.btn-tlb, [data-toggle^=tooltip]').tooltip(options);
+    $('.btn-tlb, [data-toggle^=tooltip], .thumb').tooltip(options);
   }
 });
 
