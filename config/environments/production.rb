@@ -14,6 +14,8 @@ Voyzes::Application.configure do
   # Full error reports are disabled and caching is turned on.
   config.consider_all_requests_local       = false
   config.action_controller.perform_caching = true
+  # TODO Rails 5
+  # config.action_mailer.perform_caching     = true
 
   # Enable Rack::Cache to put a simple HTTP cache in front of your application
   # Add `rack-cache` to your Gemfile before enabling this.
@@ -21,7 +23,8 @@ Voyzes::Application.configure do
   # config.action_dispatch.rack_cache = true
 
   # Disable Rails's static asset server (Apache or nginx will already do this).
-  config.serve_static_files = true # false
+  config.public_file_server.enabled = true
+  config.public_file_server.headers = { 'Cache-Control' => 'public, max-age=31536000' }
 
   # Compress JavaScripts and CSS.
   config.assets.enabled = true
@@ -38,8 +41,6 @@ Voyzes::Application.configure do
 
   # Version of your assets, change this if you want to expire all your assets.
   config.assets.version = '1.1.3'
-
-  config.static_cache_control = "public, max-age=31536000"
 
   config.assets.debug = false
 
@@ -58,6 +59,9 @@ Voyzes::Application.configure do
 
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
   config.force_ssl = true
+  # TODO Rails 5
+  # See http://edgeguides.rubyonrails.org/upgrading_ruby_on_rails.html#configure-ssl-options-to-enable-hsts-with-subdomains
+  # config.ssl_options = { hsts: { subdomains: true } }
 
   # Set to :debug to see everything in the log.
   config.log_level = :info

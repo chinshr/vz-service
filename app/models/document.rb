@@ -1,7 +1,7 @@
 require "fuzzy_match"
 require "matrix"
 
-class Document < ActiveRecord::Base
+class Document < ApplicationRecord
   extend FriendlyId
   include AASM
   include Model::AASM::Support

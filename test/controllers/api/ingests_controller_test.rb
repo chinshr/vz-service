@@ -27,19 +27,19 @@ class Api::IngestsControllerTest < ActionController::TestCase
 
   context "GET /api/ingests(.:format)" do
     should "be unauthorized without user" do
-      get :index, format: :json
+      get :index, params: {format: :json}
       assert_response :unauthorized
     end
 
     should "be unauthorized for none backend users" do
-      sign_in :user, @user1
-      get :index, format: :json
+      sign_in @user1, scope: :user
+      get :index, params: {format: :json}
       assert_response :unauthorized
     end
 
     should "all ingests when signed in as backend user" do
-      sign_in :user, @user2
-      get :index, format: :json
+      sign_in @user2, scope: :user
+      get :index, params: {format: :json}
       assert_response :success
       assert response_body.has_key?("ingests"), "should have root"
       assert_equal 2, response_body["ingests"].size, "should have one ingest"
@@ -50,19 +50,19 @@ class Api::IngestsControllerTest < ActionController::TestCase
       context "with access_token parameter" do
         should "authenticate 'backend' user role" do
           @client_access = FactoryGirl.create(:client_access, user: @user2, access_status: Api::ClientAccess::ACCESS_STATUS_ACCOUNT)
-          get :index, access_token: @client_access.uid, format: :json
+          get :index, params: {access_token: @client_access.uid, format: :json}
           assert_response :success
         end
 
         should "NOT authenticate user without 'backend' role" do
           @client_access = FactoryGirl.create(:client_access, user: @user1, access_status: Api::ClientAccess::ACCESS_STATUS_ACCOUNT)
-          get :index, access_token: @client_access.uid, format: :json
+          get :index, params: {access_token: @client_access.uid, format: :json}
           assert_response :unauthorized
         end
 
         should "NOT authenticate client access without user" do
           @client_access = FactoryGirl.create(:client_access, access_status: Api::ClientAccess::ACCESS_STATUS_CLIENT)
-          get :index, access_token: @client_access.uid, format: :json
+          get :index, params: {access_token: @client_access.uid, format: :json}
           assert_response :unauthorized
         end
       end
@@ -72,21 +72,21 @@ class Api::IngestsControllerTest < ActionController::TestCase
           @client_access = FactoryGirl.create(:client_access, user: @user2, access_status: Api::ClientAccess::ACCESS_STATUS_ACCOUNT)
           # @request.headers['HTTP_AUTHORIZATION'] = @client_access.uid
           @request.headers['HTTP_AUTHORIZATION'] = ActionController::HttpAuthentication::Token.encode_credentials(@client_access.uid)
-          get :index, format: :json
+          get :index, params: {format: :json}
           assert_response :success
         end
 
         should "NOT authenticate user without 'backend' role" do
           @client_access = FactoryGirl.create(:client_access, user: @user1, access_status: Api::ClientAccess::ACCESS_STATUS_ACCOUNT)
           @request.headers['HTTP_AUTHORIZATION'] = @client_access.uid
-          get :index, format: :json
+          get :index, params: {format: :json}
           assert_response :unauthorized
         end
 
         should "NOT authenticate client access without user" do
           @client_access = FactoryGirl.create(:client_access, access_status: Api::ClientAccess::ACCESS_STATUS_CLIENT)
           @request.headers['HTTP_AUTHORIZATION'] = @client_access.uid
-          get :index, format: :json
+          get :index, params: {format: :json}
           assert_response :unauthorized
         end
       end
@@ -95,19 +95,19 @@ class Api::IngestsControllerTest < ActionController::TestCase
 
   context "GET /api/ingests/count(.:format)" do
     should "be unauthorized whithout any user" do
-      get :count, format: :json
+      get :count, params: {format: :json}
       assert_response :unauthorized
     end
 
     should "be unauthorized without backend user" do
-      sign_in :user, @user1
-      get :count, format: :json
+      sign_in @user1, scope: :user
+      get :count, params: {format: :json}
       assert_response :unauthorized
     end
 
     should "count ingests when backend user is signed in" do
-      sign_in :user, @user2
-      get :count, format: :json
+      sign_in @user2, scope: :user
+      get :count, params: {format: :json}
       assert_response :success
       assert response_body.has_key?("count"), "should have root"
       assert_equal Ingest.count, response_body["count"], "should have count"
@@ -116,19 +116,19 @@ class Api::IngestsControllerTest < ActionController::TestCase
 
   context "GET /api/ingests/:id" do
     should "be unauthorized whithout any user" do
-      get :show, :id => @ingest1.id, format: :json
+      get :show, params: {:id => @ingest1.id, format: :json}
       assert_response :unauthorized
     end
 
     should "be unauthorized without backend user" do
-      sign_in :user, @user1
-      get :show, :id => @ingest1.id, format: :json
+      sign_in @user1, scope: :user
+      get :show, params: {:id => @ingest1.id, format: :json}
       assert_response :unauthorized
     end
 
     should "get ingest when signed in as backend user" do
-      sign_in :user, @user2
-      get :show, :id => @ingest2.id, format: :json
+      sign_in @user2, scope: :user
+      get :show, params: {:id => @ingest2.id, format: :json}
       assert_response :success
       assert_attributes response_body["ingest"]
       assert_not_nil response_body["ingest"]["upload"], "expect upload"
@@ -140,10 +140,10 @@ class Api::IngestsControllerTest < ActionController::TestCase
 
   context "PUT /api/ingests/:id(.:format)" do
     should "update ingest to forward stage as backend user" do
-      sign_in :user, @user2
+      sign_in @user2, scope: :user
       assert_equal :starting, @ingest2.state
       assert_equal :begin_stage, @ingest2.stage
-      put :update, {:id => @ingest2.id, :ingest => {
+      put :update, params: {:id => @ingest2.id, :ingest => {
         event: "forward_stage"
       }, format: :json}
       assert_response :success
@@ -153,9 +153,9 @@ class Api::IngestsControllerTest < ActionController::TestCase
     end
 
     should "change ingest state to 'started' via #status=" do
-      sign_in :user, @user2
+      sign_in @user2, scope: :user
       assert_equal :starting, @ingest2.state
-      put :update, {:id => @ingest2.id, :ingest => {
+      put :update, params: {:id => @ingest2.id, :ingest => {
         stage: "start", progress: 1, status: Ingest::STATE_STARTED
       }, format: :json}
       assert_response :success
@@ -165,9 +165,9 @@ class Api::IngestsControllerTest < ActionController::TestCase
     end
 
     should "change ingest state to 'started' via #event=" do
-      sign_in :user, @user2
+      sign_in @user2, scope: :user
       assert_equal :starting, @ingest2.state
-      put :update, {:id => @ingest2.id, :ingest => {
+      put :update, params: {:id => @ingest2.id, :ingest => {
         progress: 1, event: "process"
       }, format: :json}
       assert_response :success
@@ -177,8 +177,8 @@ class Api::IngestsControllerTest < ActionController::TestCase
     end
 
     should "update metadata attributes" do
-      sign_in :user, @user2
-      put :update, {:id => @ingest2.id, :ingest => {
+      sign_in @user2, scope: :user
+      put :update, params: {:id => @ingest2.id, :ingest => {
         file_type: "video/mp4",
         file_size: 1234567
       }, format: :json}
@@ -189,13 +189,13 @@ class Api::IngestsControllerTest < ActionController::TestCase
     end
 
     should "trigger next stage via #trigger_stage_with=" do
-      sign_in :user, @user2
+      sign_in @user2, scope: :user
       @ingest2.update_attributes(aasm_state: "started", aasm_stage: "harvest_stage")
       assert_equal :started, @ingest2.state
       assert_equal :harvest_stage, @ingest2.stage
       Ingest::MediaIngest::TranscodeWorker.expects(:perform_workflow).with(@ingest2.id).once
 
-      put :update, {:id => @ingest2.id, :ingest => {
+      put :update, params: {:id => @ingest2.id, :ingest => {
         trigger: "#{@ingest2.stage}"
       }, format: :json}
       assert_response :success
@@ -205,9 +205,9 @@ class Api::IngestsControllerTest < ActionController::TestCase
 
     should "change update ingest with origin_url" do
       origin_url = "http://s3.amazonaws.com/vz-test-origin/z6bg6kevzy8f5shcnjjj"
-      sign_in :user, @user2
+      sign_in @user2, scope: :user
       assert_equal :starting, @ingest2.state
-      put :update, {:id => @ingest2.id, :ingest => {
+      put :update, params: {:id => @ingest2.id, :ingest => {
         origin_url: origin_url
       }, format: :json}
       assert_response :success
@@ -216,9 +216,9 @@ class Api::IngestsControllerTest < ActionController::TestCase
     end
 
     should "NOT change ingest state due to invalid transition via #status=" do
-      sign_in :user, @user2
+      sign_in @user2, scope: :user
       assert_equal :starting, @ingest2.state
-      put :update, {:id => @ingest2.id, :ingest => {
+      put :update, params: {:id => @ingest2.id, :ingest => {
         progress: 1, status: Ingest::STATE_RESET
       }, format: :json}
       assert_response :unprocessable_entity
@@ -229,33 +229,33 @@ class Api::IngestsControllerTest < ActionController::TestCase
     end
 
     should "NOT update without user" do
-      put :update, {:id => @ingest1.id, :ingest => {:stage => "transcribe"}, format: :json}
+      put :update, params: {:id => @ingest1.id, :ingest => {:stage => "transcribe"}, format: :json}
       assert_response :unauthorized
     end
 
     should "NOT update without backend user" do
-      sign_in :user, @user1
-      put :update, {:id => @ingest1.id, :ingest => {:stage => "transcribe"}, format: :json}
+      sign_in @user1, scope: :user
+      put :update, params: {:id => @ingest1.id, :ingest => {:stage => "transcribe"}, format: :json}
       assert_response :unauthorized
     end
   end
 
   context "DELETE /api/ingests/:id(.:format)" do
     should "be unauthorized without user" do
-      delete :destroy, {id: @ingest1, format: :json}
+      delete :destroy, params: {id: @ingest1, format: :json}
       assert_response :unauthorized
     end
 
     should "be unauthorized without backend user" do
-      sign_in :user, @user1
-      delete :destroy, {id: @ingest1, format: :json}
+      sign_in @user1, scope: :user
+      delete :destroy, params: {id: @ingest1, format: :json}
       assert_response :unauthorized
     end
 
     should "destroy with backend user" do
-      sign_in :user, @user2
+      sign_in @user2, scope: :user
       assert_enqueued_with(job: Ingest::RemoveJob) do
-        delete :destroy, {id: @ingest1, format: :json}
+        delete :destroy, params: {id: @ingest1, format: :json}
         assert_response :success
         assert_attributes response_body["ingest"]
       end

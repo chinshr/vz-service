@@ -32,14 +32,14 @@ class Api::TagsControllerTest < ActionController::TestCase
 
       context "filters" do
         should "#limit" do
-          get :index, :limit => 1, format: :json
+          get :index, params: {:limit => 1, format: :json}
           assert_response :success
           assert response_body.has_key?("tags"), "should have root"
           assert_equal 1, response_body["tags"].size
         end
 
         should "#most_used" do
-          get :index, :most_used => 1, format: :json
+          get :index, params: {:most_used => 1, format: :json}
           assert_response :success
           assert response_body.has_key?("tags"), "should have root"
           assert_equal 1, response_body["tags"].size
@@ -47,14 +47,14 @@ class Api::TagsControllerTest < ActionController::TestCase
         end
 
         should "#least_used" do
-          get :index, :least_used => 1, format: :json
+          get :index, params: {:least_used => 1, format: :json}
           assert_response :success
           assert response_body.has_key?("tags"), "should have root"
           assert_equal 1, response_body["tags"].size
         end
 
         should "#named_like" do
-          get :index, :named_like => "cat", format: :json
+          get :index, params: {:named_like => "cat", format: :json}
           assert_response :success
           assert response_body.has_key?("tags"), "should have root"
           assert_equal 1, response_body["tags"].size
@@ -66,7 +66,7 @@ class Api::TagsControllerTest < ActionController::TestCase
     context "with signed in user" do
       setup do
         @user = FactoryGirl.create(:user)
-        sign_in :user, @user
+        sign_in @user, scope: :user
       end
 
       should "get all tags" do

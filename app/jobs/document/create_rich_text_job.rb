@@ -1,4 +1,4 @@
-class Document::CreateRichTextJob < ActiveJob::Base
+class Document::CreateRichTextJob < ApplicationJob
   queue_as :default
 
   def perform(document_id)

@@ -1,6 +1,6 @@
 class Web::Account::SubscriptionsController < Web::Account::ApplicationController
-  before_filter :find_plan_and_coupon, only: [:create, :update]
-  before_filter :find_subscription, only: [:update, :destroy]
+  before_action :find_plan_and_coupon, only: [:create, :update]
+  before_action :find_subscription, only: [:update, :destroy]
 
   # [POST] /account/billing/subscription(.:format)
   def create

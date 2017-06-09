@@ -1,4 +1,4 @@
-class Upload < ActiveRecord::Base
+class Upload < ApplicationRecord
   include Model::Filter
   include Model::Uid
   include Model::S3

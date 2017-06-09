@@ -23,7 +23,7 @@ ActiveAdmin.register Payola::Sale, as: "Sale" do
     end
     column :email
     column "Plan", :owner do |resource|
-      link_to(resource.owner.name, "plans/#{resource.owner.id}")
+      link_to(resource.owner.name, "plans/#{resource.owner.id}") if resource.owner
     end
     column :guid
     column :amount do |resource|

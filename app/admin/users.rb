@@ -41,10 +41,10 @@ ActiveAdmin.register User do
       links += link_to I18n.t('active_admin.view'), resource_path(resource), :class => "member_link view_link"
       links += link_to I18n.t('active_admin.edit'), edit_resource_path(resource), :class => "member_link edit_link"
       if resource.approved?
-        links += link_to "Block", switch_admin_user_path(resource.id, params.merge(:event => "unapprove").symbolize_keys),
+        links += link_to "Block", switch_admin_user_path(resource.id, switch_params.merge(:event => "unapprove")),
           :class => "member_link view_link button", :confirm => "Really want to block?"
       else
-        links += link_to "Accept", switch_admin_user_path(resource.id, params.merge(:event => "approve").symbolize_keys),
+        links += link_to "Accept", switch_admin_user_path(resource.id, switch_params.merge(:event => "approve")),
           :class => "member_link view_link button", :confirm => "Really want to accept?"
       end
       links.html_safe
@@ -105,10 +105,6 @@ ActiveAdmin.register User do
     elsif params[:event] == "unapprove"
       resource.update_attribute(:approved, false)
     end
-    params.delete(:controller)
-    params.delete(:action)
-    params.delete(:event)
-    params.delete(:id)
-    redirect_to admin_users_path(params.symbolize_keys)
+    redirect_to admin_users_path(switch_params)
   end
 end

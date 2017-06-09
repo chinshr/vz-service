@@ -1,4 +1,3 @@
-# encoding: UTF-8
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -25,11 +24,10 @@ ActiveRecord::Schema.define(version: 20170525220429) do
     t.string   "author_type",   limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.index ["author_type", "author_id"], name: "index_active_admin_comments_on_author_type_and_author_id", using: :btree
+    t.index ["namespace"], name: "index_active_admin_comments_on_namespace", using: :btree
+    t.index ["resource_type", "resource_id"], name: "index_active_admin_comments_on_resource_type_and_resource_id", using: :btree
   end
-
-  add_index "active_admin_comments", ["author_type", "author_id"], name: "index_active_admin_comments_on_author_type_and_author_id", using: :btree
-  add_index "active_admin_comments", ["namespace"], name: "index_active_admin_comments_on_namespace", using: :btree
-  add_index "active_admin_comments", ["resource_type", "resource_id"], name: "index_active_admin_comments_on_resource_type_and_resource_id", using: :btree
 
   create_table "admin_users", force: :cascade do |t|
     t.string   "email",                  limit: 255, default: "", null: false
@@ -45,11 +43,10 @@ ActiveRecord::Schema.define(version: 20170525220429) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "roles_mask"
+    t.index ["email"], name: "index_admin_users_on_email", unique: true, using: :btree
+    t.index ["reset_password_token"], name: "index_admin_users_on_reset_password_token", unique: true, using: :btree
+    t.index ["roles_mask"], name: "index_admin_users_on_roles_mask", using: :btree
   end
-
-  add_index "admin_users", ["email"], name: "index_admin_users_on_email", unique: true, using: :btree
-  add_index "admin_users", ["reset_password_token"], name: "index_admin_users_on_reset_password_token", unique: true, using: :btree
-  add_index "admin_users", ["roles_mask"], name: "index_admin_users_on_roles_mask", using: :btree
 
   create_table "api_client_accesses", force: :cascade do |t|
     t.string   "uid",             limit: 255,                      null: false
@@ -65,14 +62,13 @@ ActiveRecord::Schema.define(version: 20170525220429) do
     t.datetime "deleted_at"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.index ["aasm_state"], name: "index_api_client_accesses_on_aasm_state", using: :btree
+    t.index ["access_status"], name: "index_api_client_accesses_on_access_status", using: :btree
+    t.index ["client_id"], name: "index_api_client_accesses_on_client_id", using: :btree
+    t.index ["deleted_at"], name: "index_api_client_accesses_on_deleted_at", using: :btree
+    t.index ["uid"], name: "index_api_client_accesses_on_uid", unique: true, using: :btree
+    t.index ["user_id"], name: "index_api_client_accesses_on_user_id", using: :btree
   end
-
-  add_index "api_client_accesses", ["aasm_state"], name: "index_api_client_accesses_on_aasm_state", using: :btree
-  add_index "api_client_accesses", ["access_status"], name: "index_api_client_accesses_on_access_status", using: :btree
-  add_index "api_client_accesses", ["client_id"], name: "index_api_client_accesses_on_client_id", using: :btree
-  add_index "api_client_accesses", ["deleted_at"], name: "index_api_client_accesses_on_deleted_at", using: :btree
-  add_index "api_client_accesses", ["uid"], name: "index_api_client_accesses_on_uid", unique: true, using: :btree
-  add_index "api_client_accesses", ["user_id"], name: "index_api_client_accesses_on_user_id", using: :btree
 
   create_table "api_clients", force: :cascade do |t|
     t.string   "name",        limit: 255
@@ -80,10 +76,9 @@ ActiveRecord::Schema.define(version: 20170525220429) do
     t.integer  "platform_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.index ["key"], name: "index_api_clients_on_key", unique: true, using: :btree
+    t.index ["platform_id"], name: "index_api_clients_on_platform_id", using: :btree
   end
-
-  add_index "api_clients", ["key"], name: "index_api_clients_on_key", unique: true, using: :btree
-  add_index "api_clients", ["platform_id"], name: "index_api_clients_on_platform_id", using: :btree
 
   create_table "api_devices", force: :cascade do |t|
     t.string   "device_name",      limit: 255
@@ -92,11 +87,10 @@ ActiveRecord::Schema.define(version: 20170525220429) do
     t.integer  "client_access_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.index ["client_access_id"], name: "index_api_devices_on_client_access_id", using: :btree
+    t.index ["client_id"], name: "index_api_devices_on_client_id", using: :btree
+    t.index ["uid"], name: "index_api_devices_on_uid", unique: true, using: :btree
   end
-
-  add_index "api_devices", ["client_access_id"], name: "index_api_devices_on_client_access_id", using: :btree
-  add_index "api_devices", ["client_id"], name: "index_api_devices_on_client_id", using: :btree
-  add_index "api_devices", ["uid"], name: "index_api_devices_on_uid", unique: true, using: :btree
 
   create_table "api_platforms", force: :cascade do |t|
     t.string   "uid",            limit: 255,                      null: false
@@ -108,15 +102,8 @@ ActiveRecord::Schema.define(version: 20170525220429) do
     t.datetime "deactivated_at"
     t.datetime "created_at"
     t.datetime "updated_at"
-  end
-
-  add_index "api_platforms", ["aasm_state"], name: "index_api_platforms_on_aasm_state", using: :btree
-  add_index "api_platforms", ["uid"], name: "index_api_platforms_on_uid", unique: true, using: :btree
-
-  create_table "ar_internal_metadata", primary_key: "key", force: :cascade do |t|
-    t.string   "value"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.index ["aasm_state"], name: "index_api_platforms_on_aasm_state", using: :btree
+    t.index ["uid"], name: "index_api_platforms_on_uid", unique: true, using: :btree
   end
 
   create_table "attachings", force: :cascade do |t|
@@ -124,9 +111,8 @@ ActiveRecord::Schema.define(version: 20170525220429) do
     t.integer  "upload_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.index ["message_id", "upload_id"], name: "index_attachings_on_message_id_and_upload_id", unique: true, using: :btree
   end
-
-  add_index "attachings", ["message_id", "upload_id"], name: "index_attachings_on_message_id_and_upload_id", unique: true, using: :btree
 
   create_table "documents", force: :cascade do |t|
     t.string   "title",                 limit: 255
@@ -157,30 +143,29 @@ ActiveRecord::Schema.define(version: 20170525220429) do
     t.datetime "removed_at"
     t.datetime "deleted_at"
     t.integer  "processed_stages_mask",                                      default: 0,             null: false
+    t.index "locale text_pattern_ops", name: "documents_locale_with_text_pattern_ops", using: :btree
+    t.index ["aasm_state"], name: "index_documents_on_aasm_state", using: :btree
+    t.index ["accessibility_mask"], name: "index_documents_on_accessibility_mask", using: :btree
+    t.index ["created_at"], name: "index_documents_on_created_at", using: :btree
+    t.index ["deleted_at"], name: "index_documents_on_deleted_at", using: :btree
+    t.index ["ingest_iteration"], name: "index_documents_on_ingest_iteration", using: :btree
+    t.index ["offset"], name: "index_documents_on_offset", using: :btree
+    t.index ["privacy_mask"], name: "index_documents_on_privacy_mask", using: :btree
+    t.index ["processed_stages_mask"], name: "index_documents_on_processed_stages_mask", using: :btree
+    t.index ["processing_status"], name: "index_documents_on_processing_status", using: :btree
+    t.index ["published_at"], name: "index_documents_on_published_at", using: :btree
+    t.index ["removed_at"], name: "index_documents_on_removed_at", using: :btree
+    t.index ["response"], name: "index_documents_on_response", using: :gin
+    t.index ["score"], name: "index_documents_on_score", using: :btree
+    t.index ["slug"], name: "index_documents_on_slug", unique: true, using: :btree
+    t.index ["slug_id"], name: "index_documents_on_slug_id", unique: true, using: :btree
+    t.index ["title"], name: "index_documents_on_title", using: :btree
+    t.index ["turkee_task_id"], name: "index_documents_on_turkee_task_id", using: :btree
+    t.index ["type"], name: "index_documents_on_type", using: :btree
+    t.index ["uid"], name: "index_documents_on_uid", using: :btree
+    t.index ["updated_at"], name: "index_documents_on_updated_at", using: :btree
+    t.index ["user_id"], name: "index_documents_on_user_id", using: :btree
   end
-
-  add_index "documents", ["aasm_state"], name: "index_documents_on_aasm_state", using: :btree
-  add_index "documents", ["accessibility_mask"], name: "index_documents_on_accessibility_mask", using: :btree
-  add_index "documents", ["created_at"], name: "index_documents_on_created_at", using: :btree
-  add_index "documents", ["deleted_at"], name: "index_documents_on_deleted_at", using: :btree
-  add_index "documents", ["ingest_iteration"], name: "index_documents_on_ingest_iteration", using: :btree
-  add_index "documents", ["locale"], name: "documents_locale_with_text_pattern_ops", using: :btree
-  add_index "documents", ["offset"], name: "index_documents_on_offset", using: :btree
-  add_index "documents", ["privacy_mask"], name: "index_documents_on_privacy_mask", using: :btree
-  add_index "documents", ["processed_stages_mask"], name: "index_documents_on_processed_stages_mask", using: :btree
-  add_index "documents", ["processing_status"], name: "index_documents_on_processing_status", using: :btree
-  add_index "documents", ["published_at"], name: "index_documents_on_published_at", using: :btree
-  add_index "documents", ["removed_at"], name: "index_documents_on_removed_at", using: :btree
-  add_index "documents", ["response"], name: "index_documents_on_response", using: :gin
-  add_index "documents", ["score"], name: "index_documents_on_score", using: :btree
-  add_index "documents", ["slug"], name: "index_documents_on_slug", unique: true, using: :btree
-  add_index "documents", ["slug_id"], name: "index_documents_on_slug_id", unique: true, using: :btree
-  add_index "documents", ["title"], name: "index_documents_on_title", using: :btree
-  add_index "documents", ["turkee_task_id"], name: "index_documents_on_turkee_task_id", using: :btree
-  add_index "documents", ["type"], name: "index_documents_on_type", using: :btree
-  add_index "documents", ["uid"], name: "index_documents_on_uid", using: :btree
-  add_index "documents", ["updated_at"], name: "index_documents_on_updated_at", using: :btree
-  add_index "documents", ["user_id"], name: "index_documents_on_user_id", using: :btree
 
   create_table "friendly_id_slugs", force: :cascade do |t|
     t.string   "slug",           limit: 255, null: false
@@ -188,12 +173,11 @@ ActiveRecord::Schema.define(version: 20170525220429) do
     t.string   "sluggable_type", limit: 50
     t.string   "scope",          limit: 255
     t.datetime "created_at"
+    t.index ["slug", "sluggable_type", "scope"], name: "index_friendly_id_slugs_on_slug_and_sluggable_type_and_scope", unique: true, using: :btree
+    t.index ["slug", "sluggable_type"], name: "index_friendly_id_slugs_on_slug_and_sluggable_type", using: :btree
+    t.index ["sluggable_id"], name: "index_friendly_id_slugs_on_sluggable_id", using: :btree
+    t.index ["sluggable_type"], name: "index_friendly_id_slugs_on_sluggable_type", using: :btree
   end
-
-  add_index "friendly_id_slugs", ["slug", "sluggable_type", "scope"], name: "index_friendly_id_slugs_on_slug_and_sluggable_type_and_scope", unique: true, using: :btree
-  add_index "friendly_id_slugs", ["slug", "sluggable_type"], name: "index_friendly_id_slugs_on_slug_and_sluggable_type", using: :btree
-  add_index "friendly_id_slugs", ["sluggable_id"], name: "index_friendly_id_slugs_on_sluggable_id", using: :btree
-  add_index "friendly_id_slugs", ["sluggable_type"], name: "index_friendly_id_slugs_on_sluggable_type", using: :btree
 
   create_table "image_formats", force: :cascade do |t|
     t.string   "uid",          limit: 255
@@ -204,13 +188,12 @@ ActiveRecord::Schema.define(version: 20170525220429) do
     t.decimal  "aspect_ratio",             precision: 8, scale: 3
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.index ["aspect_ratio"], name: "index_image_formats_on_aspect_ratio", using: :btree
+    t.index ["format"], name: "index_image_formats_on_format", using: :btree
+    t.index ["height"], name: "index_image_formats_on_height", using: :btree
+    t.index ["uid"], name: "index_image_formats_on_uid", using: :btree
+    t.index ["width"], name: "index_image_formats_on_width", using: :btree
   end
-
-  add_index "image_formats", ["aspect_ratio"], name: "index_image_formats_on_aspect_ratio", using: :btree
-  add_index "image_formats", ["format"], name: "index_image_formats_on_format", using: :btree
-  add_index "image_formats", ["height"], name: "index_image_formats_on_height", using: :btree
-  add_index "image_formats", ["uid"], name: "index_image_formats_on_uid", using: :btree
-  add_index "image_formats", ["width"], name: "index_image_formats_on_width", using: :btree
 
   create_table "images", force: :cascade do |t|
     t.string   "uid",             limit: 255
@@ -226,13 +209,12 @@ ActiveRecord::Schema.define(version: 20170525220429) do
     t.integer  "height"
     t.string   "format",          limit: 255
     t.decimal  "aspect_ratio",                precision: 8, scale: 3
+    t.index ["deleted_at"], name: "index_images_on_deleted_at", using: :btree
+    t.index ["image_format_id"], name: "index_images_on_image_format_id", using: :btree
+    t.index ["ingest_id"], name: "index_images_on_ingest_id", using: :btree
+    t.index ["iteration"], name: "index_images_on_iteration", using: :btree
+    t.index ["uid"], name: "index_images_on_uid", using: :btree
   end
-
-  add_index "images", ["deleted_at"], name: "index_images_on_deleted_at", using: :btree
-  add_index "images", ["image_format_id"], name: "index_images_on_image_format_id", using: :btree
-  add_index "images", ["ingest_id"], name: "index_images_on_ingest_id", using: :btree
-  add_index "images", ["iteration"], name: "index_images_on_iteration", using: :btree
-  add_index "images", ["uid"], name: "index_images_on_uid", using: :btree
 
   create_table "ingest_servers", force: :cascade do |t|
     t.string   "type",               limit: 255,                     null: false
@@ -259,22 +241,21 @@ ActiveRecord::Schema.define(version: 20170525220429) do
     t.datetime "deleted_at"
     t.datetime "stopped_at"
     t.datetime "terminated_at"
+    t.index ["aasm_state"], name: "index_ingest_servers_on_aasm_state", using: :btree
+    t.index ["deleted_at"], name: "index_ingest_servers_on_deleted_at", using: :btree
+    t.index ["image_id"], name: "index_ingest_servers_on_image_id", using: :btree
+    t.index ["instance_type"], name: "index_ingest_servers_on_instance_type", using: :btree
+    t.index ["launched_at"], name: "index_ingest_servers_on_launched_at", using: :btree
+    t.index ["max_workers"], name: "index_ingest_servers_on_max_workers", using: :btree
+    t.index ["name"], name: "index_ingest_servers_on_name", using: :btree
+    t.index ["stopped_at"], name: "index_ingest_servers_on_stopped_at", using: :btree
+    t.index ["tenancy_mask"], name: "index_ingest_servers_on_tenancy_mask", using: :btree
+    t.index ["terminated_at"], name: "index_ingest_servers_on_terminated_at", using: :btree
+    t.index ["type"], name: "index_ingest_servers_on_type", using: :btree
+    t.index ["uid"], name: "index_ingest_servers_on_uid", unique: true, using: :btree
+    t.index ["version"], name: "index_ingest_servers_on_version", using: :btree
+    t.index ["vpc_id"], name: "index_ingest_servers_on_vpc_id", using: :btree
   end
-
-  add_index "ingest_servers", ["aasm_state"], name: "index_ingest_servers_on_aasm_state", using: :btree
-  add_index "ingest_servers", ["deleted_at"], name: "index_ingest_servers_on_deleted_at", using: :btree
-  add_index "ingest_servers", ["image_id"], name: "index_ingest_servers_on_image_id", using: :btree
-  add_index "ingest_servers", ["instance_type"], name: "index_ingest_servers_on_instance_type", using: :btree
-  add_index "ingest_servers", ["launched_at"], name: "index_ingest_servers_on_launched_at", using: :btree
-  add_index "ingest_servers", ["max_workers"], name: "index_ingest_servers_on_max_workers", using: :btree
-  add_index "ingest_servers", ["name"], name: "index_ingest_servers_on_name", using: :btree
-  add_index "ingest_servers", ["stopped_at"], name: "index_ingest_servers_on_stopped_at", using: :btree
-  add_index "ingest_servers", ["tenancy_mask"], name: "index_ingest_servers_on_tenancy_mask", using: :btree
-  add_index "ingest_servers", ["terminated_at"], name: "index_ingest_servers_on_terminated_at", using: :btree
-  add_index "ingest_servers", ["type"], name: "index_ingest_servers_on_type", using: :btree
-  add_index "ingest_servers", ["uid"], name: "index_ingest_servers_on_uid", unique: true, using: :btree
-  add_index "ingest_servers", ["version"], name: "index_ingest_servers_on_version", using: :btree
-  add_index "ingest_servers", ["vpc_id"], name: "index_ingest_servers_on_vpc_id", using: :btree
 
   create_table "ingest_workers", force: :cascade do |t|
     t.string   "uid"
@@ -293,19 +274,18 @@ ActiveRecord::Schema.define(version: 20170525220429) do
     t.integer  "lock_count",       default: 0,         null: false
     t.string   "worker_object_id"
     t.datetime "failed_at"
+    t.index ["aasm_state"], name: "index_ingest_workers_on_aasm_state", using: :btree
+    t.index ["created_at"], name: "index_ingest_workers_on_created_at", using: :btree
+    t.index ["failed_at"], name: "index_ingest_workers_on_failed_at", using: :btree
+    t.index ["finished_at"], name: "index_ingest_workers_on_finished_at", using: :btree
+    t.index ["ingest_id"], name: "index_ingest_workers_on_ingest_id", using: :btree
+    t.index ["ingest_iteration"], name: "index_ingest_workers_on_ingest_iteration", using: :btree
+    t.index ["server_id"], name: "index_ingest_workers_on_server_id", using: :btree
+    t.index ["started_at"], name: "index_ingest_workers_on_started_at", using: :btree
+    t.index ["stopped_at"], name: "index_ingest_workers_on_stopped_at", using: :btree
+    t.index ["uid"], name: "index_ingest_workers_on_uid", using: :btree
+    t.index ["worker_name"], name: "index_ingest_workers_on_worker_name", using: :btree
   end
-
-  add_index "ingest_workers", ["aasm_state"], name: "index_ingest_workers_on_aasm_state", using: :btree
-  add_index "ingest_workers", ["created_at"], name: "index_ingest_workers_on_created_at", using: :btree
-  add_index "ingest_workers", ["failed_at"], name: "index_ingest_workers_on_failed_at", using: :btree
-  add_index "ingest_workers", ["finished_at"], name: "index_ingest_workers_on_finished_at", using: :btree
-  add_index "ingest_workers", ["ingest_id"], name: "index_ingest_workers_on_ingest_id", using: :btree
-  add_index "ingest_workers", ["ingest_iteration"], name: "index_ingest_workers_on_ingest_iteration", using: :btree
-  add_index "ingest_workers", ["server_id"], name: "index_ingest_workers_on_server_id", using: :btree
-  add_index "ingest_workers", ["started_at"], name: "index_ingest_workers_on_started_at", using: :btree
-  add_index "ingest_workers", ["stopped_at"], name: "index_ingest_workers_on_stopped_at", using: :btree
-  add_index "ingest_workers", ["uid"], name: "index_ingest_workers_on_uid", using: :btree
-  add_index "ingest_workers", ["worker_name"], name: "index_ingest_workers_on_worker_name", using: :btree
 
   create_table "ingests", force: :cascade do |t|
     t.integer  "upload_id"
@@ -329,7 +309,7 @@ ActiveRecord::Schema.define(version: 20170525220429) do
     t.boolean  "use_source_annotations",             default: false,     null: false
     t.string   "file_name",              limit: 255
     t.string   "file_type",              limit: 255
-    t.integer  "file_size",              limit: 8
+    t.bigint   "file_size"
     t.text     "source_url"
     t.json     "metadata",                           default: {},        null: false
     t.string   "handle",                 limit: 255
@@ -338,26 +318,25 @@ ActiveRecord::Schema.define(version: 20170525220429) do
     t.string   "ingestable_type",        limit: 255
     t.datetime "deleted_at"
     t.json     "messages",                           default: {},        null: false
+    t.index ["aasm_stage"], name: "index_ingests_on_aasm_stage", using: :btree
+    t.index ["aasm_state"], name: "index_ingests_on_aasm_state", using: :btree
+    t.index ["created_at"], name: "index_ingests_on_created_at", using: :btree
+    t.index ["deleted_at"], name: "index_ingests_on_deleted_at", using: :btree
+    t.index ["document_id"], name: "index_ingests_on_document_id", using: :btree
+    t.index ["file_type"], name: "index_ingests_on_file_type", using: :btree
+    t.index ["finished_at"], name: "index_ingests_on_finished_at", using: :btree
+    t.index ["handle"], name: "index_ingests_on_handle", using: :btree
+    t.index ["ingestable_id", "ingestable_type"], name: "index_ingests_on_ingestable_id_and_ingestable_type", using: :btree
+    t.index ["iteration"], name: "index_ingests_on_iteration", using: :btree
+    t.index ["removed_at"], name: "index_ingests_on_removed_at", using: :btree
+    t.index ["reset_at"], name: "index_ingests_on_reset_at", using: :btree
+    t.index ["started_at"], name: "index_ingests_on_started_at", using: :btree
+    t.index ["stopped_at"], name: "index_ingests_on_stopped_at", using: :btree
+    t.index ["type"], name: "index_ingests_on_type", using: :btree
+    t.index ["uid"], name: "index_ingests_on_uid", using: :btree
+    t.index ["updated_at"], name: "index_ingests_on_updated_at", using: :btree
+    t.index ["upload_id"], name: "index_ingests_on_upload_id", using: :btree
   end
-
-  add_index "ingests", ["aasm_stage"], name: "index_ingests_on_aasm_stage", using: :btree
-  add_index "ingests", ["aasm_state"], name: "index_ingests_on_aasm_state", using: :btree
-  add_index "ingests", ["created_at"], name: "index_ingests_on_created_at", using: :btree
-  add_index "ingests", ["deleted_at"], name: "index_ingests_on_deleted_at", using: :btree
-  add_index "ingests", ["document_id"], name: "index_ingests_on_document_id", using: :btree
-  add_index "ingests", ["file_type"], name: "index_ingests_on_file_type", using: :btree
-  add_index "ingests", ["finished_at"], name: "index_ingests_on_finished_at", using: :btree
-  add_index "ingests", ["handle"], name: "index_ingests_on_handle", using: :btree
-  add_index "ingests", ["ingestable_id", "ingestable_type"], name: "index_ingests_on_ingestable_id_and_ingestable_type", using: :btree
-  add_index "ingests", ["iteration"], name: "index_ingests_on_iteration", using: :btree
-  add_index "ingests", ["removed_at"], name: "index_ingests_on_removed_at", using: :btree
-  add_index "ingests", ["reset_at"], name: "index_ingests_on_reset_at", using: :btree
-  add_index "ingests", ["started_at"], name: "index_ingests_on_started_at", using: :btree
-  add_index "ingests", ["stopped_at"], name: "index_ingests_on_stopped_at", using: :btree
-  add_index "ingests", ["type"], name: "index_ingests_on_type", using: :btree
-  add_index "ingests", ["uid"], name: "index_ingests_on_uid", using: :btree
-  add_index "ingests", ["updated_at"], name: "index_ingests_on_updated_at", using: :btree
-  add_index "ingests", ["upload_id"], name: "index_ingests_on_upload_id", using: :btree
 
   create_table "messages", force: :cascade do |t|
     t.string   "uid",         limit: 255, null: false
@@ -374,11 +353,10 @@ ActiveRecord::Schema.define(version: 20170525220429) do
     t.integer  "sender_id"
     t.text     "body"
     t.string   "sender_name"
+    t.index ["sender_id"], name: "index_messages_on_sender_id", using: :btree
+    t.index ["type"], name: "index_messages_on_type", using: :btree
+    t.index ["uid"], name: "index_messages_on_uid", using: :btree
   end
-
-  add_index "messages", ["sender_id"], name: "index_messages_on_sender_id", using: :btree
-  add_index "messages", ["type"], name: "index_messages_on_type", using: :btree
-  add_index "messages", ["uid"], name: "index_messages_on_uid", using: :btree
 
   create_table "payola_affiliates", force: :cascade do |t|
     t.string   "code"
@@ -423,14 +401,13 @@ ActiveRecord::Schema.define(version: 20170525220429) do
     t.text     "signed_custom_fields"
     t.integer  "owner_id"
     t.string   "owner_type",           limit: 100
+    t.index ["coupon_id"], name: "index_payola_sales_on_coupon_id", using: :btree
+    t.index ["email"], name: "index_payola_sales_on_email", using: :btree
+    t.index ["guid"], name: "index_payola_sales_on_guid", using: :btree
+    t.index ["owner_id", "owner_type"], name: "index_payola_sales_on_owner_id_and_owner_type", using: :btree
+    t.index ["product_id", "product_type"], name: "index_payola_sales_on_product", using: :btree
+    t.index ["stripe_customer_id"], name: "index_payola_sales_on_stripe_customer_id", using: :btree
   end
-
-  add_index "payola_sales", ["coupon_id"], name: "index_payola_sales_on_coupon_id", using: :btree
-  add_index "payola_sales", ["email"], name: "index_payola_sales_on_email", using: :btree
-  add_index "payola_sales", ["guid"], name: "index_payola_sales_on_guid", using: :btree
-  add_index "payola_sales", ["owner_id", "owner_type"], name: "index_payola_sales_on_owner_id_and_owner_type", using: :btree
-  add_index "payola_sales", ["product_id", "product_type"], name: "index_payola_sales_on_product", using: :btree
-  add_index "payola_sales", ["stripe_customer_id"], name: "index_payola_sales_on_stripe_customer_id", using: :btree
 
   create_table "payola_stripe_webhooks", force: :cascade do |t|
     t.string   "stripe_id"
@@ -475,9 +452,8 @@ ActiveRecord::Schema.define(version: 20170525220429) do
     t.text     "business_address"
     t.integer  "setup_fee"
     t.decimal  "tax_percent",                      precision: 4, scale: 2
+    t.index ["guid"], name: "index_payola_subscriptions_on_guid", using: :btree
   end
-
-  add_index "payola_subscriptions", ["guid"], name: "index_payola_subscriptions_on_guid", using: :btree
 
   create_table "plans", force: :cascade do |t|
     t.string   "uid"
@@ -495,15 +471,14 @@ ActiveRecord::Schema.define(version: 20170525220429) do
     t.datetime "updated_at",                    null: false
     t.jsonb    "config",        default: {},    null: false
     t.string   "key"
+    t.index ["config"], name: "index_plans_on_config", using: :gin
+    t.index ["create_stripe"], name: "index_plans_on_create_stripe", using: :btree
+    t.index ["display_order"], name: "index_plans_on_display_order", using: :btree
+    t.index ["enabled"], name: "index_plans_on_enabled", using: :btree
+    t.index ["stripe_id"], name: "index_plans_on_stripe_id", using: :btree
+    t.index ["uid"], name: "index_plans_on_uid", using: :btree
+    t.index ["visible"], name: "index_plans_on_visible", using: :btree
   end
-
-  add_index "plans", ["config"], name: "index_plans_on_config", using: :gin
-  add_index "plans", ["create_stripe"], name: "index_plans_on_create_stripe", using: :btree
-  add_index "plans", ["display_order"], name: "index_plans_on_display_order", using: :btree
-  add_index "plans", ["enabled"], name: "index_plans_on_enabled", using: :btree
-  add_index "plans", ["stripe_id"], name: "index_plans_on_stripe_id", using: :btree
-  add_index "plans", ["uid"], name: "index_plans_on_uid", using: :btree
-  add_index "plans", ["visible"], name: "index_plans_on_visible", using: :btree
 
   create_table "registrations", force: :cascade do |t|
     t.string   "email",        limit: 255
@@ -531,13 +506,12 @@ ActiveRecord::Schema.define(version: 20170525220429) do
     t.string   "aasm_state",   limit: 255,                          default: "pending", null: false
     t.datetime "accepted_at"
     t.datetime "declined_at"
+    t.index ["aasm_state"], name: "index_registrations_on_aasm_state", using: :btree
+    t.index ["email"], name: "index_registrations_on_email", unique: true, using: :btree
+    t.index ["referrer_uid"], name: "index_registrations_on_referrer_uid", using: :btree
+    t.index ["type"], name: "index_registrations_on_type", using: :btree
+    t.index ["uid"], name: "index_registrations_on_uid", using: :btree
   end
-
-  add_index "registrations", ["aasm_state"], name: "index_registrations_on_aasm_state", using: :btree
-  add_index "registrations", ["email"], name: "index_registrations_on_email", unique: true, using: :btree
-  add_index "registrations", ["referrer_uid"], name: "index_registrations_on_referrer_uid", using: :btree
-  add_index "registrations", ["type"], name: "index_registrations_on_type", using: :btree
-  add_index "registrations", ["uid"], name: "index_registrations_on_uid", using: :btree
 
   create_table "segments", force: :cascade do |t|
     t.integer  "document_id"
@@ -550,17 +524,16 @@ ActiveRecord::Schema.define(version: 20170525220429) do
     t.datetime "created_at"
     t.boolean  "is_master",               default: false, null: false
     t.datetime "deleted_at"
+    t.index ["chunk_id"], name: "index_segments_on_chunk_id", using: :btree
+    t.index ["created_at"], name: "index_segments_on_created_at", using: :btree
+    t.index ["deleted_at"], name: "index_segments_on_deleted_at", using: :btree
+    t.index ["document_id"], name: "index_segments_on_document_id", using: :btree
+    t.index ["ingest_id"], name: "index_segments_on_ingest_id", using: :btree
+    t.index ["is_master"], name: "index_segments_on_is_master", using: :btree
+    t.index ["position"], name: "index_segments_on_position", using: :btree
+    t.index ["track_id"], name: "index_segments_on_track_id", using: :btree
+    t.index ["type"], name: "index_segments_on_type", using: :btree
   end
-
-  add_index "segments", ["chunk_id"], name: "index_segments_on_chunk_id", using: :btree
-  add_index "segments", ["created_at"], name: "index_segments_on_created_at", using: :btree
-  add_index "segments", ["deleted_at"], name: "index_segments_on_deleted_at", using: :btree
-  add_index "segments", ["document_id"], name: "index_segments_on_document_id", using: :btree
-  add_index "segments", ["ingest_id"], name: "index_segments_on_ingest_id", using: :btree
-  add_index "segments", ["is_master"], name: "index_segments_on_is_master", using: :btree
-  add_index "segments", ["position"], name: "index_segments_on_position", using: :btree
-  add_index "segments", ["track_id"], name: "index_segments_on_track_id", using: :btree
-  add_index "segments", ["type"], name: "index_segments_on_type", using: :btree
 
   create_table "taggings", force: :cascade do |t|
     t.integer  "tag_id"
@@ -570,28 +543,26 @@ ActiveRecord::Schema.define(version: 20170525220429) do
     t.string   "tagger_type",   limit: 255
     t.string   "context",       limit: 128
     t.datetime "created_at"
+    t.index ["context"], name: "index_taggings_on_context", using: :btree
+    t.index ["tag_id", "taggable_id", "taggable_type", "context", "tagger_id", "tagger_type"], name: "taggings_idx", unique: true, using: :btree
+    t.index ["tag_id"], name: "index_taggings_on_tag_id", using: :btree
+    t.index ["taggable_id", "taggable_type", "context"], name: "index_taggings_on_taggable_id_and_taggable_type_and_context", using: :btree
+    t.index ["taggable_id", "taggable_type", "tagger_id", "context"], name: "taggings_idy", using: :btree
+    t.index ["taggable_id"], name: "index_taggings_on_taggable_id", using: :btree
+    t.index ["taggable_type"], name: "index_taggings_on_taggable_type", using: :btree
+    t.index ["tagger_id", "tagger_type"], name: "index_taggings_on_tagger_id_and_tagger_type", using: :btree
+    t.index ["tagger_id"], name: "index_taggings_on_tagger_id", using: :btree
   end
-
-  add_index "taggings", ["context"], name: "index_taggings_on_context", using: :btree
-  add_index "taggings", ["tag_id", "taggable_id", "taggable_type", "context", "tagger_id", "tagger_type"], name: "taggings_idx", unique: true, using: :btree
-  add_index "taggings", ["tag_id"], name: "index_taggings_on_tag_id", using: :btree
-  add_index "taggings", ["taggable_id", "taggable_type", "context"], name: "index_taggings_on_taggable_id_and_taggable_type_and_context", using: :btree
-  add_index "taggings", ["taggable_id", "taggable_type", "tagger_id", "context"], name: "taggings_idy", using: :btree
-  add_index "taggings", ["taggable_id"], name: "index_taggings_on_taggable_id", using: :btree
-  add_index "taggings", ["taggable_type"], name: "index_taggings_on_taggable_type", using: :btree
-  add_index "taggings", ["tagger_id", "tagger_type"], name: "index_taggings_on_tagger_id_and_tagger_type", using: :btree
-  add_index "taggings", ["tagger_id"], name: "index_taggings_on_tagger_id", using: :btree
 
   create_table "tags", force: :cascade do |t|
     t.string  "name",           limit: 255
     t.integer "taggings_count",             default: 0
     t.string  "slug",           limit: 255
     t.boolean "featured",                   default: false, null: false
+    t.index ["featured"], name: "index_tags_on_featured", using: :btree
+    t.index ["name"], name: "index_tags_on_name", unique: true, using: :btree
+    t.index ["slug"], name: "index_tags_on_slug", using: :btree
   end
-
-  add_index "tags", ["featured"], name: "index_tags_on_featured", using: :btree
-  add_index "tags", ["name"], name: "index_tags_on_name", unique: true, using: :btree
-  add_index "tags", ["slug"], name: "index_tags_on_slug", using: :btree
 
   create_table "tracks", force: :cascade do |t|
     t.string   "s3_url",               limit: 255
@@ -606,15 +577,14 @@ ActiveRecord::Schema.define(version: 20170525220429) do
     t.datetime "start_at"
     t.datetime "end_at"
     t.datetime "deleted_at"
+    t.index ["deleted_at"], name: "index_tracks_on_deleted_at", using: :btree
+    t.index ["duration"], name: "index_tracks_on_duration", using: :btree
+    t.index ["end_at"], name: "index_tracks_on_end_at", using: :btree
+    t.index ["ingest_iteration"], name: "index_tracks_on_ingest_iteration", using: :btree
+    t.index ["start_at"], name: "index_tracks_on_start_at", using: :btree
+    t.index ["type"], name: "index_tracks_on_type", using: :btree
+    t.index ["uid"], name: "index_tracks_on_uid", using: :btree
   end
-
-  add_index "tracks", ["deleted_at"], name: "index_tracks_on_deleted_at", using: :btree
-  add_index "tracks", ["duration"], name: "index_tracks_on_duration", using: :btree
-  add_index "tracks", ["end_at"], name: "index_tracks_on_end_at", using: :btree
-  add_index "tracks", ["ingest_iteration"], name: "index_tracks_on_ingest_iteration", using: :btree
-  add_index "tracks", ["start_at"], name: "index_tracks_on_start_at", using: :btree
-  add_index "tracks", ["type"], name: "index_tracks_on_type", using: :btree
-  add_index "tracks", ["uid"], name: "index_tracks_on_uid", using: :btree
 
   create_table "turkee_imported_assignments", force: :cascade do |t|
     t.string   "assignment_id",  limit: 255
@@ -623,10 +593,9 @@ ActiveRecord::Schema.define(version: 20170525220429) do
     t.integer  "turkee_task_id"
     t.string   "worker_id",      limit: 255
     t.integer  "result_id"
+    t.index ["assignment_id"], name: "index_turkee_imported_assignments_on_assignment_id", unique: true, using: :btree
+    t.index ["turkee_task_id"], name: "index_turkee_imported_assignments_on_turkee_task_id", using: :btree
   end
-
-  add_index "turkee_imported_assignments", ["assignment_id"], name: "index_turkee_imported_assignments_on_assignment_id", unique: true, using: :btree
-  add_index "turkee_imported_assignments", ["turkee_task_id"], name: "index_turkee_imported_assignments_on_turkee_task_id", using: :btree
 
   create_table "turkee_studies", force: :cascade do |t|
     t.integer  "turkee_task_id"
@@ -634,9 +603,8 @@ ActiveRecord::Schema.define(version: 20170525220429) do
     t.string   "gold_response",  limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.index ["turkee_task_id"], name: "index_turkee_studies_on_turkee_task_id", using: :btree
   end
-
-  add_index "turkee_studies", ["turkee_task_id"], name: "index_turkee_studies_on_turkee_task_id", using: :btree
 
   create_table "turkee_tasks", force: :cascade do |t|
     t.string   "hit_url",               limit: 255
@@ -665,14 +633,13 @@ ActiveRecord::Schema.define(version: 20170525220429) do
     t.datetime "recorded_at"
     t.integer  "user_id"
     t.datetime "deleted_at"
+    t.index ["created_at"], name: "index_uploads_on_created_at", using: :btree
+    t.index ["deleted_at"], name: "index_uploads_on_deleted_at", using: :btree
+    t.index ["type"], name: "index_uploads_on_type", using: :btree
+    t.index ["uid"], name: "index_uploads_on_uid", using: :btree
+    t.index ["updated_at"], name: "index_uploads_on_updated_at", using: :btree
+    t.index ["user_id"], name: "index_uploads_on_user_id", using: :btree
   end
-
-  add_index "uploads", ["created_at"], name: "index_uploads_on_created_at", using: :btree
-  add_index "uploads", ["deleted_at"], name: "index_uploads_on_deleted_at", using: :btree
-  add_index "uploads", ["type"], name: "index_uploads_on_type", using: :btree
-  add_index "uploads", ["uid"], name: "index_uploads_on_uid", using: :btree
-  add_index "uploads", ["updated_at"], name: "index_uploads_on_updated_at", using: :btree
-  add_index "uploads", ["user_id"], name: "index_uploads_on_user_id", using: :btree
 
   create_table "users", force: :cascade do |t|
     t.string   "email",                  limit: 255,                          default: "",    null: false
@@ -718,21 +685,20 @@ ActiveRecord::Schema.define(version: 20170525220429) do
     t.boolean  "approved",                                                    default: false, null: false
     t.string   "name"
     t.datetime "deleted_at"
+    t.index ["approved"], name: "index_users_on_approved", using: :btree
+    t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true, using: :btree
+    t.index ["deleted_at"], name: "index_users_on_deleted_at", using: :btree
+    t.index ["email"], name: "index_users_on_email", unique: true, using: :btree
+    t.index ["lat"], name: "index_users_on_lat", using: :btree
+    t.index ["lng"], name: "index_users_on_lng", using: :btree
+    t.index ["plan_id"], name: "index_users_on_plan_id", using: :btree
+    t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
+    t.index ["roles_mask"], name: "index_users_on_roles_mask", using: :btree
+    t.index ["slug"], name: "index_users_on_slug", unique: true, using: :btree
+    t.index ["uid"], name: "index_users_on_uid", using: :btree
+    t.index ["unlock_token"], name: "index_users_on_unlock_token", unique: true, using: :btree
+    t.index ["username"], name: "index_users_on_username", unique: true, using: :btree
   end
-
-  add_index "users", ["approved"], name: "index_users_on_approved", using: :btree
-  add_index "users", ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true, using: :btree
-  add_index "users", ["deleted_at"], name: "index_users_on_deleted_at", using: :btree
-  add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
-  add_index "users", ["lat"], name: "index_users_on_lat", using: :btree
-  add_index "users", ["lng"], name: "index_users_on_lng", using: :btree
-  add_index "users", ["plan_id"], name: "index_users_on_plan_id", using: :btree
-  add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
-  add_index "users", ["roles_mask"], name: "index_users_on_roles_mask", using: :btree
-  add_index "users", ["slug"], name: "index_users_on_slug", unique: true, using: :btree
-  add_index "users", ["uid"], name: "index_users_on_uid", using: :btree
-  add_index "users", ["unlock_token"], name: "index_users_on_unlock_token", unique: true, using: :btree
-  add_index "users", ["username"], name: "index_users_on_username", unique: true, using: :btree
 
   create_table "versions", force: :cascade do |t|
     t.string   "item_type",  limit: 255, null: false
@@ -741,8 +707,7 @@ ActiveRecord::Schema.define(version: 20170525220429) do
     t.string   "whodunnit",  limit: 255
     t.text     "object"
     t.datetime "created_at"
+    t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id", using: :btree
   end
-
-  add_index "versions", ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id", using: :btree
 
 end

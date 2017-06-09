@@ -1,4 +1,4 @@
-class Api::Client < ActiveRecord::Base
+class Api::Client < ApplicationRecord
   self.table_name = "api_clients"
   KEY_SIZE = 44
 

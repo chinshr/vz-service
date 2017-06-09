@@ -170,7 +170,7 @@ class Api::DeviceTest < ActiveSupport::TestCase
       non_capped_client = FactoryGirl.create(:client, :platform => FactoryGirl.create(:platform, :cap => false))
       @device.client = non_capped_client and @device.save and @device.reload
       Timecop.freeze(Date.today + 1.month + 2.days) do
-        assert_nothing_raised Api::Exception::AuthorizationError do
+        assert_nothing_raised do
           @device.authorize!
         end
       end
@@ -183,7 +183,7 @@ class Api::DeviceTest < ActiveSupport::TestCase
         :client => client, :uid => SecureRandom.hex(20))}
       @device.client = client and @device.save and @device.reload
       Timecop.freeze(Date.today + 1.month + 2.days) do
-        assert_nothing_raised Api::Exception::DeviceLimit do
+        assert_nothing_raised do
           @device.authorize!
         end
       end

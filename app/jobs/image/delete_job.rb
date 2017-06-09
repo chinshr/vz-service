@@ -1,4 +1,4 @@
-class Image::DeleteJob < ActiveJob::Base
+class Image::DeleteJob < ApplicationJob
   include Job::Helper
 
   queue_as :default

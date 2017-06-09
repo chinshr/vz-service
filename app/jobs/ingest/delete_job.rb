@@ -1,4 +1,4 @@
-class Ingest::DeleteJob < ActiveJob::Base
+class Ingest::DeleteJob < ApplicationJob
   include Job::Helper
 
   queue_as :default

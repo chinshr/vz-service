@@ -1,7 +1,7 @@
 require 'nokogiri'
 require 'whatlanguage'
 
-class Message < ActiveRecord::Base
+class Message < ApplicationRecord
   self.table_name = "messages"
   include ::Model::Uid
 

@@ -13,13 +13,13 @@ class Web::Profiles::DocumentsControllerTest < ActionController::TestCase
       end
 
       should "not load with anonymous" do
-        get :show, user_id: "@#{@document.user.username}", id: @document.slug
+        get :show, params: {user_id: "@#{@document.user.username}", id: @document.slug}
         assert_response :unauthorized
       end
 
       should "not load with any user" do
         sign_in FactoryGirl.create(:user)
-        get :show, user_id: "@#{@document.user.username}", id: @document.slug
+        get :show, params: {user_id: "@#{@document.user.username}", id: @document.slug}
         assert_response :unauthorized
       end
     end
@@ -38,35 +38,35 @@ class Web::Profiles::DocumentsControllerTest < ActionController::TestCase
           end
 
           should "load with anonymous user" do
-            get :show, user_id: "@#{@document.user.username}", id: @document.slug
+            get :show, params: {user_id: "@#{@document.user.username}", id: @document.slug}
             assert_response :success
           end
 
           should "load with document's signed in user" do
             sign_in @document.user
-            get :show, user_id: "@#{@document.user.username}", id: @document.slug
+            get :show, params: {user_id: "@#{@document.user.username}", id: @document.slug}
             assert_response :success
           end
 
           should "load with any user" do
             sign_in FactoryGirl.create(:user)
-            get :show, user_id: "@#{@document.user.username}", id: @document.slug
+            get :show, params: {user_id: "@#{@document.user.username}", id: @document.slug}
             assert_response :success
           end
 
           should "load mp3 and redirect to S3 url" do
-            get :show, user_id: "@#{@document.user.username}", id: @document.slug, format: "mp3"
+            get :show, params: {user_id: "@#{@document.user.username}", id: @document.slug, format: "mp3"}
             assert_response :redirect
           end
 
           should "load and render srt" do
-            get :show, user_id: "@#{@document.user.username}", id: @document.slug, format: "srt"
+            get :show, params: {user_id: "@#{@document.user.username}", id: @document.slug, format: "srt"}
             assert_response :success
             assert_template "show"
           end
 
           should "load and render txt" do
-            get :show, user_id: "@#{@document.user.username}", id: @document.slug, format: "txt"
+            get :show, params: {user_id: "@#{@document.user.username}", id: @document.slug, format: "txt"}
             assert_response :success
             assert_template "show"
           end
@@ -79,7 +79,7 @@ class Web::Profiles::DocumentsControllerTest < ActionController::TestCase
           end
 
           should "not load with anonymous user" do
-            get :show, user_id: "@#{@document.user.username}", id: @document.slug
+            get :show, params: {user_id: "@#{@document.user.username}", id: @document.slug}
             assert_response :unauthorized
           end
         end

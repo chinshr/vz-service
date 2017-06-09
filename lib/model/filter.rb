@@ -11,12 +11,12 @@ module Model::Filter
 
     def filter(filter_options)
       return self.all if filter_options.blank?
-      raise(ArgumentError, I18n.t('lib.model.filter.argument_error', :input => filter_options.inspect)) unless filter_options.is_a?(Hash)
+      raise(ArgumentError, I18n.t('lib.model.filter.argument_error', :input => filter_options.inspect)) unless filter_options.is_a?(Hash) || filter_options.is_a?(ActionController::Parameters)
 
       scope = self.all
       messages  = []
 
-      filter_options.stringify_keys.except(*EXCEPTED_KEYS).sort {|v| PRIORITY_KEYS.include?(v.to_s) ? -1 : 1}.each do |tuple|
+      filter_options.as_json.except(*EXCEPTED_KEYS).sort {|v| PRIORITY_KEYS.include?(v.to_s) ? -1 : 1}.each do |tuple|
         key, value = tuple.first, tuple.last
         if self.scopes.map(&:to_s).include?(key)
           value = ((key == "offset" || key == "limit") && value.to_i <= 0) ? 0 : value

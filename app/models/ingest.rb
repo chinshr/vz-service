@@ -1,4 +1,4 @@
-class Ingest < ActiveRecord::Base
+class Ingest < ApplicationRecord
   include AASM
   include Model::AASM::Support
   include Model::Filter
@@ -34,11 +34,11 @@ class Ingest < ActiveRecord::Base
   has_many :segments, foreign_key: :ingest_id, dependent: :nullify
   has_many :chunks, through: :segments, source: :chunk, dependent: :destroy do
     def create(chunk_attributes)
-      Chunk.create({ingest: proxy_association.owner, document: proxy_association.owner.document}.merge(chunk_attributes))
+      Chunk.create({ingest: proxy_association.owner, document: proxy_association.owner.document}.merge((chunk_attributes || {}).to_h.symbolize_keys))
     end
   end
-  has_many :tracks, -> { uniq }, through: :chunks, source: :track
-  has_many :tracks_including_master_track, -> {uniq}, through: :segments, source: :track, class_name: "Track"
+  has_many :tracks, -> { distinct }, through: :chunks, source: :track
+  has_many :tracks_including_master_track, -> { distinct }, through: :segments, source: :track, class_name: "Track"
   has_many :workers, :class_name => "Ingest::Worker", :dependent => :destroy
   has_many :servers, -> { select("DISTINCT ON (id) ingest_servers.*") }, through: :workers
   has_many :images, :class_name => "::Image", :foreign_key => :ingest_id, :dependent => :destroy
@@ -261,7 +261,7 @@ class Ingest < ActiveRecord::Base
   end
 
   def progress=(value)
-    self[:progress] = value.round(2) if value
+    self[:progress] = value.to_f.round(2) if value
   end
 
   def document_url

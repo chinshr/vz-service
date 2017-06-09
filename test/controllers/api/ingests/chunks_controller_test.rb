@@ -35,7 +35,7 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
     setup do
       @attributes = {
         :position          => 1,
-        :offset            => 0,
+        :offset            => 0.0,
         :text              => "I like pickles",
         :score             => 0.59,
         :response          => {"status" => 3, "hypotheses" => [{"utterance" => "I like pickles", "confidence" => 0.9876}], "words" => @words},
@@ -45,21 +45,21 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
     end
 
     should "be unauthorized without user" do
-      post :create, :ingest_id => @ingest1.id, format: :json
+      post :create, params: {:ingest_id => @ingest1.id, format: :json}
       assert_response :unauthorized
     end
 
     should "be unauthorized without backend user" do
-      sign_in :user, @user1
-      post :create, :ingest_id => @ingest1.id, format: :json
+      sign_in @user1, scope: :user
+      post :create, params: {:ingest_id => @ingest1.id, format: :json}
       assert_response :unauthorized
     end
 
     should "create chunk with signed in backend user" do
-      sign_in :user, @user2
+      sign_in @user2, scope: :user
       assert_difference 'Chunk::PocketsphinxChunk.count', 1 do
         attributes = @attributes.merge(type: "pocketsphinx")
-        post :create, ingest_id: @ingest1.id, chunk: attributes, format: :json
+        post :create, params: {ingest_id: @ingest1.id, chunk: attributes, format: :json}
         assert_response :success
         attributes[:type] = "Chunk::PocketsphinxChunk"
         assert_attributes response_body["chunk"], attributes
@@ -74,12 +74,12 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
     end
 
     should "create chunk with ingest_iteration from associated ingest" do
-      sign_in :user, @user2
+      sign_in @user2, scope: :user
       attributes = @attributes
       attributes.delete(:ingest_iteration)
       assert_difference 'Chunk::GoogleSpeechChunk.count', 1 do
         attributes = @attributes.merge(type: "Chunk::GoogleSpeechChunk")
-        post :create, ingest_id: @ingest1.id, chunk: attributes, format: :json
+        post :create, params: {ingest_id: @ingest1.id, chunk: attributes, format: :json}
         assert_response :success
         assert_attributes response_body["chunk"], attributes
         assert_equal @ingest1.iteration, Chunk::GoogleSpeechChunk.last.ingest_iteration
@@ -87,12 +87,12 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
     end
 
     should "create chunk with track_attributes" do
-      sign_in :user, @user2
+      sign_in @user2, scope: :user
       assert_difference 'Chunk::GoogleSpeechChunk.count', 1 do
         assert_difference 'Track.count', 1 do
           attributes = @attributes.merge(type: "Chunk::GoogleSpeechChunk")
           track_attributes = {duration: 5, s3_url: @s3_url, s3_mp3_url: @s3_mp3_url, s3_waveform_json_url: @s3_waveform_json_url}
-          post :create, ingest_id: @ingest1.id, chunk: attributes.merge(track_attributes: track_attributes), format: :json
+          post :create, params: {ingest_id: @ingest1.id, chunk: attributes.merge(track_attributes: track_attributes), format: :json}
           assert_response :success
           assert_attributes response_body["chunk"], attributes
           assert_equal 1, Chunk::GoogleSpeechChunk.last.ingest_iteration
@@ -105,7 +105,7 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
     end
 
     should "create captcha chunk with source and reference chunks" do
-      sign_in :user, @user2
+      sign_in @user2, scope: :user
 
       Chunk::MechanicalTurkChunk.stubs(:create_hit).returns(true)
 
@@ -122,7 +122,7 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
         attributes = @attributes.merge(type: "Chunk::CaptchaChunk",
           document_id: sc1.id, chunk_ids: [sc1.id, rc1.id])
         track_attributes = {duration: 5, s3_url: @s3_url, s3_mp3_url: @s3_mp3_url, s3_waveform_json_url: @s3_waveform_json_url}
-        post :create, ingest_id: @ingest1.id, chunk: attributes.merge(track_attributes: track_attributes), format: :json
+        post :create, params: {ingest_id: @ingest1.id, chunk: attributes.merge(track_attributes: track_attributes), format: :json}
         assert_response :success
         attributes[:chunk_ids] = response_body["chunk"]["chunk_ids"] # fixes order problem
         assert_attributes response_body["chunk"], attributes
@@ -139,20 +139,20 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
 
   context "GET /api/ingests/:ingest_id/chunks" do
     should "be unauthorized without user" do
-      get :index, ingest_id: @ingest1.id, format: :json
+      get :index, params: {ingest_id: @ingest1.id, format: :json}
       assert_response :unauthorized
     end
 
     should "be unauthorized for none backend users" do
-      sign_in :user, @user1
-      get :index, ingest_id: @ingest1.id, format: :json
+      sign_in @user1, scope: :user
+      get :index, params: {ingest_id: @ingest1.id, format: :json}
       assert_response :unauthorized
     end
 
     should "all ingest chunks when signed in as backend user" do
       @chunk1 = FactoryGirl.create(:chunk_google_speech, document: @ingest1.document, ingest_id: @ingest1.id)
-      sign_in :user, @user2
-      get :index, ingest_id: @ingest1.id, format: :json
+      sign_in @user2, scope: :user
+      get :index, params: {ingest_id: @ingest1.id, format: :json}
       assert_response :success
       assert response_body.has_key?("chunks"), "should have root"
       assert_equal 1, response_body["chunks"].size, "should have one chunk"
@@ -162,8 +162,8 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
     should "filter ingest chunks of type att_speech" do
       @chunk1 = FactoryGirl.create(:chunk_google_speech, document: @ingest1.document, ingest_id: @ingest1.id)
       @chunk2 = FactoryGirl.create(:chunk_att_speech, document: @ingest1.document, ingest_id: @ingest1.id)
-      sign_in :user, @user2
-      get :index, ingest_id: @ingest1.id, any_of_types: "att_speech", format: :json
+      sign_in @user2, scope: :user
+      get :index, params: {ingest_id: @ingest1.id, any_of_types: "att_speech", format: :json}
       assert_response :success
       assert response_body.has_key?("chunks"), "should have root"
       assert_equal 1, response_body["chunks"].size, "should have one chunk"
@@ -173,13 +173,13 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
 
   context "GET /api/ingests/chunks" do
     should "be unauthorized without user" do
-      get :index, format: :json
+      get :index, params: {format: :json}
       assert_response :unauthorized
     end
 
     should "be unauthorized for none backend users" do
-      sign_in :user, @user1
-      get :index, format: :json
+      sign_in @user1, scope: :user
+      get :index, params: {format: :json}
       assert_response :unauthorized
     end
 
@@ -187,9 +187,8 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
       Chunk.destroy_all
       @chunk1 = FactoryGirl.create(:chunk_pocketsphinx)
       @chunk2 = FactoryGirl.create(:chunk_pocketsphinx, document: @ingest1.document, ingest_id: @ingest1.id)
-      sign_in :user, @user2
-      get :index, none_of_ingest_ids: [@ingest1.id], any_of_types: ["pocketsphinx"],
-        format: :json
+      sign_in @user2, scope: :user
+      get :index, params: {none_of_ingest_ids: [@ingest1.id], any_of_types: ["pocketsphinx"], format: :json}
       assert_response :success
       assert response_body.has_key?("chunks"), "should have root"
       assert_equal 1, response_body["chunks"].size, "should have one chunk"
@@ -200,13 +199,13 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
 
   context "GET /api/ingests/:ingest_id/chunks/count" do
     should "be unauthorized whithout any user" do
-      get :count, ingest_id: @ingest1.id, format: :json
+      get :count, params: {ingest_id: @ingest1.id, format: :json}
       assert_response :unauthorized
     end
 
     should "be unauthorized without backend user" do
-      sign_in :user, @user1
-      get :count, ingest_id: @ingest1.id, format: :json
+      sign_in @user1, scope: :user
+      get :count, params: {ingest_id: @ingest1.id, format: :json}
       assert_response :unauthorized
     end
 
@@ -216,8 +215,8 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
         FactoryGirl.create(:chunk_google_speech, document: @ingest1.document,
           ingest_id: @ingest1.id, position: index + 1)
       end
-      sign_in :user, @user2
-      get :count, ingest_id: @ingest1.id, format: :json
+      sign_in @user2, scope: :user
+      get :count, params: {ingest_id: @ingest1.id, format: :json}
       assert_response :success
       assert response_body.has_key?("count"), "should have root"
       assert_equal count, response_body["count"], "should have count"
@@ -230,19 +229,19 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
     end
 
     should "be unauthorized whithout any user" do
-      get :show, ingest_id: @ingest1.id, id: @chunk1.id, format: :json
+      get :show, params: {ingest_id: @ingest1.id, id: @chunk1.id, format: :json}
       assert_response :unauthorized
     end
 
     should "be unauthorized without backend user" do
-      sign_in :user, @user1
-      get :show, ingest_id: @ingest1.id, id: @chunk1.id, format: :json
+      sign_in @user1, scope: :user
+      get :show, params: {ingest_id: @ingest1.id, id: @chunk1.id, format: :json}
       assert_response :unauthorized
     end
 
     should "get ingest when signed in as backend user" do
-      sign_in :user, @user2
-      get :show, ingest_id: @ingest1.id, id: @chunk1.id, format: :json
+      sign_in @user2, scope: :user
+      get :show, params: {ingest_id: @ingest1.id, id: @chunk1.id, format: :json}
       assert_response :success
       assert_attributes response_body["chunk"]
       assert_equal @ingest1.id, response_body["chunk"]["ingest_id"]
@@ -256,8 +255,8 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
     end
 
     should "update ingest with backend user" do
-      sign_in :user, @user2
-      put :update, {ingest_id: @ingest1.id, id: @chunk1.id, :chunk => {
+      sign_in @user2, scope: :user
+      put :update, params: {ingest_id: @ingest1.id, id: @chunk1.id, :chunk => {
         :score                 => 0.95,
         :response              => {"status" => 1, "hypotheses" => {"utterance" => "You got it!", "confidence" => 0.95}},
         :processed_stages_mask => ::Speech::Stages::ProcessedStages.bits([:build, :encode, :convert, :extract])
@@ -271,14 +270,14 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
     end
 
     should "update ingest with track_attributes to create new track" do
-      sign_in :user, @user2
+      sign_in @user2, scope: :user
       attributes = {:score => 0.95,
         :response => {"status" => 1, "hypotheses" => {"utterance" => "You got it!", "confidence" => 0.95}},
       }
       track_attributes = {s3_url: @s3_url, s3_mp3_url: @s3_mp3_url}
       assert_no_difference 'Chunk::GoogleSpeechChunk.count' do
         assert_difference 'Track.count', 1 do
-          put :update, {ingest_id: @ingest1.id, id: @chunk1.id,
+          put :update, params: {ingest_id: @ingest1.id, id: @chunk1.id,
             :chunk => attributes.merge(track_attributes: track_attributes), format: :json}
           assert_response :success
           assert_response_body_attributes_with "chunk"
@@ -293,7 +292,7 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
     end
 
     should "update ingest with track_attributes to update existing track" do
-      sign_in :user, @user2
+      sign_in @user2, scope: :user
       attributes = {:score => 0.95,
         :response => {"status" => 1, "hypothesis" => "You got it!"},
       }
@@ -304,7 +303,7 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
 
       assert_no_difference 'Chunk::GoogleSpeechChunk.count' do
         assert_no_difference 'Track.count' do
-          put :update, {ingest_id: @ingest1.id, id: @chunk1.id,
+          put :update, params: {ingest_id: @ingest1.id, id: @chunk1.id,
             :chunk => attributes.merge(track_attributes: track_attributes), format: :json}
           assert_response :success
           assert_response_body_attributes_with "chunk"
@@ -317,13 +316,13 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
     end
 
     should "NOT update without user" do
-      put :update, {ingest_id: @ingest1.id, id: @chunk1.id, :chunk => {}, format: :json}
+      put :update, params: {ingest_id: @ingest1.id, id: @chunk1.id, :chunk => {}, format: :json}
       assert_response :unauthorized
     end
 
     should "NOT update without backend user" do
-      sign_in :user, @user1
-      put :update, {ingest_id: @ingest1.id, id: @chunk1.id, :chunk => {}, format: :json}
+      sign_in @user1, scope: :user
+      put :update, params: {ingest_id: @ingest1.id, id: @chunk1.id, :chunk => {}, format: :json}
       assert_response :unauthorized
     end
   end
@@ -335,23 +334,23 @@ class Api::Ingests::ChunksControllerTest < ActionController::TestCase
 
     should "be unauthorized without user" do
       assert_no_difference 'Chunk.count' do
-        delete :destroy, {ingest_id: @ingest1.id, id: @chunk1.id, format: :json}
+        delete :destroy, params: {ingest_id: @ingest1.id, id: @chunk1.id, format: :json}
         assert_response :unauthorized
       end
     end
 
     should "be unauthorized without backend user" do
-      sign_in :user, @user1
+      sign_in @user1, scope: :user
       assert_no_difference 'Chunk.count' do
-        delete :destroy, {ingest_id: @ingest1.id, id: @chunk1.id, format: :json}
+        delete :destroy, params: {ingest_id: @ingest1.id, id: @chunk1.id, format: :json}
         assert_response :unauthorized
       end
     end
 
     should "destroy with backend user" do
-      sign_in :user, @user2
+      sign_in @user2, scope: :user
       assert_no_difference 'Chunk.count' do
-        delete :destroy, {ingest_id: @ingest1.id, id: @chunk1.id, format: :json}
+        delete :destroy, params: {ingest_id: @ingest1.id, id: @chunk1.id, format: :json}
         assert_response :success
         assert_attributes response_body["chunk"]
           assert_equal 0, @ingest1.chunks.count

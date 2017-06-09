@@ -23,7 +23,7 @@ class Api::Documents::TracksControllerTest < ActionController::TestCase
   context "POST /api/documents/:document_id/tracks.json" do
 
     should "#create document master track" do
-      sign_in :user, @user2
+      sign_in @user2, scope: :user
       post :create, document_id: @document.id, track: {s3_url: "http://s3.amazonaws.com/vz-test-origin/13dba008-7ba2-4804-a534-43d03c65260b/t4", 
         s3_mp3_url: "http://s3.amazonaws.com/vz-test-origin/13dba008-7ba2-4804-a534-43d03c65260b/t4.128.mp3"}, format: :json
       assert_response :success
@@ -35,7 +35,7 @@ class Api::Documents::TracksControllerTest < ActionController::TestCase
     end
 
     should "#create chunk track" do
-      sign_in :user, @user2
+      sign_in @user2, scope: :user
       post :create, document_id: @c1.id, track: {s3_url: "http://s3.amazonaws.com/vz-test-origin/13dba008-7ba2-4804-a534-43d03c65260b/chunk-track1"}, format: :json
       assert_response :success
       assert_attributes response_body["track"]
@@ -49,7 +49,7 @@ class Api::Documents::TracksControllerTest < ActionController::TestCase
     end
 
     should "be unauthorized without backend user" do
-      sign_in :user, @user1
+      sign_in @user1, scope: :user
       post :create, document_id: @document.id, format: :json
       assert_response :unauthorized
     end
@@ -59,7 +59,7 @@ class Api::Documents::TracksControllerTest < ActionController::TestCase
 =begin
   context "PUT /api/documents/:document_id/tracks/:id.json" do
     should "#update document master track" do
-      sign_in :user, @user2
+      sign_in @user2, scope: :user
       put :update, document_id: @document.id, id: @t0.id, track: {s3_url: "http://update_t0"}, format: :json
       assert_response :success
       assert_attributes response_body["track"]
@@ -67,7 +67,7 @@ class Api::Documents::TracksControllerTest < ActionController::TestCase
     end
 
     should "#update chunk track" do
-      sign_in :user, @user2
+      sign_in @user2, scope: :user
       put :update, document_id: @c1.id, id: @t1.id, track: {s3_url: "http://update-chunk-track1"}, format: :json
       assert_response :success
       assert_attributes response_body["track"]
@@ -80,7 +80,7 @@ class Api::Documents::TracksControllerTest < ActionController::TestCase
     end
 
     should "be unauthorized without backend user" do
-      sign_in :user, @user1
+      sign_in @user1, scope: :user
       put :update, document_id: @document.id, id: @t0.id, format: :json
       assert_response :unauthorized
     end
@@ -89,8 +89,8 @@ class Api::Documents::TracksControllerTest < ActionController::TestCase
 
   context "GET /api/documents/:document_id/tracks.json" do
     should "get index" do
-      sign_in :user, @user2
-      get :index, :document_id => @document.id, :any_of_types => ["document_track"], format: :json
+      sign_in @user2, scope: :user
+      get :index, params: {:document_id => @document.id, :any_of_types => ["document_track"], format: :json}
       assert_response :success
       assert_equal 1, response_body["tracks"].size
       assert_attributes response_body["tracks"].first, Track.find(response_body["tracks"].first["id"])
@@ -100,21 +100,21 @@ class Api::Documents::TracksControllerTest < ActionController::TestCase
     end
 
     should "be unauthorized without user" do
-      get :index, :document_id => @document.id, format: :json
+      get :index, params: {:document_id => @document.id, format: :json}
       assert_response :unauthorized
     end
 
     should "be unauthorized without backend user" do
-      sign_in :user, @user1
-      get :index, :document_id => @document.id, format: :json
+      sign_in @user1, scope: :user
+      get :index, params: {:document_id => @document.id, format: :json}
       assert_response :unauthorized
     end
   end
 
   context "GET /api/documents/:document_id/tracks/:id.json" do
     should "get show" do
-      sign_in :user, @user2
-      get :show, :document_id => @document.id, :id => @t0.id, format: :json
+      sign_in @user2, scope: :user
+      get :show, params: {:document_id => @document.id, :id => @t0.id, format: :json}
       assert_response :success
       assert_attributes response_body["track"]
       assert_nil response_body["track"]["s3_url"]
@@ -123,13 +123,13 @@ class Api::Documents::TracksControllerTest < ActionController::TestCase
     end
 
     should "be unauthorized without user" do
-      get :show, :document_id => @document.id, :id => @t0.id, format: :json
+      get :show, params: {:document_id => @document.id, :id => @t0.id, format: :json}
       assert_response :unauthorized
     end
 
     should "be unauthorized without backend user" do
-      sign_in :user, @user1
-      get :show, :document_id => @document.id, :id => @t0.id, format: :json
+      sign_in @user1, scope: :user
+      get :show, params: {:document_id => @document.id, :id => @t0.id, format: :json}
       assert_response :unauthorized
     end
   end
@@ -137,7 +137,7 @@ class Api::Documents::TracksControllerTest < ActionController::TestCase
 =begin
   context "DELETE /api/documents/:document_id/tracks/:id.json" do
     should "#delete" do
-      sign_in :user, @user2
+      sign_in @user2, scope: :user
       assert_difference "Track.count", -1 do
         delete :destroy, :document_id => @document.id, :id => @t0.id, format: :json
         assert_response :success
@@ -151,7 +151,7 @@ class Api::Documents::TracksControllerTest < ActionController::TestCase
     end
 
     should "be unauthorized without backend user" do
-      sign_in :user, @user1
+      sign_in @user1, scope: :user
       delete :destroy, :document_id => @document.id, :id => @t0.id, format: :json
       assert_response :unauthorized
     end

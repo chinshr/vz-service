@@ -14,14 +14,14 @@ class Api::AuthorizationTest < ActionDispatch::IntegrationTest
 
       context "when client key is not passed" do
         should "ARGUMENT_MISSING client_key" do
-          post "/api/authorize/client", {:format => :json}
+          post "/api/authorize/client", params: {:format => :json}
           assert_response_attributes({"code"=>Api::Code::ARGUMENT_MISSING})
         end
       end
 
       context "correct client_key is passed" do
         should "ARGUMENT_MISSING device_uid" do
-          post "/api/authorize/client", {:format => :json, :client_key => "bad"}
+          post "/api/authorize/client", params: {:format => :json, :client_key => "bad"}
           assert_response_attributes({"code"=>Api::Code::ARGUMENT_MISSING})
         end
       end
@@ -31,12 +31,12 @@ class Api::AuthorizationTest < ActionDispatch::IntegrationTest
       context "when client key is passed" do
         context "when device_uid is not passed" do
           should "raise ARGUMENT_MISSING error when passing bad client key" do
-            post "/api/authorize/client", {:format => :json, :client_key => "bad"}
+            post "/api/authorize/client", params: {:format => :json, :client_key => "bad"}
             assert_response_attributes({"code"=>Api::Code::ARGUMENT_MISSING})
           end
 
           should "should raise ARGUMENT_MISSING error" do
-            post "/api/authorize/client", {:format => :json, :client_key => @client.key}
+            post "/api/authorize/client", params: {:format => :json, :client_key => @client.key}
             assert_response_attributes({"code"=>Api::Code::ARGUMENT_MISSING})
           end
         end
@@ -44,7 +44,7 @@ class Api::AuthorizationTest < ActionDispatch::IntegrationTest
         context "when device_uid is passed" do
           should "create client_access and return access_token and access_secret on success" do
             assert_difference "Api::ClientAccess.count", 1 do
-              post "/api/authorize/client", {:format => :json,
+              post "/api/authorize/client", params: {:format => :json,
                 :client_key => @client.key, :device_uid => "12345"}
               assert_response :success
               last_access = Api::ClientAccess.last
@@ -55,7 +55,7 @@ class Api::AuthorizationTest < ActionDispatch::IntegrationTest
           end
 
           should "have all the proper tags in response" do
-            post "/api/authorize/client", {:format => :json, :client_key => @client.key, :device_uid => "12345"}
+            post "/api/authorize/client", params: {:format => :json, :client_key => @client.key, :device_uid => "12345"}
             assert_response :success
             auth = response_body
             assert_equal 3, auth.keys.length
@@ -68,9 +68,9 @@ class Api::AuthorizationTest < ActionDispatch::IntegrationTest
 
           should "replace client access with new one when authorizing same device_uid" do
             assert_difference "Api::ClientAccess.count", 1 do
-              post "/api/authorize/client", {:format => :json, :client_key => @client.key, :device_uid => "12345"}
+              post "/api/authorize/client", params: {:format => :json, :client_key => @client.key, :device_uid => "12345"}
               assert_response :success
-              post "/api/authorize/client", {:format => :json, :client_key => @client.key, :device_uid => "12345"}
+              post "/api/authorize/client", params: {:format => :json, :client_key => @client.key, :device_uid => "12345"}
               assert_response :success
               last_access = Api::ClientAccess.last
               assert_not_nil last_access
@@ -92,7 +92,7 @@ class Api::AuthorizationTest < ActionDispatch::IntegrationTest
       should "raise AUTHORIZATION_ERROR when not passing access_token" do
         params = {format: :json, email: @user.email,
           password: @user.password}.with_indifferent_access
-        post "/api/authorize/user", params
+        post "/api/authorize/user", params: params
         assert_response :unauthorized
         assert_response_attributes({"code" => Api::Code::AUTHORIZATION_ERROR,
           "errors" => {"base" => ["Authorization error: access_token"]}})
@@ -101,7 +101,7 @@ class Api::AuthorizationTest < ActionDispatch::IntegrationTest
       should "raise AUTHORIZATION_ERROR when passing bad access_token" do
         params = {format: :json, access_id: "bad",
           email: @user.email, password: @user.password}.with_indifferent_access
-        post "/api/authorize/user", params
+        post "/api/authorize/user", params: params
         assert_response :unauthorized
         assert_response_attributes({"code" => Api::Code::AUTHORIZATION_ERROR,
           "errors" => {"base" => ["Authorization error: access_token"]}})
@@ -117,7 +117,7 @@ class Api::AuthorizationTest < ActionDispatch::IntegrationTest
       should "raise ARGUMENT_MISSING error when not passing email" do
         params = {format: :json, access_token: @client_access.uid,
           password: @user.password}.with_indifferent_access
-        post "/api/authorize/user", params
+        post "/api/authorize/user", params: params
         assert_response_attributes({"code" => Api::Code::ARGUMENT_MISSING})
         assert_response :unprocessable_entity
       end
@@ -125,7 +125,7 @@ class Api::AuthorizationTest < ActionDispatch::IntegrationTest
       should "raise RECORD_NOT_FOUND error when passing bad email" do
         params = {format: :json, access_token: @client_access.uid,
           email: "bad", password: "password"}.with_indifferent_access
-        post "/api/authorize/user", params
+        post "/api/authorize/user", params: params
         assert_response_attributes({"code" => Api::Code::RECORD_NOT_FOUND})
         assert_response :missing
       end
@@ -133,7 +133,7 @@ class Api::AuthorizationTest < ActionDispatch::IntegrationTest
       should "raise AUTHORIZATION_ERROR error when not passing password" do
         params = {format: :json, access_token: @client_access.uid,
           email: @user.email}.with_indifferent_access
-        post "/api/authorize/user", params
+        post "/api/authorize/user", params: params
         assert_response :unprocessable_entity
         assert_response_attributes({"code" => Api::Code::ARGUMENT_MISSING})
         assert_response :unprocessable_entity
@@ -142,7 +142,7 @@ class Api::AuthorizationTest < ActionDispatch::IntegrationTest
       should "raise AUTHORIZATION_ERROR error when passing bad password" do
         params = {format: :json, access_token: @client_access.uid,
           email: @user.email, password: "bad"}.with_indifferent_access
-        post "/api/authorize/user", params
+        post "/api/authorize/user", params: params
         assert_response_attributes({"code" => Api::Code::AUTHORIZATION_ERROR})
         assert_response :unauthorized
       end
@@ -157,7 +157,7 @@ class Api::AuthorizationTest < ActionDispatch::IntegrationTest
       should "successfully upgrade client access for user authorization" do
         params = {format: :json, access_token: @client_access.uid,
            email: @user.email, password: @user.password}.with_indifferent_access
-        post "/api/authorize/user", params
+        post "/api/authorize/user", params: params
         assert_response :success
         assert_equal @user.id, @client_access.reload.user_id
         assert_equal Api::ClientAccess::ACCESS_STATUS_ACCOUNT, @client_access.reload.access_status
@@ -169,7 +169,7 @@ class Api::AuthorizationTest < ActionDispatch::IntegrationTest
         client_access = @client.client_accesses.create(:device_uid => device_uid)
         params = {format: :json, access_token: @client_access.uid,
           email: @user.email, password: @user.password}.with_indifferent_access
-        post "/api/authorize/user", params
+        post "/api/authorize/user", params: params
         assert_response :success
         assert_equal 1, Api::ClientAccess.where(device_uid: device_uid, user_id: @user.id).count
       end
@@ -179,7 +179,7 @@ class Api::AuthorizationTest < ActionDispatch::IntegrationTest
         assert_equal false, @user.active?
         params = {format: :json, access_token: @client_access.uid,
           email: @user.email, password: @user.password}.with_indifferent_access
-        post "/api/authorize/user", params
+        post "/api/authorize/user", params: params
         assert_response_attributes({"code" => Api::Code::AUTHORIZATION_ERROR})
         assert_response :unauthorized
       end
@@ -194,13 +194,13 @@ class Api::AuthorizationTest < ActionDispatch::IntegrationTest
 
     should "return record not found for wrong access_token" do
       @params[:access_token] = 'wrong'
-      get "/api/authorize/status", @params
+      get "/api/authorize/status", params: @params
       assert_response :unauthorized
       assert_response_attributes("code" => Api::Code::AUTHORIZATION_ERROR)
     end
 
     should "return SUCCESS with access_token and access_status = client" do
-      get "/api/authorize/status", @params
+      get "/api/authorize/status", params: @params
       assert_response :success
       assert_response_attributes("code" => Api::Code::SUCCESS,
         "access_status" => Api::ClientAccess::ACCESS_STATUS_CLIENT)
@@ -208,10 +208,10 @@ class Api::AuthorizationTest < ActionDispatch::IntegrationTest
 
     should "return SUCCESS with access_token and return access_status = account" do
       @user = FactoryGirl.create(:user)
-      post "/api/authorize/user", {format: :json, access_token: @client_access.uid,
+      post "/api/authorize/user", params: {format: :json, access_token: @client_access.uid,
         email: @user.email, password: @user.password}.with_indifferent_access
       assert_response :success
-      get "/api/authorize/status", @params
+      get "/api/authorize/status", params: @params
       assert_response :success
       assert_response_attributes("code" => Api::Code::SUCCESS,
         "access_status" => Api::ClientAccess::ACCESS_STATUS_ACCOUNT)
@@ -228,7 +228,7 @@ class Api::AuthorizationTest < ActionDispatch::IntegrationTest
       should "raise AUTHORIZATION_ERROR error when not passing access_token" do
         params = {format: :json, email: @user.email,
           password: @user.password}.with_indifferent_access
-        delete "/api/authorize/user", params
+        delete "/api/authorize/user", params: params
         assert_response_attributes("code" => Api::Code::AUTHORIZATION_ERROR)
         assert_response :unauthorized
       end
@@ -236,7 +236,7 @@ class Api::AuthorizationTest < ActionDispatch::IntegrationTest
       should "raise AUTHORIZATION_ERROR error when passing bad access_token" do
         params = {format: :json, email: @user.email,
           password: @user.password, access_token: "bad"}.with_indifferent_access
-        delete "/api/authorize/user", params
+        delete "/api/authorize/user", params: params
         assert_response_attributes("code" => Api::Code::AUTHORIZATION_ERROR)
         assert_response :unauthorized
       end
@@ -251,7 +251,7 @@ class Api::AuthorizationTest < ActionDispatch::IntegrationTest
         @client_access = FactoryGirl.create(:client_access, user: @user, access_status: Api::ClientAccess::ACCESS_STATUS_ACCOUNT)
         params = {format: :json, access_token: @client_access.uid}.with_indifferent_access
         assert_equal @user, @client_access.user
-        delete "/api/authorize/user", params
+        delete "/api/authorize/user", params: params
         assert_response :success
         # assert_response_attributes("code" => Api::Code::SUCCESS)
         assert_nil @client_access.reload.user
@@ -261,7 +261,7 @@ class Api::AuthorizationTest < ActionDispatch::IntegrationTest
       should "fail if account is not connected" do
         @client_access = FactoryGirl.create(:client_access, :access_status => Api::ClientAccess::ACCESS_STATUS_CLIENT)
         params = {format: :json, access_token: @client_access.uid}.with_indifferent_access
-        delete "/api/authorize/user", params
+        delete "/api/authorize/user", params: params
         assert_response_attributes("code" => Api::Code::AUTHORIZATION_ERROR)
         assert_response :unauthorized
         assert_equal Api::ClientAccess::ACCESS_STATUS_CLIENT, @client_access.reload.access_status

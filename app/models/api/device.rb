@@ -1,4 +1,4 @@
-class Api::Device < ActiveRecord::Base
+class Api::Device < ApplicationRecord
   self.table_name = "api_devices"
   include Model::Filter
 

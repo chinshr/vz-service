@@ -1,4 +1,4 @@
-class Ingest::Server::TerminateJob < ActiveJob::Base
+class Ingest::Server::TerminateJob < ApplicationJob
   include Job::Helper
   queue_as :default
 

@@ -54,7 +54,7 @@ ActiveAdmin.register Upload do
       end
       # (resource.ingest.aasm.events(resource.ingest.aasm.current_state) - [:process, :fail, :finish]).each do |event|
       (resource.ingest.aasm(:default).events(permitted: true).map(&:name) - [:process, :fail, :finish]).each do |event|
-        links += link_to event.to_s.humanize, switch_admin_upload_path(resource, params.merge(:event => event)),
+        links += link_to event.to_s.humanize, switch_admin_upload_path(resource, switch_params.merge(:event => event)),
           :class => "member_link view_link button", :confirm => "Really want to #{event.to_s.humanize.downcase}?"
       end
       links.html_safe
@@ -65,8 +65,8 @@ ActiveAdmin.register Upload do
   member_action :switch do
     resource = Upload.find(params[:id])
     ingest = resource.ingest
-    ingest.send(:"#{params[:event]}!")
-    redirect_to admin_uploads_path
+    ingest.send(:"#{params[:event]}!") if params[:event]
+    redirect_to admin_uploads_path(switch_params)
   end
 
 end

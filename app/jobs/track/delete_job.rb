@@ -1,4 +1,4 @@
-class Track::DeleteJob < ActiveJob::Base
+class Track::DeleteJob < ApplicationJob
   include Job::Helper
   queue_as :default
 

@@ -1,4 +1,4 @@
-class Registration < ActiveRecord::Base
+class Registration < ApplicationRecord
   include AASM
   include Model::AASM::Support
 
@@ -50,7 +50,7 @@ class Registration < ActiveRecord::Base
         index == 0 ? secure_options.merge!(normalize_params(attr)) : custom_options.merge!(normalize_params(attr))
       end
       record = new
-      custom_options.each {|k, v| record.send("#{k}=", v)}
+      custom_options.each {|k, v| record.send("#{k}=", v) if record.respond_to?("#{k}=")}
       record.attributes = secure_options
       yield record if block_given?
       record
@@ -74,7 +74,7 @@ class Registration < ActiveRecord::Base
   private
 
     def normalize_params(attributes = {})
-      attributes, result = (attributes || {}).symbolize_keys, {}
+      attributes, result = attributes || {}, {}
       if attributes[:ip]
         result[:ip_address]   = attributes[:ip]
         result[:lat]          = attributes[:latitude]
@@ -85,7 +85,7 @@ class Registration < ActiveRecord::Base
         result[:region_name]  = attributes[:region_name]
         result[:country_code] = attributes[:country_code]
       else
-        result = attributes
+        result = attributes.as_json
       end
       result.reject {|k,v| v.blank?}
     end
