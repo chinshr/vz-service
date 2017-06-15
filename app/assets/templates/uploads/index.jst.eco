@@ -30,7 +30,7 @@
                 <!-- Drop files -->
                 <div class="button button-with-chrome button-upload upload-drop-files-here">Drop files here...</div>
                 <!-- Email link -->
-                <div class = "input-group upload-email-input-group">
+                <div class="input-group upload-email-input-group">
                   <span class="input-group-addon"><i data-toggle="tooltip" title="Email your media file as attachment" class="fa fa-envelope-o"></i></span>
                   <input type="text" class="form-control email-file-link" placeholder="email" value="my@voyz.es">
                   <span class="input-group-addon"><i class="fa fa-clipboard copy-email-to-clipboard" data-toggle="tooltip" title="Copy email address to clipboard" data-placement="bottom" data-copied-title="Copied!"></i></span>

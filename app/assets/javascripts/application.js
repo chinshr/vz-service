@@ -32,7 +32,7 @@
 //= require lib/jquery.fileupload
 //= require lib/jquery.creditCardValidator
 //= require lib/vanillaTextMask
-//= require lib/particles
+//= require lib/intro
 //= require underscore
 //= require backbone
 //= require payola

@@ -56,9 +56,8 @@ App.Views.UploadsIndex = Backbone.View.extend({
       _this.initSourceModal();
       _this.setLocale();
       _this.initImageUploadInput();
-      $('[data-toggle="tooltip"]').tooltip({
-        container: 'body'
-      });
+      $('[data-toggle="tooltip"]').tooltip({container: 'body'});
+      introJs().start();
     });
 
     return this;
