@@ -38,4 +38,10 @@ Voyzes::Application.configure do
   routes.default_url_options[:host]        = 'test'
 
   config.active_support.test_order = :sorted  # :random
+
+  # From: https://jtway.co/speed-up-your-rails-test-suite-by-6-in-1-line-13fedb869ec4
+  unless ENV['RAILS_ENABLE_TEST_LOG']
+    config.logger    = Logger.new(nil)
+    config.log_level = :fatal
+  end
 end
