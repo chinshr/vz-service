@@ -2,13 +2,22 @@
 # https://blog.appcanary.com/2017/http-security-headers.html
 
 SecureHeaders::Configuration.default do |config|
-  config.cookies = {
-    secure: true, # mark all cookies as "Secure"
-    httponly: true, # mark all cookies as "HttpOnly"
-    samesite: {
-      lax: true # mark all cookies as SameSite=lax
-    }
-  }
+  # config.cookies = {
+  #   secure: true, # mark all cookies as "Secure"
+  #   httponly: true, # mark all cookies as "HttpOnly"
+  #   samesite: {
+  #     lax: true # mark all cookies as SameSite=lax
+  #   }
+  # }
+  # config.cookies = {
+  #   secure: SecureHeaders::OPT_OUT,
+  #   httponly: SecureHeaders::OPT_OUT,
+  #   samesite: SecureHeaders::OPT_OUT,
+  # }
+
+  # nuclear option, just make things work again
+  # config.cookies = SecureHeaders::OPT_OUT
+
   # Add "; preload" and submit the site to hstspreload.org for best protection.
   config.hsts = "max-age=#{20.years.to_i}; includeSubdomains"
   config.x_frame_options = "DENY"
@@ -17,12 +26,12 @@ SecureHeaders::Configuration.default do |config|
   config.x_download_options = "noopen"
   config.x_permitted_cross_domain_policies = "none"
   config.referrer_policy = "origin-when-cross-origin"
-  config.clear_site_data = [
-    "cache",
-    "cookies",
-    "storage",
-    "executionContexts"
-  ]
+  # config.clear_site_data = [
+  #   "cache",
+  #   "cookies",
+  #   "storage",
+  #   "executionContexts"
+  # ]
   config.csp = SecureHeaders::OPT_OUT # If this line is omitted, we will assume you meant to opt out.
   # config.csp = {
   #   # "meta" values. these will shaped the header, but the values are not included in the header.
