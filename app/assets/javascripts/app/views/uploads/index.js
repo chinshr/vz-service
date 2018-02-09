@@ -495,8 +495,9 @@ App.Views.UploadsIndex = Backbone.View.extend({
 
     _this.listenTo(_this.collection, 'add', _this.addOne);
     _this.listenToOnce(_this.collection, 'reset', _this.addAll);
-    document.addEventListener('scroll', function (event) {
-      if (document.body.scrollHeight === document.body.scrollTop + window.innerHeight) {
+
+    window.addEventListener('scroll', function() {
+      if (window.innerHeight + window.scrollY > $(document).height() - 300) {
         if (!_this.blockFetchCollection) {
           _this.blockFetchCollection = true;
           _this.fetchCollection(this);
